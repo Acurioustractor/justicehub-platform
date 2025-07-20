@@ -1,0 +1,33 @@
+# Development Dockerfile for JusticeHub
+FROM node:18-alpine
+
+# Install dependencies for development
+RUN apk add --no-cache \
+    libc6-compat \
+    git
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install dependencies with legacy peer deps flag
+RUN npm install --legacy-peer-deps --no-optional
+
+# Copy source code
+COPY . .
+
+# Create .next directory and set permissions
+RUN mkdir -p .next && chmod 777 .next
+
+# Expose port
+EXPOSE 3000
+
+# Set environment
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV WATCHPACK_POLLING=true
+
+# Start development server
+CMD ["npm", "run", "dev"]

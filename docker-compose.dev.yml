@@ -1,0 +1,57 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3003:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://user:pass@db:5432/justicehub
+      - REDIS_URL=redis://redis:6379
+      - AUTH0_SECRET=development-secret-not-for-production
+      - AUTH0_BASE_URL=http://localhost:3003
+      - AUTH0_ISSUER_BASE_URL=https://dev-placeholder.auth0.com
+      - AUTH0_CLIENT_ID=dev-client-id
+      - AUTH0_CLIENT_SECRET=dev-client-secret
+      - OPENAI_API_KEY=your-openai-key-here
+      - AWS_ACCESS_KEY_ID=dev-access-key
+      - AWS_SECRET_ACCESS_KEY=dev-secret-key
+      - AWS_S3_BUCKET=justicehub-media-dev
+      - AIRTABLE_API_KEY=patvXij3ajsKB9yQR.9c7597c2fedb2fb5a1631ecb109654ecd631a816165b38ad3452ead1bddb4dd7
+      - AIRTABLE_BASE_ID=app7G3Ae65pBblJke
+      - AIRTABLE_STORIES_TABLE=Stories
+      - NEXT_TELEMETRY_DISABLED=1
+      - WATCHPACK_POLLING=true
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    stdin_open: true
+    tty: true
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=justicehub
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:

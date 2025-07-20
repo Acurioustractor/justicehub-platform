@@ -1,0 +1,59 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    ports:
+      - "3003:3000"
+    env_file:
+      - .env.docker
+    depends_on:
+      - db
+      - redis
+      - mcp-server
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+
+  mcp-server:
+    build:
+      context: ./airtable-mcp-server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - AIRTABLE_API_KEY=dev-airtable-key
+      - AIRTABLE_BASE_ID=dev-base-id
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - NODE_ENV=development
+    depends_on:
+      - redis
+    volumes:
+      - ./airtable-mcp-server:/app
+      - /app/node_modules
+      - /app/dist
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=justicehub
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data: 
