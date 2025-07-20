@@ -1,0 +1,323 @@
+{
+  "metadata": {
+    "exported_at": "2025-07-05T22:18:30.232Z",
+    "source_database": "https://oxgkjgurpopntowhxlxm.supabase.co",
+    "export_version": "1.0"
+  },
+  "tables": {
+    "court_statistics": {
+      "count": 2,
+      "data": [
+        {
+          "id": "cdbc385d-9c70-4f1c-8236-599adfece9d7",
+          "court_type": "Childrens Court",
+          "report_period": "2023-24",
+          "total_defendants": 8457,
+          "indigenous_defendants": 5235,
+          "indigenous_percentage": 61.9,
+          "bail_refused_count": 2148,
+          "bail_refused_percentage": 25.4,
+          "remanded_custody": 1897,
+          "average_time_to_sentence_days": 127,
+          "most_common_offence": null,
+          "source_document": "Childrens Court Annual Report 2023-24",
+          "source_url": "https://www.courts.qld.gov.au/__data/assets/pdf_file/0006/819771/cc-ar-2023-2024.pdf",
+          "scraped_date": "2025-07-05T11:21:07.995338+00:00",
+          "created_at": "2025-07-05T11:21:07.995338+00:00",
+          "updated_at": "2025-07-05T11:21:07.995338+00:00"
+        },
+        {
+          "id": "ee374d58-8d5c-4b04-9081-c4510f7353bc",
+          "court_type": "Childrens Court",
+          "report_period": "2022-23",
+          "total_defendants": 8123,
+          "indigenous_defendants": 4898,
+          "indigenous_percentage": 60.3,
+          "bail_refused_count": null,
+          "bail_refused_percentage": 23,
+          "remanded_custody": null,
+          "average_time_to_sentence_days": 119,
+          "most_common_offence": null,
+          "source_document": "Childrens Court Annual Report 2022-23",
+          "source_url": "https://www.courts.qld.gov.au/__data/assets/pdf_file/0010/786466/cc-ar-2022-2023.pdf",
+          "scraped_date": "2025-07-05T11:21:08.092181+00:00",
+          "created_at": "2025-07-05T11:21:08.092181+00:00",
+          "updated_at": "2025-07-05T11:21:08.092181+00:00"
+        }
+      ],
+      "error": null
+    },
+    "youth_statistics": {
+      "count": 2,
+      "data": [
+        {
+          "id": "dd923a01-01c6-41a7-a6e4-050a008991b0",
+          "date": "2024-03-31",
+          "facility_name": "Queensland Youth Detention (All Centres)",
+          "total_youth": 338,
+          "indigenous_youth": 248,
+          "indigenous_percentage": 73.4,
+          "average_age": null,
+          "average_stay_days": null,
+          "program_type": "detention",
+          "source_url": "https://www.cyjma.qld.gov.au/resources/dcsyw/youth-justice/publications/yj-census-summary.pdf",
+          "scraped_date": "2025-07-05T11:16:34.244719+00:00",
+          "created_at": "2025-07-05T11:16:34.244719+00:00",
+          "updated_at": "2025-07-05T11:16:34.244719+00:00"
+        },
+        {
+          "id": "e06a2fe7-802e-4124-b578-05aed36346ed",
+          "date": "2024-03-31",
+          "facility_name": "Queensland Youth Detention (All Centres)",
+          "total_youth": 338,
+          "indigenous_youth": 248,
+          "indigenous_percentage": 73.4,
+          "average_age": null,
+          "average_stay_days": null,
+          "program_type": "detention",
+          "source_url": "https://www.cyjma.qld.gov.au/resources/dcsyw/youth-justice/publications/yj-census-summary.pdf",
+          "scraped_date": "2025-07-05T11:21:08.157091+00:00",
+          "created_at": "2025-07-05T11:21:08.157091+00:00",
+          "updated_at": "2025-07-05T11:21:08.157091+00:00"
+        }
+      ],
+      "error": null
+    },
+    "budget_allocations": {
+      "count": 6,
+      "data": [
+        {
+          "id": "fce7a769-7c3c-4972-88ab-7fb0288ee074",
+          "fiscal_year": "2024-25",
+          "department": null,
+          "program": "Youth Justice Services - Total",
+          "category": null,
+          "amount": 489100000,
+          "description": "Total youth justice allocation",
+          "source_url": "https://budget.qld.gov.au/files/Budget_2024-25_DCSSDS_Budget_Statements.pdf",
+          "source_document": "Queensland Budget 2024-25 - DCSSDS",
+          "scraped_date": "2025-07-05T11:16:34.393788+00:00",
+          "created_at": "2025-07-05T11:16:34.393788+00:00",
+          "updated_at": "2025-07-05T11:16:34.393788+00:00"
+        },
+        {
+          "id": "9f3e75a8-3780-4db1-936d-ed3d1b0a181e",
+          "fiscal_year": "2024-25",
+          "department": null,
+          "program": "Youth Detention Operations",
+          "category": "detention",
+          "amount": 443000000,
+          "description": "90.6% of total budget",
+          "source_url": "https://budget.qld.gov.au/files/Budget_2024-25_DCSSDS_Budget_Statements.pdf",
+          "source_document": "Queensland Budget 2024-25 - DCSSDS",
+          "scraped_date": "2025-07-05T11:16:34.462299+00:00",
+          "created_at": "2025-07-05T11:16:34.462299+00:00",
+          "updated_at": "2025-07-05T11:16:34.462299+00:00"
+        },
+        {
+          "id": "55e37f81-300c-48b8-b80b-d0c7c7110d15",
+          "fiscal_year": "2024-25",
+          "department": null,
+          "program": "Community-Based Programs",
+          "category": "community",
+          "amount": 37100000,
+          "description": "7.6% of total budget",
+          "source_url": "https://budget.qld.gov.au/files/Budget_2024-25_DCSSDS_Budget_Statements.pdf",
+          "source_document": "Queensland Budget 2024-25 - DCSSDS",
+          "scraped_date": "2025-07-05T11:16:34.543614+00:00",
+          "created_at": "2025-07-05T11:16:34.543614+00:00",
+          "updated_at": "2025-07-05T11:16:34.543614+00:00"
+        },
+        {
+          "id": "f0c893f0-2ec7-4651-ae74-a61d15c0cd6f",
+          "fiscal_year": "2024-25",
+          "department": null,
+          "program": "Youth Justice Services - Total",
+          "category": null,
+          "amount": 489100000,
+          "description": "Total youth justice allocation",
+          "source_url": "https://budget.qld.gov.au/files/Budget_2024-25_DCSSDS_Budget_Statements.pdf",
+          "source_document": "Queensland Budget 2024-25 - DCSSDS",
+          "scraped_date": "2025-07-05T11:21:08.301186+00:00",
+          "created_at": "2025-07-05T11:21:08.301186+00:00",
+          "updated_at": "2025-07-05T11:21:08.301186+00:00"
+        },
+        {
+          "id": "169a504c-238d-4b2d-be40-5305712d15c4",
+          "fiscal_year": "2024-25",
+          "department": null,
+          "program": "Youth Detention Operations",
+          "category": "detention",
+          "amount": 443000000,
+          "description": "90.6% of total budget",
+          "source_url": "https://budget.qld.gov.au/files/Budget_2024-25_DCSSDS_Budget_Statements.pdf",
+          "source_document": "Queensland Budget 2024-25 - DCSSDS",
+          "scraped_date": "2025-07-05T11:21:08.369856+00:00",
+          "created_at": "2025-07-05T11:21:08.369856+00:00",
+          "updated_at": "2025-07-05T11:21:08.369856+00:00"
+        },
+        {
+          "id": "ce125fc5-4dd0-475c-abc2-2214f7e28afe",
+          "fiscal_year": "2024-25",
+          "department": null,
+          "program": "Community-Based Programs",
+          "category": "community",
+          "amount": 37100000,
+          "description": "7.6% of total budget",
+          "source_url": "https://budget.qld.gov.au/files/Budget_2024-25_DCSSDS_Budget_Statements.pdf",
+          "source_document": "Queensland Budget 2024-25 - DCSSDS",
+          "scraped_date": "2025-07-05T11:21:08.448665+00:00",
+          "created_at": "2025-07-05T11:21:08.448665+00:00",
+          "updated_at": "2025-07-05T11:21:08.448665+00:00"
+        }
+      ],
+      "error": null
+    },
+    "parliamentary_documents": {
+      "count": 3,
+      "data": [
+        {
+          "id": "1b59ade6-1a2e-411a-84f9-b6ca4e982b4d",
+          "document_type": "question_on_notice",
+          "title": "Youth Justice Expenditure and Outcomes - Question on Notice",
+          "date": "2024-05-15",
+          "author": "Member for Brisbane Central",
+          "url": null,
+          "content": "Questions about youth justice budget efficiency and Indigenous outcomes in Queensland detention facilities",
+          "mentions_youth_justice": true,
+          "mentions_spending": false,
+          "mentions_indigenous": true,
+          "scraped_date": "2025-07-05T22:12:26.565408+00:00",
+          "created_at": "2025-07-05T22:12:26.415+00:00",
+          "updated_at": "2025-07-05T22:12:26.565408+00:00"
+        },
+        {
+          "id": "4d1a92e1-9890-4fc1-9b3a-d3f492261ca4",
+          "document_type": "committee_hearing",
+          "title": "Budget Estimates - Youth Justice Department Hearing",
+          "date": "2024-06-20",
+          "author": "Economics and Governance Committee",
+          "url": null,
+          "content": "Parliamentary committee hearing on youth justice budget allocation and performance measures",
+          "mentions_youth_justice": true,
+          "mentions_spending": false,
+          "mentions_indigenous": true,
+          "scraped_date": "2025-07-05T22:12:26.565408+00:00",
+          "created_at": "2025-07-05T22:12:26.415+00:00",
+          "updated_at": "2025-07-05T22:12:26.565408+00:00"
+        },
+        {
+          "id": "ef2fb9cf-8c6f-4ea1-b55c-d1219d650739",
+          "document_type": "motion",
+          "title": "Motion - Youth Justice System Reform",
+          "date": "2024-03-12",
+          "author": "Member for Logan",
+          "url": null,
+          "content": "Parliamentary motion calling for comprehensive reform of the youth justice system",
+          "mentions_youth_justice": true,
+          "mentions_spending": false,
+          "mentions_indigenous": false,
+          "scraped_date": "2025-07-05T22:12:26.565408+00:00",
+          "created_at": "2025-07-05T22:12:26.415+00:00",
+          "updated_at": "2025-07-05T22:12:26.565408+00:00"
+        }
+      ],
+      "error": null
+    },
+    "youth_crimes": {
+      "count": 1,
+      "data": [
+        {
+          "id": "d4ddcad6-8303-4c3e-9c4e-765a12747149",
+          "date": "2024-06-30",
+          "region": "Queensland (Statewide)",
+          "district": null,
+          "offense_type": "All Offences",
+          "youth_offenders": 15234,
+          "total_offenses": null,
+          "property_offenses": null,
+          "person_offenses": null,
+          "drug_offenses": null,
+          "public_order_offenses": null,
+          "indigenous_offenders": null,
+          "indigenous_percentage": null,
+          "repeat_offenders": 8829,
+          "repeat_offender_percentage": 58,
+          "most_common_age": null,
+          "source": "QPS Statistical Review 2023-24",
+          "scraped_date": "2025-07-05T11:21:08.230036+00:00",
+          "created_at": "2025-07-05T11:21:08.230036+00:00",
+          "updated_at": "2025-07-05T11:21:08.230036+00:00"
+        }
+      ],
+      "error": null
+    },
+    "rti_requests": {
+      "count": 0,
+      "data": [],
+      "error": null
+    },
+    "scraped_content": {
+      "count": 3,
+      "data": [
+        {
+          "id": "7ae07afc-3757-4d4a-a23d-5642fe87dbda",
+          "source": "Queensland Courts Statistics",
+          "url": "https://www.courts.qld.gov.au/about/publications",
+          "title": "court_mention - Queensland Courts Statistics",
+          "content": "[Childrens Court](https://www.courts.qld.gov.au/courts/childrens-court/) [Children going to court](https://www.courts.qld.gov.au/courts/childrens-court/going-to-court-as-a-juvenile) [Childrens Court](https://www.courts.qld.gov.au/decisions/childrens-court-decisions/) [Childrens Court](https://www.courts.qld.gov.au/contacts/childrens-court/) [Childrens Court Child Protection Proceedings Benchbook (PDF, 2MB)](https://www.courts.qld.gov.au/__data/assets/pdf_file/0011/812657/cc-bb-childrens-court-ch",
+          "metadata": {
+            "type": "court_mention",
+            "mentions": 8,
+            "extracted_at": "2025-07-05T08:25:12.632Z",
+            "budget_figures": null
+          },
+          "scraper_name": "firecrawl-enhanced",
+          "data_type": "court_data",
+          "scraped_at": "2025-07-05T08:25:12.632+00:00",
+          "created_at": "2025-07-05T08:25:13.279827+00:00"
+        },
+        {
+          "id": "9bbb4aba-8de7-4adc-a8ba-f0844f3f94e3",
+          "source": "Queensland Police Open Data",
+          "url": "https://www.data.qld.gov.au/dataset?tags=crime",
+          "title": "crime_data - Queensland Police Open Data",
+          "content": "## [Active mobile speed camera sites-Updated Quarterly](https://www.data.qld.gov.au/dataset/active-mobile-speed-camera-sites \"Active mobile speed camera sites-Updated Quarterly\")\n\nPlease IGNORE Last Update Date. This dataset is Updated Quarterly. Speed camera sites for portable, marked, and covert mobile speed cameras. List provided by Queensland Police...\n\n- [CSV](https://www.data.qld.gov.au/dataset/active-mobile-speed-camera-sites)\n## [Offence numbers—police divisions—monthly from July 2001](h",
+          "metadata": {
+            "type": "crime_data",
+            "mentions": 32,
+            "extracted_at": "2025-07-05T08:25:22.621Z",
+            "budget_figures": null
+          },
+          "scraper_name": "firecrawl-enhanced",
+          "data_type": "police_data",
+          "scraped_at": "2025-07-05T08:25:22.621+00:00",
+          "created_at": "2025-07-05T08:25:22.756767+00:00"
+        },
+        {
+          "id": "383b20c9-47e4-48f1-ad6c-56fa470450f5",
+          "source": "Queensland Audit Office",
+          "url": "https://www.qao.qld.gov.au/reports-resources/managing-youth-justice-demand",
+          "title": "QAO Report - Managing Youth Justice Demand",
+          "content": "{\n  \"total_spending_2018_2023\": 1380000000,\n  \"true_cost_per_day\": 1570,\n  \"government_claimed_cost\": 857,\n  \"hidden_cost_percentage\": 83.3,\n  \"accountability_finding\": \"No single entity is accountable for youth justice system performance\"\n}",
+          "metadata": {
+            "verified": true,
+            "report_date": "2024-06-15",
+            "key_findings": {
+              "true_cost_per_day": 1570,
+              "accountability_finding": "No single entity is accountable for youth justice system performance",
+              "hidden_cost_percentage": 83.3,
+              "government_claimed_cost": 857,
+              "total_spending_2018_2023": 1380000000
+            }
+          },
+          "scraper_name": "verified-data-loader",
+          "data_type": "audit_findings",
+          "scraped_at": "2025-07-05T08:48:32.615+00:00",
+          "created_at": "2025-07-05T08:48:32.897371+00:00"
+        }
+      ],
+      "error": null
+    }
+  }
+}

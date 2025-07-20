@@ -1,0 +1,54 @@
+# Web scraping
+beautifulsoup4==4.12.3
+requests==2.31.0
+selenium==4.18.1
+lxml==5.1.0
+
+# PDF processing
+PyPDF2==3.0.1
+pdfplumber==0.10.3
+tabula-py==2.9.0
+camelot-py[cv]==0.11.0
+
+# Database
+sqlalchemy==2.0.25
+supabase==2.3.0
+
+# Data processing
+pandas==2.1.4
+numpy==1.26.3
+matplotlib==3.8.2
+seaborn==0.13.1
+
+# Dashboard
+streamlit==1.31.0
+plotly==5.19.0
+altair==5.2.0
+
+# Flask dashboard
+flask==3.0.0
+flask-socketio==5.3.5
+flask-cors==4.0.0
+python-socketio==5.10.0
+eventlet==0.34.1
+gunicorn==21.2.0
+gevent==23.9.1
+gevent-websocket==0.10.1
+
+# Scheduling and automation
+schedule==1.2.0
+python-crontab==3.0.0
+APScheduler==3.10.4
+
+# Email and reporting
+reportlab==4.0.9
+weasyprint==60.2
+markdown2==2.4.12
+
+# Utilities
+python-dotenv==1.0.0
+pyyaml==6.0.1
+loguru==0.7.2
+pytest==8.0.0
+black==24.1.1
+jinja2==3.1.3
