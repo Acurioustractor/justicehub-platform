@@ -1,0 +1,31 @@
+{
+  "title": "Queensland Youth Services Database Summary",
+  "generated": "2025-07-08T01:41:14.441Z",
+  "total_services": 275,
+  "coverage": {
+    "regions": 33,
+    "data_sources": 14,
+    "service_categories": 51
+  },
+  "highlights": {
+    "largest_provider": [
+      "pcyc_mega_expansion",
+      69
+    ],
+    "most_services_region": [
+      "brisbane",
+      76
+    ],
+    "top_category": [
+      "education_support",
+      80
+    ],
+    "youth_specific_services": 270,
+    "indigenous_specific_services": 24
+  },
+  "files_created": [
+    "MASTER-Queensland-Youth-Services.json",
+    "MASTER-Queensland-Youth-Services.csv",
+    "Queensland-Services-By-Region.json"
+  ]
+}

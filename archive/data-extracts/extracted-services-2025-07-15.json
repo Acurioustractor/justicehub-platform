@@ -1,0 +1,4031 @@
+[
+  {
+    "id": "1bead8a1-6b8c-44e5-8f5a-b221dc9d6262",
+    "name": "St George Family Support Services Inc.",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "community_service",
+      "housing",
+      "family_support",
+      "justice_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.975Z",
+    "updated_at": "2025-07-15T21:16:38.975Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11005906054.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "257fca70-60ab-4656-b5d9-e4dd8609aa02",
+      "name": "St George Family Support Services Inc.",
+      "description": "ACNC Registered Charity - Size: Medium",
+      "organization_type": "non_profit",
+      "tax_id": "11005906054.0",
+      "legal_status": "Registered",
+      "url": "www.sgfss.org.au",
+      "created_at": "2025-07-15T21:16:38.975Z",
+      "updated_at": "2025-07-15T21:16:38.975Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "754a3134-2083-46e1-915b-61478d931a5e",
+        "name": "St George Family Support Services Inc.",
+        "address_1": "42 Jubilee Ave",
+        "address_2": "",
+        "city": "Carlton",
+        "state_province": "NSW",
+        "postal_code": "2218",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "b0a40a48-7909-43fd-af25-5cfb744e951a",
+        "name": "St George Family Support Services Inc. Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Medium",
+    "acnc_established_date": "01/01/1987",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "3c15d0d4-f92c-42a9-8eaa-71c26ac95a81",
+    "name": "The Trustee For Community Foundation For Albury Wodonga Region",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "community_service"
+    ],
+    "created_at": "2025-07-15T21:16:38.975Z",
+    "updated_at": "2025-07-15T21:16:38.975Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11064494169.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "b870ffd3-40f7-4252-9abd-2c13446b356f",
+      "name": "The Trustee For Community Foundation For Albury Wodonga Region",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11064494169.0",
+      "legal_status": "Registered",
+      "url": "www.bordertrust.org.au",
+      "created_at": "2025-07-15T21:16:38.975Z",
+      "updated_at": "2025-07-15T21:16:38.975Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "bc2a1f63-1366-4786-ae9c-946cf6cc651a",
+        "name": "The Trustee For Community Foundation For Albury Wodonga Region",
+        "address_1": "486 Olive St",
+        "address_2": "",
+        "city": "Albury",
+        "state_province": "NSW",
+        "postal_code": "2640",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "c1c348b5-4b06-4e16-afaf-07c8492633eb",
+        "name": "The Trustee For Community Foundation For Albury Wodonga Region Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/2004",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "9a9f7a31-ec10-4eb5-8c8b-b3a258576993",
+    "name": "Parish Of The Nativity",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.975Z",
+    "updated_at": "2025-07-15T21:16:38.975Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11083216579.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "1089a8be-5fd7-4a4a-a47b-443fa0e7ef9a",
+      "name": "Parish Of The Nativity",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11083216579.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.975Z",
+      "updated_at": "2025-07-15T21:16:38.975Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "850d958a-aba3-49bd-9ee6-feb5ead4f23b",
+        "name": "Parish Of The Nativity",
+        "address_1": "C/- 39 Wakefield Street",
+        "address_2": "",
+        "city": "Adelaide",
+        "state_province": "SA",
+        "postal_code": "5000",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "66b61cc2-3ac9-4399-95fb-d871cc0ce93b",
+        "name": "Parish Of The Nativity Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1980",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "d1668b92-bf03-4a3f-969e-65a9df0be6fd",
+    "name": "Carbon Market Institute Limited",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "family_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.975Z",
+    "updated_at": "2025-07-15T21:16:38.975Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11146804668.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "4534f65d-357e-4eca-ae94-bde0052b8fe6",
+      "name": "Carbon Market Institute Limited",
+      "description": "ACNC Registered Charity - Size: Large",
+      "organization_type": "non_profit",
+      "tax_id": "11146804668.0",
+      "legal_status": "Registered",
+      "url": "https://carbonmarketinstitute.org/",
+      "created_at": "2025-07-15T21:16:38.975Z",
+      "updated_at": "2025-07-15T21:16:38.975Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "69023809-a86c-42bd-8f62-328e621d36a3",
+        "name": "Carbon Market Institute Limited",
+        "address_1": "The Hub, Level 2",
+        "address_2": "696 Bourke Street",
+        "city": "Melbourne",
+        "state_province": "VIC",
+        "postal_code": "3000",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "1b13413e-5549-471d-8369-3fbf600402c6",
+        "name": "Carbon Market Institute Limited Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Large",
+    "acnc_established_date": "01/01/2010",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "4da5da19-9d90-488d-a678-18632fff5eb0",
+    "name": "Olivia Newton-John Cancer Research Institute",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "health_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.975Z",
+    "updated_at": "2025-07-15T21:16:38.975Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11167192752.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "bd265d7f-ab99-4cfe-8d6f-311dee07be8f",
+      "name": "Olivia Newton-John Cancer Research Institute",
+      "description": "ACNC Registered Charity - Size: Large",
+      "organization_type": "non_profit",
+      "tax_id": "11167192752.0",
+      "legal_status": "Registered",
+      "url": "www.onjcri.org.au",
+      "created_at": "2025-07-15T21:16:38.975Z",
+      "updated_at": "2025-07-15T21:16:38.975Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "d6c0f9a9-25dc-478e-adac-231c2be2c9d5",
+        "name": "Olivia Newton-John Cancer Research Institute",
+        "address_1": "Level 5, ONJ Centre",
+        "address_2": "145 Studley Road",
+        "city": "Heidelberg",
+        "state_province": "VIC",
+        "postal_code": "3084",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "006658d4-3106-482f-8a22-52b8c2ceca4c",
+        "name": "Olivia Newton-John Cancer Research Institute Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "11/12/2013",
+    "acnc_size": "Large",
+    "acnc_established_date": "11/12/2013",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "d61c4d16-895e-4f5d-843e-669650b97fa1",
+    "name": "St Johns Evangelical Lutheran Church Burra",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "community_service"
+    ],
+    "created_at": "2025-07-15T21:16:38.975Z",
+    "updated_at": "2025-07-15T21:16:38.975Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11236340422.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "ce243636-3bc5-44c0-9041-b106d8b34eea",
+      "name": "St Johns Evangelical Lutheran Church Burra",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11236340422.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.975Z",
+      "updated_at": "2025-07-15T21:16:38.975Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "0633d999-5588-48a0-9da8-1216d0aa89d1",
+        "name": "St Johns Evangelical Lutheran Church Burra",
+        "address_1": "14 Ludgvan Street",
+        "address_2": "",
+        "city": "Burra",
+        "state_province": "SA",
+        "postal_code": "5417",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "a4809c12-f32a-486a-a8a4-602ae9956bec",
+        "name": "St Johns Evangelical Lutheran Church Burra Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1967",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "301fe3bc-fe55-4dc4-98f8-d80e6becee84",
+    "name": "Bonnet Bay P&C Association",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "education_support",
+      "family_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.975Z",
+    "updated_at": "2025-07-15T21:16:38.975Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11248418710.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "6a786119-8192-4510-aadd-71d5e6f27193",
+      "name": "Bonnet Bay P&C Association",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11248418710.0",
+      "legal_status": "Registered",
+      "url": "https://bbpca.square.site/",
+      "created_at": "2025-07-15T21:16:38.975Z",
+      "updated_at": "2025-07-15T21:16:38.975Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "e581bb26-9b60-4f2d-a20a-d5f21c0de45e",
+        "name": "Bonnet Bay P&C Association",
+        "address_1": "Bonnet Bay Primary School",
+        "address_2": "",
+        "city": "Bonnet Bay",
+        "state_province": "NSW",
+        "postal_code": "2226",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "2c750ca1-6892-4575-a429-fbf4f6559df4",
+        "name": "Bonnet Bay P&C Association Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1979",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "efbddd11-ae05-4785-af70-f4e5b281206c",
+    "name": "University Of Melbourne Graduate Student Association Inc",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "education_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.975Z",
+    "updated_at": "2025-07-15T21:16:38.975Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11274192974.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "5cfd02f8-916e-4dbb-b6b5-c14c87a1c3cb",
+      "name": "University Of Melbourne Graduate Student Association Inc",
+      "description": "ACNC Registered Charity - Size: Large",
+      "organization_type": "non_profit",
+      "tax_id": "11274192974.0",
+      "legal_status": "Registered",
+      "url": "https://gsa.unimelb.edu.au/",
+      "created_at": "2025-07-15T21:16:38.975Z",
+      "updated_at": "2025-07-15T21:16:38.975Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "e79df272-12a7-4d75-88ce-10df940775e2",
+        "name": "University Of Melbourne Graduate Student Association Inc",
+        "address_1": "190 Grattan Street",
+        "address_2": "",
+        "city": "Parkville",
+        "state_province": "VIC",
+        "postal_code": "3010",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "5b61a44a-7c56-4e52-b2f0-e12e60bde29d",
+        "name": "University Of Melbourne Graduate Student Association Inc Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Large",
+    "acnc_established_date": "01/01/1994",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "ecdb6144-2b00-48a2-96df-b4775aceb32a",
+    "name": "Corrigin Church Of Christ Inc",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "family_support",
+      "youth_services",
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.975Z",
+    "updated_at": "2025-07-15T21:16:38.975Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11286533983.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "762ae1a7-9816-4fb4-b5e4-4b17f885d7a3",
+      "name": "Corrigin Church Of Christ Inc",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11286533983.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.975Z",
+      "updated_at": "2025-07-15T21:16:38.975Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "3c2c240d-f80b-4893-91dd-e834e3a7ae4e",
+        "name": "Corrigin Church Of Christ Inc",
+        "address_1": "2 Davies St",
+        "address_2": "",
+        "city": "Corrigin",
+        "state_province": "WA",
+        "postal_code": "6375",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "962e5c32-4433-4d4c-89ae-be77dadda660",
+        "name": "Corrigin Church Of Christ Inc Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1955",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "23265c1c-d3d2-47d1-869b-eaaa388335f9",
+    "name": "Sandy Bay Senior Citizens Club Inc",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "community_service"
+    ],
+    "created_at": "2025-07-15T21:16:38.975Z",
+    "updated_at": "2025-07-15T21:16:38.975Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11308202509.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "826358bf-cc3f-4bd2-945a-103fb20628a4",
+      "name": "Sandy Bay Senior Citizens Club Inc",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11308202509.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.975Z",
+      "updated_at": "2025-07-15T21:16:38.975Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "15cd88d0-1663-45ef-ab67-674c63008b90",
+        "name": "Sandy Bay Senior Citizens Club Inc",
+        "address_1": "23 Lambert Ave",
+        "address_2": "",
+        "city": "Sandy Bay",
+        "state_province": "TAS",
+        "postal_code": "7005",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "7081c4df-db79-4bc6-8dc5-be1574addf76",
+        "name": "Sandy Bay Senior Citizens Club Inc Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1972",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "a454279a-384f-4192-b768-af2dd6612fa0",
+    "name": "Gungyah Ngallingnee Aboriginal Corporation",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "community_service",
+      "cultural_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.975Z",
+    "updated_at": "2025-07-15T21:16:38.975Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11321413690.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "0c234d79-c4c6-4974-8a46-7cccd49d4f67",
+      "name": "Gungyah Ngallingnee Aboriginal Corporation",
+      "description": "ACNC Registered Charity - Size: Unknown",
+      "organization_type": "non_profit",
+      "tax_id": "11321413690.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.975Z",
+      "updated_at": "2025-07-15T21:16:38.975Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "46517c51-c7c2-4fda-bbb6-72645428078b",
+        "name": "Gungyah Ngallingnee Aboriginal Corporation",
+        "address_1": "The Tuckerbox",
+        "address_2": "8 Walker Street",
+        "city": "TABULAM",
+        "state_province": "NSW",
+        "postal_code": "2469",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "f71b7e5f-6ba6-4726-9cdc-9a21e289addb",
+        "name": "Gungyah Ngallingnee Aboriginal Corporation Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "",
+    "acnc_established_date": "12/12/1984",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "5dfde2ec-2b25-4048-829a-12607de19a28",
+    "name": "Harrietville Television Committee Inc",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "family_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.975Z",
+    "updated_at": "2025-07-15T21:16:38.975Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11342844238.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "37faf487-e377-4d59-9ad8-2bcdda771e0d",
+      "name": "Harrietville Television Committee Inc",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11342844238.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.975Z",
+      "updated_at": "2025-07-15T21:16:38.975Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "dea6c6c3-434a-47a2-8372-3f8d01153cda",
+        "name": "Harrietville Television Committee Inc",
+        "address_1": "54 Bon Accord Trk",
+        "address_2": "",
+        "city": "Harrietville",
+        "state_province": "VIC",
+        "postal_code": "3741",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "a615d848-9ef7-4859-8063-f20c1f6b3998",
+        "name": "Harrietville Television Committee Inc Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.975Z",
+        "updated_at": "2025-07-15T21:16:38.975Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1997",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "9d92c1ec-ad05-40b6-a335-d3852ea2a57c",
+    "name": "The Trustee For The Foundation For Imaging Research",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "health_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11036231838.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "bdb13709-d070-4fe2-bf7e-9ff632c1a9f5",
+      "name": "The Trustee For The Foundation For Imaging Research",
+      "description": "ACNC Registered Charity - Size: Medium",
+      "organization_type": "non_profit",
+      "tax_id": "11036231838.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "41ef101e-b582-41d1-a39d-211b401c9add",
+        "name": "The Trustee For The Foundation For Imaging Research",
+        "address_1": "Level 36, Tower 2, Collins Square, 727 Collins Street",
+        "address_2": "",
+        "city": "Docklands",
+        "state_province": "VIC",
+        "postal_code": "3008",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "0300fca5-c4c1-415d-8483-a249917c3d9a",
+        "name": "The Trustee For The Foundation For Imaging Research Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Medium",
+    "acnc_established_date": "01/01/2006",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "18b20314-ef7b-40bb-9281-c4ed70b502e2",
+    "name": "The Family And Disability Society Of Wa Incorporated",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "family_support",
+      "disability_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11045845426.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "83665a6b-bbe1-4532-a88d-9d8b7b9c1a34",
+      "name": "The Family And Disability Society Of Wa Incorporated",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11045845426.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "51adf891-3497-45c4-a968-6046074cef03",
+        "name": "The Family And Disability Society Of Wa Incorporated",
+        "address_1": "92 Eucalyptus Bvd",
+        "address_2": "",
+        "city": "Canning Vale",
+        "state_province": "WA",
+        "postal_code": "6155",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "0cd5ce0a-1c1c-4039-90a9-d780d4fef15f",
+        "name": "The Family And Disability Society Of Wa Incorporated Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1992",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "5e1941d0-c08f-4da6-9496-7a063dabbceb",
+    "name": "Church Of Christ Belmore",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "family_support",
+      "youth_services",
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11082241761.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "d9c97e13-d223-4ca1-bd6e-90106b435d8e",
+      "name": "Church Of Christ Belmore",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11082241761.0",
+      "legal_status": "Registered",
+      "url": "www.belmorechurchofchrist.org",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "83868f89-135b-42c5-a39a-8a6fe3db8edd",
+        "name": "Church Of Christ Belmore",
+        "address_1": "1a Chalmers St",
+        "address_2": "",
+        "city": "Belmore",
+        "state_province": "NSW",
+        "postal_code": "2192",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "2b28a0ca-f293-4311-97c0-74cd1b0f4acf",
+        "name": "Church Of Christ Belmore Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1906",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "7f535831-cbf2-4896-955f-95aaaf747ddb",
+    "name": "Aboriginal & Torres Strait Islander Legal Service (Qld) Ltd",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "housing",
+      "family_support",
+      "cultural_support",
+      "justice_support",
+      "disability_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11116314562.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "8ed61040-26b2-42b9-a813-108a680bc337",
+      "name": "Aboriginal & Torres Strait Islander Legal Service (Qld) Ltd",
+      "description": "ACNC Registered Charity - Size: Large",
+      "organization_type": "non_profit",
+      "tax_id": "11116314562.0",
+      "legal_status": "Registered",
+      "url": "http://www.atsils.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "795e8ba5-4c55-4ad6-924a-39c75c6cd950",
+        "name": "Aboriginal & Torres Strait Islander Legal Service (Qld) Ltd",
+        "address_1": "Dairymens Building",
+        "address_2": "",
+        "city": "Brisbane City",
+        "state_province": "QLD",
+        "postal_code": "4000",
+        "country": "AU",
+        "region": "brisbane",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "bac83050-fdc8-493d-aa12-efca34faa326",
+        "name": "Aboriginal & Torres Strait Islander Legal Service (Qld) Ltd Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Large",
+    "acnc_established_date": "01/01/2005",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "85a70360-9e6f-4305-b6ef-4b3b40155a83",
+    "name": "Hope Foundation Limited",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "community_service",
+      "housing",
+      "family_support",
+      "cultural_support",
+      "justice_support",
+      "disability_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11117886432.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "07a38acb-59a1-47c3-b119-c504f19c0522",
+      "name": "Hope Foundation Limited",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11117886432.0",
+      "legal_status": "Registered",
+      "url": "https://lovewellfoundation.org.au/",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "7e7d5017-b5c3-41c5-8d3e-cbd4bb0c04d3",
+        "name": "Hope Foundation Limited",
+        "address_1": "185 Mount Gravatt Outlook Drive",
+        "address_2": "",
+        "city": "Mt Gravatt",
+        "state_province": "QLD",
+        "postal_code": "4122",
+        "country": "AU",
+        "region": "brisbane",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "7b6d1832-5a65-4c62-85fc-b07158bd39ef",
+        "name": "Hope Foundation Limited Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/2006",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "b7a099de-60c6-4830-bb4a-04f63a6647a9",
+    "name": "Sunny Corner Toy Library Incorporated",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "education_support",
+      "family_support",
+      "disability_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11121512677.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "47064ebd-6b05-44cc-99bf-088e27ae7a0e",
+      "name": "Sunny Corner Toy Library Incorporated",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11121512677.0",
+      "legal_status": "Registered",
+      "url": "www.sunnycornertoylibrary.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "a825eb0b-780f-4d3b-b4f5-75051c0ae603",
+        "name": "Sunny Corner Toy Library Incorporated",
+        "address_1": "12 Station Rd",
+        "address_2": "",
+        "city": "Auburn",
+        "state_province": "NSW",
+        "postal_code": "2144",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "30c773ed-d134-4826-8f0b-ec231b4d8a0e",
+        "name": "Sunny Corner Toy Library Incorporated Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "13/01/2016",
+    "acnc_size": "Small",
+    "acnc_established_date": "25/06/1993",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "dbfc0901-97c1-44ed-ab05-bc193820cfa9",
+    "name": "Brisbane Islamic Centre Limited",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "education_support",
+      "community_service",
+      "family_support",
+      "youth_services",
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11133425439.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "d9464f45-353e-49a3-ac1e-80fe3c1564bf",
+      "name": "Brisbane Islamic Centre Limited",
+      "description": "ACNC Registered Charity - Size: Medium",
+      "organization_type": "non_profit",
+      "tax_id": "11133425439.0",
+      "legal_status": "Registered",
+      "url": "www.bic.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "cc184fee-3f69-4aae-b5c4-5ab00ff7457b",
+        "name": "Brisbane Islamic Centre Limited",
+        "address_1": "161 Underwood Rd",
+        "address_2": "",
+        "city": "Eight Mile Plains",
+        "state_province": "QLD",
+        "postal_code": "4113",
+        "country": "AU",
+        "region": "brisbane",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "b81e6f69-ea2e-483d-b541-e73670665d09",
+        "name": "Brisbane Islamic Centre Limited Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "01/07/2018",
+    "acnc_size": "Medium",
+    "acnc_established_date": "25/09/2008",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "b62738e2-fc40-4d2e-8e24-6a310a05bdb8",
+    "name": "Short Black Opera Company Pty Ltd",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "family_support",
+      "cultural_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11141727577.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "43653fcf-b014-419b-9a7c-5cc3abb86407",
+      "name": "Short Black Opera Company Pty Ltd",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11141727577.0",
+      "legal_status": "Registered",
+      "url": "www.shortblackopera.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "c62ea1e4-1f8e-4163-9a0b-6a4d03941d4e",
+        "name": "Short Black Opera Company Pty Ltd",
+        "address_1": "U 1202 576-578 St Kilda Rd",
+        "address_2": "",
+        "city": "Melbourne",
+        "state_province": "VIC",
+        "postal_code": "3004",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "b5d21c23-addc-47c9-8b10-1caada5a7d38",
+        "name": "Short Black Opera Company Pty Ltd Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/2010",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "a68bfb8a-aaba-4da9-83f7-03396d6eab2a",
+    "name": "Fellowship Of Aust Writers West Aust Section (Inc)",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11163101750.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "3847f0ff-d1e5-4da7-80bc-e4b5c2486c8a",
+      "name": "Fellowship Of Aust Writers West Aust Section (Inc)",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11163101750.0",
+      "legal_status": "Registered",
+      "url": "www.fawwa.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "ae403f75-b5a2-4da4-9bad-426598d13aee",
+        "name": "Fellowship Of Aust Writers West Aust Section (Inc)",
+        "address_1": "88 Wood St",
+        "address_2": "",
+        "city": "Swanbourne",
+        "state_province": "WA",
+        "postal_code": "6010",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "26f872e6-8329-4c8b-ab93-5a7d0a96013d",
+        "name": "Fellowship Of Aust Writers West Aust Section (Inc) Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1938",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "2c376068-7b2a-47df-939d-d797f3cdfb45",
+    "name": "Mandurah Surf Lifesaving Club (Inc)",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "family_support",
+      "cultural_support",
+      "disability_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11166136776.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "c0edb5f2-02aa-43cd-91da-f43dafd074af",
+      "name": "Mandurah Surf Lifesaving Club (Inc)",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11166136776.0",
+      "legal_status": "Registered",
+      "url": "http://mandurahslsc.asn.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "514da655-0d8d-439a-96b5-2cf9283dc77b",
+        "name": "Mandurah Surf Lifesaving Club (Inc)",
+        "address_1": "40 Orestes St",
+        "address_2": "",
+        "city": "San Remo",
+        "state_province": "WA",
+        "postal_code": "6210",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "ad997b34-45c8-42b2-bd8d-ce5c12397d2a",
+        "name": "Mandurah Surf Lifesaving Club (Inc) Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1996",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "d19d5fe0-e03b-4b55-b4ef-465ed5572777",
+    "name": "Aviation Historical Society of the NT Inc",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "education_support",
+      "family_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11170657354.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "6c9d1aac-e4f4-403e-a0b7-0db2c9084365",
+      "name": "Aviation Historical Society of the NT Inc",
+      "description": "ACNC Registered Charity - Size: Medium",
+      "organization_type": "non_profit",
+      "tax_id": "11170657354.0",
+      "legal_status": "Registered",
+      "url": "www.darwinaviationmuseum.com.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "954b9de3-a8ce-48db-90e4-8354492f9430",
+        "name": "Aviation Historical Society of the NT Inc",
+        "address_1": "557 Stuart Highway",
+        "address_2": "",
+        "city": "Winnellie",
+        "state_province": "NSW",
+        "postal_code": "0820",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "109e3dbf-1b87-4cf7-b9e6-659fd4a0ce66",
+        "name": "Aviation Historical Society of the NT Inc Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Medium",
+    "acnc_established_date": "01/12/1977",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "b2ad6dfd-d3b8-40ff-bf7f-164ffeb9d6aa",
+    "name": "Bakers Hill Primary School Parents and Citizens’ Association Incorporated",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "education_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11184347887.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "3ced871e-9bad-4248-8ace-2a51043b4c99",
+      "name": "Bakers Hill Primary School Parents and Citizens’ Association Incorporated",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11184347887.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "f47bda53-b967-44d7-87fe-981ae621c0fc",
+        "name": "Bakers Hill Primary School Parents and Citizens’ Association Incorporated",
+        "address_1": "St George St",
+        "address_2": "",
+        "city": "Bakers Hill",
+        "state_province": "WA",
+        "postal_code": "6562",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "fc9d9300-4ecc-40e5-9abf-a8eacfb7f266",
+        "name": "Bakers Hill Primary School Parents and Citizens’ Association Incorporated Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1989",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "957c433b-dcfe-4a0b-b699-4c13beac0c68",
+    "name": "Kent Street Community Kindergarten Inc",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "education_support",
+      "family_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11248791547.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "f9798d4b-95dd-4f72-abd4-6c3029f2e1a8",
+      "name": "Kent Street Community Kindergarten Inc",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11248791547.0",
+      "legal_status": "Registered",
+      "url": "www.kentstreetcommunitykindergarten.com.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "20335b61-ed05-4023-864d-d12d1ff6a606",
+        "name": "Kent Street Community Kindergarten Inc",
+        "address_1": "Beenleigh Community Preschool",
+        "address_2": "",
+        "city": "Beenleigh",
+        "state_province": "QLD",
+        "postal_code": "4207",
+        "country": "AU",
+        "region": "gold_coast",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "039520d7-c77a-4903-b9a1-e3522538bdd7",
+        "name": "Kent Street Community Kindergarten Inc Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1963",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "18a945b0-258c-4363-aaf4-a5a748928920",
+    "name": "Integricare Limited",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "community_service",
+      "family_support",
+      "cultural_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11000073870.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "48172a8d-48a1-4326-822b-8e40183b38d4",
+      "name": "Integricare Limited",
+      "description": "ACNC Registered Charity - Size: Large",
+      "organization_type": "non_profit",
+      "tax_id": "11000073870.0",
+      "legal_status": "Registered",
+      "url": "www.integricare.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "ea7e9d3e-c486-48bd-bd99-ad09ca0e09f6",
+        "name": "Integricare Limited",
+        "address_1": "Suite 8, Level 1,",
+        "address_2": "1-17 Elsie Street",
+        "city": "Burwood",
+        "state_province": "NSW",
+        "postal_code": "2134",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "f832afd4-bd95-4ddc-a2c5-40a8253f26c9",
+        "name": "Integricare Limited Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Large",
+    "acnc_established_date": "31/12/1881",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "0c37dd6b-1b97-4d06-9bdc-9f635337984c",
+    "name": "Yagoona Baptist Church",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11021947936.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "283936bd-e758-4776-8c03-ed25fcb4560a",
+      "name": "Yagoona Baptist Church",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11021947936.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "820a24aa-7018-4f83-b206-a571021ea931",
+        "name": "Yagoona Baptist Church",
+        "address_1": "18 The Crescent",
+        "address_2": "",
+        "city": "Yagoona",
+        "state_province": "NSW",
+        "postal_code": "2199",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "dbbc5e60-ceef-4ba8-b104-b6f696874d27",
+        "name": "Yagoona Baptist Church Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1938",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "8d2b34b7-3422-4ecf-ac94-d290aca30e14",
+    "name": "The Roman Catholic Archbishop Of Perth-Beaconsfield Parish",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11299736811.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "c9848d54-da28-4daf-9078-e8dc629479f9",
+      "name": "The Roman Catholic Archbishop Of Perth-Beaconsfield Parish",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11299736811.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "b167b236-0a05-4831-9364-b0b357e4791c",
+        "name": "The Roman Catholic Archbishop Of Perth-Beaconsfield Parish",
+        "address_1": "59 Lefroy Road",
+        "address_2": "",
+        "city": "Beaconsfield",
+        "state_province": "WA",
+        "postal_code": "6162",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "8fcd1f65-78bd-4b1d-bcd5-f8f9e9929041",
+        "name": "The Roman Catholic Archbishop Of Perth-Beaconsfield Parish Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "a5ec3c31-df4a-4a3c-abcd-3aba83243b60",
+    "name": "Wide Bay Women's Health Centre Inc.",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "health_services",
+      "community_service",
+      "cultural_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11301450257.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "3d33e1dc-861c-4f51-9dee-a197bbde2569",
+      "name": "Wide Bay Women's Health Centre Inc.",
+      "description": "ACNC Registered Charity - Size: Medium",
+      "organization_type": "non_profit",
+      "tax_id": "11301450257.0",
+      "legal_status": "Registered",
+      "url": "www.wbwhc.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "7bb52759-77af-43e5-b6a3-f5904c0a5db7",
+        "name": "Wide Bay Women's Health Centre Inc.",
+        "address_1": "8 Truro St",
+        "address_2": "",
+        "city": "Torquay",
+        "state_province": "QLD",
+        "postal_code": "4655",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "2799f0b7-bba0-4b34-a4c5-c597ffca00a2",
+        "name": "Wide Bay Women's Health Centre Inc. Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Medium",
+    "acnc_established_date": "01/01/1989",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "2fe5c7e3-03d7-4dd9-a3b6-8e8163fe8500",
+    "name": "The Gwen & Edna Jones Foundation",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "community_service"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11328366859.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "0798fb73-8b6e-4b51-9cc6-db526a5ca7df",
+      "name": "The Gwen & Edna Jones Foundation",
+      "description": "ACNC Registered Charity - Size: Medium",
+      "organization_type": "non_profit",
+      "tax_id": "11328366859.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "4570089f-a229-4512-bc11-9744dab38345",
+        "name": "The Gwen & Edna Jones Foundation",
+        "address_1": "199 Koroit Street",
+        "address_2": "",
+        "city": "WARRNAMBOOL",
+        "state_province": "VIC",
+        "postal_code": "3280",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "69b12f6a-3589-405b-b371-3e6fd9c3a6f6",
+        "name": "The Gwen & Edna Jones Foundation Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Medium",
+    "acnc_established_date": "01/01/1991",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "f58ac576-0cce-4742-aa3c-dd17c80b0642",
+    "name": "EDUCATION WITHOUT BORDERS (AUSTRALIA) INCORPORATED",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "education_support",
+      "community_service",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11363125088.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "46e1b93e-87b8-4837-b28a-684dd9b08bd1",
+      "name": "EDUCATION WITHOUT BORDERS (AUSTRALIA) INCORPORATED",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11363125088.0",
+      "legal_status": "Registered",
+      "url": "http://www.saff.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "3ddb4353-03a9-4c2f-b1b9-d51c0ad6b3a2",
+        "name": "EDUCATION WITHOUT BORDERS (AUSTRALIA) INCORPORATED",
+        "address_1": "7 Marne St",
+        "address_2": "",
+        "city": "Vaucluse",
+        "state_province": "NSW",
+        "postal_code": "2030",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "4212dd3d-feb3-458e-aa54-95e8050b7235",
+        "name": "EDUCATION WITHOUT BORDERS (AUSTRALIA) INCORPORATED Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "31/01/2019",
+    "acnc_size": "Small",
+    "acnc_established_date": "28/09/2018",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "b3d29818-246e-4dfa-bd9f-17ab8ab2e24a",
+    "name": "Fairfield Christian Family",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "family_support",
+      "justice_support",
+      "disability_support",
+      "youth_services",
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11429394461.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "f2396a3d-9a06-4421-bc67-af5e4b2ad345",
+      "name": "Fairfield Christian Family",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11429394461.0",
+      "legal_status": "Registered",
+      "url": "www.fcfchurch.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "de6680ae-70a3-4c2b-bbbc-84d4bce35bfd",
+        "name": "Fairfield Christian Family",
+        "address_1": "51 Cross St",
+        "address_2": "",
+        "city": "Fairfield",
+        "state_province": "QLD",
+        "postal_code": "4103",
+        "country": "AU",
+        "region": "brisbane",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "4fa02db8-6812-4c19-8deb-fe1ec6a5c3a4",
+        "name": "Fairfield Christian Family Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1940",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "21b61c43-070f-4230-a784-5f01739fe634",
+    "name": "Soroptimist International of Bunbury Inc",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "health_services",
+      "community_service",
+      "family_support",
+      "cultural_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11441521829.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "bfc860bd-6e9a-4788-aa6b-3f00c13546db",
+      "name": "Soroptimist International of Bunbury Inc",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11441521829.0",
+      "legal_status": "Registered",
+      "url": "https://www.facebook.com/SoroptimistInternationalBunbury",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "a59db02c-5c79-41a7-adaf-2a4ee8238b4b",
+        "name": "Soroptimist International of Bunbury Inc",
+        "address_1": "U 6 12 Bradford Loop",
+        "address_2": "",
+        "city": "Eaton",
+        "state_province": "WA",
+        "postal_code": "6232",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "0186a200-65f4-4018-ae86-cecea2ac348f",
+        "name": "Soroptimist International of Bunbury Inc Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "07/07/2023",
+    "acnc_size": "Small",
+    "acnc_established_date": "15/11/2021",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "7693f3b8-c711-4872-a11f-c0809da1fb07",
+    "name": "Community Housing Limited",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "community_service"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11062802797.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "e222ecce-9cf2-42b7-84b2-26c1ffe8209a",
+      "name": "Community Housing Limited",
+      "description": "ACNC Registered Charity - Size: Large",
+      "organization_type": "non_profit",
+      "tax_id": "11062802797.0",
+      "legal_status": "Registered",
+      "url": "www.chl.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "fa0ea8af-098d-4edc-9bcd-c3ebf981b43b",
+        "name": "Community Housing Limited",
+        "address_1": "Level 15",
+        "address_2": "222 Exhibition",
+        "city": "Melbourne",
+        "state_province": "VIC",
+        "postal_code": "3000",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "fe37d066-14ef-4687-84e6-9db5e092e99c",
+        "name": "Community Housing Limited Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Large",
+    "acnc_established_date": "15/12/1993",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "e3ae1788-190c-4c27-892a-9f210d79a0b9",
+    "name": "Anglican Parish of Bull Creek - Leeming",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "family_support",
+      "cultural_support",
+      "youth_services",
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11086103323.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "93b745bd-3328-4a31-b7d2-6e256c83f279",
+      "name": "Anglican Parish of Bull Creek - Leeming",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11086103323.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "8fa02bf0-caf0-49b2-8602-4b03d7e0a7c7",
+        "name": "Anglican Parish of Bull Creek - Leeming",
+        "address_1": "PO Box 258",
+        "address_2": "",
+        "city": "BULL CREEK",
+        "state_province": "WA",
+        "postal_code": "6149",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "2fd7b7ed-3871-4bce-9617-c40a34a9ad0c",
+        "name": "Anglican Parish of Bull Creek - Leeming Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1977",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "0f970e50-0e87-4a26-ad7a-daa3a8ddb191",
+    "name": "Edithburgh Museum Inc",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "family_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11114063043.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "9a140867-f6f2-48b7-a074-2e59348dae56",
+      "name": "Edithburgh Museum Inc",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11114063043.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "7ccc27d0-abeb-4846-aa38-a8d76db0b9fd",
+        "name": "Edithburgh Museum Inc",
+        "address_1": "7 Edith St",
+        "address_2": "",
+        "city": "Edithburgh",
+        "state_province": "SA",
+        "postal_code": "5583",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "f68bd952-2377-4254-8187-2f25b5fd9946",
+        "name": "Edithburgh Museum Inc Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1973",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "1aa31a2b-64f3-43e1-b1e9-dc749d98f88f",
+    "name": "Aged Care Services 26 (Bayview) Pty Ltd",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "community_service",
+      "disability_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11125425069.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "8c93a72b-c24c-4aee-b012-653232c89244",
+      "name": "Aged Care Services 26 (Bayview) Pty Ltd",
+      "description": "ACNC Registered Charity - Size: Unknown",
+      "organization_type": "non_profit",
+      "tax_id": "11125425069.0",
+      "legal_status": "Registered",
+      "url": "https://www.calvarycare.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "0768d112-6f16-4cff-96f5-1e6872c4ba4c",
+        "name": "Aged Care Services 26 (Bayview) Pty Ltd",
+        "address_1": "Level 15 345 George Street",
+        "address_2": "",
+        "city": "Sydney",
+        "state_province": "NSW",
+        "postal_code": "2000",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "a0206a71-1ebd-4446-9231-27337f26e2f3",
+        "name": "Aged Care Services 26 (Bayview) Pty Ltd Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "05/11/2021",
+    "acnc_size": "",
+    "acnc_established_date": "16/05/2007",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "8c5354d2-5540-45b1-adfa-1fbfea0c4c11",
+    "name": "Queenscliffe Maritime Museum Inc",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "education_support",
+      "family_support",
+      "disability_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11209960897.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "13d5c393-9028-4c74-8543-3ad7ef6f1540",
+      "name": "Queenscliffe Maritime Museum Inc",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11209960897.0",
+      "legal_status": "Registered",
+      "url": "www.maritimequeenscliffe.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "e1f1e9d6-ba91-4c23-8bd8-3dddc7faf0be",
+        "name": "Queenscliffe Maritime Museum Inc",
+        "address_1": "Po Box 2",
+        "address_2": "",
+        "city": "Queenscliff",
+        "state_province": "VIC",
+        "postal_code": "3225",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "5fa63f4c-f7fa-47ff-b4bb-fe9045d78666",
+        "name": "Queenscliffe Maritime Museum Inc Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "01/07/2014",
+    "acnc_size": "Small",
+    "acnc_established_date": "26/06/1985",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "7c9e620d-02ca-4b50-ba77-c92c0339eb14",
+    "name": "The Corporation Of The Synod Of The Diocese Of Brisbane",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11263154159.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "bd298d58-fa8e-4840-9b8f-40f9422067ba",
+      "name": "The Corporation Of The Synod Of The Diocese Of Brisbane",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11263154159.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "3811717f-dd12-4b0e-b010-440d6e2b85f9",
+        "name": "The Corporation Of The Synod Of The Diocese Of Brisbane",
+        "address_1": "373 Ann St",
+        "address_2": "",
+        "city": "Brisbane City",
+        "state_province": "QLD",
+        "postal_code": "4000",
+        "country": "AU",
+        "region": "brisbane",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "3b7167d2-290c-4f58-8abf-253532e3a9e9",
+        "name": "The Corporation Of The Synod Of The Diocese Of Brisbane Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "31/12/1894",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "04969c2e-ec4f-4f25-a487-d6cd2b43046e",
+    "name": "St Marys Catholic Church",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "housing",
+      "family_support",
+      "justice_support",
+      "disability_support",
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11403509906.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "8378fca3-4888-4f24-b778-33aa9f7aa712",
+      "name": "St Marys Catholic Church",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11403509906.0",
+      "legal_status": "Registered",
+      "url": "https://www.stmarysmtevelyn.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "74331cae-773d-4cd5-be6a-f475ec5f9372",
+        "name": "St Marys Catholic Church",
+        "address_1": "Clegg Road",
+        "address_2": "",
+        "city": "Mount Evelyn",
+        "state_province": "VIC",
+        "postal_code": "3796",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "67ca325a-0cdf-4202-85a9-caa1fd893deb",
+        "name": "St Marys Catholic Church Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/1979",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "b85a47cc-a27e-46d2-babc-e254fd068b3e",
+    "name": "Montmorency Community Church",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "family_support",
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11411225987.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "f1d55119-76a9-4801-9aa0-dec65ee96c10",
+      "name": "Montmorency Community Church",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11411225987.0",
+      "legal_status": "Registered",
+      "url": "www.montycc.org",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "0a285827-13b5-4db4-ab7f-dd147117d99a",
+        "name": "Montmorency Community Church",
+        "address_1": "24 Mayona Rd",
+        "address_2": "",
+        "city": "Montmorency",
+        "state_province": "VIC",
+        "postal_code": "3094",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "cd288f3d-c392-417c-a2a7-d6d22f4c774a",
+        "name": "Montmorency Community Church Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Small",
+    "acnc_established_date": "",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "2bdc5bee-ec72-4a7c-a32c-f5b16b3191e3",
+    "name": "Southern Eyre Arts Incorporated",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "family_support",
+      "cultural_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11413745482.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "64326108-887c-44af-bd62-7872fe25afab",
+      "name": "Southern Eyre Arts Incorporated",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11413745482.0",
+      "legal_status": "Registered",
+      "url": "www.saltfestival.com.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "1c0c15b1-263b-4025-8173-1595c68ae4ab",
+        "name": "Southern Eyre Arts Incorporated",
+        "address_1": "23 Wavell Rd",
+        "address_2": "",
+        "city": "Port Lincoln",
+        "state_province": "SA",
+        "postal_code": "5606",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "8527c099-5c28-4ab2-817b-329d6338d96a",
+        "name": "Southern Eyre Arts Incorporated Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "09/05/2016",
+    "acnc_size": "Small",
+    "acnc_established_date": "11/01/2016",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "fd80fe10-7e05-447f-a439-257c8dca9d25",
+    "name": "Carlisle Filipino Congregation of Jehovah's Witnesses",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11437953196.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "128b6482-8879-4157-9298-940397e92114",
+      "name": "Carlisle Filipino Congregation of Jehovah's Witnesses",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11437953196.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "996455b7-73c5-453d-b5f5-cc4de136c4cb",
+        "name": "Carlisle Filipino Congregation of Jehovah's Witnesses",
+        "address_1": "1 Glennis Cl",
+        "address_2": "",
+        "city": "Gosnells",
+        "state_province": "WA",
+        "postal_code": "6110",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "a1511a40-8923-40f9-b5ee-728c73e8a173",
+        "name": "Carlisle Filipino Congregation of Jehovah's Witnesses Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "17/12/2015",
+    "acnc_size": "Small",
+    "acnc_established_date": "01/01/2016",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "2e3f43e8-8f06-4760-b794-7871d560e16a",
+    "name": "AUSTRALIANS IN MISSION TOGETHER",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "housing",
+      "family_support",
+      "spiritual_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11000761571.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "baede283-10af-4bca-83d4-69efa4681029",
+      "name": "AUSTRALIANS IN MISSION TOGETHER",
+      "description": "ACNC Registered Charity - Size: Large",
+      "organization_type": "non_profit",
+      "tax_id": "11000761571.0",
+      "legal_status": "Registered",
+      "url": "www.amtglobal.com.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "785806df-b141-4eb8-bb9c-170f049932df",
+        "name": "AUSTRALIANS IN MISSION TOGETHER",
+        "address_1": "35 Miriam St",
+        "address_2": "",
+        "city": "Holland Park West",
+        "state_province": "QLD",
+        "postal_code": "4121",
+        "country": "AU",
+        "region": "brisbane",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "fc134c22-a660-4379-9c7c-314da019368b",
+        "name": "AUSTRALIANS IN MISSION TOGETHER Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Large",
+    "acnc_established_date": "01/01/1910",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "ab676638-60c4-494e-853b-ab9b30915cb0",
+    "name": "St Peters Pre-School Ltd",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "education_support",
+      "family_support",
+      "youth_services"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11002389746.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "2d987fa2-3724-45d2-b8fe-e06db89ea84e",
+      "name": "St Peters Pre-School Ltd",
+      "description": "ACNC Registered Charity - Size: Medium",
+      "organization_type": "non_profit",
+      "tax_id": "11002389746.0",
+      "legal_status": "Registered",
+      "url": "www.stpeterspreschool.org.au",
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "154b50a2-aa1f-45cf-bbfa-4caf91a83551",
+        "name": "St Peters Pre-School Ltd",
+        "address_1": "St Peters Pre School",
+        "address_2": "",
+        "city": "Armidale",
+        "state_province": "NSW",
+        "postal_code": "2350",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "aeccf99f-4b2b-415d-b4d9-ff71d94900fd",
+        "name": "St Peters Pre-School Ltd Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "03/12/2012",
+    "acnc_size": "Medium",
+    "acnc_established_date": "01/01/1952",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "079109cd-8827-49dc-8ca2-a453c8add528",
+    "name": "C MANAGEMENT SERVICES PTY LTD",
+    "description": "Registered with Australian Charities and Not-for-profits Commission (ACNC)",
+    "status": "active",
+    "categories": [
+      "education_support"
+    ],
+    "created_at": "2025-07-15T21:16:38.976Z",
+    "updated_at": "2025-07-15T21:16:38.976Z",
+    "data_source": "ACNC Charity Register",
+    "source_url": "https://www.acnc.gov.au/charity/11088415829.0",
+    "verification_status": "verified",
+    "verification_score": 90,
+    "organization": {
+      "id": "b917a223-71d5-43b3-9d2b-76bcaf2f13d2",
+      "name": "C MANAGEMENT SERVICES PTY LTD",
+      "description": "ACNC Registered Charity - Size: Small",
+      "organization_type": "non_profit",
+      "tax_id": "11088415829.0",
+      "legal_status": "Registered",
+      "url": null,
+      "created_at": "2025-07-15T21:16:38.976Z",
+      "updated_at": "2025-07-15T21:16:38.976Z",
+      "data_source": "ACNC Charity Register",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "7a140430-97d7-4b3b-8737-7d4f52937318",
+        "name": "C MANAGEMENT SERVICES PTY LTD",
+        "address_1": "Central Qld University",
+        "address_2": "",
+        "city": "Norman Gardens",
+        "state_province": "QLD",
+        "postal_code": "4701",
+        "country": "AU",
+        "region": "remote_queensland",
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "e2437f2b-6a49-4f34-aa18-acb31764ce54",
+        "name": "C MANAGEMENT SERVICES PTY LTD Contact",
+        "email": null,
+        "phone": [],
+        "created_at": "2025-07-15T21:16:38.976Z",
+        "updated_at": "2025-07-15T21:16:38.976Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": true,
+    "acnc_registration_date": "01/01/2019",
+    "acnc_size": "Small",
+    "acnc_established_date": "02/07/1999",
+    "completeness_score": 0.7
+  },
+  {
+    "id": "e9e7d605-a409-4e13-8d4c-65eaa7468282",
+    "name": "Brisbane North Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "41ef0dda-c73d-44bd-9203-44d47595fdc1",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "0ddf8fc0-c6c2-4723-a758-868491385081",
+        "name": "Brisbane North Youth Justice Centre",
+        "address_1": "41 Murray Street",
+        "address_2": "",
+        "city": "Bowen Hills",
+        "state_province": "QLD",
+        "postal_code": "4006",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -27.4418731,
+        "longitude": 153.0413788,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "f96ffdec-55a5-4e24-a1dd-578eec3f76f6",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 3097 1300"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "9bca8c02-e128-4751-930b-abdb491c86a9",
+    "name": "Brisbane South Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "abda50ad-6d68-4081-b41d-f7d8df7286b8",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "a160f947-470d-497c-ba5d-48a1b4c19bd5",
+        "name": "Brisbane South Youth Justice Centre",
+        "address_1": "306 Ipswich Road",
+        "address_2": "",
+        "city": "Buranda",
+        "state_province": "QLD",
+        "postal_code": "4102",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -27.500706,
+        "longitude": 153.0364595,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "a2b88d23-7ab1-48ca-82ca-2a401a307e72",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 3097 1400"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "1e2f5097-af79-4e1a-9b01-3d8fef6296fc",
+    "name": "Bundaberg Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "66ceee3b-f824-4553-b4f0-b4af9381836a",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "ae20c996-d9ad-48ba-8dc9-c1a4e2ebb7ab",
+        "name": "Bundaberg Youth Justice Centre",
+        "address_1": "6 Heidke Street",
+        "address_2": "",
+        "city": "Bundaberg",
+        "state_province": "QLD",
+        "postal_code": "4670",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -24.8873095,
+        "longitude": 152.3206174,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "46ad3778-bf3f-407d-b40d-82acf79b8856",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 4154 9800"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "eb3549aa-5ac0-45ca-91ea-c1c1da9a9eb4",
+    "name": "Caboolture Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "4c06c053-0de2-40c5-9557-1f189a4a911d",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "bdceb900-3073-42f3-94f5-cc5768efc90e",
+        "name": "Caboolture Youth Justice Centre",
+        "address_1": "10-20 Walker Road",
+        "address_2": "",
+        "city": "Morayfield",
+        "state_province": "QLD",
+        "postal_code": "4506",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -27.111287,
+        "longitude": 152.950237,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "e8dcc619-b868-4be4-8055-4eb4a66aa29d",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 5433 6900"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "6f305cc9-533d-4317-a607-6db985a85489",
+    "name": "Cairns Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "61d4ba5e-c42c-4ac2-bf4e-e69eb98ebd48",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "b032772b-cad3-45d2-b4c5-0eb883900f25",
+        "name": "Cairns Youth Justice Centre",
+        "address_1": "120 Spence Street",
+        "address_2": "",
+        "city": "Parramatta Park",
+        "state_province": "QLD",
+        "postal_code": "4870",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -16.92807,
+        "longitude": 145.7712,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "e6f0c9c6-5814-4d8a-b550-dbe619ef0ff1",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 4255 7585"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "1e826968-d15d-48c3-b984-5d3452e9ba73",
+    "name": "Central West Youth Justice Service",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "c440e682-8aef-4706-a7f2-c8dbcf58d3ce",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "c949e0b5-a4de-4189-8fb7-d3efafb63961",
+        "name": "Central West Youth Justice Service",
+        "address_1": "50 Borilla Street",
+        "address_2": "",
+        "city": "Emerald",
+        "state_province": "QLD",
+        "postal_code": "4720",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -23.522617,
+        "longitude": 148.158932,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "520b9528-ea0f-40a3-b64e-6b9e902ceea3",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 4986 8600"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "f7bacc2c-f8e3-49a8-b39d-4bc6a934298d",
+    "name": "Jumbunna (Cherbourg Youth Justice Centre)",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "017c88f7-32bd-46c6-b2a4-e48e2d29a904",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "786857ce-298c-42f8-b716-c73cfe8fdd75",
+        "name": "Jumbunna (Cherbourg Youth Justice Centre)",
+        "address_1": "3 Vincent Law Senior Way",
+        "address_2": "",
+        "city": "Cherbourg",
+        "state_province": "QLD",
+        "postal_code": "4605",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -26.29191,
+        "longitude": 151.95213,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "72c50c01-0eca-49c7-a120-073e051f8edf",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 4179 5300"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "4a1c6e4c-e8f8-4b48-a7cc-f999eae740cb",
+    "name": "Gladstone Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "3087f111-a3af-4c76-85cb-592c33800b8a",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "65b8d134-3c31-4bc9-b4f2-10146a8ca3ab",
+        "name": "Gladstone Youth Justice Centre",
+        "address_1": "Level 3, Government Building",
+        "address_2": "Corner Oaka Lane and Roseberry Street",
+        "city": "Gladstone",
+        "state_province": "QLD",
+        "postal_code": "4680",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -23.8414219,
+        "longitude": 151.2559064,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "7e29fa91-4b6a-4fd8-998b-81faa78e5172",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 4843 7600"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "618dbdbc-6216-406a-a4b0-b950b40e9ddb",
+    "name": "Gold Coast Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "c1240001-f0dd-4bb1-b302-107fb33fe1ba",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "69dd83f7-c628-480c-be53-69e16fc7c197",
+        "name": "Gold Coast Youth Justice Centre",
+        "address_1": "Shop 13 Pacific Square",
+        "address_2": "2532-2540  Gold Coast Highway",
+        "city": "Mermaid Beach",
+        "state_province": "QLD",
+        "postal_code": "4218",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -28.04125,
+        "longitude": 153.43308,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "0066a059-a64f-4b21-a8fc-ec1c43b09ec5",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 5675 4200"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "13ead8bf-738c-4db5-a017-22fe2abefb44",
+    "name": "Hervey Bay Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "053bf48d-9a40-4e1a-9ddf-08615041c3ec",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "511b5599-a318-4a7f-93ac-bec9c12200b9",
+        "name": "Hervey Bay Youth Justice Centre",
+        "address_1": "3/101 Beach Road",
+        "address_2": "",
+        "city": "Pialba",
+        "state_province": "QLD",
+        "postal_code": "4655",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -25.286551,
+        "longitude": 152.830907,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "d5287344-be46-40cd-aaa9-de61c00f3d89",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 4325 1400"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "10c5bdde-1e50-4583-b174-34fed1875078",
+    "name": "Ipswich Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "805f820d-886d-4083-aa58-59dc58748bdf",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "d4891e25-9666-4b9b-807d-acef170aaba8",
+        "name": "Ipswich Youth Justice Centre",
+        "address_1": "24-26 South Street",
+        "address_2": "",
+        "city": "Ipswich",
+        "state_province": "QLD",
+        "postal_code": "4305",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -27.6113994,
+        "longitude": 152.7894508,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "91aade46-d129-4cab-8950-40dece403d8f",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 3432 1900"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "01264a04-504e-4814-be81-cc427095bd15",
+    "name": "Lake Perseverance Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "79b493fb-7f65-4525-94f9-2a7d4a455ad5",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "7895c763-c69c-4b8d-8175-613b61a91fbc",
+        "name": "Lake Perseverance Centre",
+        "address_1": "854 Perseverance Dam Road",
+        "address_2": "",
+        "city": "Crows Nest",
+        "state_province": "QLD",
+        "postal_code": "4355",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -27.289127,
+        "longitude": 152.127422,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "12f6ea7c-baa9-4b4f-b87c-bd8aca112f5b",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 5460 6900"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Please contact the centre for bookings",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "bcaa2e9c-5ee6-4153-af35-44704943d98a",
+    "name": "Logan Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "42e555cb-3a3c-48df-bc87-ace033f1f29f",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "3668ca5a-43f0-479a-9ae1-411cfb58cb75",
+        "name": "Logan Youth Justice Centre",
+        "address_1": "18 Blackwood Road",
+        "address_2": "",
+        "city": "Woodridge",
+        "state_province": "QLD",
+        "postal_code": "4114",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -27.6379171,
+        "longitude": 153.1062286,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "839c5828-0962-4276-bfd2-f0ed6a21b99d",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 3094 7600"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "892734b4-1066-419f-90ae-1bed1cafbabb",
+    "name": "Mackay Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "2a5e37b9-897b-4bd5-84c3-6097176eaaa7",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "31b47ab1-d87e-4768-a815-f29fbe3ea3b4",
+        "name": "Mackay Youth Justice Centre",
+        "address_1": "41 Gordon Street",
+        "address_2": "",
+        "city": "Mackay",
+        "state_province": "QLD",
+        "postal_code": "4740",
+        "country": "AU",
+        "region": "regional_queensland",
+        "latitude": -21.143065,
+        "longitude": 149.1853422,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "58a83a4b-f0cd-417c-9f75-be376f54eff3",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 4864 1500"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "20e6624e-82f5-48fd-97ad-7b6471ada43b",
+    "name": "Mount Isa Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "65bc7001-8600-4ef9-8129-13f79067206b",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "d8d2e768-26a5-4869-8720-a784e6aeea4a",
+        "name": "Mount Isa Youth Justice Centre",
+        "address_1": "Suite 5, Ground Floor, Mount Isa House",
+        "address_2": "119 Camooweal St, Mount Isa",
+        "city": "Mount Isa",
+        "state_province": "QLD",
+        "postal_code": "4825",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -20.72263,
+        "longitude": 139.49326,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "b3cee5e9-a4c4-4581-92c2-2f994b4daf65",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 4437 4205"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "d55e91a5-db2c-4302-af8b-970c91c0ab80",
+    "name": "Northern Outlook",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "bc44bc76-d797-4337-9ddf-8bd60352f853",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "a77fcc2c-477d-4262-8fac-2be8f1a2df91",
+        "name": "Northern Outlook",
+        "address_1": "646 Redlynch Intake Road",
+        "address_2": "",
+        "city": "Redlynch",
+        "state_province": "QLD",
+        "postal_code": "4870",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -16.925611,
+        "longitude": 145.694587,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "ae80eede-3f4d-45b6-b674-799c83f20f5a",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 4255 7598"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Please contact the centre for bookings",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "25414919-6add-49f8-ba5b-4a2091fd0839",
+    "name": "Redcliffe Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "a86b57b3-911f-4c6b-940d-a39ed481a508",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "e837e989-2ab0-4d70-84af-38065e70605b",
+        "name": "Redcliffe Youth Justice Centre",
+        "address_1": "414 Deception Bay Road",
+        "address_2": "",
+        "city": "Deception Bay",
+        "state_province": "QLD",
+        "postal_code": "4021",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -27.191419,
+        "longitude": 153.02176,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "3957462a-bd20-4fe5-80ee-5b0b5a8832ea",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 3385 3570"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "e1727ada-a347-42f7-a054-95426b208597",
+    "name": "Redlands Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "38bd640d-2fef-4f0e-bb1b-1964c013326f",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "b1bd27df-3cbb-489a-8439-209ca92ae3f0",
+        "name": "Redlands Youth Justice Centre",
+        "address_1": "Level 1",
+        "address_2": "17/39 Old Cleveland Road",
+        "city": "Capalaba",
+        "state_province": "QLD",
+        "postal_code": "4157",
+        "country": "AU",
+        "region": "remote_queensland",
+        "latitude": -27.52039,
+        "longitude": 153.1903,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "e2a73c0e-cbcc-41cb-8ad2-156eb8a7b135",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 3884 3200"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "a802aa4d-8695-43b0-9ea6-689dce437f3a",
+    "name": "Remote Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.112Z",
+    "updated_at": "2025-07-15T21:16:39.112Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "9587fff6-3cff-4c7d-9588-58cc37a06be8",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.112Z",
+      "updated_at": "2025-07-15T21:16:39.112Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "3f8a43e7-a7a2-4b97-8a2a-9927992632f2",
+        "name": "Remote Youth Justice Centre",
+        "address_1": "Level 10, Cairns Corporate Tower",
+        "address_2": "15 Lake Street",
+        "city": "Cairns",
+        "state_province": "QLD",
+        "postal_code": "4870",
+        "country": "AU",
+        "region": "regional_queensland",
+        "latitude": -16.925293,
+        "longitude": 145.77785,
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "ec3bf9bb-6430-437d-8056-e1edb473fb2f",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 4255 7500 FREECALL"
+        ],
+        "created_at": "2025-07-15T21:16:39.112Z",
+        "updated_at": "2025-07-15T21:16:39.112Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  },
+  {
+    "id": "d5a5d44c-1695-4688-b2d2-a5c34ad57329",
+    "name": "Rockhampton Youth Justice Centre",
+    "description": "Youth Justice Centre Locations service. Verified Queensland Government service",
+    "status": "active",
+    "categories": [
+      "youth_justice",
+      "government_service"
+    ],
+    "created_at": "2025-07-15T21:16:39.113Z",
+    "updated_at": "2025-07-15T21:16:39.113Z",
+    "data_source": "Queensland Open Data Portal",
+    "source_url": "https://data.qld.gov.au/dataset/youth-justice-centre-locations",
+    "verification_status": "verified",
+    "verification_score": 85,
+    "organization": {
+      "id": "a00300b0-6990-4b3f-a78c-f4dd316e9bf7",
+      "name": "DYJ",
+      "description": "Queensland Government Service - Youth Justice Centre Locations",
+      "organization_type": "government",
+      "legal_status": "Government Agency",
+      "url": null,
+      "created_at": "2025-07-15T21:16:39.113Z",
+      "updated_at": "2025-07-15T21:16:39.113Z",
+      "data_source": "Queensland Open Data Portal",
+      "verification_status": "verified"
+    },
+    "locations": [
+      {
+        "id": "e54c6915-9961-4ada-9237-f9302318d401",
+        "name": "Rockhampton Youth Justice Centre",
+        "address_1": "155 Alma Street",
+        "address_2": "",
+        "city": "Rockhampton",
+        "state_province": "QLD",
+        "postal_code": "4700",
+        "country": "AU",
+        "region": "regional_queensland",
+        "latitude": -23.380242,
+        "longitude": 150.51213,
+        "created_at": "2025-07-15T21:16:39.113Z",
+        "updated_at": "2025-07-15T21:16:39.113Z"
+      }
+    ],
+    "contacts": [
+      {
+        "id": "908f38b8-de00-4e40-8b51-4176c8e82a86",
+        "name": "Service Contact",
+        "email": null,
+        "phone": [
+          "(07) 4848 4600"
+        ],
+        "created_at": "2025-07-15T21:16:39.113Z",
+        "updated_at": "2025-07-15T21:16:39.113Z"
+      }
+    ],
+    "youth_specific": true,
+    "indigenous_specific": false,
+    "qld_dataset": "Youth Justice Centre Locations",
+    "qld_operating_hours": "Monday–Friday – 8.30am–4.30pm",
+    "completeness_score": 0.85
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "timestamp": "2025-07-08T01:04:27.593Z",
+  "totalServices": 1113412,
+  "results": {
+    "Legal Aid": {
+      "servicesFound": 14,
+      "servicesProcessed": 14,
+      "errors": 0
+    },
+    "PCYC": {
+      "servicesFound": 15,
+      "servicesProcessed": 15,
+      "errors": 0
+    },
+    "Headspace": {
+      "servicesFound": 15,
+      "servicesProcessed": 15,
+      "errors": 0
+    },
+    "Queensland Open Data": {
+      "datasetsProcessed": 53,
+      "servicesFound": 1113358,
+      "servicesProcessed": 0,
+      "duplicatesSkipped": 0,
+      "errors": 4
+    },
+    "Youth Advocacy": {
+      "servicesFound": 4,
+      "servicesProcessed": 4,
+      "errors": 0
+    },
+    "Crisis Support": {
+      "servicesFound": 6,
+      "servicesProcessed": 6,
+      "errors": 0
+    }
+  }
+}

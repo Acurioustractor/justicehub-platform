@@ -1,0 +1,245 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables - NEVER commit these files
+.env
+.env.local
+.env.development
+.env.test
+.env.prod
+.env.production
+.env.production.local
+.env.staging
+*.env
+**/.env
+**/.env.local
+**/.env.production
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+database/data/
+migrations/temp/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+.nyc_output
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+temp-cleanup/
+*.tmp
+
+# Build outputs
+build/
+dist/
+*.tgz
+
+# Docker
+.dockerignore
+
+# Backup files
+backups/
+*.backup
+*.bak
+
+# Scraping reports and temporary data
+scraping-report-*.json
+*.local.json
+temp-data/
+docs/data-exports/
+*extraction*.json
+*collection*.json
+*database-backup*.json
+
+# SSL certificates and keys
+*.pem
+*.key
+*.crt
+*.csr
+ssl/
+certificates/
+
+# Local development overrides
+docker-compose.override.yml
+.env.override
+
+# Generated documentation
+docs/generated/
+
+# Test artifacts
+test-results/
+screenshots/
+videos/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Kubernetes
+*.kubeconfig
+
+# Cloud provider credentials
+.aws/
+.gcp/
+.azure/
+
+# Monitoring and alerting
+grafana/data/
+prometheus/data/
+
+# Application specific
+frontend/dist/
+frontend/build/
+frontend/.next/
+frontend/out/
+
+# Temporal
+temporal-data/
+
+# Elasticsearch data
+elasticsearch-data/
+
+# Production secrets
+secrets/
+private/
+
+# Local configuration
+config.local.js
+config.local.json
+
+# Runtime data
+pids
+*.seed
+*.pid.lock
+
+# Coverage reports
+coverage/
+.coverage
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.vercel
