@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Queensland Youth Justice Tracker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(to bottom, #f9fafb, #ffffff);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+        }
+        h1 {
+            color: #1f2937;
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+        p {
+            color: #6b7280;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .stats {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 32px 0;
+        }
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            font-size: 16px;
+        }
+        .stat-label {
+            color: #92400e;
+        }
+        .stat-value {
+            font-weight: bold;
+            color: #78350f;
+        }
+        .button {
+            background: #7c2d12;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+            margin-top: 16px;
+        }
+        .icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 24px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414">
+            </path>
+        </svg>
+        
+        <h1>You're Offline</h1>
+        <p>
+            Don't worry! We've saved the most important statistics for you to access offline.
+        </p>
+
+        <div class="stats">
+            <h2 style="color: #92400e; margin-bottom: 16px;">Key Statistics (Cached)</h2>
+            <div class="stat">
+                <span class="stat-label">Youth in detention:</span>
+                <span class="stat-value">338</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Indigenous youth:</span>
+                <span class="stat-value">73.4%</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Daily cost:</span>
+                <span class="stat-value">$1.2M+</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Reoffend rate:</span>
+                <span class="stat-value">58%</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Budget on detention:</span>
+                <span class="stat-value">90.6%</span>
+            </div>
+        </div>
+
+        <p>
+            These statistics are from official Queensland Government reports. 
+            Connect to the internet to access the full dashboard and latest updates.
+        </p>
+
+        <a href="#" onclick="window.location.reload()" class="button">
+            Try Again
+        </a>
+    </div>
+
+    <script>
+        // Check for connection periodically
+        setInterval(() => {
+            if (navigator.onLine) {
+                window.location.reload();
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

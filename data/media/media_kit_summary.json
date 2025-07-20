@@ -1,0 +1,56 @@
+{
+  "generated": "2025-06-15T16:50:22.300572",
+  "key_statistics": {
+    "costs": {
+      "detention_daily": 857,
+      "detention_annual": 312805,
+      "community_daily": 41,
+      "community_annual": 14965,
+      "cost_ratio": 20.9,
+      "source": "Queensland Government Service Delivery Statements 2024-25"
+    },
+    "budget_allocation": {
+      "total_budget": 500000000,
+      "detention_percentage": 90.6,
+      "community_percentage": 9.4,
+      "detention_amount": 453000000,
+      "community_amount": 47000000,
+      "source": "Queensland Budget Papers 2024-25"
+    },
+    "indigenous_representation": {
+      "population_percentage": 6,
+      "detention_percentage": 66,
+      "overrepresentation_factor_min": 22,
+      "overrepresentation_factor_max": 33,
+      "source": "Queensland Government Youth Justice Census 2023"
+    },
+    "effectiveness": {
+      "detention_success_rate": 30,
+      "community_success_rate": 55,
+      "restorative_justice_success_rate": 65,
+      "early_intervention_success_rate": 75,
+      "source": "Various program evaluations and research studies"
+    }
+  },
+  "talking_points": [
+    "Queensland spends $857 per day to detain one young person - 21 times more than community programs at $41/day",
+    "Despite youth crime falling 28% since 2018, youth justice spending has increased 32%",
+    "Indigenous youth make up only 6% of Queensland's youth but 66% of those in detention",
+    "For the cost of detaining ONE youth, we could support 20 youth in proven community programs",
+    "90.6% of the youth justice budget goes to detention, only 9.4% to community alternatives",
+    "Community programs have 55% success rate vs 30% for detention",
+    "Families bear hidden costs of $2,000-3,000/month that don't appear in government budgets"
+  ],
+  "media_files": {
+    "graphics": [
+      "data/media/cost_comparison_20250615.png",
+      "data/media/indigenous_overrepresentation_20250615.png",
+      "data/media/spending_timeline_20250615.png"
+    ],
+    "social_cards": [
+      "data/media/social_cost_comparison_20250615.png",
+      "data/media/social_indigenous_20250615.png",
+      "data/media/social_budget_split_20250615.png"
+    ]
+  }
+}

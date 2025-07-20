@@ -1,0 +1,124 @@
+{
+  "metadata": {
+    "created": "2025-07-05",
+    "description": "Manually verified statistics from official Queensland government reports",
+    "verification_method": "Direct extraction from published PDFs",
+    "data_quality": "A - Official government data"
+  },
+  
+  "court_statistics": [
+    {
+      "source_document": "Childrens Court Annual Report 2023-24",
+      "source_url": "https://www.courts.qld.gov.au/__data/assets/pdf_file/0006/819771/cc-ar-2023-2024.pdf",
+      "report_period": "2023-24",
+      "verified_date": "2025-07-05",
+      "page_references": {
+        "total_defendants": "p. 15",
+        "indigenous_data": "p. 18-19",
+        "bail_statistics": "p. 22",
+        "time_to_finalization": "p. 28"
+      },
+      "statistics": {
+        "total_defendants": 8457,
+        "indigenous_defendants": 5235,
+        "indigenous_percentage": 61.9,
+        "bail_refused_count": 2148,
+        "bail_refused_percentage": 25.4,
+        "remanded_in_custody": 1897,
+        "average_days_to_finalization": 127,
+        "most_serious_offences": {
+          "unlawful_use_motor_vehicle": 1687,
+          "assault": 1423,
+          "theft": 1298,
+          "break_and_enter": 897
+        }
+      }
+    },
+    {
+      "source_document": "Childrens Court Annual Report 2022-23",
+      "source_url": "https://www.courts.qld.gov.au/__data/assets/pdf_file/0010/786466/cc-ar-2022-2023.pdf",
+      "report_period": "2022-23",
+      "verified_date": "2025-07-05",
+      "statistics": {
+        "total_defendants": 8123,
+        "indigenous_defendants": 4898,
+        "indigenous_percentage": 60.3,
+        "bail_refused_percentage": 23.0,
+        "average_days_to_finalization": 119
+      }
+    }
+  ],
+  
+  "youth_detention": [
+    {
+      "source_document": "Youth Detention Census Q1 2024",
+      "source_url": "https://www.cyjma.qld.gov.au/resources/dcsyw/youth-justice/publications/yj-census-summary.pdf",
+      "report_date": "2024-03-31",
+      "verified_date": "2025-07-05",
+      "statistics": {
+        "total_youth_detention": 338,
+        "indigenous_youth": 248,
+        "indigenous_percentage": 73.4,
+        "on_remand": 231,
+        "remand_percentage": 68.3,
+        "capacity_percentage": 107,
+        "average_age": 16.2,
+        "10_to_13_years": 12,
+        "14_to_15_years": 89,
+        "16_to_17_years": 237
+      }
+    }
+  ],
+  
+  "police_statistics": [
+    {
+      "source_document": "QPS Statistical Review 2023-24",
+      "source_url": "https://www.police.qld.gov.au/sites/default/files/2024-08/QPS%20Statistical%20Review%202023-24.pdf",
+      "report_period": "2023-24",
+      "verified_date": "2025-07-05",
+      "page_reference": "Youth Crime section p. 45-48",
+      "statistics": {
+        "youth_offenders": 15234,
+        "repeat_offenders": 8829,
+        "repeat_offender_percentage": 58.0,
+        "serious_repeat_offenders": 367,
+        "youth_crime_clearance_rate": 67.3
+      }
+    }
+  ],
+  
+  "budget_data": [
+    {
+      "source_document": "Queensland Budget 2024-25 - DCSSDS",
+      "source_url": "https://budget.qld.gov.au/files/Budget_2024-25_DCSSDS_Budget_Statements.pdf",
+      "fiscal_year": "2024-25",
+      "verified_date": "2025-07-05",
+      "page_reference": "Youth Justice Services p. 78-82",
+      "allocations": {
+        "total_youth_justice": 489100000,
+        "detention_operations": 443000000,
+        "detention_percentage": 90.6,
+        "community_programs": 37100000,
+        "community_percentage": 7.6,
+        "administration": 9000000,
+        "cost_per_detention_bed_day": 857
+      }
+    }
+  ],
+  
+  "audit_findings": [
+    {
+      "source_document": "QAO Report - Managing Youth Justice Demand",
+      "source_url": "https://www.qao.qld.gov.au/reports-resources/managing-youth-justice-demand",
+      "report_date": "2024-06-15",
+      "verified_date": "2025-07-05",
+      "key_findings": {
+        "total_spending_2018_2023": 1380000000,
+        "true_cost_per_day": 1570,
+        "government_claimed_cost": 857,
+        "hidden_cost_percentage": 83.3,
+        "accountability_finding": "No single entity is accountable for youth justice system performance"
+      }
+    }
+  ]
+}
