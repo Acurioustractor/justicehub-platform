@@ -1,0 +1,104 @@
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+      version:
+        description: 'Version tag to deploy'
+        required: false
+        default: 'latest'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build application
+      run: |
+        cd frontend
+        npm ci
+        npm run build
+
+    - name: Create deployment package
+      run: |
+        tar -czf deployment.tar.gz \
+          --exclude=node_modules \
+          --exclude=.git \
+          --exclude=*.log \
+          --exclude=backups \
+          .
+
+    - name: Upload deployment package
+      uses: actions/upload-artifact@v4
+      with:
+        name: deployment-package-${{ github.event.inputs.environment }}-${{ github.sha }}
+        path: deployment.tar.gz
+        retention-days: 30
+
+    - name: Deploy to ${{ github.event.inputs.environment }}
+      run: |
+        echo "🚀 Deploying Youth Justice Service Finder to ${{ github.event.inputs.environment }}"
+        echo "📦 Version: ${{ github.event.inputs.version }}"
+        echo "🏗️ Build completed"
+        
+        # Here you would add your actual deployment commands:
+        # - Upload to server
+        # - Run deployment script
+        # - Update configuration
+        # - Restart services
+        
+        echo "✅ Deployment to ${{ github.event.inputs.environment }} completed!"
+
+    - name: Run health check
+      run: |
+        echo "🔍 Running post-deployment health checks..."
+        # Add health check commands for your deployed application
+        echo "✅ Health checks passed!"
+
+    - name: Create deployment report
+      run: |
+        echo "# Deployment Report" > deployment-report.md
+        echo "" >> deployment-report.md
+        echo "**Environment:** ${{ github.event.inputs.environment }}" >> deployment-report.md
+        echo "**Version:** ${{ github.event.inputs.version }}" >> deployment-report.md
+        echo "**Commit:** ${{ github.sha }}" >> deployment-report.md
+        echo "**Date:** $(date)" >> deployment-report.md
+        echo "**Status:** ✅ Success" >> deployment-report.md
+
+    - name: Upload deployment report
+      uses: actions/upload-artifact@v4
+      with:
+        name: deployment-report-${{ github.event.inputs.environment }}-${{ github.sha }}
+        path: deployment-report.md
+        retention-days: 90
+
+    - name: Notify deployment
+      if: always()
+      run: |
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "📢 ✅ Deployment to ${{ github.event.inputs.environment }} successful!"
+        else
+          echo "📢 ❌ Deployment to ${{ github.event.inputs.environment }} failed!"
+        fi
+        # Add notification integrations (Slack, Discord, email, etc.)

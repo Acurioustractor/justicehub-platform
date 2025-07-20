@@ -1,0 +1,16 @@
+[phases.setup]
+nixPkgs = ["nodejs", "npm"]
+
+[phases.install]
+cmds = [
+  "npm ci",
+  "cd frontend && npm ci"
+]
+
+[phases.build]
+cmds = [
+  "npm run build:frontend"
+]
+
+[start]
+cmd = "node src/api/server-fullstack.js"
