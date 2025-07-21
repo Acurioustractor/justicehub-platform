@@ -27,7 +27,15 @@ import {
   TrendingUp
 } from 'lucide-react';
 import Link from 'next/link';
-import { getPrivacyLabel } from '@/lib/privacy';
+// Simple privacy label helper
+const getPrivacyLabel = (level: string) => {
+  switch (level) {
+    case 'public': return 'Public';
+    case 'community': return 'Community';
+    case 'private': return 'Private';
+    default: return 'Unknown';
+  }
+};
 
 interface UnifiedStoryFeedProps {
   initialFilter?: {
