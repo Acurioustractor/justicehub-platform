@@ -9,8 +9,25 @@ dev-debug.log
 # Dependency directories
 node_modules/
 
-# Environment variables
+# Environment variables - NEVER commit these files
 .env
+.env.local
+.env.*.local
+.env.development.local
+.env.staging.local
+.env.production.local
+.env.test.local
+
+# Environment backups
+.env.local.backup*
+.env.*.backup*
+
+# API Keys and Secrets
+*api-keys*
+*secrets*
+*.pem
+*.key
+*.cert
 
 # Editor directories and files
 .idea

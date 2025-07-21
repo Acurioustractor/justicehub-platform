@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { UserProvider as Auth0Provider } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
 import { store } from '@/lib/store';
-import { ThemeProvider } from '@/components/theme-provider';
 import { UserProvider } from '@/contexts/UserContext';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -51,15 +50,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
           <UserProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-              {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-            </ThemeProvider>
+            {children}
+            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           </UserProvider>
         </QueryClientProvider>
       </Provider>

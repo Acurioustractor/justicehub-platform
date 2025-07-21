@@ -28,7 +28,7 @@
       "@/types/*": ["./src/types/*"],
       "@/server/*": ["./src/server/*"]
     },
-    "types": ["node", "jest"]
+    "types": ["node"]
   },
   "include": [
     "next-env.d.ts",

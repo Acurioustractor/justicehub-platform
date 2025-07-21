@@ -4,48 +4,70 @@
 
 @layer base {
   :root {
+    /* JusticeHub Brand Colors - Truth needs no filter, accessible by design */
     --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
+    --foreground: 0 0% 0%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 0 0% 0%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-    --primary: 0 0% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 98%;
-    --secondary-foreground: 0 0% 10%;
-    --muted: 0 0% 98%;
-    --muted-foreground: 0 0% 42%;
-    --accent: 16 86% 56%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 25%;  /* Improved from 40% to 25% for better contrast */
+    --accent: 0 78% 44%;  /* Bold red for urgent CTAs */
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 0% 10%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 10%;
-    --radius: 0.25rem;
+    --destructive: 0 78% 44%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 0%;
+    --input: 0 0% 0%;
+    --ring: 0 0% 0%;
+    --radius: 0rem;
+    
+    /* Enhanced color palette for accessibility */
+    --text-primary: 0 0% 0%;           /* #000000 - AAA rated */
+    --text-secondary: 0 0% 25%;        /* #404040 - AA rated on white */
+    --text-muted: 0 0% 35%;            /* #595959 - AA rated on white */
+    --text-error: 0 78% 35%;           /* Darker red for better contrast */
+    --text-success: 120 100% 20%;      /* Dark green for better contrast */
+    --text-warning: 35 95% 30%;        /* Dark orange for better contrast */
+    
+    /* Background variations with proper contrast */
+    --bg-surface: 0 0% 98%;            /* Subtle off-white */
+    --bg-elevated: 0 0% 100%;          /* Pure white */
+    --bg-overlay: 0 0% 0% / 0.5;       /* Semi-transparent overlay */
+    
+    /* Typography scales */
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    
+    /* Spacing for better readability */
+    --reading-line-height: 1.6;
+    --heading-line-height: 1.2;
   }
 
   .dark {
-    --background: 0 0% 10%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 10%;
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 58%;
-    --accent: 16 86% 56%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 64%;
+    --accent: 0 78% 44%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 0% 98%;
-    --destructive-foreground: 0 0% 10%;
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 98%;
+    --destructive: 0 78% 44%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 100%;
+    --input: 0 0% 100%;
+    --ring: 0 0% 100%;
   }
 }
 
@@ -53,27 +75,156 @@
   * {
     @apply border-border;
   }
+  
+  /* Remove any potential browser styling artifacts */
+  *:before,
+  *:after {
+    border: none;
+    outline: none;
+  }
+  
+  
+  /* Remove any potential browser chrome artifacts */
   body {
-    @apply bg-background text-foreground;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  
+  /* Eliminate browser chrome artifacts and weird top lines */
+  html, body {
+    border: none !important;
+    outline: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Only target HTML/body for browser artifacts - leave everything else alone */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    font-family: var(--font-sans);
+    line-height: var(--reading-line-height);
+  }
+  
+  /* Typography - Clean, accessible, no compromise */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
+    line-height: var(--heading-line-height);
+    color: hsl(var(--text-primary));
+  }
+  
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+    margin-bottom: 1rem;
+  }
+  
+  h2 {
+    @apply text-3xl md:text-4xl;
+    margin-bottom: 0.875rem;
+  }
+  
+  h3 {
+    @apply text-2xl md:text-3xl;
+    margin-bottom: 0.75rem;
+  }
+  
+  h4 {
+    @apply text-xl md:text-2xl;
+    margin-bottom: 0.625rem;
+  }
+  
+  h5 {
+    @apply text-lg md:text-xl;
+    margin-bottom: 0.5rem;
+  }
+  
+  h6 {
+    @apply text-base md:text-lg;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    @apply leading-relaxed;
+    color: hsl(var(--text-primary));
+    margin-bottom: 1rem;
+    line-height: var(--reading-line-height);
+  }
+  
+  /* Improved text contrast classes */
+  .text-muted {
+    color: hsl(var(--text-muted));
+  }
+  
+  .text-secondary {
+    color: hsl(var(--text-secondary));
+  }
+  
+  .text-success {
+    color: hsl(var(--text-success));
+  }
+  
+  .text-error {
+    color: hsl(var(--text-error));
+  }
+  
+  .text-warning {
+    color: hsl(var(--text-warning));
+  }
+  
+  /* Data presentation */
+  .stat {
+    @apply font-mono text-5xl md:text-7xl font-bold;
+  }
+  
+  .stat-label {
+    @apply text-base md:text-lg font-normal mt-2;
   }
 }
 
-/* Custom JusticeHub styles */
+/* JusticeHub Brand Styles - No decoration, just truth */
 .story-card {
-  @apply bg-white rounded shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200;
+  @apply bg-white border border-black p-8 hover:bg-black hover:text-white transition-all duration-200;
 }
 
 .story-card:hover {
-  @apply shadow-md border-gray-300;
+  @apply shadow-xl;
 }
 
-/* Animation utilities */
+/* Hero statements */
+.hero-stat {
+  @apply font-mono text-6xl md:text-8xl font-bold leading-none;
+}
+
+/* CTAs that work */
+.cta-primary {
+  @apply bg-black text-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-accent transition-colors duration-200;
+}
+
+.cta-secondary {
+  @apply border-2 border-black text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-all duration-200;
+}
+
+/* Data visualization */
+.data-card {
+  @apply border-2 border-black p-6 bg-white text-black;
+}
+
+.data-highlight {
+  @apply bg-accent text-white p-2 font-mono font-bold;
+}
+
+/* Minimal animations - Function over flourish */
 .fade-in {
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.2s ease-out;
 }
 
-.slide-up {
-  animation: slideUp 0.4s ease-out;
+.impact-number {
+  animation: impactReveal 0.6s ease-out;
 }
 
 @keyframes fadeIn {
@@ -85,18 +236,27 @@
   }
 }
 
-@keyframes slideUp {
+@keyframes impactReveal {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1);
   }
 }
 
-/* Accessibility improvements */
+/* Grid system for clean layouts */
+.justice-grid {
+  @apply grid gap-0 border-t border-l border-black;
+}
+
+.justice-grid > * {
+  @apply border-r border-b border-black;
+}
+
+/* Accessibility improvements - WCAG compliant */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -109,46 +269,205 @@
   border: 0;
 }
 
-/* Focus styles */
-.focus-ring {
-  @apply focus:outline-none focus:ring-1 focus:ring-gray-900 focus:ring-offset-1;
+/* Skip links for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 8px;
+  z-index: 1000;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 4px;
+  transition: top 0.2s;
 }
 
-/* Mobile-first responsive utilities */
-.mobile-padding {
-  @apply px-4 sm:px-6 lg:px-8;
+.skip-link:focus {
+  top: 6px;
+  outline: 2px solid hsl(var(--accent));
+  outline-offset: 2px;
 }
 
-.mobile-text {
-  @apply text-sm sm:text-base lg:text-lg;
+/* Focus styles - Clear, accessible, and consistent */
+.focus-ring,
+button:focus,
+a:focus,
+input:focus,
+textarea:focus,
+select:focus,
+[tabindex]:focus {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+  transition: outline 0.15s ease-in-out;
 }
 
-/* Story content styling */
+/* High contrast focus for better visibility */
+.focus-visible:focus-visible {
+  outline: 3px solid hsl(var(--accent));
+  outline-offset: 2px;
+  background-color: hsl(var(--accent) / 0.1);
+}
+
+/* Improved button accessibility */
+button:disabled,
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+}
+
+/* Motion preferences respect */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --muted-foreground: 0 0% 0%;
+    --text-muted: 0 0% 0%;
+    --text-secondary: 0 0% 0%;
+  }
+  
+  .data-card {
+    border-width: 3px;
+  }
+  
+  .cta-primary,
+  .cta-secondary {
+    border-width: 3px;
+  }
+}
+
+/* Better link styling for accessibility */
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color 0.2s ease;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+a:focus {
+  text-decoration-thickness: 2px;
+  text-decoration-color: hsl(var(--accent));
+}
+
+/* Remove underline for specific navigation elements */
+nav a,
+.no-underline {
+  text-decoration: none;
+}
+
+nav a:hover,
+nav a:focus {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Layout utilities */
+.container-justice {
+  @apply max-w-7xl mx-auto px-4 md:px-6 lg:px-8;
+}
+
+.section-padding {
+  @apply py-16 md:py-24;
+}
+
+/* Header offset for fixed navigation */
+.header-offset {
+  @apply pt-36 md:pt-40;
+}
+
+
+/* Youth Scout Button Red Transition - Force it to work */
+.youth-scout-button {
+  background: linear-gradient(to right, #2563eb, #9333ea);
+  transition: all 0.5s ease;
+}
+
+.youth-scout-button:hover {
+  background: linear-gradient(to right, #dc2626, #dc2626) !important;
+}
+
+/* Truth-telling typography */
+.headline-truth {
+  @apply text-4xl md:text-6xl font-bold leading-tight;
+}
+
+.body-truth {
+  @apply text-lg md:text-xl leading-relaxed max-w-3xl;
+}
+
+/* Story content - Real voices, no filter */
 .story-content {
-  @apply prose prose-gray max-w-none;
+  @apply prose prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight;
 }
 
 .story-content h1,
 .story-content h2,
 .story-content h3 {
-  @apply text-gray-900;
+  @apply text-black;
 }
 
 .story-content p {
-  @apply text-gray-700 leading-relaxed;
+  @apply text-black leading-relaxed;
 }
 
 .story-content blockquote {
-  @apply border-l-2 border-gray-300 pl-4 italic text-gray-600;
+  @apply border-l-4 border-black pl-6 not-italic font-bold text-black my-8;
 }
 
-/* Loading states */
+.quote-truth {
+  @apply text-2xl md:text-3xl font-bold leading-tight border-l-4 border-accent pl-6 my-8;
+}
+
+/* Loading states - Honest waiting */
 .skeleton {
-  @apply animate-pulse bg-gray-200 rounded;
+  @apply animate-pulse bg-gray-100;
 }
 
-.spinner {
-  @apply inline-block w-4 h-4 border-2 border-current border-r-transparent rounded-full animate-spin;
+.loading-truth {
+  @apply font-mono text-sm;
+}
+
+/* Impact presentation */
+.impact-stat {
+  @apply flex flex-col gap-2;
+}
+
+.impact-number {
+  @apply font-mono text-5xl md:text-7xl font-bold;
+}
+
+.impact-context {
+  @apply text-lg md:text-xl;
+}
+
+.comparison-stat {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.comparison-stat > div {
+  @apply p-8;
+}
+
+.comparison-stat > div:first-child {
+  @apply md:border-r-0;
 }
 
 /* Print styles */

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
+import { Navigation, Footer } from '@/components/ui/navigation';
 import { 
   Users,
   MessageSquare,
@@ -108,23 +109,30 @@ export default function ConnectionsPage() {
   }) || [];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-white">
+      {/* Skip to main content link for accessibility */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      
+      {/* Unified Navigation */}
+      <Navigation />
+
+      <main id="main-content">
+        <div className="container-justice pt-24 pb-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl font-bold mb-2">My Connections</h1>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-black font-medium">
                 Manage your mentor relationships and schedule sessions
               </p>
             </div>
-            <Button asChild>
-              <Link href="/mentors">
-                <Search className="h-4 w-4 mr-2" />
-                Find Mentors
-              </Link>
-            </Button>
+            <Link href="/mentors" className="cta-primary">
+              <Search className="h-4 w-4 mr-2" />
+              Find Mentors
+            </Link>
           </div>
 
           {/* Quick Stats */}
@@ -133,7 +141,7 @@ export default function ConnectionsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Active Mentors</p>
+                    <p className="text-sm text-black font-medium">Active Mentors</p>
                     <p className="text-2xl font-bold">
                       {connections?.filter(c => c.status === 'active').length || 0}
                     </p>
@@ -147,7 +155,7 @@ export default function ConnectionsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Pending Requests</p>
+                    <p className="text-sm text-black font-medium">Pending Requests</p>
                     <p className="text-2xl font-bold">
                       {connections?.filter(c => c.status === 'pending').length || 0}
                     </p>
@@ -161,7 +169,7 @@ export default function ConnectionsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Upcoming Sessions</p>
+                    <p className="text-sm text-black font-medium">Upcoming Sessions</p>
                     <p className="text-2xl font-bold">
                       {connections?.filter(c => c.upcomingSession).length || 0}
                     </p>
@@ -175,7 +183,7 @@ export default function ConnectionsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Unread Messages</p>
+                    <p className="text-sm text-black font-medium">Unread Messages</p>
                     <p className="text-2xl font-bold">
                       {connections?.reduce((sum, c) => sum + c.unreadMessages, 0) || 0}
                     </p>
@@ -190,13 +198,13 @@ export default function ConnectionsPage() {
         {/* Search */}
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-black" />
             <Input
               type="search"
               placeholder="Search mentors by name or expertise..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-10 border-black"
             />
           </div>
         </div>
@@ -213,14 +221,14 @@ export default function ConnectionsPage() {
             {filteredConnections.length === 0 ? (
               <Card>
                 <CardContent className="py-12 text-center">
-                  <Users className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <Users className="h-12 w-12 mx-auto mb-4 text-black" />
                   <h3 className="text-lg font-semibold mb-2">No Active Connections</h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-black font-medium mb-4">
                     You don't have any active mentor connections yet.
                   </p>
-                  <Button asChild>
-                    <Link href="/mentors">Browse Mentors</Link>
-                  </Button>
+                  <Link href="/mentors" className="cta-primary inline-block">
+                    Browse Mentors
+                  </Link>
                 </CardContent>
               </Card>
             ) : (
@@ -385,7 +393,11 @@ export default function ConnectionsPage() {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
+        </div>
+      </main>
+
+      {/* Unified Footer */}
+      <Footer />
     </div>
   );
 }

@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
@@ -81,6 +80,7 @@ module.exports = {
       fontFamily: {
         'sans': ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
         'display': ['Inter', 'system-ui', 'sans-serif'],
+        'mono': ['IBM Plex Mono', 'Courier New', 'monospace'],
       },
       letterSpacing: {
         'wider': '0.05em',

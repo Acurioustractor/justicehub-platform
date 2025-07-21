@@ -1,14 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { StoryGrid } from '@/components/stories/StoryGrid';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { 
   PenSquare, 
-  Sparkles,
   TrendingUp,
   Users,
   Globe,
@@ -17,258 +11,575 @@ import {
   Filter,
   Heart,
   BookOpen,
-  Star,
-  Eye
+  Play,
+  Camera,
+  Mic,
+  FileText,
+  MapPin,
+  Phone,
+  Mail,
+  ChevronRight,
+  Calendar,
+  Tag,
+  ExternalLink,
+  Quote
 } from 'lucide-react';
 import Link from 'next/link';
+import { Navigation, Footer } from '@/components/ui/navigation';
+
+// Sample story data for testing
+const sampleStories = [
+  {
+    id: 1,
+    title: "From Prison to Purpose: Marcus's Welding Journey",
+    author: "Marcus Thompson",
+    age: 19,
+    location: "Armidale, NSW",
+    program: "BackTrack Youth Works",
+    theme: "Transformation",
+    summary: "After multiple run-ins with the law, Marcus found his calling through BackTrack's unique combination of dog training, welding, and mentorship. Now he's a qualified welder mentoring other at-risk youth.",
+    heroImage: "/placeholder-hero-marcus.jpg",
+    quote: "BackTrack didn't just teach me welding. They taught me I was worth something. Now I'm mentoring other kids who've been where I was.",
+    videoUrl: "https://youtube.com/embed/sample-marcus",
+    tags: ["Welding", "Mentorship", "Second Chances", "Rural NSW"],
+    contactEmail: "marcus@backtrack.org.au",
+    programLink: "/grassroots/backtrack-youth-works",
+    publishDate: "2024-01-15",
+    readTime: "8 min read",
+    featured: true
+  },
+  {
+    id: 2,
+    title: "Finding My Voice: Aisha's Social Work Path",
+    author: "Aisha Patel",
+    age: 21,
+    location: "Logan, QLD",
+    program: "Logan Youth Collective",
+    theme: "Education",
+    summary: "From being labeled a 'problem student' to studying social work at university, Aisha's journey shows how community support can unlock potential that others couldn't see.",
+    heroImage: "/placeholder-hero-aisha.jpg",
+    quote: "Everyone else saw a problem kid. The Youth Collective saw someone with potential. Three years later, I'm studying social work to give back.",
+    videoUrl: null,
+    tags: ["Education", "Social Work", "Community Support", "Queensland"],
+    contactEmail: "aisha@loganyouth.org.au",
+    programLink: "/grassroots/logan-youth-collective",
+    publishDate: "2024-01-08",
+    readTime: "6 min read",
+    featured: true
+  },
+  {
+    id: 3,
+    title: "Culture Saved My Life: Jayden's Healing Journey",
+    author: "Jayden Williams",
+    age: 18,
+    location: "Alice Springs, NT",
+    program: "Healing Circles Program",
+    theme: "Healing",
+    summary: "Through traditional Aboriginal healing practices and elder mentorship, Jayden overcame trauma and substance abuse. Now he helps other young Aboriginal people reconnect with culture.",
+    heroImage: "/placeholder-hero-jayden.jpg",
+    quote: "Connecting with elders and learning traditional ways helped me understand who I am. Now I help other young Aboriginal kids find their way too.",
+    videoUrl: "https://youtube.com/embed/sample-jayden",
+    tags: ["Aboriginal Culture", "Healing", "Trauma Recovery", "Northern Territory"],
+    contactEmail: "jayden@healingcircles.org.au",
+    programLink: "/grassroots/healing-circles-program",
+    publishDate: "2023-12-20",
+    readTime: "10 min read",
+    featured: true
+  },
+  {
+    id: 4,
+    title: "From Foster Care to Film: Sarah's Creative Journey",
+    author: "Sarah Chen",
+    age: 20,
+    location: "Melbourne, VIC",
+    program: "Creative Futures Collective",
+    theme: "Foster Care",
+    summary: "Aging out of foster care with nowhere to go, Sarah discovered filmmaking through a community arts program. Her documentary about youth homelessness just won a national award.",
+    heroImage: "/placeholder-hero-sarah.jpg",
+    quote: "Nobody expected the foster kid to win awards. But when you give young people cameras and trust them to tell their stories, magic happens.",
+    videoUrl: "https://youtube.com/embed/sample-sarah",
+    tags: ["Foster Care", "Creative Arts", "Filmmaking", "Victoria"],
+    contactEmail: "sarah@creativefutures.org.au",
+    programLink: "/grassroots/creative-futures-collective",
+    publishDate: "2023-12-10",
+    readTime: "7 min read",
+    featured: false
+  },
+  {
+    id: 5,
+    title: "Breaking Cycles: Tommy's Community Leadership",
+    author: "Tommy Rodriguez",
+    age: 22,
+    location: "Redfern, NSW",
+    program: "Young Leaders Initiative",
+    theme: "Advocacy",
+    summary: "Growing up in public housing with family members in and out of prison, Tommy chose a different path. Now he runs community workshops helping other young people navigate the justice system.",
+    heroImage: "/placeholder-hero-tommy.jpg",
+    quote: "I knew every police officer in my neighborhood by age 12. Now I'm training them on how to better support young people in crisis.",
+    videoUrl: null,
+    tags: ["Community Leadership", "Justice Reform", "Public Housing", "NSW"],
+    contactEmail: "tommy@youngleaders.org.au",
+    programLink: "/grassroots/young-leaders-initiative",
+    publishDate: "2023-11-28",
+    readTime: "9 min read",
+    featured: false
+  },
+  {
+    id: 6,
+    title: "Coding My Way Forward: Alex's Tech Journey",
+    author: "Alex Kim",
+    age: 17,
+    location: "Adelaide, SA",
+    program: "TechStart Youth",
+    theme: "Education",
+    summary: "Suspended from school multiple times for 'behavioral issues,' Alex found focus and purpose through coding. Now they're building apps to help other neurodivergent young people succeed.",
+    heroImage: "/placeholder-hero-alex.jpg",
+    quote: "They said I couldn't focus, but give me a coding problem and I'll work on it for 12 hours straight. Different doesn't mean broken.",
+    videoUrl: "https://youtube.com/embed/sample-alex",
+    tags: ["Technology", "Neurodiversity", "Education", "South Australia"],
+    contactEmail: "alex@techstartyouth.org.au",
+    programLink: "/grassroots/techstart-youth",
+    publishDate: "2023-11-15",
+    readTime: "5 min read",
+    featured: false
+  }
+];
 
 export default function StoriesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState('All');
+  const [selectedType, setSelectedType] = useState('All');
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  const themes = ['All', 'Transformation', 'Education', 'Healing', 'Foster Care', 'Advocacy'];
+  const contentTypes = ['All', 'Blog Posts', 'Videos', 'Photos', 'Interviews'];
+
+  const filteredStories = sampleStories.filter(story => {
+    const matchesSearch = !searchQuery || 
+      story.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      story.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      story.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesTheme = selectedTheme === 'All' || story.theme === selectedTheme;
+    
+    return matchesSearch && matchesTheme;
+  });
+
+  const featuredStories = sampleStories.filter(story => story.featured);
+
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
-      {/* Header */}
-      <header className="border-b border-neutral-200 dark:border-neutral-800">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="h-8 w-8 bg-neutral-900 dark:bg-neutral-100 rounded-sm"></div>
-                <h1 className="text-2xl font-light text-neutral-900 dark:text-neutral-100">JusticeHub</h1>
-              </Link>
-            </div>
-            <nav className="flex items-center space-x-4">
-              <Link href="/dashboard">
-                <Button variant="outline" size="sm">Dashboard</Button>
-              </Link>
-              <Link href="/mentors">
-                <Button variant="outline" size="sm">Mentors</Button>
-              </Link>
-              <Link href="/stories/new">
-                <Button size="sm" className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-200">
-                  <PenSquare className="h-4 w-4 mr-1" />
-                  Share Story
-                </Button>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-white">
+      {/* Skip to main content link for accessibility */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      
+      {/* Unified Navigation */}
+      <Navigation />
 
-      {/* Hero Section - Magazine Style */}
-      <div className="border-b border-neutral-200 dark:border-neutral-800">
-        <div className="container mx-auto px-4 py-16">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="mb-4 text-sm uppercase tracking-wider text-accent-600 font-medium">
-              STORIES & VOICES
-            </div>
-            <h1 className="text-5xl md:text-6xl font-light tracking-tight mb-6 text-neutral-900 dark:text-neutral-100">
-              Stories That Inspire Change
-            </h1>
-            <p className="text-xl text-neutral-600 dark:text-neutral-400 mb-10 leading-relaxed">
-              Discover stories from youth across communities, share your journey, 
-              and connect with others who understand your path.
-            </p>
-            <div className="flex gap-4 justify-center">
-              <Link href="/stories/new">
-                <Button size="lg" className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-200">
-                  <PenSquare className="h-5 w-5 mr-2" />
-                  Share Your Story
-                </Button>
-              </Link>
-              <Link href="/stories/browse">
-                <Button variant="outline" size="lg">
-                  <BookOpen className="h-5 w-5 mr-2" />
-                  Browse All Stories
-                </Button>
-              </Link>
+      <main id="main-content">
+
+        {/* Hero Section */}
+        <section className="header-offset pb-16 border-b-2 border-black">
+          <div className="container-justice">
+            <div className="text-center max-w-4xl mx-auto">
+              <div className="mb-4 text-sm uppercase tracking-wider text-black font-bold">
+                STORIES & VOICES
+              </div>
+              <h1 className="headline-truth mb-6">
+                Stories That Inspire Change
+              </h1>
+              <p className="text-xl text-black mb-10 leading-relaxed font-medium">
+                Discover stories from youth across communities, share your journey, 
+                and connect with others who understand your path.
+              </p>
+              <div className="flex gap-4 justify-center">
+                <Link href="/stories/new">
+                  <button className="cta-primary">
+                    <PenSquare className="h-5 w-5 mr-2" />
+                    Share Your Story
+                  </button>
+                </Link>
+                <Link href="/stories/browse">
+                  <button className="cta-secondary">
+                    <BookOpen className="h-5 w-5 mr-2" />
+                    Browse All Stories
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Stats Section - Clean Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <div className="text-center py-6 border-r border-neutral-200 dark:border-neutral-800 last:border-r-0">
-            <BookOpen className="h-8 w-8 mx-auto mb-3 text-neutral-700 dark:text-neutral-300" />
-            <div className="text-3xl font-light text-neutral-900 dark:text-neutral-100">1,200+</div>
-            <div className="text-sm uppercase tracking-wider text-neutral-600 dark:text-neutral-400 mt-1">Stories Shared</div>
-          </div>
-          <div className="text-center py-6 border-r border-neutral-200 dark:border-neutral-800 last:border-r-0">
-            <Heart className="h-8 w-8 mx-auto mb-3 text-neutral-700 dark:text-neutral-300" />
-            <div className="text-3xl font-light text-neutral-900 dark:text-neutral-100">15K+</div>
-            <div className="text-sm uppercase tracking-wider text-neutral-600 dark:text-neutral-400 mt-1">Lives Touched</div>
-          </div>
-          <div className="text-center py-6 border-r border-neutral-200 dark:border-neutral-800 last:border-r-0">
-            <Users className="h-8 w-8 mx-auto mb-3 text-neutral-700 dark:text-neutral-300" />
-            <div className="text-3xl font-light text-neutral-900 dark:text-neutral-100">500+</div>
-            <div className="text-sm uppercase tracking-wider text-neutral-600 dark:text-neutral-400 mt-1">Community Members</div>
-          </div>
-          <div className="text-center py-6">
-            <TrendingUp className="h-8 w-8 mx-auto mb-3 text-neutral-700 dark:text-neutral-300" />
-            <div className="text-3xl font-light text-neutral-900 dark:text-neutral-100">85%</div>
-            <div className="text-sm uppercase tracking-wider text-neutral-600 dark:text-neutral-400 mt-1">Success Rate</div>
-          </div>
-        </div>
-
-        {/* Search and Filters - Minimal Design */}
-        <div className="mb-12">
-          <div className="flex gap-4 items-center mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-              <Input
-                type="search"
-                placeholder="Search stories by title, content, or themes..."
-                value={mounted ? searchQuery : ''}
-                onChange={(e) => mounted && setSearchQuery(e.target.value)}
-                className="pl-10 border-neutral-200 dark:border-neutral-800"
-                disabled={!mounted}
-              />
+        <div className="container-justice py-8">
+          {/* Enhanced Stats Section with Multimedia */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-12">
+            <div className="text-center py-6 border-r border-black last:border-r-0">
+              <BookOpen className="h-8 w-8 mx-auto mb-3 text-black" />
+              <div className="text-3xl font-bold text-black">1,200+</div>
+              <div className="text-sm uppercase tracking-wider text-black font-medium mt-1">Blog Posts</div>
             </div>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
-          </div>
-
-          {/* Story Type Filters - Clean Tags */}
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="cursor-pointer hover:bg-neutral-900 hover:text-white dark:hover:bg-neutral-100 dark:hover:text-neutral-900 border-neutral-300 dark:border-neutral-700">
-              Transformation
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-neutral-900 hover:text-white dark:hover:bg-neutral-100 dark:hover:text-neutral-900 border-neutral-300 dark:border-neutral-700">
-              Advocacy
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-neutral-900 hover:text-white dark:hover:bg-neutral-100 dark:hover:text-neutral-900 border-neutral-300 dark:border-neutral-700">
-              Healing
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-neutral-900 hover:text-white dark:hover:bg-neutral-100 dark:hover:text-neutral-900 border-neutral-300 dark:border-neutral-700">
-              Education
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-neutral-900 hover:text-white dark:hover:bg-neutral-100 dark:hover:text-neutral-900 border-neutral-300 dark:border-neutral-700">
-              Second Chances
-            </Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-neutral-900 hover:text-white dark:hover:bg-neutral-100 dark:hover:text-neutral-900 border-neutral-300 dark:border-neutral-700">
-              Foster Care
-            </Badge>
-          </div>
-        </div>
-
-        {/* Featured Stories - Magazine Layout */}
-        <div className="mb-12">
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="h-5 w-5 text-accent-600" />
-              <span className="text-sm uppercase tracking-wider text-accent-600 font-medium">FEATURED</span>
+            <div className="text-center py-6 border-r border-black last:border-r-0">
+              <Play className="h-8 w-8 mx-auto mb-3 text-black" />
+              <div className="text-3xl font-bold text-black">250+</div>
+              <div className="text-sm uppercase tracking-wider text-black font-medium mt-1">Video Stories</div>
             </div>
-            <h2 className="text-3xl font-light text-neutral-900 dark:text-neutral-100">Stories from JusticeHub Community</h2>
-            <p className="text-neutral-600 dark:text-neutral-400 mt-2">
-              Real stories from young people who have transformed their challenges into opportunities.
-            </p>
+            <div className="text-center py-6 border-r border-black last:border-r-0">
+              <Camera className="h-8 w-8 mx-auto mb-3 text-black" />
+              <div className="text-3xl font-bold text-black">800+</div>
+              <div className="text-sm uppercase tracking-wider text-black font-medium mt-1">Photo Stories</div>
+            </div>
+            <div className="text-center py-6 border-r border-black last:border-r-0">
+              <Mic className="h-8 w-8 mx-auto mb-3 text-black" />
+              <div className="text-3xl font-bold text-black">150+</div>
+              <div className="text-sm uppercase tracking-wider text-black font-medium mt-1">Interviews</div>
+            </div>
+            <div className="text-center py-6">
+              <TrendingUp className="h-8 w-8 mx-auto mb-3 text-black" />
+              <div className="text-3xl font-bold text-black">85%</div>
+              <div className="text-sm uppercase tracking-wider text-black font-medium mt-1">Impact Rate</div>
+            </div>
           </div>
-          <StoryGrid />
-        </div>
 
-        {/* Privacy & Safety Notice - Clean Design */}
-        <Card className="mb-12 border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900">
-          <CardContent className="p-8">
-            <div className="flex items-start gap-4">
-              <Shield className="h-6 w-6 text-neutral-700 dark:text-neutral-300 mt-1" />
+          {/* Search and Filters */}
+          <div className="mb-12">
+            <div className="flex gap-4 items-center mb-6">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black" />
+                <input
+                  type="search"
+                  placeholder="Search stories by title, content, or themes..."
+                  value={mounted ? searchQuery : ''}
+                  onChange={(e) => mounted && setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-black font-medium focus:outline-none focus:ring-2 focus:ring-blue-800"
+                  disabled={!mounted}
+                />
+              </div>
+              <button className="cta-secondary">
+                <Filter className="h-4 w-4 mr-2" />
+                Filters
+              </button>
+            </div>
+
+            {/* Enhanced Content Type and Story Filters */}
+            <div className="space-y-4">
+              {/* Content Type Filters */}
               <div>
-                <h3 className="font-medium text-lg mb-3 text-neutral-900 dark:text-neutral-100">Your Stories, Your Control</h3>
-                <p className="text-neutral-600 dark:text-neutral-400 mb-6">
+                <h3 className="text-sm font-bold text-black mb-2 uppercase tracking-wider">Content Types</h3>
+                <div className="flex flex-wrap gap-2">
+                  {contentTypes.map((type) => (
+                    <button 
+                      key={type}
+                      onClick={() => setSelectedType(type)}
+                      className={`border-2 px-3 py-1 text-sm font-bold transition-all flex items-center gap-1 ${
+                        selectedType === type
+                          ? 'border-blue-800 bg-blue-800 text-white'
+                          : 'border-blue-800 bg-blue-50 text-blue-800 hover:bg-blue-100'
+                      }`}
+                    >
+                      {type === 'Blog Posts' && <FileText className="h-3 w-3" />}
+                      {type === 'Videos' && <Play className="h-3 w-3" />}
+                      {type === 'Photos' && <Camera className="h-3 w-3" />}
+                      {type === 'Interviews' && <Mic className="h-3 w-3" />}
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Story Theme Filters */}
+              <div>
+                <h3 className="text-sm font-bold text-black mb-2 uppercase tracking-wider">Story Themes</h3>
+                <div className="flex flex-wrap gap-2">
+                  {themes.map((theme) => (
+                    <button 
+                      key={theme}
+                      onClick={() => setSelectedTheme(theme)}
+                      className={`border-2 px-3 py-1 text-sm font-bold transition-all ${
+                        selectedTheme === theme
+                          ? 'border-black bg-black text-white'
+                          : 'border-black hover:bg-black hover:text-white'
+                      }`}
+                    >
+                      {theme}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Featured Stories Section */}
+          <div className="mb-12">
+            <div className="mb-8">
+              <div className="flex items-center gap-2 mb-2">
+                <BookOpen className="h-5 w-5 text-black" />
+                <span className="text-sm uppercase tracking-wider text-black font-bold">FEATURED STORIES</span>
+              </div>
+              <h2 className="text-3xl font-bold text-black">Stories That Move, Inspire & Connect</h2>
+              <p className="text-black font-medium mt-2">
+                Powerful journeys of transformation, healing, and hope from young people across Australia.
+              </p>
+            </div>
+            
+            {/* Featured Stories Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              {featuredStories.map((story) => (
+                <div key={story.id} className="data-card">
+                  <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
+                    <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm">
+                      HERO IMAGE: {story.author}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="inline-block bg-blue-800 text-white px-2 py-1 text-xs font-bold uppercase tracking-wider">
+                      {story.theme}
+                    </span>
+                    <span className="text-sm text-gray-600">{story.readTime}</span>
+                  </div>
+                  
+                  <h3 className="text-lg font-bold mb-3 line-clamp-2">{story.title}</h3>
+                  
+                  <div className="flex items-center gap-2 mb-3 text-sm text-gray-600">
+                    <MapPin className="h-4 w-4" />
+                    <span>{story.location}</span>
+                    <span>•</span>
+                    <span>{story.program}</span>
+                  </div>
+                  
+                  <p className="text-gray-700 mb-4 line-clamp-3">{story.summary}</p>
+                  
+                  <div className="border-l-4 border-orange-600 pl-4 mb-4 bg-orange-50 py-2">
+                    <Quote className="h-4 w-4 text-orange-600 mb-2" />
+                    <p className="text-sm italic text-gray-700 line-clamp-2">"{story.quote}"</p>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <Link href={`/stories/${story.id}`} className="font-bold underline text-blue-800 hover:text-blue-600">
+                      Read full story →
+                    </Link>
+                    {story.videoUrl && (
+                      <div className="flex items-center gap-1 text-sm text-gray-600">
+                        <Play className="h-4 w-4" />
+                        <span>Video</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* All Stories Section */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-black mb-8">All Stories</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredStories.map((story) => (
+                <div key={story.id} className="data-card">
+                  <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
+                    <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm">
+                      IMAGE: {story.author}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`inline-block px-2 py-1 text-xs font-bold uppercase tracking-wider text-white ${
+                      story.theme === 'Transformation' ? 'bg-blue-800' :
+                      story.theme === 'Education' ? 'bg-orange-600' :
+                      story.theme === 'Healing' ? 'bg-blue-600' :
+                      story.theme === 'Foster Care' ? 'bg-orange-700' :
+                      story.theme === 'Advocacy' ? 'bg-blue-900' :
+                      'bg-gray-800'
+                    }`}>
+                      {story.theme}
+                    </span>
+                    <span className="text-sm text-gray-600">{story.readTime}</span>
+                  </div>
+                  
+                  <h3 className="text-lg font-bold mb-2 line-clamp-2">{story.title}</h3>
+                  
+                  <div className="flex items-center gap-2 mb-3 text-sm text-gray-600">
+                    <MapPin className="h-4 w-4" />
+                    <span>{story.location}</span>
+                  </div>
+                  
+                  <p className="text-gray-700 mb-4 line-clamp-2">{story.summary}</p>
+                  
+                  <div className="flex items-center justify-between">
+                    <Link href={`/stories/${story.id}`} className="text-sm font-bold underline text-blue-800 hover:text-blue-600">
+                      Read more →
+                    </Link>
+                    <div className="flex items-center gap-2">
+                      {story.videoUrl && <Play className="h-4 w-4 text-gray-600" />}
+                      <Calendar className="h-4 w-4 text-gray-600" />
+                      {mounted && <span className="text-xs text-gray-600">{new Date(story.publishDate).toLocaleDateString('en-AU')}</span>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {filteredStories.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-xl text-gray-600">No stories found matching your search.</p>
+                <button 
+                  onClick={() => {setSearchQuery(''); setSelectedTheme('All'); setSelectedType('All');}}
+                  className="mt-4 cta-secondary"
+                >
+                  Clear filters
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {/* Content Type Showcase */}
+          <div className="mb-12 py-12 border-t-2 border-b-2 border-black">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-bold mb-3 text-black">Stories in Every Format</h2>
+              <p className="text-black font-medium">
+                Choose how you want to experience and share your story
+              </p>
+            </div>
+            <div className="grid md:grid-cols-4 gap-8">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-blue-50 border-2 border-blue-800 flex items-center justify-center mx-auto mb-4">
+                  <FileText className="h-8 w-8 text-blue-800" />
+                </div>
+                <h3 className="font-bold mb-2 text-black">Blog Posts</h3>
+                <p className="text-sm text-black font-medium">
+                  Share your journey through detailed written narratives with photos and multimedia.
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-orange-50 border-2 border-orange-600 flex items-center justify-center mx-auto mb-4">
+                  <Play className="h-8 w-8 text-orange-600" />
+                </div>
+                <h3 className="font-bold mb-2 text-black">Video Stories</h3>
+                <p className="text-sm text-black font-medium">
+                  Create powerful video documentaries and vlogs that capture your authentic voice.
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-blue-50 border-2 border-blue-600 flex items-center justify-center mx-auto mb-4">
+                  <Camera className="h-8 w-8 text-blue-600" />
+                </div>
+                <h3 className="font-bold mb-2 text-black">Photo Essays</h3>
+                <p className="text-sm text-black font-medium">
+                  Tell your story through compelling photography and visual narratives.
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-orange-50 border-2 border-orange-700 flex items-center justify-center mx-auto mb-4">
+                  <Mic className="h-8 w-8 text-orange-700" />
+                </div>
+                <h3 className="font-bold mb-2 text-black">Interviews</h3>
+                <p className="text-sm text-black font-medium">
+                  Participate in or conduct interviews that explore important themes and experiences.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Privacy & Safety Notice */}
+          <div className="mb-12 border-2 border-black bg-gray-50 p-8">
+            <div className="flex items-start gap-4">
+              <Shield className="h-6 w-6 text-black mt-1" />
+              <div>
+                <h3 className="font-bold text-lg mb-3 text-black">Your Stories, Your Control</h3>
+                <p className="text-black font-medium mb-6">
                   At JusticeHub, you decide who sees your story. Choose from public sharing to inspire others, 
                   organization-only for trusted networks, or anonymous options to protect your identity.
                 </p>
                 <div className="grid md:grid-cols-3 gap-6 text-sm">
                   <div className="flex items-center gap-3">
-                    <Globe className="h-4 w-4 text-neutral-700 dark:text-neutral-300" />
-                    <span className="text-neutral-700 dark:text-neutral-300"><span className="font-medium">Public:</span> Inspire everyone</span>
+                    <Globe className="h-4 w-4 text-black" />
+                    <span className="text-black"><span className="font-bold">Public:</span> Inspire everyone</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Users className="h-4 w-4 text-neutral-700 dark:text-neutral-300" />
-                    <span className="text-neutral-700 dark:text-neutral-300"><span className="font-medium">Network:</span> Share safely</span>
+                    <Users className="h-4 w-4 text-black" />
+                    <span className="text-black"><span className="font-bold">Network:</span> Share safely</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Shield className="h-4 w-4 text-neutral-700 dark:text-neutral-300" />
-                    <span className="text-neutral-700 dark:text-neutral-300"><span className="font-medium">Anonymous:</span> Stay protected</span>
+                    <Shield className="h-4 w-4 text-black" />
+                    <span className="text-black"><span className="font-bold">Anonymous:</span> Stay protected</span>
                   </div>
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* How Stories Create Impact - Editorial Style */}
-        <div className="mb-12 py-12 border-t border-b border-neutral-200 dark:border-neutral-800">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-light mb-3 text-neutral-900 dark:text-neutral-100">How Your Story Creates Impact</h2>
-            <p className="text-neutral-600 dark:text-neutral-400">
-              Every story shared creates ripples of change in our community
-            </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 rounded-sm flex items-center justify-center mx-auto mb-4">
-                <Heart className="h-6 w-6 text-accent-600" />
-              </div>
-              <h3 className="font-medium mb-2 text-neutral-900 dark:text-neutral-100">Inspire Others</h3>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                Your journey shows others what's possible and gives them hope for their own transformation.
+
+          {/* How Stories Create Impact */}
+          <div className="mb-12 py-12 border-t-2 border-b-2 border-black">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-bold mb-3 text-black">How Your Story Creates Impact</h2>
+              <p className="text-black font-medium">
+                Every story shared creates ripples of change in our community
               </p>
             </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 rounded-sm flex items-center justify-center mx-auto mb-4">
-                <Users className="h-6 w-6 text-accent-600" />
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-100 rounded-sm flex items-center justify-center mx-auto mb-4">
+                  <Heart className="h-6 w-6 text-black" />
+                </div>
+                <h3 className="font-bold mb-2 text-black">Inspire Others</h3>
+                <p className="text-sm text-black font-medium">
+                  Your journey shows others what's possible and gives them hope for their own transformation.
+                </p>
               </div>
-              <h3 className="font-medium mb-2 text-neutral-900 dark:text-neutral-100">Build Community</h3>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                Connect with others who understand your experience and create lasting support networks.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 rounded-sm flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="h-6 w-6 text-accent-600" />
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-100 rounded-sm flex items-center justify-center mx-auto mb-4">
+                  <Users className="h-6 w-6 text-black" />
+                </div>
+                <h3 className="font-bold mb-2 text-black">Build Community</h3>
+                <p className="text-sm text-black font-medium">
+                  Connect with others who understand your experience and create lasting support networks.
+                </p>
               </div>
-              <h3 className="font-medium mb-2 text-neutral-900 dark:text-neutral-100">Drive Change</h3>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                Influence policy, funding decisions, and program development with real-world impact data.
-              </p>
+              <div className="text-center">
+                <div className="w-12 h-12 bg-gray-100 rounded-sm flex items-center justify-center mx-auto mb-4">
+                  <TrendingUp className="h-6 w-6 text-black" />
+                </div>
+                <h3 className="font-bold mb-2 text-black">Drive Change</h3>
+                <p className="text-sm text-black font-medium">
+                  Influence policy, funding decisions, and program development with real-world impact data.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Call to Action - Clean CTA */}
-        <Card className="bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 border border-neutral-800 dark:border-neutral-200">
-          <CardContent className="p-12 text-center">
-            <h3 className="text-3xl font-light mb-4">Ready to Share Your Story?</h3>
-            <p className="text-lg mb-8 text-neutral-300 dark:text-neutral-700 max-w-2xl mx-auto">
+          {/* Call to Action */}
+          <div className="bg-black text-white border-2 border-black p-12 text-center">
+            <h3 className="text-3xl font-bold mb-4 text-white">Ready to Share Your Story?</h3>
+            <p className="text-lg mb-8 max-w-2xl mx-auto font-medium text-white">
               Your experience matters. Your voice can change lives. Join our community of storytellers 
               who are turning their journeys into opportunities.
             </p>
             <div className="flex gap-4 justify-center">
               <Link href="/stories/new">
-                <Button size="lg" className="bg-white text-neutral-900 hover:bg-neutral-100 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800">
-                  <PenSquare className="h-5 w-5 mr-2" />
+                <button className="bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-100 transition-all">
+                  <PenSquare className="h-5 w-5 mr-2 inline" />
                   Start Writing
-                </Button>
+                </button>
               </Link>
               <Link href="/mentors">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-neutral-900 dark:border-neutral-900 dark:text-neutral-900 dark:hover:bg-neutral-900 dark:hover:text-white">
-                  <Users className="h-5 w-5 mr-2" />
+                <button className="border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-all">
+                  <Users className="h-5 w-5 mr-2 inline" />
                   Find a Mentor
-                </Button>
+                </button>
               </Link>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Unified Footer */}
+      <Footer />
     </div>
   );
 }

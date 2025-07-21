@@ -1,180 +1,454 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { DetentionDollarSection } from '@/components/landing/DetentionDollarSection';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { ArrowRight, ArrowDown, Target, Award, DollarSign, TrendingUp, Users } from 'lucide-react';
 import Link from 'next/link';
+import { Navigation, Footer } from '@/components/ui/navigation';
 
 export default function HomePage() {
+  const [currentStatIndex, setCurrentStatIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  // Only start rotation after mounting to prevent hydration issues
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Rotate through impact stats
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const interval = setInterval(() => {
+      setCurrentStatIndex((prev) => (prev + 1) % 3);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [mounted]);
+
+  const impactStats = [
+    { number: "24x", context: "Indigenous kids locked up vs non-Indigenous" },
+    { number: "95%", context: "Crime drop on Groote Eylandt in 3 years" },
+    { number: "$1.1M", context: "Per child, per year. To make things worse." }
+  ];
+
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
-      {/* Header */}
-      <header className="border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-sm bg-neutral-900 dark:bg-neutral-100"></div>
-              <h1 className="text-2xl font-medium tracking-wide text-neutral-900 dark:text-neutral-100">JusticeHub</h1>
+    <div className="min-h-screen bg-white text-black">
+      {/* Skip to main content link for accessibility */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      
+      {/* Unified Navigation */}
+      <Navigation />
+
+      {/* Hero - One powerful truth */}
+      <main id="main-content">
+        <section className="min-h-screen flex items-center justify-center header-offset">
+          <div className="container-justice text-center">
+          <div className="max-w-5xl mx-auto">
+            {/* Rotating impact stat */}
+            <div className="mb-12 impact-number">
+              <div className="hero-stat">{impactStats[currentStatIndex].number}</div>
+              <p className="text-xl md:text-2xl mt-4 font-medium">
+                {impactStats[currentStatIndex].context}
+              </p>
             </div>
-            <nav className="flex items-center space-x-4">
-              <Link href="/talent-scout">
-                <Button variant="outline" className="hidden sm:inline-flex">
-                  Talent Scout
-                </Button>
+
+            <h1 className="headline-truth mb-8">
+              Australia locks up children.<br />
+              Communities have the cure.<br />
+              We connect them.
+            </h1>
+
+            <p className="body-truth mx-auto mb-12">
+              No inspirational quotes. No poverty tourism. Just proven solutions 
+              from communities already doing the work. This is infrastructure for revolution.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/services" className="cta-primary">
+                FIND HELP NOW
               </Link>
-              <Link href="/api/auth/login">
-                <Button variant="outline">Sign In</Button>
+              <Link href="#truth" className="cta-secondary">
+                SEE THE DATA
               </Link>
-              <Link href="/api/auth/login">
-                <Button>Get Started</Button>
-              </Link>
-            </nav>
+            </div>
+          </div>
+
+          <div className="mt-20">
+            <ArrowDown className="w-8 h-8 mx-auto animate-bounce" />
           </div>
         </div>
-      </header>
+      </section>
 
-      {/* Hero Section */}
-      <main className="container mx-auto px-4 py-16">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-light tracking-tight text-neutral-900 dark:text-neutral-100 mb-6">
-            Empowering Youth Through
-            <span className="text-accent-600">
-              {' '}Storytelling
-            </span>
+      {/* The Truth Section */}
+      <section id="truth" className="section-padding border-t-2 border-black">
+        <div className="container-justice">
+          <h2 className="headline-truth mb-16 text-center">
+            The truth about youth justice
           </h2>
-          <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto mb-8 leading-relaxed">
-            A digital platform that transforms how grassroots organizations support young people 
-            by providing tools and human support that help youth understand their own stories 
-            and connect them to opportunities.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/api/auth/login">
-              <Button size="lg" className="w-full sm:w-auto">
-                Start Your Journey
-              </Button>
+
+          {/* Primary Success Rate Comparison */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+            <div className="data-card bg-orange-50 border-l-8 border-orange-600 text-center">
+              <div className="font-mono text-6xl font-bold text-orange-600 mb-4">15.5%</div>
+              <h3 className="text-xl font-bold mb-2">DETENTION SUCCESS RATE</h3>
+              <p className="text-gray-700">84.5% reoffend within 12 months</p>
+              <div className="mt-4 bg-orange-600 text-white py-2 px-4 font-bold">
+                SYSTEM FAILURE
+              </div>
+            </div>
+            <div className="data-card bg-blue-50 border-l-8 border-blue-800 text-center">
+              <div className="font-mono text-6xl font-bold text-blue-800 mb-4">78%</div>
+              <h3 className="text-xl font-bold mb-2">COMMUNITY PROGRAMS</h3>
+              <p className="text-gray-700">22% reoffend - and that's the average</p>
+              <div className="mt-4 bg-blue-800 text-white py-2 px-4 font-bold">
+                PROVEN SOLUTION
+              </div>
+            </div>
+          </div>
+
+          {/* Cost Comparison */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold mb-8 text-center">COST REALITY</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              <div className="data-card bg-blue-50 border-l-8 border-blue-800 text-center">
+                <h4 className="font-bold text-lg mb-4">COMMUNITY PROGRAMS</h4>
+                <div className="font-mono text-5xl font-bold text-blue-800 mb-2">$58,000</div>
+                <p className="text-sm text-gray-600 mb-4">per young person annually</p>
+                <div className="bg-blue-800 h-4 rounded mb-2" style={{width: '5.3%'}}></div>
+                <div className="bg-blue-800 text-white py-2 px-4 font-bold text-sm">
+                  INVESTMENT IN SOLUTION
+                </div>
+              </div>
+              
+              <div className="data-card bg-orange-50 border-l-8 border-orange-600 text-center">
+                <h4 className="font-bold text-lg mb-4">DETENTION</h4>
+                <div className="font-mono text-5xl font-bold text-orange-600 mb-2">$1.1M</div>
+                <p className="text-sm text-gray-600 mb-4">per young person annually</p>
+                <div className="bg-orange-600 h-4 rounded mb-2" style={{width: '100%'}}></div>
+                <div className="bg-orange-600 text-white py-2 px-4 font-bold text-sm">
+                  WASTE OF RESOURCES
+                </div>
+              </div>
+            </div>
+            
+            <div className="text-center mt-8 p-6 bg-black">
+              <p className="text-2xl font-bold text-white">
+                SAVINGS: $1,042,000 per young person per year
+              </p>
+              <p className="text-lg mt-2 text-white">19 times more cost-effective. And it actually works.</p>
+            </div>
+          </div>
+
+          {/* Platform Impact Metrics */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold mb-8 text-center">JUSTICEHUB IMPACT</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="data-card text-center">
+                <div className="flex justify-center mb-4">
+                  <Target className="h-8 w-8 text-black" />
+                </div>
+                <div className="font-mono text-4xl font-bold mb-2">150</div>
+                <p className="text-lg font-bold mb-1">Programs Documented</p>
+                <p className="text-sm text-blue-800 font-medium">+23% this year</p>
+              </div>
+              
+              <div className="data-card text-center">
+                <div className="flex justify-center mb-4">
+                  <Users className="h-8 w-8 text-black" />
+                </div>
+                <div className="font-mono text-4xl font-bold mb-2">2,400</div>
+                <p className="text-lg font-bold mb-1">Youth Connected</p>
+                <p className="text-sm text-blue-800 font-medium">+45% this year</p>
+              </div>
+              
+              <div className="data-card text-center">
+                <div className="flex justify-center mb-4">
+                  <Award className="h-8 w-8 text-black" />
+                </div>
+                <div className="font-mono text-4xl font-bold mb-2">78%</div>
+                <p className="text-lg font-bold mb-1">Average Success Rate</p>
+                <p className="text-sm text-gray-600">vs 15.5% in detention</p>
+              </div>
+              
+              <div className="data-card text-center">
+                <div className="flex justify-center mb-4">
+                  <DollarSign className="h-8 w-8 text-black" />
+                </div>
+                <div className="font-mono text-4xl font-bold mb-2">$45M</div>
+                <p className="text-lg font-bold mb-1">Cost Savings</p>
+                <p className="text-sm text-gray-600">Identified annually</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <p className="text-2xl font-bold mb-4">
+              Every dollar spent on detention is a dollar stolen from solutions that work.
+            </p>
+            <Link href="/transparency" className="cta-primary inline-block">
+              FOLLOW THE MONEY
             </Link>
-            <Button variant="outline" size="lg" className="w-full sm:w-auto">
-              Learn More
-            </Button>
           </div>
         </div>
+      </section>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          <Card className="border border-neutral-200 dark:border-neutral-800 shadow-sm hover:shadow-md transition-shadow">
-            <CardHeader>
-              <div className="h-12 w-12 rounded-sm bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center mb-4">
-                <svg className="h-6 w-6 text-neutral-900 dark:text-neutral-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <CardTitle className="font-medium">Living Libraries</CardTitle>
-              <CardDescription className="text-neutral-600 dark:text-neutral-400">
-                Share your story and discover others' journeys through our interactive storytelling platform.
-              </CardDescription>
-            </CardHeader>
-          </Card>
+      {/* What We Build */}
+      <section className="section-padding bg-black">
+        <div className="container-justice">
+          <h2 className="headline-truth mb-4 text-white">
+            We don't decorate injustice.
+          </h2>
+          <p className="text-2xl mb-16 text-white">We dismantle it.</p>
 
-          <Card className="border border-neutral-200 dark:border-neutral-800 shadow-sm hover:shadow-md transition-shadow">
-            <CardHeader>
-              <div className="h-12 w-12 rounded-sm bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center mb-4">
-                <svg className="h-6 w-6 text-neutral-900 dark:text-neutral-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <CardTitle className="font-medium">Mentor Hub</CardTitle>
-              <CardDescription className="text-neutral-600 dark:text-neutral-400">
-                Connect with experienced mentors who understand your journey and can guide your growth.
-              </CardDescription>
-            </CardHeader>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-2 border-white">
+            <div className="p-8 border-b-2 md:border-b-0 md:border-r-2 border-white">
+              <h3 className="text-xl font-bold mb-4 uppercase tracking-wider text-white">
+                For Young People
+              </h3>
+              <p className="mb-6 text-white">
+                No lectures. No judgment. Just tools that work. 
+                Built by people who've been where you are.
+              </p>
+              <Link href="/services" className="text-white underline font-bold hover:text-gray-300">
+                Start here →
+              </Link>
+            </div>
 
-          <Card className="border border-neutral-200 dark:border-neutral-800 shadow-sm hover:shadow-md transition-shadow">
-            <CardHeader>
-              <div className="h-12 w-12 rounded-sm bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center mb-4">
-                <svg className="h-6 w-6 text-neutral-900 dark:text-neutral-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <CardTitle className="font-medium">Opportunity Matching</CardTitle>
-              <CardDescription className="text-neutral-600 dark:text-neutral-400">
-                Discover personalized opportunities for education, employment, and personal development.
-              </CardDescription>
-            </CardHeader>
-          </Card>
+            <div className="p-8 border-b-2 md:border-b-0 md:border-r-2 border-white">
+              <h3 className="text-xl font-bold mb-4 uppercase tracking-wider text-white">
+                For Communities
+              </h3>
+              <p className="mb-6 text-white">
+                You already have the answers. Your programs work. 
+                We're here to amplify them.
+              </p>
+              <Link href="/grassroots" className="text-white underline font-bold hover:text-gray-300">
+                Share your solution →
+              </Link>
+            </div>
+
+            <div className="p-8">
+              <h3 className="text-xl font-bold mb-4 uppercase tracking-wider text-white">
+                For Decision Makers
+              </h3>
+              <p className="mb-6 text-white">
+                The evidence is unanimous. The community is ready. 
+                Your move.
+              </p>
+              <Link href="/transparency" className="text-white underline font-bold hover:text-gray-300">
+                See the evidence →
+              </Link>
+            </div>
+          </div>
         </div>
+      </section>
 
-        {/* Talent Scout Feature */}
-        <div className="my-24">
-          <Card className="border border-neutral-200 dark:border-neutral-800 shadow-sm bg-neutral-50 dark:bg-neutral-900">
-            <CardContent className="p-12">
-              <div className="flex flex-col md:flex-row items-center gap-12">
-                <div className="flex-1">
-                  <div className="text-sm uppercase tracking-wider text-accent-600 mb-3">NEW</div>
-                  <h3 className="text-3xl font-light mb-4 text-neutral-900 dark:text-neutral-100">JusticeHub Talent Scout</h3>
-                  <p className="text-lg mb-8 text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                    Transform your organization into a youth talent discovery powerhouse. 
-                    Like Triple-J Unearthed for justice - spot, develop, and launch the next 
-                    generation of community leaders.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Link href="/talent-scout">
-                      <Button size="lg" className="bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-200">
-                        Explore Talent Scout
-                      </Button>
-                    </Link>
-                    <Link href="/dashboard/dreamtrack">
-                      <Button size="lg" variant="outline" className="border-neutral-900 text-neutral-900 hover:bg-neutral-100 dark:border-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800">
-                        Try Youth Dashboard
-                      </Button>
-                    </Link>
+      {/* Programs That Work - Grid Layout */}
+      <section className="section-padding">
+        <div className="container-justice">
+          <h2 className="headline-truth mb-16">
+            Communities already solving this
+          </h2>
+
+          <div className="justice-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {/* Groote Eylandt */}
+            <div className="p-8">
+              <div className="font-mono text-5xl font-bold mb-4">95%</div>
+              <h3 className="text-xl font-bold mb-2">Groote Eylandt</h3>
+              <p className="mb-4">
+                Elders + culture + young people = 95% less crime in 3 years. 
+                No new theory. Ancient wisdom.
+              </p>
+              <Link href="/stories" className="font-bold underline">
+                Full story →
+              </Link>
+            </div>
+
+            {/* BackTrack */}
+            <div className="p-8">
+              <div className="font-mono text-5xl font-bold mb-4">87%</div>
+              <h3 className="text-xl font-bold mb-2">BackTrack Youth Works</h3>
+              <p className="mb-4">
+                Dogs, welding, and mentorship. Turns "problem kids" into 
+                qualified workers. 87% never reoffend.
+              </p>
+              <Link href="/grassroots" className="font-bold underline">
+                Learn more →
+              </Link>
+            </div>
+
+            {/* Transition 2 Success */}
+            <div className="p-8">
+              <div className="font-mono text-5xl font-bold mb-4">67%</div>
+              <h3 className="text-xl font-bold mb-2">Transition 2 Success</h3>
+              <p className="mb-4">
+                Costs 95% less than detention. Three times better outcomes. 
+                Operating in Queensland right now.
+              </p>
+              <Link href="/services" className="font-bold underline">
+                Find services →
+              </Link>
+            </div>
+
+            {/* More programs */}
+            <div className="p-8 bg-black md:col-span-2 lg:col-span-3">
+              <p className="text-2xl font-bold mb-4 text-white">
+                150+ programs across Australia. Working. Right now.
+              </p>
+              <p className="text-xl mb-6 text-white">
+                The solutions exist. They're just invisible, underfunded, and 
+                disconnected. That's what we're here to fix.
+              </p>
+              <Link href="/grassroots" className="inline-block bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-100">
+                EXPLORE ALL PROGRAMS
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* The Platform */}
+      <section className="section-padding border-t-2 border-black">
+        <div className="container-justice">
+          <h2 className="headline-truth mb-16">
+            JusticeHub: Infrastructure for revolution
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="data-card">
+              <h3 className="text-xl font-bold mb-4">GRASSROOTS DATABASE</h3>
+              <p className="mb-4">
+                Every community program. Searchable. Shareable. 
+                No more reinventing wheels.
+              </p>
+              <Link href="/grassroots" className="font-bold underline">
+                Search programs →
+              </Link>
+            </div>
+
+            <div className="data-card">
+              <h3 className="text-xl font-bold mb-4">TALENT SCOUT</h3>
+              <p className="mb-4">
+                Match young people with mentors based on dreams, 
+                not risk factors. Human connection that works.
+              </p>
+              <Link href="/talent-scout" className="font-bold underline">
+                Find mentors →
+              </Link>
+            </div>
+
+            <div className="data-card">
+              <h3 className="text-xl font-bold mb-4">MONEY TRAIL</h3>
+              <p className="mb-4">
+                Every dollar. Every decision. Every outcome. 
+                Transparency as a weapon for change.
+              </p>
+              <Link href="/transparency" className="font-bold underline">
+                Follow money →
+              </Link>
+            </div>
+
+            <div className="data-card">
+              <h3 className="text-xl font-bold mb-4">STORIES PLATFORM</h3>
+              <p className="mb-4">
+                Young voices. Unfiltered. Their words, their power 
+                to change the narrative.
+              </p>
+              <Link href="/stories" className="font-bold underline">
+                Read stories →
+              </Link>
+            </div>
+          </div>
+          
+          {/* Stories Grid */}
+          <div className="mt-16">
+            <h3 className="text-2xl font-bold mb-8 text-center">VOICES OF CHANGE</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="data-card">
+                <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
+                  <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm">
+                    IMAGE PLACEHOLDER
                   </div>
                 </div>
-                <div className="text-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-accent-600">
-                    <path d="M9 2v6" />
-                    <path d="M15 2v6" />
-                    <path d="M12 17v5" />
-                    <path d="M5 7h14" />
-                    <path d="M6 2h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Z" />
-                    <path d="M6 7h12v6H6z" />
-                  </svg>
-                  <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-4">Launch careers,<br/>not just programs</p>
-                </div>
+                <h4 className="text-lg font-bold mb-3">"I found my purpose"</h4>
+                <p className="text-gray-700 mb-4">
+                  "BackTrack didn't just teach me welding. They taught me I was worth something. 
+                  Now I'm mentoring other kids who've been where I was."
+                </p>
+                <p className="text-sm font-bold text-gray-600">— Marcus, 19, BackTrack Graduate</p>
+                <Link href="/stories" className="text-sm font-bold underline mt-2 inline-block">
+                  Read full story →
+                </Link>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-
-      {/* Detention Dollar Comparison - Outside container for full width impact */}
-      <DetentionDollarSection />
-
-      <main className="container mx-auto px-4">
-        {/* CTA Section */}
-        <div className="text-center my-24">
-          <Card className="border border-neutral-200 dark:border-neutral-800 shadow-sm bg-neutral-900 dark:bg-neutral-100">
-            <CardContent className="p-16">
-              <h3 className="text-3xl font-light mb-6 text-white dark:text-neutral-900">Ready to Transform Your Story?</h3>
-              <p className="text-xl mb-10 text-neutral-300 dark:text-neutral-700 max-w-2xl mx-auto">
-                Join thousands of young people who are turning their experiences into opportunities.
-              </p>
-              <Link href="/api/auth/login">
-                <Button size="lg" className="bg-white text-neutral-900 hover:bg-neutral-100 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800">
-                  Get Started Today
-                </Button>
+              
+              <div className="data-card">
+                <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
+                  <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm">
+                    IMAGE PLACEHOLDER
+                  </div>
+                </div>
+                <h4 className="text-lg font-bold mb-3">"They saw something in me"</h4>
+                <p className="text-gray-700 mb-4">
+                  "Everyone else saw a problem kid. The Youth Collective saw someone with potential. 
+                  Three years later, I'm studying social work to give back."
+                </p>
+                <p className="text-sm font-bold text-gray-600">— Aisha, 21, Logan Youth Collective</p>
+                <Link href="/stories" className="text-sm font-bold underline mt-2 inline-block">
+                  Read full story →
+                </Link>
+              </div>
+              
+              <div className="data-card">
+                <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
+                  <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm">
+                    IMAGE PLACEHOLDER
+                  </div>
+                </div>
+                <h4 className="text-lg font-bold mb-3">"Culture saved my life"</h4>
+                <p className="text-gray-700 mb-4">
+                  "Connecting with elders and learning traditional ways helped me understand who I am. 
+                  Now I help other young Aboriginal kids find their way too."
+                </p>
+                <p className="text-sm font-bold text-gray-600">— Jayden, 18, Healing Circles Program</p>
+                <Link href="/stories" className="text-sm font-bold underline mt-2 inline-block">
+                  Read full story →
+                </Link>
+              </div>
+            </div>
+            
+            <div className="text-center mt-8">
+              <Link href="/stories" className="cta-primary">
+                READ MORE STORIES
               </Link>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
-        <div className="container mx-auto px-4 py-12">
-          <div className="text-center text-neutral-600 dark:text-neutral-400">
-            <p className="text-sm">&copy; 2024 JusticeHub. Empowering youth through storytelling.</p>
+            </div>
           </div>
         </div>
-      </footer>
+      </section>
+
+      {/* Final CTA */}
+      <section className="section-padding bg-black">
+        <div className="container-justice text-center">
+          <h2 className="headline-truth mb-8 text-white">
+            The evidence is clear.<br />
+            The solutions exist.<br />
+            The time is now.
+          </h2>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/services" className="inline-block bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-100">
+              I NEED HELP
+            </Link>
+            <Link href="/grassroots" className="inline-block border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-all">
+              I HAVE SOLUTIONS
+            </Link>
+          </div>
+        </div>
+      </section>
+      </main>
+
+      {/* Unified Footer */}
+      <Footer />
     </div>
   );
 }

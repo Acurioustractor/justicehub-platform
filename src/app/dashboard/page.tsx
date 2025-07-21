@@ -3,16 +3,14 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useUserContext } from '@/contexts/UserContext';
 import { UnifiedStoryFeed } from '@/components/stories/UnifiedStoryFeed';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   PenSquare, 
   Users, 
   Target, 
   Trophy,
   Shield,
-  Globe
+  Globe,
+  ArrowRight
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -43,8 +41,10 @@ export default function DashboardPage() {
 
   if (currentIsLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="font-mono text-lg">Loading...</div>
+        </div>
       </div>
     );
   }
@@ -54,25 +54,20 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow">
-        <div className="container mx-auto px-4 py-4">
+    <div className="min-h-screen bg-white">
+      {/* Header - Stark and functional */}
+      <header className="border-b-2 border-black">
+        <div className="container-justice py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600"></div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">JusticeHub</h1>
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600 dark:text-gray-300">
-                Welcome, {currentUser?.name || currentUser?.email}
+            <Link href="/" className="font-bold text-xl tracking-tight">
+              JUSTICEHUB
+            </Link>
+            <div className="flex items-center gap-8">
+              <span className="font-mono text-sm">
+                {currentUser?.name || currentUser?.email}
               </span>
-              <Link href="/api/auth/logout">
-                <Button variant="outline" size="sm">
-                  Sign Out
-                </Button>
+              <Link href="/api/auth/logout" className="font-bold underline">
+                SIGN OUT
               </Link>
             </div>
           </div>
@@ -80,141 +75,138 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Your Dashboard
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300">
-            Welcome to your personal space. Start your journey by sharing your story.
+      <main className="container-justice py-16">
+        {/* Hero Statement */}
+        <div className="mb-16">
+          <h1 className="headline-truth mb-4">
+            Your dashboard.<br />
+            Your story.<br />
+            Your power.
+          </h1>
+          <p className="text-xl max-w-2xl">
+            No judgment. No lectures. Just tools that work and people who get it.
           </p>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Link href="/stories/new">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
-                <PenSquare className="h-12 w-12 mx-auto mb-3 text-primary" />
-                <h3 className="font-semibold">Create Story</h3>
-                <p className="text-sm text-gray-600 mt-1">Share your journey</p>
-              </CardContent>
-            </Card>
+        {/* Quick Actions - Grid layout */}
+        <div className="justice-grid grid-cols-1 md:grid-cols-4 mb-16">
+          <Link href="/stories/new" className="group">
+            <div className="p-8 h-full hover:bg-black hover:text-white transition-all">
+              <PenSquare className="h-12 w-12 mb-4" />
+              <h3 className="font-bold text-lg mb-2">SHARE YOUR STORY</h3>
+              <p className="text-sm mb-4">Your words. Your truth. Your power.</p>
+              <span className="font-bold group-hover:underline">Start writing →</span>
+            </div>
           </Link>
 
-          <Link href="/mentors">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
-                <Users className="h-12 w-12 mx-auto mb-3 text-blue-600" />
-                <h3 className="font-semibold">Find Mentors</h3>
-                <p className="text-sm text-gray-600 mt-1">Connect for guidance</p>
-              </CardContent>
-            </Card>
+          <Link href="/mentors" className="group">
+            <div className="p-8 h-full hover:bg-black hover:text-white transition-all">
+              <Users className="h-12 w-12 mb-4" />
+              <h3 className="font-bold text-lg mb-2">FIND MENTORS</h3>
+              <p className="text-sm mb-4">Real people. Real connection. Real help.</p>
+              <span className="font-bold group-hover:underline">Connect now →</span>
+            </div>
           </Link>
 
-          <Link href="/opportunities">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
-                <Target className="h-12 w-12 mx-auto mb-3 text-green-600" />
-                <h3 className="font-semibold">Opportunities</h3>
-                <p className="text-sm text-gray-600 mt-1">Discover new paths</p>
-              </CardContent>
-            </Card>
+          <Link href="/opportunities" className="group">
+            <div className="p-8 h-full hover:bg-black hover:text-white transition-all">
+              <Target className="h-12 w-12 mb-4" />
+              <h3 className="font-bold text-lg mb-2">OPPORTUNITIES</h3>
+              <p className="text-sm mb-4">Jobs. Programs. Pathways that work.</p>
+              <span className="font-bold group-hover:underline">Explore →</span>
+            </div>
           </Link>
 
-          <Link href="/profile">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
-                <Trophy className="h-12 w-12 mx-auto mb-3 text-yellow-600" />
-                <h3 className="font-semibold">Profile</h3>
-                <p className="text-sm text-gray-600 mt-1">View your profile</p>
-              </CardContent>
-            </Card>
+          <Link href="/profile" className="group">
+            <div className="p-8 h-full hover:bg-black hover:text-white transition-all">
+              <Trophy className="h-12 w-12 mb-4" />
+              <h3 className="font-bold text-lg mb-2">YOUR PROFILE</h3>
+              <p className="text-sm mb-4">Track progress. Celebrate wins.</p>
+              <span className="font-bold group-hover:underline">View profile →</span>
+            </div>
           </Link>
         </div>
 
-        {/* Privacy Demo Card */}
-        <Card className="mb-8 border-primary">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5" />
-              Privacy Controls Active
-            </CardTitle>
-            <CardDescription>
-              Your stories are protected by our privacy system. You control who sees what.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div className="flex items-start gap-3">
-                <Globe className="h-5 w-5 text-green-600 mt-0.5" />
-                <div>
-                  <p className="font-medium">Public Stories</p>
-                  <p className="text-gray-600">Visible to everyone, inspire others</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Users className="h-5 w-5 text-purple-600 mt-0.5" />
-                <div>
-                  <p className="font-medium">Organization/Mentor Only</p>
-                  <p className="text-gray-600">Share within your trusted network</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Shield className="h-5 w-5 text-orange-600 mt-0.5" />
-                <div>
-                  <p className="font-medium">Anonymous Option</p>
-                  <p className="text-gray-600">Share publicly without revealing identity</p>
-                </div>
-              </div>
+        {/* Privacy Statement */}
+        <div className="border-2 border-black p-8 mb-16">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+            <Shield className="h-8 w-8" />
+            YOUR PRIVACY. YOUR CONTROL.
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <h3 className="font-bold mb-2 flex items-center gap-2">
+                <Globe className="h-5 w-5" />
+                PUBLIC STORIES
+              </h3>
+              <p>Inspire others. Change the narrative. Stay anonymous if you want.</p>
             </div>
-          </CardContent>
-        </Card>
+            
+            <div>
+              <h3 className="font-bold mb-2 flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                TRUSTED NETWORK
+              </h3>
+              <p>Share with mentors and organizations only. Safe space guaranteed.</p>
+            </div>
+            
+            <div>
+              <h3 className="font-bold mb-2 flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                ANONYMOUS MODE
+              </h3>
+              <p>Share your truth without your name. Power without exposure.</p>
+            </div>
+          </div>
+        </div>
 
-        {/* Story Feed Tabs */}
-        <Tabs defaultValue="all" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="all">All Stories</TabsTrigger>
-            <TabsTrigger value="mine">My Stories</TabsTrigger>
-            <TabsTrigger value="organization">Organization</TabsTrigger>
-            <TabsTrigger value="public">Public Feed</TabsTrigger>
-          </TabsList>
+        {/* Story Feed - Simplified */}
+        <div className="space-y-8">
+          <div className="flex items-center justify-between border-b-2 border-black pb-4">
+            <h2 className="text-2xl font-bold">STORIES FROM YOUR COMMUNITY</h2>
+            <div className="flex gap-4">
+              <button className="font-bold underline">ALL</button>
+              <button className="font-bold hover:underline">MINE</button>
+              <button className="font-bold hover:underline">NETWORK</button>
+              <button className="font-bold hover:underline">PUBLIC</button>
+            </div>
+          </div>
 
-          <TabsContent value="all">
-            <DevStoryFeed 
-              showHeader={true}
-              showStats={false}
-              limit={10}
-            />
-          </TabsContent>
-
-          <TabsContent value="mine">
-            <Card className="p-6 text-center">
-              <CardContent>
-                <p className="text-gray-600 mb-4">You haven't shared any stories yet.</p>
-                <Link href="/stories/new">
-                  <Button>Share Your First Story</Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="organization">
-            <DevStoryFeed 
+          {/* Story Feed Component */}
+          <div className="space-y-0">
+            <UnifiedStoryFeed 
               showHeader={false}
               showStats={false}
               limit={5}
             />
-          </TabsContent>
+          </div>
 
-          <TabsContent value="public">
-            <DevStoryFeed 
-              showHeader={false}
-              showStats={false}
-              limit={8}
-            />
-          </TabsContent>
-        </Tabs>
+          <div className="text-center pt-8">
+            <Link href="/stories" className="cta-primary inline-block">
+              VIEW ALL STORIES
+            </Link>
+          </div>
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="mt-16 p-12 bg-black text-white text-center">
+          <h2 className="text-3xl font-bold mb-4">
+            Ready to change your story?
+          </h2>
+          <p className="text-xl mb-8 max-w-2xl mx-auto">
+            Start with one step. One connection. One opportunity.
+            We're here to make it happen.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/stories/new" className="inline-block bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-100">
+              SHARE YOUR STORY
+            </Link>
+            <Link href="/dashboard/dreamtrack" className="inline-block border-2 border-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-all">
+              LAUNCH DREAMTRACK
+            </Link>
+          </div>
+        </div>
       </main>
     </div>
   );
