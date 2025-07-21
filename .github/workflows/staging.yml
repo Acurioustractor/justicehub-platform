@@ -28,11 +28,5 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
       
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v20
-        if: ${{ secrets.VERCEL_TOKEN != '' }}
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.ORG_ID }}
-          vercel-project-id: ${{ secrets.PROJECT_ID }}
-          scope: ${{ secrets.TEAM_ID }}
+      - name: Build completed successfully
+        run: echo "✅ Staging build ready! Connect Vercel via GitHub integration when ready."
