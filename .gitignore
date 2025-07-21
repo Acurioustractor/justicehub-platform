@@ -47,4 +47,8 @@ out/
 
 # Task files
 # tasks.json
-# tasks/ 
+# tasks/
+
+# Large data files
+*.json.large
+**/archive/data-extracts/*.json 
