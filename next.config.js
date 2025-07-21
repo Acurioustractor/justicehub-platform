@@ -2,7 +2,6 @@
 const nextConfig = {
   experimental: {
     // serverActions are now enabled by default in Next.js 14
-    optimizeCss: true,
     optimizeServerReact: true,
   },
   images: {
