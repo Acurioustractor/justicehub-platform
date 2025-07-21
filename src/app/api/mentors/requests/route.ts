@@ -2,12 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/server/db';
 import { mentors, mentorshipRelationships, youthProfiles, users } from '@/server/db/schema';
 import { eq, and, or, desc, sql } from 'drizzle-orm';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getSession } from '@auth0/nextjs-auth0';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -96,7 +95,7 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ApprenticeshipList } from '@/components/apprenticeships/ApprenticeshipList';
-import { useUser } from '@/contexts/UserContext';
+import { useUserContext } from '@/contexts/UserContext';
 import type { ApprenticeshipFilters } from '@/types/apprenticeship';
 import { 
   Plus, 
@@ -19,7 +19,7 @@ import {
 
 export default function ApprenticeshipsPage() {
   const router = useRouter();
-  const { user } = useUser();
+  const { user } = useUserContext();
   const [activeTab, setActiveTab] = useState('all');
 
   const canCreateApprenticeship = user?.role === 'org_admin' || user?.role === 'platform_admin';

@@ -749,7 +749,7 @@ export function ServiceFinderWidget() {
                 </Button>
               </div>
             </div>
-          </>)
+          </>
         ) : hasSearched ? (
           <Card className="border-0 shadow-lg">
             <CardContent className="text-center py-16">

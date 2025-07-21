@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useApprenticeship, useUpdateApprenticeshipStatus } from '@/hooks/useApprenticeships';
-import { useUser } from '@/contexts/UserContext';
+import { useUserContext } from '@/contexts/UserContext';
 import { 
   ArrowLeft,
   Calendar,
@@ -31,7 +31,7 @@ export default function ApprenticeshipDetailPage({
   params: { id: string } 
 }) {
   const router = useRouter();
-  const { user } = useUser();
+  const { user } = useUserContext();
   const { data: apprenticeship, isLoading, error } = useApprenticeship(params.id);
   const updateStatus = useUpdateApprenticeshipStatus(params.id);
   const [showStatusModal, setShowStatusModal] = useState(false);

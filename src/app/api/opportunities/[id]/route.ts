@@ -60,8 +60,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/server/db';
 import { opportunities, organizations, savedOpportunities, opportunityApplications } from '@/server/db/schema';
 import { eq, and, sql } from 'drizzle-orm';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getSession } from '@auth0/nextjs-auth0';
 
 export async function GET(
   request: NextRequest,
@@ -69,7 +68,7 @@ export async function GET(
 ) {
   try {
     const opportunityId = params.id;
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
     const userId = session?.user?.id;
 
     // Get opportunity with organization data
@@ -193,7 +192,7 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -263,7 +262,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },

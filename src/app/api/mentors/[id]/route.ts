@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/server/db';
 import { mentors, mentorReviews, mentorshipRelationships, users, organizations } from '@/server/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getSession } from '@auth0/nextjs-auth0';
 
 export async function GET(
   request: NextRequest,
@@ -61,7 +60,7 @@ export async function GET(
 
     // Only show active and verified mentors publicly
     if (mentor.status !== 'active' || !mentor.verified) {
-      const session = await getServerSession(authOptions);
+      const session = await getSession();
       if (!session?.user?.id || session.user.id !== mentor.userId) {
         return NextResponse.json(
           { error: 'Mentor not found' },
@@ -136,7 +135,7 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
     if (!session?.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
