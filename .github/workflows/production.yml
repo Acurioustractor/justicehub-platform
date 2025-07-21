@@ -1,0 +1,42 @@
+name: Production Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run comprehensive tests
+        run: |
+          npm run test:ci
+          npm run lint
+          npm run type-check
+      
+      - name: Build for production
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.PROD_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PROD_SUPABASE_ANON_KEY }}
+      
+      - name: Deploy to Vercel Production
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
+          vercel-args: '--prod'
+          scope: ${{ secrets.TEAM_ID }}
+      
+      - name: Notify deployment success
+        run: echo "🚀 Production deployment successful!"

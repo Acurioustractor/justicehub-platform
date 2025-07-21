@@ -1,1 +1,0 @@
-{"status":"unhealthy","timestamp":"2025-07-19T12:07:15.412Z","services":{"api":"operational","database":"disconnected","auth":"configured","redis":"configured","airtable":"configured"},"version":"1.0.0"}
