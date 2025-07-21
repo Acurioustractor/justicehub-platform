@@ -1,11 +1,9 @@
 'use client';
 
-import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { UserProvider as Auth0Provider } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
-import { store } from '@/lib/store';
 import { UserProvider } from '@/contexts/UserContext';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -47,14 +45,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <Auth0Provider>
-      <Provider store={store}>
-        <QueryClientProvider client={queryClient}>
-          <UserProvider>
-            {children}
-            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-          </UserProvider>
-        </QueryClientProvider>
-      </Provider>
+      <QueryClientProvider client={queryClient}>
+        <UserProvider>
+          {children}
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        </UserProvider>
+      </QueryClientProvider>
     </Auth0Provider>
   );
 }
