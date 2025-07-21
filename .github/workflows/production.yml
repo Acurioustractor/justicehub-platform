@@ -28,6 +28,7 @@ jobs:
       
       - name: Deploy to Vercel Production
         uses: amondnet/vercel-action@v20
+        if: ${{ secrets.VERCEL_TOKEN != '' }}
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID }}
@@ -35,5 +36,5 @@ jobs:
           vercel-args: '--prod'
           scope: ${{ secrets.TEAM_ID }}
       
-      - name: Notify deployment success
-        run: echo "🚀 Production deployment successful!"
+      - name: Notify build success
+        run: echo "✅ Build completed successfully! Deploy manually to Vercel if needed."
