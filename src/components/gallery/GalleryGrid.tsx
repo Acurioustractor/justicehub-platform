@@ -16,7 +16,7 @@ import {
   List,
   Search,
   Filter,
-  Sort,
+  ArrowUpDown as Sort,
   Eye,
   Heart,
   Share2,
@@ -37,7 +37,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import type { 
+import { 
   GalleryItem, 
   GalleryCollection, 
   GalleryFilter, 

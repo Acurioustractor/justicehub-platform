@@ -115,11 +115,11 @@ export function validateAPIKeys(): { valid: boolean; missing: string[]; warnings
     warnings.push('No AI service API keys configured');
   }
   
-  if (!env.FIRECRAWL_API_KEY && env.ENABLE_WEB_SCRAPING) {
+  if (!(env as any).FIRECRAWL_API_KEY && (env as any).ENABLE_WEB_SCRAPING) {
     warnings.push('Web scraping enabled but no Firecrawl API key');
   }
   
-  if (!env.SENDGRID_API_KEY && env.NODE_ENV === 'production') {
+  if (!(env as any).SENDGRID_API_KEY && env.NODE_ENV === 'production') {
     warnings.push('No email service configured for production');
   }
   

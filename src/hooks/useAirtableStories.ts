@@ -60,7 +60,7 @@ export function useAirtableStories(params: AirtableStoriesParams = {}) {
     },
     enabled: !!user,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -86,7 +86,7 @@ export function useAirtableStory(recordId: string, includeMedia: boolean = true)
     },
     enabled: !!user && !!recordId,
     staleTime: 10 * 60 * 1000, // 10 minutes
-    cacheTime: 20 * 60 * 1000, // 20 minutes
+    gcTime: 20 * 60 * 1000, // 20 minutes
   });
 }
 
@@ -136,7 +136,7 @@ export function useAirtableStoriesByTag(tags: string[], matchAll: boolean = fals
     },
     enabled: !!user && tags.length > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -159,7 +159,7 @@ export function useAirtableMetadata(organizationId?: string) {
     },
     enabled: !!user,
     staleTime: 10 * 60 * 1000, // 10 minutes
-    cacheTime: 20 * 60 * 1000, // 20 minutes
+    gcTime: 20 * 60 * 1000, // 20 minutes
   });
 }
 
@@ -201,9 +201,9 @@ export function useAirtableSync() {
       return response.json();
     },
     enabled: !!user,
-    refetchInterval: (data) => {
+    refetchInterval: (query) => {
       // Poll while sync is running
-      const lastSync = data?.lastSync;
+      const lastSync = query.state.data?.lastSync;
       if (lastSync?.status === 'running') {
         return 5000; // 5 seconds
       }
@@ -213,7 +213,7 @@ export function useAirtableSync() {
 
   return {
     sync: syncMutation.mutate,
-    isSyncing: syncMutation.isLoading || statusQuery.data?.lastSync?.status === 'running',
+    isSyncing: syncMutation.isPending || statusQuery.data?.lastSync?.status === 'running',
     syncStatus: statusQuery.data,
     error: syncMutation.error || statusQuery.error,
   };

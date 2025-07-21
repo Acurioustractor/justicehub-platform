@@ -9,6 +9,7 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
   active: boolean;
+  name?: string;
   youthProfile?: YouthProfile;
   mentorProfile?: any; // Will be properly typed once mentor types are imported
 }
@@ -16,6 +17,9 @@ export interface User {
 export interface UserProfile {
   firstName: string;
   lastName: string;
+  name?: string;
+  picture?: string;
+  location?: string;
   dateOfBirth?: Date;
   phone?: string;
   address?: Address;
@@ -122,7 +126,10 @@ export interface PrivacySettings {
   analytics: boolean;
   marketingEmails: boolean;
   mentorContact: boolean;
+  allowMentorContact?: boolean;
   organizationContact: boolean;
+  shareStories?: boolean;
+  showProfile?: boolean;
 }
 
 export interface Address {

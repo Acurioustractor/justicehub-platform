@@ -28,11 +28,26 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     name: 'Dev User',
     role: 'admin' as UserRole,
     organizationId: 'org_123_dev',
-    profilePicture: 'https://placehold.co/100x100',
-    bio: 'Development user for testing',
-    skills: [],
-    interests: [],
-    location: 'Development Land',
+    auth0Id: 'dev-auth0-123',
+    profile: {
+      firstName: 'Dev',
+      lastName: 'User',
+      name: 'Dev User',
+      picture: 'https://placehold.co/100x100',
+      bio: 'Development user for testing',
+      location: 'Development Land',
+    },
+    privacySettings: {
+      emailNotifications: true,
+      smsNotifications: false,
+      profileVisibility: 'public',
+      dataSharing: false,
+      analytics: true,
+      marketingEmails: false,
+      mentorContact: true,
+      organizationContact: true,
+    },
+    active: true,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -51,7 +66,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       }
       
       const userData = await response.json();
-      setUser(userData);
+      setUser({
+        ...userData,
+        name: userData.profile?.name || `${userData.profile?.firstName} ${userData.profile?.lastName}`,
+      });
     } catch (err) {
       console.error('Error fetching user profile:', err);
       setError(err instanceof Error ? err : new Error('Unknown error'));
@@ -85,7 +103,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         isLoading: isDev ? false : (isLoading || auth0Loading),
-        error: isDev ? null : (error || auth0Error),
+        error: isDev ? null : (error || auth0Error || null),
         role,
         refreshUser,
       }}

@@ -46,6 +46,7 @@ interface UnifiedStoryFeedProps {
   };
   showHeader?: boolean;
   showStats?: boolean;
+  limit?: number;
 }
 
 export function UnifiedStoryFeed({ 
