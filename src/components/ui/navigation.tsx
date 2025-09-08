@@ -9,16 +9,39 @@ interface NavigationProps {
   variant?: 'default' | 'transparent';
 }
 
+interface NavigationItem {
+  label: string;
+  href?: string;
+  description?: string;
+  type?: 'dropdown';
+  items?: NavigationItem[];
+}
+
 export function Navigation({ variant = 'default' }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const navigationItems = [
+  useEffect(() => {
+    return () => {
+      if (dropdownTimeout) {
+        clearTimeout(dropdownTimeout);
+      }
+    };
+  }, [dropdownTimeout]);
+
+  const navigationItems: NavigationItem[] = [
+    {
+      label: 'About',
+      href: '/about',
+      description: 'How JusticeHub works'
+    },
     {
       label: 'Stories',
       href: '/stories',
@@ -30,36 +53,69 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
       description: 'AI-powered comprehensive directory'
     },
     {
-      label: 'Community Programs',
-      href: '/community-programs',
-      description: 'Curated grassroots solutions'
+      label: 'Explore',
+      type: 'dropdown',
+      items: [
+        {
+          label: 'Community Programs',
+          href: '/community-programs',
+          description: 'Curated grassroots solutions'
+        },
+        {
+          label: 'Gallery',
+          href: '/gallery',
+          description: 'Programs in action'
+        },
+        {
+          label: 'Art & Innovation',
+          href: '/art-innovation',
+          description: 'Creative works and tech solutions'
+        }
+      ]
     },
     {
-      label: 'Gallery',
-      href: '/gallery',
-      description: 'Programs in action'
-    },
-    {
-      label: 'Art & Innovation',
-      href: '/art-innovation',
-      description: 'Creative works and tech solutions'
-    },
-    {
-      label: 'Money Trail',
-      href: '/transparency',
-      description: 'Track funding and outcomes'
-    },
-    {
-      label: 'Roadmap',
-      href: '/roadmap',
-      description: 'Community-driven feature roadmap'
+      label: 'Platform',
+      type: 'dropdown',
+      items: [
+        {
+          label: 'Money Trail',
+          href: '/transparency',
+          description: 'Track funding and outcomes'
+        },
+        {
+          label: 'Roadmap',
+          href: '/roadmap',
+          description: 'Community-driven feature roadmap'
+        }
+      ]
     }
   ];
 
   const isActivePath = (href: string) => {
+    if (!mounted) return false; // Prevent hydration mismatch
     if (href === '/' && pathname === '/') return true;
     if (href !== '/' && pathname.startsWith(href)) return true;
     return false;
+  };
+
+  const isDropdownActive = (items: NavigationItem[]) => {
+    if (!mounted) return false; // Prevent hydration mismatch
+    return items.some(item => item.href && isActivePath(item.href));
+  };
+
+  const handleDropdownEnter = (label: string) => {
+    if (dropdownTimeout) {
+      clearTimeout(dropdownTimeout);
+      setDropdownTimeout(null);
+    }
+    setActiveDropdown(label);
+  };
+
+  const handleDropdownLeave = () => {
+    const timeout = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 150); // 150ms delay before hiding
+    setDropdownTimeout(timeout);
   };
 
   const headerClasses = variant === 'transparent' 
@@ -120,22 +176,78 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
         <div className="hidden lg:flex items-center justify-center py-3">
           <nav className="flex items-center gap-8" role="navigation" aria-label="Main navigation">
             {navigationItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`font-bold text-sm uppercase tracking-wider transition-all duration-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 relative group ${
-                  isActivePath(item.href)
-                    ? 'text-red-600'
-                    : 'text-black'
-                }`}
-                aria-current={isActivePath(item.href) ? 'page' : undefined}
-                title={item.description}
-              >
-                {item.label}
-                <div className={`absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 transition-all duration-300 ${
-                  isActivePath(item.href) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                }`}></div>
-              </Link>
+              <div key={item.label} className="relative">
+                {item.type === 'dropdown' ? (
+                  <div
+                    className="relative"
+                    onMouseEnter={() => handleDropdownEnter(item.label)}
+                    onMouseLeave={handleDropdownLeave}
+                  >
+                    <button
+                      className={`font-bold text-sm uppercase tracking-wider transition-all duration-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 relative group flex items-center gap-1 ${
+                        item.items && isDropdownActive(item.items)
+                          ? 'text-red-600'
+                          : 'text-black'
+                      }`}
+                      aria-expanded={activeDropdown === item.label}
+                      aria-haspopup="true"
+                    >
+                      {item.label}
+                      <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${
+                        activeDropdown === item.label ? 'rotate-180' : ''
+                      }`} />
+                      <div className={`absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 transition-all duration-300 ${
+                        item.items && isDropdownActive(item.items) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                      }`}></div>
+                    </button>
+                    
+                    {/* Bridge element to prevent hover gaps */}
+                    {activeDropdown === item.label && (
+                      <div className="absolute top-full left-0 w-64 h-2 bg-transparent z-40"></div>
+                    )}
+                    
+                    {activeDropdown === item.label && (
+                      <div className="absolute top-full left-0 mt-1 w-64 bg-white border-2 border-black shadow-lg z-50">
+                        {item.items?.map((dropdownItem) => (
+                          dropdownItem.href && (
+                            <Link
+                              key={dropdownItem.href}
+                              href={dropdownItem.href}
+                              className={`block px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors border-b border-gray-200 last:border-b-0 ${
+                                isActivePath(dropdownItem.href)
+                                  ? 'text-red-600 bg-red-50'
+                                  : 'text-black'
+                              }`}
+                              aria-current={mounted && isActivePath(dropdownItem.href) ? 'page' : undefined}
+                            >
+                              <div className="font-bold">{dropdownItem.label}</div>
+                              <div className="text-xs text-gray-600 mt-1">{dropdownItem.description}</div>
+                            </Link>
+                          )
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  item.href && (
+                    <Link
+                      href={item.href}
+                      className={`font-bold text-sm uppercase tracking-wider transition-all duration-300 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 relative group ${
+                        isActivePath(item.href)
+                          ? 'text-red-600'
+                          : 'text-black'
+                      }`}
+                      aria-current={mounted && isActivePath(item.href) ? 'page' : undefined}
+                      title={item.description}
+                    >
+                      {item.label}
+                      <div className={`absolute -bottom-1 left-0 right-0 h-0.5 bg-red-600 transition-all duration-300 ${
+                        isActivePath(item.href) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                      }`}></div>
+                    </Link>
+                  )
+                )}
+              </div>
             ))}
             
             {/* Youth Scout CTA - Special Floating Button */}
@@ -155,33 +267,67 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
         </div>
 
         {/* Mobile Navigation */}
-        {mounted && isMobileMenuOpen && (
-          <nav 
-            id="mobile-menu"
-            className="lg:hidden mt-4 pb-4 border-t border-gray-200"
-            role="navigation"
-            aria-label="Mobile navigation"
-          >
+        <nav 
+          id="mobile-menu"
+          className={`lg:hidden mt-4 pb-4 border-t border-gray-200 ${
+            mounted && isMobileMenuOpen ? 'block' : 'hidden'
+          }`}
+          role="navigation"
+          aria-label="Mobile navigation"
+        >
             <div className="flex flex-col space-y-4 mt-4">
               {navigationItems.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`text-base font-bold px-3 py-2 rounded transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 block ${
-                    isActivePath(item.href)
-                      ? 'text-black bg-gray-100'
-                      : 'text-black hover:text-black hover:bg-gray-100'
-                  }`}
-                  aria-current={isActivePath(item.href) ? 'page' : undefined}
-                >
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <span>{item.label}</span>
+                <div key={item.label}>
+                  {item.type === 'dropdown' ? (
+                    <div>
+                      <div className="text-sm font-bold text-gray-700 uppercase tracking-wider px-3 py-2 border-b border-gray-200">
+                        {item.label}
+                      </div>
+                      {item.items?.map((dropdownItem) => (
+                        dropdownItem.href && (
+                          <Link
+                            key={dropdownItem.href}
+                            href={dropdownItem.href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className={`text-base font-bold px-6 py-2 rounded transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 block ml-3 ${
+                              isActivePath(dropdownItem.href)
+                                ? 'text-black bg-gray-100'
+                                : 'text-black hover:text-black hover:bg-gray-100'
+                            }`}
+                            aria-current={mounted && isActivePath(dropdownItem.href) ? 'page' : undefined}
+                          >
+                            <div>
+                              <div className="flex items-center justify-between">
+                                <span>{dropdownItem.label}</span>
+                              </div>
+                              <div className="text-sm text-black mt-1 font-normal">{dropdownItem.description}</div>
+                            </div>
+                          </Link>
+                        )
+                      ))}
                     </div>
-                    <div className="text-sm text-black mt-1 font-normal">{item.description}</div>
-                  </div>
-                </Link>
+                  ) : (
+                    item.href && (
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`text-base font-bold px-3 py-2 rounded transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 block ${
+                          isActivePath(item.href)
+                            ? 'text-black bg-gray-100'
+                            : 'text-black hover:text-black hover:bg-gray-100'
+                        }`}
+                        aria-current={mounted && isActivePath(item.href) ? 'page' : undefined}
+                      >
+                        <div>
+                          <div className="flex items-center justify-between">
+                            <span>{item.label}</span>
+                          </div>
+                          <div className="text-sm text-black mt-1 font-normal">{item.description}</div>
+                        </div>
+                      </Link>
+                    )
+                  )}
+                </div>
               ))}
               
               <Link 
@@ -196,8 +342,7 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                 <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </Link>
             </div>
-          </nav>
-        )}
+        </nav>
       </div>
     </header>
   );
