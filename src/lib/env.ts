@@ -145,7 +145,9 @@ export type Env = z.infer<typeof envSchema>;
 // Validate and parse environment variables
 function parseEnv(): Env {
   try {
-    return envSchema.parse(process.env);
+    // During build time, process.env might be undefined or incomplete
+    const env = process.env || {};
+    return envSchema.parse(env);
   } catch (error) {
     if (error instanceof z.ZodError) {
       const missingVars = error.errors
@@ -234,8 +236,8 @@ export const env = {
   }),
 };
 
-// Validate on import in non-test environments
-if (typeof window === 'undefined' && process.env.NODE_ENV !== 'test') {
+// Validate on import in non-test environments (skip during build)
+if (typeof window === 'undefined' && process.env.NODE_ENV !== 'test' && !process.env.BUILDING) {
   try {
     getEnv();
     console.log('✅ Environment configuration validated successfully');
