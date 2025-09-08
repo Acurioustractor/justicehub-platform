@@ -367,9 +367,11 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="data-card">
                 <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm">
-                    IMAGE PLACEHOLDER
-                  </div>
+                  <img 
+                    src="/screenshots/youth-scout-desktop.png" 
+                    alt="Youth Scout platform interface showing talent matching"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <h4 className="text-lg font-bold mb-3">"I found my purpose"</h4>
                 <p className="text-gray-700 mb-4">
@@ -384,9 +386,11 @@ export default function HomePage() {
               
               <div className="data-card">
                 <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm">
-                    IMAGE PLACEHOLDER
-                  </div>
+                  <img 
+                    src="/screenshots/stories-platform-desktop.png" 
+                    alt="Stories Platform interface showing youth storytelling features"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <h4 className="text-lg font-bold mb-3">"They saw something in me"</h4>
                 <p className="text-gray-700 mb-4">
@@ -401,9 +405,11 @@ export default function HomePage() {
               
               <div className="data-card">
                 <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm">
-                    IMAGE PLACEHOLDER
-                  </div>
+                  <img 
+                    src="/screenshots/community-programs-desktop.png" 
+                    alt="Community Programs interface showing grassroots support services"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <h4 className="text-lg font-bold mb-3">"Culture saved my life"</h4>
                 <p className="text-gray-700 mb-4">
