@@ -439,12 +439,39 @@ export default function AboutPage() {
                         <div className="bg-blue-800 text-white p-2 text-center">
                           <h3 className="font-bold text-xs">JUSTICEHUB MOBILE</h3>
                         </div>
-                        <div className="flex-1 overflow-hidden">
-                          <img
-                            src="/screenshots/homepage-hero-mobile.png"
-                            alt="JusticeHub mobile interface"
-                            className="w-full h-full object-cover object-top"
-                          />
+                        <div className="flex-1 overflow-hidden bg-white p-3">
+                          {/* Mobile Interface Mockup */}
+                          <div className="space-y-3 h-full">
+                            {/* Hero Section */}
+                            <div className="text-center py-4 bg-gradient-to-r from-blue-800 to-purple-700 text-white rounded-lg">
+                              <div className="text-xs font-bold">24x</div>
+                              <div className="text-xs">Indigenous kids locked up</div>
+                            </div>
+                            
+                            {/* Navigation Cards */}
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="bg-gray-50 p-2 rounded text-center">
+                                <div className="w-4 h-4 bg-blue-800 rounded mx-auto mb-1"></div>
+                                <div className="text-xs font-medium">Find Help</div>
+                              </div>
+                              <div className="bg-gray-50 p-2 rounded text-center">
+                                <div className="w-4 h-4 bg-purple-700 rounded mx-auto mb-1"></div>
+                                <div className="text-xs font-medium">Share Story</div>
+                              </div>
+                            </div>
+                            
+                            {/* Content Preview */}
+                            <div className="space-y-2">
+                              <div className="bg-gray-100 p-2 rounded">
+                                <div className="text-xs font-bold mb-1">Latest Stories</div>
+                                <div className="text-xs text-gray-600">Young voices changing the system...</div>
+                              </div>
+                              <div className="bg-gray-100 p-2 rounded">
+                                <div className="text-xs font-bold mb-1">Find Services</div>
+                                <div className="text-xs text-gray-600">Support near you right now...</div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                         <div className="border-t bg-gray-50 p-2">
                           <div className="flex justify-around">
