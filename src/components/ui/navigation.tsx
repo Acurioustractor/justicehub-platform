@@ -38,11 +38,6 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
 
   const navigationItems: NavigationItem[] = [
     {
-      label: 'About',
-      href: '/about',
-      description: 'How JusticeHub works'
-    },
-    {
       label: 'Stories',
       href: '/stories',
       description: 'Youth voices and experiences'
@@ -86,6 +81,22 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
           label: 'Roadmap',
           href: '/roadmap',
           description: 'Community-driven feature roadmap'
+        }
+      ]
+    },
+    {
+      label: 'CONTAINED',
+      type: 'dropdown',
+      items: [
+        {
+          label: 'Campaign Home',
+          href: '/contained',
+          description: 'Join the CONTAINED campaign'
+        },
+        {
+          label: 'About CONTAINED',
+          href: '/contained/about',
+          description: 'Meet the team and vision'
         }
       ]
     }
@@ -249,7 +260,21 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                 )}
               </div>
             ))}
-            
+
+            {/* About Link */}
+            <Link
+              href="/about"
+              className={`px-4 py-2 font-bold text-sm uppercase tracking-wider transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
+                isActivePath('/about')
+                  ? 'text-black underline decoration-2 underline-offset-4'
+                  : 'text-gray-700 hover:text-black hover:underline hover:decoration-2 hover:underline-offset-4'
+              }`}
+              aria-current={mounted && isActivePath('/about') ? 'page' : undefined}
+              title="Learn about JusticeHub"
+            >
+              About
+            </Link>
+
             {/* Youth Scout CTA - Special Floating Button */}
             <div className="ml-4 relative">
               <Link 
@@ -329,8 +354,33 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                   )}
                 </div>
               ))}
-              
-              <Link 
+
+              {/* About Link - Mobile (Distinct Style) */}
+              <div className="border-t-2 border-gray-200 pt-4 mt-4">
+                <div className="text-xs uppercase tracking-wider text-gray-500 font-bold px-3 mb-2">
+                  Learn More
+                </div>
+                <Link
+                  href="/about"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`border-2 mx-3 px-4 py-3 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 block ${
+                    isActivePath('/about')
+                      ? 'border-blue-800 bg-blue-800 text-white'
+                      : 'border-gray-400 text-gray-700 hover:border-blue-800 hover:bg-blue-800 hover:text-white'
+                  }`}
+                  aria-current={mounted && isActivePath('/about') ? 'page' : undefined}
+                >
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold">About JusticeHub</span>
+                      <span className="text-xs opacity-75">?</span>
+                    </div>
+                    <div className="text-sm mt-1 font-normal opacity-90">How our platform works</div>
+                  </div>
+                </Link>
+              </div>
+
+              <Link
                 href="/youth-scout"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="relative youth-scout-button text-white px-6 py-3 font-bold text-sm uppercase tracking-wider hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 group text-center rounded-sm no-underline"

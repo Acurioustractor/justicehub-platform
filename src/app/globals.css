@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import CONTAINED theme styles */
+@import '../styles/theme.css';
+
 @layer base {
   :root {
     /* JusticeHub Brand Colors - Truth needs no filter, accessible by design */
@@ -388,9 +391,9 @@ nav a:focus {
   @apply py-16 md:py-24;
 }
 
-/* Header offset for fixed navigation */
+/* Header offset for fixed navigation - increased to prevent content being hidden */
 .header-offset {
-  @apply pt-36 md:pt-40;
+  @apply pt-52 md:pt-56;
 }
 
 
