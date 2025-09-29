@@ -25,13 +25,19 @@ out/
 # Environment backups
 .env.local.backup*
 .env.*.backup*
+.env.backup*
 
-# API Keys and Secrets
+# API Keys and Secrets - CRITICAL
 *api-keys*
 *secrets*
 *.pem
 *.key
 *.cert
+*-secret.json
+*-credentials.json
+
+# Vercel environment files (downloaded locally)
+.vercel/.env*
 
 # Editor directories and files
 .idea
