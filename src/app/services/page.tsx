@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Search, 
@@ -27,87 +27,18 @@ interface Service {
   rating: number;
   verified: boolean;
   lastUpdated: string;
+  aiDiscovered?: boolean;
+  source?: string;
+  eligibility?: string[];
+  subcategory?: string;
 }
 
 export default function ServicesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
-
-  const sampleServices: Service[] = [
-    {
-      id: '1',
-      name: 'Youth Legal Aid Center',
-      category: 'legal',
-      description: 'Free legal assistance for youth facing criminal charges or system involvement',
-      location: 'Brisbane CBD',
-      contact: '1800-YOUTH-LAW',
-      cost: 'free',
-      rating: 4.8,
-      verified: true,
-      lastUpdated: '2 hours ago'
-    },
-    {
-      id: '2', 
-      name: 'Second Chance Education Hub',
-      category: 'education',
-      description: 'Alternative education pathways and vocational training for disconnected youth',
-      location: 'Logan',
-      contact: 'info@secondchance.org.au',
-      cost: 'free',
-      rating: 4.6,
-      verified: true,
-      lastUpdated: '1 day ago'
-    },
-    {
-      id: '3',
-      name: 'Crisis Response Team 24/7',
-      category: 'emergency',
-      description: 'Immediate crisis intervention and emergency support for youth in danger',
-      location: 'Statewide QLD',
-      contact: '000 or 1800-CRISIS',
-      cost: 'free',
-      rating: 4.9,
-      verified: true,
-      lastUpdated: '30 minutes ago'
-    },
-    {
-      id: '4',
-      name: 'Headspace Youth Mental Health',
-      category: 'health',
-      description: 'Mental health support, counseling, and wellbeing services for 12-25 year olds',
-      location: 'Multiple locations',
-      contact: '1800-650-890',
-      cost: 'free',
-      rating: 4.5,
-      verified: true,
-      lastUpdated: '4 hours ago'
-    },
-    {
-      id: '5',
-      name: 'Safe Haven Accommodation',
-      category: 'housing',
-      description: 'Emergency and transitional housing for homeless and at-risk youth',
-      location: 'Inner Brisbane',
-      contact: 'intake@safehaven.org.au',
-      cost: 'free',
-      rating: 4.3,
-      verified: true,
-      lastUpdated: '6 hours ago'
-    },
-    {
-      id: '6',
-      name: 'Youth Employment Pathways',
-      category: 'employment',
-      description: 'Job placement, skills training, and career coaching for justice-involved youth',
-      location: 'Gold Coast',
-      contact: '(07) 5555-0123',
-      cost: 'free',
-      rating: 4.7,
-      verified: true,
-      lastUpdated: '3 hours ago'
-    }
-  ];
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const categories = [
     { id: 'all', label: 'All Services', icon: Target },
@@ -121,7 +52,34 @@ export default function ServicesPage() {
     { id: 'substance', label: 'Substance Use Support', icon: Star }
   ];
 
-  const filteredServices = sampleServices.filter(service => {
+  // Load services on component mount
+  useEffect(() => {
+    loadServices();
+  }, []);
+
+  const loadServices = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/scraped-services');
+      const data = await response.json();
+
+      if (response.ok) {
+        // Only show AI-scraped services
+        const scrapedServices = data.services.map((s: any) => ({ ...s, aiDiscovered: true }));
+        setServices(scrapedServices);
+      } else {
+        console.error('Failed to load scraped services:', data.error);
+        setServices([]);
+      }
+    } catch (error) {
+      console.error('Error loading services:', error);
+      setServices([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredServices = services.filter(service => {
     const matchesSearch = service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          service.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || service.category === selectedCategory;
@@ -182,9 +140,9 @@ export default function ServicesPage() {
           <div className="container-justice">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
               <div>
-                <div className="text-3xl font-bold text-black mb-2">2,400+</div>
-                <div className="text-sm font-medium">Services Indexed</div>
-                <div className="text-xs text-gray-600 mt-1">Updated daily by AI</div>
+                <div className="text-3xl font-bold text-black mb-2">{services.length}</div>
+                <div className="text-sm font-medium">AI-Discovered Services</div>
+                <div className="text-xs text-gray-600 mt-1">Live from government sources</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-black mb-2">Australia-wide</div>
@@ -210,14 +168,14 @@ export default function ServicesPage() {
           <div className="container-justice">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
               <h2 className="text-xl font-bold mb-4 md:mb-0">FILTER BY CATEGORY</h2>
-              
+
               {/* View Mode Toggle */}
               <div className="flex border-2 border-black">
                 <button
                   onClick={() => setViewMode('cards')}
                   className={`p-3 font-bold transition-all ${
-                    viewMode === 'cards' 
-                      ? 'bg-black text-white' 
+                    viewMode === 'cards'
+                      ? 'bg-black text-white'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -226,8 +184,8 @@ export default function ServicesPage() {
                 <button
                   onClick={() => setViewMode('table')}
                   className={`p-3 font-bold transition-all border-l-2 border-black ${
-                    viewMode === 'table' 
-                      ? 'bg-black text-white' 
+                    viewMode === 'table'
+                      ? 'bg-black text-white'
                       : 'hover:bg-gray-100'
                   }`}
                 >
@@ -270,6 +228,14 @@ export default function ServicesPage() {
               </p>
             </div>
 
+            {/* Loading State */}
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="text-xl text-gray-600 mb-4">🤖 Loading AI-discovered services...</div>
+                <div className="text-sm text-gray-500">Fetching real-time data from government sources</div>
+              </div>
+            ) : (
+              <>
             {/* Results Display */}
             {viewMode === 'cards' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -280,13 +246,23 @@ export default function ServicesPage() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <h3 className="font-bold text-lg leading-tight">{service.name}</h3>
+                            {service.aiDiscovered && (
+                              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                🤖 AI-Discovered
+                              </span>
+                            )}
                             {service.verified && (
                               <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
                                 ✓ Verified
                               </span>
                             )}
                           </div>
-                          <div className="text-xs text-gray-500">Updated {service.lastUpdated}</div>
+                          <div className="text-xs text-gray-500">
+                            Updated {service.lastUpdated}
+                            {service.source && service.aiDiscovered && (
+                              <span className="ml-2">• Scraped from government data</span>
+                            )}
+                          </div>
                         </div>
                         <div className="flex items-center gap-1">
                           <Star className="h-4 w-4 fill-current text-yellow-400" />
@@ -400,6 +376,8 @@ export default function ServicesPage() {
                   Clear Filters
                 </button>
               </div>
+            )}
+            </>
             )}
           </div>
         </section>

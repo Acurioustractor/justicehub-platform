@@ -57,6 +57,11 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
           description: 'Curated grassroots solutions'
         },
         {
+          label: 'Community Map',
+          href: '/community-map',
+          description: 'Locate proven services nationwide'
+        },
+        {
           label: 'Gallery',
           href: '/gallery',
           description: 'Programs in action'

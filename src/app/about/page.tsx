@@ -29,7 +29,7 @@ import {
   X
 } from 'lucide-react';
 import Link from 'next/link';
-import { Navigation, Footer } from '@/components/ui/navigation';
+import { Navigation, Footer, QuickNav } from '@/components/ui/navigation';
 
 export default function AboutPage() {
   const [mounted, setMounted] = useState(false);
@@ -136,10 +136,17 @@ export default function AboutPage() {
       {/* Unified Navigation */}
       <Navigation />
 
+      {/* Quick Navigation for About Page */}
+      <QuickNav
+        backLink="/"
+        backLabel="Back to Home"
+        title="About JusticeHub"
+      />
+
       <main id="main-content">
 
         {/* Hero Section */}
-        <section className="header-offset pb-16 border-b-2 border-black">
+        <section className="pt-8 pb-16 border-b-2 border-black">
           <div className="container-justice">
             <div className="text-center max-w-4xl mx-auto">
               <div className="mb-4 text-sm uppercase tracking-wider text-black font-bold">

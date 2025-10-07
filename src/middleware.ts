@@ -34,12 +34,27 @@ const securityHeaders = {
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
     "media-src 'self' blob:",
-    "connect-src 'self' https://api.openai.com https://*.auth0.com https://*.amazonaws.com",
+    [
+      "connect-src 'self'",
+      'https://api.openai.com',
+      'https://*.auth0.com',
+      'https://*.amazonaws.com',
+      'https://basemaps.cartocdn.com',
+      'https://tiles.basemaps.cartocdn.com',
+      'https://*.basemaps.cartocdn.com',
+      'https://demotiles.maplibre.org',
+      'https://tile.openstreetmap.org',
+      'https://*.tile.openstreetmap.org',
+      'blob:',
+      'data:'
+    ].join(' '),
     "frame-src 'self' https://*.auth0.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
+    "worker-src 'self' blob:",
+    "child-src 'self' blob:",
     "upgrade-insecure-requests"
   ].join('; ')
 };

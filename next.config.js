@@ -5,10 +5,31 @@ const nextConfig = {
     optimizeServerReact: true,
   },
   images: {
-    domains: [
-      'localhost',
-      's3.amazonaws.com',
-      'justicehub-media.s3.amazonaws.com',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: 's3.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'justicehub-media.s3.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'your-project-id.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'tednluwflfhxyucgwigh.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
