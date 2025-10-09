@@ -17,6 +17,8 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import ExcellenceMap from '@/components/ExcellenceMap';
+import { australianFrameworks } from '@/content/excellence-map-locations';
 
 interface BestPracticeModel {
   id: string;
@@ -415,6 +417,23 @@ export default function BestPracticePage() {
                 <div className="text-3xl font-bold mb-1">71%</div>
                 <div className="text-sm text-gray-600">WA detention are Aboriginal (6% population)</div>
               </div>
+            </div>
+
+            {/* Australian Frameworks Map */}
+            <div className="mt-12">
+              <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                <MapPin className="h-6 w-6" />
+                Australian State Frameworks
+              </h3>
+              <p className="text-gray-700 mb-6">
+                See where these state-level approaches operate across Australia. Click markers for key outcomes and challenges.
+              </p>
+              <ExcellenceMap
+                locations={australianFrameworks}
+                height="450px"
+                initialZoom={3.5}
+                initialCenter={[133.7751, -26.2744]}
+              />
             </div>
           </div>
         </section>

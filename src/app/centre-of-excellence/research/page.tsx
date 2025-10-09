@@ -20,6 +20,8 @@ import {
   MapPin
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import ExcellenceMap from '@/components/ExcellenceMap';
+import { researchSources } from '@/content/excellence-map-locations';
 
 // Research item type
 interface ResearchItem {
@@ -976,6 +978,23 @@ export default function ResearchLibraryPage() {
                 </div>
               </div>
             )}
+
+            {/* Research Sources Map */}
+            <div className="mt-12">
+              <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                <MapPin className="h-6 w-6" />
+                Global Research Sources
+              </h3>
+              <p className="text-gray-700 mb-6">
+                Major research institutions contributing to our evidence base. Click markers to learn more about each organization.
+              </p>
+              <ExcellenceMap
+                locations={researchSources}
+                height="450px"
+                initialZoom={1.5}
+                initialCenter={[25, 10]}
+              />
+            </div>
           </div>
         </section>
 

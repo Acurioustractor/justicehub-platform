@@ -58,4 +58,4 @@ Thumbs.db
 
 # Large data files
 *.json.large
-**/archive/data-extracts/*.json 
+**/archive/data-extracts/*.json .env.bak*

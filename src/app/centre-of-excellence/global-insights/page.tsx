@@ -20,6 +20,8 @@ import {
   Video
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import ExcellenceMap from '@/components/ExcellenceMap';
+import { internationalModels } from '@/content/excellence-map-locations';
 
 // International model interface
 interface InternationalModel {
@@ -701,6 +703,23 @@ export default function GlobalInsightsPage() {
                 <div className="text-3xl font-bold mb-1">24%</div>
                 <div className="text-sm text-gray-600">Missouri Model recidivism vs 43-52% other states</div>
               </div>
+            </div>
+
+            {/* International Models Map */}
+            <div className="mt-12">
+              <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                <Globe className="h-6 w-6" />
+                International Models Locations
+              </h3>
+              <p className="text-gray-700 mb-6">
+                Explore where these proven youth justice models operate. Click markers to see key outcomes for each jurisdiction.
+              </p>
+              <ExcellenceMap
+                locations={internationalModels}
+                height="450px"
+                initialZoom={1.5}
+                initialCenter={[25, 30]}
+              />
             </div>
           </div>
         </section>
