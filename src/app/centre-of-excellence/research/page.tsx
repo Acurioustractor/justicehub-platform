@@ -16,7 +16,8 @@ import {
   TrendingUp,
   Award,
   Users,
-  ArrowLeft
+  ArrowLeft,
+  MapPin
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 
