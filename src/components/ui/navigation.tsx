@@ -104,6 +104,11 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
           description: 'Meet the team and vision'
         }
       ]
+    },
+    {
+      label: 'Centre of Excellence',
+      href: '/centre-of-excellence',
+      description: 'Australian leadership in youth justice'
     }
   ];
 
@@ -491,7 +496,8 @@ export function Footer() {
         { label: 'Gallery', href: '/gallery', description: 'Programs in action' },
         { label: 'Money Trail', href: '/transparency', description: 'Financial transparency' },
         { label: 'Art & Innovation', href: '/art-innovation', description: 'Creative solutions' },
-        { label: 'Roadmap', href: '/roadmap', description: 'Community-driven features' }
+        { label: 'Roadmap', href: '/roadmap', description: 'Community-driven features' },
+        { label: 'Centre of Excellence', href: '/centre-of-excellence', description: 'Research and best practice' }
       ]
     },
     {
