@@ -10,9 +10,16 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "screenshots": "node scripts/take-screenshots.js",
-    "screenshots:install": "npm install playwright && npx playwright install chromium"
+    "screenshots:install": "npm install playwright && npx playwright install chromium",
+    "scrape": "NODE_OPTIONS='--require dotenv/config' npx tsx src/scripts/scrape-qld-services.ts",
+    "scrape:batch": "NODE_OPTIONS='--require dotenv/config' npx tsx src/scripts/scrape-qld-services-batch.ts",
+    "scrape:high": "NODE_OPTIONS='--require dotenv/config' npx tsx src/scripts/scrape-qld-services-batch.ts 3 high",
+    "scrape:all": "NODE_OPTIONS='--require dotenv/config' npx tsx src/scripts/scrape-qld-services-batch.ts 5 all",
+    "scrape:daemon": "NODE_OPTIONS='--require dotenv/config' npx tsx src/scripts/scraper-daemon.ts",
+    "scrape:daemon:bg": "nohup npm run scrape:daemon > logs/daemon.log 2>&1 &"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.65.0",
     "@auth0/nextjs-auth0": "^3.5.0",
     "@notionhq/client": "^5.1.0",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -38,6 +45,8 @@
     "@tiptap/pm": "^3.2.0",
     "@tiptap/react": "^3.2.0",
     "@tiptap/starter-kit": "^3.2.0",
+    "cheerio": "^1.1.2",
+    "chromadb": "^3.0.17",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -45,11 +54,12 @@
     "lucide-react": "^0.517.0",
     "maplibre-gl": "^4.7.1",
     "next": "^14.2.25",
+    "openai": "^6.2.0",
     "react": "^18",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^4.1.11"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
@@ -59,7 +69,7 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.0.4",
-    "playwright": "^1.55.0",
+    "playwright": "^1.56.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.3.3"

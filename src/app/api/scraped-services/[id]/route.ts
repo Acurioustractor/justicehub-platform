@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL || 'https://tednluwflfhxyucgwigh.supabase.co',
-  process.env.SUPABASE_SERVICE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlZG5sdXdmbGZoeHl1Y2d3aWdoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjM0NjIyOSwiZXhwIjoyMDY3OTIyMjI5fQ.wyizbOWRxMULUp6WBojJPfey1ta8-Al1OlZqDDIPIHo'
-);
+// Use environment variables - don't hardcode
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function GET(
   request: NextRequest,
@@ -17,24 +22,10 @@ export async function GET(
       return NextResponse.json({ error: 'Service ID is required' }, { status: 400 });
     }
 
-    // Get the specific service
+    // Get the specific service from services_complete view
     const { data: service, error } = await supabase
-      .from('scraped_services')
-      .select(`
-        id,
-        name,
-        description,
-        category,
-        subcategory,
-        eligibility_criteria,
-        cost_structure,
-        contact_info,
-        confidence_score,
-        source_url,
-        extraction_timestamp,
-        validation_status,
-        active
-      `)
+      .from('services_complete')
+      .select('*')
       .eq('id', serviceId)
       .eq('active', true)
       .single();
@@ -55,21 +46,26 @@ export async function GET(
     const transformedService = {
       id: service.id,
       name: service.name,
-      category: mapCategory(service.category),
-      description: service.description,
-      location: extractLocation(service.contact_info, service.source_url),
-      contact: extractContact(service.contact_info),
-      cost: mapCost(service.cost_structure),
-      rating: Math.round(service.confidence_score * 5 * 100) / 100, // Convert confidence to 5-star rating
-      verified: service.validation_status === 'approved' || service.confidence_score >= 0.8,
-      lastUpdated: formatTimestamp(service.extraction_timestamp),
-      source: service.source_url,
-      aiDiscovered: true,
-      eligibility: service.eligibility_criteria || [],
-      subcategory: service.subcategory,
-      contactInfo: service.contact_info,
-      confidenceScore: service.confidence_score,
-      extractionTimestamp: service.extraction_timestamp
+      category: mapCategory(service.categories?.[0] || 'support'),
+      description: service.description || 'No description available',
+      location: buildLocation(service),
+      contact: extractContact(service),
+      cost: mapCost(service.cost || 'unknown'),
+      rating: Math.round((service.score || 0.5) * 5 * 100) / 100,
+      verified: service.verification_status === 'verified' || (service.score || 0) >= 0.8,
+      lastUpdated: formatTimestamp(service.scraped_at || service.updated_at),
+      source: service.source_url || service.url,
+      aiDiscovered: service.source === 'scraper' || service.source === 'ai_scrape',
+      eligibility: service.eligibility || [],
+      subcategory: service.categories?.[1],
+      contactInfo: {
+        phone: service.contact?.phone || service.phone,
+        email: service.contact?.email || service.email,
+        website: service.url,
+        address: buildAddress(service)
+      },
+      confidenceScore: service.score,
+      extractionTimestamp: service.scraped_at
     };
 
     return NextResponse.json({
@@ -87,54 +83,54 @@ export async function GET(
   }
 }
 
-// Helper functions (same as main API)
+// Helper functions
 function mapCategory(category: string): string {
   const categoryMap: { [key: string]: string } = {
-    'legal_support': 'legal',
-    'crisis_intervention': 'emergency',
-    'youth_support': 'family',
+    'legal_aid': 'legal',
     'mental_health': 'health',
+    'crisis_support': 'emergency',
     'education_training': 'education',
     'employment': 'employment',
     'housing': 'housing',
-    'substance_use': 'substance'
+    'substance_abuse': 'substance',
+    'family_support': 'family',
+    'court_support': 'legal',
+    'advocacy': 'legal'
   };
   return categoryMap[category] || 'family';
 }
 
-function mapCost(costStructure: string): 'free' | 'low' | 'moderate' {
-  if (!costStructure) return 'free';
-  const cost = costStructure.toLowerCase();
-  if (cost.includes('free') || cost.includes('no cost')) return 'free';
-  if (cost.includes('low') || cost.includes('sliding')) return 'low';
-  return 'moderate';
+function mapCost(cost: string): 'free' | 'low' | 'moderate' {
+  if (!cost) return 'free';
+  const costLower = cost.toLowerCase();
+  if (costLower === 'free' || costLower === 'unknown') return 'free';
+  if (costLower === 'subsidized') return 'low';
+  if (costLower === 'fee_based') return 'moderate';
+  return 'free';
 }
 
-function extractLocation(contactInfo: any, sourceUrl: string): string {
-  if (contactInfo?.address) return contactInfo.address;
-  if (contactInfo?.location) return contactInfo.location;
-
-  // Extract location from source URL
-  if (sourceUrl?.includes('nsw')) return 'NSW';
-  if (sourceUrl?.includes('qld')) return 'Queensland';
-  if (sourceUrl?.includes('vic')) return 'Victoria';
-  if (sourceUrl?.includes('wa')) return 'Western Australia';
-  if (sourceUrl?.includes('sa')) return 'South Australia';
-  if (sourceUrl?.includes('tas')) return 'Tasmania';
-  if (sourceUrl?.includes('nt')) return 'Northern Territory';
-  if (sourceUrl?.includes('act')) return 'ACT';
-
-  return 'Australia-wide';
+function buildLocation(service: any): string {
+  const parts = [];
+  if (service.city) parts.push(service.city);
+  if (service.state) parts.push(service.state);
+  return parts.join(', ') || 'Queensland';
 }
 
-function extractContact(contactInfo: any): string {
-  if (!contactInfo) return 'Contact via service website';
-  if (typeof contactInfo === 'string') return contactInfo;
+function buildAddress(service: any): string {
+  const parts = [];
+  if (service.address) parts.push(service.address);
+  if (service.city) parts.push(service.city);
+  if (service.state) parts.push(service.state);
+  if (service.postcode) parts.push(service.postcode);
+  return parts.join(', ') || 'Address not available';
+}
 
-  if (contactInfo.phone) return contactInfo.phone;
-  if (contactInfo.email) return contactInfo.email;
-  if (contactInfo.website) return contactInfo.website;
-
+function extractContact(service: any): string {
+  if (service.contact?.phone) return service.contact.phone;
+  if (service.phone) return service.phone;
+  if (service.contact?.email) return service.contact.email;
+  if (service.email) return service.email;
+  if (service.url) return service.url;
   return 'Contact via service website';
 }
 

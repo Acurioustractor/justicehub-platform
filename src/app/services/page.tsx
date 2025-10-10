@@ -33,6 +33,28 @@ interface Service {
   subcategory?: string;
 }
 
+// Helper function to map database categories to UI categories
+function mapCategory(dbCategory: string): Service['category'] {
+  const categoryMap: { [key: string]: Service['category'] } = {
+    'legal_aid': 'legal',
+    'court_support': 'legal',
+    'advocacy': 'legal',
+    'mental_health': 'health',
+    'health': 'health',
+    'crisis_support': 'emergency',
+    'emergency': 'emergency',
+    'education_training': 'education',
+    'education': 'education',
+    'employment': 'employment',
+    'housing': 'housing',
+    'substance_abuse': 'substance',
+    'substance': 'substance',
+    'family_support': 'family',
+    'case_management': 'family'
+  };
+  return categoryMap[dbCategory] || 'family';
+}
+
 export default function ServicesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -60,15 +82,30 @@ export default function ServicesPage() {
   const loadServices = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/scraped-services');
+      const response = await fetch('/api/services?limit=100');
       const data = await response.json();
 
-      if (response.ok) {
-        // Only show AI-scraped services
-        const scrapedServices = data.services.map((s: any) => ({ ...s, aiDiscovered: true }));
-        setServices(scrapedServices);
+      if (response.ok && data.success) {
+        // Map to the format this component expects
+        const formattedServices = data.data.map((s: any) => ({
+          id: s.id,
+          name: s.name,
+          category: mapCategory(s.categories?.[0] || 'family'),
+          description: s.description || '',
+          location: s.location?.city || s.location?.region || 'QLD',
+          contact: s.contact?.phone || s.contact?.email || 'Contact via organization',
+          cost: s.cost === 'free' ? 'free' : 'low',
+          rating: 4.5, // Default
+          verified: s.verification_status === 'verified',
+          lastUpdated: s.updated_at || s.created_at,
+          aiDiscovered: !!s.data_source,
+          source: s.data_source_url,
+          eligibility: s.eligibility_criteria || [],
+          subcategory: s.categories?.[0] || ''
+        }));
+        setServices(formattedServices);
       } else {
-        console.error('Failed to load scraped services:', data.error);
+        console.error('Failed to load services:', data.error);
         setServices([]);
       }
     } catch (error) {

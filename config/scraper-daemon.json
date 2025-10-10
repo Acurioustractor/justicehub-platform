@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "schedule": {
+    "daily": true,
+    "hourOfDay": 2,
+    "daysOfWeek": [0, 1, 2, 3, 4, 5, 6]
+  },
+  "batchSize": 5,
+  "priorityFilter": "all",
+  "notificationEmail": "admin@justicehub.org"
+}

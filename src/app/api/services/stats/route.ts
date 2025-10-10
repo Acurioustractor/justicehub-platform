@@ -26,39 +26,89 @@ export async function GET() {
       },
     }
   )
-  
-  // Get total services count
-  const { count: totalServices, error: servicesError } = await supabase
-    .from('services')
-    .select('*', { count: 'exact' })
-    .eq('active', true)
-  
-  if (servicesError) {
-    return NextResponse.json({ success: false, error: servicesError.message })
+
+  try {
+    // Get total services
+    const { count: totalServices } = await supabase
+      .from('services')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
+
+    // Get total organizations
+    const { count: totalOrganizations } = await supabase
+      .from('organizations')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
+
+    // Get total locations
+    const { count: totalLocations } = await supabase
+      .from('service_locations')
+      .select('*', { count: 'exact', head: true })
+
+    // Get total contacts
+    const { count: totalContacts } = await supabase
+      .from('service_contacts')
+      .select('*', { count: 'exact', head: true })
+
+    // Get services by region
+    const { data: regionData } = await supabase
+      .from('services')
+      .select('location_city')
+      .eq('is_active', true)
+
+    const byRegion: Record<string, number> = {}
+    regionData?.forEach((service) => {
+      if (service.location_city) {
+        byRegion[service.location_city] = (byRegion[service.location_city] || 0) + 1
+      }
+    })
+
+    // Get services by category
+    const { data: categoryData } = await supabase
+      .from('services')
+      .select('categories')
+      .eq('is_active', true)
+
+    const byCategory: Record<string, number> = {}
+    categoryData?.forEach((service) => {
+      if (service.categories && Array.isArray(service.categories)) {
+        service.categories.forEach((category: string) => {
+          byCategory[category] = (byCategory[category] || 0) + 1
+        })
+      }
+    })
+
+    // Get youth-specific and indigenous-specific counts
+    const { count: youthSpecificCount } = await supabase
+      .from('services')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .eq('youth_specific', true)
+
+    const { count: indigenousSpecificCount } = await supabase
+      .from('services')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .eq('indigenous_specific', true)
+
+    return NextResponse.json({
+      success: true,
+      stats: {
+        total_services: totalServices || 0,
+        total_organizations: totalOrganizations || 0,
+        total_locations: totalLocations || 0,
+        total_contacts: totalContacts || 0,
+        youth_specific_services: youthSpecificCount || 0,
+        indigenous_specific_services: indigenousSpecificCount || 0,
+        by_region: byRegion,
+        by_category: byCategory,
+      }
+    })
+  } catch (error) {
+    console.error('Stats API error:', error)
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to fetch statistics'
+    }, { status: 500 })
   }
-  
-  // Get organizations count
-  const { count: totalOrganizations, error: orgsError } = await supabase
-    .from('organizations')
-    .select('*', { count: 'exact' })
-    .eq('is_active', true)
-  
-  if (orgsError) {
-    return NextResponse.json({ success: false, error: orgsError.message })
-  }
-  
-  // Simple stats object
-  const stats = {
-    total_services: totalServices || 0,
-    total_organizations: totalOrganizations || 0,
-    total_locations: 0, // Implement based on your data
-    total_contacts: 0, // Implement based on your data
-    by_region: {}, // Implement based on your data
-    by_category: {} // Implement based on your data
-  }
-  
-  return NextResponse.json({
-    success: true,
-    stats
-  })
 }

@@ -26,34 +26,61 @@ export async function GET(request: Request) {
       },
     }
   )
-  
+
   const { searchParams } = new URL(request.url)
-  const limit = searchParams.get('limit') || '12'
-  const page = searchParams.get('page') || '1'
-  
-  const from = (parseInt(page) - 1) * parseInt(limit)
-  const to = from + parseInt(limit) - 1
-  
-  const { data, error, count } = await supabase
-    .from('services')
-    .select(`
-      *,
-      organization:organizations(name, website_url)
-    `, { count: 'exact' })
+  const limit = parseInt(searchParams.get('limit') || '12')
+  const page = parseInt(searchParams.get('page') || '1')
+  const category = searchParams.get('category')
+  const state = searchParams.get('state')
+  const youthSpecific = searchParams.get('youth_specific')
+  const indigenousSpecific = searchParams.get('indigenous_specific')
+
+  const from = (page - 1) * limit
+  const to = from + limit - 1
+
+  // Use the services_complete view for frontend compatibility
+  let query = supabase
+    .from('services_complete')
+    .select('*', { count: 'exact' })
     .eq('active', true)
     .range(from, to)
-  
-  if (error) {
-    return NextResponse.json({ success: false, error: error.message })
+    .order('created_at', { ascending: false })
+
+  // Apply filters
+  if (category) {
+    query = query.contains('categories', [category])
   }
-  
+
+  if (state) {
+    query = query.eq('location.state', state)
+  }
+
+  if (youthSpecific === 'true') {
+    query = query.eq('youth_specific', true)
+  }
+
+  if (indigenousSpecific === 'true') {
+    query = query.eq('indigenous_specific', true)
+  }
+
+  const { data, error, count } = await query
+
+  if (error) {
+    console.error('Services API error:', error)
+    return NextResponse.json({
+      success: false,
+      error: error.message
+    }, { status: 500 })
+  }
+
   return NextResponse.json({
     success: true,
     data,
     pagination: {
-      total: count,
-      page: parseInt(page),
-      limit: parseInt(limit)
+      total: count || 0,
+      page,
+      limit,
+      totalPages: Math.ceil((count || 0) / limit)
     }
   })
 }

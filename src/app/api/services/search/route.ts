@@ -32,12 +32,10 @@ export async function GET(request: Request) {
   const location = searchParams.get('location') || ''
   const limit = searchParams.get('limit') || '24'
   
+  // Use services_complete view for full compatibility
   let supabaseQuery = supabase
-    .from('services')
-    .select(`
-      *,
-      organization:organizations(name, website_url)
-    `)
+    .from('services_complete')
+    .select('*')
     .eq('active', true)
     .limit(parseInt(limit))
   
