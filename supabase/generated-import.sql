@@ -440,4 +440,3 @@ SELECT
 FROM services
 ORDER BY table_name;
 
-✅ Generated SQL for 325 unique organizations
