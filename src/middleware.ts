@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getSession } from '@auth0/nextjs-auth0/edge';
+import { createServerClient } from '@supabase/ssr';
 
 // Add a mock session for development
 const mockSession = {
@@ -39,6 +39,7 @@ const securityHeaders = {
       'https://api.openai.com',
       'https://*.auth0.com',
       'https://*.amazonaws.com',
+      'https://*.supabase.co',
       'https://basemaps.cartocdn.com',
       'https://tiles.basemaps.cartocdn.com',
       'https://*.basemaps.cartocdn.com',
@@ -113,8 +114,38 @@ function detectSuspiciousActivity(req: NextRequest): boolean {
 }
 
 export async function middleware(request: NextRequest) {
-  const response = NextResponse.next();
+  let response = NextResponse.next();
   const path = request.nextUrl.pathname;
+
+  // Create Supabase client for middleware (handles auth cookie refresh)
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          const cookies = request.cookies.getAll()
+          console.log('🍪 Middleware cookies:', cookies.map(c => c.name).join(', '))
+          return cookies
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value)
+          })
+          response = NextResponse.next({
+            request,
+          })
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options)
+          })
+        },
+      },
+    }
+  )
+
+  // Refresh session if expired - this is crucial!
+  const { data: { user }, error } = await supabase.auth.getUser()
+  console.log('🔐 Middleware auth check:', user ? `User: ${user.email}` : `No user (${error?.message})`)
 
   // Apply security headers to all responses
   Object.entries(securityHeaders).forEach(([key, value]) => {
@@ -153,56 +184,9 @@ export async function middleware(request: NextRequest) {
     }
   }
   
-  // Skip authentication for public routes
-  const publicPaths = ['/', '/api/health', '/_next/', '/favicon.ico', '/stories/browse', '/public/'];
-  if (publicPaths.some(publicPath => path.startsWith(publicPath))) {
-    return response;
-  }
-
-  try {
-    let session: any;
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log('DEV MODE: Bypassing authentication with mock user.');
-      session = mockSession;
-    } else {
-      session = await getSession(request, response);
-    }
-    
-    if (!session?.user) {
-      // Redirect to login for protected routes if not in dev and no session
-      if (process.env.NODE_ENV !== 'development') {
-        return NextResponse.redirect(new URL('/api/auth/login', request.url));
-      }
-    }
-
-    // Role-based access control for both real and mock sessions
-    if (session?.user) {
-      const userRole = session.user['https://justicehub.org/role'] || 'youth';
-      
-      // Admin routes
-      if (request.nextUrl.pathname.startsWith('/admin') && userRole !== 'admin') {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
-      
-      // Organization admin routes
-      if (request.nextUrl.pathname.startsWith('/organization') && 
-          !['org_admin', 'admin'].includes(userRole)) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
-      
-      // Mentor routes
-      if (request.nextUrl.pathname.startsWith('/mentor') && 
-          !['mentor', 'org_admin', 'admin'].includes(userRole)) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
-    }
-
-    return response;
-  } catch (error) {
-    console.error('Middleware error:', error);
-    return response;
-  }
+  // Most routes are public - no auth required
+  // Protected routes can handle auth in their own page components
+  return response;
 }
 
 export const config = {

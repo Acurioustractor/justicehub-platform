@@ -43,23 +43,70 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
       description: 'Youth voices and experiences'
     },
     {
-      label: 'Service Finder',
-      href: '/services',
-      description: 'AI-powered comprehensive directory'
-    },
-    {
-      label: 'Explore',
+      label: 'Discover',
       type: 'dropdown',
       items: [
         {
-          label: 'Community Programs',
-          href: '/community-programs',
-          description: 'Curated grassroots solutions'
+          label: 'People',
+          href: '/people',
+          description: 'Advocates, artists, and changemakers'
         },
         {
-          label: 'Community Map',
+          label: 'Organizations',
+          href: '/organizations',
+          description: 'Youth justice organizations'
+        },
+        {
+          label: 'Programs',
+          href: '/community-programs',
+          description: 'Community-led solutions'
+        },
+        {
+          label: 'Services',
+          href: '/services',
+          description: 'Support services directory'
+        },
+        {
+          label: 'Map',
           href: '/community-map',
-          description: 'Locate proven services nationwide'
+          description: 'Locate services nationwide'
+        }
+      ]
+    },
+    {
+      label: 'Centre of Excellence',
+      type: 'dropdown',
+      items: [
+        {
+          label: 'Overview',
+          href: '/centre-of-excellence',
+          description: 'Australian youth justice leadership'
+        },
+        {
+          label: 'Research',
+          href: '/centre-of-excellence/research',
+          description: 'Evidence-based insights'
+        },
+        {
+          label: 'Best Practice',
+          href: '/centre-of-excellence/best-practice',
+          description: 'Proven approaches'
+        },
+        {
+          label: 'Global Insights',
+          href: '/centre-of-excellence/global-insights',
+          description: 'International perspectives'
+        }
+      ]
+    },
+    {
+      label: 'Platform',
+      type: 'dropdown',
+      items: [
+        {
+          label: 'Transparency',
+          href: '/transparency',
+          description: 'Track funding and outcomes'
         },
         {
           label: 'Gallery',
@@ -69,46 +116,14 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
         {
           label: 'Art & Innovation',
           href: '/art-innovation',
-          description: 'Creative works and tech solutions'
-        }
-      ]
-    },
-    {
-      label: 'Platform',
-      type: 'dropdown',
-      items: [
-        {
-          label: 'Money Trail',
-          href: '/transparency',
-          description: 'Track funding and outcomes'
+          description: 'Creative solutions'
         },
         {
           label: 'Roadmap',
           href: '/roadmap',
-          description: 'Community-driven feature roadmap'
+          description: 'Community-driven features'
         }
       ]
-    },
-    {
-      label: 'CONTAINED',
-      type: 'dropdown',
-      items: [
-        {
-          label: 'Campaign Home',
-          href: '/contained',
-          description: 'Join the CONTAINED campaign'
-        },
-        {
-          label: 'About CONTAINED',
-          href: '/contained/about',
-          description: 'Meet the team and vision'
-        }
-      ]
-    },
-    {
-      label: 'Centre of Excellence',
-      href: '/centre-of-excellence',
-      description: 'Australian leadership in youth justice'
     }
   ];
 
@@ -239,7 +254,7 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                                   ? 'text-red-600 bg-red-50'
                                   : 'text-black'
                               }`}
-                              aria-current={mounted && isActivePath(dropdownItem.href) ? 'page' : undefined}
+                              aria-current={isActivePath(dropdownItem.href) ? 'page' : undefined}
                             >
                               <div className="font-bold">{dropdownItem.label}</div>
                               <div className="text-xs text-gray-600 mt-1">{dropdownItem.description}</div>
@@ -258,7 +273,7 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                           ? 'text-red-600'
                           : 'text-black'
                       }`}
-                      aria-current={mounted && isActivePath(item.href) ? 'page' : undefined}
+                      aria-current={isActivePath(item.href) ? 'page' : undefined}
                       title={item.description}
                     >
                       {item.label}
@@ -279,7 +294,7 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                   ? 'text-black underline decoration-2 underline-offset-4'
                   : 'text-gray-700 hover:text-black hover:underline hover:decoration-2 hover:underline-offset-4'
               }`}
-              aria-current={mounted && isActivePath('/about') ? 'page' : undefined}
+              aria-current={isActivePath('/about') ? 'page' : undefined}
               title="Learn about JusticeHub"
             >
               About
@@ -329,7 +344,7 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                                 ? 'text-black bg-gray-100'
                                 : 'text-black hover:text-black hover:bg-gray-100'
                             }`}
-                            aria-current={mounted && isActivePath(dropdownItem.href) ? 'page' : undefined}
+                            aria-current={isActivePath(dropdownItem.href) ? 'page' : undefined}
                           >
                             <div>
                               <div className="flex items-center justify-between">
@@ -351,7 +366,7 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                             ? 'text-black bg-gray-100'
                             : 'text-black hover:text-black hover:bg-gray-100'
                         }`}
-                        aria-current={mounted && isActivePath(item.href) ? 'page' : undefined}
+                        aria-current={isActivePath(item.href) ? 'page' : undefined}
                       >
                         <div>
                           <div className="flex items-center justify-between">
@@ -378,7 +393,7 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                       ? 'border-blue-800 bg-blue-800 text-white'
                       : 'border-gray-400 text-gray-700 hover:border-blue-800 hover:bg-blue-800 hover:text-white'
                   }`}
-                  aria-current={mounted && isActivePath('/about') ? 'page' : undefined}
+                  aria-current={isActivePath('/about') ? 'page' : undefined}
                 >
                   <div>
                     <div className="flex items-center justify-between">
