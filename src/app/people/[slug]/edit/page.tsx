@@ -25,7 +25,8 @@ export default function EditProfilePage({ params }: { params: { slug: string } }
     photo_url: '',
     website_url: '',
     email: '',
-    social_links: {} as Record<string, string>
+    social_links: {} as Record<string, string>,
+    is_public: false
   });
 
   const availableRoleTags = [
@@ -101,7 +102,8 @@ export default function EditProfilePage({ params }: { params: { slug: string } }
       photo_url: profileData.photo_url || '',
       website_url: profileData.website_url || '',
       email: profileData.email || '',
-      social_links: profileData.social_links || {}
+      social_links: profileData.social_links || {},
+      is_public: profileData.is_public || false
     });
 
     setLoading(false);
@@ -245,6 +247,27 @@ export default function EditProfilePage({ params }: { params: { slug: string } }
             </div>
 
             {/* Basic Info */}
+            <div className="border-2 border-black p-6 bg-white">
+              <h2 className="text-xl font-black mb-4">Profile Visibility</h2>
+
+              <div className="space-y-4">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_public}
+                    onChange={(e) => setFormData({ ...formData, is_public: e.target.checked })}
+                    className="w-6 h-6 border-2 border-black focus:ring-2 focus:ring-ochre-600"
+                  />
+                  <span className="font-bold">Make my profile public</span>
+                </label>
+                <p className="text-sm text-earth-600">
+                  {formData.is_public
+                    ? '✅ Your profile is visible to everyone'
+                    : '🔒 Your profile is private (only you can see it)'}
+                </p>
+              </div>
+            </div>
+
             <div className="border-2 border-black p-6 bg-white">
               <h2 className="text-xl font-black mb-4">Basic Information</h2>
 

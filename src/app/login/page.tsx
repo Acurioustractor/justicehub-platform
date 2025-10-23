@@ -92,10 +92,16 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-2">
+            <p className="text-sm text-earth-600">
+              Don't have an account?{' '}
+              <Link href="/signup" className="text-ochre-600 hover:text-ochre-800 underline font-bold">
+                Sign up
+              </Link>
+            </p>
             <Link
               href="/"
-              className="text-sm text-earth-600 hover:text-earth-900 underline"
+              className="block text-sm text-earth-600 hover:text-earth-900 underline"
             >
               ← Back to Home
             </Link>
