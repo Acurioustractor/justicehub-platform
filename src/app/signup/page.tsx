@@ -80,11 +80,24 @@ export default function SignupPage() {
         throw new Error('Not authenticated');
       }
 
-      // Generate slug from full name
-      const slug = fullName
+      // Generate slug from full name with uniqueness check
+      let slug = fullName
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
+
+      // Check if slug exists and add random suffix if needed
+      const { data: existingProfile } = await supabase
+        .from('public_profiles')
+        .select('slug')
+        .eq('slug', slug)
+        .single();
+
+      if (existingProfile) {
+        // Add random 4-digit suffix to make it unique
+        const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+        slug = `${slug}-${randomSuffix}`;
+      }
 
       // Create users table record
       const { error: userError } = await supabase
