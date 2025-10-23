@@ -301,7 +301,7 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
             </Link>
 
             {/* Youth Scout CTA - Special Floating Button */}
-            <div className="ml-4 relative">
+            <div className="ml-4 flex items-center gap-3">
               <Link
                 href="/youth-scout"
                 className="relative youth-scout-button text-white px-5 py-2.5 font-bold text-xs uppercase tracking-wider hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 group rounded-sm no-underline"
