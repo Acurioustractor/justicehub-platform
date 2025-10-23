@@ -83,6 +83,7 @@ export default async function ProfilePage({
     canEdit = userData?.user_role === 'admin';
   }
 
+  // Fetch profile - allow private profiles if user owns them
   const { data: profile, error } = await supabase
     .from('public_profiles')
     .select(`
@@ -122,10 +123,15 @@ export default async function ProfilePage({
       )
     `)
     .eq('slug', params.slug)
-    .eq('is_public', true)
     .single();
 
   if (error || !profile) {
+    notFound();
+  }
+
+  // Check if profile is private and user doesn't own it
+  if (!profile.is_public && (!user || profile.user_id !== user.id)) {
+    // Private profile - only owner can view
     notFound();
   }
 
