@@ -315,7 +315,7 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
 
               <Link
                 href="/signup"
-                className="px-5 py-2.5 bg-ochre-600 text-white font-bold text-xs uppercase tracking-wider hover:bg-ochre-700 transition-colors border-2 border-black rounded-sm"
+                className="px-5 py-2.5 bg-black text-white font-bold text-xs uppercase tracking-wider hover:bg-gray-800 transition-colors border-2 border-black shadow-lg rounded-sm"
                 aria-label="Create your profile"
               >
                 SIGN UP
@@ -428,7 +428,7 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
               <Link
                 href="/signup"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="px-6 py-3 bg-ochre-600 text-white font-bold text-sm uppercase tracking-wider hover:bg-ochre-700 transition-colors border-2 border-black text-center rounded-sm"
+                className="px-6 py-3 bg-black text-white font-bold text-sm uppercase tracking-wider hover:bg-gray-800 transition-colors border-2 border-black text-center shadow-lg rounded-sm"
                 aria-label="Create your profile"
               >
                 SIGN UP
