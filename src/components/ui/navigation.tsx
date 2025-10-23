@@ -302,8 +302,8 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
 
             {/* Youth Scout CTA - Special Floating Button */}
             <div className="ml-4 relative">
-              <Link 
-                href="/youth-scout" 
+              <Link
+                href="/youth-scout"
                 className="relative youth-scout-button text-white px-5 py-2.5 font-bold text-xs uppercase tracking-wider hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 group rounded-sm no-underline"
                 aria-label="Youth Scout - Your personalized journey"
               >
@@ -311,6 +311,14 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                   YOUTH SCOUT
                 </span>
                 <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </Link>
+
+              <Link
+                href="/signup"
+                className="px-5 py-2.5 bg-ochre-600 text-white font-bold text-xs uppercase tracking-wider hover:bg-ochre-700 transition-colors border-2 border-black rounded-sm"
+                aria-label="Create your profile"
+              >
+                SIGN UP
               </Link>
             </div>
           </nav>
@@ -415,6 +423,15 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                   YOUTH SCOUT
                 </span>
                 <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </Link>
+
+              <Link
+                href="/signup"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="px-6 py-3 bg-ochre-600 text-white font-bold text-sm uppercase tracking-wider hover:bg-ochre-700 transition-colors border-2 border-black text-center rounded-sm"
+                aria-label="Create your profile"
+              >
+                SIGN UP
               </Link>
             </div>
         </nav>
