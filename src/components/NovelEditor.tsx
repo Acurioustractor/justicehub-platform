@@ -16,6 +16,7 @@ interface NovelEditorProps {
 
 export default function NovelEditor({ content, onChange, onImageUpload, placeholder }: NovelEditorProps) {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: {
