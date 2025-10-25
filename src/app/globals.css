@@ -364,12 +364,12 @@ button:disabled,
 
 /* Fixed header spacing - adds padding to account for fixed navigation */
 .page-content {
-  padding-top: 11rem; /* 176px - height of fixed navigation header with both rows */
+  padding-top: 12rem; /* 192px - generous spacing for fixed navigation header */
 }
 
 @media (max-width: 1024px) {
   .page-content {
-    padding-top: 10rem; /* 160px for mobile with collapsed nav */
+    padding-top: 11rem; /* 176px for mobile with collapsed nav */
   }
 }
 
