@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Save, Eye, ArrowLeft, Upload, X, Clock, FileText } from 'lucide-react';
+import { Save, Eye, ArrowLeft, Upload, X, Clock, FileText, Maximize2, Minimize2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import dynamic from 'next/dynamic';
 
@@ -79,6 +79,7 @@ export default function EnhancedBlogPostPage() {
   const [autoSaving, setAutoSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -219,6 +220,11 @@ export default function EnhancedBlogPostPage() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Escape to exit fullscreen
+      if (e.key === 'Escape' && isFullscreen) {
+        e.preventDefault();
+        setIsFullscreen(false);
+      }
       // Cmd/Ctrl + S to save
       if ((e.metaKey || e.ctrlKey) && e.key === 's') {
         e.preventDefault();
@@ -233,7 +239,7 @@ export default function EnhancedBlogPostPage() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [formData]);
+  }, [formData, isFullscreen]);
 
   // Save post
   const handleSave = async (status: 'draft' | 'review' | 'published', silent = false) => {
@@ -386,14 +392,25 @@ export default function EnhancedBlogPostPage() {
                   <label className="block text-sm font-bold text-black">
                     Content *
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => setShowTemplates(!showTemplates)}
-                    className="text-sm text-blue-600 hover:underline flex items-center gap-1"
-                  >
-                    <FileText className="w-4 h-4" />
-                    Use Template
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowTemplates(!showTemplates)}
+                      className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Use Template
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsFullscreen(!isFullscreen)}
+                      className="text-sm font-bold text-black hover:text-blue-600 flex items-center gap-1 transition-colors"
+                      title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                    >
+                      {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                      {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+                    </button>
+                  </div>
                 </div>
 
                 {/* Template Selector */}
@@ -597,6 +614,50 @@ export default function EnhancedBlogPostPage() {
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Editor Overlay */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-50 bg-white flex flex-col">
+          {/* Fullscreen Header */}
+          <div className="flex items-center justify-between p-4 border-b-2 border-black bg-gray-50">
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setIsFullscreen(false)}
+                className="px-4 py-2 bg-black text-white font-bold hover:bg-gray-800 flex items-center gap-2"
+              >
+                <Minimize2 className="w-4 h-4" />
+                Exit Fullscreen
+              </button>
+              <div className="text-sm text-gray-600">
+                {autoSaving && <span className="text-blue-600">Saving...</span>}
+                {lastSaved && !autoSaving && (
+                  <span>Last saved: {lastSaved.toLocaleTimeString()}</span>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-4 text-sm text-gray-600">
+              <span>{wordCount} words</span>
+              <span>{characterCount} characters</span>
+              <span>{readingTime} min read</span>
+            </div>
+          </div>
+
+          {/* Fullscreen Editor */}
+          <div className="flex-1 overflow-auto p-8">
+            <div className="max-w-4xl mx-auto">
+              <NovelEditor
+                content={formData.content}
+                onChange={(content) =>
+                  setFormData((prev) => ({ ...prev, content }))
+                }
+                onImageUpload={() => fileInputRef.current?.click()}
+                placeholder="Start writing your story... Press Escape to exit fullscreen"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
