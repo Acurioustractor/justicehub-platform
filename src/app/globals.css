@@ -125,6 +125,16 @@
     @apply text-4xl md:text-5xl lg:text-6xl;
     margin-bottom: 1rem;
   }
+
+  /* Ensure headings on black backgrounds are always white */
+  .bg-black h1,
+  .bg-black h2,
+  .bg-black h3,
+  .bg-black h4,
+  .bg-black h5,
+  .bg-black h6 {
+    color: white !important;
+  }
   
   h2 {
     @apply text-3xl md:text-4xl;
@@ -352,28 +362,42 @@ button:disabled,
   }
 }
 
-/* Better link styling for accessibility */
+/* Fixed header spacing - adds padding to account for fixed navigation */
+.page-content {
+  padding-top: 11rem; /* 176px - height of fixed navigation header with both rows */
+}
+
+@media (max-width: 1024px) {
+  .page-content {
+    padding-top: 10rem; /* 160px for mobile with collapsed nav */
+  }
+}
+
+/* Better link styling for accessibility - only underline on hover/focus */
 a {
   color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-thickness: 1px;
+  text-decoration: none;
   transition: text-decoration-color 0.2s ease;
 }
 
 a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
   text-decoration-thickness: 2px;
 }
 
 a:focus {
+  text-decoration: underline;
+  text-underline-offset: 2px;
   text-decoration-thickness: 2px;
   text-decoration-color: hsl(var(--accent));
+  outline: 2px solid hsl(var(--accent));
+  outline-offset: 2px;
 }
 
-/* Remove underline for specific navigation elements */
-nav a,
+/* Keep explicit no-underline class for overrides */
 .no-underline {
-  text-decoration: none;
+  text-decoration: none !important;
 }
 
 nav a:hover,
