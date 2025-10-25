@@ -638,7 +638,7 @@ export default function EnhancedBlogPostPage() {
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-600">
               <span>{wordCount} words</span>
-              <span>{characterCount} characters</span>
+              <span>{charCount} characters</span>
               <span>{readingTime} min read</span>
             </div>
           </div>
