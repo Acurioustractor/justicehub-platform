@@ -107,7 +107,7 @@ export default function TalentLoginPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-pink-50">
+    <div className="min-h-screen page-content bg-gradient-to-br from-orange-50 via-yellow-50 to-pink-50">
       <Navigation />
 
       <main className="header-offset">

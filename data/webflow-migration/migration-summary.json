@@ -1,0 +1,73 @@
+{
+  "scrapedAt": "2025-10-11T09:40:57.979Z",
+  "articlesCount": 6,
+  "articles": [
+    {
+      "title": "Where Fire Meets Country: A Journey Through Mount Isa's NAIDOC week",
+      "slug": "where-fire-meets-country-a-journey-through-mount-isas-naidoc-week",
+      "category": "seeds",
+      "publishedAt": "2025-01-09",
+      "contentLength": 8871,
+      "locationTags": [
+        "Mount Isa"
+      ]
+    },
+    {
+      "title": "Achieving Gold-Standard Youth Crime Prevention: Designing Programs That Transform Lives",
+      "slug": "achieving-gold-standard-youth-crime-prevention-designing-programs-that-transform-lives",
+      "category": "growth",
+      "publishedAt": "2025-04-28",
+      "contentLength": 23445,
+      "locationTags": [
+        "Queensland"
+      ]
+    },
+    {
+      "title": "Beyond Shadows: Plato's Cave and the Reimagining of Youth Justice in Australia",
+      "slug": "beyond-shadows-platos-cave-and-the-reimagining-of-youth-justice-in-australia",
+      "category": "growth",
+      "publishedAt": "2025-04-01",
+      "contentLength": 10611,
+      "locationTags": [
+        "Athens",
+        "Mount Isa",
+        "Palm Island",
+        "Queensland"
+      ]
+    },
+    {
+      "title": "Creating Spaces for Growth: The Physical and Emotional Environment of Transformation",
+      "slug": "creating-spaces-for-growth-the-physical-and-emotional-environment-of-transformation",
+      "category": "growth",
+      "publishedAt": "2025-01-23",
+      "contentLength": 8985,
+      "locationTags": [
+        "Spain",
+        "Australia"
+      ]
+    },
+    {
+      "title": "From Control to Care: Reimagining Staff Roles in Youth Justice",
+      "slug": "from-control-to-care-reimagining-staff-roles-in-youth-justice",
+      "category": "growth",
+      "publishedAt": "2025-01-22",
+      "contentLength": 7105,
+      "locationTags": [
+        "Spain"
+      ]
+    },
+    {
+      "title": "The Courage to Connect: How Authentic Relationships Transform Youth in Detention",
+      "slug": "the-courage-to-connect-how-authentic-relationships-transform-youth-in-detention",
+      "category": "growth",
+      "publishedAt": "2025-01-20",
+      "contentLength": 6424,
+      "locationTags": [
+        "Spain",
+        "Australia"
+      ]
+    }
+  ],
+  "aboutPageLength": 1370,
+  "contactPageLength": 1864
+}

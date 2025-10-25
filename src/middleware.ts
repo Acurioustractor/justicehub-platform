@@ -86,7 +86,7 @@ function getClientIdentifier(req: NextRequest): string {
   return `${ip}:${userAgent.slice(0, 50)}`;
 }
 
-function detectSuspiciousActivity(req: NextRequest): boolean {
+function detectSuspiciousActivity(req: NextRequest, isAdminUser: boolean = false): boolean {
   const userAgent = req.headers.get('user-agent') || '';
   const path = req.nextUrl.pathname;
 
@@ -104,9 +104,14 @@ function detectSuspiciousActivity(req: NextRequest): boolean {
     return true;
   }
 
-  // Block common admin/config paths
-  const blockedPaths = ['/admin', '/wp-admin', '/phpmyadmin', '/.env', '/.git'];
+  // Block common admin/config paths (but allow /admin for authenticated admins)
+  const blockedPaths = ['/wp-admin', '/phpmyadmin', '/.env', '/.git'];
   if (blockedPaths.some(blockedPath => path.startsWith(blockedPath))) {
+    return true;
+  }
+
+  // Block /admin paths only for non-admin users
+  if (path.startsWith('/admin') && !isAdminUser) {
     return true;
   }
 
@@ -147,6 +152,19 @@ export async function middleware(request: NextRequest) {
   const { data: { user }, error } = await supabase.auth.getUser()
   console.log('🔐 Middleware auth check:', user ? `User: ${user.email}` : `No user (${error?.message})`)
 
+  // Check if user is admin (for /admin path protection)
+  let isAdminUser = false;
+  if (user && path.startsWith('/admin')) {
+    const { data: userData } = await supabase
+      .from('users')
+      .select('user_role')
+      .eq('id', user.id)
+      .single();
+
+    isAdminUser = userData?.user_role === 'admin';
+    console.log('🔑 Admin check for /admin path:', { userId: user.id, isAdmin: isAdminUser });
+  }
+
   // Apply security headers to all responses
   Object.entries(securityHeaders).forEach(([key, value]) => {
     response.headers.set(key, value);
@@ -158,7 +176,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Detect suspicious activity
-  if (detectSuspiciousActivity(request)) {
+  if (detectSuspiciousActivity(request, isAdminUser)) {
     console.warn('Suspicious activity detected:', {
       ip: request.headers.get('x-forwarded-for') || request.ip,
       userAgent: request.headers.get('user-agent'),

@@ -19,6 +19,23 @@ import {
   Bot
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import ProfileCard from '@/components/ProfileCard';
+
+interface ProfileData {
+  profile: {
+    id: string;
+    name?: string;
+    preferred_name?: string;
+    bio?: string;
+    profile_picture_url?: string;
+    organization?: {
+      name: string;
+    };
+  };
+  appearanceRole?: string;
+  appearanceExcerpt?: string;
+  isFeatured?: boolean;
+}
 
 interface ServiceDetail {
   id: string;
@@ -48,12 +65,15 @@ interface ServiceDetail {
 export default function ServiceDetailPage() {
   const params = useParams();
   const [service, setService] = useState<ServiceDetail | null>(null);
+  const [profiles, setProfiles] = useState<ProfileData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [profilesLoading, setProfilesLoading] = useState(false);
 
   useEffect(() => {
     if (params.id) {
       loadServiceDetail(params.id as string);
+      loadProfiles(params.id as string);
     }
   }, [params.id]);
 
@@ -76,6 +96,22 @@ export default function ServiceDetailPage() {
       setError('Failed to load service details');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadProfiles = async (serviceId: string) => {
+    try {
+      setProfilesLoading(true);
+
+      const response = await fetch(`/api/services/${serviceId}/profiles`);
+      if (response.ok) {
+        const data = await response.json();
+        setProfiles(data.profiles || []);
+      }
+    } catch (error) {
+      console.error('Error loading profiles:', error);
+    } finally {
+      setProfilesLoading(false);
     }
   };
 
@@ -340,6 +376,39 @@ export default function ServiceDetailPage() {
                 </div>
               </div>
             </div>
+
+            {/* Real People Stories */}
+            {profiles.length > 0 && (
+              <div className="mt-12 border-t-2 border-black pt-8">
+                <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
+                  <Users className="h-8 w-8" />
+                  Real People, Real Impact
+                </h2>
+                <p className="text-lg text-gray-700 mb-8">
+                  Hear from people who have used this service and their experiences.
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {profiles.map((profileData, index) => (
+                    <ProfileCard
+                      key={profileData.profile.id + index}
+                      profile={profileData.profile}
+                      role={profileData.appearanceRole}
+                      storyExcerpt={profileData.appearanceExcerpt}
+                      isFeatured={profileData.isFeatured}
+                    />
+                  ))}
+                </div>
+
+                <div className="mt-6 text-sm text-gray-600 p-4 bg-blue-50 border-l-4 border-blue-500">
+                  <p>
+                    These stories are shared through <strong>Empathy Ledger</strong>,
+                    an Indigenous-led storytelling platform that maintains data sovereignty
+                    and cultural protocols. All stories are shared with explicit consent.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Action Buttons */}
             <div className="mt-12 text-center border-t-2 border-black pt-8">

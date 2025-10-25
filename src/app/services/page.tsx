@@ -58,6 +58,10 @@ function mapCategory(dbCategory: string): Service['category'] {
 export default function ServicesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedLocation, setSelectedLocation] = useState<string>('all');
+  const [selectedState, setSelectedState] = useState<string>('all');
+  const [selectedCost, setSelectedCost] = useState<string>('all');
+  const [minRating, setMinRating] = useState<number>(0);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,7 +86,7 @@ export default function ServicesPage() {
   const loadServices = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/services?limit=100');
+      const response = await fetch('/api/services?limit=1000');
       const data = await response.json();
 
       if (response.ok && data.success) {
@@ -120,8 +124,16 @@ export default function ServicesPage() {
     const matchesSearch = service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          service.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || service.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    const matchesLocation = selectedLocation === 'all' || service.location.toLowerCase().includes(selectedLocation.toLowerCase());
+    const matchesState = selectedState === 'all' || service.location.includes(selectedState);
+    const matchesCost = selectedCost === 'all' || service.cost === selectedCost;
+    const matchesRating = service.rating >= minRating;
+    return matchesSearch && matchesCategory && matchesLocation && matchesState && matchesCost && matchesRating;
   });
+
+  // Get unique locations and states from services for filters
+  const uniqueLocations = Array.from(new Set(services.map(s => s.location))).sort();
+  const australianStates = ['QLD', 'NSW', 'VIC', 'SA', 'WA', 'TAS', 'NT', 'ACT'];
 
   const getCostColor = (cost: string) => {
     switch (cost) {
@@ -133,7 +145,7 @@ export default function ServicesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white page-content">
       {/* Skip to main content link for accessibility */}
       <a href="#main-content" className="skip-link">
         Skip to main content
@@ -342,18 +354,117 @@ export default function ServicesPage() {
                 ))}
               </div>
             ) : (
-              <div className="overflow-x-auto border-2 border-black">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b-2 border-black">
-                    <tr>
-                      <th className="px-4 py-3 text-left font-bold">Service</th>
-                      <th className="px-4 py-3 text-left font-bold">Category</th>
-                      <th className="px-4 py-3 text-left font-bold">Location</th>
-                      <th className="px-4 py-3 text-center font-bold">Cost</th>
-                      <th className="px-4 py-3 text-center font-bold">Rating</th>
-                      <th className="px-4 py-3 text-center font-bold">Action</th>
-                    </tr>
-                  </thead>
+              <>
+                {/* Table Filters */}
+                <div className="mb-6 p-4 border-2 border-black bg-gray-50">
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    {/* Category Filter */}
+                    <div>
+                      <label className="block text-xs font-bold mb-2">CATEGORY</label>
+                      <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="w-full px-3 py-2 border-2 border-black font-medium text-sm"
+                      >
+                        <option value="all">All Categories</option>
+                        {categories.filter(c => c.id !== 'all').map(cat => (
+                          <option key={cat.id} value={cat.id}>{cat.label}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* State Filter */}
+                    <div>
+                      <label className="block text-xs font-bold mb-2">STATE</label>
+                      <select
+                        value={selectedState}
+                        onChange={(e) => setSelectedState(e.target.value)}
+                        className="w-full px-3 py-2 border-2 border-black font-medium text-sm"
+                      >
+                        <option value="all">All States</option>
+                        {australianStates.map(state => (
+                          <option key={state} value={state}>{state}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Location Filter */}
+                    <div>
+                      <label className="block text-xs font-bold mb-2">LOCATION</label>
+                      <select
+                        value={selectedLocation}
+                        onChange={(e) => setSelectedLocation(e.target.value)}
+                        className="w-full px-3 py-2 border-2 border-black font-medium text-sm"
+                      >
+                        <option value="all">All Locations</option>
+                        {uniqueLocations.map(loc => (
+                          <option key={loc} value={loc}>{loc}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Cost Filter */}
+                    <div>
+                      <label className="block text-xs font-bold mb-2">COST</label>
+                      <select
+                        value={selectedCost}
+                        onChange={(e) => setSelectedCost(e.target.value)}
+                        className="w-full px-3 py-2 border-2 border-black font-medium text-sm"
+                      >
+                        <option value="all">All Costs</option>
+                        <option value="free">Free</option>
+                        <option value="low">Low Cost</option>
+                        <option value="moderate">Moderate</option>
+                      </select>
+                    </div>
+
+                    {/* Rating Filter */}
+                    <div>
+                      <label className="block text-xs font-bold mb-2">MIN RATING</label>
+                      <select
+                        value={minRating}
+                        onChange={(e) => setMinRating(Number(e.target.value))}
+                        className="w-full px-3 py-2 border-2 border-black font-medium text-sm"
+                      >
+                        <option value="0">Any Rating</option>
+                        <option value="3">3+ Stars</option>
+                        <option value="4">4+ Stars</option>
+                        <option value="4.5">4.5+ Stars</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Clear Filters Button */}
+                  {(selectedCategory !== 'all' || selectedState !== 'all' || selectedLocation !== 'all' || selectedCost !== 'all' || minRating > 0) && (
+                    <div className="mt-4">
+                      <button
+                        onClick={() => {
+                          setSelectedCategory('all');
+                          setSelectedState('all');
+                          setSelectedLocation('all');
+                          setSelectedCost('all');
+                          setMinRating(0);
+                        }}
+                        className="px-4 py-2 text-sm font-bold border-2 border-black hover:bg-black hover:text-white transition-all"
+                      >
+                        Clear All Filters
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="overflow-x-auto border-2 border-black">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b-2 border-black">
+                      <tr>
+                        <th className="px-4 py-3 text-left font-bold">Service</th>
+                        <th className="px-4 py-3 text-left font-bold">Category</th>
+                        <th className="px-4 py-3 text-left font-bold">Location</th>
+                        <th className="px-4 py-3 text-center font-bold">Cost</th>
+                        <th className="px-4 py-3 text-center font-bold">Rating</th>
+                        <th className="px-4 py-3 text-center font-bold">Action</th>
+                      </tr>
+                    </thead>
                   <tbody>
                     {filteredServices.map((service, index) => (
                       <tr key={service.id} className={`border-b ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
@@ -398,19 +509,24 @@ export default function ServicesPage() {
                   </tbody>
                 </table>
               </div>
+              </>
             )}
 
             {filteredServices.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-xl text-gray-600 mb-4">No services found matching your criteria</p>
-                <button 
+                <button
                   onClick={() => {
                     setSearchQuery('');
                     setSelectedCategory('all');
+                    setSelectedState('all');
+                    setSelectedLocation('all');
+                    setSelectedCost('all');
+                    setMinRating(0);
                   }}
                   className="px-6 py-3 border-2 border-black font-bold hover:bg-black hover:text-white transition-all"
                 >
-                  Clear Filters
+                  Clear All Filters
                 </button>
               </div>
             )}

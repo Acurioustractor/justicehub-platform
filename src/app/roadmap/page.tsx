@@ -336,7 +336,7 @@ export default function RoadmapPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white page-content">
       {/* Skip to main content link for accessibility */}
       <a href="#main-content" className="skip-link">
         Skip to main content

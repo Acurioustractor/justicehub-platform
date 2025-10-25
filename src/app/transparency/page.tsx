@@ -189,7 +189,7 @@ export default function MoneyTrailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white page-content">
       <Navigation />
 
       <main className="header-offset">

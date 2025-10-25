@@ -19,7 +19,7 @@ We've successfully processed your Airtable mapping of **336 Queensland youth jus
    - Navigate to SQL Editor
 
 2. **Run the Generated SQL**
-   - Open file: `/supabase/generated-import.sql`
+   - Open file: `/supabase/safe-import.sql`
    - Copy all contents
    - Paste into Supabase SQL Editor
    - Click "Run"

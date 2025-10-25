@@ -18,15 +18,22 @@ export default async function AdminProfilesPage({
     redirect('/login?redirect=/admin/profiles');
   }
 
-  const { data: userData } = await supabase
+  const { data: userData, error: userError } = await supabase
     .from('users')
     .select('user_role')
     .eq('id', user.id)
     .single();
 
+  console.log('Admin check - User ID:', user.id);
+  console.log('Admin check - User data:', userData);
+  console.log('Admin check - Error:', userError);
+
   if (userData?.user_role !== 'admin') {
+    console.log('Not admin - redirecting. Role:', userData?.user_role);
     redirect('/');
   }
+
+  console.log('Admin access granted!');
 
   // Fetch all profiles with filters
   let query = supabase

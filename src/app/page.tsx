@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ArrowRight, ArrowDown, Target, Award, DollarSign, TrendingUp, Users } from 'lucide-react';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import FeaturedStories from '@/components/FeaturedStories';
 
 export default function HomePage() {
   const [currentStatIndex, setCurrentStatIndex] = useState(0);
@@ -192,6 +193,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Featured Stories from Empathy Ledger */}
+      <FeaturedStories />
 
       {/* What We Build */}
       <section className="section-padding bg-black">

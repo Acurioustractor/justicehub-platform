@@ -96,7 +96,7 @@ export default function ContactPage() {
   // Success state
   if (submitted) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white page-content">
         <Navigation />
         <main className="header-offset">
           <div className="container-justice py-16">
@@ -146,7 +146,7 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white page-content">
       <Navigation />
 
       <main className="header-offset">

@@ -15,6 +15,10 @@ export function createClient() {
     {
       cookies: {
         getAll() {
+          // Only access document in browser environment
+          if (typeof document === 'undefined') {
+            return []
+          }
           return document.cookie.split('; ')
             .filter(Boolean)
             .map(c => {
@@ -23,6 +27,10 @@ export function createClient() {
             })
         },
         setAll(cookiesToSet) {
+          // Only access document in browser environment
+          if (typeof document === 'undefined') {
+            return
+          }
           cookiesToSet.forEach(({ name, value, options }) => {
             let cookie = `${name}=${value}; path=${options?.path || '/'}`
 

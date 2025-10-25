@@ -98,7 +98,7 @@ export default function YouthScoutLandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white page-content">
       <Navigation />
 
       {/* Admin Mode Toggle (hidden in production) */}

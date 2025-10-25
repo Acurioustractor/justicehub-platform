@@ -17,7 +17,7 @@ import { Navigation, Footer } from '@/components/ui/navigation';
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white page-content">
       <Navigation />
 
       <main className="header-offset">

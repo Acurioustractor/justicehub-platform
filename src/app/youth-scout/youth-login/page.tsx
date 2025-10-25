@@ -96,7 +96,7 @@ export default function YouthLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-orange-50">
+    <div className="min-h-screen page-content bg-gradient-to-br from-blue-50 via-purple-50 to-orange-50">
       <Navigation />
 
       <main className="header-offset">

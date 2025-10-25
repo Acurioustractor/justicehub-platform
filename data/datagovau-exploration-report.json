@@ -1,0 +1,891 @@
+{
+  "searchDate": "2025-10-11T03:31:59.472Z",
+  "totalDatasets": 536,
+  "relevantDatasets": 400,
+  "searchTerms": [
+    "youth services Queensland",
+    "community services Queensland",
+    "youth justice",
+    "child protection services",
+    "family support services",
+    "social services directory",
+    "community organizations Queensland",
+    "non-profit services",
+    "aboriginal services Queensland",
+    "welfare services Queensland",
+    "service providers Queensland"
+  ],
+  "top20": [
+    {
+      "id": "6d6ad4b7-67d7-4956-be08-32c29ea9a124",
+      "name": "department-of-families-fairness-and-housing-annual-report-datasets-2023-24",
+      "title": "Department of Families, Fairness and Housing Annual Report datasets - 2023-24",
+      "organization": "Department of Families, Fairness and Housing",
+      "description": "The annual report provides insights into the department’s key outcomes and achievements over the past year. These datasets are extracts of the tables found in the Department of Families Fairness and H",
+      "url": "https://data.gov.au/dataset/department-of-families-fairness-and-housing-annual-report-datasets-2023-24",
+      "relevance": 34,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [
+        "XLSX"
+      ],
+      "resources": [
+        {
+          "name": "Budget Portfolio Outcomes - 2023-24 DFFH Machine readable dataset",
+          "format": "XLSX",
+          "url": "https://www.dffh.vic.gov.au/budget-portfolio-outcomes-2023-24-dffh-machine-readable-dataset"
+        },
+        {
+          "name": "Capital Projects reaching completion - DFFH 2023-24 machine readable dataset",
+          "format": "XLSX",
+          "url": "https://www.dffh.vic.gov.au/capital-projects-reaching-completion-dffh-2023-24-machine-readable-dataset"
+        },
+        {
+          "name": "Consultancies - DFFH 2023-24 Machine readable dataset",
+          "format": "XLSX",
+          "url": "https://www.dffh.vic.gov.au/consultancies-dffh-2023-24-machine-readable-dataset"
+        },
+        {
+          "name": "Environmental performance reporting - DFFH 2023-24 machine readable dataset",
+          "format": "XLSX",
+          "url": "https://www.dffh.vic.gov.au/environmental-performance-reporting-dffh-2023-24-machine-readable-dataset"
+        },
+        {
+          "name": "Financial Statements - DFFH 2023-24 machine readable dataset",
+          "format": "XLSX",
+          "url": "https://www.dffh.vic.gov.au/financial-statements-dffh-2023-24-machine-readable-dataset"
+        },
+        {
+          "name": "Government advertising expenditure - DFFH 2023-24 machine readable dataset",
+          "format": "XLSX",
+          "url": "https://www.dffh.vic.gov.au/government-advertising-expenditure-dffh-2023-24-machine-readable-dataset"
+        },
+        {
+          "name": "Grants and transfer payments - DFFH 2023-24 Machine readable dataset",
+          "format": "XLSX",
+          "url": "https://www.dffh.vic.gov.au/grants-and-transfer-payments-dffh-2023-24-machine-readable-dataset"
+        },
+        {
+          "name": "Homes Victoria - DFFH 2023-24 Machine readable dataset",
+          "format": "XLSX",
+          "url": "https://www.dffh.vic.gov.au/homes-victoria-dffh-2023-24-machine-readable-dataset"
+        },
+        {
+          "name": "Portfolio Performance Measures - DFFH 2023-24 Machine readable dataset",
+          "format": "XLSX",
+          "url": "https://www.dffh.vic.gov.au/portfolio-performance-measures-dffh-2023-24-machine-readable-dataset"
+        },
+        {
+          "name": "Review and study expenditure - DFFH 2023-24 machine readable dataset",
+          "format": "XLSX",
+          "url": "https://www.dffh.vic.gov.au/review-and-study-expenditure-dffh-2023-24-machine-readable-dataset"
+        },
+        {
+          "name": "Social Housing dwelling stock - DFFH 2023-24 Machine readable dataset",
+          "format": "XLSX",
+          "url": "https://www.dffh.vic.gov.au/social-housing-dwelling-stock-dffh-2023-24-machine-readable-dataset"
+        },
+        {
+          "name": "Workforce data and OHS - DFFH 2023-24 machine readable dataset",
+          "format": "XLSX",
+          "url": "https://www.dffh.vic.gov.au/workforce-data-and-ohs-dffh-2023-24-machine-readable-dataset"
+        }
+      ]
+    },
+    {
+      "id": "fe738e7d-1316-4dea-bc57-d37cf2ec66fa",
+      "name": "transitioning-from-out-of-home-care-support-for-aboriginal-young-people",
+      "title": "Transitioning from Out-of-home care: Support for Aboriginal young people",
+      "organization": "Department of Health and Human Services",
+      "description": "The dataset details the types of services that could be delivered as part the\nTransitioning from out of home care: support for aboriginal young peopleof the\ninitiative, which include:\n\nas part of the ",
+      "url": "https://data.gov.au/dataset/transitioning-from-out-of-home-care-support-for-aboriginal-young-people",
+      "relevance": 33,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [
+        "XLS"
+      ],
+      "resources": [
+        {
+          "name": "Transitioning from Out-of-home care: Support for Aboriginal young people",
+          "format": "XLS",
+          "url": "https://discover.data.vic.gov.au/dataset/fe738e7d-1316-4dea-bc57-d37cf2ec66fa/resource/ac6fd280-efbb-4e10-a10e-8c46efecc2a3/download/transitioning-out-of-home-care-support-aboriginal-young-people-data-130718.xls"
+        }
+      ]
+    },
+    {
+      "id": "e5a6ca38-b17c-4e65-af70-84e7759a0ffa",
+      "name": "australian-government-cashless-debit-card-program",
+      "title": "Australian Government Cashless Debit Card Program",
+      "organization": "Department of Social Services ",
+      "description": "The Cashless Debit Card (CDC) program has ended in all locations across Australia, and all CDC participants have now exited the program or transferred to enhanced Income Management. Data summaries for",
+      "url": "https://data.gov.au/dataset/australian-government-cashless-debit-card-program",
+      "relevance": 31,
+      "hasServiceList": true,
+      "hasContacts": true,
+      "formats": [
+        "PDF",
+        ".pdf"
+      ],
+      "resources": [
+        {
+          "name": "Cashless Debit Card Data Summary - March 2023",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/67c6bef1-a703-4bbe-b5a6-436554a066a4/download/cashless-debit-card-data-summary-march-2023.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - February 2023",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/f9a8af1e-3799-4db6-8aa4-534d4e658cfd/download/cashless-debit-card-data-summary-february-2023.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - January 2023",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/69c1754b-585c-446a-8f8f-036f620d3617/download/cashless-debit-card-data-summary-january-2023.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - December 2022",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/fe56e5e3-2f69-4b1b-bb73-bc0ff9374381/download/cashless-debit-card-data-summary-december-2022.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - November 2022",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/1d5a4e1b-c829-4074-9b7b-5eb7e9ada461/download/cashless-debit-card-data-summary-november-2022.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - October 2022",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/38927f70-725a-4266-810b-d450d1d99a91/download/cashless-debit-card-data-summary-october-2022.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - September 2022",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/8658cf57-19b8-4efc-91a9-6ccc2dc77cf7/download/cashless-debit-card-data-summary-september-2022.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - August 2022",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/1fc7f53c-db31-4f44-8ab3-620f8e6efe9a/download/cashless-debit-card-data-summary-august-2022.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - July 2022",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/6628c9ae-8bd3-46fb-941b-ac41903bdacf/download/cashless-debit-card-data-summary-july-2022.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - June 2022",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/6fcd577b-9977-4ecc-a175-1ecd5843c21d/download/cashless-debit-card-data-summary-june-2022.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - May 2022",
+          "format": ".pdf",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/f2870157-0c73-4660-a890-691d09e699fd/download/cashless-debit-card-data-summary-may-2022.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - April 2022",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/8ea58b8e-c615-4c23-8965-09f9ca861f62/download/cashless-debit-card-data-summary-april-2022.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - March 2022",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/06c556dd-00c1-4541-b96a-6212c894c28a/download/cashless-debit-card-data-summary-march-2022.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - February 2022",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/72adf759-eba6-4745-ba38-8c3a59eb899d/download/cashless-debit-card-data-summary-february-2022.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - January 2022",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/c8b6edf5-d9ec-436a-81fe-da76920a327d/download/cashless-debit-card-data-summary-january-2022.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - December 2021.pdf",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/d0f2b81c-9e1b-44b9-b19c-5b64ae03c332/download/cashless-debit-card-data-summary-december-2021.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - November 2021.pdf",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/281a7851-a5b1-457f-b9f1-4ba716f4dabe/download/cashless-debit-card-data-summary-november-2021.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary -October 2021.pdf",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/3e178936-65e5-4ff2-bcab-9c1aa0c40529/download/cashless-debit-card-data-summary-october-2021.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary - September 2021.pdf",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/d551b82a-1da9-4691-a84a-85afcb3a964a/download/cashless-debit-card-data-summary-september-2021.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary August 2021.pdf",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/cf5759a7-0145-452b-8ac7-8b268006c58d/download/cashless-debit-card-data-summary-august-2021.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary July 2021",
+          "format": ".pdf",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/0c6eca69-601e-453b-a889-edb0a553a975/download/cashless-debit-card-data-summary-july-2021.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary June 2021",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/3f105a92-f57c-467a-a54b-37a54cb37358/download/cashless-debit-card-data-summary-june-2021.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary May 2021",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/de5ab157-7d01-45fb-aa72-f78b954d4d5c/download/cashless-debit-card-data-summary-may-2021.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary April 2021",
+          "format": ".pdf",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/a8d06c1d-0f5f-4bb8-8c45-65a4ff35df13/download/cashless-debit-card-data-summary-april-2021.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary March 2021",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/80e9cb8f-e585-40fa-896e-a8927f850ba4/download/cashless-debit-card-data-summary-march-2021.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary February 2021",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/21afd4e1-4196-43c5-8a1c-4fc94948b7a3/download/cashless-debit-card-data-summary-february-2021.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary January 2021",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/9bff4647-292e-42f2-9263-222e821d6aa5/download/cashless-debit-card-data-summary-january-2021.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Summary December 2020",
+          "format": ".pdf",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/55a52b5c-c066-4a1e-b757-56aa41356513/download/cashless-debit-card-summary-december-2020.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary November 2020.pdf",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/f50caf3c-4149-42ff-b42e-68e6b48a324b/download/cashless-debit-card-data-summary-november-2020.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary October 2020",
+          "format": ".pdf",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/ae410c4a-f53b-4fed-9310-314d1aeda33d/download/cashless-debit-card-data-summary-october-2020.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary September 2020",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/bfd433d0-f41f-4d2b-8848-287d16e0cdd8/download/cashless-debit-card-data-summary-september-2020.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary August 2020",
+          "format": ".pdf",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/bea72baf-4542-45b4-b2f6-f54c85aa81d4/download/cashless-debit-card-data-summary-august-2020.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary July 2020",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/3e209c45-6354-4f3b-89dc-0bef310fd2e2/download/cashless-debit-card-data-summary-july-2020.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary June 2020",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/9410d1bb-ae96-4bc1-a394-a721b69d8e14/download/cashless-debit-card-data-summary-june-2020.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary May 2020",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/7d04ad43-172b-41e7-bc87-f7431e7d6b4b/download/cashless-debit-card-data-summary-may-2020.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary April 2020",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/2e50203c-f3c9-44fa-988a-c2994376a4ad/download/cashless-debit-card-data-summary-apr-2020.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary March 2020",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/d98ade8d-d087-49bb-aba8-d1af62e329b5/download/cashless-debit-card-data-summary-mar-2020.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary February 2020",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/543e57d9-c348-4d6a-9a62-e7254ba1927e/download/cashless-debit-card-data-summary-feb-2020.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary January 2020",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/f0a6b4bd-b356-4080-8647-4ef368194670/download/cashless-debit-card-data-summary-january-2020.pdf"
+        },
+        {
+          "name": "Cashless Debit Card Data Summary December 2019",
+          "format": ".pdf",
+          "url": "https://data.gov.au/data/dataset/e5a6ca38-b17c-4e65-af70-84e7759a0ffa/resource/19394dc4-ef91-43a7-87ab-890b4ce51078/download/cashless-debit-card-data-summary-december-2019.pdf"
+        }
+      ]
+    },
+    {
+      "id": "14d8d6ab-8da9-485a-9cb0-a89e5ae31b20",
+      "name": "community-based-catch-monitoring-of-a-traditional-fishery-for-marine-turtles-in-the-kaiwal-2006",
+      "title": "Community-based catch-monitoring of a traditional fishery for marine turtles in the Kaiwalagal traditional sea country of Torres Strait 2006",
+      "organization": "CSIRO Marlin Data Catalogue",
+      "description": "26th Annual Symposium on Sea Turtle Biology and Conservation\nIsland of Crete, Greece, 3-8 April 2006. Oral Presentation.\nThe Torres Strait and northern Queensland have the largest population of green ",
+      "url": "https://data.gov.au/dataset/community-based-catch-monitoring-of-a-traditional-fishery-for-marine-turtles-in-the-kaiwal-2006",
+      "relevance": 30,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [],
+      "resources": []
+    },
+    {
+      "id": "0d915408-0026-44f7-a477-5f29ad7708ea",
+      "name": "nsw-human-services-data-hub-ngo-providers-2014-15",
+      "title": "Human Services Data Hub NGO providers",
+      "organization": "Department of Customer Service",
+      "description": "The Human Services Data Hub aggregates data about human services funded by NSW Government. This dataset lists NGO providers who had active service agreements in 2014/15 and 2015/16. It includes the se",
+      "url": "https://data.gov.au/dataset/nsw-human-services-data-hub-ngo-providers-2014-15",
+      "relevance": 30,
+      "hasServiceList": true,
+      "hasContacts": true,
+      "formats": [
+        "CSV",
+        "XLS",
+        "KML",
+        "PDF",
+        "DQS - PDF",
+        "WMS",
+        "WFS",
+        "GeoJSON"
+      ],
+      "resources": [
+        {
+          "name": "HSDH NGO providers 2015-2016 Agreements",
+          "format": "CSV",
+          "url": "https://data.nsw.gov.au/data/dataset/0d915408-0026-44f7-a477-5f29ad7708ea/resource/912ffb6b-b4dc-44c0-a5ce-ffd8efe91821/download/hsdh-ngo-providers-2015-2016-agreements.csv"
+        },
+        {
+          "name": "HSDH NGO providers 2015-2016 Agreements",
+          "format": "XLS",
+          "url": "https://data.nsw.gov.au/data/dataset/0d915408-0026-44f7-a477-5f29ad7708ea/resource/94a8c088-9e51-4f24-9cbc-7e88a32cb1cb/download/hsdh-ngo-providers-2015-2016-agreements.xlsx"
+        },
+        {
+          "name": "HSDH NGO providers 2015-2016 Agreements",
+          "format": "KML",
+          "url": "https://data.nsw.gov.au/data/dataset/0d915408-0026-44f7-a477-5f29ad7708ea/resource/56d8ddc0-57e6-49c9-b766-b83b1103dbad/download/hsdh-ngo-providers-2015-2016.kml"
+        },
+        {
+          "name": "HSDH NGO providers 2016-2016 Data Quality Statement",
+          "format": "PDF",
+          "url": "https://data.nsw.gov.au/data/dataset/0d915408-0026-44f7-a477-5f29ad7708ea/resource/464a4372-d2d3-4957-ba8e-b523c88da4da/download/hsdh-ngo-providers-2015-2016-dataqualitystatement.pdf"
+        },
+        {
+          "name": "HSDH 2014-2015 (xlsx)",
+          "format": "XLS",
+          "url": "https://data.nsw.gov.au/data/dataset/0d915408-0026-44f7-a477-5f29ad7708ea/resource/f2e8df4e-cf04-4fff-893b-228aa30f7f55/download/tab-b-r020-hsdh-2014-2015.xlsx"
+        },
+        {
+          "name": "HSDH 2014-2015 (csv)",
+          "format": "CSV",
+          "url": "https://data.nsw.gov.au/data/dataset/0d915408-0026-44f7-a477-5f29ad7708ea/resource/0ad7196f-f7e8-45fd-957d-79394255b0ef/download/tab-b-open-data-r020-hsdh-2014-2015.csv"
+        },
+        {
+          "name": "Data Quality Statement",
+          "format": "DQS - PDF",
+          "url": "https://data.nsw.gov.au/data/dataset/0d915408-0026-44f7-a477-5f29ad7708ea/resource/ee64fd00-d141-45ea-acc4-e022097e11fe/download/tab-c-dataqualitytoolstatement26-02-2016.pdf"
+        },
+        {
+          "name": "HSDH NGO Providers (kml)",
+          "format": "KML",
+          "url": "https://data.nsw.gov.au/data/dataset/0d915408-0026-44f7-a477-5f29ad7708ea/resource/f3415b5d-efbb-4749-a108-eeb31e2bb1d1/download/2016012517-30-21.kml"
+        },
+        {
+          "name": "Human Services Data Hub NGO providers - Preview this Dataset (WMS)",
+          "format": "WMS",
+          "url": "https://data.gov.au/geoserver/nsw-human-services-data-hub-ngo-providers-2014-15/wms?request=GetCapabilities"
+        },
+        {
+          "name": "Human Services Data Hub NGO providers Web Feature Service API Link",
+          "format": "WFS",
+          "url": "https://data.gov.au/geoserver/nsw-human-services-data-hub-ngo-providers-2014-15/wfs"
+        },
+        {
+          "name": "Human Services Data Hub NGO providers GeoJSON",
+          "format": "GeoJSON",
+          "url": "https://data.gov.au/geoserver/nsw-human-services-data-hub-ngo-providers-2014-15/wfs?request=GetFeature&typeName=ckan_0d915408_0026_44f7_a477_5f29ad7708ea&outputFormat=json"
+        }
+      ]
+    },
+    {
+      "id": "60a88dc3-478d-4169-89d6-7285d060859d",
+      "name": "gulf-of-carpentaria-mangrove-aerial-shoreline-surveys-2017-2019-nesp-twq-4-13-jcu",
+      "title": "Gulf of Carpentaria Mangrove Aerial Shoreline Surveys 2017 & 2019 (NESP TWQ 4.13, JCU)",
+      "organization": "Australian Ocean Data Network",
+      "description": "This project investigated the cause of the extensive areas of mangroves across the Gulf of Carpentaria which died in late 2015. Images from local fisherman showed extended impacted areas of more than ",
+      "url": "https://data.gov.au/dataset/gulf-of-carpentaria-mangrove-aerial-shoreline-surveys-2017-2019-nesp-twq-4-13-jcu",
+      "relevance": 30,
+      "hasServiceList": true,
+      "hasContacts": true,
+      "formats": [
+        "HTML",
+        "PDF",
+        "WMS",
+        "PNG"
+      ],
+      "resources": [
+        {
+          "name": "Bulk browse shoreline imagery and Shoreline_DB. Allows download of the dataset.",
+          "format": "HTML",
+          "url": "https://nextcloud.eatlas.org.au/apps/sharealias/a/GOC_NESP-4-13_JCU_Mangrove-Shoreline-Aerial-Surveys_2017_2019"
+        },
+        {
+          "name": "Interactive map of this dataset - View photos on map",
+          "format": "HTML",
+          "url": "https://maps.eatlas.org.au/index.html?intro=false&z=10&ll=136.96547,-15.79844&l0=ea_nesp4%3AGOC_NESP-4-13_JCU_AerialSurveys_2017_2019_Shoreline_DB,ea_ea-be%3AWorld_Bright-Earth-e-Atlas-basemap,google_HYBRID,google_TERRAIN,ea_nesp-mac-3%3AAU_NESP-MaC-3-17_AIMS_S2-comp_low-tide_p30-trueColour&v0=,f,,f"
+        },
+        {
+          "name": "Report: Assessing the Gulf of Carpentaria mangrove dieback 2017–2019. Volume 1: Aerial surveys [PDF]",
+          "format": "PDF",
+          "url": "https://nesptropical.edu.au/wp-content/uploads/2021/05/Project-4.13-Final-Report-Volume-1.pdf"
+        },
+        {
+          "name": "NESP TWQ 4.13 Project website page",
+          "format": "HTML",
+          "url": "https://nesptropical.edu.au/index.php/round-4-projects/project-4-13/"
+        },
+        {
+          "name": "Code repository documenting the data preparation for the eAtlas",
+          "format": "HTML",
+          "url": "https://github.com/eatlas/GOC_JCU_NESP-TWQ-4-13_Mangrove-Dieback_2017-2019"
+        },
+        {
+          "name": "nesp4:GOC_NESP-4-13_JCU_AerialSurveys_2017_2019_Shoreline_DB",
+          "format": "WMS",
+          "url": "https://maps.eatlas.org.au/maps/wms"
+        },
+        {
+          "name": "ORCID ID",
+          "format": "HTML",
+          "url": "https://orcid.org/0000-0003-2081-9120"
+        },
+        {
+          "name": "ORCID ID",
+          "format": "HTML",
+          "url": "https://orcid.org/0000-0003-4182-9432"
+        },
+        {
+          "name": "ORCID ID",
+          "format": "HTML",
+          "url": "https://orcid.org/0000-0003-2081-9120"
+        },
+        {
+          "name": "Unnamed resource",
+          "format": "PNG",
+          "url": "https://i.creativecommons.org/l/by/4.0/88x31.png"
+        }
+      ]
+    },
+    {
+      "id": "66c9b62b-e937-46f9-9992-091257e86848",
+      "name": "nsw-3-17671-aboriginal-outcomes-strategy-2017-2021",
+      "title": "Aboriginal Outcomes Strategy 2017-2021",
+      "organization": "NSW Government",
+      "description": "Outlines FACS commitments regarding child protection, social housing and disability services for Aboriginal people, and increasing Aboriginal employment in the department.",
+      "url": "https://data.gov.au/dataset/nsw-3-17671-aboriginal-outcomes-strategy-2017-2021",
+      "relevance": 28,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [
+        "PDF"
+      ],
+      "resources": [
+        {
+          "format": "PDF",
+          "url": "https://www.opengov.nsw.gov.au/download/17944"
+        }
+      ]
+    },
+    {
+      "id": "e42fad8b-045c-494b-bf83-f36e497174bc",
+      "name": "erin-collaborative-australian-protected-areas-database-capad-2016-terrestrial-not-current-release",
+      "title": "Collaborative Australian Protected Areas Database (CAPAD) 2016 - Terrestrial (Not current release)",
+      "organization": "DCCEEW's Find Environmental Data (FED)",
+      "description": "The Collaborative Australian Protected Areas Database (CAPAD) 2016 provides both spatial and textual information about government, Indigenous and privately protected areas for Australia, in both the m",
+      "url": "https://data.gov.au/dataset/erin-collaborative-australian-protected-areas-database-capad-2016-terrestrial-not-current-release",
+      "relevance": 25,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [
+        "HTML"
+      ],
+      "resources": [
+        {
+          "name": "ArcGIS Hub Dataset",
+          "format": "HTML",
+          "url": "https://fed.dcceew.gov.au/datasets/erin::collaborative-australian-protected-areas-database-capad-2016-terrestrial-not-current-release"
+        }
+      ]
+    },
+    {
+      "id": "697ebda2-9afb-4803-b766-c8853a3cc495",
+      "name": "erin-collaborative-australian-protected-areas-database-capad-2012-terrestrial-not-current-release",
+      "title": "Collaborative Australian Protected Areas Database (CAPAD) 2012 - Terrestrial (Not current release)",
+      "organization": "DCCEEW's Find Environmental Data (FED)",
+      "description": "The Collaborative Australian Protected Areas Database (CAPAD) 2012 provides both spatial and text information about government, Indigenous and privately protected areas for continental Australia. Stat",
+      "url": "https://data.gov.au/dataset/erin-collaborative-australian-protected-areas-database-capad-2012-terrestrial-not-current-release",
+      "relevance": 25,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [
+        "HTML"
+      ],
+      "resources": [
+        {
+          "name": "ArcGIS Hub Dataset",
+          "format": "HTML",
+          "url": "https://fed.dcceew.gov.au/datasets/erin::collaborative-australian-protected-areas-database-capad-2012-terrestrial-not-current-release"
+        }
+      ]
+    },
+    {
+      "id": "1499f564-a8a1-4c06-a88a-117e41da6564",
+      "name": "collaborative-australian-protected-areas-database-capad-20161",
+      "title": "Collaborative Australian Protected Areas Database (CAPAD) 2016",
+      "organization": "Australian Government Department of Climate Change, Energy, the Environment and Water",
+      "description": "The Collaborative Australian Protected Areas Database (CAPAD) 2016 provides both spatial and textual information about government, Indigenous and privately protected areas for Australia, in both the m",
+      "url": "https://data.gov.au/dataset/collaborative-australian-protected-areas-database-capad-20161",
+      "relevance": 25,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [
+        "HTML"
+      ],
+      "resources": [
+        {
+          "name": "Collaborative Australian Protected Areas Database (CAPAD) 2016",
+          "format": "HTML",
+          "url": "https://www.environment.gov.au/fed/catalog/search/resource/details.page?uuid=9984a9fd-3dd0-4e38-bfbd-7e788fa851a1"
+        }
+      ]
+    },
+    {
+      "id": "0ac2c95f-aacd-44f9-b52d-41c7ac83a234",
+      "name": "erin-collaborative-australian-protected-areas-database-capad-2014-terrestrial-not-current-release",
+      "title": "Collaborative Australian Protected Areas Database (CAPAD) 2014 - Terrestrial (Not current release)",
+      "organization": "DCCEEW's Find Environmental Data (FED)",
+      "description": "The Collaborative Australian Protected Areas Database (CAPAD) 2014 provides both spatial and text information about government, indigenous and privately protected areas for continental Australia. Stat",
+      "url": "https://data.gov.au/dataset/erin-collaborative-australian-protected-areas-database-capad-2014-terrestrial-not-current-release",
+      "relevance": 25,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [
+        "HTML"
+      ],
+      "resources": [
+        {
+          "name": "ArcGIS Hub Dataset",
+          "format": "HTML",
+          "url": "https://fed.dcceew.gov.au/datasets/erin::collaborative-australian-protected-areas-database-capad-2014-terrestrial-not-current-release"
+        }
+      ]
+    },
+    {
+      "id": "7427cb28-e52c-4603-b353-8eb97c2aa847",
+      "name": "erin-collaborative-australian-protected-areas-database-capad-2018-terrestrial-not-current-release",
+      "title": "Collaborative Australian Protected Areas Database (CAPAD) 2018 - Terrestrial (Not current release)",
+      "organization": "DCCEEW's Find Environmental Data (FED)",
+      "description": "November 2020 - Please note this dataset has been re-released to exclude Conservation Covenant data for Victoria.The Collaborative Australian Protected Areas Database (CAPAD) 2018 provides both spatia",
+      "url": "https://data.gov.au/dataset/erin-collaborative-australian-protected-areas-database-capad-2018-terrestrial-not-current-release",
+      "relevance": 25,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [
+        "HTML"
+      ],
+      "resources": [
+        {
+          "name": "ArcGIS Hub Dataset",
+          "format": "HTML",
+          "url": "https://fed.dcceew.gov.au/datasets/erin::collaborative-australian-protected-areas-database-capad-2018-terrestrial-not-current-release"
+        }
+      ]
+    },
+    {
+      "id": "05a0e15c-5dfb-44f0-94aa-8f60b4b05b6f",
+      "name": "erin-collaborative-australian-protected-areas-database-capad-2020-terrestrial-not-current-release",
+      "title": "Collaborative Australian Protected Areas Database (CAPAD) 2020 - Terrestrial (Not current release)",
+      "organization": "DCCEEW's Find Environmental Data (FED)",
+      "description": "The Collaborative Australian Protected Areas Database (CAPAD) 2020 provides both spatial and textual information about government, Indigenous and privately protected areas for Australia, in both the m",
+      "url": "https://data.gov.au/dataset/erin-collaborative-australian-protected-areas-database-capad-2020-terrestrial-not-current-release",
+      "relevance": 25,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [
+        "HTML"
+      ],
+      "resources": [
+        {
+          "name": "ArcGIS Hub Dataset",
+          "format": "HTML",
+          "url": "https://fed.dcceew.gov.au/datasets/erin::collaborative-australian-protected-areas-database-capad-2020-terrestrial-not-current-release"
+        }
+      ]
+    },
+    {
+      "id": "b473cf3e-8922-4a9f-99a1-658ceac355be",
+      "name": "erin-collaborative-australian-protected-areas-database-capad-2022-terrestrial-not-current-release",
+      "title": "Collaborative Australian Protected Areas Database (CAPAD) 2022 - Terrestrial (Not current release)",
+      "organization": "DCCEEW's Find Environmental Data (FED)",
+      "description": "Note: The CAPAD 2022 data were updated in June 2024 to exclude 278 areas which do not meet the National Reserve System standard (NRS_PA = N or ND), so that the spatial data more closely resembles the ",
+      "url": "https://data.gov.au/dataset/erin-collaborative-australian-protected-areas-database-capad-2022-terrestrial-not-current-release",
+      "relevance": 25,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [
+        "HTML"
+      ],
+      "resources": [
+        {
+          "name": "ArcGIS Hub Dataset",
+          "format": "HTML",
+          "url": "https://fed.dcceew.gov.au/datasets/erin::collaborative-australian-protected-areas-database-capad-2022-terrestrial-not-current-release"
+        }
+      ]
+    },
+    {
+      "id": "c04c4b6e-5645-4fc0-943c-03355195a037",
+      "name": "australia-s-indigenous-land-and-forest-estate-2020",
+      "title": "Australia's Indigenous land and forest estate (2020)",
+      "organization": "Australian Bureau of Agricultural and Resource Economics and Sciences",
+      "description": "**This is a superseded dataset, the most recent _Australia's Indigenous land and forest estate_ spatial dataset can be found at: https://www.agriculture.gov.au/abares/forestsaustralia/forest-data-maps",
+      "url": "https://data.gov.au/dataset/australia-s-indigenous-land-and-forest-estate-2020",
+      "relevance": 24,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [
+        "ZIP",
+        "PDF",
+        "website link",
+        "arcgis rest wms wfs"
+      ],
+      "resources": [
+        {
+          "name": "Australia’s Indigenous land and forest estate (2020) dataset GeoTIFF",
+          "format": "ZIP",
+          "url": "https://data.gov.au/data/dataset/c04c4b6e-5645-4fc0-943c-03355195a037/resource/ea2770d0-81da-4de3-b232-e6616008898b/download/ind_est20_geotiff.zip"
+        },
+        {
+          "name": "Australia’s Indigenous land and forest estate (2020) dataset Grid file format",
+          "format": "ZIP",
+          "url": "https://data.gov.au/data/dataset/c04c4b6e-5645-4fc0-943c-03355195a037/resource/5034c3e8-f3c5-49cb-9e67-699db8334466/download/ind_est20_grid.zip"
+        },
+        {
+          "name": "Australia’s Indigenous land and forest estate (2020) dataset metadata statement",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/c04c4b6e-5645-4fc0-943c-03355195a037/resource/784471ca-37a2-40ad-bf2c-42526e9b01b3/download/australias_indigenous_land_and_forest_estate_2020_metadata.pdf"
+        },
+        {
+          "name": "Australia’s Indigenous land and forest estate (2020) dataset lineage statement",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/c04c4b6e-5645-4fc0-943c-03355195a037/resource/40e2ba66-508f-46e4-8aa8-e6e139bf01f7/download/australias_indigenous_land_and_forest_estate_2020_lineage.pdf"
+        },
+        {
+          "name": "Australia’s Indigenous land and forest estate (2020) dataset look up tables document",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/c04c4b6e-5645-4fc0-943c-03355195a037/resource/176e61dc-77bd-4c34-9d63-0b4a312aabe4/download/australias_indigenous_land_and_forest_estate_2020_lookup_tables.pdf"
+        },
+        {
+          "name": "Australia’s Indigenous land and forest estate (2020) dataset online map viewer",
+          "format": "website link",
+          "url": "https://www.arcgis.com/home/webmap/viewer.html?url=http%3A%2F%2Fwww.environment.gov.au%2Fmapping%2Frest%2Fservices%2Fabares%2FAustIndigLandForestEstate2020%2FMapServer&source=sd"
+        },
+        {
+          "name": "Australia’s Indigenous land and forest estate (2020) dataset web services",
+          "format": "arcgis rest wms wfs",
+          "url": "https://www.environment.gov.au/mapping/rest/services/abares/AustIndigLandForestEstate2020/MapServer"
+        }
+      ]
+    },
+    {
+      "id": "62fda4a9-0d63-4ed1-9283-b7f4f0d604e5",
+      "name": "victorian-government-aboriginal-affairs-report-vgaar",
+      "title": "Victorian Government Aboriginal Affairs Report 2020 (VGAAR)",
+      "organization": "First Peoples State Relations",
+      "description": "This Victorian Aboriginal Affairs Framework data demonstrates how we've tracked against our commitment to improving outcomes for Aboriginal Victorians. The Report includes historical data dating from ",
+      "url": "https://data.gov.au/dataset/victorian-government-aboriginal-affairs-report-vgaar",
+      "relevance": 24,
+      "hasServiceList": false,
+      "hasContacts": false,
+      "formats": [
+        "XLSX"
+      ],
+      "resources": [
+        {
+          "name": "VGAAR 2020 Data tables: Domain 1 - Children, family and home",
+          "format": "XLSX",
+          "url": "https://www.firstpeoplesrelations.vic.gov.au/sites/default/files/2021-06/2020-VGAAR-data-tables-Domain-1-Children-family-and-%20home.xlsx"
+        },
+        {
+          "name": "VGAAR 2020 Data tables: Domain 2 -  Learning and skills",
+          "format": "XLSX",
+          "url": "https://www.firstpeoplesrelations.vic.gov.au/sites/default/files/2021-07/2020%20VGAAR%20Data%20Tables%20-%20Domain%202%20-%20Learning%20%26%20skills.XLSX"
+        },
+        {
+          "name": "VGAAR 2020 Data tables: Domain 3 - Opportunity and prosperity",
+          "format": "XLSX",
+          "url": "https://www.firstpeoplesrelations.vic.gov.au/sites/default/files/2021-06/2020-VGAAR-data-tables-Domain-3-Opportunity-and-prosperity.xlsx"
+        },
+        {
+          "name": "VGAAR 2020 Data tables: Domain 4 - Health and wellbeing",
+          "format": "XLSX",
+          "url": "https://www.firstpeoplesrelations.vic.gov.au/sites/default/files/2021-06/2020-VGAAR-data-tables-Domain-4-Health-wellbeing.xlsx"
+        },
+        {
+          "name": "VGAAR 2020 Data tables: Domain 5 - Justice and safety",
+          "format": "XLSX",
+          "url": "https://www.firstpeoplesrelations.vic.gov.au/sites/default/files/2021-07/2020%20VGAAR%20Data%20Tables%20-%20Domain%205%20-%20Justice%20%26%20safety.XLSX"
+        },
+        {
+          "name": "VGAAR 2020 Data tables: Domain 6 - Culture and Country",
+          "format": "XLSX",
+          "url": "https://www.firstpeoplesrelations.vic.gov.au/sites/default/files/2021-06/2020-VGAAR-data-tables-Domain-6-Culture-and-Country.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "bf67d7e7-4528-4724-83b7-9007d0f7aeaa",
+      "name": "victorian-government-aboriginal-affairs-report-2018-vgaar",
+      "title": "Victorian Government Aboriginal Affairs Report 2018 (VGAAR)",
+      "organization": "First Peoples State Relations",
+      "description": "This Victorian Aboriginal Affairs Framework data demonstrates how we've tracked against our commitment to improving outcomes for Aboriginal Victorians. The Report includes historical data dating from ",
+      "url": "https://data.gov.au/dataset/victorian-government-aboriginal-affairs-report-2018-vgaar",
+      "relevance": 24,
+      "hasServiceList": false,
+      "hasContacts": false,
+      "formats": [
+        "XLSX"
+      ],
+      "resources": [
+        {
+          "name": "VGAAR 2018 Data tables",
+          "format": "XLSX",
+          "url": "https://www.firstpeoplesrelations.vic.gov.au/sites/default/files/2019-12/Data%20Tables%20-%20Victorian%20Government%20Aboriginal%20Affairs%20Report%202018_0.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "70bd8d41-967e-4318-8e62-9d664e592c99",
+      "name": "victorian-government-aboriginal-affairs-report-2017-vgaar",
+      "title": "Victorian Government Aboriginal Affairs Report 2017 (VGAAR)",
+      "organization": "First Peoples State Relations",
+      "description": "This Victorian Aboriginal Affairs Framework data demonstrates how we've tracked against our commitment to improving outcomes for Aboriginal Victorians. The Report includes historical data dating from ",
+      "url": "https://data.gov.au/dataset/victorian-government-aboriginal-affairs-report-2017-vgaar",
+      "relevance": 24,
+      "hasServiceList": false,
+      "hasContacts": false,
+      "formats": [
+        "XLSX"
+      ],
+      "resources": [
+        {
+          "name": "VGAAR 2017 Data Tables",
+          "format": "XLSX",
+          "url": "https://www.firstpeoplesrelations.vic.gov.au/sites/default/files/2019-12/Data%20Tables%20-%20Victorian%20Government%20Aboriginal%20Affairs%20Report%202017.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "107db6e8-0b8e-402e-8ecf-39c632efa180",
+      "name": "australia-s-indigenous-land-and-forest-estate-2024",
+      "title": "Australia's Indigenous land and forest estate (2024)",
+      "organization": "Australian Bureau of Agricultural and Resource Economics and Sciences",
+      "description": "The _Australia's Indigenous land and forest estate (2024)_ is a continental spatial dataset that identifies and reports separately the individual attributes of Australia's Indigenous estate, namely th",
+      "url": "https://data.gov.au/dataset/australia-s-indigenous-land-and-forest-estate-2024",
+      "relevance": 24,
+      "hasServiceList": true,
+      "hasContacts": false,
+      "formats": [
+        "zipped file - geotiff",
+        "zipped - esri grid",
+        "PDF",
+        "CSV",
+        "excel (.xlsx)",
+        "PNG"
+      ],
+      "resources": [
+        {
+          "name": "Australia's Indigenous land and forest estate (2024) dataset GeoTIFF",
+          "format": "zipped file - geotiff",
+          "url": "https://data.gov.au/data/dataset/107db6e8-0b8e-402e-8ecf-39c632efa180/resource/40ae4f14-b2eb-4652-b9d5-4413d38f4016/download/ind_for24_geotiff_0.zip"
+        },
+        {
+          "name": "Australia's Indigenous land and forest estate (2024) dataset Esri GRID",
+          "format": "zipped - esri grid",
+          "url": "https://data.gov.au/data/dataset/107db6e8-0b8e-402e-8ecf-39c632efa180/resource/e36b916e-c3c5-40a0-ab69-e87799d1937c/download/ind_for24_esri_grid.zip"
+        },
+        {
+          "name": "Metadata for the Australia's Indigenous land and forest estate (2024) dataset",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/107db6e8-0b8e-402e-8ecf-39c632efa180/resource/d398f0c4-ddac-44d0-980d-9162ea7b06b3/download/australias_indigenous_land_and_forest_estate_2024_metadata.pdf"
+        },
+        {
+          "name": "Attribute lookup tables for the Australia's Indigenous land and forest estate (2024) dataset",
+          "format": "PDF",
+          "url": "https://data.gov.au/data/dataset/107db6e8-0b8e-402e-8ecf-39c632efa180/resource/b0c8fd66-20fc-48cf-a31f-a6bb13863fcf/download/australias_indigenous_land_and_forest_estate_2024_lookup_tables.pdf"
+        },
+        {
+          "name": "Attribute table for Australia's Indigenous land and forest estate (2024) dataset",
+          "format": "CSV",
+          "url": "https://data.gov.au/data/dataset/107db6e8-0b8e-402e-8ecf-39c632efa180/resource/f016746a-e032-44bf-ae80-683955de2161/download/ind_for24_attributes.csv"
+        },
+        {
+          "name": "Symbology colour palette and full descriptions of Indigenous estate attributes",
+          "format": "excel (.xlsx)",
+          "url": "https://data.gov.au/data/dataset/107db6e8-0b8e-402e-8ecf-39c632efa180/resource/61fceb84-752b-4199-a48b-079af68418d0/download/ind_for24_colour_luts.xlsx"
+        },
+        {
+          "name": "Map of the Indigenous land estate",
+          "format": "PNG",
+          "url": "https://data.gov.au/data/dataset/107db6e8-0b8e-402e-8ecf-39c632efa180/resource/c0500144-8522-47a9-af8a-28d22829addd/download/indig_land_estate_dataset_map.png"
+        },
+        {
+          "name": "Map of the Indigenous forest estate",
+          "format": "PNG",
+          "url": "https://data.gov.au/data/dataset/107db6e8-0b8e-402e-8ecf-39c632efa180/resource/d856df99-3b3a-40fd-b5dd-fdf17a32e7d1/download/indig_forest_estate_dataset_map.png"
+        }
+      ]
+    },
+    {
+      "id": "469ea5ba-2ab3-4972-a045-52bfc87fc512",
+      "name": "youth-justice-detention-data",
+      "title": "Youth Justice Detention Data",
+      "organization": "Australian Institute of Health and Welfare",
+      "description": "The publication [Youth detention population in Australia 2016](http://www.aihw.gov.au/publication-detail/?id=60129557387) can be found on the AIHW Website. \r\n\r\nThe report presents information on the y",
+      "url": "https://data.gov.au/dataset/youth-justice-detention-data",
+      "relevance": 23,
+      "hasServiceList": false,
+      "hasContacts": false,
+      "formats": [
+        "DOCX",
+        "CSV"
+      ],
+      "resources": [
+        {
+          "name": "FAQ",
+          "format": "DOCX",
+          "url": "https://data.gov.au/data/dataset/469ea5ba-2ab3-4972-a045-52bfc87fc512/resource/298784a7-14de-4022-9a5a-32b2a1ed5379/download/faqs2017.docx"
+        },
+        {
+          "name": "Youth Justice Detention Data",
+          "format": "CSV",
+          "url": "https://data.gov.au/data/dataset/469ea5ba-2ab3-4972-a045-52bfc87fc512/resource/c7edfa08-7bc9-404d-8f2b-22bcd0425021/download/youth-justice-detention-data-2017.csv"
+        }
+      ]
+    }
+  ]
+}

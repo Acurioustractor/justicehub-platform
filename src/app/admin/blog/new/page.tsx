@@ -4,30 +4,102 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Save, Eye, ArrowLeft, Image as ImageIcon, Link2, Tag, Video, FileText, Upload, X } from 'lucide-react';
+import { Save, Eye, ArrowLeft, Upload, X, Clock, FileText } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import dynamic from 'next/dynamic';
 
-export default function NewBlogPostPage() {
+// Dynamically import the editor to avoid SSR issues
+const NovelEditor = dynamic(() => import('@/components/NovelEditor'), {
+  ssr: false,
+  loading: () => <div className="p-8 text-center text-gray-500">Loading editor...</div>
+});
+
+// Content Templates
+const TEMPLATES = [
+  {
+    id: 'blank',
+    name: 'Blank Document',
+    content: '',
+  },
+  {
+    id: 'story',
+    name: 'Story Template',
+    content: `<h1>Story Title Here</h1>
+
+<h2>Background</h2>
+<p>Provide context about the situation, community, or individual...</p>
+
+<h2>What Happened</h2>
+<p>Tell the story of what occurred, focusing on the human impact...</p>
+
+<h2>Impact & Outcomes</h2>
+<p>Describe the results, changes, or lessons learned...</p>
+
+<h2>Call to Action</h2>
+<p>What can readers do? How can they get involved or learn more?</p>`,
+  },
+  {
+    id: 'case-study',
+    name: 'Case Study',
+    content: `<h1>[Organization Name]: [Key Achievement]</h1>
+
+<h2>The Challenge</h2>
+<p>Describe the problem or situation that needed addressing...</p>
+
+<h2>The Approach</h2>
+<p>Explain the strategy, methods, or innovations used...</p>
+
+<h2>Results & Impact</h2>
+<p>Share measurable outcomes and community impact...</p>
+
+<h2>Lessons Learned</h2>
+<p>What insights can others take away from this experience?</p>`,
+  },
+  {
+    id: 'news',
+    name: 'News Update',
+    content: `<h1>Headline Goes Here</h1>
+
+<p><strong>Lead paragraph summarizing the who, what, when, where, why...</strong></p>
+
+<h2>Key Details</h2>
+<p>Expand on the main points...</p>
+
+<h2>Context & Background</h2>
+<p>Provide relevant context for understanding this news...</p>
+
+<h2>What's Next</h2>
+<p>Future developments, upcoming events, or next steps...</p>`,
+  },
+];
+
+export default function EnhancedBlogPostPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [autoSaving, setAutoSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [showTemplates, setShowTemplates] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
     excerpt: '',
     content: '',
     featured_image_url: '',
-    featured_image_caption: '',
     status: 'draft' as 'draft' | 'review' | 'published',
     tags: [] as string[],
-    categories: [] as string[],
-    meta_title: '',
-    meta_description: '',
   });
   const [currentTag, setCurrentTag] = useState('');
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const autoSaveTimerRef = useRef<NodeJS.Timeout>();
+
+  // Calculate stats
+  const wordCount = formData.content
+    .replace(/<[^>]*>/g, ' ') // Remove HTML tags
+    .split(/\s+/)
+    .filter(Boolean).length;
+  const charCount = formData.content.replace(/<[^>]*>/g, '').length;
+  const readingTime = Math.ceil(wordCount / 200);
 
   // Auto-generate slug from title
   const handleTitleChange = (title: string) => {
@@ -41,6 +113,7 @@ export default function NewBlogPostPage() {
     });
   };
 
+  // Handle tag management
   const handleAddTag = () => {
     if (currentTag && !formData.tags.includes(currentTag)) {
       setFormData({
@@ -58,42 +131,28 @@ export default function NewBlogPostPage() {
     });
   };
 
-  // Insert text at cursor position
-  const insertAtCursor = (text: string) => {
-    const textarea = contentTextareaRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const content = formData.content;
-    const newContent = content.substring(0, start) + text + content.substring(end);
-
-    setFormData({ ...formData, content: newContent });
-
-    // Set cursor position after inserted text
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + text.length, start + text.length);
-    }, 0);
-  };
-
   // Handle image upload
-  const handleImageUpload = async (file: File) => {
-    if (!file.type.startsWith('image/')) {
+  const handleImageUpload = async (file?: File) => {
+    let selectedFile = file;
+
+    if (!selectedFile) {
+      // Trigger file input
+      fileInputRef.current?.click();
+      return;
+    }
+
+    if (!selectedFile.type.startsWith('image/')) {
       alert('Please select an image file');
       return;
     }
 
     setUploading(true);
-    setUploadProgress(0);
 
     try {
-      // Create form data
       const uploadFormData = new FormData();
-      uploadFormData.append('file', file);
+      uploadFormData.append('file', selectedFile);
       uploadFormData.append('folder', 'blog');
 
-      // Upload via API route
       const response = await fetch('/api/upload-image', {
         method: 'POST',
         body: uploadFormData,
@@ -106,118 +165,79 @@ export default function NewBlogPostPage() {
 
       const data = await response.json();
 
-      // Insert markdown image at cursor
-      const imageMarkdown = `\n![${data.altText}](${data.url})\n`;
-      insertAtCursor(imageMarkdown);
+      // Insert image into editor
+      const imageHtml = `<img src="${data.url}" alt="${data.altText}" />`;
+      setFormData(prev => ({
+        ...prev,
+        content: prev.content + imageHtml,
+      }));
 
-      setUploadProgress(100);
-      setTimeout(() => {
-        setUploading(false);
-        setUploadProgress(0);
-      }, 1000);
+      alert('Image uploaded successfully!');
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('Failed to upload image. Please try again.');
+    } finally {
       setUploading(false);
-      setUploadProgress(0);
     }
   };
 
-  // Handle file input change
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleImageUpload(file);
-    }
-    // Reset input so same file can be selected again
-    e.target.value = '';
-  };
+  // Auto-save functionality
+  const autoSave = async () => {
+    if (!formData.title && !formData.content) return;
 
-  // Handle drag and drop
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      handleImageUpload(file);
+    setAutoSaving(true);
+    try {
+      // Save draft silently
+      await handleSave('draft', true);
+      setLastSaved(new Date());
+    } catch (error) {
+      console.error('Auto-save failed:', error);
+    } finally {
+      setAutoSaving(false);
     }
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
+  // Set up auto-save timer
+  useEffect(() => {
+    // Clear existing timer
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+    }
 
-  // Handle slash commands
-  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newContent = e.target.value;
-    const textarea = e.target;
-    const cursorPos = textarea.selectionStart;
+    // Set new timer
+    autoSaveTimerRef.current = setTimeout(() => {
+      autoSave();
+    }, 5000); // Auto-save every 5 seconds
 
-    // Check for slash command at cursor
-    const textBeforeCursor = newContent.substring(0, cursorPos);
-    const lastSlashIndex = textBeforeCursor.lastIndexOf('/');
-
-    if (lastSlashIndex >= 0) {
-      const commandText = textBeforeCursor.substring(lastSlashIndex + 1);
-      const isStartOfLine = lastSlashIndex === 0 || textBeforeCursor[lastSlashIndex - 1] === '\n';
-
-      if (isStartOfLine && commandText.length > 0 && commandText.indexOf(' ') === -1) {
-        // Check for image command
-        if ('image'.startsWith(commandText.toLowerCase()) && commandText.length >= 2) {
-          if (e.nativeEvent instanceof InputEvent && e.nativeEvent.data === ' ') {
-            e.preventDefault();
-            const beforeSlash = newContent.substring(0, lastSlashIndex);
-            const afterCommand = newContent.substring(cursorPos);
-            const imageTemplate = '![Alt text](paste-image-url-here)';
-            setFormData({ ...formData, content: beforeSlash + imageTemplate + afterCommand });
-            setTimeout(() => {
-              textarea.focus();
-              const newPos = beforeSlash.length + 2; // Position at "Alt text"
-              textarea.setSelectionRange(newPos, newPos + 8); // Select "Alt text"
-            }, 0);
-            return;
-          }
-        }
-
-        // Check for video command
-        if ('video'.startsWith(commandText.toLowerCase()) && commandText.length >= 2) {
-          if (e.nativeEvent instanceof InputEvent && e.nativeEvent.data === ' ') {
-            e.preventDefault();
-            const beforeSlash = newContent.substring(0, lastSlashIndex);
-            const afterCommand = newContent.substring(cursorPos);
-            const videoTemplate = '\n\n**Video:** Paste YouTube or Vimeo link here\n\n';
-            setFormData({ ...formData, content: beforeSlash + videoTemplate + afterCommand });
-            setTimeout(() => {
-              textarea.focus();
-              const newPos = beforeSlash.length + videoTemplate.length - 2;
-              textarea.setSelectionRange(newPos, newPos);
-            }, 0);
-            return;
-          }
-        }
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
       }
-    }
+    };
+  }, [formData]);
 
-    // Auto-convert video URLs to embeds
-    const youtubeRegex = /https?:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
-    const vimeoRegex = /https?:\/\/(www\.)?vimeo\.com\/(\d+)/g;
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd/Ctrl + S to save
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        handleSave('draft');
+      }
+      // Cmd/Ctrl + Shift + P to publish
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'p') {
+        e.preventDefault();
+        handleSave('published');
+      }
+    };
 
-    let convertedContent = newContent;
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [formData]);
 
-    // Convert YouTube links
-    convertedContent = convertedContent.replace(youtubeRegex, (match, _, __, videoId) => {
-      return `\n\n<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>\n\n`;
-    });
-
-    // Convert Vimeo links
-    convertedContent = convertedContent.replace(vimeoRegex, (match, _, videoId) => {
-      return `\n\n<iframe src="https://player.vimeo.com/video/${videoId}" width="640" height="360" frameborder="0" allowfullscreen></iframe>\n\n`;
-    });
-
-    setFormData({ ...formData, content: convertedContent });
-  };
-
-  const handleSave = async (status: 'draft' | 'review' | 'published') => {
-    setSaving(true);
+  // Save post
+  const handleSave = async (status: 'draft' | 'review' | 'published', silent = false) => {
+    if (!silent) setSaving(true);
 
     try {
       const supabase = createClient();
@@ -225,7 +245,7 @@ export default function NewBlogPostPage() {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        alert('You must be logged in to create a blog post');
+        if (!silent) alert('You must be logged in to create a blog post');
         return;
       }
 
@@ -237,7 +257,7 @@ export default function NewBlogPostPage() {
         .single();
 
       if (!profile) {
-        alert('Profile not found');
+        if (!silent) alert('Profile not found');
         return;
       }
 
@@ -246,6 +266,7 @@ export default function NewBlogPostPage() {
         status,
         author_id: profile.id,
         published_at: status === 'published' ? new Date().toISOString() : null,
+        reading_time_minutes: readingTime,
       };
 
       const { data, error } = await supabase
@@ -256,13 +277,27 @@ export default function NewBlogPostPage() {
 
       if (error) throw error;
 
-      alert(status === 'published' ? 'Blog post published!' : 'Draft saved!');
-      router.push('/admin/blog');
+      if (!silent) {
+        alert(status === 'published' ? 'Blog post published!' : 'Draft saved!');
+        router.push('/admin/blog');
+      }
     } catch (error) {
       console.error('Error saving post:', error);
-      alert('Error saving blog post. Please try again.');
+      if (!silent) alert('Error saving blog post. Please try again.');
     } finally {
-      setSaving(false);
+      if (!silent) setSaving(false);
+    }
+  };
+
+  // Apply template
+  const applyTemplate = (templateId: string) => {
+    const template = TEMPLATES.find(t => t.id === templateId);
+    if (template) {
+      setFormData(prev => ({
+        ...prev,
+        content: template.content,
+      }));
+      setShowTemplates(false);
     }
   };
 
@@ -271,7 +306,7 @@ export default function NewBlogPostPage() {
       <Navigation />
 
       <div className="pt-24 pb-16">
-        <div className="max-w-5xl mx-auto px-4">
+        <div className="max-w-6xl mx-auto px-4">
           {/* Header */}
           <div className="mb-8">
             <Link
@@ -281,16 +316,41 @@ export default function NewBlogPostPage() {
               <ArrowLeft className="w-4 h-4" />
               Back to Blog Posts
             </Link>
-            <h1 className="text-4xl font-black text-black mb-2">Write New Story</h1>
-            <p className="text-lg text-gray-600">
-              Share stories from the movement - use /image or /video for quick media inserts
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-4xl font-black text-black mb-2">Write New Story</h1>
+                <p className="text-lg text-gray-600">
+                  Professional editor with auto-save and rich formatting
+                </p>
+              </div>
+
+              {/* Stats */}
+              <div className="text-right text-sm text-gray-600">
+                <div className="flex items-center gap-4">
+                  <div>
+                    <strong>{wordCount}</strong> words
+                  </div>
+                  <div>
+                    <strong>{charCount}</strong> characters
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <strong>{readingTime}</strong> min read
+                  </div>
+                </div>
+                {lastSaved && (
+                  <div className="text-xs text-gray-500 mt-1">
+                    {autoSaving ? 'Saving...' : `Last saved ${lastSaved.toLocaleTimeString()}`}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Main Form */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main Content - Left Side */}
-            <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Main Content - Left Side (3 columns) */}
+            <div className="lg:col-span-3 space-y-6">
               {/* Title */}
               <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
                 <label className="block text-sm font-bold text-black mb-2">
@@ -300,172 +360,145 @@ export default function NewBlogPostPage() {
                   type="text"
                   value={formData.title}
                   onChange={(e) => handleTitleChange(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-black font-bold text-2xl focus:outline-none focus:ring-2 focus:ring-black"
+                  className="w-full px-4 py-3 border-2 border-black font-bold text-3xl focus:outline-none focus:ring-2 focus:ring-black"
                   placeholder="Enter story title..."
                   required
                 />
               </div>
 
-              {/* Slug */}
-              <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
-                <label className="block text-sm font-bold text-black mb-2">
-                  URL Slug *
-                </label>
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-500">justicehub.au/blog/</span>
-                  <input
-                    type="text"
-                    value={formData.slug}
-                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                    className="flex-1 px-4 py-2 border-2 border-black font-medium focus:outline-none focus:ring-2 focus:ring-black"
-                    placeholder="url-slug"
-                    required
-                  />
-                </div>
-              </div>
-
               {/* Excerpt */}
               <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
                 <label className="block text-sm font-bold text-black mb-2">
-                  Excerpt
+                  Excerpt (Brief Summary)
                 </label>
                 <textarea
                   value={formData.excerpt}
                   onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                   className="w-full px-4 py-3 border-2 border-black font-medium focus:outline-none focus:ring-2 focus:ring-black"
                   rows={3}
-                  placeholder="Brief summary for previews..."
+                  placeholder="Brief summary for previews and search results..."
                 />
-                <p className="text-xs text-gray-500 mt-2">
-                  This appears in blog listings and search results
-                </p>
               </div>
 
-              {/* Main Content - Enhanced Markdown Editor */}
+              {/* Rich Text Editor */}
               <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
                 <div className="flex items-center justify-between mb-4">
                   <label className="block text-sm font-bold text-black">
-                    Content * (Markdown + slash commands)
+                    Content *
                   </label>
-                  <a
-                    href="https://www.markdownguide.org/basic-syntax/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-blue-600 hover:underline"
-                  >
-                    Markdown Guide
-                  </a>
-                </div>
-
-                {/* Quick Insert Toolbar */}
-                <div className="flex flex-wrap gap-2 mb-3 p-3 bg-gray-50 border-2 border-gray-300">
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileSelect}
-                    accept="image/*"
-                    className="hidden"
-                  />
                   <button
                     type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploading}
-                    className="px-3 py-1.5 bg-green-100 border-2 border-black text-sm font-bold hover:bg-green-200 flex items-center gap-2 disabled:opacity-50"
+                    onClick={() => setShowTemplates(!showTemplates)}
+                    className="text-sm text-blue-600 hover:underline flex items-center gap-1"
                   >
-                    <Upload className="w-4 h-4" />
-                    {uploading ? `Uploading ${uploadProgress}%` : 'Upload Image'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertAtCursor('\n\n**Video:** Paste YouTube or Vimeo link here\n\n')}
-                    className="px-3 py-1.5 bg-white border-2 border-black text-sm font-bold hover:bg-gray-100 flex items-center gap-2"
-                  >
-                    <Video className="w-4 h-4" />
-                    Add Video
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertAtCursor('**bold text**')}
-                    className="px-3 py-1.5 bg-white border-2 border-black text-sm font-bold hover:bg-gray-100"
-                  >
-                    <strong>B</strong>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertAtCursor('*italic text*')}
-                    className="px-3 py-1.5 bg-white border-2 border-black text-sm font-bold hover:bg-gray-100 italic"
-                  >
-                    <em>I</em>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => insertAtCursor('[Link text](url)')}
-                    className="px-3 py-1.5 bg-white border-2 border-black text-sm font-bold hover:bg-gray-100 flex items-center gap-2"
-                  >
-                    <Link2 className="w-4 h-4" />
-                    Link
+                    <FileText className="w-4 h-4" />
+                    Use Template
                   </button>
                 </div>
 
-                <div
-                  onDrop={handleDrop}
-                  onDragOver={handleDragOver}
-                  className="relative"
-                >
-                  <textarea
-                    ref={contentTextareaRef}
-                    value={formData.content}
-                    onChange={handleContentChange}
-                    className="w-full px-4 py-3 border-2 border-black font-mono text-sm focus:outline-none focus:ring-2 focus:ring-black"
-                    rows={20}
-                    placeholder="# Write your story here...
+                {/* Template Selector */}
+                {showTemplates && (
+                  <div className="mb-4 p-4 bg-gray-50 border-2 border-gray-300">
+                    <p className="text-sm font-bold mb-2">Choose a template:</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {TEMPLATES.map(template => (
+                        <button
+                          key={template.id}
+                          type="button"
+                          onClick={() => applyTemplate(template.id)}
+                          className="px-4 py-2 bg-white border-2 border-black text-sm font-bold hover:bg-gray-100 text-left"
+                        >
+                          {template.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-Drag and drop images anywhere in this editor!
+                {/* Hidden file input for image uploads */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleImageUpload(file);
+                    e.target.value = '';
+                  }}
+                  accept="image/*"
+                  className="hidden"
+                />
 
-Or click 'Upload Image' button above to select from your computer.
+                <NovelEditor
+                  content={formData.content}
+                  onChange={(content) => setFormData({ ...formData, content })}
+                  onImageUpload={() => fileInputRef.current?.click()}
+                  placeholder="Write your story here... Use the toolbar for formatting or drag & drop images!"
+                />
+              </div>
+            </div>
 
-Type / at the start of a line for quick commands:
-  /image - Insert image
-  /video - Insert video placeholder
+            {/* Sidebar - Right Side (1 column) */}
+            <div className="lg:col-span-1 space-y-6">
+              {/* Publish Actions */}
+              <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 sticky top-24">
+                <h3 className="text-sm font-bold text-black mb-4">PUBLISH</h3>
 
-Or paste YouTube/Vimeo links and they'll auto-convert to embeds!
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => handleSave('draft')}
+                    disabled={saving}
+                    className="w-full px-4 py-3 bg-white border-2 border-black font-bold hover:bg-gray-100 flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    <Save className="w-4 h-4" />
+                    {saving ? 'Saving...' : 'Save Draft'}
+                  </button>
 
-## Use markdown formatting
-
-- **Bold text**
-- *Italic text*
-- [Links](https://example.com)
-
-### Code blocks
-```
-Code goes here
-```
-
-> Blockquotes for emphasis"
-                    required
-                  />
+                  <button
+                    type="button"
+                    onClick={() => handleSave('published')}
+                    disabled={saving}
+                    className="w-full px-4 py-3 bg-black text-white border-2 border-black font-bold hover:bg-gray-800 flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    <Eye className="w-4 h-4" />
+                    {saving ? 'Publishing...' : 'Publish Now'}
+                  </button>
                 </div>
-                <div className="mt-4 p-3 bg-blue-50 border-2 border-blue-600">
-                  <p className="text-xs font-bold text-blue-900 mb-2">✨ Magic Features:</p>
-                  <ul className="text-xs text-blue-800 space-y-1">
-                    <li>• <strong>Drag & drop images</strong> directly into the editor!</li>
-                    <li>• Click <code className="bg-blue-100 px-1">Upload Image</code> to browse your computer</li>
-                    <li>• Type <code className="bg-blue-100 px-1">/image</code> then space to insert image template</li>
-                    <li>• Type <code className="bg-blue-100 px-1">/video</code> then space for video</li>
-                    <li>• Paste YouTube/Vimeo links - they auto-convert to embeds!</li>
-                    <li>• Use toolbar buttons for quick formatting</li>
+
+                <div className="mt-4 p-3 bg-blue-50 border-2 border-blue-300 text-xs">
+                  <p className="font-bold text-blue-900 mb-1">⌨️ Keyboard Shortcuts:</p>
+                  <ul className="text-blue-800 space-y-1">
+                    <li>• Cmd/Ctrl + S = Save draft</li>
+                    <li>• Cmd/Ctrl + Shift + P = Publish</li>
+                    <li>• Cmd/Ctrl + B = Bold</li>
+                    <li>• Cmd/Ctrl + I = Italic</li>
                   </ul>
                 </div>
+              </div>
+
+              {/* URL Slug */}
+              <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
+                <label className="block text-sm font-bold text-black mb-2">
+                  URL Slug *
+                </label>
+                <input
+                  type="text"
+                  value={formData.slug}
+                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                  className="w-full px-3 py-2 border-2 border-black font-mono text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                  placeholder="url-slug"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  /blog/{formData.slug || 'url-slug'}
+                </p>
               </div>
 
               {/* Featured Image */}
               <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
                 <label className="block text-sm font-bold text-black mb-2">
-                  <ImageIcon className="w-4 h-4 inline mr-2" />
                   Featured Image
                 </label>
-
-                {/* Featured Image Upload Button */}
                 <button
                   type="button"
                   onClick={async () => {
@@ -504,172 +537,60 @@ Code goes here
                     input.click();
                   }}
                   disabled={uploading}
-                  className="w-full px-4 py-3 bg-green-100 border-2 border-black font-bold hover:bg-green-200 mb-3 flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full px-4 py-3 bg-green-100 border-2 border-black font-bold hover:bg-green-200 flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <Upload className="w-4 h-4" />
-                  {uploading ? 'Uploading...' : 'Upload Featured Image'}
+                  {uploading ? 'Uploading...' : 'Upload Image'}
                 </button>
-
-                <div className="text-center text-xs text-gray-500 mb-3">or paste URL below</div>
-
-                <input
-                  type="url"
-                  value={formData.featured_image_url}
-                  onChange={(e) => setFormData({ ...formData, featured_image_url: e.target.value })}
-                  className="w-full px-4 py-2 border-2 border-black font-medium focus:outline-none focus:ring-2 focus:ring-black mb-3"
-                  placeholder="https://..."
-                />
                 {formData.featured_image_url && (
-                  <div className="mb-3">
+                  <div className="mt-3">
                     <img
                       src={formData.featured_image_url}
-                      alt="Featured preview"
-                      className="w-full h-48 object-cover border-2 border-black"
+                      alt="Featured"
+                      className="w-full h-auto border-2 border-black"
                     />
                   </div>
                 )}
-                <input
-                  type="text"
-                  value={formData.featured_image_caption}
-                  onChange={(e) => setFormData({ ...formData, featured_image_caption: e.target.value })}
-                  className="w-full px-4 py-2 border-2 border-black font-medium focus:outline-none focus:ring-2 focus:ring-black"
-                  placeholder="Image caption..."
-                />
-              </div>
-            </div>
-
-            {/* Sidebar - Right Side */}
-            <div className="space-y-6">
-              {/* Publish Actions */}
-              <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 sticky top-24">
-                <h3 className="font-bold text-black mb-4">Publish</h3>
-
-                <div className="space-y-3">
-                  <button
-                    onClick={() => handleSave('draft')}
-                    disabled={saving}
-                    className="w-full px-4 py-3 bg-gray-100 text-black border-2 border-black font-bold hover:bg-gray-200 transition-colors disabled:opacity-50"
-                  >
-                    <Save className="w-4 h-4 inline mr-2" />
-                    Save Draft
-                  </button>
-
-                  <button
-                    onClick={() => handleSave('review')}
-                    disabled={saving}
-                    className="w-full px-4 py-3 bg-yellow-100 text-black border-2 border-black font-bold hover:bg-yellow-200 transition-colors disabled:opacity-50"
-                  >
-                    <Eye className="w-4 h-4 inline mr-2" />
-                    Submit for Review
-                  </button>
-
-                  <button
-                    onClick={() => handleSave('published')}
-                    disabled={saving}
-                    className="w-full px-4 py-3 bg-black text-white border-2 border-black font-bold hover:bg-gray-800 transition-colors disabled:opacity-50"
-                  >
-                    Publish Now
-                  </button>
-                </div>
               </div>
 
               {/* Tags */}
               <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
-                <label className="block text-sm font-bold text-black mb-3">
-                  <Tag className="w-4 h-4 inline mr-2" />
+                <label className="block text-sm font-bold text-black mb-2">
                   Tags
                 </label>
-
                 <div className="flex gap-2 mb-3">
                   <input
                     type="text"
                     value={currentTag}
                     onChange={(e) => setCurrentTag(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
-                    className="flex-1 px-3 py-2 border-2 border-black font-medium focus:outline-none focus:ring-2 focus:ring-black"
+                    className="flex-1 px-3 py-2 border-2 border-black text-sm focus:outline-none focus:ring-2 focus:ring-black"
                     placeholder="Add tag..."
                   />
                   <button
+                    type="button"
                     onClick={handleAddTag}
-                    className="px-4 py-2 bg-black text-white font-bold border-2 border-black hover:bg-gray-800"
+                    className="px-4 py-2 bg-black text-white border-2 border-black font-bold hover:bg-gray-800"
                   >
-                    Add
+                    +
                   </button>
                 </div>
-
                 <div className="flex flex-wrap gap-2">
-                  {formData.tags.map((tag) => (
+                  {formData.tags.map(tag => (
                     <span
                       key={tag}
-                      className="px-3 py-1 bg-gray-100 border-2 border-black text-sm font-bold flex items-center gap-2"
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 border-2 border-black text-sm font-bold"
                     >
                       {tag}
                       <button
+                        type="button"
                         onClick={() => handleRemoveTag(tag)}
-                        className="text-red-600 hover:text-red-800"
+                        className="hover:text-red-600"
                       >
-                        ×
+                        <X className="w-3 h-3" />
                       </button>
                     </span>
                   ))}
-                </div>
-
-                <div className="mt-3 text-xs text-gray-500">
-                  <p className="font-bold mb-1">Quick add:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {['Youth Story', 'Editorial', 'Update', 'Research', 'YouthJustice', 'SystemsChange'].map(tag => (
-                      <button
-                        key={tag}
-                        onClick={() => {
-                          if (!formData.tags.includes(tag)) {
-                            setFormData({ ...formData, tags: [...formData.tags, tag] });
-                          }
-                        }}
-                        className="text-blue-600 hover:underline"
-                      >
-                        +{tag}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* SEO */}
-              <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
-                <h3 className="font-bold text-black mb-3">SEO</h3>
-
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Meta Title
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.meta_title}
-                      onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })}
-                      className="w-full px-3 py-2 border-2 border-black font-medium text-sm focus:outline-none focus:ring-2 focus:ring-black"
-                      placeholder={formData.title || 'Page title for search engines'}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.meta_title.length}/60 characters
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Meta Description
-                    </label>
-                    <textarea
-                      value={formData.meta_description}
-                      onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })}
-                      className="w-full px-3 py-2 border-2 border-black font-medium text-sm focus:outline-none focus:ring-2 focus:ring-black"
-                      rows={3}
-                      placeholder={formData.excerpt || 'Description for search results'}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.meta_description.length}/160 characters
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>

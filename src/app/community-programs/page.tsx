@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { 
-  Search, 
-  MapPin, 
-  Users, 
+import {
+  Search,
+  MapPin,
+  Users,
   Target,
   Star,
   ChevronRight,
@@ -18,6 +18,7 @@ import {
   List
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import { supabase } from '@/lib/supabase';
 
 interface CommunityProgram {
   id: string;
@@ -40,136 +41,6 @@ interface CommunityProgram {
   tags: string[];
   founded_year: number;
 }
-
-// Sample data for community programs focusing on grassroots approaches and indigenous knowledge
-const samplePrograms: CommunityProgram[] = [
-  {
-    id: '1',
-    name: 'BackTrack Youth Works',
-    organization: 'BackTrack',
-    location: 'Armidale',
-    state: 'NSW',
-    approach: 'Community-based',
-    description: 'Innovative program combining vocational training, animal therapy, and intensive mentoring for disengaged youth.',
-    impact_summary: 'Transforms lives through dogs, welding, and mentorship - 87% never reoffend',
-    success_rate: 87,
-    participants_served: 300,
-    years_operating: 15,
-    contact_phone: '02 6772 1234',
-    contact_email: 'info@backtrack.org.au',
-    website: 'https://backtrack.org.au',
-    is_featured: true,
-    indigenous_knowledge: false,
-    community_connection_score: 95,
-    tags: ['Vocational Training', 'Animal Therapy', 'Mentorship', 'Rural NSW'],
-    founded_year: 2009
-  },
-  {
-    id: '2',
-    name: 'Healing Circles Program',
-    organization: 'Antakirinja Matu-Yankunytjatjara',
-    location: 'Alice Springs',
-    state: 'NT',
-    approach: 'Indigenous-led',
-    description: 'Traditional Aboriginal healing practices combined with elder mentorship for young Aboriginal people experiencing trauma.',
-    impact_summary: 'Cultural connection and healing through ancient wisdom - 78% report significant trauma recovery',
-    success_rate: 78,
-    participants_served: 120,
-    years_operating: 8,
-    contact_phone: '08 8951 4251',
-    contact_email: 'healing@amyac.org.au',
-    website: 'https://amyac.org.au',
-    is_featured: true,
-    indigenous_knowledge: true,
-    community_connection_score: 98,
-    tags: ['Cultural Healing', 'Elder Mentorship', 'Trauma Recovery', 'Traditional Knowledge'],
-    founded_year: 2016
-  },
-  {
-    id: '3',
-    name: 'Logan Youth Collective',
-    organization: 'Logan Youth Collective',
-    location: 'Logan',
-    state: 'QLD',
-    approach: 'Grassroots',
-    description: 'Youth-led organization focused on community organizing, leadership development, and social justice advocacy.',
-    impact_summary: 'Young people driving change in their community - 92% pursue higher education or leadership roles',
-    success_rate: 92,
-    participants_served: 150,
-    years_operating: 6,
-    contact_phone: '07 3299 5678',
-    contact_email: 'info@loganyouth.org.au',
-    website: 'https://loganyouth.org.au',
-    is_featured: true,
-    indigenous_knowledge: false,
-    community_connection_score: 90,
-    tags: ['Youth Leadership', 'Community Organizing', 'Social Justice', 'Advocacy'],
-    founded_year: 2018
-  },
-  {
-    id: '4',
-    name: 'Creative Futures Collective',
-    organization: 'Creative Futures',
-    location: 'Melbourne',
-    state: 'VIC',
-    approach: 'Community-based',
-    description: 'Arts-based program supporting young people from foster care and out-of-home care through creative expression.',
-    impact_summary: 'Creativity as pathway to stability - 67% achieve independent living and creative careers',
-    success_rate: 67,
-    participants_served: 85,
-    years_operating: 4,
-    contact_phone: '03 9555 0987',
-    contact_email: 'creative@futures.org.au',
-    website: 'https://creativefutures.org.au',
-    is_featured: false,
-    indigenous_knowledge: false,
-    community_connection_score: 85,
-    tags: ['Creative Arts', 'Foster Care', 'Independent Living', 'Youth Homelessness'],
-    founded_year: 2020
-  },
-  {
-    id: '5',
-    name: 'Yurrampi Growing Strong',
-    organization: 'Tangentyere Council',
-    location: 'Alice Springs',
-    state: 'NT',
-    approach: 'Indigenous-led',
-    description: 'Strengthening young Aboriginal men through culture, ceremony, and connection to country.',
-    impact_summary: 'Building strong Aboriginal men through culture - 85% remain connected to community and culture',
-    success_rate: 85,
-    participants_served: 200,
-    years_operating: 12,
-    contact_phone: '08 8951 4466',
-    contact_email: 'yurrampi@tangentyere.org.au',
-    website: 'https://tangentyere.org.au',
-    is_featured: false,
-    indigenous_knowledge: true,
-    community_connection_score: 97,
-    tags: ['Cultural Strength', 'Young Men', 'Connection to Country', 'Ceremony'],
-    founded_year: 2012
-  },
-  {
-    id: '6',
-    name: 'TechStart Youth',
-    organization: 'TechStart Youth',
-    location: 'Adelaide',
-    state: 'SA',
-    approach: 'Community-based',
-    description: 'Technology education and coding programs designed for neurodivergent and disengaged young people.',
-    impact_summary: 'Technology as empowerment tool - 73% gain tech employment or start digital ventures',
-    success_rate: 73,
-    participants_served: 95,
-    years_operating: 3,
-    contact_phone: '08 8234 5678',
-    contact_email: 'info@techstartyouth.org.au',
-    website: 'https://techstartyouth.org.au',
-    is_featured: false,
-    indigenous_knowledge: false,
-    community_connection_score: 80,
-    tags: ['Technology', 'Neurodiversity', 'Digital Skills', 'Innovation'],
-    founded_year: 2021
-  }
-];
 
 // Sample stories related to community programs
 const communityStories = [
@@ -205,8 +76,30 @@ export default function CommunityProgramsPage() {
   const [selectedState, setSelectedState] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [mounted, setMounted] = useState(false);
+  const [programs, setPrograms] = useState<CommunityProgram[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch programs from database
   useEffect(() => {
+    async function fetchPrograms() {
+      setLoading(true);
+      console.log('Fetching programs from Supabase...');
+      const { data, error } = await supabase
+        .from('community_programs')
+        .select('*')
+        .order('is_featured', { ascending: false })
+        .order('name');
+
+      if (error) {
+        console.error('Error fetching programs:', error);
+      } else if (data) {
+        console.log(`Successfully fetched ${data.length} programs`);
+        setPrograms(data);
+      }
+      setLoading(false);
+    }
+
+    fetchPrograms();
     setMounted(true);
   }, []);
 
@@ -230,9 +123,9 @@ export default function CommunityProgramsPage() {
     { id: 'ACT', label: 'Australian Capital Territory' }
   ];
 
-  const featuredPrograms = samplePrograms.filter(program => program.is_featured);
-  
-  const filteredPrograms = samplePrograms.filter(program => {
+  const featuredPrograms = programs.filter(program => program.is_featured);
+
+  const filteredPrograms = programs.filter(program => {
     const matchesSearch = program.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          program.organization.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          program.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -252,7 +145,7 @@ export default function CommunityProgramsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white page-content">
       <Navigation />
 
       <main>
@@ -289,17 +182,35 @@ export default function CommunityProgramsPage() {
           </div>
         </section>
 
+        {/* Loading State */}
+        {loading && (
+          <section className="py-16">
+            <div className="container-justice text-center">
+              <div className="animate-pulse">
+                <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-96 mx-auto mb-8"></div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-64 bg-gray-200 rounded"></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Featured Programs */}
-        <section className="py-16 border-b-2 border-black">
-          <div className="container-justice">
-            <h2 className="text-3xl font-bold mb-2 text-center">FEATURED PROGRAMS</h2>
-            <p className="text-center text-gray-700 mb-12 max-w-2xl mx-auto">
-              Exceptional programs showcasing the power of community-driven approaches, 
-              indigenous knowledge, and grassroots innovation.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {featuredPrograms.map((program) => (
+        {!loading && (
+          <section className="py-16 border-b-2 border-black">
+            <div className="container-justice">
+              <h2 className="text-3xl font-bold mb-2 text-center">FEATURED PROGRAMS</h2>
+              <p className="text-center text-gray-700 mb-12 max-w-2xl mx-auto">
+                Exceptional programs showcasing the power of community-driven approaches,
+                indigenous knowledge, and grassroots innovation.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {featuredPrograms.map((program) => (
                 <div key={program.id} className="data-card">
                   <div className="flex items-center justify-between mb-4">
                     <span className={`px-3 py-1 text-sm font-bold uppercase tracking-wider ${getApproachColor(program.approach)}`}>
@@ -347,8 +258,10 @@ export default function CommunityProgramsPage() {
             </div>
           </div>
         </section>
+        )}
 
         {/* Search and Database */}
+        {!loading && (
         <section className="py-16">
           <div className="container-justice">
             <div className="mb-8">
@@ -551,6 +464,7 @@ export default function CommunityProgramsPage() {
             )}
           </div>
         </section>
+        )}
 
         {/* Stories Section */}
         <section className="py-16 bg-gray-50 border-t-2 border-black">

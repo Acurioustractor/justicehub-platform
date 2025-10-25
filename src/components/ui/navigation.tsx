@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, User, LogOut } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+import Image from 'next/image';
 
 interface NavigationProps {
   variant?: 'default' | 'transparent';
@@ -17,15 +19,84 @@ interface NavigationItem {
   items?: NavigationItem[];
 }
 
+interface UserProfile {
+  slug: string;
+  full_name: string;
+  photo_url: string | null;
+  user_role?: string;
+}
+
 export function Navigation({ variant = 'default' }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
+
+    // Create Supabase client only on client-side
+    const supabase = createClient();
+
+    // Check auth state
+    const checkAuth = async () => {
+      console.log('🔍 Navigation: Checking auth...');
+      const { data: { user }, error } = await supabase.auth.getUser();
+      console.log('🔍 Navigation: User:', user?.email || 'Not logged in', error?.message || '');
+      setUser(user);
+
+      if (user) {
+        // Fetch user's profile and role
+        console.log('🔍 Navigation: Fetching profile for user:', user.id);
+        const { data: profile, error: profileError } = await supabase
+          .from('public_profiles')
+          .select(`
+            slug,
+            full_name,
+            photo_url,
+            users!public_profiles_user_id_fkey(user_role)
+          `)
+          .eq('user_id', user.id)
+          .single();
+
+        console.log('🔍 Navigation: Profile data:', profile, profileError?.message || '');
+        console.log('🔍 Navigation: Profile.users:', profile?.users);
+
+        // Extract user_role from the joined data
+        if (profile && profile.users) {
+          console.log('🔍 Navigation: users is array?', Array.isArray(profile.users));
+          console.log('🔍 Navigation: users content:', profile.users);
+
+          if (Array.isArray(profile.users) && profile.users[0]) {
+            profile.user_role = profile.users[0].user_role;
+            console.log('🔍 Navigation: Extracted user_role (array):', profile.user_role);
+          } else if (typeof profile.users === 'object' && profile.users.user_role) {
+            // Sometimes Supabase returns single object instead of array
+            profile.user_role = profile.users.user_role;
+            console.log('🔍 Navigation: Extracted user_role (object):', profile.user_role);
+          }
+        }
+
+        console.log('🔍 Navigation: Final profile with user_role:', profile);
+        setUserProfile(profile);
+      }
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (!session?.user) {
+        setUserProfile(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -40,7 +111,7 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
     {
       label: 'Stories',
       href: '/stories',
-      description: 'Youth voices and experiences'
+      description: 'Voices and insights from the movement'
     },
     {
       label: 'Discover',
@@ -152,6 +223,15 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
       setActiveDropdown(null);
     }, 150); // 150ms delay before hiding
     setDropdownTimeout(timeout);
+  };
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    setUser(null);
+    setUserProfile(null);
+    setProfileDropdownOpen(false);
+    window.location.href = '/';
   };
 
   const headerClasses = variant === 'transparent' 
@@ -313,13 +393,98 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                 <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </Link>
 
-              <Link
-                href="/signup"
-                className="px-5 py-2.5 bg-black text-white font-bold text-xs uppercase tracking-wider hover:bg-gray-800 transition-colors border-2 border-black shadow-lg rounded-sm"
-                aria-label="Create your profile"
-              >
-                SIGN UP
-              </Link>
+              {/* Show SIGN UP or Profile Dropdown based on auth state */}
+              {mounted && user && userProfile ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                    onBlur={() => setTimeout(() => setProfileDropdownOpen(false), 200)}
+                    className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded-sm transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                    aria-expanded={profileDropdownOpen}
+                    aria-haspopup="true"
+                  >
+                    {userProfile.photo_url ? (
+                      <Image
+                        src={userProfile.photo_url}
+                        alt={userProfile.full_name}
+                        width={32}
+                        height={32}
+                        className="w-8 h-8 rounded-full object-cover border-2 border-black"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-black flex items-center justify-center">
+                        <User className="w-4 h-4 text-gray-600" />
+                      </div>
+                    )}
+                    <ChevronDown className={`w-3 h-3 transition-transform ${profileDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {profileDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white border-2 border-black shadow-lg z-50">
+                      <div className="px-4 py-3 border-b border-gray-200">
+                        <p className="text-sm font-bold text-black">{userProfile.full_name}</p>
+                        <p className="text-xs text-gray-600">{user.email}</p>
+                      </div>
+                      <Link
+                        href={`/people/${userProfile.slug}`}
+                        className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors border-b border-gray-200"
+                        onClick={() => setProfileDropdownOpen(false)}
+                      >
+                        <div className="flex items-center gap-2">
+                          <User className="w-4 h-4" />
+                          View Profile
+                        </div>
+                      </Link>
+                      <Link
+                        href={`/people/${userProfile.slug}/edit`}
+                        className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors border-b border-gray-200"
+                        onClick={() => setProfileDropdownOpen(false)}
+                      >
+                        <div className="flex items-center gap-2">
+                          <User className="w-4 h-4" />
+                          Edit Profile
+                        </div>
+                      </Link>
+                      {userProfile.user_role === 'admin' && (
+                        <Link
+                          href="/admin"
+                          className="block px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors border-b border-gray-200"
+                          onClick={() => setProfileDropdownOpen(false)}
+                        >
+                          <div className="flex items-center gap-2">
+                            <User className="w-4 h-4" />
+                            Admin Dashboard
+                          </div>
+                        </Link>
+                      )}
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors flex items-center gap-2 text-red-600"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : mounted ? (
+                <div className="flex items-center gap-3">
+                  <Link
+                    href="/login"
+                    className="px-5 py-2.5 bg-white text-black font-bold text-xs uppercase tracking-wider hover:bg-gray-100 transition-colors border-2 border-black shadow-lg rounded-sm"
+                    aria-label="Log in to your account"
+                  >
+                    LOG IN
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="px-5 py-2.5 bg-black text-white font-bold text-xs uppercase tracking-wider hover:bg-gray-800 transition-colors border-2 border-black shadow-lg rounded-sm"
+                    aria-label="Create your profile"
+                  >
+                    SIGN UP
+                  </Link>
+                </div>
+              ) : null}
             </div>
           </nav>
         </div>
@@ -425,14 +590,93 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
                 <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </Link>
 
-              <Link
-                href="/signup"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="px-6 py-3 bg-black text-white font-bold text-sm uppercase tracking-wider hover:bg-gray-800 transition-colors border-2 border-black text-center shadow-lg rounded-sm"
-                aria-label="Create your profile"
-              >
-                SIGN UP
-              </Link>
+              {/* Mobile: Show SIGN UP or Profile Links based on auth state */}
+              {mounted && user && userProfile ? (
+                <div className="border-t-2 border-gray-200 pt-4 mt-4">
+                  <div className="flex items-center gap-3 px-3 mb-4">
+                    {userProfile.photo_url ? (
+                      <Image
+                        src={userProfile.photo_url}
+                        alt={userProfile.full_name}
+                        width={48}
+                        height={48}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-black"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-gray-200 border-2 border-black flex items-center justify-center">
+                        <User className="w-6 h-6 text-gray-600" />
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-bold text-black">{userProfile.full_name}</p>
+                      <p className="text-xs text-gray-600">{user.email}</p>
+                    </div>
+                  </div>
+                  <Link
+                    href={`/people/${userProfile.slug}`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block px-6 py-3 bg-gray-100 text-black font-bold text-sm hover:bg-gray-200 transition-colors mb-2 rounded-sm"
+                  >
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      View Profile
+                    </div>
+                  </Link>
+                  <Link
+                    href={`/people/${userProfile.slug}/edit`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block px-6 py-3 bg-gray-100 text-black font-bold text-sm hover:bg-gray-200 transition-colors mb-2 rounded-sm"
+                  >
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      Edit Profile
+                    </div>
+                  </Link>
+                  {userProfile.user_role === 'admin' && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-6 py-3 bg-gray-100 text-black font-bold text-sm hover:bg-gray-200 transition-colors mb-2 rounded-sm"
+                    >
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4" />
+                        Admin Dashboard
+                      </div>
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleSignOut();
+                    }}
+                    className="w-full px-6 py-3 bg-red-600 text-white font-bold text-sm hover:bg-red-700 transition-colors rounded-sm"
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <LogOut className="w-4 h-4" />
+                      Sign Out
+                    </div>
+                  </button>
+                </div>
+              ) : mounted ? (
+                <div className="flex flex-col gap-3">
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="px-6 py-3 bg-white text-black font-bold text-sm uppercase tracking-wider hover:bg-gray-100 transition-colors border-2 border-black text-center shadow-lg rounded-sm"
+                    aria-label="Log in to your account"
+                  >
+                    LOG IN
+                  </Link>
+                  <Link
+                    href="/signup"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="px-6 py-3 bg-black text-white font-bold text-sm uppercase tracking-wider hover:bg-gray-800 transition-colors border-2 border-black text-center shadow-lg rounded-sm"
+                    aria-label="Create your profile"
+                  >
+                    SIGN UP
+                  </Link>
+                </div>
+              ) : null}
             </div>
         </nav>
       </div>
