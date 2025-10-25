@@ -46,6 +46,7 @@
     "@tiptap/pm": "^3.2.0",
     "@tiptap/react": "^3.8.0",
     "@tiptap/starter-kit": "^3.8.0",
+    "blurhash": "^2.0.5",
     "cheerio": "^1.1.2",
     "chromadb": "^3.0.17",
     "class-variance-authority": "^0.7.0",
@@ -62,6 +63,7 @@
     "react-markdown": "^10.1.0",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
+    "sharp": "^0.34.4",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^4.1.12"
