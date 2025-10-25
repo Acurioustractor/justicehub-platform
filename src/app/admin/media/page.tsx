@@ -86,7 +86,7 @@ export default function MediaLibraryPage() {
     <div className="min-h-screen bg-gray-50">
       <Navigation />
 
-      <div className="pt-24 pb-16">
+      <div className="page-content pb-16">
         <div className="max-w-7xl mx-auto px-4">
           {/* Header */}
           <div className="mb-8">
