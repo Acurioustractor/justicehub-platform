@@ -122,47 +122,9 @@ export async function middleware(request: NextRequest) {
   let response = NextResponse.next();
   const path = request.nextUrl.pathname;
 
-  // Create Supabase client for middleware (handles auth cookie refresh)
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          const cookies = request.cookies.getAll()
-          console.log('🍪 Middleware cookies:', cookies.map(c => c.name).join(', '))
-          return cookies
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set(name, value)
-          })
-          response = NextResponse.next({
-            request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options)
-          })
-        },
-      },
-    }
-  )
-
-  // Refresh session if expired - this is crucial!
-  const { data: { user }, error } = await supabase.auth.getUser()
-  console.log('🔐 Middleware auth check:', user ? `User: ${user.email}` : `No user (${error?.message})`)
-
-  // Check if user is admin (for /admin path protection)
-  let isAdminUser = false;
-  if (user && path.startsWith('/admin')) {
-    const { data: userData } = await supabase
-      .from('users')
-      .select('user_role')
-      .eq('id', user.id)
-      .single();
-
-    isAdminUser = userData?.user_role === 'admin';
-    console.log('🔑 Admin check for /admin path:', { userId: user.id, isAdmin: isAdminUser });
+  // Skip middleware for static files and internal Next.js routes early
+  if (path.startsWith('/_next') || path.startsWith('/static') || path.includes('.') || path === '/favicon.ico') {
+    return response;
   }
 
   // Apply security headers to all responses
@@ -170,9 +132,73 @@ export async function middleware(request: NextRequest) {
     response.headers.set(key, value);
   });
 
-  // Skip middleware for static files and internal Next.js routes
-  if (path.startsWith('/_next') || path.startsWith('/static') || path.includes('.') || path === '/favicon.ico') {
-    return response;
+  // Redirect old blog routes to stories routes
+  if (path.startsWith('/admin/blog')) {
+    const newPath = path.replace('/admin/blog', '/admin/stories');
+    return NextResponse.redirect(new URL(newPath, request.url));
+  }
+
+  // Public routes that don't need Supabase auth
+  const publicRoutes = ['/wiki', '/preplanning', '/', '/stories', '/community-programs', '/organizations'];
+  const isPublicRoute = publicRoutes.some(route => path === route || path.startsWith(`${route}/`));
+
+  // Only create Supabase client if we have environment variables and not on a fully public route
+  let user = null;
+  let isAdminUser = false;
+
+  if (!isPublicRoute) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (supabaseUrl && supabaseKey) {
+      try {
+        // Create Supabase client for middleware (handles auth cookie refresh)
+        const supabase = createServerClient(
+          supabaseUrl,
+          supabaseKey,
+          {
+            cookies: {
+              getAll() {
+                const cookies = request.cookies.getAll()
+                console.log('🍪 Middleware cookies:', cookies.map(c => c.name).join(', '))
+                return cookies
+              },
+              setAll(cookiesToSet) {
+                cookiesToSet.forEach(({ name, value, options }) => {
+                  request.cookies.set(name, value)
+                })
+                response = NextResponse.next({
+                  request,
+                })
+                cookiesToSet.forEach(({ name, value, options }) => {
+                  response.cookies.set(name, value, options)
+                })
+              },
+            },
+          }
+        );
+
+        // Refresh session if expired - this is crucial!
+        const { data: { user: authUser }, error } = await supabase.auth.getUser();
+        user = authUser;
+        console.log('🔐 Middleware auth check:', user ? `User: ${user.email}` : `No user (${error?.message})`);
+
+        // Check if user is admin (for /admin path protection)
+        if (user && path.startsWith('/admin')) {
+          const { data: userData } = await supabase
+            .from('users')
+            .select('user_role')
+            .eq('id', user.id)
+            .single();
+
+          isAdminUser = userData?.user_role === 'admin';
+          console.log('🔑 Admin check for /admin path:', { userId: user.id, isAdmin: isAdminUser });
+        }
+      } catch (error) {
+        console.error('Middleware Supabase error:', error);
+        // Continue without auth - don't crash the middleware
+      }
+    }
   }
 
   // Detect suspicious activity
