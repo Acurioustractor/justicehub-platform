@@ -36,7 +36,7 @@ async function getDocContent(slug: string): Promise<string | null> {
   const fileName = SLUG_TO_FILE[slug];
   if (!fileName) return null;
 
-  const filePath = path.join(process.cwd(), fileName);
+  const filePath = path.join(process.cwd(), 'public', 'docs', fileName);
 
   try {
     const content = fs.readFileSync(filePath, 'utf8');
