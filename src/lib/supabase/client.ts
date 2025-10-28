@@ -9,9 +9,27 @@ import { createBrowserClient } from '@supabase/ssr'
  * @returns Supabase client configured for browser usage
  */
 export function createClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '';
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
+
+  // During build time, return a placeholder if env vars aren't available
+  if (!url || !key) {
+    console.warn('Supabase credentials not available, using placeholder client');
+    return createBrowserClient(
+      'https://placeholder.supabase.co',
+      'placeholder-key',
+      {
+        cookies: {
+          getAll() { return [] },
+          setAll() {},
+        },
+      }
+    );
+  }
+
   return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    key,
     {
       cookies: {
         getAll() {
