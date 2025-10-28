@@ -5,12 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
+import { createClient } from '@/lib/supabase/client';
 
 const AUSTRALIAN_STATES = ['NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'ACT'];
 const APPROACH_TYPES = ['Indigenous-led', 'Community-based', 'Grassroots', 'Culturally-responsive'];
@@ -29,6 +24,7 @@ const SUGGESTED_TAGS = [
 
 export default function AddProgramPage() {
   const router = useRouter();
+  const supabase = createClient();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);

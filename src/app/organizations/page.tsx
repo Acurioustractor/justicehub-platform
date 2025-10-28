@@ -3,12 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
+import { createClient } from '@/lib/supabase/client';
 
 interface Organization {
   id: string;
@@ -23,6 +18,7 @@ interface Organization {
 }
 
 export default function OrganizationsPage() {
+  const supabase = createClient();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [programCounts, setProgramCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
