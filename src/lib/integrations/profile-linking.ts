@@ -1,11 +1,24 @@
 import { empathyLedgerClient, EmpathyLedgerStory, EmpathyLedgerProfile } from '@/lib/supabase/empathy-ledger';
 import { createClient } from '@supabase/supabase-js';
 
-// Use service role key for write operations (has permission to bypass RLS)
-const justiceHubClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.YJSF_SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
+// Lazy-load client to avoid build-time errors
+let justiceHubClient: ReturnType<typeof createClient> | null = null;
+
+function getJusticeHubClient() {
+  if (!justiceHubClient) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+    const key = process.env.YJSF_SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+
+    if (!url || !key) {
+      console.warn('Supabase credentials not configured for JusticeHub client');
+      // Return a dummy client during build time
+      return createClient('https://placeholder.supabase.co', 'placeholder-key');
+    }
+
+    justiceHubClient = createClient(url, key);
+  }
+  return justiceHubClient;
+}
 
 // Justice-related themes/tags (updated to match actual Empathy Ledger data)
 const JUSTICE_THEMES = [
