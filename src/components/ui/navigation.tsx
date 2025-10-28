@@ -892,6 +892,15 @@ export function Footer() {
           <p className="text-sm text-gray-600 font-medium">
             © 2024 JusticeHub. Built for Australia's youth, by people who care.
           </p>
+
+          <div className="mt-4">
+            <Link
+              href="/preplanning"
+              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              Preplanning
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
