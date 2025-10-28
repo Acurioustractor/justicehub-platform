@@ -893,7 +893,13 @@ export function Footer() {
             © 2024 JusticeHub. Built for Australia's youth, by people who care.
           </p>
 
-          <div className="mt-4">
+          <div className="mt-4 flex space-x-4">
+            <Link
+              href="/wiki"
+              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              Wiki
+            </Link>
             <Link
               href="/preplanning"
               className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
