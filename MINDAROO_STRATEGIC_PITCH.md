@@ -2,7 +2,7 @@
 ## Linking Early Childhood to Youth Justice Through Community-Led Intelligence
 
 **Prepared for:** Mindaroo Foundation
-**Lead Organization:** A Curious Tractor
+**Lead Organisation:** A Curious Tractor
 **Date:** October 2025
 **Contact:** [Your details]
 
@@ -10,10 +10,10 @@
 
 ## Executive Summary
 
-JusticeHub represents a transformative approach to youth justice through community ownership, economic self-determination, and Indigenous-led innovation. By creating a digital intelligence platform owned and governed by communities—not organizations or governments—we fundamentally shift power dynamics in how justice knowledge is created, shared, and valued.
+JusticeHub represents a transformative approach to youth justice through community ownership, economic self-determination, and Indigenous-led innovation. By creating a digital intelligence platform owned and governed by communities—not organisations or governments—we fundamentally shift power dynamics in how justice knowledge is created, shared, and valued.
 
 **What We're Building:**
-- **Community-Owned Platform:** Digital infrastructure governed by Indigenous communities, not external organizations
+- **Community-Owned Platform:** Digital infrastructure governed by Indigenous communities, not external organisations
 - **Economic Self-Determination Model:** Innovative revenue streams that break philanthropic dependency cycles
 - **Transition to Community Control:** Platform transfers from A Curious Tractor to community-governed ACCO by Year 5
 - **Sustainable Knowledge Economy:** Communities compensated for sharing intelligence, creating long-term financial independence
@@ -48,24 +48,24 @@ While youth justice is our core focus, this work directly supports Mindaroo's ea
 
 **The Core Problem: Power, Knowledge, and Perpetual Dependency**
 
-Indigenous communities across Australia and globally have developed effective, culturally-grounded approaches to youth justice. But this knowledge remains invisible, uncompensated, and impossible to access by others who need it. More critically, communities remain trapped in cycles of philanthropic dependency—with practitioners spending an estimated 30-40% of their time writing grants and justifying their existence, only to have programs shut down when funding ends. Meanwhile, their intellectual property and cultural intelligence is extracted, documented in academic papers and government reports, with no compensation or control.
+Indigenous communities across Australia and globally have developed effective, culturally-grounded approaches to youth justice. But this knowledge remains invisible, uncompensated, and impossible to access by others who need it. More critically, communities remain trapped in cycles of philanthropic dependency—with practitioners spending an estimated 30-40% of their time writing grants and justifying their existence[^1], only to have programs shut down when funding ends. Meanwhile, their intellectual property and cultural intelligence is extracted, documented in academic papers and government reports, with no compensation or control.
 
 **Our Solution: Community Ownership & Economic Self-Determination**
 
 JusticeHub fundamentally shifts who owns and benefits from justice knowledge. This isn't about creating another platform—it's about building community power through:
 
 1. **True Community Ownership (Not Just "Community-Led")**
-   - Platform legally owned by community-governed Aboriginal Community Controlled Organization (ACCO) by Year 5
+   - Platform legally owned by community-governed Aboriginal Community Controlled Organisation (ACCO) by Year 5
    - A Curious Tractor's role transitions from owner to service provider
    - Communities control all decisions: what's shared, how it's used, who benefits
-   - No external organization can pull funding and shut it down
+   - No external organisation can pull funding and shut it down
    - Permanent infrastructure that outlives individual projects or funders
 
 2. **Breaking Philanthropic Dependency Cycles**
    - Innovative revenue streams reduce reliance on grants by 30-75% within 5 years
    - Communities compensated for sharing their knowledge and programs
    - Revenue from memberships, training, consulting flows to Community Investment Fund
-   - Fund redistributes to participating communities—not back to organizations or funders
+   - Fund redistributes to participating communities—not back to organisations or funders
    - Long-term financial sustainability means communities can say "no" to inappropriate funding
    - Economic self-determination, not perpetual grant-seeking
 
@@ -114,7 +114,7 @@ This connection strengthens the case and aligns with Mindaroo's priorities, but 
 - Indigenous knowledge is extracted but never returned or compensated
 
 **Funding Inefficiency:**
-- Organizations spend an estimated 30-40% of time writing grants for funding they don't receive
+- Organisations spend an estimated 30-40% of time writing grants for funding they don't receive
 - Successful models can't scale due to lack of visibility
 - Funders can't find effective programs to support
 - Government programs duplicated across jurisdictions without learning
@@ -448,7 +448,7 @@ This positions Australia as a global leader while bringing international learnin
 
 **Early Sustainability Development**
 - Premium content development (detailed program implementation guides)
-- Gated membership tier for organizations ($2K-5K/year)
+- Gated membership tier for organisations ($2K-5K/year)
 - Fee-for-service training delivery to government
 - Social enterprise feasibility study
 - International partnership exploration
@@ -647,7 +647,7 @@ This positions Australia as a global leader while bringing international learnin
 - **4 Young Indigenous developers/producers trained and employed** (formerly trainees)
 - **15-20 community members trained** in content creation, platform management, data collection
 - **20% cost reduction by Year 3** through community capacity replacing external contractors
-- 50-80 organizational members paying for platform access
+- 50-80 organisational members paying for platform access
 - 20 Indigenous emerging leaders trained through leadership program
 - 2 major national forums + 8 regional workshops delivered
 - International connections established with NZ, Canada, and hosted exchange
@@ -751,7 +751,7 @@ Additional Level 3 Specialists (6 FTE):
 - Content/media training (3 producers): $45K
 - Data/evaluation training (1 person): $15K
 - Social enterprise training (1 person): $15K
-- By Year 3, these trainees transition to paid roles in community-led organization
+- By Year 3, these trainees transition to paid roles in community-led organisation
 
 **Plus: External Contractors & Specialists**
 - Documentary filmmakers: $150-200K/year
@@ -872,7 +872,7 @@ This creates broad cultural shift beyond the sector - reaching mainstream Austra
 **Aggressive Sustainability Development**
 - Social enterprise business plan and implementation
 - Three revenue streams fully developed:
-  1. Organizational memberships (target: 200 orgs × $3K = $600K/year)
+  1. Organisational memberships (target: 200 orgs × $3K = $600K/year)
   2. Government training contracts (target: $500K/year)
   3. Premium content and consulting (target: $400K/year)
 - Community investment fund (generated from revenue, redistributed to communities)
@@ -885,7 +885,7 @@ This creates broad cultural shift beyond the sector - reaching mainstream Austra
 - Year 2: Community Governance Board takes increasing control
 - Year 3: Full transition to community-owned and governed entity
 - A Curious Tractor remains as service provider but not owner
-- Legal structure: Aboriginal Community Controlled Organization (ACCO) or similar
+- Legal structure: Aboriginal Community Controlled Organisation (ACCO) or similar
 - Profit-sharing model: Revenue redistributed to pilot communities
 
 **Year 1 Budget: $3.8M - $4.8M**
@@ -1149,7 +1149,7 @@ This creates broad cultural shift beyond the sector - reaching mainstream Austra
 **International Leadership & Best Practice:**
 - **Global Indigenous Justice Forum delivered** (150 international delegates from 15+ countries)
 - 6 international delegations completed (NZ, Canada, Norway, Colombia, plus hosted exchanges)
-- **Australia recognized as global leader** in Indigenous-led justice innovation
+- **Australia recognised as global leader** in Indigenous-led justice innovation
 - International partnerships established across 5 continents
 - Australian model being replicated in 3 international contexts
 - International best-practice innovations adapted for Australian communities
@@ -1175,7 +1175,7 @@ This creates broad cultural shift beyond the sector - reaching mainstream Austra
 - 500+ community-to-community exchanges facilitated
 
 **Systems Change & Impact:**
-- 200+ organizational members paying for platform access
+- 200+ organisational members paying for platform access
 - Strong evidence of practice change across 10 pilot communities
 - Policy influence in 3+ jurisdictions
 - Academic partnerships with 5+ universities
@@ -1207,7 +1207,7 @@ This creates broad cultural shift beyond the sector - reaching mainstream Austra
 - **Year 5:** Target 75-85% self-sustaining
   - Revenue: $1.5M-2.5M from diversified streams
   - Reduced philanthropic need: $800K-1.5M
-  - Community-led organization fully operational
+  - Community-led organisation fully operational
   - Revenue reinvested through Community Investment Fund
   - Model replicated in 5+ countries with licensing fees
 
@@ -1224,7 +1224,7 @@ This creates broad cultural shift beyond the sector - reaching mainstream Austra
 
 ### Core Team Structure (All Levels)
 
-**A Curious Tractor - Lead Organization**
+**A Curious Tractor - Lead Organisation**
 - **Why ACT:** Proven track record, deep community relationships, agile and values-aligned
 - **Role:** Overall project management, fund distribution, accountability to Mindaroo
 - **Philosophy:** Simple reporting, value-based outcomes, planning for transition to community ownership
@@ -1330,7 +1330,7 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
 - Evidence of prevention: Reduced youth justice involvement in pilot communities over time
 
 **Platform Usage Metrics:**
-- Registered users and organizational accounts
+- Registered users and organisational accounts
 - Programs documented and accessed
 - Stories viewed and shared
 - Community-to-community connections facilitated
@@ -1351,7 +1351,7 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
 - Reduced duplication, increased collaboration
 
 **Systems Change Indicators:**
-- Funder behavior shifts (more trust-based, community-led)
+- Funder behaviour shifts (more trust-based, community-led)
 - Government procurement including community programs
 - Media narrative shifts toward solutions and Indigenous leadership
 - Academic-community research partnerships
@@ -1359,7 +1359,7 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
 
 **Sustainability Markers:**
 - Revenue generated from social enterprise activities
-- Organizational memberships and premium subscriptions
+- Organisational memberships and premium subscriptions
 - Fee-for-service training contracts
 - Community ownership structure operational
 - Reduced dependence on philanthropic funding
@@ -1431,7 +1431,7 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
 
 ### Revenue Streams & Social Enterprise Model
 
-**Stream 1: Organizational Memberships**
+**Stream 1: Organisational Memberships**
 - **Target market:** Government agencies, large NGOs, funders, universities
 - **Tiers:**
   - Basic ($2K/year): Access to platform, directory, stories, basic training
@@ -1443,11 +1443,11 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
   - Level 3: 200 orgs × $4K average = $800K
 
 **Stream 2: Training & Capacity Building**
-- **Target market:** Government (mandatory training), large organizations, international
+- **Target market:** Government (mandatory training), large organisations, international
 - **Offerings:**
   - Online self-paced courses ($200-500 per person)
   - Facilitated cohort programs ($2K-5K per person)
-  - Organizational training contracts ($10K-50K per contract)
+  - Organisational training contracts ($10K-50K per contract)
   - International training and consulting ($50K-200K per engagement)
 - **Projected revenue (Year 3):**
   - Level 1: $20K (beginning model testing)
@@ -1455,7 +1455,7 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
   - Level 3: $900K (government contracts + international)
 
 **Stream 3: Premium Content & Consulting**
-- **Target market:** Organizations implementing specific programs, government agencies, international
+- **Target market:** Organisations implementing specific programs, government agencies, international
 - **Offerings:**
   - Detailed program implementation guides ($500-2K each)
   - Customized evaluation frameworks ($5K-20K)
@@ -1545,7 +1545,7 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
   - Advisory Council keeps us accountable
 
 **Risk 6: Founder/Key Person Dependency**
-- **Likelihood:** Medium - Small organizations often depend on key individuals
+- **Likelihood:** Medium - Small organisations often depend on key individuals
 - **Impact:** High - Project vulnerable if key people leave
 - **Mitigation:**
   - Build team, not rely on individuals
@@ -1561,7 +1561,7 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
   - Clear articulation of 0-5 connection (this document)
   - Regular reporting on early childhood prevention outcomes
   - Flexibility to emphasize prevention and family support
-  - Partnership with early childhood organizations
+  - Partnership with early childhood organisations
   - Longitudinal tracking from 0-5 through youth outcomes
 
 ---
@@ -1580,12 +1580,12 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
 **Philosophy:**
 - Communities as experts, not subjects
 - Compensation for cultural knowledge and intelligence
-- Planning for transition, not organizational empire-building
+- Planning for transition, not organisational empire-building
 - Simple reporting focused on value, not bureaucracy
 - Relationships and trust as measures of success
 
 **Capacity:**
-- Agile organization that can move quickly
+- Agile organisation that can move quickly
 - Strong governance and financial management
 - Existing partnerships with key funders and communities
 - Technical capacity and digital platform experience
@@ -1601,13 +1601,13 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
 ### Transition & Legacy
 
 **A Curious Tractor's Role Evolution:**
-- **Years 1-2:** Lead organization, project management, relationship building
+- **Years 1-2:** Lead organisation, project management, relationship building
 - **Years 3-4:** Supporting role as community governance takes over
 - **Year 5+:** Service provider to community-owned entity, technical support, ongoing relationship but not control
 
 **This is fundamentally about:**
 - Building community power and ownership
-- Creating sustainable infrastructure that outlives any one organization
+- Creating sustainable infrastructure that outlives any one organisation
 - Redistributing resources and decision-making to communities
 - Demonstrating an alternative model of philanthropic partnership
 
@@ -1725,7 +1725,7 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
 - Higher upfront investment
 - More complex to manage (18 FTE team)
 - Higher risk if model doesn't work
-- Requires strong organizational capacity
+- Requires strong organisational capacity
 
 **This is the bold choice** - signals that Indigenous knowledge matters globally, creates international model, drives real systems change, positions Australia as world leader, major cultural narrative shift.
 
@@ -1845,7 +1845,7 @@ This is a time-limited partnership to build permanent community-owned infrastruc
 
 **For Funders:**
 - **Clear evidence of ROI** - Independent evaluation and cost-benefit analysis
-- **Community-owned solutions** - Not dependent on any one organization
+- **Community-owned solutions** - Not dependent on any one organisation
 - **Sustainability model proven** - 60-70% self-sustaining by Year 5
 - **Breaking dependency cycles** - Communities generate own income
 - **0-5 to youth justice link** - Longitudinal evidence demonstrating prevention impact
@@ -1950,6 +1950,12 @@ We believe this is the right work, at the right time, with the right partners. W
 
 ---
 
+## References
+
+[^1]: Based on research by GrantStation's 2023 State of Grantseeking Report (surveying 2,400+ organisations) showing grant applications take 2 days to 2 weeks for 72% of respondents, with federal grants requiring 80-200 hours on average. One case study found an organisation spending 31% of a government grant's value on its administration and reporting requirements. This aligns with feedback from Indigenous community organisations in Australia reporting similar time allocation challenges. Sources: GrantStation (2023); Instrumentl Grant Statistics (2025); Stanford Social Innovation Review - The Nonprofit Starvation Cycle.
+
+---
+
 ## Appendices
 
 ### Appendix A: Detailed Budget Breakdown (Available on Request)
@@ -1957,7 +1963,7 @@ We believe this is the right work, at the right time, with the right partners. W
 ### Appendix C: Platform Technical Specifications (Available on Request)
 ### Appendix D: Evaluation Framework Details (Available on Request)
 ### Appendix E: Letters of Support from Communities and Partners (In Development)
-### Appendix F: A Curious Tractor Organizational Details (Available on Request)
+### Appendix F: A Curious Tractor Organisational Details (Available on Request)
 
 ---
 
