@@ -105,10 +105,19 @@ export default function WikiHomePage() {
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-gray-900 mb-3">Budget & Funding</h2>
                   <p className="text-gray-600 mb-4">
-                    Detailed budget scenarios, funding strategies, and ready-to-use pitch templates
+                    Comprehensive funding strategies, detailed budget scenarios, and ready-to-use pitch templates
                     for government, foundations, and corporate sponsors.
                   </p>
                   <div className="grid grid-cols-2 gap-3">
+                    <Link
+                      href="/wiki/mindaroo-strategic-pitch"
+                      className="col-span-2 flex items-center justify-between p-4 bg-green-100 rounded-lg hover:bg-green-200 transition-colors group border-2 border-green-400"
+                    >
+                      <span className="text-base font-bold text-green-800 group-hover:text-green-900">
+                        Mindaroo Strategic Pitch (15K words) ⭐ NEW
+                      </span>
+                      <ArrowRight className="w-5 h-5 text-green-700 group-hover:text-green-800" />
+                    </Link>
                     <Link
                       href="/wiki/budget-summary"
                       className="flex items-center justify-between p-3 bg-green-50 rounded hover:bg-green-100 transition-colors group"

@@ -11,6 +11,7 @@ const SLUG_TO_FILE: Record<string, string> = {
   'executive-summary': 'EXECUTIVE_SUMMARY.md',
   'one-page-overview': 'ONE_PAGE_OVERVIEW.md',
   'justicehub-planning': 'JUSTICEHUB_PLANNING.md',
+  'mindaroo-strategic-pitch': 'MINDAROO_STRATEGIC_PITCH.md',
   'budget-summary': 'BUDGET_SUMMARY.md',
   'funding-pitch-templates': 'FUNDING_PITCH_TEMPLATES.md',
   'admin-user-guide': 'ADMIN_USER_GUIDE.md',

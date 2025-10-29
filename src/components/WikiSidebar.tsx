@@ -29,6 +29,7 @@ const navigation: NavSection[] = [
     title: 'Budget & Funding',
     icon: <DollarSign className="w-5 h-5" />,
     items: [
+      { title: 'Mindaroo Strategic Pitch', slug: 'mindaroo-strategic-pitch', wordCount: '15K words' },
       { title: 'Budget Summary', slug: 'budget-summary', wordCount: '5K words' },
       { title: 'Funding Pitch Templates', slug: 'funding-pitch-templates', wordCount: '12K words' },
     ],
