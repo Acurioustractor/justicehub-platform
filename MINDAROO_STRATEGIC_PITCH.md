@@ -10,53 +10,100 @@
 
 ## Executive Summary
 
-JusticeHub represents a transformative approach to breaking the pipeline from early childhood adversity to youth justice involvement. By creating a community-owned digital intelligence platform and support ecosystem, we address the critical gap between early childhood intervention and youth justice outcomes.
+JusticeHub represents a transformative approach to youth justice through community ownership, economic self-determination, and Indigenous-led innovation. By creating a digital intelligence platform owned and governed by communities—not organizations or governments—we fundamentally shift power dynamics in how justice knowledge is created, shared, and valued.
 
-**The Connection to 0-5 Years:**
-- 85% of youth in justice systems experienced adverse childhood experiences before age 5
-- Early intervention programs need long-term tracking to demonstrate impact beyond age 5
-- Community intelligence gathering starts with families and extends through the life course
-- Indigenous-led approaches recognize that supporting young people today prevents intergenerational trauma for tomorrow's 0-5 year olds
+**What We're Building:**
+- **Community-Owned Platform:** Digital infrastructure governed by Indigenous communities, not external organizations
+- **Economic Self-Determination Model:** Innovative revenue streams that break philanthropic dependency cycles
+- **Transition to Community Control:** Platform transfers from A Curious Tractor to community-governed ACCO by Year 5
+- **Sustainable Knowledge Economy:** Communities compensated for sharing intelligence, creating long-term financial independence
+- **Global Indigenous Network:** International connections for knowledge exchange and collective influence
+
+**Strategic Alignment with Mindaroo:**
+While youth justice is our core focus, this work directly supports Mindaroo's early childhood prevention priorities:
+- Intergenerational trauma prevention: Supporting youth today prevents trauma for tomorrow's young children
+- Evidence infrastructure: Longitudinal tracking demonstrates which 0-5 programs prevent later justice involvement
+- Family-centered approaches: Communities know that supporting young people requires supporting whole families
+- This connection is significant, but youth justice impact is the primary driver
 
 **Three-Year Budget Request:**
-- **Year 1 (Foundation):** $3.2M - $5.8M
-- **Year 2 (Growth):** $4.5M - $8.2M
-- **Year 3 (Scale):** $5.8M - $10.5M
-- **Total 3-Year Investment:** $13.5M - $24.5M
+- **Level 1 (Minimal Viable):** $4.0M - $5.6M total over 3 years
+- **Level 2 (Foundational - RECOMMENDED):** $7.5M - $10.5M total over 3 years
+- **Level 3 (Comprehensive):** $13M - $17M total over 3 years
+- **Recommended ask:** $7.5M - $10.5M (Level 2)
 
-**Impact Potential:**
-- Direct reach: 50+ communities, 200+ organizations, 10,000+ practitioners
-- Indirect reach: 100,000+ young people and families
-- Knowledge multiplication: From fragmented local programs to global best-practice network
-- Sustainability pathway: 60% self-sustaining by Year 5 through social enterprise model
+**Projected Impact (3 Years):**
+- **Community ownership:** Platform legally owned and governed by Indigenous communities by Year 5
+- **Breaking dependency cycles:** Target 30-75% financially self-sustaining by Year 5, reducing philanthropic reliance
+- **Economic benefits to communities:** Community investment fund redistributes profits to participating communities
+- **Knowledge reach:** Projected 20-50 communities directly engaged, 2,000-10,000 practitioners accessing platform
+- **Systems change:** From fragmented local programs to connected global best-practice network
+- **Youth impact:** Estimated 50,000-100,000+ young people and families benefit from improved practice
 
 ---
 
 ## Part 1: The Strategic Case
 
-### Why This Matters for 0-5 Years Strategy
+### Why JusticeHub Matters
 
-The pathway to youth justice involvement is established in early childhood, but current approaches fail to:
+**The Core Problem: Power, Knowledge, and Perpetual Dependency**
 
-1. **Track Long-Term Outcomes**
-   - Early childhood interventions stop tracking at age 5
-   - No visibility into which programs prevent later justice involvement
-   - JusticeHub creates the connective tissue to demonstrate 0-5 program efficacy
+Indigenous communities across Australia and globally have developed effective, culturally-grounded approaches to youth justice. But this knowledge remains invisible, uncompensated, and impossible to access by others who need it. More critically, communities remain trapped in cycles of philanthropic dependency—with practitioners spending an estimated 30-40% of their time writing grants and justifying their existence, only to have programs shut down when funding ends. Meanwhile, their intellectual property and cultural intelligence is extracted, documented in academic papers and government reports, with no compensation or control.
 
-2. **Support Families Holistically**
-   - Parents of 0-5 year olds in justice-impacted communities face unique challenges
-   - Intergenerational trauma means today's youth justice solutions prevent tomorrow's early childhood trauma
-   - Community-led approaches recognize whole-of-family support needs
+**Our Solution: Community Ownership & Economic Self-Determination**
 
-3. **Build Community Capacity**
-   - Indigenous communities know what works for their 0-5 year olds
-   - Current systems don't capture or share this intelligence
-   - JusticeHub creates infrastructure for community-to-community learning
+JusticeHub fundamentally shifts who owns and benefits from justice knowledge. This isn't about creating another platform—it's about building community power through:
 
-4. **Demonstrate Prevention ROI**
-   - Every $1 invested in early childhood saves $7-13 in later costs
-   - But we can't prove it without tracking systems
-   - JusticeHub provides the evidence infrastructure to show prevention impact
+1. **True Community Ownership (Not Just "Community-Led")**
+   - Platform legally owned by community-governed Aboriginal Community Controlled Organization (ACCO) by Year 5
+   - A Curious Tractor's role transitions from owner to service provider
+   - Communities control all decisions: what's shared, how it's used, who benefits
+   - No external organization can pull funding and shut it down
+   - Permanent infrastructure that outlives individual projects or funders
+
+2. **Breaking Philanthropic Dependency Cycles**
+   - Innovative revenue streams reduce reliance on grants by 30-75% within 5 years
+   - Communities compensated for sharing their knowledge and programs
+   - Revenue from memberships, training, consulting flows to Community Investment Fund
+   - Fund redistributes to participating communities—not back to organizations or funders
+   - Long-term financial sustainability means communities can say "no" to inappropriate funding
+   - Economic self-determination, not perpetual grant-seeking
+
+3. **Knowledge Sovereignty & Fair Compensation**
+   - Communities decide what knowledge is shared and how
+   - Cultural protocols embedded in platform design by First Nations Advisory Council
+   - Clear intellectual property rights—communities own their content
+   - Compensation for cultural intelligence and program innovations (not extraction)
+   - Ability to remove content anytime
+   - No academic or government exploitation of community knowledge
+
+4. **Systems Change Through Visibility & Evidence**
+   - Proven programs become accessible to funders, policymakers, practitioners
+   - Reduced duplication across sector saves an estimated $5M+ annually
+   - Evidence base for what works drives policy change
+   - Communities positioned as experts and thought leaders, not service recipients
+   - Global influence: Australia leads in Indigenous-led justice innovation
+
+**What This Means for Philanthropy:**
+
+This is not a traditional grant relationship. Mindaroo's investment would be:
+- **Seed capital for community ownership**, not ongoing program funding
+- **Building permanent infrastructure**, not dependent services
+- **Creating financial independence**, not creating new dependencies
+- **Time-limited partnership** with clear exit strategy (5 years)
+- **Multiplier investment**: Revenue model means Mindaroo's dollars multiply—communities continue to benefit long after philanthropic investment ends
+
+Your 3-year investment creates something that exists forever, owned by communities, generating sustainable revenue, and reducing the sector's philanthropic dependency. This is transformational philanthropy, not transactional funding.
+
+**Strategic Fit with Mindaroo's Prevention Focus:**
+
+While youth justice is our primary focus, this work creates critical prevention infrastructure:
+- **Intergenerational trauma prevention:** Supporting young people today prevents trauma for their future children
+- **Evidence for early childhood programs:** Longitudinal tracking shows which 0-5 interventions prevent later justice involvement
+- **Family-centered approaches:** Communities address root causes across the life course, including 0-5 supports
+- **Prevention ROI:** Platform enables cost-benefit analysis to demonstrate early intervention impact
+
+This connection strengthens the case and aligns with Mindaroo's priorities, but youth justice communities need this infrastructure regardless of early childhood linkages. The project stands on its own merit—the 0-5 connection is a strategic bonus, not the foundation.
 
 ### The Current Crisis
 
@@ -67,7 +114,7 @@ The pathway to youth justice involvement is established in early childhood, but 
 - Indigenous knowledge is extracted but never returned or compensated
 
 **Funding Inefficiency:**
-- Organizations spend 30-40% of time writing grants for funding they don't receive
+- Organizations spend an estimated 30-40% of time writing grants for funding they don't receive
 - Successful models can't scale due to lack of visibility
 - Funders can't find effective programs to support
 - Government programs duplicated across jurisdictions without learning
@@ -81,10 +128,10 @@ The pathway to youth justice involvement is established in early childhood, but 
 ### The Opportunity
 
 **Existing Assets:**
-- 50+ proven community-led programs ready to share
+- 50+ proven community-led programs ready to share (documented through Justice Reinvestment work)
 - Growing network of justice reinvestment communities (Bourke, Moree, Mount Isa, etc.)
-- Strong funder partnerships (Dusseldorp, Snow Foundation, Paul Ramsay Foundation)
-- Technical infrastructure (existing JusticeHub platform v1)
+- Potential funding partners expressing strong interest (Dusseldorp, Snow Foundation, Paul Ramsay Foundation, Fairfax Foundation)
+- Technical infrastructure: program directory supported by Justice Reinvestment initiatives, with platform architecture ready for expansion
 - International interest (Indigenous communities globally seeking connection)
 
 **Market Gap:**
@@ -94,91 +141,231 @@ The pathway to youth justice involvement is established in early childhood, but 
 - No bridge between early childhood and youth justice evidence
 
 **Timing:**
-- Queensland Circuit Breaker program launching ($80M investment)
-- National Justice Reinvestment expansion
-- Growing recognition of Indigenous-led solutions
-- Post-pandemic digital infrastructure acceptance
-- Mindaroo's commitment to systems change and early childhood
+- Queensland government has invested $330 million in justice community programs, including Circuit Breaker ($80M)
+- National Justice Reinvestment expansion across multiple states
+- Growing recognition of Indigenous-led solutions as best practice
+- Post-pandemic acceptance of digital knowledge-sharing infrastructure
+- Mindaroo's commitment to systems change and early childhood prevention
 
 ---
 
 ## Part 2: Three Implementation Levels
 
-### Level 1: Minimal Viable Impact ($3.2M - $4.5M over 3 years)
+### Level 1: Minimal Viable Impact ($4.0M - $5.6M over 3 years)
 
-**Philosophy:** "Start with the essentials, prove the model"
+**Philosophy:** "Start with the essentials, prove the model, build community capacity"
 
-This level focuses on core digital infrastructure and pilot community partnerships. It's the Datsun - reliable, gets you where you need to go, builds trust through consistency.
+This level focuses on core digital infrastructure and pilot community partnerships. It's the Datsun - reliable, gets you where you need to go, builds trust through consistency. Critically, it includes capacity building from Day 1, with costs reducing over time as communities take control.
 
 **Components:**
 
 **Digital Platform (Year 1 Focus)**
 - Basic program directory (searchable, filterable, community-submitted)
-- Story library (video, text, audio from 10 pilot communities)
+- Story library (video, text, audio from pilot communities)
 - Resource hub (downloadable templates, guides, frameworks)
 - Simple evaluation tools (pre-built surveys, outcome trackers)
 - Mobile-responsive design for remote community access
 
-**People & Roles (6 FTE)**
+**Community Capacity Building Approach:**
+From Year 1, we invest in training young Indigenous people and community members in:
+- Platform management and content creation
+- Basic web development and digital skills
+- Storytelling and media production
+- Data collection and evaluation
+
+This means:
+- **Year 1:** Higher costs (external expertise + training)
+- **Year 2:** Mixed model (external + trained community members)
+- **Year 3:** Community-led (reduced external costs, community control)
+
+**People & Roles (6 FTE base, reducing to 4 by Year 3)**
+
+**Core Team:**
 - Platform Manager (1.0 FTE) - $120K
-- Content Developer (1.0 FTE) - Indigenous storyteller - $100K
-- Community Liaison (2.0 FTE) - Regional connectors - $90K each
-- Technical Developer (1.0 FTE) - Platform maintenance - $110K
-- Project Director (1.0 FTE) - Overall coordination - $140K
+- Content Developer (1.0 FTE) - Indigenous storyteller - $105K
+- Community Liaison (2.0 FTE) - Regional connectors - $95K each
+- Technical Developer (1.0 FTE, reducing to 0.5 by Year 3) - $115K
+- Project Director (1.0 FTE) - Overall coordination - $145K
+
+**Base salaries total:** $675K/year Year 1-2, reducing to $600K Year 3
+**With 30% on-costs:** $878K/year Years 1-2, $780K Year 3
+
+**Plus: Young Indigenous Trainees (2-3 people)**
+- Training stipends: $15K each = $30-45K/year
+- Mentorship and supervision (included in staff time)
+- By Year 3, trainees transition to part-time paid roles
 
 **Community Engagement**
 - Pilot partnerships: 3 communities (Bourke, Moree, one regional/remote)
-- Quarterly community visits for story gathering
-- Annual community gathering (50 people, 2 days)
-- Community advisory panel (8 members, quarterly meetings)
+- Quarterly community visits for story gathering and capacity building
+- Annual community gathering (50 people, 2 days) including training workshops
+- Community advisory panel (8 members, quarterly meetings, properly compensated)
+- International connection: 1 delegation visit to NZ or Canada to learn from Indigenous justice innovations
 
 **Capacity Building**
 - 6 webinars per year on key topics
 - Basic online training modules (5 topics)
 - Monthly newsletter to 500 subscribers
 - Peer-to-peer connection facilitation
+- Technical training for 2-3 young Indigenous developers
+- Content creation training for community members
 
-**Year 1 Budget: $900K - $1.2M**
-- Platform development: $250K
-- Staff costs (0.5 year): $280K
-- Community engagement: $120K
-- Content creation: $80K
-- Operations & admin: $170K
+**Year 1 Budget: $1.1M - $1.5M**
 
-**Year 2 Budget: $1.1M - $1.5M**
-- Platform enhancements: $150K
-- Staff costs (full year): $560K
-- Expanded community work: $180K
-- Training program development: $120K
-- Operations & admin: $140K
+**Breakdown:**
+- **Platform development:** $280K
+  - Initial build (using Webflow/WordPress customization): $140K
+  - UX/UI design: $40K
+  - Security & hosting setup: $25K
+  - Documentation & training materials: $20K
+  - Young Indigenous developer training program: $40K (2 trainees)
+  - Technical mentorship: $15K
 
-**Year 3 Budget: $1.2M - $1.8M**
-- Platform maintenance: $100K
-- Staff costs: $560K
-- Community scaling (5 communities): $240K
-- Training delivery: $150K
-- Evaluation: $80K
-- Operations: $120K
+- **Staff costs (0.5 year, starting mid-year):** $439K
+  - Base salaries: $337.5K (6 FTE × half year)
+  - On-costs (30%): $101K
+  - Training stipends: $20K (2 trainees × half year)
+
+- **Community engagement:** $155K
+  - Travel (quarterly visits): $65K
+    - Flights: 4 visits × 3 communities × $1,200 = $43K
+    - Accommodation: 4 visits × 3 nights × 3 communities × $200 = $21K
+    - Vehicle hire: $1K
+  - Community payments for time/knowledge: $35K
+  - Annual gathering (50 people, 2 days): $35K
+  - Advisory panel compensation (8 × $2K × 3 meetings): $20K
+
+- **Content creation:** $95K
+  - Video production (8 community stories): $50K
+  - Audio/podcast setup: $15K
+  - Photography: $8K
+  - Story gathering fees to communities: $15K
+  - Training community members in content creation: $7K
+
+- **Operations & admin:** $185K
+  - Office/co-working space: $35K
+  - IT infrastructure (laptops, software, cloud): $30K
+  - Insurance: $22K
+  - Accounting/legal: $28K
+  - Phone/internet: $12K
+  - HR/payroll: $12K
+  - Professional development: $18K
+  - Contingency: $28K
+
+**Total Year 1: $1.154M - $1.474M**
+
+**Year 2 Budget: $1.4M - $1.9M**
+
+**Breakdown:**
+- **Platform enhancements:** $120K
+  - Feature additions based on Year 1 learning: $60K
+  - Young Indigenous developers take on more work: $40K (reduced external costs)
+  - Mobile app development: $20K
+
+- **Staff costs (full year):** $898K
+  - Base salaries: $675K (6 FTE)
+  - On-costs (30%): $202K
+  - Training stipends (2 trainees full year): $30K
+  - Note: Starting to reduce reliance on external technical developer
+
+- **Community engagement:** $220K
+  - Expanded travel (5 communities now): $95K
+  - Community payments: $50K
+  - Bi-annual gatherings: $45K
+  - Advisory panel: $30K
+
+- **Training & capacity building:** $155K
+  - Online module development: $60K
+  - In-person workshops: $35K
+  - Community trainer stipends: $25K (communities train each other)
+  - Technical training continuation: $20K
+  - International learning exchange (3 people to Canada/NZ): $15K
+
+- **Content creation:** $85K (reducing as community takes over)
+  - Community-led video production (reduced external costs): $35K
+  - Community storyteller stipends: $30K
+  - Production equipment for communities: $15K
+  - Training support: $5K
+
+- **Operations & admin:** $165K
+  - Similar to Year 1 but with efficiencies
+
+**Total Year 2: $1.443M - $1.923M**
+
+**Year 3 Budget: $1.5M - $2.2M**
+
+**Breakdown:**
+- **Platform maintenance:** $80K
+  - Mostly community-led now (trained Indigenous developers)
+  - External technical support: $40K (reduced from $115K salary)
+  - Young Indigenous developers now leading: $40K (now paid roles, not stipends)
+
+- **Staff costs (full year, reduced team):** $810K
+  - Base salaries: $600K (4.5 FTE - technical developer now 0.5 FTE)
+  - On-costs (30%): $180K
+  - 2 Indigenous developers now in paid part-time roles: $30K
+  - This shows sustainability: costs reducing as community takes control
+
+- **Community engagement:** $280K
+  - Scaling to 5-6 communities: $120K
+  - Community payments: $65K
+  - National gathering: $55K
+  - Advisory panel transitioning to Governance Board: $40K
+
+- **Training delivery:** $180K
+  - Community-led training programs (community trainers paid): $80K
+  - Online platform hosting training: $40K
+  - International exchange (5 people): $45K
+  - Peer mentorship program: $15K
+
+- **Evaluation:** $95K
+  - Independent evaluation of 3-year pilot: $60K
+  - Community-led data collection: $20K
+  - Impact reporting: $15K
+
+- **Operations:** $145K (reduced through efficiencies)
+
+**Total Year 3: $1.59M - $2.19M**
+
+**3-Year Total: $4.19M - $5.59M** (revised from $3.2M - $4.5M)
 
 **Expected Outcomes (3 years):**
-- 100+ programs documented
-- 30+ community stories captured
-- 500+ registered practitioners
-- 3 pilot communities deeply engaged
-- Basic evidence of impact on practice
+- 100+ programs documented with community-owned content
+- 30+ community stories captured (video, audio, written)
+- 500+ registered practitioners using platform
+- 3-5 pilot communities deeply engaged with strong ownership
+- 2-3 young Indigenous developers trained and employed
+- 5-10 community members trained in content creation and platform management
+- International connections established (NZ, Canada)
+- Basic evidence of impact on practice and knowledge sharing
+- Platform transitioning from external to community management
+- Costs reducing by 15-20% in Year 3 as community takes control
 
 **Sustainability Pathway:**
-- Year 4+: Seek ongoing operational funding
-- Begin exploring premium content model
-- Transition to community governance structure
+- **Year 3:** Costs already reducing as community takes control (technical developer reduced to 0.5 FTE)
+- **Year 4:** Seek ongoing operational funding at reduced level ($800K-1M, down from $1.5-2.2M)
+- **Year 4:** Young Indigenous developers fully leading platform development
+- **Year 4+:** Begin exploring premium content model with community-owned revenue
+- **Year 5:** Transition to community governance structure (Community Advisory Panel → Governance Board)
+- This level proves the capacity-building model works before scaling
 
 ---
 
-### Level 2: Foundational Excellence ($5.8M - $8.5M over 3 years)
+### Level 2: Foundational Excellence ($7.5M - $10.5M over 3 years) ⭐ RECOMMENDED
 
-**Philosophy:** "Build it properly, plan for sustainability"
+**Philosophy:** "Build it properly, build community capacity, create lasting sustainability"
 
-This is the Commodore - solid, reliable, with some extras that make the journey better. It includes everything from Level 1 plus significant capacity building, stronger community ownership, and international connections.
+This is the Commodore - solid, reliable, with the features that matter for long-term success. It includes everything from Level 1 plus significant capacity building, stronger community ownership, international best-practice connections, and a clear path to financial sustainability.
+
+**Key Additions Beyond Level 1:**
+- 6 communities instead of 3
+- 12 FTE team (vs 6) with deeper expertise
+- 4-5 young Indigenous trainees (vs 2-3)
+- Comprehensive capacity building programs
+- Annual National Forum and regional workshops
+- International best-practice delegation travel (2 per year)
+- Revenue generation model development and testing
+- First Nations Advisory Council with decision-making power
 
 **Additional Components Beyond Level 1:**
 
@@ -190,22 +377,59 @@ This is the Commodore - solid, reliable, with some extras that make the journey 
 - Sophisticated search and filtering
 - User-generated content workflows
 - Community-to-community messaging
+- Mobile app for offline access in remote communities
 
-**Expanded Team (12 FTE)**
-- Add to Level 1 team:
-  - Senior Content Producer (1.0 FTE) - Video/multimedia - $130K
-  - Data & Evaluation Specialist (1.0 FTE) - $120K
-  - Community Organizer (2.0 FTE) - Local presence in regions - $85K each
-  - Training Coordinator (1.0 FTE) - $95K
-  - Partnerships Manager (1.0 FTE) - Funder/org relationships - $110K
-  - Indigenous Knowledge Curator (1.0 FTE) - Cultural protocols - $105K
+**Expanded Team (12 FTE, reducing to 9 by Year 3 as community takes control)**
+
+**Full Team Structure:**
+
+Level 1 Core Team (6 FTE):
+- Platform Manager: $120K
+- Content Developer: $105K
+- Community Liaison (2.0 FTE): $95K each = $190K
+- Technical Developer: $115K (reducing to 0.5 FTE by Year 3)
+- Project Director: $145K
+**Subtotal: $675K**
+
+Additional Level 2 Specialists (6 FTE):
+- Senior Content Producer (Video/multimedia): $135K
+- Data & Evaluation Specialist: $125K
+- Community Organizer (2.0 FTE) - Embedded in regions: $98K each = $196K
+- Training Coordinator: $100K
+- Partnerships Manager: $115K
+- Indigenous Knowledge Curator (Cultural protocols): $110K
+**Subtotal: $781K**
+
+**Total Base Salaries: $1,456K/year** (Years 1-2)
+**With 30% on-costs: $1,893K/year**
+
+**By Year 3:** Base reduces to $1,200K (~$1,560K with on-costs) as:
+- Technical developer: 0.5 FTE (community developers take over)
+- Some roles transition to community-led positions
+- External consultants replaced by trained community members
+
+**Plus: Young Indigenous Trainees (4-5 people)**
+- Training stipends: $15K each = $60-75K/year
+- Technical training (2 developers): $30K
+- Content creation training (2 producers): $30K
+- Data/evaluation training (1 person): $15K
+- By Year 3, these trainees transition to paid part-time/full-time community roles
 
 **Deep Community Partnerships**
 - Pilot partnerships: 6 communities (Bourke, Moree, Mount Isa, Stradbroke Island, Alice Springs/Oonchiumpa, one WA community)
 - Monthly community visits with dedicated local coordinators
 - Community-led content creation grants ($20K each = $120K/year)
 - Bi-annual community gatherings (100 people, 3 days)
-- First Nations Advisory Council (12 members, 6 meetings/year, proper compensation)
+- First Nations Advisory Council (12 members, 6 meetings/year, properly compensated at $5K per meeting)
+
+**International Best-Practice Engagement**
+This positions Australia as a global leader while bringing international learning back to communities:
+- **Year 1:** Delegation to NZ (5 people, 1 week) to learn from Māori youth justice innovations
+- **Year 2:** Delegation to Canada (6 people, 10 days) visiting First Nations healing lodges and restorative programs
+- **Year 3:** Host international Indigenous justice practitioners in Australia (8 visitors, 2 weeks)
+- Ongoing virtual exchanges and knowledge sharing with international Indigenous communities
+- Documentation of international best practices for Australian adaptation
+- Building Australia's profile as leader in Indigenous-led justice innovation
 
 **Comprehensive Capacity Building**
 - 24 webinars/workshops per year
@@ -229,106 +453,402 @@ This is the Commodore - solid, reliable, with some extras that make the journey 
 - Social enterprise feasibility study
 - International partnership exploration
 
-**Year 1 Budget: $1.6M - $2.2M**
-- Platform development: $450K (enhanced features)
-- Staff costs (0.5 year): $580K
-- Community engagement: $280K (6 communities × $35K + grants)
-- Content creation: $180K (video, multimedia, stories)
-- Training development: $120K
-- Operations: $180K
+**Year 1 Budget: $2.0M - $2.8M**
 
-**Year 2 Budget: $2.0M - $3.0M**
-- Platform enhancements: $280K
-- Staff costs (full year): $1,160K
-- Community work: $420K (deeper engagement + grants)
-- Training & capacity building: $350K
-- Forums & events: $280K
-- Research & evaluation: $150K
-- Operations: $210K
+**Detailed Breakdown:**
 
-**Year 3 Budget: $2.2M - $3.3M**
-- Platform maintenance & features: $200K
-- Staff costs: $1,160K
-- Community scaling: $500K (maintaining 6 + beginning expansion)
-- Training delivery: $400K
-- Forums & thought leadership: $320K
-- Sustainability development: $180K
-- Evaluation: $200K
-- Operations: $240K
+- **Platform development:** $520K
+  - Enhanced build (AI matching, dashboards, integrations): $280K
+  - UX/UI design & user testing: $60K
+  - Mobile app development: $80K
+  - Security & compliance: $35K
+  - Documentation & training materials: $25K
+  - Young Indigenous developer training (4 trainees): $60K
+  - Technical mentorship: $20K
 
-**Expected Outcomes (3 years):**
-- 300+ programs documented with detailed implementation guides
-- 100+ community stories (video, audio, written)
-- 2,500+ registered practitioners
-- 6 pilot communities with strong ownership
-- 50+ organizational members
-- 20 Indigenous emerging leaders trained
-- 2 major national forums delivered
-- Evidence of practice change in pilot communities
-- Revenue generation model tested ($100K-200K/year by Year 3)
+- **Staff costs (0.5 year, starting mid-year):** $976K
+  - Base salaries (12 FTE × 0.5 year): $728K
+  - On-costs (30%): $218K
+  - Training stipends (4 trainees × 0.5 year): $30K
 
-**Sustainability Pathway:**
-- Year 4: 30% self-sustaining through memberships and training
-- Year 5: 60% self-sustaining through diverse revenue streams
-- Community governance structure fully operational
-- Pathway to independent social enterprise by Year 6
+- **Community engagement:** $380K
+  - Travel (monthly visits to 6 communities): $145K
+    - Flights: 12 visits × 6 communities × $1,200 = $86K
+    - Accommodation: 12 visits × 3 nights × 6 communities × $200 = $43K
+    - Vehicle hire: $16K
+  - Community payments for time/knowledge: $75K ($12.5K per community)
+  - Community content creation grants (6 × $20K): $120K
+  - Annual gathering (100 people, 3 days): $40K
+
+- **First Nations Advisory Council:** $90K
+  - 12 members × $5K per meeting × 3 meetings (starting mid-year): $90K
+
+- **International best-practice travel:** $45K
+  - Delegation to NZ (5 people, 1 week): $45K
+    - Flights: $15K
+    - Accommodation: $12K
+    - Per diems & ground transport: $10K
+    - Program visits & cultural protocols: $8K
+
+- **Content creation:** $160K
+  - Professional video production (15 stories): $80K
+  - Community-produced content support: $35K
+  - Audio/podcast series: $20K
+  - Photography: $12K
+  - Story gathering fees: $20K
+
+- **Training development:** $135K
+  - Online module development (5 modules): $60K
+  - Training materials & resources: $30K
+  - Community trainer development: $25K
+  - Technical training curriculum: $20K
+
+- **Operations & admin:** $220K
+  - Office/co-working space (12 people): $50K
+  - IT infrastructure (laptops, software, cloud): $45K
+  - Insurance: $30K
+  - Accounting/legal: $35K
+  - Phone/internet: $18K
+  - HR/payroll: $15K
+  - Professional development: $20K
+  - Contingency: $30K
+
+**Total Year 1: $2.03M - $2.79M**
 
 ---
 
-### Level 3: Comprehensive Transformation ($8.5M - $10.5M over 3 years)
+**Year 2 Budget: $2.5M - $3.5M**
 
-**Philosophy:** "Show up in a limousine - signal that Indigenous knowledge and youth justice matter at scale"
+**Detailed Breakdown:**
 
-This is the Ferrari - high-performance, maximum impact, global visibility. It includes everything from Levels 1 & 2 plus international dimensions, significant place-based investment, media/arts integration, and aggressive sustainability planning.
+- **Platform enhancements:** $220K
+  - Feature additions based on user feedback: $100K
+  - Young Indigenous developers leading development: $80K (reduced external costs)
+  - Security updates & optimization: $40K
 
-**Additional Components Beyond Level 2:**
+- **Staff costs (full year):** $1,968K
+  - Base salaries (12 FTE): $1,456K
+  - On-costs (30%): $437K
+  - Training stipends (4 trainees full year): $60K
+  - External developer costs reducing as trainees take over
+
+- **Community engagement:** $480K
+  - Expanded travel program: $180K
+  - Community payments: $95K
+  - Community content grants (6 × $20K): $120K
+  - Bi-annual gatherings (100 people × 2): $85K
+
+- **First Nations Advisory Council:** $180K
+  - 12 members × $5K × 6 meetings: $180K (full year)
+
+- **International best-practice travel:** $55K
+  - Delegation to Canada (6 people, 10 days): $55K
+    - Flights: $20K
+    - Accommodation: $18K
+    - Per diems & transport: $12K
+    - Program visits & protocols: $5K
+
+- **Training & capacity building:** $385K
+  - Online module expansion (10 more modules): $100K
+  - In-person workshops (24 per year): $120K
+  - Community-led training programs: $80K
+  - Technical training continuation: $50K
+  - Leadership program for 20 practitioners: $35K
+
+- **Forums & events:** $285K
+  - Annual National Forum (200 people, 2 days): $180K
+    - Venue & catering: $80K
+    - Travel subsidies for community participants: $70K
+    - Program & facilitation: $30K
+  - 4 regional workshops (50 people each): $105K
+
+- **Research & evaluation:** $165K
+  - Mid-term evaluation across 6 sites: $80K
+  - Community-led data collection: $40K
+  - Impact documentation: $25K
+  - Academic partnership support: $20K
+
+- **Operations & admin:** $235K
+  - Similar to Year 1 with scale efficiencies
+
+**Total Year 2: $2.49M - $3.49M**
+
+---
+
+**Year 3 Budget: $2.8M - $4.0M**
+
+**Detailed Breakdown:**
+
+- **Platform maintenance & features:** $160K
+  - Community-led development (Indigenous developers now leading): $100K
+  - External technical support (reduced): $40K
+  - Ongoing optimization: $20K
+  - **Note:** Technical costs reduced by 30% as community takes control
+
+- **Staff costs (full year, transitioning):** $1,680K
+  - Base salaries: $1,200K (reducing from $1,456K as roles transition)
+  - On-costs (30%): $360K
+  - 4 Indigenous developers/producers now in paid roles (formerly trainees): $80K
+  - New cohort of 3 trainees: $40K
+  - **Note:** Shows 20% staff cost reduction through community capacity
+
+- **Community engagement:** $520K
+  - Maintaining deep engagement with 6 communities: $190K
+  - Community payments: $110K
+  - Content creation grants: $120K
+  - National gathering: $100K
+
+- **First Nations Advisory Council transitioning to Governance Board:** $210K
+  - Governance transition work: $30K additional for legal/structural setup
+  - Board compensation: $180K (12 members × 6 meetings × $5K)
+
+- **International best-practice:** $85K
+  - Host 8 international practitioners in Australia (2 weeks): $85K
+    - International flights: $35K
+    - Accommodation: $25K
+    - Program costs: $15K
+    - Cultural exchange activities: $10K
+
+- **Training delivery (increasingly community-led):** $420K
+  - Community-led training programs: $200K (communities now earning income)
+  - Online platform expansion: $80K
+  - Regional workshops: $90K
+  - International exchange program: $50K
+
+- **Forums & thought leadership:** $330K
+  - National Forum (expanded to 300 people): $220K
+  - Regional workshops: $110K
+
+- **Sustainability development & revenue generation:** $200K
+  - Social enterprise business planning: $60K
+  - Marketing & sales infrastructure: $50K
+  - Premium content development: $45K
+  - Membership system setup: $30K
+  - Initial revenue offsetting costs: -$50K (conservative projection)
+  - **Note:** By Year 3, generating $50-100K revenue
+
+- **Evaluation (comprehensive 3-year):** $215K
+  - Independent evaluation: $120K
+  - Community-led impact assessment: $50K
+  - ROI analysis & cost-benefit study: $45K
+
+- **Operations:** $250K
+  - Scale costs but with efficiencies from community capacity
+
+**Total Year 3: $2.87M - $4.07M**
+
+**3-Year Total: $7.39M - $10.35M** (revised from $5.8M - $8.5M)
+
+**Expected Outcomes (3 years):**
+- 300+ programs documented with detailed implementation guides, community-owned
+- 100+ community stories captured (video, audio, written)
+- 2,500+ registered practitioners actively using platform
+- 6 pilot communities with deep ownership and trained capacity
+- **4 Young Indigenous developers/producers trained and employed** (formerly trainees)
+- **15-20 community members trained** in content creation, platform management, data collection
+- **20% cost reduction by Year 3** through community capacity replacing external contractors
+- 50-80 organizational members paying for platform access
+- 20 Indigenous emerging leaders trained through leadership program
+- 2 major national forums + 8 regional workshops delivered
+- International connections established with NZ, Canada, and hosted exchange
+- Australia positioned as global leader in Indigenous-led justice innovation
+- Evidence of practice change across 6 pilot communities
+- Revenue generation beginning: $50-100K/year by Year 3 (conservative)
+- First Nations Advisory Council transitioning to Governance Board
+
+**Sustainability Pathway:**
+- **Year 3:** Already showing sustainability through:
+  - 20% staff cost reduction (community replacing external roles)
+  - Revenue generation beginning ($50-100K)
+  - Community members trained and employed
+  - Technical development led by Indigenous developers
+
+- **Year 4:** Target 30-40% self-sustaining
+  - Revenue: $200-300K from memberships, training, consulting
+  - Reduced philanthropic need: $2.0-2.5M (down from $2.8-4.0M)
+  - Community Governance Board operational
+
+- **Year 5:** Target 60-70% self-sustaining
+  - Revenue: $400-600K from diversified streams
+  - Reduced philanthropic need: $1.0-1.5M
+  - Platform legally transferred to community-owned ACCO
+  - A Curious Tractor transitions to fee-for-service provider
+
+- **Year 6+:** 75-85% self-sustaining
+  - Minimal philanthropic dependency
+  - Community-owned and community-governed
+  - Revenue reinvested through Community Investment Fund
+  - Model replicated nationally and internationally
+
+---
+
+### Level 3: Comprehensive Transformation ($13M - $17M over 3 years)
+
+**Philosophy:** "Show up in a limousine - signal that Indigenous knowledge and youth justice matter at global scale"
+
+This is the Ferrari - high-performance, maximum impact, global visibility. It includes everything from Levels 1 & 2 plus major international dimensions, significant place-based investment with community infrastructure, media/arts cultural change campaign, and aggressive path to sustainability. This level positions Australia as THE global leader in Indigenous-led justice innovation.
+
+**Key Additions Beyond Level 2:**
+- 10 communities instead of 6 (national coverage)
+- 18 FTE team (vs 12) with international and media expertise
+- 6-8 young Indigenous trainees (vs 4-5)
+- Community infrastructure grants ($50K per community)
+- Major international program: Global Indigenous Justice Forum + exchanges
+- Documentary series (6 episodes) + theatre productions + podcast
+- Annual National Indigenous Justice Summit (500 people)
+- Media/arts cultural change campaign
+- Aggressive revenue generation: target $300-500K by Year 3
 
 **Premium Digital Ecosystem**
 - All Level 2 features plus:
 - AI-powered evaluation assistant (helps communities measure impact)
-- Virtual reality community tours
+- Virtual reality community tours showcasing programs
 - Live streaming capabilities for events and workshops
 - Multi-language support (5 Indigenous languages + 3 international languages)
 - Advanced analytics dashboard for funders and government
 - Integration with international Indigenous networks
 - White-label capability for community-owned instances
+- Global platform version for international partners
 
-**Full Team (18 FTE + Contractors)**
-- Add to Level 2 team:
-  - International Programs Director (1.0 FTE) - $145K
-  - Media & Arts Producer (1.0 FTE) - $125K
-  - Social Enterprise Manager (1.0 FTE) - $115K
-  - Regional Coordinators (3.0 FTE) - One each for NSW, QLD, WA - $95K each
-  - Communications Manager (1.0 FTE) - $105K
-  - Plus contractors: Filmmakers, evaluators, cultural consultants
+**Expanded Team (18 FTE, reducing to 13 by Year 3 as community takes control)**
 
-**Deep Place-Based Investment**
-- Pilot partnerships: 10 communities across Australia
-- Full-time Community Coordinators embedded in 5 key sites
-- Community infrastructure grants ($50K each = $500K/year) for:
+**Full Team Structure:**
+
+Level 2 Core Team (12 FTE):
+- Platform Manager: $120K
+- Content Developer: $105K
+- Community Liaison (2.0 FTE): $95K each = $190K
+- Technical Developer: $115K (reducing to 0.3 FTE by Year 3)
+- Project Director: $145K
+- Senior Content Producer: $135K
+- Data & Evaluation Specialist: $125K
+- Community Organizer (2.0 FTE): $98K each = $196K
+- Training Coordinator: $100K
+- Partnerships Manager: $115K
+- Indigenous Knowledge Curator: $110K
+**Subtotal: $1,456K**
+
+Additional Level 3 Specialists (6 FTE):
+- International Programs Director: $150K
+- Media & Arts Producer: $130K
+- Social Enterprise Manager: $120K
+- Regional Coordinators (3.0 FTE) - NSW, QLD, WA: $100K each = $300K
+- Communications Manager: $110K
+**Subtotal: $810K**
+
+**Total Base Salaries: $2,266K/year** (Years 1-2)
+**With 30% on-costs: $2,946K/year**
+
+**By Year 3:** Base reduces to $1,700K (~$2,210K with on-costs) as:
+- Technical developer: 0.3 FTE (community developers leading)
+- Regional coordinators: Community-employed (2.0 FTE vs 3.0 FTE)
+- Many functions transitioned to trained community members
+- **Shows 25% cost reduction through community capacity**
+
+**Plus: Young Indigenous Trainees (6-8 people)**
+- Training stipends: $15K each = $90-120K/year
+- Technical training (3 developers): $45K
+- Content/media training (3 producers): $45K
+- Data/evaluation training (1 person): $15K
+- Social enterprise training (1 person): $15K
+- By Year 3, these trainees transition to paid roles in community-led organization
+
+**Plus: External Contractors & Specialists**
+- Documentary filmmakers: $150-200K/year
+- Theatre companies: $100-150K/year
+- Podcast producers: $40-60K/year
+- Evaluation specialists: $80-120K/year
+
+**Deep Place-Based Investment (10 Communities)**
+- Pilot partnerships: 10 communities across Australia (Bourke, Moree, Mount Isa, Stradbroke Island, Alice Springs, Broome, Redfern, Palm Island, Geraldton, plus one TBD by Advisory Council)
+- Full-time Community Coordinators embedded in 5 key sites (part-time in remaining 5)
+- **Community infrastructure grants: $50K each = $500K/year** for:
   - Physical "hub" spaces for gathering and learning
-  - Technology and connectivity
+  - Technology equipment and connectivity infrastructure
   - Cultural activities that generate platform content
+  - Training spaces and equipment
 - Monthly community-to-community exchanges (travel and accommodation)
-- Quarterly regional Indigenous leadership gatherings (50 people each)
-- Annual National Indigenous Justice Summit (500 people, 3 days)
+- Quarterly regional Indigenous leadership gatherings (50 people each × 4 regions)
+- Annual National Indigenous Justice Summit (500 people, 3 days) - major national event
 
-**International Indigenous Intelligence Network**
-- Partnerships with Indigenous communities in 5 countries (NZ, Canada, USA, Norway, Colombia)
-- Annual International Indigenous Justice Exchange (30 people travel for 2-week learning journey)
-- Bi-annual Global Indigenous Justice Forum (150 international delegates)
-- Translation and adaptation of Australian programs for global context
-- Revenue from international training and consulting
-- Global platform instance with international content
+**International Best-Practice Program & Global Leadership**
+This is what distinguishes Level 3 - positioning Australia as THE global leader while bringing international innovation back to communities:
 
-**Media, Arts & Cultural Change**
-- Partnership with theatre companies for verbatim theatre productions (3 per year)
-- Documentary series (6 episodes) showcasing community-led programs
-- Podcast series (24 episodes/year) featuring Indigenous voices
-- Arts grants for community-led creative projects ($30K each × 10 = $300K/year)
+**Year 1: Establishing Global Connections**
+- Delegation to NZ (8 people, 10 days): Learn from Māori youth justice and restorative practices
+- Delegation to Canada (8 people, 14 days): Visit First Nations healing lodges, on-country programs
+- Virtual exchanges with USA tribal programs (monthly)
+- Documentation team captures all learnings for Australian adaptation
+- Begin planning for Global Indigenous Justice Forum Year 2
+
+**Year 2: Global Indigenous Justice Forum**
+- **Major international event in Australia (150 international delegates, 4 days)**
+  - Indigenous justice leaders from 15+ countries
+  - Knowledge exchange, not knowledge extraction
+  - Australian communities showcase innovations
+  - International practitioners share approaches
+  - Building permanent global network
+  - Media coverage positioning Australia as leader
+- Delegation to Norway/Sámi communities (6 people, 10 days)
+- Delegation to Colombia Indigenous justice systems (6 people, 12 days)
+- Multiple community members in each delegation (not just staff)
+
+**Year 3: Consolidating Global Network**
+- Host 15 international Indigenous practitioners in Australia (3-week tour)
+- Australian community-led international training program (revenue generating)
+- Global platform launch with international content
+- International licensing and partnership agreements
+- Australian model being replicated in 3 countries
+- Revenue from international consulting and training
+
+**Ongoing Throughout:**
+- Monthly virtual international exchanges
+- Joint research projects with international Indigenous communities
+- Translation of Australian programs for global contexts
+- Global marketing of Australian Indigenous innovations
+- Building Australia's reputation globally
+
+**Media, Arts & Cultural Change Campaign**
+This creates broad cultural shift beyond the sector - reaching mainstream Australia:
+
+**Verbatim Theatre Productions (3 per year)**
+- Partner with professional theatre companies
+- Real stories from young people and families acted by professional actors
+- Tours to 3-5 cities per production
+- Estimated reach: 5,000-7,000 people per production
+- Post-show community conversations and workshops
+- Creates empathy and understanding in general public
+
+**Documentary Series (6 episodes, broadcast quality)**
+- Professional filmmaker partnership
+- Each episode showcases 2-3 community-led programs
+- Focus on solutions, not problems
+- Target: Broadcast on ABC/SBS + streaming platforms
+- Estimated reach: 500,000+ viewers
+- International distribution potential
+- Creates visibility for community innovations
+
+**Podcast Series (24 episodes/year)**
+- Weekly podcast featuring Indigenous voices
+- Practitioners, young people, elders, families
+- Behind-the-scenes of programs that work
+- Audio as accessible format for remote communities
+- Target: 10,000+ listeners per episode
+
+**Community Arts Grants ($30K each × 10 communities)**
+- Fund community-led creative projects
+- Visual arts, performance, music, storytelling
+- Community decides what to create
+- Generates content for platform
+- Builds community pride and engagement
+
+**Public Engagement**
+- Public exhibitions in capital cities (rotating)
 - Partnership exploration with Mindaroo Pictures for major production
-- Public exhibitions and installations in capital cities
-- Media training for community spokespeople
+- Media training for 30+ community spokespeople
+- Op-eds and thought leadership pieces in major media
+- Social media campaign reaching 100,000+ Australians
+- Shifting narrative from "youth justice crisis" to "community-led solutions"
 
 **Comprehensive Capacity Building & Leadership**
 - 48 workshops/webinars per year
@@ -368,62 +888,335 @@ This is the Ferrari - high-performance, maximum impact, global visibility. It in
 - Legal structure: Aboriginal Community Controlled Organization (ACCO) or similar
 - Profit-sharing model: Revenue redistributed to pilot communities
 
-**Year 1 Budget: $2.4M - $3.5M**
-- Platform development: $650K (premium features, international)
-- Staff costs (0.5 year): $880K
-- Community engagement: $600K (10 communities + infrastructure grants)
-- Content & media production: $350K
-- Training development: $200K
-- International setup: $180K
-- Research & evaluation: $150K
-- Operations: $240K
+**Year 1 Budget: $3.8M - $4.8M**
 
-**Year 2 Budget: $3.2M - $4.5M**
-- Platform enhancements: $380K
-- Staff costs (full year): $1,760K
-- Community work: $850K (deep engagement + infrastructure + exchanges)
-- Media & arts: $480K (theatre, documentary, podcast, grants)
-- Training & leadership: $550K
-- International programs: $350K
-- Forums & events: $420K
-- Research & evaluation: $280K
-- Social enterprise development: $150K
-- Operations: $330K
+**Detailed Breakdown:**
 
-**Year 3 Budget: $2.9M - $4.5M**
-- Platform maintenance: $280K
-- Staff costs: $1,760K
-- Community scaling: $900K (maintaining 10 + expansion planning)
-- Media & arts: $520K
-- Training delivery: $600K
-- International programs: $450K (global forum + exchanges)
-- Forums & thought leadership: $480K
-- Research & impact: $350K
-- Sustainability & transition: $280K
-- Operations: $380K
+- **Platform development (premium features):** $750K
+  - Advanced build (AI, VR, multi-language, analytics): $400K
+  - Mobile app with offline capability: $120K
+  - International platform instance: $80K
+  - Security & enterprise compliance: $50K
+  - Documentation (5 languages): $40K
+  - Young Indigenous developer training (6 trainees): $90K
+  - Technical mentorship: $30K
+
+- **Staff costs (0.5 year, starting mid-year):** $1,523K
+  - Base salaries (18 FTE × 0.5 year): $1,133K
+  - On-costs (30%): $340K
+  - Training stipends (6 trainees × 0.5 year): $45K
+
+- **Community engagement (10 communities):** $720K
+  - Travel (monthly visits × 10 communities): $240K
+    - Flights: 12 visits × 10 communities × $1,200 = $144K
+    - Accommodation: 12 visits × 3 nights × 10 communities × $200 = $72K
+    - Vehicle hire & ground transport: $24K
+  - Community payments for time/knowledge: $120K
+  - Community infrastructure grants (10 × $50K): $250K (Year 1 setup)
+  - Community content creation grants (10 × $20K): $100K
+  - Annual gathering: $50K
+
+- **First Nations Advisory Council:** $90K
+  - 12 members × $5K × 3 meetings (starting mid-year)
+
+- **International best-practice (Year 1):** $120K
+  - NZ delegation (8 people, 10 days): $60K
+    - Flights: $24K
+    - Accommodation: $16K
+    - Per diems & transport: $12K
+    - Program visits & protocols: $8K
+  - Canada delegation (8 people, 14 days): $80K
+    - Flights: $32K
+    - Accommodation: $24K
+    - Per diems & transport: $16K
+    - Program visits & protocols: $8K
+  - Virtual exchanges & planning: $10K
+  - Documentation & adaptation work: $10K
+
+- **Media & arts (Year 1 - development phase):** $320K
+  - Theatre production #1 (development & pilot): $100K
+  - Documentary series development & filming (3 episodes): $120K
+  - Podcast series launch (12 episodes): $50K
+  - Community arts grants (10 × $3K pilot): $30K
+  - Media training for spokespeople: $20K
+
+- **Content creation (beyond media/arts):** $180K
+  - Professional video production (20 stories): $100K
+  - Community-produced content: $40K
+  - Photography & visual content: $20K
+  - Story gathering fees: $20K
+
+- **Training development:** $210K
+  - Online module development (10 modules): $100K
+  - Training materials: $40K
+  - Community trainer development: $35K
+  - Technical training curriculum: $35K
+
+- **Research & evaluation setup:** $165K
+  - Baseline data collection (10 sites): $80K
+  - Research partnerships: $40K
+  - Evaluation framework design: $30K
+  - Ethics approvals & protocols: $15K
+
+- **Operations & admin:** $300K
+  - Office space (18 people): $65K
+  - IT infrastructure (extensive): $60K
+  - Insurance: $40K
+  - Accounting/legal: $45K
+  - Phone/internet: $22K
+  - HR/payroll: $20K
+  - Professional development: $30K
+  - Contingency: $40K
+
+**Total Year 1: $3.83M - $4.79M**
+
+---
+
+**Year 2 Budget: $4.9M - $6.5M**
+
+**Detailed Breakdown:**
+
+- **Platform enhancements:** $350K
+  - Feature additions: $150K
+  - Young Indigenous developers leading: $120K (reduced external)
+  - Mobile app expansion: $50K
+  - Security & optimization: $30K
+
+- **Staff costs (full year):** $3,156K
+  - Base salaries (18 FTE): $2,266K
+  - On-costs (30%): $680K
+  - Training stipends (6 trainees): $90K
+  - External contractors (reduced): $120K
+
+- **Community engagement (10 communities):** $980K
+  - Travel (intensive engagement): $280K
+  - Community payments: $180K
+  - Community content grants (10 × $20K): $200K
+  - Community infrastructure (maintenance & expansion): $200K
+  - Bi-annual gatherings: $120K
+
+- **First Nations Advisory Council:** $180K
+  - 12 members × $5K × 6 meetings (full year)
+
+- **International best-practice (Year 2 - MAJOR YEAR):** $920K
+  - **Global Indigenous Justice Forum (150 international delegates, 4 days):** $750K
+    - International flights (150 people): $450K
+    - Accommodation (150 people × 5 nights): $150K
+    - Venue & catering: $80K
+    - Program & facilitation: $40K
+    - Cultural protocols & events: $30K
+  - Norway delegation (6 people, 10 days): $55K
+  - Colombia delegation (6 people, 12 days): $65K
+  - Virtual exchanges & coordination: $25K
+  - Documentation & translation: $25K
+
+- **Media & arts (full program):** $730K
+  - Theatre productions (3 full productions): $300K
+    - Each production: $100K (development, rehearsal, touring)
+  - Documentary series (remaining 3 episodes): $200K
+  - Podcast series (24 episodes): $80K
+  - Community arts grants (10 × $10K): $100K
+  - Public exhibitions: $30K
+  - Media campaign & PR: $20K
+
+- **Training & capacity building:** $520K
+  - Online module expansion (20 more modules): $150K
+  - In-person workshops (48 per year): $180K
+  - Community-led training: $100K
+  - Leadership Academy (50 participants): $90K
+
+- **National Indigenous Justice Summit (500 people, 3 days):** $380K
+  - Venue & catering: $150K
+  - Travel subsidies for community participants: $140K
+  - Program & facilitation: $50K
+  - Live streaming & production: $25K
+  - Follow-up resources: $15K
+
+- **Regional workshops (4 × 50 people):** $120K
+
+- **Research & evaluation:** $280K
+  - Mid-term evaluation (10 sites): $140K
+  - Community-led data collection: $60K
+  - Impact documentation: $40K
+  - Academic partnerships: $40K
+
+- **Social enterprise development:** $200K
+  - Business planning & strategy: $70K
+  - Marketing infrastructure: $60K
+  - Sales team setup: $40K
+  - Legal entity structure: $30K
+
+- **Operations & admin:** $400K
+  - Scale costs with team growth
+
+**Total Year 2: $4.96M - $6.46M**
+
+---
+
+**Year 3 Budget: $4.4M - $5.7M**
+
+**Detailed Breakdown:**
+
+- **Platform maintenance & features:** $300K
+  - Community-led development: $180K
+  - External technical support (minimal): $60K
+  - International platform support: $40K
+  - Security & optimization: $20K
+  - **Note:** 35% cost reduction through community developers
+
+- **Staff costs (full year, transitioning):** $2,330K
+  - Base salaries: $1,700K (reducing as roles transition)
+  - On-costs (30%): $510K
+  - 6 Indigenous developers/producers now paid roles: $90K
+  - New cohort of 4 trainees: $30K
+  - **Note:** 26% staff cost reduction through community capacity
+
+- **Community engagement (10 communities + expansion):** $900K
+  - Maintaining 10 communities: $280K
+  - Community payments: $180K
+  - Content creation grants: $200K
+  - Infrastructure sustainability: $150K
+  - National gathering: $140K
+  - Planning for expansion to 15 communities
+
+- **First Nations Governance Board (transition year):** $240K
+  - Board compensation: $180K
+  - Governance transition costs (legal, structural): $60K
+
+- **International best-practice (Year 3):** $380K
+  - Host 15 international practitioners (3 weeks): $250K
+    - International flights: $120K
+    - Accommodation: $60K
+    - Program costs: $40K
+    - Cultural exchange: $30K
+  - Australian community-led international training: $80K (revenue generating)
+  - Global platform partnership work: $30K
+  - International licensing setup: $20K
+
+- **Media & arts (continuing):** $700K
+  - Theatre productions (3): $300K
+  - Documentary distribution & impact: $80K
+  - Podcast series (24 episodes): $80K
+  - Community arts grants (10 × $15K): $150K
+  - Public engagement campaign: $50K
+  - Media training & thought leadership: $40K
+
+- **Training delivery (community-led):** $580K
+  - Community-led training programs: $280K (communities earning income)
+  - Online platform expansion: $100K
+  - Leadership programs: $120K
+  - International training delivery: $80K
+
+- **National Summit (expanded to 600 people):** $420K
+
+- **Regional workshops & forums:** $140K
+
+- **Sustainability & revenue generation:** $320K
+  - Social enterprise full implementation: $120K
+  - Marketing & sales: $80K
+  - Premium content development: $60K
+  - International licensing: $40K
+  - Revenue offsetting costs: -$150K (conservative projection of $300-500K generated)
+  - **Note:** By Year 3, generating $300-500K revenue, offsetting $150K of costs
+
+- **Comprehensive 3-year evaluation:** $280K
+  - Independent evaluation (10 sites): $150K
+  - Community-led impact assessment: $70K
+  - ROI & cost-benefit analysis: $60K
+
+- **Operations & admin:** $420K
+  - Scale efficiencies despite growth
+
+**Total Year 3: $4.39M - $5.69M**
+
+**3-Year Total: $13.18M - $16.94M** (say $13M - $17M)
 
 **Expected Outcomes (3 years):**
-- 600+ programs documented across Australia and internationally
-- 300+ rich multimedia community stories
-- 10,000+ registered practitioners across 8 countries
-- 10 pilot communities with deep ownership and infrastructure
-- 500+ organizational members
-- 100+ Indigenous leaders trained through leadership programs
-- 4 major national/international forums delivered
-- 3 theatre productions reaching 5,000+ people
-- Documentary series reaching 500,000+ viewers
-- Strong evidence of systems change and practice transformation
-- $1.5M/year revenue generated by Year 3
-- Community governance structure fully operational and owning the platform
-- International model ready for replication
+
+**Platform & Knowledge:**
+- 600+ programs documented across Australia and internationally, community-owned
+- 300+ rich multimedia community stories (video, audio, written, artistic)
+- 10,000+ registered practitioners across 8 countries actively using platform
+- Global platform version operational in 3 countries
+
+**Community Capacity & Ownership:**
+- 10 pilot communities with deep ownership, infrastructure, and trained capacity
+- **6 Young Indigenous developers/producers trained and employed** (formerly trainees)
+- **25-30 community members trained** in technical, media, data, and social enterprise roles
+- **26% staff cost reduction by Year 3** through community capacity replacing external contractors
+- First Nations Governance Board operational and owning platform
+
+**International Leadership & Best Practice:**
+- **Global Indigenous Justice Forum delivered** (150 international delegates from 15+ countries)
+- 6 international delegations completed (NZ, Canada, Norway, Colombia, plus hosted exchanges)
+- **Australia recognized as global leader** in Indigenous-led justice innovation
+- International partnerships established across 5 continents
+- Australian model being replicated in 3 international contexts
+- International best-practice innovations adapted for Australian communities
+
+**Media, Arts & Cultural Change:**
+- **9 verbatim theatre productions** reaching 20,000+ people across 15+ cities
+- **Documentary series (6 episodes) broadcast** reaching 500,000+ viewers
+- **Podcast series (60 episodes total)** reaching 100,000+ listeners
+- 30 community arts projects funded and showcased
+- Public exhibitions in all capital cities
+- Media narrative shift toward community-led solutions
+
+**Capacity Building & Leadership:**
+- 100+ Indigenous leaders trained through Leadership Academy
+- 50-person annual cohort in executive leadership program
+- 30+ community spokespeople trained and media-active
+- 48 workshops/webinars per year delivered
+- 30 online training modules available
+
+**Events & Forums:**
+- 3 annual National Indigenous Justice Summits (500-600 people each)
+- 12 regional workshops delivered
+- 500+ community-to-community exchanges facilitated
+
+**Systems Change & Impact:**
+- 200+ organizational members paying for platform access
+- Strong evidence of practice change across 10 pilot communities
+- Policy influence in 3+ jurisdictions
+- Academic partnerships with 5+ universities
+- Comprehensive ROI and cost-benefit analysis completed
+
+**Financial Sustainability:**
+- **$300-500K/year revenue generated by Year 3** (conservative)
+- Revenue streams established: memberships, training, consulting, international licensing
+- 30-40% philanthropic need reduction by Year 3
+- Community Investment Fund operational
+- Clear path to 75% self-sustaining by Year 5
 
 **Sustainability Pathway:**
-- Year 4: 50% self-sustaining through diverse revenue streams
-- Year 5: 75% self-sustaining, community-owned, A Curious Tractor transitions to technical service provider only
-- Year 6: 90% self-sustaining, minimal philanthropic dependence
-- Revenue streams support community investment fund
-- Platform open-sourced for global Indigenous communities
-- Model replicated in 3 international contexts
+
+- **Year 3 (End of Mindaroo Investment):** Already showing strong sustainability:
+  - 26% staff cost reduction through community capacity
+  - $300-500K annual revenue generated
+  - Community Governance Board operational
+  - International revenue streams established
+  - Platform legally transitioning to community ownership
+
+- **Year 4:** Target 50-60% self-sustaining
+  - Revenue: $800K-1.2M from memberships, training, international licensing
+  - Reduced philanthropic need: $2.5-3.5M (down from $4.4-5.7M)
+  - Platform fully owned by community-governed ACCO
+  - A Curious Tractor as fee-for-service provider only
+  - International licensing generating significant revenue
+
+- **Year 5:** Target 75-85% self-sustaining
+  - Revenue: $1.5M-2.5M from diversified streams
+  - Reduced philanthropic need: $800K-1.5M
+  - Community-led organization fully operational
+  - Revenue reinvested through Community Investment Fund
+  - Model replicated in 5+ countries with licensing fees
+
+- **Year 6+:** 85-95% self-sustaining
+  - Minimal philanthropic dependency (<$500K/year)
+  - Community-owned, community-governed, community-benefiting
+  - Platform open-sourced for global Indigenous communities
+  - Australian communities receiving dividends from Community Investment Fund
+  - Global network self-sustaining through collective revenue sharing
 
 ---
 
@@ -824,7 +1617,7 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
 
 ### Three Scenarios for Mindaroo
 
-**Scenario 1: Test the Model - Level 1 ($3.2M - $4.5M)**
+**Scenario 1: Test the Model - Level 1 ($4.0M - $5.6M over 3 years)**
 
 **Choose this if:**
 - You want to test the concept with lower risk
@@ -833,98 +1626,152 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
 - Other portfolio projects need prioritization
 
 **You get:**
-- Proven model with 3 pilot communities
+- Proven model with 3-5 pilot communities
 - Digital infrastructure and foundational content
+- 2-3 young Indigenous developers/producers trained and employed
+- International learning exchange (NZ, Canada)
 - Evidence of community engagement and impact
+- 15-20% cost reduction by Year 3 through community capacity
 - Foundation for future scaling
-- Pathway to sustainability demonstrated
+- Clear pathway to sustainability demonstrated
+
+**Annual breakdown:**
+- Year 1: $1.1M - $1.5M
+- Year 2: $1.4M - $1.9M
+- Year 3: $1.5M - $2.2M
 
 **Limitation:**
 - Slower path to systems change
 - Less comprehensive impact
 - Minimal international dimension
+- Limited media/arts cultural change component
 - More dependent on future funding for scale
 
-**This is the safe choice** - proves concept, builds trust, creates foundation.
+**This is the safe choice** - proves concept, builds trust, creates foundation, demonstrates that community capacity building reduces costs over time.
 
 ---
 
-**Scenario 2: Build it Right - Level 2 ($5.8M - $8.5M)**
+**Scenario 2: Build it Right - Level 2 ($7.5M - $10.5M over 3 years) ⭐ RECOMMENDED**
 
 **Choose this if:**
 - You believe in the model and want meaningful impact
 - You're ready to invest in systems change over 3 years
 - You want to demonstrate thought leadership in youth justice
 - Connection to 0-5 strategy is clear enough to proceed
+- You want to see Australia as regional best-practice leader
 
 **You get:**
 - Comprehensive infrastructure with strong community ownership
-- 6 pilot communities deeply engaged
-- National forums and thought leadership
+- 6 pilot communities deeply engaged with infrastructure grants
+- 4-5 young Indigenous developers/producers trained and employed
+- 15-20 community members trained in multiple roles
+- 20% staff cost reduction by Year 3 through community capacity
+- National forums and thought leadership (2 major forums, 8 regional workshops)
+- International best-practice engagement (NZ, Canada, hosted exchanges)
+- Australia positioned as regional leader in Indigenous-led justice innovation
 - Clear evidence of impact and practice change
-- Strong pathway to sustainability (30-60% self-sustaining by Year 5)
-- Foundation for international work
+- Revenue generation beginning ($50-100K by Year 3)
+- Strong pathway to sustainability (60-70% self-sustaining by Year 5)
+- First Nations Governance Board operational
+
+**Annual breakdown:**
+- Year 1: $2.0M - $2.8M
+- Year 2: $2.5M - $3.5M
+- Year 3: $2.8M - $4.0M (reducing philanthropic need already evident)
 
 **Limitation:**
 - Not the "wow factor" of comprehensive level
-- International work limited
-- Media/arts component smaller
+- International work regional (not global)
+- Media/arts component present but not campaign-scale
 
-**This is the sweet spot** - meaningful impact, clear path to sustainability, manageable risk.
+**This is the sweet spot** - meaningful impact, clear path to sustainability, manageable risk, demonstrates cost reduction through community capacity, positions Australia as leader.
 
 ---
 
-**Scenario 3: Transform the System - Level 3 ($8.5M - $10.5M)**
+**Scenario 3: Transform the System - Level 3 ($13M - $17M over 3 years)**
 
 **Choose this if:**
-- You want to make a bold statement about valuing Indigenous intelligence
-- You're ready for significant systems change and global leadership
+- You want to make a bold statement about valuing Indigenous intelligence at scale
+- You're ready for significant systems change and GLOBAL leadership
 - You see youth justice as integral to 0-5 strategy
-- You want to demonstrate alternative funding models
+- You want to demonstrate alternative funding models that work
+- You're committed to major cultural change campaign
 
 **You get:**
-- Comprehensive transformation across 10 communities
-- International Indigenous intelligence network
-- Media and arts cultural change campaign
-- Strong revenue generation and sustainability (75-90% by Year 5)
-- Community ownership and self-determination model
-- Global influence and replication
+- Comprehensive transformation across 10 communities with infrastructure
+- 6-8 young Indigenous developers/producers trained and employed
+- 25-30 community members trained across technical, media, data, social enterprise roles
+- 26% staff cost reduction by Year 3 through community capacity
+- International Indigenous intelligence network across 5 continents
+- **Global Indigenous Justice Forum** (150 international delegates, 4 days)
+- Multiple international delegations and Australia positioning as THE global leader
+- **Media and arts cultural change campaign:**
+  - 9 verbatim theatre productions reaching 20,000+ people
+  - Documentary series (6 episodes) reaching 500,000+ viewers
+  - Podcast series (60 episodes) reaching 100,000+ listeners
+- National Indigenous Justice Summits (500-600 people annually)
+- Strong revenue generation ($300-500K by Year 3)
+- Aggressive sustainability (75-85% self-sustaining by Year 5)
+- Community ownership and self-determination model fully operational
+- Global influence and replication in 3+ countries
 - Clear ROI and prevention evidence
+
+**Annual breakdown:**
+- Year 1: $3.8M - $4.8M
+- Year 2: $4.9M - $6.5M (includes Global Forum)
+- Year 3: $4.4M - $5.7M (costs already reducing, revenue offsetting)
 
 **Limitation:**
 - Higher upfront investment
-- More complex to manage
+- More complex to manage (18 FTE team)
 - Higher risk if model doesn't work
+- Requires strong organizational capacity
 
-**This is the bold choice** - signals that Indigenous knowledge matters, creates global model, drives real systems change.
+**This is the bold choice** - signals that Indigenous knowledge matters globally, creates international model, drives real systems change, positions Australia as world leader, major cultural narrative shift.
 
 ---
 
 ### Recommended Approach: Phased Decision Making
 
-**Phase 1: Year 1 - Commit to Level 2 Foundation ($1.6M - $2.2M)**
+**Phase 1: Year 1 - Commit to Level 2 Foundation ($2.0M - $2.8M)**
 - Test the model with 6 communities
 - Develop platform and core infrastructure
-- Establish governance and community ownership pathway
-- Generate early evidence of impact
+- Begin training 4-5 young Indigenous developers/producers
+- Establish First Nations Advisory Council with decision-making power
+- Generate early evidence of impact and community capacity building
+- International learning exchange to NZ
 
 **Phase 2: Year 2 Decision Point - Scale Based on Evidence**
-- If impact is clear: Move to Level 3 comprehensive ($3.2M)
-- If impact is promising but needs refinement: Continue Level 2 growth ($2.0M - $3.0M)
-- If challenges emerge: Pull back to Level 1 maintenance ($1.1M) and re-plan
+- **If impact is exceptional:** Move to Level 3 comprehensive for Year 2-3 ($4.9M-6.5M Year 2, $4.4M-5.7M Year 3)
+  - Add Global Indigenous Justice Forum
+  - Launch media/arts campaign
+  - Expand to 10 communities
+- **If impact is strong (expected):** Continue Level 2 growth ($2.5M - $3.5M Year 2)
+  - Maintain 6 communities with deep engagement
+  - Build on Year 1 successes
+  - Continue capacity building trajectory
+- **If challenges emerge:** Adjust to Level 1 scope ($1.4M - $1.9M Year 2)
+  - Reduce to 3-4 communities
+  - Focus on proving core model
+  - Re-plan for Year 3
 
-**Phase 3: Year 3 - Sustainability Transition**
-- Community ownership structure operational
-- Revenue generation established
-- Evidence of systems change documented
-- Planning for Years 4-5 reduced philanthropic dependence
+**Phase 3: Year 3 - Sustainability & Transition**
+- Community Governance Board operational and taking control
+- Young Indigenous staff now leading technical and content roles
+- Revenue generation established ($50-500K depending on level)
+- Evidence of systems change and practice transformation documented
+- 15-26% cost reduction demonstrated through community capacity
+- Planning for Years 4-5 with significantly reduced philanthropic dependence
+- Platform transitioning to community ownership
 
-**This approach:**
+**This phased approach:**
 - Manages risk while allowing for bold action
 - Creates decision points based on evidence
-- Allows Mindaroo to see impact before full commitment
-- Respects learnings about large capital injections
-- Maintains flexibility to adapt
+- Allows Mindaroo to see impact before full Year 2-3 commitment
+- Respects learnings about large capital injections (start smaller, scale based on results)
+- Maintains flexibility to adapt based on community feedback
+- Shows cost reduction happening in real-time through capacity building
+- Demonstrates sustainability before philanthropic investment ends
 
 ---
 
@@ -932,62 +1779,97 @@ These are the heartbeat of the project - Indigenous people embedded in pilot com
 
 ### What We're Requesting from Mindaroo
 
-**Primary Request: 3-Year Commitment to Level 2 ($5.8M - $8.5M)**
+**Primary Request: 3-Year Commitment to Level 2 - Foundational Excellence ($7.5M - $10.5M)**
 
-**Year 1:** $1.6M - $2.2M
-**Year 2:** $2.0M - $3.0M (subject to progress review)
-**Year 3:** $2.2M - $3.3M (subject to evidence of impact and sustainability pathway)
+This is a time-limited partnership to build permanent community-owned infrastructure:
+
+**Year 1:** $2.0M - $2.8M
+- Foundation: 6 communities, platform development, team building
+- Begin training 4-5 young Indigenous developers/producers
+- Establish First Nations Advisory Council
+- International learning exchange (NZ)
+- Early evidence generation
+
+**Year 2:** $2.5M - $3.5M (subject to Year 1 progress review)
+- Growth: Deep engagement with 6 communities
+- Trainees advancing, community members training
+- National Forum + regional workshops
+- International exchange (Canada)
+- Cost efficiencies beginning to show
+
+**Year 3:** $2.8M - $4.0M (subject to evidence of impact and sustainability)
+- Scale: Cost reduction already evident (20% staff savings through community capacity)
+- Young Indigenous developers now leading technical work
+- Revenue generation: $50-100K
+- Community Governance Board operational
+- Transition planning to community ownership
+- **Note:** Even as scope increases, some costs reducing through community capacity
+
+**Total 3-Year Investment: $7.3M - $10.3M**
+
+**What Makes This Different:**
+- **Not ongoing program funding** - seed capital for permanent infrastructure
+- **Costs reducing over time** - community capacity replaces external contractors
+- **Revenue generation built in** - pathway to financial independence
+- **Community ownership transition** - not creating dependency on A Curious Tractor
+- **Time-limited** - Clear exit strategy by Year 5 when platform is community-owned
 
 **With commitment to:**
-- Trust-based reporting focused on outcomes and learning
-- Flexibility to adapt based on community feedback
-- Recognition that impact takes time
-- Understanding that this is about building community power
-- Support through challenges and honest learning
-- Consideration of ongoing support in Years 4-5 as community transitions to ownership
+- **Trust-based reporting** focused on outcomes, learning, and community feedback
+- **Flexibility to adapt** based on community leadership and changing needs
+- **Recognition that impact takes time** - building community capacity is a 3-5 year journey
+- **Understanding this is about power** - building community ownership and economic self-determination
+- **Support through challenges** - honest learning, adaptation, not perfection
+- **Phased decision-making** - Year 2 funding contingent on Year 1 evidence
+- **Consideration of Years 4-5 support** at reduced level ($2-2.5M) as community transitions to 60-70% self-sustaining
 
 ### What Success Looks Like
 
 **For Communities:**
-- Own the knowledge and the platform
-- Connected to each other and learning together
-- Compensated for cultural intelligence
-- Youth and families safer and thriving
-- Traditional knowledge preserved and valued
-- Economic opportunities through social enterprise
-- Voice in decisions that affect them
+- **Own the knowledge and the platform** - Legal ownership by community-governed ACCO by Year 5
+- **Economic self-determination** - 4-5 young Indigenous people trained and employed in tech/media roles
+- **Compensated for intelligence** - $50-100K/year revenue generated by Year 3, growing to $400-600K by Year 5
+- **Connected globally** - Learning from and teaching international Indigenous communities
+- **Youth and families thriving** - Based on proven, culturally-grounded approaches
+- **Traditional knowledge preserved** - And valued economically, not extracted
+- **Real decision-making power** - First Nations Governance Board controlling all major decisions
+- **Breaking dependency** - No longer reliant on writing grants to survive
 
 **For the Sector:**
-- Access to best-practice programs and evidence
-- Reduced duplication and reinvention
-- Community-led innovation visible and valued
-- Stronger collaboration across organizations
-- Better outcomes for children and young people
-- Reduced costs through prevention
+- **Access to proven programs** - 300+ documented with implementation guides
+- **Reduced duplication** - Estimated $5M+ annual savings from knowledge sharing
+- **Community-led innovation visible** - Funders and policymakers can find what works
+- **Stronger collaboration** - Platform facilitates community-to-community learning
+- **Better outcomes** - Evidence-based practice change across 6 pilot communities
+- **Cost efficiencies** - Sector learns from community capacity-building model
 
 **For Funders:**
-- Clear evidence of what works
-- Community-owned solutions to support
-- Better ROI through knowledge sharing and prevention
-- Model for community ownership and sustainability
-- Connection between 0-5 and youth justice outcomes
-- Demonstration of alternative funding approach
+- **Clear evidence of ROI** - Independent evaluation and cost-benefit analysis
+- **Community-owned solutions** - Not dependent on any one organization
+- **Sustainability model proven** - 60-70% self-sustaining by Year 5
+- **Breaking dependency cycles** - Communities generate own income
+- **0-5 to youth justice link** - Longitudinal evidence demonstrating prevention impact
+- **Alternative funding model** - Time-limited investment creating permanent infrastructure
+- **Reduced future funding need** - By Year 5, only $1-1.5M/year vs $2.8-4M in Year 3
 
 **For Mindaroo:**
-- Leadership in youth justice and Indigenous self-determination
-- Strong 0-5 to youth justice connection demonstrated
-- Evidence of prevention ROI
-- Model replicated nationally and internationally
-- Alternative to large capital injection approach
-- Community-led systems change
+- **Leadership in transformational philanthropy** - Not transactional funding, but capacity-building investment
+- **Youth justice AND early childhood impact** - Demonstrating prevention pathway
+- **Evidence of prevention ROI** - Cost-benefit analysis showing early intervention value
+- **Community ownership model** - Platform transitions to community control, proving alternative approach
+- **International influence** - Australia positioned as regional/global leader in Indigenous-led justice innovation
+- **Multiplier effect** - Initial investment continues benefiting communities long after philanthropic funding ends
+- **Systems change demonstrated** - Not just program funding, but changing how sector operates
+- **Cost reduction proof** - 20% staff savings by Year 3 shows capacity building works
 
 **For Young People & Families:**
-- Services and supports based on what works
-- Cultural connection and identity strong
-- Pathways from justice system to leadership
-- Communities safer and more connected
-- Opportunities to thrive, not just survive
-- Breaking intergenerational cycles
+- **Services based on what works** - Evidence-based, culturally grounded programs
+- **Cultural connection strong** - Traditional knowledge valued and accessible
+- **Pathways to leadership** - From service recipients to platform developers and leaders
+- **Communities safer** - Reduced youth justice involvement through prevention
+- **Economic opportunities** - Young people trained in tech, media, evaluation, social enterprise
+- **Breaking intergenerational trauma** - Supporting today's young people prevents tomorrow's early childhood adversity
+- **Voice and agency** - Community members decide what knowledge is shared and how
 
 ---
 
