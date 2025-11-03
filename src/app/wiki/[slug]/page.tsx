@@ -71,14 +71,14 @@ export default async function WikiDocPage({ params }: { params: { slug: string }
       <main className="flex-1 overflow-y-auto bg-white">
         <article className="max-w-4xl mx-auto px-8 py-12">
           {/* Breadcrumb */}
-          <div className="text-sm text-gray-500 mb-8">
-            <a href="/wiki" className="hover:text-gray-700">Wiki</a>
-            <span className="mx-2">/</span>
-            <span className="text-gray-900">{title}</span>
+          <div className="text-sm text-gray-500 mb-8 flex items-center gap-2">
+            <a href="/wiki" className="hover:text-blue-600 transition-colors">Wiki</a>
+            <span className="text-gray-400">/</span>
+            <span className="text-gray-900 font-medium">{title}</span>
           </div>
 
           {/* Markdown Content */}
-          <div className="prose prose-lg prose-blue max-w-none">
+          <div className="prose max-w-none">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
@@ -88,85 +88,85 @@ export default async function WikiDocPage({ params }: { params: { slug: string }
                   </h1>
                 ),
                 h2: ({ children }) => (
-                  <h2 className="text-3xl font-bold text-gray-900 mt-12 mb-4 pb-2 border-b-2 border-gray-300">
+                  <h2 className="text-3xl font-bold text-gray-900 mt-16 mb-6 pb-3 border-b-2 border-gray-300">
                     {children}
                   </h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="text-2xl font-bold text-gray-900 mt-8 mb-3">
+                  <h3 className="text-2xl font-bold text-gray-900 mt-10 mb-4">
                     {children}
                   </h3>
                 ),
                 h4: ({ children }) => (
-                  <h4 className="text-xl font-bold text-gray-900 mt-6 mb-2">
+                  <h4 className="text-xl font-bold text-gray-900 mt-8 mb-3">
                     {children}
                   </h4>
                 ),
                 p: ({ children }) => (
-                  <p className="text-gray-700 leading-relaxed mb-4">
+                  <p className="text-gray-700 leading-relaxed mb-5 text-base">
                     {children}
                   </p>
                 ),
                 ul: ({ children }) => (
-                  <ul className="list-disc list-inside space-y-2 mb-4 text-gray-700">
+                  <ul className="list-disc pl-6 space-y-2 mb-6 text-gray-700">
                     {children}
                   </ul>
                 ),
                 ol: ({ children }) => (
-                  <ol className="list-decimal list-inside space-y-2 mb-4 text-gray-700">
+                  <ol className="list-decimal pl-6 space-y-2 mb-6 text-gray-700">
                     {children}
                   </ol>
                 ),
                 li: ({ children }) => (
-                  <li className="ml-4">
+                  <li className="leading-relaxed">
                     {children}
                   </li>
                 ),
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-4 border-blue-500 bg-blue-50 pl-4 py-2 my-4 italic text-gray-700">
+                  <blockquote className="border-l-4 border-blue-500 bg-blue-50 pl-6 pr-4 py-4 my-6 text-gray-700">
                     {children}
                   </blockquote>
                 ),
                 code: ({ inline, children, ...props }: any) => {
                   if (inline) {
                     return (
-                      <code className="bg-gray-100 text-red-600 px-1.5 py-0.5 rounded text-sm font-mono">
+                      <code className="bg-gray-100 text-blue-700 px-2 py-1 rounded text-sm font-mono font-semibold">
                         {children}
                       </code>
                     );
                   }
                   return (
-                    <code className="block bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono my-4" {...props}>
+                    <code className="block bg-gray-900 text-gray-100 p-6 rounded-lg overflow-x-auto text-sm font-mono my-6 leading-relaxed" {...props}>
                       {children}
                     </code>
                   );
                 },
                 table: ({ children }) => (
-                  <div className="overflow-x-auto my-6">
-                    <table className="min-w-full divide-y divide-gray-300 border-2 border-gray-300">
+                  <div className="overflow-x-auto my-8">
+                    <table className="min-w-full divide-y divide-gray-300 border border-gray-300 rounded-lg">
                       {children}
                     </table>
                   </div>
                 ),
                 thead: ({ children }) => (
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-100">
                     {children}
                   </thead>
                 ),
                 th: ({ children }) => (
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 border-b-2 border-gray-300">
+                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 border-b-2 border-gray-300">
                     {children}
                   </th>
                 ),
                 td: ({ children }) => (
-                  <td className="px-4 py-3 text-sm text-gray-700 border-b border-gray-200">
+                  <td className="px-6 py-4 text-sm text-gray-700 border-b border-gray-200">
                     {children}
                   </td>
                 ),
                 a: ({ children, href }) => (
                   <a
                     href={href}
-                    className="text-blue-600 hover:text-blue-800 underline"
+                    className="text-blue-600 hover:text-blue-800 underline font-medium transition-colors"
                     target={href?.startsWith('http') ? '_blank' : undefined}
                     rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
                   >
@@ -179,9 +179,12 @@ export default async function WikiDocPage({ params }: { params: { slug: string }
                   </strong>
                 ),
                 em: ({ children }) => (
-                  <em className="italic text-gray-800">
+                  <em className="italic text-gray-700">
                     {children}
                   </em>
+                ),
+                hr: ({ children }) => (
+                  <hr className="my-8 border-t-2 border-gray-200" />
                 ),
               }}
             >
