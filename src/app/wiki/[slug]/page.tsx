@@ -7,11 +7,15 @@ import remarkGfm from 'remark-gfm';
 
 // Map of slugs to actual file names
 const SLUG_TO_FILE: Record<string, string> = {
+  'site-overview': 'SITE_OVERVIEW.md',
+  'sovereignty-flywheel-visual': 'SOVEREIGNTY_FLYWHEEL_VISUAL.md',
+  'design-tools-guide': 'DESIGN_TOOLS_GUIDE.md',
   'strategic-overview': 'STRATEGIC_OVERVIEW.md',
   'executive-summary': 'EXECUTIVE_SUMMARY.md',
   'one-page-overview': 'ONE_PAGE_OVERVIEW.md',
   'justicehub-planning': 'JUSTICEHUB_PLANNING.md',
   'mindaroo-strategic-pitch': 'MINDAROO_STRATEGIC_PITCH.md',
+  'three-scenarios-budget': 'THREE_SCENARIOS_BUDGET.md',
   'budget-summary': 'BUDGET_SUMMARY.md',
   'funding-pitch-templates': 'FUNDING_PITCH_TEMPLATES.md',
   'admin-user-guide': 'ADMIN_USER_GUIDE.md',
@@ -19,6 +23,7 @@ const SLUG_TO_FILE: Record<string, string> = {
   'admin-routes-complete': 'ADMIN_ROUTES_COMPLETE.md',
   'admin-complete-flows': 'ADMIN_COMPLETE_FLOWS.md',
   'admin-flows-analysis': 'ADMIN_FLOWS_ANALYSIS.md',
+  'wiki-enhancement-plan': 'WIKI_ENHANCEMENT_PLAN.md',
   'centre-of-excellence-complete': 'CENTRE_OF_EXCELLENCE_COMPLETE.md',
   'empathy-ledger-full-integration': 'EMPATHY_LEDGER_FULL_INTEGRATION.md',
   'auto-linking-complete': 'AUTO_LINKING_COMPLETE.md',

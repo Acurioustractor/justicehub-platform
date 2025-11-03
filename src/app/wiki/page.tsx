@@ -14,10 +14,60 @@ export default function WikiHomePage() {
             <h1 className="text-5xl font-bold text-gray-900 mb-4">
               JusticeHub Wiki
             </h1>
-            <p className="text-xl text-gray-600 leading-relaxed">
+            <p className="text-xl text-gray-600 leading-relaxed mb-6">
               Comprehensive strategic planning, budget frameworks, and platform documentation
               for transforming Australia's youth justice system.
             </p>
+            <Link
+              href="/wiki/site-overview"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            >
+              <Search className="w-5 h-5" />
+              New? Start with Site Overview
+            </Link>
+          </div>
+
+          {/* Featured: Sovereignty Flywheel - Interactive */}
+          <div className="mb-12 grid md:grid-cols-2 gap-6">
+            <Link
+              href="/flywheel"
+              className="block bg-gradient-to-r from-blue-600 to-purple-600 p-8 rounded-xl text-white hover:shadow-2xl transition-all duration-300 group"
+            >
+              <div className="inline-block bg-white/20 px-3 py-1 rounded-full text-sm font-semibold mb-3">
+                🎯 Interactive Visual
+              </div>
+              <h2 className="text-3xl font-bold mb-3 group-hover:underline">
+                The Sovereignty Flywheel
+              </h2>
+              <p className="text-blue-100 text-lg mb-4">
+                See the live, interactive version! Hover over segments, explore the cycle,
+                export as SVG/PNG. Built right into the platform.
+              </p>
+              <div className="flex items-center text-white/90">
+                <span className="text-sm font-semibold">View Interactive Version</span>
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" />
+              </div>
+            </Link>
+
+            <Link
+              href="/wiki/sovereignty-flywheel-visual"
+              className="block bg-white border-2 border-purple-600 p-8 rounded-xl hover:shadow-2xl transition-all duration-300 group"
+            >
+              <div className="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-semibold mb-3">
+                📄 Documentation
+              </div>
+              <h2 className="text-2xl font-bold mb-3 text-gray-900 group-hover:underline">
+                Visual Specification
+              </h2>
+              <p className="text-gray-700 text-base mb-4">
+                Complete design specification, concept explanation, and guide for creating
+                your own version with AI tools.
+              </p>
+              <div className="flex items-center text-purple-600">
+                <span className="text-sm font-semibold">Read Full Documentation</span>
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" />
+              </div>
+            </Link>
           </div>
 
           {/* Stats */}
@@ -110,11 +160,25 @@ export default function WikiHomePage() {
                   </p>
                   <div className="grid grid-cols-2 gap-3">
                     <Link
+                      href="/wiki/three-scenarios-budget"
+                      className="col-span-2 flex items-center justify-between p-4 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors group border-2 border-blue-500"
+                    >
+                      <div>
+                        <span className="text-base font-bold text-blue-900 group-hover:text-blue-950 block">
+                          Three Budget Scenarios: LEAN/BASE/UPPER 🎯 NEW
+                        </span>
+                        <span className="text-sm text-blue-700">
+                          Complete 3-year comparison ($5.9M - $17.6M) with clear tables and explanations
+                        </span>
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-blue-700 group-hover:text-blue-800" />
+                    </Link>
+                    <Link
                       href="/wiki/mindaroo-strategic-pitch"
                       className="col-span-2 flex items-center justify-between p-4 bg-green-100 rounded-lg hover:bg-green-200 transition-colors group border-2 border-green-400"
                     >
                       <span className="text-base font-bold text-green-800 group-hover:text-green-900">
-                        Mindaroo Strategic Pitch (15K words) ⭐ NEW
+                        Mindaroo Strategic Pitch (15K words) ⭐
                       </span>
                       <ArrowRight className="w-5 h-5 text-green-700 group-hover:text-green-800" />
                     </Link>
