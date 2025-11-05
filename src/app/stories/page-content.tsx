@@ -101,12 +101,14 @@ export function StoriesPageContent() {
       console.log('📰 Articles result:', {
         success: !articlesResult.error,
         count: articlesResult.data?.length || 0,
-        error: articlesResult.error?.message
+        error: articlesResult.error?.message,
+        errorDetails: articlesResult.error
       });
       console.log('📝 Blogs result:', {
         success: !blogsResult.error,
         count: blogsResult.data?.length || 0,
-        error: blogsResult.error?.message
+        error: blogsResult.error?.message,
+        errorDetails: blogsResult.error
       });
 
       if (articlesResult.error) {

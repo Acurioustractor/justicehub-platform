@@ -12,6 +12,13 @@ export function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '';
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
 
+  console.log('🔑 Creating Supabase client:', {
+    hasUrl: !!url,
+    hasKey: !!key,
+    urlPreview: url ? `${url.substring(0, 30)}...` : 'missing',
+    keyPreview: key ? `${key.substring(0, 20)}...` : 'missing'
+  });
+
   // During build time, return a placeholder if env vars aren't available
   if (!url || !key) {
     console.warn('Supabase credentials not available, using placeholder client');
