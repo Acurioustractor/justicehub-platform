@@ -132,7 +132,7 @@ export async function middleware(request: NextRequest) {
     response.headers.set(key, value);
   });
 
-  // Redirect old blog routes to stories routes
+  // Redirect old blog routes to stories routes (consolidate to one system)
   if (path.startsWith('/admin/blog')) {
     const newPath = path.replace('/admin/blog', '/admin/stories');
     return NextResponse.redirect(new URL(newPath, request.url));

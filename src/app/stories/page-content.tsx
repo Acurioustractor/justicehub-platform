@@ -48,6 +48,14 @@ export function StoriesPageContent() {
   const type = searchParams.get('type');
   const [content, setContent] = useState<UnifiedContent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    total: 0,
+    seeds: 0,
+    growth: 0,
+    harvest: 0,
+    roots: 0,
+    locations: 0,
+  });
 
   useEffect(() => {
     async function fetchContent() {
@@ -56,13 +64,13 @@ export function StoriesPageContent() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
 
-      // Fetch articles
+      // Fetch articles (using public_profiles for author info)
       let articlesQuery = supabase
         .from('articles')
         .select(`
           *,
-          authors (
-            name,
+          public_profiles!articles_author_id_fkey (
+            full_name,
             slug,
             photo_url
           )
@@ -100,7 +108,7 @@ export function StoriesPageContent() {
       const articles = (articlesResult.data || []).map((article: any) => ({
         ...article,
         content_type: 'article' as const,
-        author: article.authors,
+        author: article.public_profiles,
         primary_tag: article.category,
       }));
 
@@ -128,6 +136,36 @@ export function StoriesPageContent() {
       }
 
       setContent(allContent);
+
+      // Calculate stats
+      const uniqueLocations = new Set<string>();
+      let seedsCount = 0;
+      let growthCount = 0;
+      let harvestCount = 0;
+      let rootsCount = 0;
+
+      allContent.forEach((item) => {
+        // Count categories
+        if (item.category === 'seeds') seedsCount++;
+        if (item.category === 'growth') growthCount++;
+        if (item.category === 'harvest') harvestCount++;
+        if (item.category === 'roots') rootsCount++;
+
+        // Count unique locations
+        if (item.location_tags) {
+          item.location_tags.forEach((loc: string) => uniqueLocations.add(loc));
+        }
+      });
+
+      setStats({
+        total: allContent.length,
+        seeds: seedsCount,
+        growth: growthCount,
+        harvest: harvestCount,
+        roots: rootsCount,
+        locations: uniqueLocations.size,
+      });
+
       setLoading(false);
     }
 
@@ -166,6 +204,52 @@ export function StoriesPageContent() {
             <p className="text-xl md:text-2xl text-gray-600 leading-relaxed">
               Real stories, evidence-based insights, and updates from communities transforming youth justice across Australia
             </p>
+          </div>
+
+          {/* Statistics Section */}
+          <div className="max-w-6xl mx-auto mb-12">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {/* Total Stories */}
+              <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 text-center">
+                <div className="text-4xl font-black text-black mb-2">{stats.total}</div>
+                <div className="text-sm font-bold text-gray-600 uppercase tracking-wide">Stories</div>
+              </div>
+
+              {/* Seeds */}
+              <div className="bg-green-50 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 text-center">
+                <div className="text-3xl mb-1">🌱</div>
+                <div className="text-3xl font-black text-green-800 mb-2">{stats.seeds}</div>
+                <div className="text-xs font-bold text-green-700 uppercase tracking-wide">Seeds</div>
+              </div>
+
+              {/* Growth */}
+              <div className="bg-emerald-50 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 text-center">
+                <div className="text-3xl mb-1">🌿</div>
+                <div className="text-3xl font-black text-emerald-800 mb-2">{stats.growth}</div>
+                <div className="text-xs font-bold text-emerald-700 uppercase tracking-wide">Growth</div>
+              </div>
+
+              {/* Harvest */}
+              <div className="bg-amber-50 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 text-center">
+                <div className="text-3xl mb-1">🌾</div>
+                <div className="text-3xl font-black text-amber-800 mb-2">{stats.harvest}</div>
+                <div className="text-xs font-bold text-amber-700 uppercase tracking-wide">Harvest</div>
+              </div>
+
+              {/* Roots */}
+              <div className="bg-amber-100 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 text-center">
+                <div className="text-3xl mb-1">🌳</div>
+                <div className="text-3xl font-black text-amber-900 mb-2">{stats.roots}</div>
+                <div className="text-xs font-bold text-amber-800 uppercase tracking-wide">Roots</div>
+              </div>
+
+              {/* Locations */}
+              <div className="bg-blue-50 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 text-center">
+                <div className="text-3xl mb-1">📍</div>
+                <div className="text-3xl font-black text-blue-800 mb-2">{stats.locations}</div>
+                <div className="text-xs font-bold text-blue-700 uppercase tracking-wide">Locations</div>
+              </div>
+            </div>
           </div>
 
           {/* Content Type Filters */}

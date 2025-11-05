@@ -31,8 +31,65 @@ export interface ExcellenceLocation {
 
 /**
  * International Best Practice Models
+ * ALL 16 programs from the database mapped to geographic locations
  */
 export const internationalModels: ExcellenceLocation[] = [
+  {
+    id: 'progression-units-brazil',
+    name: 'Progression Units',
+    category: 'international-model',
+    type: 'global-insight',
+    description: 'São Paulo progressive model with 4% recidivism. Small living units with therapeutic approach.',
+    coordinates: { lat: -23.5505, lng: -46.6333 }, // São Paulo
+    country: 'Brazil',
+    city: 'São Paulo',
+    keyStats: [
+      '4% recidivism rate',
+      'Progressive intervention model',
+      'Small therapeutic units'
+    ],
+    tags: ['therapeutic', 'low-recidivism', 'progressive'],
+    detailUrl: '/centre-of-excellence/global-insights',
+    featured: true
+  },
+  {
+    id: 'nicro-south-africa',
+    name: 'NICRO Diversion Programs',
+    category: 'international-model',
+    type: 'global-insight',
+    description: 'South Africa\'s diversion programs achieving 6.7% recidivism through community-based interventions.',
+    coordinates: { lat: -33.9249, lng: 18.4241 }, // Cape Town
+    country: 'South Africa',
+    city: 'Cape Town',
+    keyStats: [
+      '6.7% recidivism rate',
+      'Community-based diversion',
+      'Restorative justice focus'
+    ],
+    tags: ['diversion', 'low-recidivism', 'community-based'],
+    detailUrl: '/centre-of-excellence/global-insights',
+    featured: true
+  },
+  {
+    id: 'missouri-model',
+    name: 'Missouri Model',
+    category: 'international-model',
+    type: 'global-insight',
+    description: 'Small therapeutic units with 8% recidivism vs 43-52% other US states. Zero youth suicides.',
+    coordinates: { lat: 38.5767, lng: -92.1735 }, // Jefferson City, MO
+    country: 'United States',
+    city: 'Jefferson City',
+    state: 'Missouri',
+    keyStats: [
+      '8% recidivism rate',
+      'Zero youth suicides',
+      '85.3% community engagement'
+    ],
+    tags: ['therapeutic', 'low-recidivism', 'small-units'],
+    detailUrl: '/centre-of-excellence/global-insights',
+    externalUrl: 'https://www.aecf.org/',
+    featured: true
+  },
   {
     id: 'spain-diagrama',
     name: 'Spain - Diagrama Foundation',
@@ -48,9 +105,27 @@ export const internationalModels: ExcellenceLocation[] = [
       '40,000+ lives transformed since 1991'
     ],
     tags: ['therapeutic', 'evidence-based', 'low-recidivism'],
-    detailUrl: '/centre-of-excellence/global-insights#spain-diagrama-foundation',
+    detailUrl: '/centre-of-excellence/global-insights',
     externalUrl: 'https://www.diagramaaustralia.org/',
     featured: true
+  },
+  {
+    id: 'police-cautioning-hk',
+    name: 'Police Cautioning Scheme',
+    category: 'international-model',
+    type: 'global-insight',
+    description: 'Hong Kong\'s diversionary model with 20% recidivism through police-led interventions.',
+    coordinates: { lat: 22.3193, lng: 114.1694 }, // Hong Kong
+    country: 'Hong Kong',
+    city: 'Hong Kong',
+    keyStats: [
+      '20% recidivism rate',
+      'Police-led diversion',
+      'Community partnerships'
+    ],
+    tags: ['diversion', 'police-led', 'community-based'],
+    detailUrl: '/centre-of-excellence/global-insights',
+    featured: false
   },
   {
     id: 'nz-oranga-tamariki',
@@ -72,6 +147,138 @@ export const internationalModels: ExcellenceLocation[] = [
     featured: true
   },
   {
+    id: 'roca-inc',
+    name: 'Roca, Inc.',
+    category: 'international-model',
+    type: 'global-insight',
+    description: 'Massachusetts intervention program with transformative approach to high-risk youth.',
+    coordinates: { lat: 42.3601, lng: -71.0589 }, // Boston, MA
+    country: 'United States',
+    city: 'Boston',
+    state: 'Massachusetts',
+    keyStats: [
+      '29% recidivism rate',
+      'High-risk youth focus',
+      'Intensive intervention model'
+    ],
+    tags: ['intervention', 'high-risk', 'transformative'],
+    detailUrl: '/centre-of-excellence/global-insights',
+    externalUrl: 'https://rocainc.org/',
+    featured: false
+  },
+  {
+    id: 'youth-conferencing-ni',
+    name: 'Youth Conferencing',
+    category: 'international-model',
+    type: 'global-insight',
+    description: 'Northern Ireland\'s restorative justice conferencing model.',
+    coordinates: { lat: 54.5973, lng: -5.9301 }, // Belfast
+    country: 'Northern Ireland',
+    city: 'Belfast',
+    keyStats: [
+      '54% recidivism rate',
+      'Restorative conferencing',
+      'Family inclusion model'
+    ],
+    tags: ['restorative', 'conferencing', 'family-based'],
+    detailUrl: '/centre-of-excellence/global-insights',
+    featured: false
+  },
+  {
+    id: 'mst-fft',
+    name: 'Multisystemic & Functional Family Therapy',
+    category: 'international-model',
+    type: 'global-insight',
+    description: 'Evidence-based therapeutic interventions used across United States.',
+    coordinates: { lat: 38.9072, lng: -77.0369 }, // Washington DC
+    country: 'United States',
+    city: 'Washington',
+    state: 'DC',
+    keyStats: [
+      'Evidence-based therapy',
+      'Family systems approach',
+      'Widely replicated model'
+    ],
+    tags: ['therapeutic', 'family-therapy', 'evidence-based'],
+    detailUrl: '/centre-of-excellence/global-insights',
+    featured: false
+  },
+  {
+    id: 'wraparound-milwaukee',
+    name: 'Wraparound Milwaukee',
+    category: 'international-model',
+    type: 'global-insight',
+    description: 'Comprehensive wraparound services for youth with complex needs in Milwaukee.',
+    coordinates: { lat: 43.0389, lng: -87.9065 }, // Milwaukee, WI
+    country: 'United States',
+    city: 'Milwaukee',
+    state: 'Wisconsin',
+    keyStats: [
+      'Comprehensive services',
+      'Multi-system coordination',
+      'Community-based care'
+    ],
+    tags: ['wraparound', 'comprehensive', 'community-care'],
+    detailUrl: '/centre-of-excellence/global-insights',
+    featured: false
+  },
+  {
+    id: 'jdai',
+    name: 'Juvenile Detention Alternatives Initiative',
+    category: 'international-model',
+    type: 'global-insight',
+    description: 'National initiative reducing unnecessary youth detention across United States.',
+    coordinates: { lat: 39.2904, lng: -76.6122 }, // Baltimore (Annie E. Casey Foundation HQ)
+    country: 'United States',
+    city: 'Baltimore',
+    state: 'Maryland',
+    keyStats: [
+      'Detention reduction focus',
+      'Multi-site implementation',
+      'Systems reform approach'
+    ],
+    tags: ['detention-reduction', 'systems-reform', 'national-initiative'],
+    detailUrl: '/centre-of-excellence/global-insights',
+    externalUrl: 'https://www.aecf.org/work/juvenile-justice/jdai',
+    featured: false
+  },
+  {
+    id: 'halt-netherlands',
+    name: 'HALT Program',
+    category: 'international-model',
+    type: 'global-insight',
+    description: 'Dutch early intervention program preventing escalation of youth offending.',
+    coordinates: { lat: 52.3676, lng: 4.9041 }, // Amsterdam
+    country: 'Netherlands',
+    city: 'Amsterdam',
+    keyStats: [
+      'Early intervention focus',
+      'Prevention of escalation',
+      'Alternative to prosecution'
+    ],
+    tags: ['early-intervention', 'prevention', 'diversion'],
+    detailUrl: '/centre-of-excellence/global-insights',
+    featured: false
+  },
+  {
+    id: 'fgc-nz-enhanced',
+    name: 'Family Group Conferencing (Enhanced)',
+    category: 'international-model',
+    type: 'global-insight',
+    description: 'Enhanced FGC model with improved cultural responsiveness and family empowerment.',
+    coordinates: { lat: -36.8485, lng: 174.7633 }, // Auckland
+    country: 'New Zealand',
+    city: 'Auckland',
+    keyStats: [
+      '86% victim satisfaction',
+      'Enhanced cultural practices',
+      'Family-led planning'
+    ],
+    tags: ['restorative', 'family-led', 'cultural'],
+    detailUrl: '/centre-of-excellence/global-insights',
+    featured: false
+  },
+  {
     id: 'scotland-hearings',
     name: 'Scotland - Children\'s Hearings System',
     category: 'international-model',
@@ -86,13 +293,13 @@ export const internationalModels: ExcellenceLocation[] = [
       '50+ years evidence base'
     ],
     tags: ['welfare-model', 'community-led', 'non-punitive'],
-    detailUrl: '/centre-of-excellence/global-insights#scotland-childrens-hearings',
+    detailUrl: '/centre-of-excellence/global-insights',
     externalUrl: 'https://www.chscotland.gov.uk/',
     featured: true
   },
   {
     id: 'finland-nordic',
-    name: 'Nordic Countries - Welfare Model',
+    name: 'Nordic Welfare Model',
     category: 'international-model',
     type: 'global-insight',
     description: 'Finland: Only 4 youth in custody. Education and therapeutic support over detention.',
@@ -105,46 +312,26 @@ export const internationalModels: ExcellenceLocation[] = [
       'Therapeutic over punitive'
     ],
     tags: ['welfare', 'education-focused', 'minimal-custody'],
-    detailUrl: '/centre-of-excellence/global-insights#nordic-welfare-model',
+    detailUrl: '/centre-of-excellence/global-insights',
     featured: true
   },
   {
-    id: 'canada-ycja',
-    name: 'Canada - Youth Criminal Justice Act',
+    id: 'maranguka-australia',
+    name: 'Maranguka Justice Reinvestment',
     category: 'international-model',
     type: 'global-insight',
-    description: 'YCJA framework with 20+ years evidence. Restorative conferencing and community-based alternatives.',
-    coordinates: { lat: 45.4215, lng: -75.6972 }, // Ottawa
-    country: 'Canada',
-    city: 'Ottawa',
+    description: 'Bourke, NSW community-led justice reinvestment with remarkable outcomes.',
+    coordinates: { lat: -30.0908, lng: 145.9375 }, // Bourke, NSW
+    country: 'Australia',
+    city: 'Bourke',
+    state: 'NSW',
     keyStats: [
-      '20+ years evidence base',
-      'Restorative conferencing',
-      'Community alternatives focus'
+      'Community-led approach',
+      'Justice reinvestment model',
+      'Aboriginal leadership'
     ],
-    tags: ['restorative', 'community-based', 'long-term-evidence'],
-    detailUrl: '/centre-of-excellence/global-insights#canada-ycja',
-    externalUrl: 'https://www.justice.gc.ca/eng/cj-jp/yj-jj/',
-    featured: true
-  },
-  {
-    id: 'missouri-model',
-    name: 'USA - Missouri Model',
-    category: 'international-model',
-    type: 'global-insight',
-    description: 'Small therapeutic units with 24% recidivism vs 43-52% other US states. Zero youth suicides.',
-    coordinates: { lat: 38.5767, lng: -92.1735 }, // Jefferson City, MO
-    country: 'United States',
-    city: 'Jefferson City',
-    state: 'Missouri',
-    keyStats: [
-      '24% recidivism vs 43-52% other states',
-      'Zero youth suicides',
-      '85.3% community engagement'
-    ],
-    tags: ['therapeutic', 'low-recidivism', 'small-units'],
-    detailUrl: '/centre-of-excellence/global-insights#missouri-model',
-    externalUrl: 'https://www.aecf.org/',
+    tags: ['justice-reinvestment', 'community-led', 'Aboriginal'],
+    detailUrl: '/centre-of-excellence/global-insights',
     featured: true
   }
 ];

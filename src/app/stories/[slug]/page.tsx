@@ -1,9 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { Navigation, Footer } from '@/components/ui/navigation';
+import Link from 'next/link';
+import { Calendar, Clock, Tag, MapPin, User } from 'lucide-react';
 
 const categories = {
   seeds: { emoji: '🌱', label: 'Seeds', color: 'bg-green-100 text-green-800' },
@@ -12,216 +11,239 @@ const categories = {
   roots: { emoji: '🌳', label: 'Roots', color: 'bg-amber-100 text-amber-900' },
 };
 
-type Props = {
-  params: { slug: string };
-};
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export default async function StoryPage({ params }: { params: { slug: string } }) {
   const supabase = await createClient();
+  const { slug } = params;
+
+  // Try to fetch from articles first
   const { data: article } = await supabase
-    .from('articles')
-    .select('title, excerpt, seo_title, seo_description')
-    .eq('slug', params.slug)
-    .eq('status', 'published')
-    .single();
-
-  if (!article) {
-    return {
-      title: 'Article Not Found | JusticeHub',
-    };
-  }
-
-  return {
-    title: article.seo_title || `${article.title} | JusticeHub`,
-    description: article.seo_description || article.excerpt,
-  };
-}
-
-export default async function ArticlePage({ params }: Props) {
-  const supabase = await createClient();
-
-  const { data: article, error } = await supabase
     .from('articles')
     .select(`
       *,
-      authors (
-        name,
+      public_profiles!articles_author_id_fkey (
+        full_name,
         slug,
-        bio,
-        photo_url
+        photo_url,
+        bio
       )
     `)
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .eq('status', 'published')
     .single();
 
-  if (error || !article) {
+  // If not found in articles, try blog_posts
+  let story = article;
+  let contentType: 'article' | 'blog' = 'article';
+
+  if (!story) {
+    const { data: blogPost } = await supabase
+      .from('blog_posts')
+      .select(`
+        *,
+        public_profiles!blog_posts_author_id_fkey (
+          full_name,
+          slug,
+          photo_url,
+          bio
+        )
+      `)
+      .eq('slug', slug)
+      .eq('status', 'published')
+      .single();
+
+    story = blogPost;
+    contentType = 'blog';
+  }
+
+  // If still not found, return 404
+  if (!story) {
     notFound();
   }
 
-  const publishedDate = article.published_at
-    ? new Date(article.published_at).toLocaleDateString('en-AU', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : null;
+  const author = story.public_profiles;
+  const publishDate = new Date(story.published_at);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <article className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
+    <>
+      <Navigation />
+      <article className="min-h-screen page-content">
+        <div className="container-justice py-12">
+          {/* Back Link */}
           <Link
             href="/stories"
-            className="inline-flex items-center text-blue-600 hover:underline mb-8"
+            className="inline-flex items-center gap-2 text-sm font-bold text-gray-600 hover:text-black mb-8 transition-colors"
           >
             ← Back to Stories
           </Link>
 
-          <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
-            <div className="flex items-center gap-3 mb-6">
-              <span
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
-                  categories[article.category as keyof typeof categories]?.color
-                }`}
-              >
-                {categories[article.category as keyof typeof categories]?.emoji}
-                {categories[article.category as keyof typeof categories]?.label}
-              </span>
-              {article.is_trending && (
-                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                  🔥 Trending
+          {/* Article Header */}
+          <header className="max-w-4xl mx-auto mb-12">
+            {/* Category/Tags */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              {contentType === 'article' && story.category && (
+                <span
+                  className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-bold border-2 border-black \${
+                    categories[story.category as keyof typeof categories]?.color
+                  }`}
+                >
+                  {categories[story.category as keyof typeof categories]?.emoji}
+                  {categories[story.category as keyof typeof categories]?.label}
                 </span>
               )}
+              {story.tags?.map((tag: string) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-800 border border-blue-800 text-xs font-bold"
+                >
+                  <Tag className="w-3 h-4" />
+                  {tag}
+                </span>
+              ))}
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              {article.title}
+            {/* Title */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight">
+              {story.title}
             </h1>
 
-            {article.excerpt && (
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                {article.excerpt}
+            {/* Excerpt */}
+            {story.excerpt && (
+              <p className="text-xl text-gray-700 mb-8 leading-relaxed">
+                {story.excerpt}
               </p>
             )}
 
-            <div className="flex flex-wrap items-center gap-6 pb-8 mb-8 border-b border-gray-200">
-              {article.authors && (
+            {/* Meta Information */}
+            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 pb-8 border-b-2 border-gray-200">
+              {author && (
                 <div className="flex items-center gap-3">
-                  <div>
-                    <p className="font-semibold">{article.authors.name}</p>
-                    <p className="text-sm text-gray-500">Author</p>
-                  </div>
-                </div>
-              )}
-              {publishedDate && (
-                <div>
-                  <p className="font-semibold">{publishedDate}</p>
-                  <p className="text-sm text-gray-500">Published</p>
-                </div>
-              )}
-              {article.reading_time_minutes && (
-                <div>
-                  <p className="font-semibold">⏱️ {article.reading_time_minutes} min</p>
-                  <p className="text-sm text-gray-500">Reading time</p>
-                </div>
-              )}
-            </div>
-
-            {article.location_tags && article.location_tags.length > 0 && (
-              <div className="mb-8 p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm font-semibold text-blue-900 mb-2">
-                  📍 Locations featured in this story:
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {article.location_tags.map((location: string) => (
-                    <span
-                      key={location}
-                      className="px-3 py-1 bg-white text-blue-700 rounded-full text-sm"
-                    >
-                      {location}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 hover:prose-a:text-blue-700 prose-img:rounded-lg prose-img:shadow-md prose-strong:text-gray-900 prose-em:text-gray-800">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  // Render images with proper styling and lazy loading
-                  img: ({ node, ...props }) => (
+                  {author.photo_url && (
                     <img
-                      {...props}
-                      className="w-full h-auto rounded-lg shadow-lg my-6"
-                      loading="lazy"
-                      alt={props.alt || ''}
+                      src={author.photo_url}
+                      alt={author.full_name}
+                      className="w-12 h-12 rounded-full border-2 border-black object-cover"
                     />
-                  ),
-                  // Render links to open in new tab
-                  a: ({ node, ...props }) => (
-                    <a
-                      {...props}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-700 underline"
-                    />
-                  ),
-                  // Style headings
-                  h1: ({ node, ...props }) => (
-                    <h1 {...props} className="text-3xl font-bold mt-8 mb-4" />
-                  ),
-                  h2: ({ node, ...props }) => (
-                    <h2 {...props} className="text-2xl font-bold mt-6 mb-3" />
-                  ),
-                  h3: ({ node, ...props }) => (
-                    <h3 {...props} className="text-xl font-bold mt-4 mb-2" />
-                  ),
-                  // Style paragraphs
-                  p: ({ node, ...props }) => (
-                    <p {...props} className="mb-4 leading-relaxed text-gray-700" />
-                  ),
-                  // Style lists
-                  ul: ({ node, ...props }) => (
-                    <ul {...props} className="list-disc pl-6 mb-4 space-y-2" />
-                  ),
-                  ol: ({ node, ...props }) => (
-                    <ol {...props} className="list-decimal pl-6 mb-4 space-y-2" />
-                  ),
-                  // Style blockquotes
-                  blockquote: ({ node, ...props }) => (
-                    <blockquote {...props} className="border-l-4 border-blue-500 pl-4 italic my-6 text-gray-600" />
-                  ),
-                }}
-              >
-                {article.content}
-              </ReactMarkdown>
-            </div>
-
-            {article.authors?.bio && (
-              <div className="mt-12 pt-8 border-t border-gray-200">
-                <h3 className="text-xl font-bold mb-4">About the Author</h3>
-                <div className="flex gap-4">
+                  )}
                   <div>
-                    <p className="font-semibold mb-2">{article.authors.name}</p>
-                    <p className="text-gray-600">{article.authors.bio}</p>
+                    <div className="font-bold text-black flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      {author.full_name}
+                    </div>
+                    {author.slug && (
+                      <Link
+                        href={`/people/\${author.slug}`}
+                        className="text-blue-600 hover:underline text-xs"
+                      >
+                        View Profile
+                      </Link>
+                    )}
                   </div>
                 </div>
+              )}
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                <time dateTime={publishDate.toISOString()}>
+                  {publishDate.toLocaleDateString('en-AU', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </time>
               </div>
-            )}
+              {story.reading_time_minutes && (
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  {story.reading_time_minutes} min read
+                </div>
+              )}
+              {story.location_tags && story.location_tags.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  {story.location_tags.join(', ')}
+                </div>
+              )}
+            </div>
+          </header>
+
+          {/* Featured Image */}
+          {story.featured_image_url && (
+            <div className="max-w-5xl mx-auto mb-12">
+              <div className="border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+                <img
+                  src={story.featured_image_url}
+                  alt={story.title}
+                  className="w-full h-auto"
+                />
+              </div>
+              {story.featured_image_caption && (
+                <p className="text-sm text-gray-600 italic mt-4 text-center">
+                  {story.featured_image_caption}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Article Content */}
+          <div className="max-w-4xl mx-auto">
+            <div
+              className="prose prose-lg max-w-none
+                prose-headings:font-black prose-headings:text-black
+                prose-h1:text-4xl prose-h1:mb-6 prose-h1:mt-12
+                prose-h2:text-3xl prose-h2:mb-4 prose-h2:mt-10
+                prose-h3:text-2xl prose-h3:mb-3 prose-h3:mt-8
+                prose-p:text-gray-800 prose-p:leading-relaxed prose-p:mb-6
+                prose-a:text-blue-600 prose-a:font-bold prose-a:no-underline hover:prose-a:underline
+                prose-strong:text-black prose-strong:font-bold
+                prose-ul:my-6 prose-ol:my-6
+                prose-li:text-gray-800 prose-li:my-2
+                prose-blockquote:border-l-4 prose-blockquote:border-red-600
+                prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-gray-700
+                prose-img:border-2 prose-img:border-black prose-img:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+                prose-img:rounded-none prose-img:my-8"
+              dangerouslySetInnerHTML={{ __html: story.content }}
+            />
           </div>
 
-          <div className="mt-12 text-center">
+          {/* Author Bio */}
+          {author?.bio && (
+            <div className="max-w-4xl mx-auto mt-12 pt-12 border-t-2 border-gray-200">
+              <h3 className="text-xl font-black mb-4">About the Author</h3>
+              <div className="flex gap-6 items-start bg-gray-50 border-2 border-black p-6">
+                {author.photo_url && (
+                  <img
+                    src={author.photo_url}
+                    alt={author.full_name}
+                    className="w-20 h-20 rounded-full border-2 border-black object-cover flex-shrink-0"
+                  />
+                )}
+                <div className="flex-1">
+                  <h4 className="font-black text-lg mb-2">{author.full_name}</h4>
+                  <p className="text-gray-700 mb-3">{author.bio}</p>
+                  {author.slug && (
+                    <Link
+                      href={`/people/\${author.slug}`}
+                      className="text-blue-600 font-bold hover:underline text-sm"
+                    >
+                      View Full Profile →
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Related Content */}
+          <div className="max-w-4xl mx-auto mt-12 pt-12 border-t-2 border-gray-200">
             <Link
               href="/stories"
-              className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-bold hover:bg-red-600 transition-colors border-2 border-black"
             >
-              Read More Stories
+              ← Read More Stories
             </Link>
           </div>
         </div>
       </article>
-    </div>
+      <Footer />
+    </>
   );
 }

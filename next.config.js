@@ -1,8 +1,16 @@
+const createMDX = require('@next/mdx');
+const remarkGfm = require('remark-gfm');
+const rehypeHighlight = require('rehype-highlight');
+const rehypeSlug = require('rehype-slug');
+const rehypeAutolinkHeadings = require('rehype-autolink-headings');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   experimental: {
     // serverActions are now enabled by default in Next.js 14
     optimizeServerReact: true,
+    mdxRs: true, // Use faster Rust-based MDX compiler
   },
   images: {
     remotePatterns: [
@@ -109,4 +117,16 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+const withMDX = createMDX({
+  extension: /\.mdx?$/,
+  options: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [
+      rehypeHighlight,
+      rehypeSlug,
+      [rehypeAutolinkHeadings, { behavior: 'wrap' }],
+    ],
+  },
+});
+
+module.exports = withMDX(nextConfig);

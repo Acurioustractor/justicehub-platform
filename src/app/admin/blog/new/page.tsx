@@ -1,5 +1,8 @@
 'use client';
 
+// 🚀 NEW CODE VERSION - 2025-11-05-NOCACHE
+console.log('🚀🚀🚀 NEW CODE LOADED - AUTO-SAVE DISABLED - Version 2025-11-05-NOCACHE 🚀🚀🚀');
+
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
@@ -91,8 +94,11 @@ export default function EnhancedBlogPostPage() {
   });
   const [currentTag, setCurrentTag] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [savedArticleId, setSavedArticleId] = useState<string | null>(null); // Track article ID after first save
   const fileInputRef = useRef<HTMLInputElement>(null);
   const autoSaveTimerRef = useRef<NodeJS.Timeout>();
+  const editorRef = useRef<any>(null);
+  const placeholderIdRef = useRef<string | null>(null);
 
   // Calculate stats
   const wordCount = formData.content
@@ -104,13 +110,19 @@ export default function EnhancedBlogPostPage() {
 
   // Auto-generate slug from title
   const handleTitleChange = (title: string) => {
+    const baseSlug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+    // Add timestamp to ensure uniqueness
+    const timestamp = Date.now().toString().slice(-6); // Last 6 digits for brevity
+    const uniqueSlug = baseSlug ? `${baseSlug}-${timestamp}` : `post-${timestamp}`;
+
     setFormData({
       ...formData,
       title,
-      slug: title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, ''),
+      slug: uniqueSlug,
     });
   };
 
@@ -166,14 +178,11 @@ export default function EnhancedBlogPostPage() {
 
       const data = await response.json();
 
-      // Insert image into editor
-      const imageHtml = `<img src="${data.url}" alt="${data.altText}" />`;
-      setFormData(prev => ({
-        ...prev,
-        content: prev.content + imageHtml,
-      }));
-
-      alert('Image uploaded successfully!');
+      // Just insert the image - TipTap supports dragging images to reposition
+      if (editorRef.current) {
+        editorRef.current.chain().focus().setImage({ src: data.url, alt: data.altText }).run();
+        console.log('✅ Image inserted - you can now drag it to reposition');
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('Failed to upload image. Please try again.');
@@ -182,40 +191,34 @@ export default function EnhancedBlogPostPage() {
     }
   };
 
-  // Auto-save functionality
-  const autoSave = async () => {
-    if (!formData.title && !formData.content) return;
+  // DELETED auto-save functionality - was causing duplicate slug errors
+  // const autoSave = async () => {
+  //   if (!formData.title && !formData.content) return;
+  //   setAutoSaving(true);
+  //   try {
+  //     await handleSave('draft', true);
+  //     setLastSaved(new Date());
+  //   } catch (error) {
+  //     console.error('Auto-save failed:', error);
+  //   } finally {
+  //     setAutoSaving(false);
+  //   }
+  // };
 
-    setAutoSaving(true);
-    try {
-      // Save draft silently
-      await handleSave('draft', true);
-      setLastSaved(new Date());
-    } catch (error) {
-      console.error('Auto-save failed:', error);
-    } finally {
-      setAutoSaving(false);
-    }
-  };
-
-  // Set up auto-save timer
-  useEffect(() => {
-    // Clear existing timer
-    if (autoSaveTimerRef.current) {
-      clearTimeout(autoSaveTimerRef.current);
-    }
-
-    // Set new timer
-    autoSaveTimerRef.current = setTimeout(() => {
-      autoSave();
-    }, 5000); // Auto-save every 5 seconds
-
-    return () => {
-      if (autoSaveTimerRef.current) {
-        clearTimeout(autoSaveTimerRef.current);
-      }
-    };
-  }, [formData]);
+  // DISABLED auto-save - was causing duplicate slug errors
+  // useEffect(() => {
+  //   if (autoSaveTimerRef.current) {
+  //     clearTimeout(autoSaveTimerRef.current);
+  //   }
+  //   autoSaveTimerRef.current = setTimeout(() => {
+  //     autoSave();
+  //   }, 5000);
+  //   return () => {
+  //     if (autoSaveTimerRef.current) {
+  //       clearTimeout(autoSaveTimerRef.current);
+  //     }
+  //   };
+  // }, [formData]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -275,21 +278,69 @@ export default function EnhancedBlogPostPage() {
         reading_time_minutes: readingTime,
       };
 
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .insert([postData])
-        .select()
-        .single();
+      let data, error;
 
-      if (error) throw error;
+      if (savedArticleId) {
+        // Update existing article
+        console.log('📝 Updating existing article:', savedArticleId);
+        const result = await supabase
+          .from('articles')
+          .update(postData)
+          .eq('id', savedArticleId)
+          .select()
+          .single();
+        data = result.data;
+        error = result.error;
+      } else {
+        // Insert new article
+        console.log('✨ Creating new article');
+        const result = await supabase
+          .from('articles')
+          .insert([postData])
+          .select()
+          .single();
+        data = result.data;
+        error = result.error;
+
+        // Store the article ID for future updates
+        if (result.data) {
+          setSavedArticleId(result.data.id);
+          console.log('💾 Saved article ID:', result.data.id);
+        }
+      }
+
+      if (error) {
+        console.error('Supabase error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
+        console.error('Post data being saved:', postData);
+        throw error;
+      }
 
       if (!silent) {
         alert(status === 'published' ? 'Blog post published!' : 'Draft saved!');
         router.push('/admin/blog');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving post:', error);
-      if (!silent) alert('Error saving blog post. Please try again.');
+      console.error('Full error object:', JSON.stringify(error, null, 2));
+      if (!silent) {
+        let errorMsg = 'Error saving blog post. Please try again.';
+
+        // Provide specific error messages
+        if (error.code === '23505') {
+          errorMsg = 'A post with this slug already exists. Please try changing the title.';
+        } else if (error.code === '42501') {
+          errorMsg = 'Permission denied. Please ensure you are logged in as an admin.';
+        } else if (error.message) {
+          errorMsg = error.message;
+        }
+
+        alert(errorMsg);
+      }
     } finally {
       if (!silent) setSaving(false);
     }
@@ -448,7 +499,12 @@ export default function EnhancedBlogPostPage() {
                 <NovelEditor
                   content={formData.content}
                   onChange={(content) => setFormData({ ...formData, content })}
-                  onImageUpload={() => fileInputRef.current?.click()}
+                  onInsertImage={(editor) => {
+                    // Store editor reference so we can insert image after upload
+                    editorRef.current = editor;
+                    // Trigger file input
+                    fileInputRef.current?.click();
+                  }}
                   placeholder="Write your story here... Use the toolbar for formatting or drag & drop images!"
                 />
               </div>
@@ -651,7 +707,12 @@ export default function EnhancedBlogPostPage() {
                 onChange={(content) =>
                   setFormData((prev) => ({ ...prev, content }))
                 }
-                onImageUpload={() => fileInputRef.current?.click()}
+                onInsertImage={(editor) => {
+                  // Store editor reference so we can insert image after upload
+                  editorRef.current = editor;
+                  // Trigger file input
+                  fileInputRef.current?.click();
+                }}
                 placeholder="Start writing your story... Press Escape to exit fullscreen"
               />
             </div>

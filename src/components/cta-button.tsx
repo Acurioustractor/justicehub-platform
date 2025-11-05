@@ -43,7 +43,7 @@ export function CTAButton(props: CTAButtonProps) {
   );
 
   if (props.as === "button") {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line no-unused-vars
     const { as: _as, variant: _variant, fullWidth: _fullWidth, className: _class, children: _children, type, ...buttonProps } = props;
     return (
       <button
@@ -56,7 +56,7 @@ export function CTAButton(props: CTAButtonProps) {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   const { as: _as, variant: _variant, fullWidth: _fullWidth, className: _class, children: _children, href = "#", ...anchorProps } = props as AnchorProps;
 
   return (

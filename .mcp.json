@@ -1,19 +1,5 @@
 {
   "mcpServers": {
-    "airtable-stories": {
-      "command": "node",
-      "args": ["airtable-mcp-server/dist/index.js"],
-      "cwd": "/Users/benknight/Code/JusticeHub",
-      "env": {
-        "AIRTABLE_API_KEY": "your_airtable_api_key_here",
-        "AIRTABLE_BASE_ID": "your_airtable_base_id_here",
-        "AIRTABLE_STORIES_TABLE": "Stories",
-        "REDIS_HOST": "localhost",
-        "REDIS_PORT": "6379",
-        "CACHE_TTL": "3600",
-        "NODE_ENV": "development"
-      }
-    },
     "task-master-ai": {
       "command": "npx",
       "args": ["-y", "--package=task-master-ai", "task-master-ai"],
@@ -21,6 +7,17 @@
         "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
         "PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}"
       }
+    },
+    "html-to-design": {
+      "command": "npx",
+      "args": ["-y", "@htmltodesign/mcp-server"],
+      "env": {}
+    }
+  },
+  "servers": {
+    "figma": {
+      "url": "https://mcp.figma.com/mcp",
+      "type": "http"
     }
   }
 }

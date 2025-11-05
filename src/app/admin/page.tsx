@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, CheckCircle2, FileText } from 'lucide-react';
+import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, CheckCircle2, FileText, Network, Database } from 'lucide-react';
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -36,6 +36,11 @@ export default async function AdminDashboard() {
     { count: artLinksCount },
     { count: programLinksCount },
     { count: serviceLinksCount },
+    { count: organizationsCount },
+    { count: orgLinksCount },
+    { count: blogPostLinksCount },
+    { count: empathyProfilesCount },
+    { count: empathyTranscriptsCount },
   ] = await Promise.all([
     supabase.from('public_profiles').select('*', { count: 'exact', head: true }),
     supabase.from('public_profiles').select('*', { count: 'exact', head: true }).eq('is_public', true),
@@ -47,11 +52,19 @@ export default async function AdminDashboard() {
     supabase.from('art_innovation_profiles').select('*', { count: 'exact', head: true }),
     supabase.from('community_programs_profiles').select('*', { count: 'exact', head: true }),
     supabase.from('services_profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('organizations').select('*', { count: 'exact', head: true }),
+    supabase.from('organizations_profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('blog_posts_profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('public_profiles').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
+    supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
   ]);
 
   // Calculate connection rates
   const servicesConnectionRate = servicesCount ? Math.round((serviceLinksCount! / servicesCount) * 100) : 0;
   const programsConnectionRate = programsCount ? Math.round((programLinksCount! / programsCount) * 100) : 0;
+
+  // Calculate total auto-linked relationships
+  const totalAutoLinks = (orgLinksCount || 0) + (blogPostLinksCount || 0);
 
   const stats = [
     {
@@ -106,6 +119,36 @@ export default async function AdminDashboard() {
       textColor: 'text-orange-600',
       alert: servicesConnectionRate < 50 ? 'Low connection rate' : undefined,
     },
+    {
+      title: 'Organizations',
+      count: organizationsCount || 0,
+      subtitle: `${orgLinksCount || 0} team members`,
+      icon: Building2,
+      href: '/admin/organizations',
+      color: 'from-cyan-500 to-cyan-600',
+      bgColor: 'bg-cyan-50',
+      textColor: 'text-cyan-600',
+    },
+    {
+      title: 'Auto-Linked',
+      count: totalAutoLinks,
+      subtitle: `${orgLinksCount || 0} orgs + ${blogPostLinksCount || 0} stories`,
+      icon: Network,
+      href: '/admin/auto-linking',
+      color: 'from-indigo-500 to-indigo-600',
+      bgColor: 'bg-indigo-50',
+      textColor: 'text-indigo-600',
+    },
+    {
+      title: 'Empathy Ledger',
+      count: empathyProfilesCount || 0,
+      subtitle: `${empathyTranscriptsCount || 0} transcripts synced`,
+      icon: Database,
+      href: '/admin/empathy-ledger',
+      color: 'from-violet-500 to-violet-600',
+      bgColor: 'bg-violet-50',
+      textColor: 'text-violet-600',
+    },
   ];
 
   return (
@@ -123,7 +166,7 @@ export default async function AdminDashboard() {
           </div>
 
           {/* Stats Grid - SimCity Style */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {stats.map((stat) => {
               const Icon = stat.icon;
               return (

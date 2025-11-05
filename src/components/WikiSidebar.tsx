@@ -16,9 +16,26 @@ interface NavSection {
 
 const navigation: NavSection[] = [
   {
+    title: 'Mindaroo Foundation Pitch 🎯',
+    icon: <Book className="w-5 h-5" />,
+    items: [
+      { title: 'Pitch Package Hub ⭐', slug: 'mindaroo-pitch', wordCount: 'Overview' },
+      { title: 'One-Page Executive Pitch', slug: 'mindaroo-pitch/one-pager', wordCount: '3K words' },
+      { title: 'Strategic Pitch (Complete)', slug: 'mindaroo-pitch/strategic-pitch', wordCount: '21K words' },
+      { title: 'Sovereignty Flywheel Visual', slug: 'mindaroo-pitch/sovereignty-flywheel', wordCount: '6K words' },
+      { title: 'Budget Breakdown (3 Years)', slug: 'mindaroo-pitch/budget-breakdown', wordCount: '8K words' },
+      { title: 'Research & Evidence Paper', slug: 'mindaroo-pitch/research-paper', wordCount: '12K words' },
+      { title: 'Platform Screenshots Gallery', slug: 'mindaroo-pitch/screenshots', wordCount: '19 images' },
+    ],
+  },
+  // INTERNAL SECTIONS - Hidden for Mindaroo pitch presentation
+  // Uncomment below to show internal planning documentation
+  /*
+  {
     title: 'Strategic Planning',
     icon: <Book className="w-5 h-5" />,
     items: [
+      { title: 'Site Overview', slug: 'site-overview', wordCount: '5K words' },
       { title: 'Strategic Overview', slug: 'strategic-overview', wordCount: '20K words' },
       { title: 'Executive Summary', slug: 'executive-summary', wordCount: '5K words' },
       { title: 'One-Page Overview', slug: 'one-page-overview', wordCount: '1.5K words' },
@@ -29,33 +46,19 @@ const navigation: NavSection[] = [
     title: 'Budget & Funding',
     icon: <DollarSign className="w-5 h-5" />,
     items: [
-      { title: 'Mindaroo Strategic Pitch', slug: 'mindaroo-strategic-pitch', wordCount: '15K words' },
-      { title: 'Budget Summary', slug: 'budget-summary', wordCount: '5K words' },
+      { title: 'Budget Summary', slug: 'budget-summary', wordCount: '3K words' },
       { title: 'Funding Pitch Templates', slug: 'funding-pitch-templates', wordCount: '12K words' },
     ],
   },
   {
-    title: 'Platform Documentation',
+    title: 'Design & Visuals',
     icon: <Settings className="w-5 h-5" />,
     items: [
-      { title: 'Admin User Guide', slug: 'admin-user-guide', wordCount: '12K words' },
-      { title: 'Admin Quick Start', slug: 'admin-quick-start', wordCount: '5K words' },
-      { title: 'Admin Routes Complete', slug: 'admin-routes-complete', wordCount: '8K words' },
-      { title: 'Admin Complete Flows', slug: 'admin-complete-flows' },
-      { title: 'Admin Flows Analysis', slug: 'admin-flows-analysis' },
+      { title: 'Design Tools Guide 🎨', slug: 'design-tools-guide', wordCount: '8K words' },
+      { title: 'Wiki Enhancement Plan', slug: 'wiki-enhancement-plan', wordCount: '4K words' },
     ],
   },
-  {
-    title: 'Technical Documentation',
-    icon: <FileText className="w-5 h-5" />,
-    items: [
-      { title: 'Centre of Excellence Complete', slug: 'centre-of-excellence-complete' },
-      { title: 'Empathy Ledger Integration', slug: 'empathy-ledger-full-integration' },
-      { title: 'Auto-Linking System', slug: 'auto-linking-complete' },
-      { title: 'Blog Editor Complete', slug: 'blog-editor-complete' },
-      { title: 'Programs Consolidation', slug: 'programs-consolidation-complete' },
-    ],
-  },
+  */
 ];
 
 export function WikiSidebar() {

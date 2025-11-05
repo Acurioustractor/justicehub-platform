@@ -7,14 +7,19 @@ import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { useEffect } from 'react';
 
+// 🚀 NOVEL EDITOR VERSION 2025-11-05-V2
+console.log('🎨 NovelEditor component loaded - Version 2025-11-05-V2');
+
 interface NovelEditorProps {
   content: string;
   onChange: (content: string) => void;
   onImageUpload?: () => void;
+  onInsertImage?: (editor: any) => void;
   placeholder?: string;
 }
 
-export default function NovelEditor({ content, onChange, onImageUpload, placeholder }: NovelEditorProps) {
+export default function NovelEditor({ content, onChange, onImageUpload, onInsertImage, placeholder }: NovelEditorProps) {
+  console.log('🎨 NovelEditor rendering with props:', { hasOnInsertImage: !!onInsertImage, hasOnImageUpload: !!onImageUpload });
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -27,8 +32,9 @@ export default function NovelEditor({ content, onChange, onImageUpload, placehol
         placeholder: placeholder || 'Write your story here... Type "/" for commands',
       }),
       Image.configure({
+        inline: true, // Make images draggable within the editor
         HTMLAttributes: {
-          class: 'rounded-lg max-w-full h-auto',
+          class: 'rounded-lg max-w-full h-auto cursor-move',
         },
       }),
       Link.configure({
@@ -69,11 +75,12 @@ export default function NovelEditor({ content, onChange, onImageUpload, placehol
       },
     },
     onUpdate: ({ editor }) => {
-      // Convert editor content to markdown
+      // Convert editor content to HTML
       const html = editor.getHTML();
       onChange(html);
     },
   });
+
 
   // Update editor when content changes externally
   useEffect(() => {
@@ -196,7 +203,16 @@ export default function NovelEditor({ content, onChange, onImageUpload, placehol
         </button>
         <button
           type="button"
-          onClick={onImageUpload}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🖼️ IMAGE BUTTON CLICKED IN EDITOR', { hasCallback: !!onInsertImage, editor });
+            if (onInsertImage) {
+              onInsertImage(editor);
+            } else {
+              console.error('❌ No onInsertImage callback provided!');
+            }
+          }}
           className="px-3 py-1.5 text-sm font-bold border-2 border-black bg-green-100 hover:bg-green-200"
         >
           🖼️ Image

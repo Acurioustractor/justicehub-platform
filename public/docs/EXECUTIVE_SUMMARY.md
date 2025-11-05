@@ -13,27 +13,31 @@ A comprehensive digital platform connecting youth justice practitioners, researc
 
 **Vision:** Lead the youth justice system into a new era of better care for young people.
 
+> **🎯 Master Visual:** See [The Sovereignty Flywheel](/wiki/sovereignty-flywheel-visual) — the ONE diagram that connects everything, showing how JusticeHub creates a self-reinforcing cycle toward community sovereignty and Indigenous technical leadership.
+
 ---
 
 ## Current Platform Status
 
+> **💡 Explore the Platform:** All features mentioned below are live and operational. Visit links to see them in action.
+
 ### ✅ What's Built & Working
 
 **Platform Infrastructure (95% Complete)**
-- 15 fully functional admin pages
-- Sophisticated content management system
-- Relationship mapping across people, organizations, content
-- Empathy Ledger integration with automatic syncing
-- Responsive design for all devices
-- 40,000+ words of comprehensive documentation
+- 15 fully functional admin pages → **[View Admin Dashboard](/admin)**
+- Sophisticated content management system → **[See Story Management](/admin/stories)**
+- Relationship mapping across people, organizations, content → **[View Auto-Linking System](/admin/auto-linking)**
+- Empathy Ledger integration with automatic syncing → **[View Empathy Ledger Sync](/admin/empathy-ledger)**
+- Responsive design for all devices → **[Explore Homepage](/)**
+- 40,000+ words of comprehensive documentation → **[Browse Wiki](/wiki)**
 
 **Content Repository**
-- 33 profiles of practitioners, researchers, advocates
-- 38 stories and interview transcripts
-- 35 transcripts with video/audio
-- 454 organizations mapped
-- 521 programs and services catalogued
-- Art & innovation showcase
+- 33 profiles of practitioners, researchers, advocates → **[Browse Profiles](/people)**
+- 38 stories and interview transcripts → **[Read Stories](/stories)**
+- 35 transcripts with video/audio → **[Explore Media](/stories)**
+- 454 organizations mapped → **[View Organizations](/organizations)**
+- 521 programs and services catalogued → **[Browse Programs](/community-programs)**
+- Art & innovation showcase → **[View Art & Innovation](/art-innovation)**
 
 **Empathy Ledger Integration**
 - 31 profiles auto-synced
@@ -41,11 +45,13 @@ A comprehensive digital platform connecting youth justice practitioners, researc
 - 67 automatic relationship links created
 - Video/audio media preserved and accessible
 
+> **💡 See It In Action:** Visit the [Empathy Ledger admin page](/admin/empathy-ledger) to see how automatic syncing works between the platform and community data sources.
+
 **Centre of Excellence Framework**
-- Interactive global map
-- Program database structure
-- 5 exemplary programs documented
-- Evidence linking framework
+- Interactive global map → **[Explore Global Map](/centre-of-excellence/map)**
+- Program database structure → **[View Best Practice Programs](/centre-of-excellence/best-practice)**
+- 5 exemplary programs documented → **[Browse Research](/centre-of-excellence/research)**
+- Evidence linking framework → **[Centre of Excellence Hub](/centre-of-excellence)**
 
 ### 🟡 What's In Progress
 
