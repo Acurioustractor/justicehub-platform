@@ -175,6 +175,11 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
       type: 'dropdown',
       items: [
         {
+          label: 'Wiki',
+          href: '/wiki',
+          description: 'Strategic planning & docs'
+        },
+        {
           label: 'Transparency',
           href: '/transparency',
           description: 'Track funding and outcomes'
@@ -769,6 +774,7 @@ export function Footer() {
     {
       title: 'Platform',
       links: [
+        { label: 'Wiki', href: '/wiki', description: 'Strategic planning & docs' },
         { label: 'Gallery', href: '/gallery', description: 'Programs in action' },
         { label: 'Money Trail', href: '/transparency', description: 'Financial transparency' },
         { label: 'Art & Innovation', href: '/art-innovation', description: 'Creative solutions' },
@@ -892,21 +898,6 @@ export function Footer() {
           <p className="text-sm text-gray-600 font-medium">
             © 2024 JusticeHub. Built for Australia's youth, by people who care.
           </p>
-
-          <div className="mt-4 flex space-x-4">
-            <Link
-              href="/wiki"
-              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              Wiki
-            </Link>
-            <Link
-              href="/preplanning"
-              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              Preplanning
-            </Link>
-          </div>
         </div>
       </div>
     </footer>
