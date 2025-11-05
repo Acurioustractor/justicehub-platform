@@ -114,6 +114,11 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
       description: 'Voices and insights from the movement'
     },
     {
+      label: '🎯 Mindaroo Pitch',
+      href: '/wiki/mindaroo-pitch',
+      description: 'Complete pitch package'
+    },
+    {
       label: 'Discover',
       type: 'dropdown',
       items: [
