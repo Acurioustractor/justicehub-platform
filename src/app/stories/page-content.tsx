@@ -59,6 +59,10 @@ export function StoriesPageContent() {
 
   useEffect(() => {
     async function fetchContent() {
+      console.log('🔍 Fetching content...');
+      console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Set' : '❌ Missing');
+      console.log('Supabase Key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✅ Set' : '❌ Missing');
+
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -96,6 +100,17 @@ export function StoriesPageContent() {
         articlesQuery,
         blogsQuery,
       ]);
+
+      console.log('📰 Articles result:', {
+        success: !articlesResult.error,
+        count: articlesResult.data?.length || 0,
+        error: articlesResult.error?.message
+      });
+      console.log('📝 Blogs result:', {
+        success: !blogsResult.error,
+        count: blogsResult.data?.length || 0,
+        error: blogsResult.error?.message
+      });
 
       if (articlesResult.error) {
         console.error('Error fetching articles:', articlesResult.error);
