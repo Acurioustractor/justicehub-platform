@@ -175,11 +175,6 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
       type: 'dropdown',
       items: [
         {
-          label: 'Wiki',
-          href: '/wiki',
-          description: 'Strategic planning & docs'
-        },
-        {
           label: 'Transparency',
           href: '/transparency',
           description: 'Track funding and outcomes'
@@ -774,7 +769,6 @@ export function Footer() {
     {
       title: 'Platform',
       links: [
-        { label: 'Wiki', href: '/wiki', description: 'Strategic planning & docs' },
         { label: 'Gallery', href: '/gallery', description: 'Programs in action' },
         { label: 'Money Trail', href: '/transparency', description: 'Financial transparency' },
         { label: 'Art & Innovation', href: '/art-innovation', description: 'Creative solutions' },
