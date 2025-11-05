@@ -82,7 +82,7 @@ export default async function StoryPage({ params }: { params: { slug: string } }
             <div className="flex flex-wrap gap-2 mb-6">
               {contentType === 'article' && story.category && (
                 <span
-                  className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-bold border-2 border-black \${
+                  className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-bold border-2 border-black ${
                     categories[story.category as keyof typeof categories]?.color
                   }`}
                 >
@@ -131,7 +131,7 @@ export default async function StoryPage({ params }: { params: { slug: string } }
                     </div>
                     {author.slug && (
                       <Link
-                        href={`/people/\${author.slug}`}
+                        href={`/people/${author.slug}`}
                         className="text-blue-600 hover:underline text-xs"
                       >
                         View Profile
@@ -221,7 +221,7 @@ export default async function StoryPage({ params }: { params: { slug: string } }
                   <p className="text-gray-700 mb-3">{author.bio}</p>
                   {author.slug && (
                     <Link
-                      href={`/people/\${author.slug}`}
+                      href={`/people/${author.slug}`}
                       className="text-blue-600 font-bold hover:underline text-sm"
                     >
                       View Full Profile →
