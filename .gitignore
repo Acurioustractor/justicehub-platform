@@ -60,3 +60,47 @@ Thumbs.db
 *.json.large
 **/archive/data-extracts/*.json .env.bak*
 .vercel
+
+# === Added by cleanup script ===
+
+# Documentation drafts and WIP
+*_DRAFT.md
+*_WIP.md
+*_TODO.md
+NOTES.md
+SCRATCH.md
+
+# Temporary analysis files
+*_ANALYSIS_TEMP.md
+*_REVIEW_*.md
+
+# Large exports
+*.csv
+*.xlsx
+!config/**/*.example.xlsx
+exports/
+data-exports/
+
+# Personal notes
+PERSONAL_*.md
+MY_*.md
+
+# Duplicate/backup files
+*.backup
+*.bak
+*_OLD.md
+*_BACKUP_*.md
+
+# SQL dumps and backups
+*.sql.backup
+*.dump
+database/backups/
+
+# Generated documentation
+docs/generated/
+
+# Presentation drafts
+*.ppt
+*.pptx
+*.key
+presentations/drafts/
