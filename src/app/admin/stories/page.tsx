@@ -74,12 +74,23 @@ export default async function AdminStoriesPage() {
                 Manage user stories and testimonials
               </p>
             </div>
-            <Link
-              href="/admin/stories/new"
-              className="px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors border-2 border-black shadow-lg"
-            >
-              Create Story
-            </Link>
+            <div className="flex gap-4">
+              <Link
+                href="/admin/stories/transcript"
+                className="px-6 py-3 bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors border-2 border-blue-600 shadow-lg flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                From Transcript (AI)
+              </Link>
+              <Link
+                href="/admin/stories/new"
+                className="px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors border-2 border-black shadow-lg"
+              >
+                Blank Story
+              </Link>
+            </div>
           </div>
 
           <StoriesTable initialStories={stories || []} />

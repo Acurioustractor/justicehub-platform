@@ -112,6 +112,55 @@ export default function UnifiedStoriesEditor() {
   const charCount = formData.content.replace(/<[^>]*>/g, '').length;
   const readingTime = Math.ceil(wordCount / 200);
 
+  // Check if coming from transcript flow and load extracted data
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('from') === 'transcript') {
+      const storedData = localStorage.getItem('extracted_story_data');
+      if (storedData) {
+        try {
+          const data = JSON.parse(storedData);
+
+          // Organize content with storyteller background and quotes by theme
+          let content = `<h2>Story Background</h2>
+<p><strong>Storyteller:</strong> ${data.storytellerName}</p>
+
+<h2>Key Quotes</h2>`;
+
+          // Group quotes by theme
+          const quotesByTheme: Record<string, any[]> = {};
+          data.quotes?.forEach((quote: any) => {
+            if (!quotesByTheme[quote.theme]) {
+              quotesByTheme[quote.theme] = [];
+            }
+            quotesByTheme[quote.theme].push(quote);
+          });
+
+          // Add quotes organized by theme
+          Object.entries(quotesByTheme).forEach(([theme, quotes]) => {
+            content += `\n<h3>${theme}</h3>\n`;
+            // Add top 5 quotes for each theme
+            quotes.slice(0, 5).forEach((quote: any) => {
+              content += `<blockquote>"${quote.text}"</blockquote>\n`;
+            });
+          });
+
+          // Pre-fill the form
+          setFormData(prev => ({
+            ...prev,
+            title: `${data.storytellerName}'s Story`,
+            content: content,
+          }));
+
+          // Clean up localStorage
+          localStorage.removeItem('extracted_story_data');
+        } catch (error) {
+          console.error('Failed to load transcript data:', error);
+        }
+      }
+    }
+  }, []);
+
   // Auto-generate slug from title
   const handleTitleChange = (title: string) => {
     const baseSlug = title
