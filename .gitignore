@@ -13,8 +13,15 @@ node_modules/
 .next/
 out/
 
-# Environment variables - NEVER commit these files
-.env
+# Environment Variables
+# =============================================================================
+# .env            - Safe defaults (COMMITTED - no secrets!)
+# .env.local      - Real credentials (NEVER committed)
+# .env.example    - Template for reference (committed)
+# .env.docker     - Docker overrides (committed)
+# =============================================================================
+
+# Local overrides with real credentials - NEVER COMMIT
 .env.local
 .env.*.local
 .env.development.local
@@ -22,10 +29,12 @@ out/
 .env.production.local
 .env.test.local
 
-# Environment backups
+# Environment backups - NEVER COMMIT
 .env.local.backup*
 .env.*.backup*
 .env.backup*
+.env.production.backup
+.env.*.bak
 
 # API Keys and Secrets - CRITICAL
 *api-keys*
