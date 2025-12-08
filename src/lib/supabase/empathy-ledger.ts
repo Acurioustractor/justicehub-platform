@@ -1,11 +1,39 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Empathy Ledger Supabase Client
 // Multi-tenant cultural storytelling platform
-export const empathyLedgerClient = createClient(
-  process.env.EMPATHY_LEDGER_URL || 'https://yvnuayzslukamizrlhwb.supabase.co',
-  process.env.EMPATHY_LEDGER_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2bnVheXpzbHVrYW1penJsaHdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNDQ4NTAsImV4cCI6MjA3MTgyMDg1MH0.UV8JOXSwANMl72lRjw-9d4CKniHSlDk9hHZpKHYN6Bs'
-);
+// IMPORTANT: Credentials must be set via environment variables
+
+let _empathyLedgerClient: SupabaseClient | null = null;
+
+function getEmpathyLedgerClient(): SupabaseClient {
+  if (_empathyLedgerClient) {
+    return _empathyLedgerClient;
+  }
+
+  const url = process.env.EMPATHY_LEDGER_URL;
+  const key = process.env.EMPATHY_LEDGER_ANON_KEY;
+
+  if (!url || !key) {
+    console.warn(
+      'Empathy Ledger credentials not configured. Set EMPATHY_LEDGER_URL and EMPATHY_LEDGER_ANON_KEY in your .env file.'
+    );
+    // Return a non-functional client that will fail gracefully
+    return createClient('https://placeholder.supabase.co', 'placeholder-key');
+  }
+
+  _empathyLedgerClient = createClient(url, key);
+  return _empathyLedgerClient;
+}
+
+// Export as a getter that creates the client on first use
+export const empathyLedgerClient = new Proxy({} as SupabaseClient, {
+  get(_, prop) {
+    const client = getEmpathyLedgerClient();
+    const value = client[prop as keyof SupabaseClient];
+    return typeof value === 'function' ? value.bind(client) : value;
+  }
+});
 
 // Type definitions based on Empathy Ledger schema
 export interface EmpathyLedgerOrganization {

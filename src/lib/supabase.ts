@@ -1,3 +1,12 @@
+/**
+ * @deprecated Use the modular clients instead:
+ * - Client Components: `import { createClient } from '@/lib/supabase/client'`
+ * - Server Components: `import { createClient } from '@/lib/supabase/server'`
+ *
+ * This legacy export is kept for backwards compatibility but will be removed
+ * in a future version.
+ */
+
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 
@@ -10,9 +19,8 @@ function getSupabaseClient() {
 
     if (!supabaseUrl || !supabaseAnonKey) {
       console.warn(
-        "Missing Supabase environment variables. Some features may not work correctly."
+        "[Supabase] Missing credentials. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local"
       );
-      // Return a placeholder client during build
       return createClient<Database>('https://placeholder.supabase.co', 'placeholder-key');
     }
 
@@ -21,7 +29,9 @@ function getSupabaseClient() {
   return supabaseClient;
 }
 
-// Export as a getter function that looks like a constant
+/**
+ * @deprecated Use `createClient` from `@/lib/supabase/client` or `@/lib/supabase/server` instead
+ */
 export const supabase = new Proxy({} as ReturnType<typeof createClient<Database>>, {
   get(target, prop) {
     const client = getSupabaseClient();
