@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, ArrowDown, Target, Award, DollarSign, TrendingUp, Users } from 'lucide-react';
 import Link from 'next/link';
-import { Navigation, Footer } from '@/components/ui/navigation';
+import { Navigation } from '@/components/ui/navigation';
 import FeaturedStories from '@/components/FeaturedStories';
+import UnifiedFooter from '@/components/shared/UnifiedFooter';
 
 export default function HomePage() {
   const [currentStatIndex, setCurrentStatIndex] = useState(0);
@@ -458,7 +459,17 @@ export default function HomePage() {
       </main>
 
       {/* Unified Footer */}
-      <Footer />
+      <UnifiedFooter
+        currentProject="JusticeHub"
+        showProjects={true}
+        customLinks={[
+          { label: "About", href: "/about" },
+          { label: "Stories", href: "/stories" },
+          { label: "Services", href: "/services" },
+          { label: "Contact", href: "/contact" },
+        ]}
+        contactEmail="hello@justicehub.org.au"
+      />
     </div>
   );
 }

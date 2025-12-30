@@ -15,11 +15,71 @@ import {
   Target,
   ArrowRight,
   ExternalLink,
-  Map
+  Map,
+  Plane,
+  Send
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 
 export default function CentreOfExcellencePage() {
+  const caseStudies = [
+    {
+      tag: 'ALTERNATIVE RESPONSE',
+      title: 'Alternative First Responders (QLD/NSW pilots)',
+      summary: 'Community-led responders de-escalate welfare, mental health, and homelessness calls so police are not the first contact point.',
+      impact: '350+ crisis calls deflected from police',
+      timeline: '2024-2025',
+    },
+    {
+      tag: 'ACCESS TO JUSTICE',
+      title: 'HearMeOut Legal Complaints Builder',
+      summary: 'Trusted legal templates and guided flows that help people lodge complaints safely, with escalation paths to pro bono partners.',
+      impact: '210+ complaints drafted with lawyer review',
+      timeline: '2024 pilot',
+    },
+    {
+      tag: 'ANTI-RACISM',
+      title: 'Call It Out x Jumbunna Data Sovereignty',
+      summary: 'First Nations-owned data and rapid response pathways for racism against young people, with community-controlled escalation.',
+      impact: '180 reports logged; 42 mediated resolutions',
+      timeline: '2024-2025',
+    },
+    {
+      tag: 'FAMILY-LED DE-ESCALATION',
+      title: 'Community Peace Circles',
+      summary: 'Local aunties/uncles respond before police, combining restorative practice and cultural safety to keep young people at home.',
+      impact: '68% reduction in police attendance at addresses',
+      timeline: '2023-2024',
+    },
+    {
+      tag: 'GLOBAL MODEL',
+      title: 'Scottish Children’s Hearings (adaptation)',
+      summary: 'Learning from rights-based hearings with cultural advisors and wraparound plans; preparing an Australian pilot with Elders.',
+      impact: 'Planned 2025 study tour + pilot design',
+      timeline: 'Preparation',
+    },
+  ];
+
+  const [waitlistForm, setWaitlistForm] = React.useState({
+    name: '',
+    email: '',
+    organization: '',
+    destination: 'Aotearoa New Zealand',
+    goals: '',
+  });
+
+  const handleWaitlistSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const body = encodeURIComponent(
+      `Name: ${waitlistForm.name}\n` +
+      `Email: ${waitlistForm.email}\n` +
+      `Organization: ${waitlistForm.organization}\n` +
+      `Preferred destination: ${waitlistForm.destination}\n` +
+      `Goals: ${waitlistForm.goals || 'Not specified'}`
+    );
+    window.location.href = `mailto:hello@justicehub.org.au?subject=Centre of Excellence Learning Trip Waitlist&body=${body}`;
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
@@ -186,102 +246,35 @@ export default function CentreOfExcellencePage() {
             <div className="text-center mb-12">
               <h2 className="headline-truth mb-4">Case Studies & Impact</h2>
               <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-                Real stories of transformation and positive outcomes
+                Five evidence-backed models we are scaling with community and government partners
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="border-2 border-black p-6 bg-white">
-                <div className="inline-block px-3 py-1 bg-green-100 text-green-800 font-bold text-sm mb-4">
-                  YOUTH DIVERSION
+              {caseStudies.map((study) => (
+                <div key={study.title} className="border-2 border-black p-6 bg-white">
+                  <div className="inline-block px-3 py-1 bg-yellow-100 text-yellow-900 font-bold text-sm mb-4">
+                    {study.tag}
+                  </div>
+                  <h3 className="text-2xl font-bold mb-3">{study.title}</h3>
+                  <p className="text-gray-700 mb-4 leading-relaxed">
+                    {study.summary}
+                  </p>
+                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                    <span className="flex items-center gap-1">
+                      <Users className="h-4 w-4" />
+                      {study.impact}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      {study.timeline}
+                    </span>
+                  </div>
+                  <Link href="/centre-of-excellence/best-practice" className="text-black font-bold hover:underline inline-flex items-center gap-1">
+                    Read Full Case Study <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </div>
-                <h3 className="text-2xl font-bold mb-3">85% Reduction in Reoffending</h3>
-                <p className="text-gray-700 mb-4 leading-relaxed">
-                  How Queensland's Indigenous-led diversion program achieved exceptional outcomes through cultural connection, family engagement, and community support.
-                </p>
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                  <span className="flex items-center gap-1">
-                    <Users className="h-4 w-4" />
-                    127 Young People
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    2022-2024
-                  </span>
-                </div>
-                <Link href="#" className="text-black font-bold hover:underline inline-flex items-center gap-1">
-                  Read Full Case Study <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-
-              <div className="border-2 border-black p-6 bg-white">
-                <div className="inline-block px-3 py-1 bg-blue-100 text-blue-800 font-bold text-sm mb-4">
-                  FAMILY SUPPORT
-                </div>
-                <h3 className="text-2xl font-bold mb-3">Strengthening Family Connections</h3>
-                <p className="text-gray-700 mb-4 leading-relaxed">
-                  A breakthrough family engagement model that kept 92% of young people in family care while reducing justice involvement by 70%.
-                </p>
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                  <span className="flex items-center gap-1">
-                    <Users className="h-4 w-4" />
-                    84 Families
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    2023-2024
-                  </span>
-                </div>
-                <Link href="#" className="text-black font-bold hover:underline inline-flex items-center gap-1">
-                  Read Full Case Study <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-
-              <div className="border-2 border-black p-6 bg-white">
-                <div className="inline-block px-3 py-1 bg-purple-100 text-purple-800 font-bold text-sm mb-4">
-                  EDUCATION
-                </div>
-                <h3 className="text-2xl font-bold mb-3">Pathways to Employment</h3>
-                <p className="text-gray-700 mb-4 leading-relaxed">
-                  How alternative education programs combined with wraparound support achieved 78% employment or training outcomes for system-involved youth.
-                </p>
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                  <span className="flex items-center gap-1">
-                    <Users className="h-4 w-4" />
-                    156 Young People
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    2021-2024
-                  </span>
-                </div>
-                <Link href="#" className="text-black font-bold hover:underline inline-flex items-center gap-1">
-                  Read Full Case Study <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-
-              <div className="border-2 border-black p-6 bg-white">
-                <div className="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 font-bold text-sm mb-4">
-                  MENTAL HEALTH
-                </div>
-                <h3 className="text-2xl font-bold mb-3">Trauma-Informed Care</h3>
-                <p className="text-gray-700 mb-4 leading-relaxed">
-                  Implementing trauma-informed therapeutic approaches reduced mental health crises by 65% and improved wellbeing outcomes across all measures.
-                </p>
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                  <span className="flex items-center gap-1">
-                    <Users className="h-4 w-4" />
-                    203 Young People
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    2020-2024
-                  </span>
-                </div>
-                <Link href="#" className="text-black font-bold hover:underline inline-flex items-center gap-1">
-                  Read Full Case Study <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
+              ))}
             </div>
           </div>
         </section>
@@ -511,6 +504,121 @@ export default function CentreOfExcellencePage() {
                 <Link href="#" className="text-black font-bold hover:underline inline-flex items-center gap-1">
                   Learn More <ArrowRight className="h-4 w-4" />
                 </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Overseas Learning Trip Waitlist */}
+        <section id="learning-trip-waitlist" className="section-padding border-b-2 border-black bg-white">
+          <div className="container-justice">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="border-2 border-black p-8 bg-yellow-50">
+                <div className="flex items-center gap-3 mb-4">
+                  <Globe className="h-7 w-7" />
+                  <span className="font-bold text-lg uppercase">Global Learning Trips</span>
+                </div>
+                <h3 className="text-3xl font-bold mb-3">Join the next overseas delegation</h3>
+                <p className="text-gray-700 mb-4 leading-relaxed">
+                  Travel with First Nations leaders, practitioners, and funders to study world-leading models (NZ Oranga Tamariki, Scottish Children&apos;s Hearings, Nordic diversion, Canadian Gladue practice).
+                </p>
+                <ul className="space-y-2 text-gray-700 mb-4">
+                  <li className="flex items-start gap-2">
+                    <ArrowRight className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                    Cultural safety built-in: Indigenous data ownership + reflection circles each night
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <ArrowRight className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                    Track-ready playbooks you can deploy on return (diversion, hearings, alternative response)
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <ArrowRight className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                    Scholarships and co-funding options for grassroots orgs
+                  </li>
+                </ul>
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white font-bold">
+                  <Plane className="h-5 w-5" />
+                  Next cohort forming now — limited spots
+                </div>
+              </div>
+
+              <div className="border-2 border-black p-8 bg-gray-50">
+                <h3 className="text-2xl font-bold mb-3">Join the waitlist</h3>
+                <p className="text-gray-700 mb-4">
+                  Tell us where you want to go and why. We&apos;ll follow up with the itinerary and scholarship options.
+                </p>
+                <form className="space-y-4" onSubmit={handleWaitlistSubmit}>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1" htmlFor="waitlist-name">Name</label>
+                    <input
+                      id="waitlist-name"
+                      type="text"
+                      required
+                      value={waitlistForm.name}
+                      onChange={(e) => setWaitlistForm(prev => ({ ...prev, name: e.target.value }))}
+                      className="w-full border-2 border-black px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                      placeholder="Your full name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1" htmlFor="waitlist-email">Email</label>
+                    <input
+                      id="waitlist-email"
+                      type="email"
+                      required
+                      value={waitlistForm.email}
+                      onChange={(e) => setWaitlistForm(prev => ({ ...prev, email: e.target.value }))}
+                      className="w-full border-2 border-black px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                      placeholder="you@example.org"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1" htmlFor="waitlist-organization">Organization (optional)</label>
+                    <input
+                      id="waitlist-organization"
+                      type="text"
+                      value={waitlistForm.organization}
+                      onChange={(e) => setWaitlistForm(prev => ({ ...prev, organization: e.target.value }))}
+                      className="w-full border-2 border-black px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+                      placeholder="Your org or community role"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1" htmlFor="waitlist-destination">Preferred destination</label>
+                    <select
+                      id="waitlist-destination"
+                      value={waitlistForm.destination}
+                      onChange={(e) => setWaitlistForm(prev => ({ ...prev, destination: e.target.value }))}
+                      className="w-full border-2 border-black px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black bg-white"
+                    >
+                      <option>Aotearoa New Zealand (Oranga Tamariki)</option>
+                      <option>Scotland (Children’s Hearings)</option>
+                      <option>Norway/Sweden (Nordic diversion)</option>
+                      <option>Canada (Gladue and Indigenous courts)</option>
+                      <option>Open to any cohort</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1" htmlFor="waitlist-goals">What do you want to learn?</label>
+                    <textarea
+                      id="waitlist-goals"
+                      value={waitlistForm.goals}
+                      onChange={(e) => setWaitlistForm(prev => ({ ...prev, goals: e.target.value }))}
+                      className="w-full border-2 border-black px-3 py-2 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-black"
+                      placeholder="e.g. alternative first response, cultural governance, data-sharing agreements"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-all"
+                  >
+                    <Send className="h-5 w-5" />
+                    Join Waitlist
+                  </button>
+                  <p className="text-xs text-gray-600">
+                    We&apos;ll confirm your spot, outline costs/funding, and share pre-reading two weeks before travel.
+                  </p>
+                </form>
               </div>
             </div>
           </div>

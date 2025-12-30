@@ -190,6 +190,11 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
           description: 'Creative solutions'
         },
         {
+          label: 'Clearinghouse',
+          href: '/clearinghouse',
+          description: 'Partner-submitted services, cases, and docs'
+        },
+        {
           label: 'Roadmap',
           href: '/roadmap',
           description: 'Community-driven features'

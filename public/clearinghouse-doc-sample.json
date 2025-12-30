@@ -1,0 +1,16 @@
+{
+  "source": {
+    "system": "alternativefirstresponders.com.au",
+    "record_id": "afr-doc-001",
+    "url": "https://alternativefirstresponders.com.au/resources/protocol-v1",
+    "submitted_by": "ops@partner.org"
+  },
+  "document": {
+    "title": "Community Wellbeing Response Protocol",
+    "description": "Field protocol for non-police crisis response teams.",
+    "url": "https://alternativefirstresponders.com.au/resources/protocol-v1.pdf",
+    "format": "pdf",
+    "tags": ["protocol", "crisis_response", "training"],
+    "summary": "Step-by-step triage and de-escalation guidance for community-led responders."
+  }
+}

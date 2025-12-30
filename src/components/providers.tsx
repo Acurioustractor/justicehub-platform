@@ -36,7 +36,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             },
             onError: (error) => {
               console.error('Mutation error:', error);
-              // TODO: Show toast notification or global error handler
+              // TODO: See issue #4 in justicehub-platform: Show toast notification or global error handler
             },
           },
         },

@@ -120,7 +120,8 @@ export async function getProfileWithJusticeStories(empathyLedgerProfileId: strin
   const justiceStories = (allStories || []).filter(isJusticeRelated);
 
   // Get JusticeHub appearances
-  const { data: appearances } = await justiceHubClient
+  const supabase = getJusticeHubClient();
+  const { data: appearances } = await supabase
     .from('profile_appearances')
     .select('*')
     .eq('empathy_ledger_profile_id', empathyLedgerProfileId);
@@ -139,7 +140,8 @@ export async function getProfileWithJusticeStories(empathyLedgerProfileId: strin
  */
 export async function getProfilesFor(type: 'program' | 'service' | 'article', id: string) {
   // Get appearances
-  const { data: appearances } = await justiceHubClient
+  const supabase = getJusticeHubClient();
+  const { data: appearances } = await supabase
     .from('profile_appearances')
     .select('*')
     .eq('appears_on_type', type)
@@ -177,7 +179,8 @@ export async function createProfileAppearance(params: {
   storyExcerpt?: string;
   featured?: boolean;
 }) {
-  const { data, error } = await justiceHubClient
+  const supabase = getJusticeHubClient();
+  const { data, error } = await supabase
     .from('profile_appearances')
     .upsert({
       empathy_ledger_profile_id: params.empathyLedgerProfileId,
@@ -272,7 +275,8 @@ export async function syncProfilesFromStories() {
  * Get featured profiles for homepage/highlights
  */
 export async function getFeaturedProfiles(limit = 6) {
-  const { data: appearances } = await justiceHubClient
+  const supabase = getJusticeHubClient();
+  const { data: appearances } = await supabase
     .from('profile_appearances')
     .select('empathy_ledger_profile_id')
     .eq('featured', true)
