@@ -14,10 +14,13 @@ export async function POST(request: NextRequest) {
       authError: authError?.message
     });
 
-    // Allow upload even without auth for now - we'll use service role for storage
-    // TODO: Re-enable auth check once session handling is fixed
-    if (!user) {
-      console.warn('⚠️ No authenticated user, but allowing upload with service role');
+    // Enforce authentication - only authenticated users can upload
+    if (!user || authError) {
+      console.error('❌ Upload blocked - Authentication required');
+      return NextResponse.json(
+        { error: 'Authentication required to upload images' },
+        { status: 401 }
+      );
     }
 
     // Get form data
@@ -70,7 +73,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Upload to Supabase storage with service key
-    const { data, error } = await serviceSupabase.storage
+    const { error } = await serviceSupabase.storage
       .from('story-images')
       .upload(filePath, file, {
         cacheControl: '3600',
