@@ -77,3 +77,4 @@ public/*.csv
 # Development content
 content/
 projects/
+screen*.png
