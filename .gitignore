@@ -60,3 +60,20 @@ Thumbs.db
 *.json.large
 **/archive/data-extracts/*.json .env.bak*
 .vercel
+
+# Beads (development tool)
+.beads/
+
+# Backup files
+*.backup
+
+# Archive content
+docs/archive/
+
+# Sample/test data
+*.csv
+public/*.csv
+
+# Development content
+content/
+projects/
