@@ -24,6 +24,7 @@ on:
           - research
           - media
           - legal
+          - inquiries
 
 env:
   NODE_VERSION: '20'

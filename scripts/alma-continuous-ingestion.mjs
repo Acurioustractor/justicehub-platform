@@ -163,6 +163,52 @@ const DATA_SOURCES = {
       consent_level: 'Public Knowledge Commons',
     },
   ],
+
+  // Royal Commissions and Government Inquiries
+  inquiries: [
+    {
+      name: 'Royal Commission into the Protection and Detention of Children in the Northern Territory',
+      url: 'https://childdetentionnt.royalcommission.gov.au/',
+      type: 'inquiry',
+      update_frequency: 'once',
+      consent_level: 'Public Knowledge Commons',
+    },
+    {
+      name: 'Queensland Family and Child Commission - Youth Justice Reports',
+      url: 'https://www.qfcc.qld.gov.au/youth-justice',
+      type: 'inquiry',
+      update_frequency: 'quarterly',
+      consent_level: 'Public Knowledge Commons',
+    },
+    {
+      name: 'Victorian Commission for Children and Young People - Youth Justice Reports',
+      url: 'https://ccyp.vic.gov.au/',
+      type: 'inquiry',
+      update_frequency: 'quarterly',
+      consent_level: 'Public Knowledge Commons',
+    },
+    {
+      name: 'NSW Ombudsman - Youth Justice Reviews',
+      url: 'https://www.ombo.nsw.gov.au/',
+      type: 'inquiry',
+      update_frequency: 'quarterly',
+      consent_level: 'Public Knowledge Commons',
+    },
+    {
+      name: 'Productivity Commission - Report on Government Services (Youth Justice)',
+      url: 'https://www.pc.gov.au/ongoing/report-on-government-services/2024/community-services/youth-justice',
+      type: 'inquiry',
+      update_frequency: 'yearly',
+      consent_level: 'Public Knowledge Commons',
+    },
+    {
+      name: 'Australian Law Reform Commission - Children and the Legal Process',
+      url: 'https://www.alrc.gov.au/',
+      type: 'inquiry',
+      update_frequency: 'quarterly',
+      consent_level: 'Public Knowledge Commons',
+    },
+  ],
 };
 
 /**
