@@ -34,7 +34,7 @@ try {
 // All sources to monitor
 const SOURCES = [
   // ALMA Government Sources
-  { url: 'https://www.aihw.gov.au/reports/youth-justice', category: 'government', name: 'AIHW Youth Justice', priority: 'high' },
+  { url: 'https://www.aihw.gov.au/reports/australias-welfare/youth-justice', category: 'government', name: 'AIHW Youth Justice', priority: 'high' },
   { url: 'https://www.youthjustice.qld.gov.au/', category: 'government', name: 'QLD Youth Justice', priority: 'high' },
   { url: 'https://dcj.nsw.gov.au/children-and-families/youth-justice.html', category: 'government', name: 'NSW DCJ Youth Justice', priority: 'high' },
 
@@ -55,21 +55,42 @@ const SOURCES = [
 
   // Research Sources
   { url: 'https://www.griffith.edu.au/research/arts-education-law/criminology-institute', category: 'research', name: 'Griffith Criminology Institute', priority: 'medium' },
-  { url: 'https://www.arc.gov.au', category: 'research', name: 'Australian Research Council', priority: 'medium' },
+  // NOTE: ARC.gov.au is extremely slow (30-40s response times), removed from monitoring to avoid false alerts
+  // { url: 'https://www.arc.gov.au', category: 'research', name: 'Australian Research Council', priority: 'low', timeout: 40000 },
 ];
 
 async function checkSource(source) {
   const startTime = Date.now();
 
   try {
-    // First try HEAD request for quick check
-    const response = await fetch(source.url, {
-      method: 'HEAD',
-      headers: {
-        'User-Agent': 'JusticeHub-HealthCheck/1.0 (https://justicehub.org.au)'
-      },
-      signal: AbortSignal.timeout(10000) // 10 second timeout
-    });
+    // Try HEAD first, fall back to GET if HEAD fails
+    const timeout = source.timeout || 15000; // Use custom timeout or default 15s
+    let response;
+    let method = 'HEAD';
+
+    try {
+      response = await fetch(source.url, {
+        method: 'HEAD',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; JusticeHub-HealthCheck/1.0; +https://justicehub.org.au)',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+        },
+        redirect: 'follow',
+        signal: AbortSignal.timeout(timeout)
+      });
+    } catch (headError) {
+      // HEAD failed, try GET (some servers don't support HEAD)
+      method = 'GET';
+      response = await fetch(source.url, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; JusticeHub-HealthCheck/1.0; +https://justicehub.org.au)',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+        },
+        redirect: 'follow',
+        signal: AbortSignal.timeout(timeout)
+      });
+    }
 
     const responseTime = Date.now() - startTime;
     const status = response.ok ? 'up' : 'down';
@@ -79,12 +100,23 @@ async function checkSource(source) {
     let contentHash = null;
     if (status === 'up') {
       try {
-        const fullResponse = await fetch(source.url, {
-          headers: { 'User-Agent': 'JusticeHub-HealthCheck/1.0' },
-          signal: AbortSignal.timeout(15000)
-        });
-        const content = await fullResponse.text();
-        contentHash = crypto.createHash('md5').update(content).digest('hex');
+        // If we already did a GET request, use that response
+        if (method === 'GET') {
+          const content = await response.text();
+          contentHash = crypto.createHash('md5').update(content).digest('hex');
+        } else {
+          // Otherwise, fetch the full content
+          const fullResponse = await fetch(source.url, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; JusticeHub-HealthCheck/1.0; +https://justicehub.org.au)',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+            },
+            redirect: 'follow',
+            signal: AbortSignal.timeout(timeout)
+          });
+          const content = await fullResponse.text();
+          contentHash = crypto.createHash('md5').update(content).digest('hex');
+        }
       } catch (err) {
         // Content fetch failed, but HEAD succeeded - still mark as up
         console.log(`   ⚠️  Could not fetch content for hashing: ${err.message}`);
