@@ -35,7 +35,7 @@ try {
 const SOURCES = [
   // ALMA Government Sources
   { url: 'https://www.aihw.gov.au/reports/youth-justice', category: 'government', name: 'AIHW Youth Justice', priority: 'high' },
-  { url: 'https://www.djag.qld.gov.au/youth-justice', category: 'government', name: 'QLD Youth Justice', priority: 'high' },
+  { url: 'https://www.youthjustice.qld.gov.au/', category: 'government', name: 'QLD Youth Justice', priority: 'high' },
   { url: 'https://dcj.nsw.gov.au/children-and-families/youth-justice.html', category: 'government', name: 'NSW DCJ Youth Justice', priority: 'high' },
 
   // ALMA Indigenous Sources
@@ -43,7 +43,7 @@ const SOURCES = [
   { url: 'https://www.snaicc.org.au', category: 'indigenous', name: 'SNAICC', priority: 'high' },
 
   // Media Sources
-  { url: 'https://www.theguardian.com/australia-news/youth-justice', category: 'media', name: 'Guardian Australia Youth Justice', priority: 'high' },
+  { url: 'https://www.theguardian.com/australia-news', category: 'media', name: 'Guardian Australia', priority: 'high' },
   { url: 'https://www.abc.net.au/news', category: 'media', name: 'ABC News', priority: 'high' },
   { url: 'https://www.sbs.com.au/nitv', category: 'media', name: 'NITV News', priority: 'medium' },
 
@@ -54,7 +54,7 @@ const SOURCES = [
   { url: 'https://www.legalaid.vic.gov.au', category: 'services', name: 'Legal Aid Victoria', priority: 'medium' },
 
   // Research Sources
-  { url: 'https://www.griffith.edu.au/criminology-institute', category: 'research', name: 'Griffith Criminology Institute', priority: 'medium' },
+  { url: 'https://www.griffith.edu.au/research/arts-education-law/criminology-institute', category: 'research', name: 'Griffith Criminology Institute', priority: 'medium' },
   { url: 'https://www.arc.gov.au', category: 'research', name: 'Australian Research Council', priority: 'medium' },
 ];
 
