@@ -63,6 +63,7 @@ export default function ServicesPage() {
   const [selectedCost, setSelectedCost] = useState<string>('all');
   const [minRating, setMinRating] = useState<number>(0);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const [sortBy, setSortBy] = useState<string>('name-asc');
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -129,6 +130,26 @@ export default function ServicesPage() {
     const matchesCost = selectedCost === 'all' || service.cost === selectedCost;
     const matchesRating = service.rating >= minRating;
     return matchesSearch && matchesCategory && matchesLocation && matchesState && matchesCost && matchesRating;
+  });
+
+  // Sort filtered services
+  const sortedServices = [...filteredServices].sort((a, b) => {
+    switch (sortBy) {
+      case 'name-asc':
+        return a.name.localeCompare(b.name);
+      case 'name-desc':
+        return b.name.localeCompare(a.name);
+      case 'location-asc':
+        return a.location.localeCompare(b.location);
+      case 'location-desc':
+        return b.location.localeCompare(a.location);
+      case 'updated-desc':
+        return new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime();
+      case 'updated-asc':
+        return new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime();
+      default:
+        return 0;
+    }
   });
 
   // Get unique locations and states from services for filters
@@ -268,13 +289,31 @@ export default function ServicesPage() {
         {/* Services Grid */}
         <section className="section-padding">
           <div className="container-justice">
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
               <h2 className="text-2xl font-bold">
-                {filteredServices.length} Services Found
+                {sortedServices.length} Services Found
               </h2>
-              <p className="text-sm text-gray-600">
-                AI-verified services • Real-time data • Australia-wide coverage
-              </p>
+              <div className="flex items-center gap-4">
+                {/* Sort Dropdown */}
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-bold">SORT:</label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="px-3 py-2 border-2 border-black font-medium text-sm"
+                  >
+                    <option value="name-asc">Name (A-Z)</option>
+                    <option value="name-desc">Name (Z-A)</option>
+                    <option value="location-asc">Location (A-Z)</option>
+                    <option value="location-desc">Location (Z-A)</option>
+                    <option value="updated-desc">Recently Updated</option>
+                    <option value="updated-asc">Oldest First</option>
+                  </select>
+                </div>
+                <p className="text-sm text-gray-600 hidden lg:block">
+                  AI-verified services • Real-time data
+                </p>
+              </div>
             </div>
 
             {/* Loading State */}
@@ -288,7 +327,7 @@ export default function ServicesPage() {
             {/* Results Display */}
             {viewMode === 'cards' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredServices.map((service) => (
+                {sortedServices.map((service) => (
                   <div key={service.id} className="border-2 border-black bg-white hover:shadow-lg transition-shadow">
                     <div className="p-6">
                       <div className="flex justify-between items-start mb-4">
@@ -466,7 +505,7 @@ export default function ServicesPage() {
                       </tr>
                     </thead>
                   <tbody>
-                    {filteredServices.map((service, index) => (
+                    {sortedServices.map((service, index) => (
                       <tr key={service.id} className={`border-b ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
                         <td className="px-4 py-4">
                           <div>
@@ -512,7 +551,7 @@ export default function ServicesPage() {
               </>
             )}
 
-            {filteredServices.length === 0 && (
+            {sortedServices.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-xl text-gray-600 mb-4">No services found matching your criteria</p>
                 <button

@@ -139,7 +139,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Public routes that don't need Supabase auth
-  const publicRoutes = ['/wiki', '/preplanning', '/', '/stories', '/community-programs', '/organizations'];
+  const publicRoutes = ['/wiki', '/preplanning', '/', '/stories', '/community-programs', '/organizations', '/intelligence', '/gallery'];
   const isPublicRoute = publicRoutes.some(route => path === route || path.startsWith(`${route}/`));
 
   // Only create Supabase client if we have environment variables and not on a fully public route

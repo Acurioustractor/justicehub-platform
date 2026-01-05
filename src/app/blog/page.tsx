@@ -1,8 +1,10 @@
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { Calendar, User, Tag, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Blog - JusticeHub',
@@ -10,7 +12,7 @@ export const metadata = {
 };
 
 export default async function BlogPage() {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   // Fetch all published blog posts
   const { data: posts } = await supabase

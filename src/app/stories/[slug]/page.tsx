@@ -1,8 +1,10 @@
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { notFound } from 'next/navigation';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { Calendar, Clock, Tag, MapPin, User } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 
 const categories = {
   seeds: { emoji: '🌱', label: 'Seeds', color: 'bg-green-100 text-green-800' },
@@ -12,7 +14,7 @@ const categories = {
 };
 
 export default async function StoryPage({ params }: { params: { slug: string } }) {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
   const { slug } = params;
 
   // Try to fetch from articles first

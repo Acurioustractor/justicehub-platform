@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 /* Import CONTAINED theme styles */
-@import '../styles/theme.css';
 
 @layer base {
   :root {

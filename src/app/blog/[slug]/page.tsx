@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { notFound } from 'next/navigation';
 import { Calendar, User, Share2, Tag, ArrowLeft } from 'lucide-react';
@@ -7,8 +7,10 @@ import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const { data: post } = await supabase
     .from('blog_posts')
@@ -31,7 +33,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   // Fetch the blog post
   const { data: post } = await supabase

@@ -1,9 +1,8 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { createServiceClient } from '@/lib/supabase/service';
+
+export const dynamic = 'force-dynamic';
 
 interface Organization {
   id: string;
@@ -17,69 +16,55 @@ interface Organization {
   tags: string[];
 }
 
-export default function OrganizationsPage() {
-  const supabase = createClient();
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
-  const [programCounts, setProgramCounts] = useState<Record<string, number>>({});
-  const [loading, setLoading] = useState(true);
+async function getOrganizationsData() {
+  const supabase = createServiceClient();
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
+  try {
+    // Fetch organizations
+    const { data: orgs, error: orgsError } = await supabase
+      .from('organizations')
+      .select('*')
+      .eq('is_active', true)
+      .order('name');
 
-      // Fetch organizations
-      const { data: orgs, error: orgsError } = await supabase
-        .from('organizations')
-        .select('*')
-        .eq('is_active', true)
-        .order('name');
-
-      if (!orgsError && orgs) {
-        setOrganizations(orgs);
-      }
-
-      // Fetch program counts
-      const { data: programs } = await supabase
-        .from('community_programs')
-        .select('organization_id');
-
-      if (programs) {
-        const counts: Record<string, number> = {};
-        programs.forEach((program) => {
-          if (program.organization_id) {
-            counts[program.organization_id] = (counts[program.organization_id] || 0) + 1;
-          }
-        });
-        setProgramCounts(counts);
-      }
-
-      setLoading(false);
+    if (orgsError) {
+      console.error('Error fetching organizations:', orgsError);
+      return { organizations: [], programCounts: {} };
     }
 
-    fetchData();
-  }, []);
+    // Fetch program counts
+    const { data: programs } = await supabase
+      .from('community_programs')
+      .select('organization_id');
+
+    const programCounts: Record<string, number> = {};
+    if (programs) {
+      programs.forEach((program: { organization_id: string | null }) => {
+        if (program.organization_id) {
+          programCounts[program.organization_id] = (programCounts[program.organization_id] || 0) + 1;
+        }
+      });
+    }
+
+    return {
+      organizations: orgs || [],
+      programCounts,
+    };
+  } catch (error) {
+    console.error('Error fetching organizations data:', error);
+    return { organizations: [], programCounts: {} };
+  }
+}
+
+export default async function OrganizationsPage() {
+  const { organizations, programCounts } = await getOrganizationsData();
 
   const verifiedOrgs = organizations.filter(
-    (org) => org.verification_status === 'verified'
+    (org: Organization) => org.verification_status === 'verified'
   );
   const otherOrgs = organizations.filter(
-    (org) => org.verification_status !== 'verified'
+    (org: Organization) => org.verification_status !== 'verified'
   );
-
-  if (loading) {
-    return (
-      <>
-        <Navigation />
-        <div className="min-h-screen flex items-center justify-center bg-sand-50">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ochre-600 mx-auto mb-4"></div>
-            <p className="text-earth-600">Loading organizations...</p>
-          </div>
-        </div>
-        <Footer />
-      </>
-    );
-  }
 
   return (
     <>
@@ -132,7 +117,7 @@ export default function OrganizationsPage() {
               </div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {verifiedOrgs.map((org) => (
+                {verifiedOrgs.map((org: Organization) => (
                   <Link
                     key={org.id}
                     href={`/organizations/${org.slug}`}
@@ -244,7 +229,7 @@ export default function OrganizationsPage() {
               </div>
 
               <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {otherOrgs.map((org) => (
+                {otherOrgs.map((org: Organization) => (
                   <Link
                     key={org.id}
                     href={`/organizations/${org.slug}`}

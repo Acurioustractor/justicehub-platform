@@ -155,6 +155,132 @@ export async function getPublicStories(limit = 10) {
 }
 
 /**
+ * Get featured public stories for homepage display
+ * Note: We avoid joining on organizations due to RLS policy issues in Empathy Ledger
+ * Priority: 1) Featured stories with images, 2) Stories with images, 3) Featured stories, 4) Recent stories
+ * Images are prioritized for visual appeal on the homepage
+ */
+export async function getFeaturedStories(limit = 3) {
+  // First try to get featured stories with images (best of both worlds)
+  let { data, error } = await empathyLedgerClient
+    .from('stories')
+    .select(`
+      id,
+      title,
+      summary,
+      content,
+      story_image_url,
+      story_category,
+      is_featured,
+      published_at
+    `)
+    .eq('is_public', true)
+    .eq('privacy_level', 'public')
+    .eq('is_featured', true)
+    .not('story_image_url', 'is', null)
+    .order('published_at', { ascending: false })
+    .limit(limit);
+
+  // If not enough, get any stories with images (prioritize visual content)
+  if (!data || data.length < limit) {
+    const existingIds = (data || []).map(s => s.id);
+    const remaining = limit - (data?.length || 0);
+
+    const { data: withImages } = await empathyLedgerClient
+      .from('stories')
+      .select(`
+        id,
+        title,
+        summary,
+        content,
+        story_image_url,
+        story_category,
+        is_featured,
+        published_at
+      `)
+      .eq('is_public', true)
+      .eq('privacy_level', 'public')
+      .not('story_image_url', 'is', null)
+      .order('published_at', { ascending: false })
+      .limit(remaining + existingIds.length);
+
+    if (withImages) {
+      const newStories = withImages.filter(s => !existingIds.includes(s.id));
+      data = [...(data || []), ...newStories.slice(0, remaining)];
+    }
+  }
+
+  // If still not enough, get featured stories without images
+  if (!data || data.length < limit) {
+    const existingIds = (data || []).map(s => s.id);
+    const remaining = limit - (data?.length || 0);
+
+    const { data: featured } = await empathyLedgerClient
+      .from('stories')
+      .select(`
+        id,
+        title,
+        summary,
+        content,
+        story_image_url,
+        story_category,
+        is_featured,
+        published_at
+      `)
+      .eq('is_public', true)
+      .eq('privacy_level', 'public')
+      .eq('is_featured', true)
+      .order('published_at', { ascending: false })
+      .limit(remaining + existingIds.length);
+
+    if (featured) {
+      const newStories = featured.filter(s => !existingIds.includes(s.id));
+      data = [...(data || []), ...newStories.slice(0, remaining)];
+    }
+  }
+
+  // Final fallback: get most recent public stories
+  if (!data || data.length < limit) {
+    const existingIds = (data || []).map(s => s.id);
+    const remaining = limit - (data?.length || 0);
+
+    const { data: recent, error: recentError } = await empathyLedgerClient
+      .from('stories')
+      .select(`
+        id,
+        title,
+        summary,
+        content,
+        story_image_url,
+        story_category,
+        is_featured,
+        published_at
+      `)
+      .eq('is_public', true)
+      .eq('privacy_level', 'public')
+      .order('published_at', { ascending: false })
+      .limit(remaining + existingIds.length);
+
+    if (recent) {
+      const newStories = recent.filter(s => !existingIds.includes(s.id));
+      data = [...(data || []), ...newStories.slice(0, remaining)];
+    }
+    if (recentError) error = recentError;
+  }
+
+  if (error) {
+    console.error('Error fetching featured stories:', error);
+    return [];
+  }
+
+  // Create excerpt from content if no summary
+  return (data || []).map(story => ({
+    ...story,
+    excerpt: story.summary || (story.content ? story.content.substring(0, 200) + '...' : '')
+  }));
+}
+
+/**
  * Get organization by slug
  */
 export async function getOrganizationBySlug(slug: string) {

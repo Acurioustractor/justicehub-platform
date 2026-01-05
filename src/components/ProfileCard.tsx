@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { User, ExternalLink, AlertCircle } from 'lucide-react';
 
 interface EmpathyLedgerProfile {
@@ -48,11 +49,15 @@ export default function ProfileCard({
         {/* Profile Picture */}
         <div className="flex-shrink-0">
           {profile.profile_picture_url ? (
-            <img
-              src={profile.profile_picture_url}
-              alt={displayName}
-              className="w-16 h-16 rounded-full object-cover border-2 border-black"
-            />
+            <div className="relative w-16 h-16 rounded-full border-2 border-black overflow-hidden">
+              <Image
+                src={profile.profile_picture_url}
+                alt={displayName}
+                fill
+                className="object-cover"
+                sizes="64px"
+              />
+            </div>
           ) : (
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 border-2 border-black flex items-center justify-center">
               <User className="h-8 w-8 text-gray-600" />

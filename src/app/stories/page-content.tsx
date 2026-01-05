@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { useSearchParams } from 'next/navigation';
 
@@ -13,12 +13,6 @@ const categories = {
   roots: { emoji: '🌳', label: 'Roots', color: 'bg-amber-100 text-amber-900' },
 };
 
-const contentTypes = {
-  'Youth Story': { emoji: '💬', color: 'bg-purple-100 text-purple-800' },
-  'Editorial': { emoji: '✍️', color: 'bg-blue-100 text-blue-800' },
-  'Update': { emoji: '📢', color: 'bg-green-100 text-green-800' },
-  'Research': { emoji: '🔬', color: 'bg-indigo-100 text-indigo-800' },
-};
 
 type UnifiedContent = {
   id: string;
@@ -42,169 +36,65 @@ type UnifiedContent = {
   primary_tag?: string;
 };
 
-export function StoriesPageContent() {
+type StatsType = {
+  total: number;
+  seeds: number;
+  growth: number;
+  harvest: number;
+  roots: number;
+  locations: number;
+};
+
+interface StoriesPageContentProps {
+  initialContent: UnifiedContent[];
+  initialStats: StatsType;
+}
+
+export function StoriesPageContent({ initialContent, initialStats }: StoriesPageContentProps) {
   const searchParams = useSearchParams();
   const category = searchParams.get('category');
-  const type = searchParams.get('type');
-  const [content, setContent] = useState<UnifiedContent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    total: 0,
-    seeds: 0,
-    growth: 0,
-    harvest: 0,
-    roots: 0,
-    locations: 0,
-  });
 
-  useEffect(() => {
-    async function fetchContent() {
-      console.log('🔍 Fetching content...');
-      console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Set' : '❌ Missing');
-      console.log('Supabase Key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✅ Set' : '❌ Missing');
+  // Filter content based on URL params (client-side filtering)
+  const filteredContent = useMemo(() => {
+    if (!category) return initialContent;
+    return initialContent.filter((item) => item.category === category);
+  }, [initialContent, category]);
 
-      const supabase = createClient();
-
-      // Fetch articles (using public_profiles for author info)
-      let articlesQuery = supabase
-        .from('articles')
-        .select(`
-          *,
-          public_profiles!articles_author_id_fkey (
-            full_name,
-            slug,
-            photo_url
-          )
-        `)
-        .eq('status', 'published')
-        .order('published_at', { ascending: false });
-
-      if (category) {
-        articlesQuery = articlesQuery.eq('category', category);
-      }
-
-      // Fetch blog posts
-      const blogsQuery = supabase
-        .from('blog_posts')
-        .select(`
-          *,
-          public_profiles!blog_posts_author_id_fkey(full_name, slug, photo_url)
-        `)
-        .eq('status', 'published')
-        .order('published_at', { ascending: false });
-
-      const [articlesResult, blogsResult] = await Promise.all([
-        articlesQuery,
-        blogsQuery,
-      ]);
-
-      console.log('📰 Articles result:', {
-        success: !articlesResult.error,
-        count: articlesResult.data?.length || 0,
-        error: articlesResult.error?.message,
-        errorDetails: articlesResult.error
-      });
-      console.log('📝 Blogs result:', {
-        success: !blogsResult.error,
-        count: blogsResult.data?.length || 0,
-        error: blogsResult.error?.message,
-        errorDetails: blogsResult.error
-      });
-
-      if (articlesResult.error) {
-        console.error('Error fetching articles:', articlesResult.error);
-      }
-      if (blogsResult.error) {
-        console.error('Error fetching blog posts:', blogsResult.error);
-      }
-
-      // Transform and merge data
-      const articles = (articlesResult.data || []).map((article: any) => ({
-        ...article,
-        content_type: 'article' as const,
-        author: article.public_profiles,
-        primary_tag: article.category,
-      }));
-
-      const blogs = (blogsResult.data || []).map((blog: any) => ({
-        ...blog,
-        content_type: 'blog' as const,
-        author: blog.public_profiles,
-        primary_tag: blog.tags?.[0] || 'Editorial',
-      }));
-
-      // Merge and sort by published date
-      let allContent = [...articles, ...blogs].sort(
-        (a, b) =>
-          new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
-      );
-
-      // Filter by content type if specified
-      if (type) {
-        allContent = allContent.filter((item) => {
-          if (type === 'Youth Story' || type === 'Editorial' || type === 'Update' || type === 'Research') {
-            return item.primary_tag === type || item.tags?.includes(type);
-          }
-          return true;
-        });
-      }
-
-      setContent(allContent);
-
-      // Calculate stats
-      const uniqueLocations = new Set<string>();
-      let seedsCount = 0;
-      let growthCount = 0;
-      let harvestCount = 0;
-      let rootsCount = 0;
-
-      allContent.forEach((item) => {
-        // Count categories
-        if (item.category === 'seeds') seedsCount++;
-        if (item.category === 'growth') growthCount++;
-        if (item.category === 'harvest') harvestCount++;
-        if (item.category === 'roots') rootsCount++;
-
-        // Count unique locations
-        if (item.location_tags) {
-          item.location_tags.forEach((loc: string) => uniqueLocations.add(loc));
-        }
-      });
-
-      setStats({
-        total: allContent.length,
-        seeds: seedsCount,
-        growth: growthCount,
-        harvest: harvestCount,
-        roots: rootsCount,
-        locations: uniqueLocations.size,
-      });
-
-      setLoading(false);
+  // Calculate filtered stats
+  const stats = useMemo(() => {
+    if (!category) {
+      return initialStats;
     }
 
-    fetchContent();
-  }, [category, type]);
+    const uniqueLocations = new Set<string>();
+    let seedsCount = 0;
+    let growthCount = 0;
+    let harvestCount = 0;
+    let rootsCount = 0;
 
-  if (loading) {
-    return (
-      <>
-        <Navigation />
-        <main className="min-h-screen page-content">
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-              <p className="text-gray-600 font-bold">Loading stories...</p>
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </>
-    );
-  }
+    filteredContent.forEach((item) => {
+      if (item.category === 'seeds') seedsCount++;
+      if (item.category === 'growth') growthCount++;
+      if (item.category === 'harvest') harvestCount++;
+      if (item.category === 'roots') rootsCount++;
 
-  const featuredContent = content?.[0];
-  const otherContent = content?.slice(1) || [];
+      if (item.location_tags) {
+        item.location_tags.forEach((loc: string) => uniqueLocations.add(loc));
+      }
+    });
+
+    return {
+      total: filteredContent.length,
+      seeds: seedsCount,
+      growth: growthCount,
+      harvest: harvestCount,
+      roots: rootsCount,
+      locations: uniqueLocations.size,
+    };
+  }, [filteredContent, initialStats, category]);
+
+  const featuredContent = filteredContent?.[0];
+  const otherContent = filteredContent?.slice(1) || [];
 
   return (
     <>
@@ -266,58 +156,37 @@ export function StoriesPageContent() {
             </div>
           </div>
 
-          {/* Content Type Filters */}
-          <div className="max-w-6xl mx-auto mb-8">
+          {/* Category Filters */}
+          <div className="max-w-6xl mx-auto mb-12">
             <div className="flex flex-wrap gap-3 justify-center">
               <Link
                 href="/stories"
                 className={`px-4 py-2 font-bold border-2 transition-all ${
-                  !category && !type
+                  !category
                     ? 'bg-black text-white border-black'
                     : 'bg-white text-black border-black hover:bg-gray-100'
                 }`}
               >
-                All Content
+                All Stories
               </Link>
-              {Object.entries(contentTypes).map(([key, ct]) => (
+              {Object.entries(categories).map(([key, cat]) => (
                 <Link
                   key={key}
-                  href={`/stories?type=${encodeURIComponent(key)}`}
+                  href={`/stories?category=${key}`}
                   className={`px-4 py-2 font-bold border-2 transition-all ${
-                    type === key
-                      ? ct.color + ' border-black'
+                    category === key
+                      ? cat.color + ' border-black'
                       : 'bg-white text-black border-black hover:bg-gray-100'
                   }`}
                 >
-                  {ct.emoji} {key}
+                  {cat.emoji} {cat.label}
                 </Link>
               ))}
             </div>
           </div>
 
-          {/* Category Filters (for articles only) */}
-          {!type && (
-            <div className="max-w-6xl mx-auto mb-12">
-              <div className="flex flex-wrap gap-3 justify-center">
-                {Object.entries(categories).map(([key, cat]) => (
-                  <Link
-                    key={key}
-                    href={`/stories?category=${key}`}
-                    className={`px-3 py-1.5 text-sm font-bold border transition-all rounded-full ${
-                      category === key
-                        ? cat.color + ' border-current'
-                        : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
-                    }`}
-                  >
-                    {cat.emoji} {cat.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Featured Content */}
-          {featuredContent && !category && !type && (
+          {featuredContent && !category && (
             <div className="max-w-6xl mx-auto mb-16">
               <Link
                 href={
@@ -329,11 +198,14 @@ export function StoriesPageContent() {
               >
                 <div className="md:flex">
                   {featuredContent.featured_image_url && (
-                    <div className="md:w-1/2">
-                      <img
+                    <div className="md:w-1/2 relative h-64 md:h-auto">
+                      <Image
                         src={featuredContent.featured_image_url}
                         alt={featuredContent.title}
-                        className="w-full h-64 md:h-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        priority
                       />
                     </div>
                   )}
@@ -398,11 +270,13 @@ export function StoriesPageContent() {
                   className="group block bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 overflow-hidden no-underline"
                 >
                   {item.featured_image_url && (
-                    <div className="w-full h-48 border-b-2 border-black">
-                      <img
+                    <div className="relative w-full h-48 border-b-2 border-black">
+                      <Image
                         src={item.featured_image_url}
                         alt={item.title}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     </div>
                   )}
@@ -445,7 +319,7 @@ export function StoriesPageContent() {
             </div>
           </div>
 
-          {content?.length === 0 && (
+          {filteredContent?.length === 0 && (
             <div className="max-w-2xl mx-auto text-center py-12">
               <p className="text-xl text-gray-600">
                 No content found with the selected filters.

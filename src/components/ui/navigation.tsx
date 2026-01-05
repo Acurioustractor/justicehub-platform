@@ -154,6 +154,11 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
           description: 'Australian youth justice leadership'
         },
         {
+          label: 'Intelligence Hub',
+          href: '/intelligence',
+          description: 'ALMA intelligence & portfolio analytics'
+        },
+        {
           label: 'Research',
           href: '/centre-of-excellence/research',
           description: 'Evidence-based insights'
@@ -174,6 +179,16 @@ export function Navigation({ variant = 'default' }: NavigationProps) {
       label: 'Platform',
       type: 'dropdown',
       items: [
+        {
+          label: 'Ask ALMA',
+          href: '#alma-chat',
+          description: 'AI-powered youth justice guide'
+        },
+        {
+          label: 'Stewards',
+          href: '/stewards',
+          description: 'Protect what works'
+        },
         {
           label: 'Transparency',
           href: '/transparency',
@@ -769,10 +784,10 @@ export function Footer() {
     {
       title: 'Platform',
       links: [
+        { label: 'Ask ALMA', href: '#alma-chat', description: 'AI youth justice guide' },
+        { label: 'Stewards', href: '/stewards', description: 'Protect what works' },
         { label: 'Gallery', href: '/gallery', description: 'Programs in action' },
         { label: 'Money Trail', href: '/transparency', description: 'Financial transparency' },
-        { label: 'Art & Innovation', href: '/art-innovation', description: 'Creative solutions' },
-        { label: 'Roadmap', href: '/roadmap', description: 'Community-driven features' },
         { label: 'Centre of Excellence', href: '/centre-of-excellence', description: 'Research and best practice' }
       ]
     },

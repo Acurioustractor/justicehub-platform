@@ -1,4 +1,6 @@
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
+
+export const dynamic = 'force-dynamic';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, ExternalLink, Mail, Globe, Linkedin, Twitter, Edit } from 'lucide-react';
@@ -64,7 +66,7 @@ export default async function ProfilePage({
 }: {
   params: { slug: string };
 }) {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   // Check if current user can edit
   const { data: { user } } = await supabase.auth.getUser();

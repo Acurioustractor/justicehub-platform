@@ -1,7 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { createServiceClient } from '@/lib/supabase/service';
+
+export const dynamic = 'force-dynamic';
 
 interface Organization {
   id: string;
@@ -31,6 +33,7 @@ interface Program {
 }
 
 async function getOrganization(slug: string): Promise<Organization | null> {
+  const supabase = createServiceClient();
   const { data, error } = await supabase
     .from('organizations')
     .select('*')
@@ -47,6 +50,7 @@ async function getOrganization(slug: string): Promise<Organization | null> {
 }
 
 async function getOrganizationPrograms(orgId: string): Promise<Program[]> {
+  const supabase = createServiceClient();
   const { data, error } = await supabase
     .from('community_programs')
     .select('*')

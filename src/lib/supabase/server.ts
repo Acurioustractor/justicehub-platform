@@ -1,16 +1,17 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import type { Database } from '@/types/database.types'
 
 /**
  * Create a Supabase client for Server Components, Server Actions, and Route Handlers
  * This is the recommended way to access Supabase from the server in Next.js 14+
  *
- * @returns Supabase client configured for server-side usage
+ * @returns Supabase client configured for server-side usage with full TypeScript types
  */
 export async function createClient() {
   const cookieStore = await cookies()
 
-  return createServerClient(
+  return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {

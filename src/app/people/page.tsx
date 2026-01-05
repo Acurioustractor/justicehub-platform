@@ -1,9 +1,11 @@
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 
+export const dynamic = 'force-dynamic';
+
 export default async function PeoplePage() {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   // Fetch all public profiles
   const { data: profiles } = await supabase

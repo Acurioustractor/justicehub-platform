@@ -1,12 +1,13 @@
 'use client'
 
 import { createBrowserClient } from '@supabase/ssr'
+import type { Database } from '@/types/database.types'
 
 /**
  * Create a Supabase client for Client Components
  * This client is used in 'use client' components for interactive features
  *
- * @returns Supabase client configured for browser usage
+ * @returns Supabase client configured for browser usage with full TypeScript types
  */
 export function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '';
@@ -22,7 +23,7 @@ export function createClient() {
   // During build time, return a placeholder if env vars aren't available
   if (!url || !key) {
     console.warn('Supabase credentials not available, using placeholder client');
-    return createBrowserClient(
+    return createBrowserClient<Database>(
       'https://placeholder.supabase.co',
       'placeholder-key',
       {
@@ -34,7 +35,7 @@ export function createClient() {
     );
   }
 
-  return createBrowserClient(
+  return createBrowserClient<Database>(
     url,
     key,
     {

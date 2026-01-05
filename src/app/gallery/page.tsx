@@ -2,15 +2,17 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { 
-  Play, 
-  Eye, 
+import {
+  Play,
+  Eye,
   Calendar,
   ExternalLink,
   Filter,
   Search
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import ImageGallery from '@/components/ImageGallery';
+import FeaturedVideo from '@/components/FeaturedVideo';
 
 interface MediaItem {
   id: string;
@@ -380,8 +382,81 @@ export default function GalleryPage() {
           </div>
         </section>
 
-        {/* Cross-Platform Links */}
+        {/* Example: ImageGallery Component Showcase */}
+        <section className="py-16 bg-gray-50 border-t-2 border-black">
+          <div className="container-justice">
+            <h2 className="text-3xl font-bold mb-4 text-center">COMMUNITY IN ACTION</h2>
+            <p className="text-center text-gray-700 mb-12 max-w-2xl mx-auto">
+              Real moments from community programs making real impact across Australia
+            </p>
+
+            <ImageGallery
+              images={[
+                {
+                  src: '/api/placeholder/800/600',
+                  alt: 'Young people in welding workshop',
+                  caption: 'BackTrack Youth Works - Welding Skills Training',
+                  credit: 'Marcus Thompson'
+                },
+                {
+                  src: '/api/placeholder/800/600',
+                  alt: 'Traditional healing circle ceremony',
+                  caption: 'Cultural Healing Ceremony - Alice Springs',
+                  credit: 'Elder Mary Nganyinpa'
+                },
+                {
+                  src: '/api/placeholder/800/600',
+                  alt: 'Youth-led community mural',
+                  caption: 'Logan Youth Collective Mural Project',
+                  credit: 'Logan Youth Collective'
+                },
+                {
+                  src: '/api/placeholder/800/600',
+                  alt: 'Tech skills workshop',
+                  caption: 'Coding for Change - Adelaide',
+                  credit: 'TechStart Youth'
+                },
+                {
+                  src: '/api/placeholder/800/600',
+                  alt: 'Community BBQ celebration',
+                  caption: 'Youth Achievement Celebration',
+                  credit: 'Community Events Team'
+                },
+                {
+                  src: '/api/placeholder/800/600',
+                  alt: 'Cultural connection program',
+                  caption: 'Country Connection Program',
+                  credit: 'JusticeHub'
+                }
+              ]}
+              columns={3}
+            />
+          </div>
+        </section>
+
+        {/* Example: FeaturedVideo Component Showcase */}
         <section className="py-16 border-t-2 border-black">
+          <div className="container-justice">
+            <h2 className="text-3xl font-bold mb-12 text-center">PROGRAMS IN ACTION</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <FeaturedVideo
+                videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                title="BackTrack Youth Works: Welding Workshop"
+                description="Young people learning welding skills through hands-on mentorship. See how community-led programs create real pathways to employment."
+              />
+
+              <FeaturedVideo
+                videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                title="Traditional Healing Circles"
+                description="Elder Mary shares how cultural connection and traditional practices help young people heal and thrive."
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Cross-Platform Links */}
+        <section className="py-16 border-t-2 border-black bg-gray-50">
           <div className="container-justice">
             <h2 className="text-2xl font-bold mb-8 text-center">EXPLORE MORE</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -393,9 +468,9 @@ export default function GalleryPage() {
                 <h3 className="font-bold mb-2">Written Stories</h3>
                 <p className="text-sm">Read detailed personal narratives and impact stories</p>
               </Link>
-              <Link href="/services" className="group border-2 border-black bg-white p-6 hover:bg-black hover:text-white transition-all block" style={{textDecoration: 'none'}}>
-                <h3 className="font-bold mb-2">Find Services</h3>
-                <p className="text-sm">Connect with the programs and services you see in action</p>
+              <Link href="/stories/intelligence" className="group border-2 border-black bg-white p-6 hover:bg-black hover:text-white transition-all block" style={{textDecoration: 'none'}}>
+                <h3 className="font-bold mb-2">ALMA Intelligence</h3>
+                <p className="text-sm">Explore data-driven insights on media sentiment and community programs</p>
               </Link>
             </div>
           </div>
