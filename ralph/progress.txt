@@ -328,3 +328,110 @@ Used Playwright to audit all 12 special feature pages: /contained, /contained/ab
 - .playwright-mcp/audit/special-pages/visuals-network.png
 
 ---
+
+## 2026-01-07T07:47:00Z - Re-verification: audit-special-pages (Priority 8)
+
+**Re-verification Completed:** Special Feature Pages Re-Audit
+
+**Summary:**
+Re-ran Playwright audit on all special feature pages to verify continued functionality. All 9 main pages plus 4 visuals subpages and 3 contained subpages successfully audited. Fresh screenshots captured. Some pages (youth-scout, flywheel, grassroots, visuals) experienced networkidle timeouts but loaded correctly with domcontentloaded wait strategy. All acceptance criteria remain met.
+
+**Pages Re-Verified (16 total):**
+- /contained (200 OK) - H1: "30 Minutes That Could Transform Youth Justice Forever"
+- /contained/about (200 OK) - H1: "About CONTAINED"
+- /contained/launch (200 OK) - H1: "CONTAINED"
+- /contained/register (200 OK) - H1: "CONTAINED: Exhibition Launch"
+- /art-innovation (200 OK) - H1: "Creative Works Driving Change"
+- /youth-scout (200 OK) - H1: "YOUTH SCOUT"
+- /talent-scout (200 OK) - H1: "TALENT SCOUT"
+- /flywheel (200 OK) - H1: "The Sovereignty Flywheel"
+- /roadmap (200 OK) - H1: "Building the Future Together"
+- /grassroots (200 OK) - H1: "GRASSROOTS PROGRAMS"
+- /transparency (200 OK) - H1: "MONEY TRAIL"
+- /visuals (200 OK) - H1: "Impact Visualisations"
+- /visuals/network (200 OK)
+- /visuals/transformation (200 OK)
+- /visuals/flow (200 OK)
+- /visuals/connections (200 OK)
+
+**Console Errors Noted:**
+- /contained: CSP violations for Supabase media and Descript iframes
+- Multiple pages: CSS/JS MIME type errors (dev server issue, not production)
+
+**Fresh Screenshots Saved:**
+- .playwright-mcp/audit/special-pages/contained.png (2.0MB)
+- .playwright-mcp/audit/special-pages/art-innovation.png (509KB)
+- .playwright-mcp/audit/special-pages/youth-scout.png (570KB)
+- .playwright-mcp/audit/special-pages/talent-scout.png (1.3MB)
+- .playwright-mcp/audit/special-pages/flywheel.png (510KB)
+- .playwright-mcp/audit/special-pages/roadmap.png (792KB)
+- .playwright-mcp/audit/special-pages/grassroots.png (1.0MB)
+- .playwright-mcp/audit/special-pages/transparency.png (721KB)
+- .playwright-mcp/audit/special-pages/visuals.png (320KB)
+- .playwright-mcp/audit/special-pages/visuals-*.png (4 subpage screenshots)
+- .playwright-mcp/audit/special-pages/contained-*.png (3 subpage screenshots)
+
+**Status:** PASS - All acceptance criteria verified
+
+---
+
+## 2026-01-07T17:00:00Z - Feature: audit-wiki-content (Priority 9)
+
+**Feature Completed:** Audit Wiki & Content Strategy
+
+**Summary:**
+Used Playwright to audit the Wiki section (/wiki). The Wiki is a **strategic asset** for funder engagement, containing the comprehensive Mindaroo Foundation Pitch Package (70K+ words across 7 pages). The main Wiki index and all Mindaroo pitch sub-pages load successfully with rich content. Dynamic slug routes (/wiki/[slug]) have a technical build issue causing 500 errors.
+
+**Key Highlights:**
+- Wiki Index: 4 content categories (Strategic Planning, Budget & Funding, Platform Documentation, Technical Documentation)
+- Mindaroo Pitch Package: 7 comprehensive documents:
+  - Pitch Hub (overview with $10.5M ask, 29 communities, 16 Indigenous staff)
+  - One-Page Executive Pitch (3K words - WHY/WHAT/HOW format)
+  - Budget Breakdown (8K words - CORE/NETWORK model, year-by-year tables)
+  - Research Paper (30K+ words - international case studies, Australian success stories)
+  - Screenshots Gallery (19 screenshots of live platform)
+  - Strategic Pitch (21K words)
+  - Sovereignty Flywheel Visual (6K words)
+- All Mindaroo pitch pages demonstrate investment-readiness
+
+**Acceptance Criteria Met:**
+- [x] Wiki index page loads - rich content, clear navigation, 4 categories
+- [x] Wiki articles render - Mindaroo pitch package (7 pages) all working
+- [x] Navigation works - sidebar, breadcrumbs, back links all functional
+- [x] Content gaps documented - dynamic slug routes broken, additional funder packages needed
+- [x] Strategic recommendations created - fix build issue, add funder quick links, add case studies
+- [x] Audit report created at ralph/audit-reports/wiki-content.md
+
+**Issues Found:**
+- HIGH: Dynamic slug routes (/wiki/[slug]) return 500 error - "Cannot find module './vendor-chunks/@tanstack.js'"
+- Affected pages: /wiki/strategic-overview, /wiki/executive-summary, /wiki/admin-user-guide, etc.
+- LOW: No packages prepared for other funders (PRF, Tim Fairfax, etc.)
+
+**Content Gap Analysis:**
+- Well-covered: Funder pitch materials, budget documentation, research evidence
+- Gaps: Platform documentation (broken), other funder packages, implementation guides
+
+**Strategic Recommendations for Funders:**
+1. $10.5M ask over 3 years (BASE scenario)
+2. 29 communities reached through CORE/NETWORK model
+3. 48% Indigenous workforce by Year 3
+4. $303K platform value already created
+5. Not vaporware - live working platform
+
+**Files Modified:**
+- ralph/audit-reports/wiki-content.md (created - comprehensive audit report)
+- ralph/prd.json (updated passes: true for audit-wiki-content)
+- ralph/progress.txt (this entry)
+
+**Screenshots Saved:**
+- .playwright-mcp/audit/wiki-content/wiki-index.png
+- .playwright-mcp/audit/wiki-content/mindaroo-pitch.png
+- .playwright-mcp/audit/wiki-content/one-pager.png
+- .playwright-mcp/audit/wiki-content/budget-breakdown.png
+- .playwright-mcp/audit/wiki-content/research-paper.png
+- .playwright-mcp/audit/wiki-content/screenshots.png
+- .playwright-mcp/audit/wiki-content/strategic-overview-error.png
+- .playwright-mcp/audit/wiki-content/executive-summary-error.png
+- .playwright-mcp/audit/wiki-content/admin-user-guide-error.png
+
+---

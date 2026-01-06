@@ -142,7 +142,7 @@
         "Audit report created at ralph/audit-reports/wiki-content.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": false
+      "passes": true
     },
     {
       "id": "audit-blog-gallery",
