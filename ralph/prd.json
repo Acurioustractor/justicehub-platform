@@ -46,7 +46,7 @@
         "Audit report created at ralph/audit-reports/intelligence.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": false
+      "passes": true
     },
     {
       "id": "audit-network-services",

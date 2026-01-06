@@ -61,3 +61,42 @@ Used Playwright to audit all Stories section pages: /stories, /stories/the-patte
 - .playwright-mcp/audit/stories/stories-new.png
 
 ---
+
+## 2026-01-07T12:00:00Z - Feature: audit-intelligence-section (Priority 3)
+
+**Feature Completed:** Audit Intelligence Hub
+
+**Summary:**
+Used Playwright to audit all 5 Intelligence Hub pages: /intelligence, /intelligence/evidence, /intelligence/interventions, /intelligence/portfolio, /intelligence/nt-showcase. This is a KEY FUNDER SHOWCASE section demonstrating ALMA (Adaptive Learning & Measurement Architecture). All pages load successfully with no console errors. The hub showcases 951 documented interventions across 8 Australian states with emphasis on Aboriginal community control and evidence-based outcomes.
+
+**Key Highlights:**
+- Intelligence Hub: 951 interventions, 5 evidence records, 26 outcomes, 8/8 states
+- Interventions Database: Robust filtering by state, type, and consent level
+- Portfolio Analytics: Funder-focused pricing models ($50-75K state license, $100K corporate)
+- NT Showcase: Oochiumpa benchmark with 95% offending reduction vs 40% detention recidivism
+
+**Acceptance Criteria Met:**
+- [x] Intelligence hub displays stats - 951 interventions, 5 evidence, 26 outcomes, 8 states
+- [x] Evidence search/filter works - search box and type dropdown functional
+- [x] Interventions database works - 951 programs with state/type/consent filters, pagination
+- [x] Portfolio analytics loads - stats, funding opportunities, partnership pricing
+- [x] Audit report created at ralph/audit-reports/intelligence.md
+
+**Minor Issues Found:**
+- Evidence counter shows "0" but 5 items display (display inconsistency)
+- Evidence items show "Untitled evidence" (data enrichment needed)
+- Copyright year shows 2024 (should be 2026)
+
+**Files Modified:**
+- ralph/audit-reports/intelligence.md (created - comprehensive audit report)
+- ralph/prd.json (updated passes: true for audit-intelligence-section)
+- ralph/progress.txt (this entry)
+
+**Screenshots Saved:**
+- .playwright-mcp/audit/intelligence/intelligence-hub.png
+- .playwright-mcp/audit/intelligence/evidence.png
+- .playwright-mcp/audit/intelligence/interventions.png
+- .playwright-mcp/audit/intelligence/portfolio.png
+- .playwright-mcp/audit/intelligence/nt-showcase.png
+
+---
