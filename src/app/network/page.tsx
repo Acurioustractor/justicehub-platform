@@ -1,25 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { MapPin, Calendar, Users, ArrowRight, ExternalLink, Mail } from 'lucide-react';
+import { MapPin, Calendar, Users, ArrowRight, ExternalLink, Mail, Filter, X } from 'lucide-react';
+import AustraliaNodesMap from '@/components/AustraliaNodesMap';
 import type { JusticeHubNode } from '@/components/AustraliaNodesMap';
 
-// Dynamic import to avoid SSR issues with MapLibre
-const AustraliaNodesMap = dynamic(() => import('@/components/AustraliaNodesMap'), {
-  ssr: false,
-  loading: () => (
-    <div className="h-[600px] bg-sand-100 border-2 border-black flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ochre-600 mx-auto mb-4"></div>
-        <p className="text-earth-600">Loading map...</p>
-      </div>
-    </div>
-  ),
-});
+type NodeStatus = 'all' | 'active' | 'forming' | 'planned';
 
 interface Event {
   id: string;
@@ -36,6 +25,7 @@ export default function NetworkPage() {
   const [selectedNode, setSelectedNode] = useState<JusticeHubNode | null>(null);
   const [loading, setLoading] = useState(true);
   const [interventionCounts, setInterventionCounts] = useState<Record<string, number>>({});
+  const [statusFilter, setStatusFilter] = useState<NodeStatus>('all');
 
   useEffect(() => {
     async function fetchData() {
@@ -46,8 +36,7 @@ export default function NetworkPage() {
         .from('justicehub_nodes')
         .select(`
           id, name, node_type, state_code, country, description, status,
-          latitude, longitude, contact_email, website_url,
-          lead_organization:organizations(id, name)
+          latitude, longitude, contact_email, website_url
         `)
         .order('name');
 
@@ -118,6 +107,12 @@ export default function NetworkPage() {
   const formingNodes = nodes.filter(n => n.status === 'forming');
   const plannedNodes = nodes.filter(n => n.status === 'planned');
 
+  // Filter nodes based on status filter
+  const filteredNodes = useMemo(() => {
+    if (statusFilter === 'all') return nodes;
+    return nodes.filter(n => n.status === statusFilter);
+  }, [nodes, statusFilter]);
+
   return (
     <div className="min-h-screen bg-white page-content">
       <Navigation />
@@ -133,19 +128,61 @@ export default function NetworkPage() {
               A growing network of state-based nodes coordinating youth justice reform across Australia and internationally.
             </p>
 
-            <div className="flex flex-wrap gap-6">
-              <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded-full bg-eucalyptus-500"></div>
-                <span className="font-medium">{activeNodes.length} Active</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded-full bg-amber-500"></div>
-                <span className="font-medium">{formingNodes.length} Forming</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded-full bg-gray-400"></div>
-                <span className="font-medium">{plannedNodes.length} Planned</span>
-              </div>
+            {/* Status Filter Buttons */}
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => setStatusFilter('all')}
+                className={`flex items-center gap-2 px-4 py-2 border-2 border-black font-medium transition-colors ${
+                  statusFilter === 'all'
+                    ? 'bg-black text-white'
+                    : 'bg-white hover:bg-sand-100'
+                }`}
+              >
+                <Filter className="w-4 h-4" />
+                All ({nodes.length})
+              </button>
+              <button
+                onClick={() => setStatusFilter('active')}
+                className={`flex items-center gap-2 px-4 py-2 border-2 border-black font-medium transition-colors ${
+                  statusFilter === 'active'
+                    ? 'bg-eucalyptus-600 text-white border-eucalyptus-600'
+                    : 'bg-white hover:bg-eucalyptus-50'
+                }`}
+              >
+                <div className="w-3 h-3 rounded-full bg-eucalyptus-500"></div>
+                Active ({activeNodes.length})
+              </button>
+              <button
+                onClick={() => setStatusFilter('forming')}
+                className={`flex items-center gap-2 px-4 py-2 border-2 border-black font-medium transition-colors ${
+                  statusFilter === 'forming'
+                    ? 'bg-amber-500 text-white border-amber-500'
+                    : 'bg-white hover:bg-amber-50'
+                }`}
+              >
+                <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                Forming ({formingNodes.length})
+              </button>
+              <button
+                onClick={() => setStatusFilter('planned')}
+                className={`flex items-center gap-2 px-4 py-2 border-2 border-black font-medium transition-colors ${
+                  statusFilter === 'planned'
+                    ? 'bg-gray-600 text-white border-gray-600'
+                    : 'bg-white hover:bg-gray-100'
+                }`}
+              >
+                <div className="w-3 h-3 rounded-full bg-gray-400"></div>
+                Planned ({plannedNodes.length})
+              </button>
+              {statusFilter !== 'all' && (
+                <button
+                  onClick={() => setStatusFilter('all')}
+                  className="flex items-center gap-1 px-3 py-2 text-earth-600 hover:text-ochre-600 font-medium"
+                >
+                  <X className="w-4 h-4" />
+                  Clear filter
+                </button>
+              )}
             </div>
           </div>
         </section>
@@ -164,7 +201,7 @@ export default function NetworkPage() {
                 </div>
               ) : (
                 <AustraliaNodesMap
-                  nodes={nodes}
+                  nodes={filteredNodes}
                   height="600px"
                   onNodeSelect={handleNodeSelect}
                   selectedNodeId={selectedNode?.id}
@@ -215,6 +252,15 @@ export default function NetworkPage() {
                   </div>
 
                   <div className="space-y-3">
+                    {/* View Full Details Link */}
+                    <Link
+                      href={`/network/${selectedNode.id}`}
+                      className="flex items-center justify-between p-3 bg-black text-white hover:bg-gray-800 transition-colors"
+                    >
+                      <span className="font-medium">View Full Details</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+
                     {selectedNode.state_code && (
                       <Link
                         href={`/youth-justice-report/interventions?state=${selectedNode.state_code}`}
@@ -250,30 +296,37 @@ export default function NetworkPage() {
                 </div>
               ) : (
                 <div className="p-6">
-                  <h2 className="text-lg font-bold mb-4">All Nodes</h2>
+                  <h2 className="text-lg font-bold mb-4">
+                    {statusFilter === 'all' ? 'All Nodes' : `${statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} Nodes`}
+                    <span className="text-earth-500 font-normal ml-2">({filteredNodes.length})</span>
+                  </h2>
 
                   <div className="space-y-2 max-h-[500px] overflow-y-auto">
-                    {nodes.map((node) => (
-                      <button
-                        key={node.id}
-                        onClick={() => setSelectedNode(node)}
-                        className="w-full text-left p-3 border-2 border-black hover:bg-ochre-50 transition-colors"
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <div
-                            className="w-2 h-2 rounded-full"
-                            style={{
-                              background: node.status === 'active' ? '#059669' :
-                                node.status === 'forming' ? '#d97706' : '#6b7280'
-                            }}
-                          />
-                          <span className="font-bold">{node.name}</span>
-                        </div>
-                        <div className="text-sm text-earth-600">
-                          {node.intervention_count || 0} interventions
-                        </div>
-                      </button>
-                    ))}
+                    {filteredNodes.length === 0 ? (
+                      <p className="text-earth-600 text-sm py-4">No nodes match the current filter.</p>
+                    ) : (
+                      filteredNodes.map((node) => (
+                        <button
+                          key={node.id}
+                          onClick={() => setSelectedNode(node)}
+                          className="w-full text-left p-3 border-2 border-black hover:bg-ochre-50 transition-colors"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <div
+                              className="w-2 h-2 rounded-full"
+                              style={{
+                                background: node.status === 'active' ? '#059669' :
+                                  node.status === 'forming' ? '#d97706' : '#6b7280'
+                              }}
+                            />
+                            <span className="font-bold">{node.name}</span>
+                          </div>
+                          <div className="text-sm text-earth-600">
+                            {node.intervention_count || 0} interventions
+                          </div>
+                        </button>
+                      ))
+                    )}
                   </div>
                 </div>
               )}

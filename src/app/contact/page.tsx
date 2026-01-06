@@ -74,15 +74,18 @@ export default function ContactPage() {
     setSubmitting(true);
 
     try {
-      // TODO: Implement actual API call
-      // const response = await fetch('/api/contact', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
-      // });
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.error || 'Failed to send message. Please try again.');
+        return;
+      }
 
       setSubmitted(true);
     } catch (err) {
