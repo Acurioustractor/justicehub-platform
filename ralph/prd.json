@@ -78,7 +78,7 @@
         "Audit report created at ralph/audit-reports/centre-excellence.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": false
+      "passes": true
     },
     {
       "id": "audit-events-stewards",

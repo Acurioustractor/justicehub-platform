@@ -143,3 +143,45 @@ Used Playwright to audit all 6 Network & Services pages: /network, /services, /o
 - .playwright-mcp/audit/network-services/community-map.png
 
 ---
+
+## 2026-01-07T13:30:00Z - Feature: audit-centre-excellence (Priority 5)
+
+**Feature Completed:** Audit Centre of Excellence
+
+**Summary:**
+Used Playwright to audit all 6 Centre of Excellence pages: /centre-of-excellence, /centre-of-excellence/research, /centre-of-excellence/best-practice, /centre-of-excellence/people, /centre-of-excellence/global-insights, /centre-of-excellence/map. This is a KEY FUNDER SHOWCASE section demonstrating JusticeHub's academic credibility and international reach. All pages load successfully with rich content. One data loading issue was identified on the Global Insights page (programs not loading).
+
+**Key Highlights:**
+- Centre Hub: Comprehensive page with Vision/Mission, 4 research areas, 4 case studies with impact metrics (85% reoffending reduction), training stats (1,200+ professionals, 24 programs, 180+ experts, 15 international partners)
+- Research: 27 peer-reviewed research items with filtering by category, jurisdiction, type
+- Best Practice: 4 Australian state frameworks (NSW Youth Koori Court 40% custody reduction, Victoria MST/FFT trials, Queensland $134M investment, WA 71% Aboriginal overrepresentation)
+- People: 10 team members including 6 leadership (Benjamin Knight, Nicholas Marchesi, Patricia Ann Miller AO, Uncle Dale, Kristy Bloomfield, Tanya Turner) and 4 extended team
+- Global Insights: Headline stats (13.6% Diagrama, 86% NZ satisfaction, 4 Finland custody, Age 12 Scotland, 8% Missouri) - BUT programs not loading (shows 0)
+- Global Map: 25 locations (16 international models, 4 Australian frameworks, 5 research sources) with filtering and detailed cards
+
+**Acceptance Criteria Met:**
+- [x] Centre hub page loads - comprehensive content with stats
+- [x] Research section works - 27 items with filtering
+- [x] Best practice section works - 4 Australian frameworks
+- [x] People directory works - 10 team members + advisory groups
+- [x] Global map renders - 25 locations with filtering
+- [x] Audit report created at ralph/audit-reports/centre-excellence.md
+
+**Issues Found:**
+- MEDIUM: Global Insights page shows "Loading programs..." and "Showing 0 programs" (data fetch issue)
+- LOW: Copyright year shows 2024 (should be 2026) across all pages
+
+**Files Modified:**
+- ralph/audit-reports/centre-excellence.md (created - comprehensive audit report)
+- ralph/prd.json (updated passes: true for audit-centre-excellence)
+- ralph/progress.txt (this entry)
+
+**Screenshots Saved:**
+- .playwright-mcp/audit/centre-excellence/centre-hub.png
+- .playwright-mcp/audit/centre-excellence/research.png
+- .playwright-mcp/audit/centre-excellence/best-practice.png
+- .playwright-mcp/audit/centre-excellence/people.png
+- .playwright-mcp/audit/centre-excellence/global-insights.png
+- .playwright-mcp/audit/centre-excellence/global-map.png
+
+---
