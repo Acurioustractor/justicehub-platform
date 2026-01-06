@@ -110,7 +110,7 @@
         "Audit report created at ralph/audit-reports/youth-justice-report.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": false
+      "passes": true
     },
     {
       "id": "audit-special-pages",
