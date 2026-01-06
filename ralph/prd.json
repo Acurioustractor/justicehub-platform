@@ -188,7 +188,7 @@
         "Guide created at ralph/audit-reports/ERROR-FIX-GUIDE.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": false
+      "passes": true
     },
     {
       "id": "funder-strategic-plan",

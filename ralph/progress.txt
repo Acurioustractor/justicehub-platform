@@ -533,3 +533,60 @@ Comprehensive brand alignment review across all 48+ audited pages. Reviewed all 
 - ralph/progress.txt (this entry)
 
 ---
+
+## 2026-01-07T09:45:00Z - Feature: error-fix-guide (Priority 12)
+
+**Feature Completed:** Create Error Fix Guide
+
+**Summary:**
+Compiled all errors, broken links, console errors, and issues found during the comprehensive 11-audit site review. Created a prioritized fix guide at ralph/audit-reports/ERROR-FIX-GUIDE.md with specific file locations and recommended fixes. A total of 37 issues were documented across 48+ pages, categorized by severity: 7 HIGH, 12 MEDIUM, 18 LOW. No critical blocking issues were found.
+
+**Key Issue Categories:**
+- **HIGH Priority (7 issues):**
+  - H1: Interventions by State data not loading (infinite loading state)
+  - H2: Organization slugs return null (467 orgs affected)
+  - H3: Gallery detail pages return 404 (routes don't exist)
+  - H4: Wiki dynamic routes return 500 error (@tanstack dependency)
+  - H5: Global Insights programs not loading
+  - H6: Copyright year outdated (affects all 48+ pages)
+  - H7: Sidebar chat link broken (/chat vs /youth-justice-report/chat)
+
+- **MEDIUM Priority (12 issues):**
+  - Evidence counter display inconsistency
+  - Historical inquiries count mismatch
+  - Video loading errors on CONTAINED
+  - Missing autocomplete attributes
+  - Gallery page title generic
+  - Missing og:image tags
+  - Missing canonical URLs
+  - Loading states inconsistency
+  - Services counter shows 0 during load
+  - Talent Scout purple accent off-palette
+  - Evidence items "Untitled"
+  - 951 Evidence-Backed = Total Programs (calculation issue)
+
+- **LOW Priority (18 issues):**
+  - Minor 404 resource errors
+  - CSP violation for Descript
+  - Missing profile images
+  - Various outdated dates (Privacy Policy, Terms, Roadmap, etc.)
+  - Story links use numeric IDs
+  - 0% Outcomes Data display
+  - Blog has no content
+  - Empty sections in Portfolio
+  - Generic page titles
+  - Dev server CSS/JS errors
+
+**Acceptance Criteria Met:**
+- [x] All errors compiled - 37 issues across 11 audit reports
+- [x] Errors categorized by severity - HIGH (7), MEDIUM (12), LOW (18)
+- [x] Fix recommendations provided - each issue includes specific fix recommendation
+- [x] File locations specified - component/file paths provided where applicable
+- [x] Guide created at ralph/audit-reports/ERROR-FIX-GUIDE.md
+
+**Files Modified:**
+- ralph/audit-reports/ERROR-FIX-GUIDE.md (created - comprehensive 400+ line fix guide)
+- ralph/prd.json (updated passes: true for error-fix-guide)
+- ralph/progress.txt (this entry)
+
+---
