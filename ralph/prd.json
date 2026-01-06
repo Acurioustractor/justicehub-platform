@@ -62,7 +62,7 @@
         "Audit report created at ralph/audit-reports/network-services.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": false
+      "passes": true
     },
     {
       "id": "audit-centre-excellence",
