@@ -126,7 +126,7 @@
         "Audit report created at ralph/audit-reports/special-pages.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": false
+      "passes": true
     },
     {
       "id": "audit-wiki-content",
