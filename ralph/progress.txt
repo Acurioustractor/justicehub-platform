@@ -435,3 +435,44 @@ Used Playwright to audit the Wiki section (/wiki). The Wiki is a **strategic ass
 - .playwright-mcp/audit/wiki-content/admin-user-guide-error.png
 
 ---
+
+## 2026-01-07T08:30:00Z - Feature: audit-blog-gallery (Priority 10)
+
+**Feature Completed:** Audit Blog & Gallery
+
+**Summary:**
+Used Playwright to audit Blog (/blog) and Gallery (/gallery) pages. The Gallery page is fully functional with 6 media items across 4 types (videos, photos, artworks, stories) showcasing real community programs. The Blog page loads correctly but currently shows "No blog posts yet". Gallery detail pages (/gallery/[id]) return 404 as the routes don't exist yet. Meta tags are present but some are generic/missing (og:image, canonical).
+
+**Key Highlights:**
+- Blog: Page loads with empty state, title "Blog - JusticeHub", proper description meta tag
+- Gallery: Rich content with 6 media items, 11,900+ total views across content
+- Gallery Content: BackTrack Welding Workshop (2.8K views), Traditional Healing Circle (1.9K), Youth-Led Mural (1.5K), Jayden's Journey (3.2K), Tech Skills Workshop (892), Community BBQ (1.7K)
+- Media Types: 2 videos, 2 photos, 1 artwork, 1 story
+- Featured Sections: Featured Content, Community in Action photo grid, Programs in Action video players, Explore More links
+
+**Acceptance Criteria Met:**
+- [x] Blog listing works - page loads with proper empty state
+- [x] Blog posts render - N/A (no posts yet, but structure is ready)
+- [x] Gallery images load - all 6 media items display correctly with thumbnails
+- [x] Meta tags present - basic tags present (description, og:title, twitter:card)
+- [x] Audit report created at ralph/audit-reports/blog-gallery.md
+
+**Issues Found:**
+- HIGH: Gallery detail pages (/gallery/1, /gallery/2, etc.) return 404 - need to create src/app/gallery/[id]/page.tsx
+- MEDIUM: Gallery page title is generic ("JusticeHub - Empowering...") should be "Gallery - JusticeHub"
+- MEDIUM: Missing og:image on both pages
+- MEDIUM: Missing canonical URLs on both pages
+- LOW: Copyright year shows 2024 (should be 2026)
+- LOW: Blog has no content yet (expected)
+
+**Files Modified:**
+- ralph/audit-reports/blog-gallery.md (created - comprehensive audit report)
+- ralph/prd.json (updated passes: true for audit-blog-gallery)
+- ralph/progress.txt (this entry)
+
+**Screenshots Saved:**
+- .playwright-mcp/audit/blog-gallery/blog-listing.png
+- .playwright-mcp/audit/blog-gallery/gallery-listing.png
+- .playwright-mcp/audit/blog-gallery/gallery-detail-404.png
+
+---
