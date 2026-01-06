@@ -61,7 +61,7 @@
         "Build passes without errors"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": false
+      "passes": true
     },
     {
       "id": "justicehub-network-exploration",
