@@ -94,7 +94,7 @@
         "Audit report created at ralph/audit-reports/events-stewards.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": false
+      "passes": true
     },
     {
       "id": "audit-youth-justice-report",
