@@ -52,3 +52,31 @@ Reviewed and completed the event registration flow. The existing events listing 
 
 ---
 
+## 2026-01-07T10:00:00Z - justicehub-steward-signup
+
+**Feature Completed:** Review Journey 3: Steward Signup Flow
+
+**Summary:**
+Reviewed and verified the steward/volunteer signup flow. The existing implementation was comprehensive with:
+- Multi-step signup wizard at /signup?role=steward (account → profile → steward-info)
+- Dedicated landing page at /stewards with tier options (Community, Professional, Organization)
+- Integration with GoHighLevel CRM for contact management and tagging
+- Database persistence to public_profiles, users, and newsletter_subscriptions tables
+
+Fixed two issues:
+1. Removed 'source' column reference from /api/ghl/signup (column doesn't exist in newsletter_subscriptions table)
+2. Added database migration to create 'metadata' JSONB column in public_profiles for storing steward-specific data (motivation, experience, commitments)
+
+**Acceptance Criteria Met:**
+- ✅ Steward signup page is accessible at /signup?role=steward
+- ✅ Form validates required fields (email, password 8+ chars, password match, full name, steward motivation)
+- ✅ Submission creates records in database (auth user, public_profiles with role_tags=['steward'], users, newsletter_subscriptions)
+- ✅ Confirmation shown via redirect to profile page after signup + Supabase sends email confirmation
+- ✅ Build passes without errors
+
+**Files Modified:**
+- src/app/api/ghl/signup/route.ts (fixed source column issue)
+- supabase/migrations/20260107000001_add_metadata_to_profiles.sql (created)
+
+---
+
