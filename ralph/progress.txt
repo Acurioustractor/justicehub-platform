@@ -1,0 +1,54 @@
+# Ralph Progress Log
+# Project: ACT Global Infrastructure
+# Started: 2026-01-06T00:00:00Z
+
+---
+
+## 2026-01-06T12:00:00Z - justicehub-map-fix
+
+**Feature Completed:** Fix JusticeHub Australia Nodes Map
+
+**Summary:**
+Fixed the AustraliaNodesMap component to prevent markers from "jumping" on hover. The issue was caused by changing the marker size during hover states. The fix implements:
+- Fixed-size container wrapping each marker to prevent layout shifts
+- Replaced size-changing hover effect with a pulsing ring indicator
+- Added tooltip arrow pointing to the marker
+- Made tooltips non-interactive to prevent hover flicker
+
+**Acceptance Criteria Met:**
+- ✅ Map displays with Australia background
+- ✅ Nodes appear at correct state/territory positions (hardcoded %)
+- ✅ Hover shows tooltip without moving the marker
+- ✅ Click selects the node
+- ✅ Build passes without errors
+
+**Files Modified:**
+- src/components/AustraliaNodesMap.tsx
+
+---
+
+## 2026-01-06T14:30:00Z - justicehub-event-registration
+
+**Feature Completed:** Review Journey 2: Event Registration Flow
+
+**Summary:**
+Reviewed and completed the event registration flow. The existing events listing page and event detail page were already functional. The missing piece was the generic event registration route `/events/[id]/register` which was referenced in the event detail page but did not exist. Created a new registration page with:
+- 3-step registration wizard (Your Details, Preferences, Confirmation)
+- Dynamic event fetching and validation (redirects if event is past)
+- Integration with existing /api/ghl/register endpoint
+- GoHighLevel CRM sync and database submission
+- JusticeHub brand-consistent styling
+- Confirmation display with event details after successful registration
+
+**Acceptance Criteria Met:**
+- ✅ Events page displays upcoming events
+- ✅ Event detail page shows full information
+- ✅ Registration form works and submits to database
+- ✅ Confirmation is shown after registration
+- ✅ Build passes without errors
+
+**Files Modified:**
+- src/app/events/[id]/register/page.tsx (created)
+
+---
+
