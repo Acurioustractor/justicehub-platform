@@ -1,186 +1,35 @@
 # Ralph Progress Log
-# Project: ACT Global Infrastructure
-# Started: 2026-01-06T00:00:00Z
+# Project: JusticeHub Full Site Audit
+# Started: 2026-01-07T06:45:00Z
+# Previous session completed 5 journey reviews - now starting comprehensive audit
 
 ---
 
-## 2026-01-06T12:00:00Z - justicehub-map-fix
+## 2026-01-07T10:30:00Z - Feature: audit-core-pages (Priority 1)
 
-**Feature Completed:** Fix JusticeHub Australia Nodes Map
+**Feature Completed:** Audit Core Public Pages
 
 **Summary:**
-Fixed the AustraliaNodesMap component to prevent markers from "jumping" on hover. The issue was caused by changing the marker size during hover states. The fix implements:
-- Fixed-size container wrapping each marker to prevent layout shifts
-- Replaced size-changing hover effect with a pulsing ring indicator
-- Added tooltip arrow pointing to the marker
-- Made tooltips non-interactive to prevent hover flicker
+Used Playwright to audit all 6 core public pages (Home, About, How It Works, Contact, Privacy, Terms). All pages load successfully without blocking errors. Screenshots captured for each page. Minor issues documented including one 404 resource error on home page and outdated copyright year (2024 instead of 2026).
 
 **Acceptance Criteria Met:**
-- ✅ Map displays with Australia background
-- ✅ Nodes appear at correct state/territory positions (hardcoded %)
-- ✅ Hover shows tooltip without moving the marker
-- ✅ Click selects the node
-- ✅ Build passes without errors
+- [x] All 6 pages load without errors
+- [x] Screenshots saved for each page (in .playwright-mcp/audit/)
+- [x] Console errors logged (1 minor 404 on home page)
+- [x] Brand issues documented (consistent brutalist design, minor copyright year issue)
+- [x] Audit report created at ralph/audit-reports/core-pages.md
 
 **Files Modified:**
-- src/components/AustraliaNodesMap.tsx
+- ralph/audit-reports/core-pages.md (created - comprehensive audit report)
+- ralph/prd.json (updated passes: true)
+- ralph/progress.txt (this entry)
+
+**Screenshots Saved:**
+- .playwright-mcp/audit/home.png
+- .playwright-mcp/audit/about.png
+- .playwright-mcp/audit/how-it-works.png
+- .playwright-mcp/audit/contact.png
+- .playwright-mcp/audit/privacy.png
+- .playwright-mcp/audit/terms.png
 
 ---
-
-## 2026-01-06T14:30:00Z - justicehub-event-registration
-
-**Feature Completed:** Review Journey 2: Event Registration Flow
-
-**Summary:**
-Reviewed and completed the event registration flow. The existing events listing page and event detail page were already functional. The missing piece was the generic event registration route `/events/[id]/register` which was referenced in the event detail page but did not exist. Created a new registration page with:
-- 3-step registration wizard (Your Details, Preferences, Confirmation)
-- Dynamic event fetching and validation (redirects if event is past)
-- Integration with existing /api/ghl/register endpoint
-- GoHighLevel CRM sync and database submission
-- JusticeHub brand-consistent styling
-- Confirmation display with event details after successful registration
-
-**Acceptance Criteria Met:**
-- ✅ Events page displays upcoming events
-- ✅ Event detail page shows full information
-- ✅ Registration form works and submits to database
-- ✅ Confirmation is shown after registration
-- ✅ Build passes without errors
-
-**Files Modified:**
-- src/app/events/[id]/register/page.tsx (created)
-
----
-
-## 2026-01-07T10:00:00Z - justicehub-steward-signup
-
-**Feature Completed:** Review Journey 3: Steward Signup Flow
-
-**Summary:**
-Reviewed and verified the steward/volunteer signup flow. The existing implementation was comprehensive with:
-- Multi-step signup wizard at /signup?role=steward (account → profile → steward-info)
-- Dedicated landing page at /stewards with tier options (Community, Professional, Organization)
-- Integration with GoHighLevel CRM for contact management and tagging
-- Database persistence to public_profiles, users, and newsletter_subscriptions tables
-
-Fixed two issues:
-1. Removed 'source' column reference from /api/ghl/signup (column doesn't exist in newsletter_subscriptions table)
-2. Added database migration to create 'metadata' JSONB column in public_profiles for storing steward-specific data (motivation, experience, commitments)
-
-**Acceptance Criteria Met:**
-- ✅ Steward signup page is accessible at /signup?role=steward
-- ✅ Form validates required fields (email, password 8+ chars, password match, full name, steward motivation)
-- ✅ Submission creates records in database (auth user, public_profiles with role_tags=['steward'], users, newsletter_subscriptions)
-- ✅ Confirmation shown via redirect to profile page after signup + Supabase sends email confirmation
-- ✅ Build passes without errors
-
-**Files Modified:**
-- src/app/api/ghl/signup/route.ts (fixed source column issue)
-- supabase/migrations/20260107000001_add_metadata_to_profiles.sql (created)
-
----
-
-## 2026-01-07T14:00:00Z - justicehub-intelligence-research
-
-**Feature Completed:** Review Journey 4: Intelligence Research
-
-**Summary:**
-Reviewed the complete Intelligence/Research discovery flow. The existing implementation is comprehensive and fully functional. Verified all components work correctly:
-
-**Intelligence Hub (/intelligence):**
-- Main landing page with ALMA stats (interventions, evidence, outcomes, states coverage)
-- Four exploration cards linking to Media Intelligence, Intervention Database, Portfolio Analytics, and The Pattern Story
-- Recent intelligence updates showing policy tensions and emerging patterns
-
-**Evidence Research (/intelligence/evidence):**
-- Client-side filtering with real-time search across title, findings, and author
-- Evidence type dropdown filter (8 types: RCT, Quasi-experimental, Program evaluation, etc.)
-- Sticky filter bar with clear filters button
-- Results display with evidence type badges, author, organization, publication date
-- Links to detail pages for each evidence record
-
-**Interventions Database (/intelligence/interventions):**
-- Server-side filtering with URL search params
-- Filters: search query, state, type, consent level, sort order
-- Pagination with previous/next controls
-- InterventionCard component with evidence badges and consent indicators
-
-**Detail Pages:**
-- Evidence detail (/intelligence/evidence/[id]): Key findings, methodology, study population, geographic context, DOI citations, source URLs, consent level, cultural authority
-- Intervention detail (/intelligence/interventions/[id]): Description, evidence base, outcomes, contexts, source documents, portfolio score card with 5 signals, similar programs sidebar
-- Media detail (/intelligence/media/[id]): Sentiment analysis, key quotes, topics, geographic focus, stakeholders, policy implications
-
-**Search & Filtering:**
-- Unified search API (/api/search) searching across interventions, services, people, organizations
-- Related content API (/api/related-content) for showing citations and linked content
-- All filters work correctly with real-time updates
-
-**Citations & Sources:**
-- Evidence records show source title, author (with profile link), publication year, DOI (clickable), source URL
-- Media articles show source name, author, published date, article URL
-- Interventions show organization, contact info, website, cultural authority attribution
-- Data governance tags displayed: consent level, cultural authority, permitted uses
-
-**Acceptance Criteria Met:**
-- ✅ Intelligence page displays available research (hub with stats and exploration cards)
-- ✅ Search and filtering works (evidence: client-side; interventions: server-side with URL params)
-- ✅ Detail pages show full content (evidence, interventions, media all have comprehensive detail views)
-- ✅ Citations and sources are properly formatted (DOI links, source URLs, author profiles, cultural authority)
-- ✅ Build passes without errors
-
-**Files Modified:**
-- None required - existing implementation was complete and functional
-
----
-
-## 2026-01-07T16:30:00Z - justicehub-network-exploration
-
-**Feature Completed:** Review Journey 5: Network Exploration
-
-**Summary:**
-Reviewed and enhanced the network exploration flow. The existing network page displayed nodes on an Australia map with sidebar selection, but was missing key functionality. Implemented the following:
-
-**Node Detail Page (/network/[id]):**
-- Created comprehensive node detail page showing full node information
-- Status badge with color coding (active/forming/planned)
-- Location info and node type display
-- Stats cards showing intervention count and upcoming events
-- Lead organization link (when available)
-- Upcoming events section with event cards linking to event detail pages
-- Research & Interventions section with links to state-specific content
-- Contact CTA section with email and general inquiry options
-
-**Status Filtering:**
-- Added clickable filter buttons for All/Active/Forming/Planned statuses
-- Filter state persists in UI with visual feedback
-- Map and sidebar list update based on filter selection
-- Clear filter button appears when filter is active
-- Empty state message when no nodes match filter
-
-**Contact API Endpoint:**
-- Created /api/contact POST endpoint to handle contact form submissions
-- Validates required fields (name, email, message, category)
-- Saves submissions to contact_submissions table (with fallback logging if table doesn't exist)
-- Returns success/error responses with appropriate messages
-- Updated contact page to use real API instead of simulated timeout
-
-**Sidebar Enhancements:**
-- Added "View Full Details" button linking to node detail page
-- Updated sidebar header to show current filter and count
-- Improved empty state when no nodes match filter
-
-**Acceptance Criteria Met:**
-- ✅ Network page displays all nodes (with status indicators and intervention counts)
-- ✅ Node detail pages work (comprehensive /network/[id] page with events, research links, contact options)
-- ✅ Filtering by status works (clickable filter buttons, map and sidebar update accordingly)
-- ✅ Contact/connection functionality works (contact API endpoint created, contact form now submits properly)
-- ✅ Build passes without errors
-
-**Files Modified:**
-- src/app/network/page.tsx (added status filtering, view details link)
-- src/app/network/[id]/page.tsx (created - node detail page)
-- src/app/api/contact/route.ts (created - contact form API)
-- src/app/contact/page.tsx (updated to use real API)
-
----
-

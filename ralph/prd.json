@@ -1,82 +1,210 @@
 {
-  "project": "ACT Global Infrastructure",
-  "description": "Long-running agent tasks for ACT ecosystem projects",
-  "created": "2026-01-06",
+  "project": "JusticeHub Full Site Audit",
+  "description": "Comprehensive site audit using Playwright to review all pages, check for errors, validate brand alignment, and prepare strategic funder documentation",
+  "created": "2026-01-07",
   "features": [
     {
-      "id": "justicehub-map-fix",
+      "id": "audit-core-pages",
       "priority": 1,
-      "title": "Fix JusticeHub Australia Nodes Map",
-      "description": "The AustraliaNodesMap component needs to display nodes correctly positioned on an Australia map. Nodes should not fly around on hover. Use a simple static approach with hardcoded state positions.",
+      "title": "Audit Core Public Pages",
+      "description": "Use Playwright to screenshot and audit core public pages: Home (/), About (/about), How It Works (/how-it-works), Contact (/contact), Privacy (/privacy), Terms (/terms). Check for: broken layouts, missing content, console errors, brand alignment. Save screenshots to /tmp/audit/ and create audit report.",
       "acceptance_criteria": [
-        "Map displays with Australia background",
-        "Nodes appear at correct state/territory positions",
-        "Hover shows tooltip without moving the marker",
-        "Click selects the node",
-        "Build passes without errors"
+        "All 6 pages load without errors",
+        "Screenshots saved for each page",
+        "Console errors logged",
+        "Brand issues documented",
+        "Audit report created at ralph/audit-reports/core-pages.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
       "passes": true
     },
     {
-      "id": "justicehub-event-registration",
+      "id": "audit-stories-section",
       "priority": 2,
-      "title": "Review Journey 2: Event Registration Flow",
-      "description": "Review and ensure the event registration flow works correctly from discovery to confirmation.",
+      "title": "Audit Stories Section",
+      "description": "Use Playwright to audit Stories pages: /stories, /stories/the-pattern, /stories/intelligence, /stories/new. Check story cards render, navigation works, empathy ledger integration. Document any issues.",
       "acceptance_criteria": [
-        "Events page displays upcoming events",
-        "Event detail page shows full information",
-        "Registration form works and submits to database",
-        "Confirmation is shown after registration",
-        "Build passes without errors"
+        "Stories listing page works",
+        "Story detail pages load",
+        "The Pattern story page works",
+        "New story form accessible",
+        "Audit report created at ralph/audit-reports/stories.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": true
+      "passes": false
     },
     {
-      "id": "justicehub-steward-signup",
+      "id": "audit-intelligence-section",
       "priority": 3,
-      "title": "Review Journey 3: Steward Signup Flow",
-      "description": "Review and ensure the steward/volunteer signup process works correctly.",
+      "title": "Audit Intelligence Hub",
+      "description": "Use Playwright to audit Intelligence pages: /intelligence, /intelligence/evidence, /intelligence/interventions, /intelligence/portfolio, /intelligence/nt-showcase. Check ALMA stats display, filters work, detail pages load. This is a key funder showcase section.",
       "acceptance_criteria": [
-        "Steward signup page is accessible",
-        "Form validates required fields",
-        "Submission creates record in database",
-        "Confirmation email/message shown",
-        "Build passes without errors"
+        "Intelligence hub displays stats",
+        "Evidence search/filter works",
+        "Interventions database works",
+        "Portfolio analytics loads",
+        "Audit report created at ralph/audit-reports/intelligence.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": true
+      "passes": false
     },
     {
-      "id": "justicehub-intelligence-research",
+      "id": "audit-network-services",
       "priority": 4,
-      "title": "Review Journey 4: Intelligence Research",
-      "description": "Review and ensure the intelligence/research discovery flow works correctly.",
+      "title": "Audit Network & Services",
+      "description": "Use Playwright to audit Network and Services: /network, /services, /organizations, /people, /community-programs, /community-map. Check maps render, listings work, detail pages load, filters function.",
       "acceptance_criteria": [
-        "Intelligence page displays available research",
-        "Search and filtering works",
-        "Detail pages show full content",
-        "Citations and sources are properly formatted",
-        "Build passes without errors"
+        "Network map displays correctly",
+        "Services directory works",
+        "Organizations listing works",
+        "People directory works",
+        "Community programs loads",
+        "Audit report created at ralph/audit-reports/network-services.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": true
+      "passes": false
     },
     {
-      "id": "justicehub-network-exploration",
+      "id": "audit-centre-excellence",
       "priority": 5,
-      "title": "Review Journey 5: Network Exploration",
-      "description": "Review and ensure the network exploration flow works correctly.",
+      "title": "Audit Centre of Excellence",
+      "description": "Use Playwright to audit Centre of Excellence: /centre-of-excellence, /centre-of-excellence/research, /centre-of-excellence/best-practice, /centre-of-excellence/people, /centre-of-excellence/global-insights, /centre-of-excellence/map. Key research showcase for funders.",
       "acceptance_criteria": [
-        "Network page displays all nodes",
-        "Node detail pages work",
-        "Filtering by status works",
-        "Contact/connection functionality works",
-        "Build passes without errors"
+        "Centre hub page loads",
+        "Research section works",
+        "Best practice section works",
+        "People directory works",
+        "Global map renders",
+        "Audit report created at ralph/audit-reports/centre-excellence.md"
       ],
       "project_path": "/Users/benknight/Code/JusticeHub",
-      "passes": true
+      "passes": false
+    },
+    {
+      "id": "audit-events-stewards",
+      "priority": 6,
+      "title": "Audit Events & Stewards",
+      "description": "Use Playwright to audit Events and Stewards: /events, /stewards, /stewards/impact, /signup. Check event listings, registration flow, steward tiers, signup wizard.",
+      "acceptance_criteria": [
+        "Events page lists events",
+        "Event registration accessible",
+        "Stewards page shows tiers",
+        "Impact dashboard loads",
+        "Signup wizard works",
+        "Audit report created at ralph/audit-reports/events-stewards.md"
+      ],
+      "project_path": "/Users/benknight/Code/JusticeHub",
+      "passes": false
+    },
+    {
+      "id": "audit-youth-justice-report",
+      "priority": 7,
+      "title": "Audit Youth Justice Report Section",
+      "description": "Use Playwright to audit Youth Justice Report: /youth-justice-report, /youth-justice-report/inquiries, /youth-justice-report/recommendations, /youth-justice-report/research, /youth-justice-report/interventions, /youth-justice-report/international, /youth-justice-report/chat. Critical evidence section for funders.",
+      "acceptance_criteria": [
+        "Report hub loads",
+        "Inquiries section works",
+        "Recommendations display",
+        "Research section works",
+        "Chat interface works",
+        "Audit report created at ralph/audit-reports/youth-justice-report.md"
+      ],
+      "project_path": "/Users/benknight/Code/JusticeHub",
+      "passes": false
+    },
+    {
+      "id": "audit-special-pages",
+      "priority": 8,
+      "title": "Audit Special Feature Pages",
+      "description": "Use Playwright to audit special pages: /contained (documentary), /art-innovation, /youth-scout, /talent-scout, /flywheel, /roadmap, /grassroots, /transparency, /visuals/*. These showcase unique JusticeHub capabilities.",
+      "acceptance_criteria": [
+        "Contained documentary pages work",
+        "Art innovation section works",
+        "Youth Scout/Talent Scout work",
+        "Flywheel visualization works",
+        "Roadmap page loads",
+        "Audit report created at ralph/audit-reports/special-pages.md"
+      ],
+      "project_path": "/Users/benknight/Code/JusticeHub",
+      "passes": false
+    },
+    {
+      "id": "audit-wiki-content",
+      "priority": 9,
+      "title": "Audit Wiki & Content Strategy",
+      "description": "Use Playwright to audit Wiki: /wiki. Review wiki structure, content completeness, navigation. Document gaps and opportunities for strategic content that funders would value.",
+      "acceptance_criteria": [
+        "Wiki index page loads",
+        "Wiki articles render",
+        "Navigation works",
+        "Content gaps documented",
+        "Strategic recommendations created",
+        "Audit report created at ralph/audit-reports/wiki-content.md"
+      ],
+      "project_path": "/Users/benknight/Code/JusticeHub",
+      "passes": false
+    },
+    {
+      "id": "audit-blog-gallery",
+      "priority": 10,
+      "title": "Audit Blog & Gallery",
+      "description": "Use Playwright to audit Blog and Gallery: /blog, /gallery. Check content displays, images load, SEO meta tags present.",
+      "acceptance_criteria": [
+        "Blog listing works",
+        "Blog posts render",
+        "Gallery images load",
+        "Meta tags present",
+        "Audit report created at ralph/audit-reports/blog-gallery.md"
+      ],
+      "project_path": "/Users/benknight/Code/JusticeHub",
+      "passes": false
+    },
+    {
+      "id": "brand-alignment-review",
+      "priority": 11,
+      "title": "Brand Alignment Review",
+      "description": "Review all audit reports and screenshots. Compare against JusticeHub brand guidelines: brutalist design, black/white/accent colors, sharp edges, bold typography, ACT values alignment. Create comprehensive brand alignment report.",
+      "acceptance_criteria": [
+        "All screenshots reviewed",
+        "Brand inconsistencies documented",
+        "Color usage audited",
+        "Typography consistency checked",
+        "Recommendations prioritized",
+        "Brand report created at ralph/audit-reports/brand-alignment.md"
+      ],
+      "project_path": "/Users/benknight/Code/JusticeHub",
+      "passes": false
+    },
+    {
+      "id": "error-fix-guide",
+      "priority": 12,
+      "title": "Create Error Fix Guide",
+      "description": "Compile all errors, broken links, console errors, and issues found during audits. Create prioritized fix guide with specific file locations and recommended fixes.",
+      "acceptance_criteria": [
+        "All errors compiled",
+        "Errors categorized by severity",
+        "Fix recommendations provided",
+        "File locations specified",
+        "Guide created at ralph/audit-reports/ERROR-FIX-GUIDE.md"
+      ],
+      "project_path": "/Users/benknight/Code/JusticeHub",
+      "passes": false
+    },
+    {
+      "id": "funder-strategic-plan",
+      "priority": 13,
+      "title": "Create Funder Strategic Plan",
+      "description": "Synthesize all audits into a comprehensive strategic plan document suitable for funders. Include: platform overview, key capabilities, impact metrics shown on site, evidence base, growth opportunities, technical health assessment, and recommended investments.",
+      "acceptance_criteria": [
+        "Executive summary written",
+        "Platform capabilities documented",
+        "Impact metrics highlighted",
+        "Evidence base summarized",
+        "Investment recommendations included",
+        "Strategic plan created at ralph/FUNDER-STRATEGIC-PLAN.md"
+      ],
+      "project_path": "/Users/benknight/Code/JusticeHub",
+      "passes": false
     }
   ]
 }
