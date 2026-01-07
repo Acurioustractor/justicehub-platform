@@ -118,3 +118,35 @@
 
 ---
 
+## 2025-01-08T00:30:00Z
+**Task Completed**: article-community-programs
+**Type**: article
+**Category**: growth 🌿
+**Output**: ralph/drafts/article-community-programs.md
+**Word Count**: ~1,300 words
+
+**Summary**: Wrote comprehensive article on community programs available through JusticeHub:
+- Hook: Marcus's transformation through BackTrack welding program
+- Four program approaches: Indigenous-led, Community-based, Grassroots, Culturally-responsive
+- What makes programs work: Trust, strengths-based, holistic, accountability, long-term
+- How to find programs on JusticeHub
+- Call to action for service providers to register
+
+**Quality Notes**:
+- ✓ ~1,300 words (meets 800-1500 target)
+- ✓ Features 4 program types as required
+- ✓ Includes how community members can access programs
+- ✓ Success-focused, solution-oriented
+- ✓ Traditional Owner acknowledgment included
+- ⚠ URLs are placeholders - need real links
+- ⚠ Marcus story is illustrative (noted in disclaimer)
+
+**Learnings**:
+- Categorizing program approaches helps readers identify what type might suit them
+- Including "what all great programs share" section reinforces core principles
+- Dual audience (youth/families AND service providers) requires separate sections
+
+**Next Priority**: brief-impact-metrics (Priority 5)
+
+---
+

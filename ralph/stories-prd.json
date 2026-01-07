@@ -70,7 +70,7 @@
         "Highlight partner organizations",
         "Success-focused, solution-oriented"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "brief-impact-metrics",
