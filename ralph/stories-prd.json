@@ -1,0 +1,138 @@
+{
+  "project": "JusticeHub Content Q1 2025",
+  "description": "Autonomous content pipeline for JusticeHub stories - building awareness, engagement, and community connection",
+  "created": "2025-01-07",
+  "config": {
+    "require_human_review": true,
+    "auto_publish": false,
+    "categories": ["seeds", "growth", "harvest", "roots"],
+    "target_audience": ["community_members", "stakeholders", "funders", "partners"],
+    "publishing_cadence": "2-3 articles per week"
+  },
+  "features": [
+    {
+      "id": "brief-platform-vision",
+      "priority": 1,
+      "type": "brief",
+      "category": "seeds",
+      "title": "JusticeHub Platform Vision",
+      "brief": "Create a story brief about what JusticeHub is building - a unified platform connecting justice-involved youth with support services, community programs, and pathways to success",
+      "acceptance_criteria": [
+        "Clear articulation of the problem being solved",
+        "Vision for community impact",
+        "Key features and benefits highlighted",
+        "Call to action for early adopters"
+      ],
+      "passes": true
+    },
+    {
+      "id": "article-platform-launch",
+      "priority": 2,
+      "type": "article",
+      "category": "seeds",
+      "title": "Introducing JusticeHub: A New Chapter in Youth Justice",
+      "brief": "Write the launch article announcing JusticeHub to the community. Focus on the platform's mission to connect justice-involved youth with holistic support services.",
+      "acceptance_criteria": [
+        "800-1200 words",
+        "Empowering tone, community-centered",
+        "Include ACT's background and mission",
+        "Highlight key platform capabilities",
+        "Clear call to action for community involvement"
+      ],
+      "passes": false
+    },
+    {
+      "id": "brief-empathy-ledger-integration",
+      "priority": 3,
+      "type": "brief",
+      "category": "growth",
+      "title": "Empathy Ledger Integration Story",
+      "brief": "Create a brief about the Empathy Ledger integration - how JusticeHub amplifies community voices while respecting data sovereignty and cultural protocols",
+      "acceptance_criteria": [
+        "Explain consent-based storytelling model",
+        "Highlight Indigenous data sovereignty",
+        "Show how voices are amplified, not appropriated",
+        "Cultural sensitivity throughout"
+      ],
+      "passes": false
+    },
+    {
+      "id": "article-community-programs",
+      "priority": 4,
+      "type": "article",
+      "category": "growth",
+      "title": "Mapping the Path: Community Programs Making a Difference",
+      "brief": "Write about the community programs and services available through JusticeHub - mentorship, education pathways, employment support, cultural programs",
+      "acceptance_criteria": [
+        "800-1500 words",
+        "Feature 3-4 program types",
+        "Include how community members can access them",
+        "Highlight partner organizations",
+        "Success-focused, solution-oriented"
+      ],
+      "passes": false
+    },
+    {
+      "id": "brief-impact-metrics",
+      "priority": 5,
+      "type": "brief",
+      "category": "harvest",
+      "title": "Measuring What Matters: Impact Framework",
+      "brief": "Create a brief about how JusticeHub measures and reports impact - moving beyond recidivism to holistic wellbeing indicators",
+      "acceptance_criteria": [
+        "Challenge traditional metrics",
+        "Introduce holistic wellbeing framework",
+        "Community-defined success indicators",
+        "Data sovereignty considerations"
+      ],
+      "passes": false
+    },
+    {
+      "id": "article-act-origins",
+      "priority": 6,
+      "type": "article",
+      "category": "roots",
+      "title": "From Lived Experience to Systemic Change: The ACT Story",
+      "brief": "Write the origin story of A Curious Tractor - how lived experience drives the mission, the founding vision, and evolution to JusticeHub",
+      "acceptance_criteria": [
+        "1000-1500 words",
+        "Honor the founding journey",
+        "Connect past to present mission",
+        "Include appropriate acknowledgments",
+        "Authentic voice, not corporate"
+      ],
+      "passes": false
+    },
+    {
+      "id": "social-launch-campaign",
+      "priority": 7,
+      "type": "social_campaign",
+      "category": "seeds",
+      "title": "JusticeHub Launch Social Campaign",
+      "brief": "Create a social media campaign (8 posts) to support the platform launch across LinkedIn, Twitter/X, and Facebook",
+      "acceptance_criteria": [
+        "8 posts total across platforms",
+        "Mix of announcement, features, and engagement posts",
+        "Consistent hashtags",
+        "Platform-appropriate formatting",
+        "Links to launch article"
+      ],
+      "passes": false
+    },
+    {
+      "id": "brief-first-nations-partnerships",
+      "priority": 8,
+      "type": "brief",
+      "category": "roots",
+      "title": "Walking Together: First Nations Partnerships",
+      "brief": "Create a brief about JusticeHub's approach to First Nations partnerships - cultural protocols, community-led design, and truth-telling",
+      "acceptance_criteria": [
+        "Acknowledge Traditional Owners",
+        "Explain partnership approach",
+        "Cultural safety framework",
+        "Flag for community review before publication"
+      ],
+      "passes": false
+    }
+  ]
+}
