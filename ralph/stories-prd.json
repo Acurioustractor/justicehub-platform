@@ -85,7 +85,7 @@
         "Community-defined success indicators",
         "Data sovereignty considerations"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "article-act-origins",

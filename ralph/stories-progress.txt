@@ -150,3 +150,37 @@
 
 ---
 
+## 2025-01-08T00:45:00Z
+**Task Completed**: brief-impact-metrics
+**Type**: brief
+**Category**: harvest 🌾
+**Output**: ralph/briefs/brief-impact-metrics.json
+**Cultural Sensitivity**: ⚠️ Data sovereignty section requires First Nations review
+
+**Summary**: Created comprehensive brief on JusticeHub's impact measurement framework (ALMA):
+- Signals not scores: Growth-framing (high/growing/emerging) instead of competitive rankings
+- 12 holistic outcome types across 5 categories (justice, pathways, connection, wellbeing, system)
+- Multiple evidence levels including Indigenous-led and community authority
+- Time horizons from immediate (<6 months) to long-term (3+ years)
+- Multiple beneficiaries: young person, family, community, system
+- Data sovereignty and consent ledger built into architecture
+
+**Technical Research**:
+- Reviewed ALMA types (src/types/alma.ts): InterventionType, EvidenceLevel, OutcomeType, etc.
+- Reviewed impact signals (src/lib/alma/impact-signals.ts): scoreToSignal, ImpactLevel
+- Documented 12 OutcomeTypes and 5 EvidenceLevels from actual implementation
+
+**Review Requirements**:
+- ⚠️ First Nations team review for data sovereignty section
+- ⚠️ Technical accuracy check against ALMA implementation
+- ⚠️ May want funder/policy stakeholder review
+
+**Learnings**:
+- The codebase's ALMA implementation provides rich detail for accurate content
+- Framing "signals not scores" early helps readers understand the paradigm shift
+- Data sovereignty deserves its own section, not just a mention
+
+**Next Priority**: article-act-origins (Priority 6)
+
+---
+
