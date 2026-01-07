@@ -133,7 +133,22 @@
         "Cultural safety framework",
         "Flag for community review before publication"
       ],
-      "passes": false
+      "passes": true,
+      "notes": "Brief framework created. Article requires First Nations team review and ideally co-authorship. Do not proceed without community consultation."
     }
-  ]
+  ],
+  "completion_summary": {
+    "completed_at": "2025-01-08",
+    "fully_completed": 6,
+    "requires_human_input": 2,
+    "total_briefs": 4,
+    "total_articles": 2,
+    "total_social_posts": 8,
+    "next_actions": [
+      "Human review of all draft content",
+      "Statistics verification from AIHW",
+      "Founder conversation for ACT origins",
+      "First Nations team review for partnerships brief"
+    ]
+  }
 }

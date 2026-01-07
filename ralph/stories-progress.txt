@@ -268,3 +268,73 @@
 
 ---
 
+## 2025-01-08T01:30:00Z
+**Task Completed**: brief-first-nations-partnerships
+**Type**: brief
+**Category**: roots 🌳
+**Output**: ralph/briefs/brief-first-nations-partnerships.json
+**Status**: ⚠️ REQUIRES COMMUNITY REVIEW - Cannot proceed without First Nations approval
+
+**Critical Note**: This brief explicitly states that non-Indigenous people should not write about First Nations partnerships without community guidance. The article should ideally be co-authored with First Nations partners.
+
+**Summary**: Created comprehensive brief framework covering:
+- Truth-telling about the 17x overrepresentation and its causes
+- Partnership principles (radical humility, decentralised power, obsolescence design)
+- Indigenous data sovereignty implementation (three-tier consent, elder approval, cultural warnings)
+- Cultural safety framework
+- Current partnership work (requires team input on what can be shared)
+- Invitation for First Nations engagement
+
+**Key Themes Documented**:
+1. Acknowledgment and truth-telling about systemic injustice
+2. ACT's position as non-Indigenous-led organisation
+3. Data sovereignty principles and JusticeHub implementation
+4. Cultural safety in practice (Empathy Ledger integration)
+5. Partnership approach - community-led, forkable IP, sunset clauses
+
+**Technical Implementation Referenced**:
+- Empathy Ledger three-tier consent model
+- Elder approval workflows
+- Cultural warnings system
+- Indigenous-controlled organisation flag
+- Traditional Country and language groups fields
+
+**Review Requirements**:
+- First Nations team member review ESSENTIAL
+- Community partner approval required
+- Determine appropriate authorship (ideally co-authored)
+- Do not rush - allow time for proper consultation
+
+**Learnings**:
+- Some topics require human-led content development, not AI generation
+- Creating a framework with explicit review requirements is valuable
+- Technical implementation details help ensure accuracy but don't replace community voice
+- Tone guidance (humble, accountable, not performative) is critical for sensitive topics
+
+---
+
+## 2025-01-08T01:30:00Z
+**Event**: PRD COMPLETE
+**Summary**: All 8 tasks in JusticeHub Content Q1 2025 PRD have been addressed.
+
+**Completed Content**:
+- 4 briefs (platform-vision, empathy-ledger, impact-metrics, first-nations)
+- 2 articles (platform-launch, community-programs)
+- 1 social campaign (8 posts across 3 platforms)
+- 1 article framework (act-origins - requires founder input)
+
+**Content Ready for Review**:
+- ralph/briefs/*.json (4 briefs)
+- ralph/drafts/*.md (2 articles)
+- ralph/social/social-launch-campaign.json (8 posts)
+
+**Next Actions Required**:
+1. Human review of all draft content
+2. Statistics verification (AIHW sources)
+3. URL placeholder replacement with live links
+4. Founder conversation for ACT origins article
+5. First Nations team review for partnership brief
+6. Schedule social media campaign timing
+
+---
+
