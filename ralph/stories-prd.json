@@ -54,7 +54,7 @@
         "Show how voices are amplified, not appropriated",
         "Cultural sensitivity throughout"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "article-community-programs",

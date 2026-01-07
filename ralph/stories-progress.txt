@@ -83,3 +83,38 @@
 
 ---
 
+## 2025-01-08T00:15:00Z
+**Task Completed**: brief-empathy-ledger-integration
+**Type**: brief
+**Category**: growth 🌿
+**Output**: ralph/briefs/brief-empathy-ledger-integration.json
+**Cultural Sensitivity**: ⚠️ FLAGGED - Requires community review before article
+
+**Summary**: Created comprehensive brief on Empathy Ledger integration covering:
+- Three-tier consent model (Private → Community → Public)
+- Cultural safety features (Elder approval, warnings, sensitivity levels)
+- Indigenous data sovereignty principles in practice
+- How it works for storytellers, organizations, and readers
+- Story types that may appear through integration
+- Extensive tone guidance for sensitive topic
+
+**Technical Research**:
+- Reviewed actual Empathy Ledger integration code (src/lib/supabase/empathy-ledger.ts)
+- Documented real consent fields: privacy_level, is_public, requires_elder_approval
+- Captured cultural safety features: cultural_warnings, cultural_sensitivity_level
+- Noted Indigenous-controlled organization handling
+
+**Review Requirements**:
+- ⚠️ First Nations team review REQUIRED
+- ⚠️ Community partner approval recommended
+- ⚠️ Technical accuracy check against current implementation
+
+**Learnings**:
+- For culturally sensitive content, explain WHY review is needed, not just that it is
+- Technical documentation helps ensure accuracy when translating to plain language
+- Flagging content as requiring community review upfront prevents awkward corrections later
+
+**Next Priority**: article-community-programs (Priority 4)
+
+---
+

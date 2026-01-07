@@ -1,0 +1,174 @@
+{
+  "id": "brief-empathy-ledger-integration",
+  "title": "Empathy Ledger Integration: Amplifying Voices, Respecting Sovereignty",
+  "category": "growth",
+  "status": "draft",
+  "created_at": "2025-01-08T00:10:00Z",
+  "cultural_sensitivity_flag": true,
+  "requires_community_review": true,
+
+  "the_integration": {
+    "headline": "Community Stories on Community Terms",
+    "description": "Empathy Ledger is a multi-tenant cultural storytelling platform that puts control in the hands of storytellers. JusticeHub's integration amplifies these voices to a wider audience—but only when storytellers explicitly consent. This isn't aggregation. It's respectful syndication.",
+    "key_differentiator": "Unlike platforms that harvest content, Empathy Ledger stories only appear on JusticeHub when the storyteller has actively chosen to share publicly. The power stays with the community."
+  },
+
+  "consent_model": {
+    "headline": "Three-Tier Consent: You Control Your Story",
+    "tiers": [
+      {
+        "level": "Private",
+        "technical": "privacy_level: 'private'",
+        "meaning": "Only visible to the storyteller and authorized organization staff",
+        "justicehub": "Never synced. Never visible. Full privacy.",
+        "icon": "🔒"
+      },
+      {
+        "level": "Community",
+        "technical": "privacy_level: 'community'",
+        "meaning": "Shared within the storyteller's organization or community",
+        "justicehub": "Not exposed publicly. Stays within your circle.",
+        "icon": "👥"
+      },
+      {
+        "level": "Public",
+        "technical": "privacy_level: 'public' AND is_public: true",
+        "meaning": "Explicitly consented for public sharing",
+        "justicehub": "Can appear on JusticeHub with full attribution",
+        "icon": "🌍"
+      }
+    ],
+    "key_points": [
+      "Consent is active, not passive—you must opt in to each level",
+      "You can change your consent at any time",
+      "Deleting or changing privacy removes content from JusticeHub"
+    ]
+  },
+
+  "cultural_safety": {
+    "headline": "Respecting Cultural Protocols",
+    "features": [
+      {
+        "name": "Elder Approval Workflow",
+        "description": "For content that requires Elder guidance, stories can be flagged for approval before public sharing. Stories won't appear on JusticeHub until an Elder has reviewed and approved.",
+        "field": "requires_elder_approval + elder_approved_at"
+      },
+      {
+        "name": "Cultural Warnings",
+        "description": "Storytellers can add warnings that display before content—for culturally sensitive material, content mentioning deceased persons, or sacred knowledge.",
+        "field": "cultural_warnings[]"
+      },
+      {
+        "name": "Cultural Sensitivity Levels",
+        "description": "Content is tagged with sensitivity levels to help readers understand the nature of what they're about to read.",
+        "field": "cultural_sensitivity_level"
+      },
+      {
+        "name": "Traditional Owner Attribution",
+        "description": "Organizations can specify their Traditional Country, and this attribution flows through to displayed stories.",
+        "field": "traditional_country, language_groups"
+      }
+    ]
+  },
+
+  "data_sovereignty": {
+    "headline": "Indigenous Data Sovereignty in Practice",
+    "principles": [
+      {
+        "principle": "Community Ownership",
+        "implementation": "Stories belong to storytellers, not platforms. JusticeHub displays but doesn't own."
+      },
+      {
+        "principle": "Control at Source",
+        "implementation": "All consent is managed in Empathy Ledger. Changes propagate automatically."
+      },
+      {
+        "principle": "Contextual Integrity",
+        "implementation": "Stories carry their cultural context—organization, country, protocols—wherever they're displayed."
+      },
+      {
+        "principle": "Right to Withdrawal",
+        "implementation": "Storytellers can remove their content from JusticeHub at any time by changing consent in Empathy Ledger."
+      }
+    ],
+    "not_appropriation": "JusticeHub never rewrites, summarizes, or recontextualizes community stories. They appear as shared, with full attribution."
+  },
+
+  "how_it_works": {
+    "for_storytellers": [
+      "Share your story in Empathy Ledger through your organization",
+      "Choose your privacy level (private, community, or public)",
+      "If public, your story may appear in JusticeHub's Community Voices section",
+      "Change your mind? Update your privacy setting anytime"
+    ],
+    "for_organizations": [
+      "Enable Empathy Ledger integration for your organization",
+      "Set cultural protocols that apply to your community's stories",
+      "Manage Elder approval workflows for sensitive content",
+      "Stories with indigenous_controlled flag carry special protections"
+    ],
+    "for_justicehub_readers": [
+      "Browse Community Voices to read stories shared by permission",
+      "See cultural warnings before sensitive content",
+      "Understand the source organization and cultural context",
+      "Know that every story you read was explicitly shared"
+    ]
+  },
+
+  "story_types": {
+    "description": "The kinds of stories that may appear through Empathy Ledger integration:",
+    "types": [
+      "Personal narratives of justice involvement and healing",
+      "Traditional knowledge shared for public learning",
+      "Impact stories from community programs",
+      "Community stories about collective experiences",
+      "Healing journeys and recovery narratives",
+      "Advocacy pieces for systemic change",
+      "Cultural practice documentation"
+    ]
+  },
+
+  "suggested_article_structure": [
+    "Hook: What does it mean to share a story on your own terms?",
+    "The Problem: How most platforms extract community stories without consent",
+    "The Solution: Empathy Ledger's consent-based model",
+    "How It Works: Three-tier consent explained simply",
+    "Cultural Safety: Elder approval, warnings, and protocols",
+    "Data Sovereignty: What this means in practice",
+    "For Storytellers: How to share (or not share) your story",
+    "For Readers: How to engage respectfully",
+    "Acknowledgment: The communities who shaped this approach"
+  ],
+
+  "tone_guidance": {
+    "do": [
+      "Center the storyteller's agency throughout",
+      "Explain technical concepts in accessible language",
+      "Acknowledge the history of extractive practices",
+      "Be specific about what consent means technically",
+      "Honor the collaborative design process with communities"
+    ],
+    "avoid": [
+      "Speaking for communities—quote or reference community partners",
+      "Implying JusticeHub 'owns' or 'curates' these stories",
+      "Downplaying the importance of cultural protocols",
+      "Technical jargon without explanation",
+      "Claiming credit for Indigenous data sovereignty principles"
+    ]
+  },
+
+  "key_quotes_to_source": [
+    "Seek quote from Empathy Ledger community partner on what consent-based sharing means to them",
+    "Consider quote from Elder on cultural protocol importance",
+    "Reference First Nations data sovereignty principles (CARE, FAIR)"
+  ],
+
+  "target_length": "1000-1500 words",
+  "target_audience": ["Community members considering sharing", "Organizations evaluating integration", "Funders interested in ethical data practices"],
+
+  "review_notes": {
+    "cultural_review": "REQUIRED: This brief and any resulting article MUST be reviewed by First Nations team members before publication",
+    "technical_accuracy": "Verify consent model matches current Empathy Ledger implementation",
+    "community_voice": "Seek approval from at least one Empathy Ledger community partner before publishing"
+  }
+}
