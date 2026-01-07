@@ -1,0 +1,187 @@
+{
+  "id": "brief-act-origins",
+  "type": "brief",
+  "category": "roots",
+  "title": "From Lived Experience to Systemic Change: The ACT Story",
+  "created_at": "2025-01-08",
+  "status": "requires_founder_input",
+
+  "context_note": "This brief provides structure for the ACT origin story article. The actual content MUST be developed with direct founder input - this is not content that can be generated autonomously. The brief serves as a framework for that conversation.",
+
+  "purpose": {
+    "why_this_story_matters": [
+      "Origin stories build trust and authenticity",
+      "Lived experience credibility is central to ACT's identity",
+      "Demonstrates the journey from personal pain to systemic change",
+      "Helps readers understand WHY ACT exists, not just WHAT it does",
+      "Positions JusticeHub within a larger narrative of transformation"
+    ],
+    "audiences": [
+      "Young people and families seeking to understand who's behind this",
+      "Funders evaluating authenticity and commitment",
+      "Partners considering collaboration",
+      "Media seeking the human story behind the platform"
+    ]
+  },
+
+  "story_elements_to_explore": {
+    "the_lived_experience": {
+      "questions_for_founder": [
+        "What personal experience with the justice system shaped this work?",
+        "What was the moment of realisation that systemic change was needed?",
+        "What did you see that others weren't seeing?",
+        "What was broken in how the system treated you or others?"
+      ],
+      "note": "This section requires authentic founder voice - cannot be generated"
+    },
+
+    "the_spark": {
+      "questions_for_founder": [
+        "When did the idea for ACT first emerge?",
+        "What was the earliest seed that eventually became this ecosystem?",
+        "Who else was part of the early conversations?",
+        "What resources did you start with? What did you lack?"
+      ]
+    },
+
+    "the_evolution": {
+      "questions_for_founder": [
+        "How did ACT evolve from initial idea to current form?",
+        "What pivots or major decisions shaped the direction?",
+        "When did JusticeHub become a focus?",
+        "How did the LCAA method emerge?",
+        "When did the farm/land-based practice become central?"
+      ],
+      "from_brand_docs": {
+        "current_identity": "A regenerative innovation ecosystem partnering with marginalised—especially First Nations—communities to dismantle extractive systems",
+        "method": "LCAA - Listen, Curiosity, Action, Art",
+        "metaphor": "Like a tractor's power take-off (PTO), we transfer resources, knowledge, and capacity to community-led initiatives—we hand over the keys"
+      }
+    },
+
+    "the_values": {
+      "questions_for_founder": [
+        "Where do the core values come from?",
+        "Why 'radical humility'? What taught you that?",
+        "Why the commitment to 'designing for obsolescence'?",
+        "How did the 40% profit-sharing commitment emerge?"
+      ],
+      "from_brand_docs": {
+        "values": [
+          "Radical Humility: We don't have all the answers, but we're cultivating solutions together",
+          "Decentralised Power: Communities lead; we support. Every tool has a sunset clause",
+          "Creativity as Disruption: Revolution starts with imagination",
+          "Uncomfortable Truth-telling: Name extractive systems and work to dismantle them"
+        ]
+      }
+    },
+
+    "first_nations_partnership": {
+      "questions_for_founder": [
+        "How did the focus on First Nations partnership emerge?",
+        "What did you learn about Indigenous data sovereignty?",
+        "How do you approach truth-telling about colonisation and extraction?",
+        "What has working on Jinibara Country taught you?"
+      ],
+      "note": "This section should be reviewed by First Nations partners before publication"
+    },
+
+    "why_justicehub_now": {
+      "questions_for_founder": [
+        "Why is JusticeHub the flagship platform at this moment?",
+        "What do you hope JusticeHub will achieve?",
+        "How does JusticeHub embody ACT's values?",
+        "What's the vision for JusticeHub's future?"
+      ]
+    }
+  },
+
+  "article_structure_suggestion": {
+    "word_count_target": "1000-1500 words",
+    "structure": [
+      {
+        "section": "Hook",
+        "approach": "Open with a vivid moment - either from founder's experience or from someone ACT has worked with. NOT generic - must be specific and authentic."
+      },
+      {
+        "section": "The Problem Seen from Inside",
+        "approach": "What the founder saw/experienced that others weren't seeing. The systemic failure. The extraction."
+      },
+      {
+        "section": "The Spark",
+        "approach": "The moment or period when ACT began to take shape. Not polished - show the messy early stages."
+      },
+      {
+        "section": "The Method Emerges",
+        "approach": "How LCAA and the values crystallized through practice, not theory."
+      },
+      {
+        "section": "The Land",
+        "approach": "How Jinibara Country and the farm became central to the practice."
+      },
+      {
+        "section": "The Seeds Grow",
+        "approach": "Brief mention of projects (Empathy Ledger, JusticeHub, Goods on Country, etc.) as expressions of the vision."
+      },
+      {
+        "section": "JusticeHub as Next Chapter",
+        "approach": "Position JusticeHub as the current flagship - why this, why now."
+      },
+      {
+        "section": "The Invitation",
+        "approach": "What ACT is inviting readers into. Not a donation ask - an invitation to participate in systemic change."
+      }
+    ]
+  },
+
+  "tone_guidance": {
+    "voice": "Authentic, not polished. Grounded, not promotional. Humble, not heroic.",
+    "do": [
+      "Use first person where appropriate (founder's voice)",
+      "Include specific details that prove authenticity",
+      "Acknowledge mistakes and learnings along the way",
+      "Show the messy reality, not a clean hero's journey",
+      "Connect personal story to systemic analysis"
+    ],
+    "avoid": [
+      "Savior narrative - this is about communities, not one person",
+      "Overclaiming impact or reach",
+      "Corporate origin story cliches",
+      "Glossing over difficulties",
+      "Making the founder the hero instead of communities"
+    ]
+  },
+
+  "review_requirements": {
+    "essential": [
+      "Founder review and approval - this is their story",
+      "Fact-checking of any specific claims or dates",
+      "First Nations partner review of Indigenous partnership section"
+    ],
+    "recommended": [
+      "Early community member review for accuracy",
+      "Legal review if any sensitive details about justice system experience"
+    ]
+  },
+
+  "process_recommendation": {
+    "step_1": "Share this brief with founder for initial reaction",
+    "step_2": "Schedule conversation to gather authentic content",
+    "step_3": "Draft article based on conversation",
+    "step_4": "Founder review and revision",
+    "step_5": "First Nations partner review",
+    "step_6": "Final approval and publication"
+  },
+
+  "related_content": {
+    "existing": [
+      "ralph/drafts/article-platform-launch.md - references ACT briefly",
+      "Brand alignment skill - contains ACT identity and values"
+    ],
+    "potential_follow_ups": [
+      "Video interview with founder",
+      "Photo essay of the farm and work",
+      "Series of shorter pieces on specific aspects (land, method, values)"
+    ]
+  }
+}

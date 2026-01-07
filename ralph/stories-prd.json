@@ -101,7 +101,8 @@
         "Include appropriate acknowledgments",
         "Authentic voice, not corporate"
       ],
-      "passes": false
+      "passes": "brief_only",
+      "notes": "Brief framework created (ralph/briefs/brief-act-origins.json). Article requires founder input - cannot be AI-generated authentically. Next step: schedule founder conversation."
     },
     {
       "id": "social-launch-campaign",

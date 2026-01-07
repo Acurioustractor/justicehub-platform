@@ -184,3 +184,42 @@
 
 ---
 
+## 2025-01-08T01:00:00Z
+**Task Completed**: brief-act-origins (MODIFIED from article-act-origins)
+**Type**: brief (instead of article)
+**Category**: roots 🌳
+**Output**: ralph/briefs/brief-act-origins.json
+**Status**: ⚠️ REQUIRES FOUNDER INPUT - Cannot generate autonomously
+
+**Decision**: Created a brief instead of the article because:
+- Origin stories MUST be authentic to the founder's lived experience
+- AI-generated founder stories lack credibility and authenticity
+- This content requires direct conversation with founder
+- The brief provides a framework for that conversation
+
+**Summary**: Created comprehensive brief framework for ACT origin story:
+- Questions for founder across 6 key story elements
+- Suggested article structure (8 sections)
+- Tone guidance (authentic, not polished; humble, not heroic)
+- Review requirements (founder approval, First Nations review)
+- Process recommendation for developing the article
+
+**Story Elements Outlined**:
+1. The Lived Experience - what personal experience shaped this work
+2. The Spark - when/how ACT began
+3. The Evolution - from idea to current form
+4. The Values - where radical humility, obsolescence design emerged
+5. First Nations Partnership - how this focus developed
+6. Why JusticeHub Now - the flagship platform
+
+**Learnings**:
+- Some content types cannot be generated autonomously - they require human voice
+- Creating a brief framework is valuable even when article can't be written
+- Origin stories need authentic founder voice, not AI approximation
+- Flagging content for human development is part of quality control
+
+**Next Action Required**: Share brief with founder, schedule conversation
+**Next Priority**: social-launch-campaign (Priority 7)
+
+---
+
