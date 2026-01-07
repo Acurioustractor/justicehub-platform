@@ -49,3 +49,37 @@
 
 ---
 
+## 2025-01-08T00:00:00Z
+**Task Completed**: article-platform-launch
+**Type**: article
+**Category**: seeds 🌱
+**Output**: ralph/drafts/article-platform-launch.md
+**Word Count**: ~1,050 words
+
+**Summary**: Wrote the JusticeHub launch article following the brief structure:
+- Hook: 2am mother story navigating fragmented system
+- Problem: Statistics on youth detention, highlighting systemic issues
+- Vision: One platform, whole-person support
+- Features: Breakdown for youth, providers, community
+- Principles: Community-centered, holistic, strength-based, culturally safe
+- Call to action: Service providers, families, funders
+- Acknowledgment: Traditional Owners
+
+**Quality Notes**:
+- ✓ Empowering tone throughout
+- ✓ Community-centered (leads with family, not organisation)
+- ✓ Specific features mentioned
+- ✓ Clear calls to action
+- ✓ Traditional Owner acknowledgment included
+- ⚠ Statistics need verification from AIHW before publishing
+- ⚠ URLs are placeholders - need real links
+
+**Learnings**:
+- Opening with human story more compelling than statistics
+- Breaking features into audience segments improves clarity
+- Including "built different" section helps differentiate from existing solutions
+
+**Next Priority**: brief-empathy-ledger-integration (Priority 3)
+
+---
+

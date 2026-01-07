@@ -39,7 +39,7 @@
         "Highlight key platform capabilities",
         "Clear call to action for community involvement"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "brief-empathy-ledger-integration",
