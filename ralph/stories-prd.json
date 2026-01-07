@@ -118,7 +118,7 @@
         "Platform-appropriate formatting",
         "Links to launch article"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "brief-first-nations-partnerships",

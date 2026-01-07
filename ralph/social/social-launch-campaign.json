@@ -1,0 +1,106 @@
+{
+  "id": "social-launch-campaign",
+  "type": "social_campaign",
+  "category": "seeds",
+  "title": "JusticeHub Launch Social Campaign",
+  "created_at": "2025-01-08",
+  "status": "draft",
+  "campaign_hashtags": ["#JusticeHub", "#YouthJustice", "#CommunityFirst", "#SystemsChange"],
+  "launch_article_url": "https://justicehub.org.au/stories/introducing-justicehub-new-chapter-youth-justice",
+
+  "posts": [
+    {
+      "post_id": 1,
+      "platform": "LinkedIn",
+      "type": "announcement",
+      "timing": "Day 1 - Morning",
+      "content": "Today we're launching JusticeHub—a platform that connects justice-involved young people with the support services, community programs, and pathways they actually need.\n\nNo more maze of disconnected services. No more falling through gaps. One platform, whole-person support.\n\nJusticeHub is built by A Curious Tractor, a social enterprise driven by lived experience. We believe those closest to the problem are closest to the solution.\n\nWe're building the founding community now. Service providers, community programs, and organisations working in youth justice—we'd love to have you on board.\n\nLearn more: [link]\n\n#JusticeHub #YouthJustice #SystemsChange #CommunityFirst",
+      "character_count": 658,
+      "notes": "Professional tone for LinkedIn. Clear value prop. CTA for service providers."
+    },
+    {
+      "post_id": 2,
+      "platform": "Twitter/X",
+      "type": "announcement",
+      "timing": "Day 1 - Morning",
+      "content": "We're launching JusticeHub 🌱\n\nA platform connecting justice-involved young people with holistic support—programs, services, pathways—all in one place.\n\nBuilt by lived experience. Designed for communities.\n\nJoin the founding community: [link]\n\n#JusticeHub #YouthJustice",
+      "character_count": 275,
+      "notes": "Concise for Twitter. Single emoji. Clear CTA."
+    },
+    {
+      "post_id": 3,
+      "platform": "Facebook",
+      "type": "announcement",
+      "timing": "Day 1 - Afternoon",
+      "content": "We're excited to share something we've been working on for a long time.\n\nJusticeHub is a platform that connects young people in the justice system with the support they need—mentorship, education, employment, cultural programs—all in one place.\n\nImagine a mother at 2am searching for help for her son after he's released from detention. Right now, she'd find four different services with four different intake processes that don't talk to each other.\n\nJusticeHub changes that.\n\nWe're building the founding community now, and we'd love your support. If you work with young people, run a community program, or just want to stay informed—follow our journey.\n\nRead the full story: [link]\n\n#JusticeHub #YouthJustice #CommunityFirst",
+      "character_count": 709,
+      "notes": "Storytelling approach for Facebook. Emotional hook. Broader audience appeal."
+    },
+    {
+      "post_id": 4,
+      "platform": "LinkedIn",
+      "type": "feature_highlight",
+      "timing": "Day 2",
+      "content": "Why does youth justice need a platform like JusticeHub?\n\nThe numbers:\n• Over 5,000 young Australians are in detention on any given day\n• First Nations youth are 17× more likely to be in detention\n• Up to 80% have a cognitive disability or mental health condition\n\nBehind every statistic is a young person with potential. A family seeking support. A community invested in their success.\n\nJusticeHub brings together:\n→ Program discovery matched to individual needs\n→ Connected pathways with support coordinators\n→ Community voices shared with consent\n→ A coordinated service network\n\nWe're not another directory. We're infrastructure for systemic change.\n\nLearn more: [link]\n\n#JusticeHub #YouthJustice #SystemsChange",
+      "character_count": 747,
+      "notes": "Statistics hook. Feature breakdown. Position as infrastructure."
+    },
+    {
+      "post_id": 5,
+      "platform": "Twitter/X",
+      "type": "feature_highlight",
+      "timing": "Day 2",
+      "content": "What makes JusticeHub different?\n\n✓ Community-centered (lived experience drives decisions)\n✓ Holistic (we see the whole person, not just an offence)\n✓ Strength-based (potential, not pathology)\n✓ Culturally safe (Indigenous data sovereignty built in)\n\nBuilt different: [link]\n\n#JusticeHub",
+      "character_count": 297,
+      "notes": "Principles-focused. Checklist format works on Twitter. Single CTA."
+    },
+    {
+      "post_id": 6,
+      "platform": "Facebook",
+      "type": "engagement",
+      "timing": "Day 3",
+      "content": "We have a question for our community:\n\nWhat would have made the biggest difference for a young person you know who's been through the justice system?\n\nWas it finding the right program? Having someone who understood? Staying connected to family or culture? Getting support that didn't treat them like a number?\n\nWe're building JusticeHub to address exactly these gaps, and we want to hear from you.\n\nDrop a comment below—your insight helps us build something that actually works.\n\n#JusticeHub #YouthJustice #CommunityFirst",
+      "character_count": 527,
+      "notes": "Engagement post. Question format. Community input gathering."
+    },
+    {
+      "post_id": 7,
+      "platform": "LinkedIn",
+      "type": "cta_service_providers",
+      "timing": "Day 4",
+      "content": "Calling youth justice service providers, community programs, and NGOs:\n\nJusticeHub is building a connected network—and we want you to be part of the founding community.\n\nWhen you register your organisation, you:\n• Gain visibility to families and referral networks\n• Join a coordinated service ecosystem (not another silo)\n• Track outcomes using holistic wellbeing indicators\n• Connect with other programs doing similar work\n\nWe believe service providers deserve infrastructure that works for them—not just another reporting burden.\n\nRegister your organisation: [link]\n\n#JusticeHub #YouthJustice #ServiceProviders #NGO",
+      "character_count": 619,
+      "notes": "Direct CTA for service providers. Benefits-focused. Professional."
+    },
+    {
+      "post_id": 8,
+      "platform": "Twitter/X",
+      "type": "vision",
+      "timing": "Day 5",
+      "content": "The future we're building:\n\n• Young people leaving detention get warm handoffs, not cold releases\n• Service providers know what support is already in place\n• Families see clear pathways, not endless mazes\n• Communities tell their own stories, on their own terms\n• Impact measured by wellbeing, not just recidivism\n\nThat's JusticeHub.\n\n[link]\n\n#JusticeHub #YouthJustice #SystemsChange",
+      "character_count": 393,
+      "notes": "Vision-focused. Future framing. Aspirational close to campaign."
+    }
+  ],
+
+  "campaign_notes": {
+    "timing_strategy": "Spread over 5 days to maintain momentum without overwhelming",
+    "platform_approach": {
+      "LinkedIn": "Professional, service provider focused, statistics and features",
+      "Twitter": "Concise, principles and vision, hashtag-friendly",
+      "Facebook": "Storytelling, community engagement, broader audience"
+    },
+    "visual_suggestions": [
+      "Hero image with diverse young people for announcement posts",
+      "Statistics infographic for feature highlight",
+      "Question graphic for engagement post",
+      "JusticeHub logo/wordmark for all posts"
+    ],
+    "review_notes": [
+      "Verify all statistics before publishing (source: AIHW)",
+      "Confirm launch article URL is live before campaign starts",
+      "Consider adding UTM parameters for tracking",
+      "Have First Nations team review Indigenous data sovereignty messaging"
+    ]
+  }
+}
