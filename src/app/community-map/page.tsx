@@ -2,7 +2,7 @@
 
 import type { ComponentType } from 'react';
 import type { StyleSpecification } from 'maplibre-gl';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import maplibregl, { LngLatBounds } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import {
@@ -21,7 +21,7 @@ import {
 import { Navigation, Footer } from '@/components/ui/navigation';
 import {
   CommunityMapCategory,
-  communityMapServices,
+  communityMapServices as staticServices,
   CommunityMapService
 } from '@/content/community-map-services';
 
@@ -136,6 +136,64 @@ function createPopupHTML(service: CommunityMapService) {
   return lines.join('');
 }
 
+// Map database service categories to map categories
+function mapCategoryToMapCategory(categories: string[] | null): CommunityMapCategory {
+  if (!categories || categories.length === 0) return 'justice';
+
+  const cat = categories[0]?.toLowerCase() || '';
+
+  if (cat.includes('legal') || cat.includes('justice') || cat.includes('court')) return 'justice';
+  if (cat.includes('heal') || cat.includes('cultur') || cat.includes('country')) return 'healing';
+  if (cat.includes('skill') || cat.includes('employ') || cat.includes('vocation') || cat.includes('train')) return 'skills';
+  if (cat.includes('hous') || cat.includes('accommod') || cat.includes('shelter')) return 'housing';
+  if (cat.includes('mental') || cat.includes('health') || cat.includes('aod') || cat.includes('drug') || cat.includes('alcohol')) return 'mental_health';
+  if (cat.includes('educ') || cat.includes('school') || cat.includes('learn')) return 'education';
+  if (cat.includes('family') || cat.includes('parent') || cat.includes('child')) return 'family';
+  if (cat.includes('emergency') || cat.includes('crisis')) return 'emergency';
+
+  return 'justice';
+}
+
+// Transform database service to CommunityMapService format
+function transformDbService(dbService: any): CommunityMapService | null {
+  // Skip services without valid coordinates
+  const lat = dbService.location_latitude || dbService.latitude;
+  const lng = dbService.location_longitude || dbService.longitude;
+
+  if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+    return null;
+  }
+
+  const state = dbService.location?.state || dbService.state || 'Unknown';
+  const city = dbService.location?.suburb || dbService.suburb || dbService.location?.city || 'Unknown';
+
+  return {
+    id: dbService.id,
+    name: dbService.name || 'Unknown Service',
+    category: mapCategoryToMapCategory(dbService.categories),
+    description: dbService.description || 'Community service supporting young people.',
+    focusAreas: dbService.categories || [],
+    coordinates: {
+      lat: parseFloat(lat),
+      lng: parseFloat(lng)
+    },
+    city,
+    state,
+    regions: [state],
+    highlight: dbService.description?.substring(0, 100) || '',
+    impactStats: [],
+    website: dbService.website || undefined,
+    phone: dbService.phone || undefined,
+    email: dbService.email || undefined,
+    serviceModel: dbService.indigenous_specific ? 'community' : 'nonprofit',
+    tags: [
+      ...(dbService.indigenous_specific ? ['First Nations-led'] : []),
+      ...(dbService.youth_specific ? ['Youth-focused'] : []),
+      ...(state !== 'Unknown' ? [state] : [])
+    ]
+  };
+}
+
 export default function CommunityMapPage() {
   const [selectedCategory, setSelectedCategory] = useState<'all' | CommunityMapCategory>('all');
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
@@ -144,23 +202,52 @@ export default function CommunityMapPage() {
   const [styleSource, setStyleSource] = useState<StyleSource>('local');
   const [styleError, setStyleError] = useState<string | null>(null);
   const [mapReady, setMapReady] = useState(false);
+  const [services, setServices] = useState<CommunityMapService[]>(staticServices);
+  const [isLoading, setIsLoading] = useState(true);
   const styleErrorTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
   const markerMapRef = useRef<Map<string, maplibregl.Marker>>(new Map());
+
+  // Fetch services from database on mount
+  useEffect(() => {
+    async function fetchServices() {
+      try {
+        const response = await fetch('/api/services?limit=1000');
+        const result = await response.json();
+
+        if (result.success && result.data) {
+          const transformedServices = result.data
+            .map(transformDbService)
+            .filter((s: CommunityMapService | null): s is CommunityMapService => s !== null);
+
+          if (transformedServices.length > 0) {
+            setServices(transformedServices);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch services, using static data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchServices();
+  }, []);
+
   const regionOptions = useMemo(() => {
     const regions = new Set<string>();
-    communityMapServices.forEach((service) => {
+    services.forEach((service) => {
       service.regions.forEach((region) => regions.add(region));
     });
     return ['all', ...Array.from(regions).sort()];
-  }, []);
+  }, [services]);
 
   const filteredServices = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    return communityMapServices.filter((service) => {
+    return services.filter((service) => {
       if (selectedCategory !== 'all' && service.category !== selectedCategory) {
         return false;
       }
@@ -184,7 +271,7 @@ export default function CommunityMapPage() {
       }
       return true;
     });
-  }, [searchQuery, selectedCategory, selectedRegion]);
+  }, [searchQuery, selectedCategory, selectedRegion, services]);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) {
@@ -368,14 +455,14 @@ export default function CommunityMapPage() {
     }
   }, [filteredServices, mapReady]);
 
-  const totalServices = communityMapServices.length;
+  const totalServices = services.length;
   const firstNationsLed = useMemo(
-    () => communityMapServices.filter((service) => service.tags.includes('First Nations-led')).length,
-    []
+    () => services.filter((service) => service.tags.includes('First Nations-led')).length,
+    [services]
   );
   const regionalServices = useMemo(
-    () => communityMapServices.filter((service) => service.regions.includes('Regional') || service.regions.includes('Remote')).length,
-    []
+    () => services.filter((service) => service.regions.includes('Regional') || service.regions.includes('Remote')).length,
+    [services]
   );
 
   const handleServiceFocus = (service: CommunityMapService) => {
@@ -426,17 +513,17 @@ export default function CommunityMapPage() {
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="border-2 border-black bg-white p-4">
-                    <div className="text-3xl font-bold text-black">{totalServices}</div>
+                    <div className="text-3xl font-bold text-black">{isLoading ? '...' : totalServices}</div>
                     <div className="text-sm font-semibold uppercase tracking-wide">Services mapped</div>
                     <p className="text-xs text-gray-600 mt-2">Curated from national justice innovators and community leaders.</p>
                   </div>
                   <div className="border-2 border-black bg-white p-4">
-                    <div className="text-3xl font-bold text-black">{firstNationsLed}</div>
+                    <div className="text-3xl font-bold text-black">{isLoading ? '...' : firstNationsLed}</div>
                     <div className="text-sm font-semibold uppercase tracking-wide">First Nations led</div>
                     <p className="text-xs text-gray-600 mt-2">Delivering cultural authority and justice reinvestment on Country.</p>
                   </div>
                   <div className="border-2 border-black bg-white p-4">
-                    <div className="text-3xl font-bold text-black">{regionalServices}</div>
+                    <div className="text-3xl font-bold text-black">{isLoading ? '...' : regionalServices}</div>
                     <div className="text-sm font-semibold uppercase tracking-wide">Regional & Remote</div>
                     <p className="text-xs text-gray-600 mt-2">Programs reaching beyond capital cities with wraparound support.</p>
                   </div>
