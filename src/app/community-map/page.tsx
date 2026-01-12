@@ -160,34 +160,39 @@ function transformDbService(dbService: any): CommunityMapService | null {
   const lat = dbService.location_latitude || dbService.latitude;
   const lng = dbService.location_longitude || dbService.longitude;
 
-  if (!lat || !lng || isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) {
+  if (!lat || !lng || isNaN(parseFloat(String(lat))) || isNaN(parseFloat(String(lng)))) {
     return null;
   }
 
+  // Handle both services_complete view format and community_programs format
   const state = dbService.location?.state || dbService.state || 'Unknown';
-  const city = dbService.location?.suburb || dbService.suburb || dbService.location?.city || dbService.location || 'Unknown';
+  const city = dbService.location?.city || dbService.location?.suburb || dbService.suburb || dbService.city || 'Unknown';
+
+  // Get description, truncate if too long
+  const description = dbService.description || 'Community service supporting young people.';
+  const shortDescription = description.length > 200 ? description.substring(0, 200) + '...' : description;
 
   return {
     id: dbService.id,
     name: dbService.name || 'Unknown Service',
     category: mapCategoryToMapCategory(dbService.categories || dbService.tags || [dbService.approach]),
-    description: dbService.description || 'Community service supporting young people.',
+    description: shortDescription,
     focusAreas: dbService.categories || dbService.tags || [],
     coordinates: {
-      lat: parseFloat(lat),
-      lng: parseFloat(lng)
+      lat: parseFloat(String(lat)),
+      lng: parseFloat(String(lng))
     },
     city,
     state,
     regions: [state],
-    highlight: dbService.impact_summary || dbService.description?.substring(0, 100) || '',
+    highlight: dbService.impact_summary || shortDescription,
     impactStats: dbService.impact_summary ? [dbService.impact_summary] : [],
-    website: dbService.website || dbService.contact_website || undefined,
-    phone: dbService.phone || dbService.contact_phone || undefined,
-    email: dbService.email || dbService.contact_email || undefined,
-    serviceModel: dbService.indigenous_knowledge ? 'community' : 'nonprofit',
+    website: dbService.url || dbService.website || dbService.contact?.website || undefined,
+    phone: dbService.phone || dbService.contact?.phone || undefined,
+    email: dbService.email || dbService.contact?.email || undefined,
+    serviceModel: dbService.indigenous_specific ? 'community' : 'nonprofit',
     tags: [
-      ...(dbService.indigenous_knowledge ? ['First Nations-led'] : []),
+      ...(dbService.indigenous_specific ? ['First Nations-led'] : []),
       ...(dbService.youth_specific ? ['Youth-focused'] : []),
       ...(state !== 'Unknown' ? [state] : [])
     ]
@@ -211,34 +216,64 @@ export default function CommunityMapPage() {
   const markersRef = useRef<maplibregl.Marker[]>([]);
   const markerMapRef = useRef<Map<string, maplibregl.Marker>>(new Map());
 
-  // Fetch programs from database on mount
+  // Fetch services and programs from database on mount
   useEffect(() => {
-    async function fetchPrograms() {
+    async function fetchAllServices() {
       try {
-        // Fetch from community-programs API which has geocoded coordinates
-        const response = await fetch('/api/community-programs?limit=100');
-        const result = await response.json();
+        // Fetch from both services API (505 geocoded) and community-programs API
+        const [servicesResponse, programsResponse] = await Promise.all([
+          fetch('/api/services?limit=600'),
+          fetch('/api/community-programs?limit=100')
+        ]);
 
-        if (result.programs && result.programs.length > 0) {
-          const transformedPrograms = result.programs
+        const servicesResult = await servicesResponse.json();
+        const programsResult = await programsResponse.json();
+
+        const allDbServices: CommunityMapService[] = [];
+        const seenIds = new Set<string>();
+
+        // Process services (primary source - 505 geocoded services)
+        if (servicesResult.success && servicesResult.data) {
+          const transformedServices = servicesResult.data
             .map(transformDbService)
             .filter((s: CommunityMapService | null): s is CommunityMapService => s !== null);
 
-          if (transformedPrograms.length > 0) {
-            // Merge with static services, preferring database data
-            const existingIds = new Set(transformedPrograms.map((p: CommunityMapService) => p.id));
-            const staticUnique = staticServices.filter(s => !existingIds.has(s.id));
-            setServices([...transformedPrograms, ...staticUnique]);
-          }
+          transformedServices.forEach((s: CommunityMapService) => {
+            if (!seenIds.has(s.id)) {
+              seenIds.add(s.id);
+              allDbServices.push(s);
+            }
+          });
+        }
+
+        // Process community programs (secondary source)
+        if (programsResult.programs && programsResult.programs.length > 0) {
+          const transformedPrograms = programsResult.programs
+            .map(transformDbService)
+            .filter((s: CommunityMapService | null): s is CommunityMapService => s !== null);
+
+          transformedPrograms.forEach((p: CommunityMapService) => {
+            if (!seenIds.has(p.id)) {
+              seenIds.add(p.id);
+              allDbServices.push(p);
+            }
+          });
+        }
+
+        if (allDbServices.length > 0) {
+          // Merge with static services, preferring database data
+          const staticUnique = staticServices.filter(s => !seenIds.has(s.id));
+          setServices([...allDbServices, ...staticUnique]);
+          console.log(`Loaded ${allDbServices.length} services from database, ${staticUnique.length} static services`);
         }
       } catch (error) {
-        console.error('Failed to fetch programs, using static data:', error);
+        console.error('Failed to fetch services, using static data:', error);
       } finally {
         setIsLoading(false);
       }
     }
 
-    fetchPrograms();
+    fetchAllServices();
   }, []);
 
   const regionOptions = useMemo(() => {
