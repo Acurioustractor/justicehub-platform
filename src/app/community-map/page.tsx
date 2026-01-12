@@ -160,19 +160,19 @@ function transformDbService(dbService: any): CommunityMapService | null {
   const lat = dbService.location_latitude || dbService.latitude;
   const lng = dbService.location_longitude || dbService.longitude;
 
-  if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+  if (!lat || !lng || isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) {
     return null;
   }
 
   const state = dbService.location?.state || dbService.state || 'Unknown';
-  const city = dbService.location?.suburb || dbService.suburb || dbService.location?.city || 'Unknown';
+  const city = dbService.location?.suburb || dbService.suburb || dbService.location?.city || dbService.location || 'Unknown';
 
   return {
     id: dbService.id,
     name: dbService.name || 'Unknown Service',
-    category: mapCategoryToMapCategory(dbService.categories),
+    category: mapCategoryToMapCategory(dbService.categories || dbService.tags || [dbService.approach]),
     description: dbService.description || 'Community service supporting young people.',
-    focusAreas: dbService.categories || [],
+    focusAreas: dbService.categories || dbService.tags || [],
     coordinates: {
       lat: parseFloat(lat),
       lng: parseFloat(lng)
@@ -180,14 +180,14 @@ function transformDbService(dbService: any): CommunityMapService | null {
     city,
     state,
     regions: [state],
-    highlight: dbService.description?.substring(0, 100) || '',
-    impactStats: [],
-    website: dbService.website || undefined,
-    phone: dbService.phone || undefined,
-    email: dbService.email || undefined,
-    serviceModel: dbService.indigenous_specific ? 'community' : 'nonprofit',
+    highlight: dbService.impact_summary || dbService.description?.substring(0, 100) || '',
+    impactStats: dbService.impact_summary ? [dbService.impact_summary] : [],
+    website: dbService.website || dbService.contact_website || undefined,
+    phone: dbService.phone || dbService.contact_phone || undefined,
+    email: dbService.email || dbService.contact_email || undefined,
+    serviceModel: dbService.indigenous_knowledge ? 'community' : 'nonprofit',
     tags: [
-      ...(dbService.indigenous_specific ? ['First Nations-led'] : []),
+      ...(dbService.indigenous_knowledge ? ['First Nations-led'] : []),
       ...(dbService.youth_specific ? ['Youth-focused'] : []),
       ...(state !== 'Unknown' ? [state] : [])
     ]
@@ -211,30 +211,34 @@ export default function CommunityMapPage() {
   const markersRef = useRef<maplibregl.Marker[]>([]);
   const markerMapRef = useRef<Map<string, maplibregl.Marker>>(new Map());
 
-  // Fetch services from database on mount
+  // Fetch programs from database on mount
   useEffect(() => {
-    async function fetchServices() {
+    async function fetchPrograms() {
       try {
-        const response = await fetch('/api/services?limit=1000');
+        // Fetch from community-programs API which has geocoded coordinates
+        const response = await fetch('/api/community-programs?limit=100');
         const result = await response.json();
 
-        if (result.success && result.data) {
-          const transformedServices = result.data
+        if (result.programs && result.programs.length > 0) {
+          const transformedPrograms = result.programs
             .map(transformDbService)
             .filter((s: CommunityMapService | null): s is CommunityMapService => s !== null);
 
-          if (transformedServices.length > 0) {
-            setServices(transformedServices);
+          if (transformedPrograms.length > 0) {
+            // Merge with static services, preferring database data
+            const existingIds = new Set(transformedPrograms.map((p: CommunityMapService) => p.id));
+            const staticUnique = staticServices.filter(s => !existingIds.has(s.id));
+            setServices([...transformedPrograms, ...staticUnique]);
           }
         }
       } catch (error) {
-        console.error('Failed to fetch services, using static data:', error);
+        console.error('Failed to fetch programs, using static data:', error);
       } finally {
         setIsLoading(false);
       }
     }
 
-    fetchServices();
+    fetchPrograms();
   }, []);
 
   const regionOptions = useMemo(() => {
