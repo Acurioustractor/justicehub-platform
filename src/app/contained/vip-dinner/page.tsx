@@ -1,6 +1,8 @@
 import { ContainedEventDetail, EventData } from '@/components/contained/event-detail';
 import { createServiceClient } from '@/lib/supabase/service';
 
+export const dynamic = 'force-dynamic';
+
 export default async function VipDinnerPage() {
     const supabase = createServiceClient();
     const { data: event } = await supabase
