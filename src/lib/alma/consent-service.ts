@@ -5,7 +5,7 @@
  * Every action that touches ALMA data goes through these checks.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type {
   EntityType,
   ConsentLevel,
@@ -15,16 +15,27 @@ import type {
   GovernanceViolation,
 } from '@/types/alma';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
+// Lazy-initialized Supabase client (avoids build-time errors)
+let _supabase: SupabaseClient | null = null;
+
+function getSupabase(): SupabaseClient {
+  if (!_supabase) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!url || !key) {
+      throw new Error('Missing Supabase configuration');
+    }
+
+    _supabase = createClient(url, key, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
   }
-);
+  return _supabase;
+}
 
 /**
  * Consent Service - All ALMA governance checks
@@ -205,7 +216,7 @@ export class ConsentService {
     entityId: string
   ): Promise<{ data: ALMAConsentLedger | null; error: Error | null }> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('alma_consent_ledger')
         .select('*')
         .eq('entity_type', entityType)
@@ -245,7 +256,7 @@ export class ConsentService {
     }
   ): Promise<{ success: boolean; error: Error | null }> {
     try {
-      const { error } = await supabase.from('alma_consent_ledger').insert({
+      const { error } = await getSupabase().from('alma_consent_ledger').insert({
         entity_type: entityType,
         entity_id: entityId,
         ...consent,
@@ -284,7 +295,7 @@ export class ConsentService {
       }
 
       // Update to revoked
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('alma_consent_ledger')
         .update({
           consent_revoked: true,
@@ -367,7 +378,7 @@ export class ConsentService {
     revenueGenerated?: number
   ): Promise<void> {
     try {
-      await supabase.from('alma_usage_log').insert({
+      await getSupabase().from('alma_usage_log').insert({
         entity_type: entityType,
         entity_id: entityId,
         action,

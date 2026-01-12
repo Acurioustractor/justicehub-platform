@@ -5,7 +5,7 @@
  * Extracts structured data from PDFs, Word docs, and text using Claude.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import Anthropic from '@anthropic-ai/sdk';
 import type {
   ALMAIntervention,
@@ -17,20 +17,41 @@ import type {
   EvidenceType,
 } from '@/types/alma';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
-);
+// Lazy-initialized Supabase client (avoids build-time errors)
+let _supabase: SupabaseClient | null = null;
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
+function getSupabase(): SupabaseClient {
+  if (!_supabase) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!url || !key) {
+      throw new Error('Missing Supabase configuration');
+    }
+
+    _supabase = createClient(url, key, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
+  }
+  return _supabase;
+}
+
+// Lazy-initialized Anthropic client
+let _anthropic: Anthropic | null = null;
+
+function getAnthropic(): Anthropic {
+  if (!_anthropic) {
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      throw new Error('Missing Anthropic API key');
+    }
+    _anthropic = new Anthropic({ apiKey });
+  }
+  return _anthropic;
+}
 
 /**
  * Extraction result from Claude
@@ -62,7 +83,7 @@ export class ExtractionService {
     try {
       const prompt = this.buildExtractionPrompt(text);
 
-      const message = await anthropic.messages.create({
+      const message = await getAnthropic().messages.create({
         model: 'claude-3-5-sonnet-20241022',
         max_tokens: 8192,
         temperature: 0.2,
@@ -120,7 +141,7 @@ export class ExtractionService {
   ): Promise<ExtractionResult> {
     try {
       // Download file from Supabase Storage
-      const { data, error } = await supabase.storage
+      const { data, error } = await getSupabase().storage
         .from('documents')
         .download(storagePath);
 
@@ -166,7 +187,7 @@ export class ExtractionService {
     // Create interventions
     for (const intervention of extraction.interventions) {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
           .from('alma_interventions')
           .insert({
             ...intervention,
@@ -194,7 +215,7 @@ export class ExtractionService {
     // Create evidence
     for (const evidence of extraction.evidence) {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
           .from('alma_evidence')
           .insert({
             ...evidence,
@@ -221,7 +242,7 @@ export class ExtractionService {
     // Create outcomes
     for (const outcome of extraction.outcomes) {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
           .from('alma_outcomes')
           .insert({
             ...outcome,
@@ -247,7 +268,7 @@ export class ExtractionService {
     // Create contexts
     for (const context of extraction.contexts) {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
           .from('alma_community_contexts')
           .insert({
             ...context,

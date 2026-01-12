@@ -5,7 +5,7 @@
  * Every operation checks consent, validates authority, and logs usage.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type {
   ALMAIntervention,
   CreateInterventionRequest,
@@ -16,17 +16,27 @@ import type {
   PortfolioSignals,
 } from '@/types/alma';
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
+// Lazy-initialized Supabase client (avoids build-time errors)
+let _supabase: SupabaseClient | null = null;
+
+function getSupabase(): SupabaseClient {
+  if (!_supabase) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!url || !key) {
+      throw new Error('Missing Supabase configuration');
+    }
+
+    _supabase = createClient(url, key, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
   }
-);
+  return _supabase;
+}
 
 /**
  * Intervention Service - All operations enforce governance
@@ -54,7 +64,7 @@ export class InterventionService {
       }
 
       // Insert intervention
-      const { data: intervention, error: insertError } = await supabase
+      const { data: intervention, error: insertError } = await getSupabase()
         .from('alma_interventions')
         .insert({
           ...data,
@@ -95,7 +105,7 @@ export class InterventionService {
     userId?: string
   ): Promise<{ data: ALMAIntervention | null; error: Error | null }> {
     try {
-      const { data: intervention, error } = await supabase
+      const { data: intervention, error } = await getSupabase()
         .from('alma_interventions')
         .select('*')
         .eq('id', id)
@@ -131,7 +141,7 @@ export class InterventionService {
     offset?: number;
   } = {}): Promise<{ data: ALMAIntervention[]; error: Error | null; count: number }> {
     try {
-      let query = supabase.from('alma_interventions').select('*', { count: 'exact' });
+      let query = getSupabase().from('alma_interventions').select('*', { count: 'exact' });
 
       // Apply filters
       if (filters.consent_level) {
@@ -210,7 +220,7 @@ export class InterventionService {
         };
       }
 
-      const { data: updated, error: updateError } = await supabase
+      const { data: updated, error: updateError } = await getSupabase()
         .from('alma_interventions')
         .update({
           ...req,
@@ -258,7 +268,7 @@ export class InterventionService {
         return { success: false, error: new Error('Can only submit Draft interventions') };
       }
 
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('alma_interventions')
         .update({
           review_status: 'Community Review',
@@ -289,7 +299,7 @@ export class InterventionService {
     userId: string
   ): Promise<{ success: boolean; error: Error | null }> {
     try {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('alma_interventions')
         .update({
           review_status: 'Approved',
@@ -330,7 +340,7 @@ export class InterventionService {
         return { success: false, error: new Error(`Cannot publish: ${reason}`) };
       }
 
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('alma_interventions')
         .update({
           review_status: 'Published',
@@ -363,7 +373,7 @@ export class InterventionService {
   ): Promise<{ success: boolean; error: Error | null }> {
     try {
       // Remove existing links
-      await supabase
+      await getSupabase()
         .from('alma_intervention_outcomes')
         .delete()
         .eq('intervention_id', interventionId);
@@ -374,7 +384,7 @@ export class InterventionService {
         outcome_id: outcomeId,
       }));
 
-      const { error } = await supabase.from('alma_intervention_outcomes').insert(links);
+      const { error } = await getSupabase().from('alma_intervention_outcomes').insert(links);
 
       if (error) {
         return { success: false, error: new Error(error.message) };
@@ -398,7 +408,7 @@ export class InterventionService {
   ): Promise<{ success: boolean; error: Error | null }> {
     try {
       // Remove existing links
-      await supabase
+      await getSupabase()
         .from('alma_intervention_evidence')
         .delete()
         .eq('intervention_id', interventionId);
@@ -409,7 +419,7 @@ export class InterventionService {
         evidence_id: evidenceId,
       }));
 
-      const { error } = await supabase.from('alma_intervention_evidence').insert(links);
+      const { error } = await getSupabase().from('alma_intervention_evidence').insert(links);
 
       if (error) {
         return { success: false, error: new Error(error.message) };
@@ -433,7 +443,7 @@ export class InterventionService {
   ): Promise<{ success: boolean; error: Error | null }> {
     try {
       // Remove existing links
-      await supabase
+      await getSupabase()
         .from('alma_intervention_contexts')
         .delete()
         .eq('intervention_id', interventionId);
@@ -444,7 +454,7 @@ export class InterventionService {
         context_id: contextId,
       }));
 
-      const { error } = await supabase.from('alma_intervention_contexts').insert(links);
+      const { error } = await getSupabase().from('alma_intervention_contexts').insert(links);
 
       if (error) {
         return { success: false, error: new Error(error.message) };
@@ -464,7 +474,7 @@ export class InterventionService {
    */
   private async calculateAndUpdateSignals(interventionId: string): Promise<void> {
     try {
-      const { data, error } = await supabase.rpc('calculate_portfolio_signals', {
+      const { data, error } = await getSupabase().rpc('calculate_portfolio_signals', {
         intervention_id: interventionId,
       });
 
@@ -475,7 +485,7 @@ export class InterventionService {
 
       const signals = data[0];
 
-      await supabase
+      await getSupabase()
         .from('alma_interventions')
         .update({
           evidence_strength_signal: signals.evidence_strength,
@@ -500,7 +510,7 @@ export class InterventionService {
     userId: string
   ): Promise<void> {
     try {
-      await supabase.from('alma_consent_ledger').insert({
+      await getSupabase().from('alma_consent_ledger').insert({
         entity_type: 'intervention',
         entity_id: interventionId,
         consent_level: data.consent_level || 'Strictly Private',
@@ -528,7 +538,7 @@ export class InterventionService {
     destination?: string
   ): Promise<void> {
     try {
-      await supabase.from('alma_usage_log').insert({
+      await getSupabase().from('alma_usage_log').insert({
         entity_type: 'intervention',
         entity_id: interventionId,
         action,
@@ -549,7 +559,7 @@ export class InterventionService {
     action: PermittedUse
   ): Promise<{ allowed: boolean; reason?: string }> {
     try {
-      const { data, error } = await supabase.rpc('check_consent_compliance', {
+      const { data, error } = await getSupabase().rpc('check_consent_compliance', {
         p_entity_type: 'intervention',
         p_entity_id: interventionId,
         p_action: action,

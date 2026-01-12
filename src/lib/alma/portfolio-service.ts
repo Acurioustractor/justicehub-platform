@@ -5,7 +5,7 @@
  * Calculates signals, builds portfolios, identifies opportunities.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type {
   ALMAIntervention,
   PortfolioSignals,
@@ -14,16 +14,27 @@ import type {
   PortfolioConstraints,
 } from '@/types/alma';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
+// Lazy-initialized Supabase client (avoids build-time errors)
+let _supabase: SupabaseClient | null = null;
+
+function getSupabase(): SupabaseClient {
+  if (!_supabase) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!url || !key) {
+      throw new Error('Missing Supabase configuration');
+    }
+
+    _supabase = createClient(url, key, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
   }
-);
+  return _supabase;
+}
 
 /**
  * Portfolio Service - Intelligence and recommendations
@@ -43,7 +54,7 @@ export class PortfolioService {
    */
   async calculateSignals(interventionId: string): Promise<PortfolioSignals | null> {
     try {
-      const { data, error } = await supabase.rpc('calculate_portfolio_signals', {
+      const { data, error } = await getSupabase().rpc('calculate_portfolio_signals', {
         intervention_id: interventionId,
       });
 
@@ -68,7 +79,7 @@ export class PortfolioService {
     const finalConstraints = { ...this.defaultConstraints, ...constraints };
 
     // Get all approved or published interventions
-    const { data: interventions } = await supabase
+    const { data: interventions } = await getSupabase()
       .from('alma_interventions')
       .select('*')
       .in('review_status', ['Approved', 'Published'])
@@ -249,7 +260,7 @@ export class PortfolioService {
     cohort_gaps: Array<{ cohort: string; gap_score: number }>;
     type_gaps: Array<{ type: string; gap_score: number }>;
   }> {
-    const { data: interventions } = await supabase
+    const { data: interventions } = await getSupabase()
       .from('alma_interventions')
       .select('geography, target_cohort, type, current_funding, portfolio_score')
       .in('review_status', ['Approved', 'Published']);

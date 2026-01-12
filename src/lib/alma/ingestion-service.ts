@@ -9,25 +9,45 @@
  * - Claude: Extraction and structuring
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import FirecrawlApp from '@mendable/firecrawl-js';
 import { extractionService } from './extraction-service';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
-);
+// Lazy-initialized Supabase client (avoids build-time errors)
+let _supabase: SupabaseClient | null = null;
 
-// Initialize Firecrawl
-const firecrawl = new FirecrawlApp({
-  apiKey: process.env.FIRECRAWL_API_KEY!,
-});
+function getSupabase(): SupabaseClient {
+  if (!_supabase) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!url || !key) {
+      throw new Error('Missing Supabase configuration');
+    }
+
+    _supabase = createClient(url, key, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
+  }
+  return _supabase;
+}
+
+// Lazy-initialized Firecrawl client
+let _firecrawl: FirecrawlApp | null = null;
+
+function getFirecrawl(): FirecrawlApp {
+  if (!_firecrawl) {
+    const apiKey = process.env.FIRECRAWL_API_KEY;
+    if (!apiKey) {
+      throw new Error('Missing Firecrawl API key');
+    }
+    _firecrawl = new FirecrawlApp({ apiKey });
+  }
+  return _firecrawl;
+}
 
 /**
  * Source types for ingestion
@@ -153,7 +173,7 @@ export class IngestionService {
     try {
       console.log(`🔍 Scraping: ${url}`);
 
-      const scrapeResult = await firecrawl.scrapeUrl(url, {
+      const scrapeResult = await getFirecrawl().scrapeUrl(url, {
         formats: ['markdown', 'html'],
         onlyMainContent: true,
         waitFor: 2000,
@@ -170,7 +190,7 @@ export class IngestionService {
       const filename = this.generateFilename(url, 'md');
       const storagePath = `ingestion/${filename}`;
 
-      await supabase.storage
+      await getSupabase().storage
         .from('documents')
         .upload(storagePath, scrapeResult.markdown || '', {
           contentType: 'text/markdown',
@@ -211,7 +231,7 @@ export class IngestionService {
     try {
       console.log(`🕷️  Crawling website: ${url}`);
 
-      const crawlResult = await firecrawl.crawlUrl(url, {
+      const crawlResult = await getFirecrawl().crawlUrl(url, {
         limit: options.maxPages || 50,
         scrapeOptions: {
           formats: ['markdown'],
@@ -630,7 +650,7 @@ export class IngestionService {
   }> {
     try {
       // Check Firecrawl job status
-      const status = await firecrawl.checkCrawlStatus(jobId);
+      const status = await getFirecrawl().checkCrawlStatus(jobId);
 
       if (status.status === 'completed' && status.data) {
         // Process all crawled pages
@@ -693,7 +713,7 @@ export class IngestionService {
    * Create ingestion job record
    */
   private async createIngestionJob(job: Partial<IngestionJob>): Promise<string> {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('alma_ingestion_jobs')
       .insert({
         ...job,
@@ -719,7 +739,7 @@ export class IngestionService {
     jobId: string,
     updates: Partial<IngestionJob>
   ): Promise<void> {
-    await supabase
+    await getSupabase()
       .from('alma_ingestion_jobs')
       .update({
         ...updates,
