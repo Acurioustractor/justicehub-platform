@@ -1,46 +1,41 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ProfileCard from './ProfileCard';
+import StoryCard from './StoryCard';
 import { Users, Sparkles } from 'lucide-react';
 
-interface ProfileData {
-  profile: {
-    id: string;
-    name?: string;
-    preferred_name?: string;
-    bio?: string;
-    profile_picture_url?: string;
-    organization?: {
-      name: string;
-    };
-  };
-  justiceStories: any[];
-  appearanceRole?: string;
-  appearanceExcerpt?: string;
-  isFeatured?: boolean;
+interface Story {
+  id: string;
+  title: string;
+  summary?: string;
+  content?: string;
+  excerpt?: string;
+  story_image_url?: string;
+  story_category?: string;
+  is_featured?: boolean;
+  published_at?: string;
 }
 
 export default function FeaturedStories() {
-  const [profiles, setProfiles] = useState<ProfileData[]>([]);
+  const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadFeaturedProfiles() {
+    async function loadFeaturedStories() {
       try {
-        const response = await fetch('/api/featured-profiles');
+        const response = await fetch('/api/featured-stories');
         if (response.ok) {
           const data = await response.json();
-          setProfiles(data.profiles || []);
+          setStories(data.stories || []);
         }
       } catch (error) {
-        console.error('Error loading featured profiles:', error);
+        console.error('Error loading featured stories:', error);
       } finally {
         setLoading(false);
       }
     }
 
-    loadFeaturedProfiles();
+    loadFeaturedStories();
   }, []);
 
   if (loading) {
@@ -55,8 +50,8 @@ export default function FeaturedStories() {
     );
   }
 
-  if (profiles.length === 0) {
-    return null; // Don't show section if no featured profiles
+  if (stories.length === 0) {
+    return null; // Don't show section if no featured stories
   }
 
   return (
@@ -85,19 +80,14 @@ export default function FeaturedStories() {
           </p>
         </div>
 
-        {/* Featured Profile Cards */}
+        {/* Featured Story Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-          {profiles.map((profileData, index) => (
+          {stories.map((story) => (
             <div
-              key={profileData.profile.id + index}
+              key={story.id}
               className="transform transition-all hover:scale-105"
             >
-              <ProfileCard
-                profile={profileData.profile}
-                role={profileData.appearanceRole}
-                storyExcerpt={profileData.appearanceExcerpt}
-                isFeatured={true}
-              />
+              <StoryCard story={story} />
             </div>
           ))}
         </div>

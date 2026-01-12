@@ -15,6 +15,7 @@ import {
   Eye
 } from 'lucide-react';
 import Link from 'next/link';
+import { scoreToSignal } from '@/lib/alma/impact-signals';
 // Using real stories from API now
 
 interface Story {
@@ -37,7 +38,10 @@ interface Story {
   comments: number;
   shares: number;
   metadata: {
-    impactScore: number;
+    /** @deprecated Use impactLevel instead - ALMA uses signals not scores */
+    impactScore?: number;
+    /** Impact indicator using categorical signals instead of numeric scores */
+    impactLevel?: 'high' | 'growing' | 'emerging';
     mentorshipProgram: string;
     currentStatus: string;
     readingTime: string;
@@ -229,12 +233,17 @@ export function StoryGrid() {
               </div>
             </div>
 
-            {/* Impact Score & Date */}
+            {/* Impact Signal & Date - ALMA uses signals not scores */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-accent-600" />
-                <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Impact Score: {story.metadata.impactScore}/10</span>
-              </div>
+              {(() => {
+                const signal = scoreToSignal(story.metadata.impactScore);
+                return (
+                  <div className={`flex items-center gap-2 px-2 py-1 rounded text-xs border ${signal.color}`}>
+                    <TrendingUp className="h-3 w-3" />
+                    <span className="font-medium">{signal.label}</span>
+                  </div>
+                );
+              })()}
               <div className="text-xs text-neutral-500 dark:text-neutral-400">
                 {new Date(story.createdAt).toLocaleDateString()}
               </div>

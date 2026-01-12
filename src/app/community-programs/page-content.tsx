@@ -137,9 +137,14 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
               <h1 className="headline-truth mb-6">
                 Community Programs
               </h1>
-              <p className="text-xl max-w-4xl mx-auto mb-8 leading-relaxed">
+              <p className="text-xl max-w-4xl mx-auto mb-6 leading-relaxed">
                 Curated profiles of programs that work. Indigenous knowledge. Community connection.
                 Grassroots approaches that transform lives through cultural strength and local wisdom.
+              </p>
+
+              <p className="text-sm max-w-2xl mx-auto mb-8 text-gray-600 border-l-4 border-ochre-400 pl-4 text-left">
+                <strong>Community Programs</strong> are curated and verified by JusticeHub. We work directly with organizations to ensure accurate information and meaningful impact data.
+                Looking for a broader directory of services? Visit our <a href="/services" className="text-ochre-600 hover:underline font-medium">Services Directory</a> with 500+ indexed entries.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">

@@ -32,13 +32,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: userData } = await supabase
-      .from('users')
-      .select('user_role')
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('is_super_admin')
       .eq('id', user.id)
       .single();
 
-    if (userData?.user_role !== 'admin') {
+    if (!profileData?.is_super_admin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       try {
         // Check if already exists in JusticeHub
         const { data: existing, error: checkError } = await serviceSupabase
-          .from('public_profiles')
+          .from('profiles')
           .select('id, slug')
           .eq('empathy_ledger_profile_id', profile.id)
           .maybeSingle();

@@ -1,0 +1,43 @@
+{
+  "skills": {
+    "act-code-reviewer": {
+      "path": "./skills/act-code-reviewer/SKILL.md",
+      "description": "Review JusticeHub code against ACT values and cultural protocols"
+    },
+    "alma-scraper": {
+      "path": "./skills/alma-scraper/SKILL.md",
+      "description": "Intelligent scraper for Australian youth justice sources"
+    },
+    "apply-migration": {
+      "path": "./skills/apply-migration/SKILL.md",
+      "description": "Apply SQL migrations to Supabase database"
+    },
+    "justicehub-brand-alignment": {
+      "path": "./skills/justicehub-brand-alignment/SKILL.md",
+      "description": "Brand alignment and design system for JusticeHub"
+    },
+    "justicehub-context": {
+      "path": "./skills/justicehub-context/SKILL.md",
+      "description": "Project context and codebase awareness"
+    },
+    "justicehub-reviewer": {
+      "path": "./skills/justicehub-reviewer/SKILL.md",
+      "description": "Platform audit for pages, API routes, and Supabase patterns"
+    },
+    "ralph-storyteller": {
+      "path": "./skills/ralph-storyteller/SKILL.md",
+      "description": "Autonomous content creation for JusticeHub stories using Ralph Wiggum methodology"
+    }
+  },
+  "allowedTools": [
+    "Bash(git add:*)",
+    "Bash(git commit:*)",
+    "Bash(sqlite3 ralph/*)",
+    "Bash(mkdir -p ralph/*)",
+    "Write(ralph/*)",
+    "Edit(ralph/*)",
+    "Read(ralph/*)",
+    "Read(src/content/*)",
+    "Read(.claude/skills/ralph-storyteller/*)"
+  ]
+}

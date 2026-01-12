@@ -7,6 +7,7 @@ const rehypeAutolinkHeadings = require('rehype-autolink-headings');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  reactStrictMode: false,
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -103,7 +104,7 @@ const nextConfig = {
         tls: false,
       };
     }
-    
+
     return config;
   },
   compiler: {

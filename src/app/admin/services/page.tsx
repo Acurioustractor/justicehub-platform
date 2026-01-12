@@ -14,13 +14,16 @@ export default async function AdminServicesPage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login?redirect=/admin/services');
 
-  const { data: userData } = await supabase
-    .from('users')
-    .select('user_role')
+  // Check admin role
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('is_super_admin')
     .eq('id', user.id)
     .single();
 
-  if (userData?.user_role !== 'admin') redirect('/');
+  if (!profileData?.is_super_admin) {
+    redirect('/');
+  }
 
   const page = parseInt(searchParams.page || '1');
   const pageSize = 20;

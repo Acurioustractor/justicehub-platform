@@ -11,6 +11,7 @@ const categories = {
   growth: { emoji: '🌿', label: 'Growth', color: 'bg-emerald-100 text-emerald-800' },
   harvest: { emoji: '🌾', label: 'Harvest', color: 'bg-amber-100 text-amber-800' },
   roots: { emoji: '🌳', label: 'Roots', color: 'bg-amber-100 text-amber-900' },
+  voices: { emoji: '🗣️', label: 'Voices', color: 'bg-purple-100 text-purple-800' },
 };
 
 
@@ -32,7 +33,7 @@ type UnifiedContent = {
   };
   published_at: string;
   status: string;
-  content_type: 'article' | 'blog';
+  content_type: 'article' | 'blog' | 'empathy-ledger';
   primary_tag?: string;
 };
 
@@ -42,6 +43,7 @@ type StatsType = {
   growth: number;
   harvest: number;
   roots: number;
+  voices: number;
   locations: number;
 };
 
@@ -71,12 +73,14 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
     let growthCount = 0;
     let harvestCount = 0;
     let rootsCount = 0;
+    let voicesCount = 0;
 
     filteredContent.forEach((item) => {
       if (item.category === 'seeds') seedsCount++;
       if (item.category === 'growth') growthCount++;
       if (item.category === 'harvest') harvestCount++;
       if (item.category === 'roots') rootsCount++;
+      if (item.category === 'voices') voicesCount++;
 
       if (item.location_tags) {
         item.location_tags.forEach((loc: string) => uniqueLocations.add(loc));
@@ -89,6 +93,7 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
       growth: growthCount,
       harvest: harvestCount,
       roots: rootsCount,
+      voices: voicesCount,
       locations: uniqueLocations.size,
     };
   }, [filteredContent, initialStats, category]);
@@ -112,7 +117,7 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
 
           {/* Statistics Section */}
           <div className="max-w-6xl mx-auto mb-12">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
               {/* Total Stories */}
               <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 text-center">
                 <div className="text-4xl font-black text-black mb-2">{stats.total}</div>
@@ -145,6 +150,13 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
                 <div className="text-3xl mb-1">🌳</div>
                 <div className="text-3xl font-black text-amber-900 mb-2">{stats.roots}</div>
                 <div className="text-xs font-bold text-amber-800 uppercase tracking-wide">Roots</div>
+              </div>
+
+              {/* Voices (Empathy Ledger) */}
+              <div className="bg-purple-50 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 text-center">
+                <div className="text-3xl mb-1">🗣️</div>
+                <div className="text-3xl font-black text-purple-800 mb-2">{stats.voices}</div>
+                <div className="text-xs font-bold text-purple-700 uppercase tracking-wide">Voices</div>
               </div>
 
               {/* Locations */}
@@ -192,6 +204,8 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
                 href={
                   featuredContent.content_type === 'blog'
                     ? `/blog/${featuredContent.slug}`
+                    : featuredContent.content_type === 'empathy-ledger'
+                    ? `/stories/empathy-ledger/${featuredContent.slug}`
                     : `/stories/${featuredContent.slug}`
                 }
                 className="group block bg-white border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 overflow-hidden no-underline"
@@ -230,6 +244,11 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
                           {featuredContent.tags[0]}
                         </span>
                       )}
+                      {featuredContent.content_type === 'empathy-ledger' && (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-800 border border-purple-800 text-xs font-bold">
+                          🗣️ Community Voice
+                        </span>
+                      )}
                     </div>
                     <h2 className="text-3xl md:text-4xl font-black mb-4 group-hover:text-red-600 transition-colors no-underline">
                       {featuredContent.title}
@@ -265,6 +284,8 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
                   href={
                     item.content_type === 'blog'
                       ? `/blog/${item.slug}`
+                      : item.content_type === 'empathy-ledger'
+                      ? `/stories/empathy-ledger/${item.slug}`
                       : `/stories/${item.slug}`
                   }
                   className="group block bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 overflow-hidden no-underline"
@@ -296,6 +317,11 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
                         <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 border border-blue-800 text-xs font-bold">
                           {contentTypes[item.tags[0] as keyof typeof contentTypes]?.emoji || '📝'}
                           {item.tags[0]}
+                        </span>
+                      )}
+                      {item.content_type === 'empathy-ledger' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-800 border border-purple-800 text-xs font-bold">
+                          🗣️ Community Voice
                         </span>
                       )}
                     </div>

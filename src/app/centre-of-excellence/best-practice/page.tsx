@@ -590,6 +590,100 @@ export default function BestPracticePage() {
           </div>
         </section>
 
+        {/* Related Resources Section */}
+        <section className="section-padding border-t-2 border-black bg-sand-50">
+          <div className="container-justice">
+            <h2 className="text-3xl font-bold mb-4">Explore Related Resources</h2>
+            <p className="text-lg text-gray-700 mb-8">
+              Connect these frameworks to real programs and services operating across Australia.
+            </p>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              <Link
+                href="/community-programs"
+                className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+              >
+                <div className="text-eucalyptus-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  Community Programs
+                </div>
+                <h3 className="text-xl font-bold mb-2">Local Programs</h3>
+                <p className="text-gray-600 mb-4">
+                  Discover community-led programs implementing these frameworks in your state.
+                </p>
+                <span className="text-eucalyptus-600 font-bold inline-flex items-center gap-1">
+                  Browse Programs <ChevronRight className="h-4 w-4" />
+                </span>
+              </Link>
+
+              <Link
+                href="/services"
+                className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+              >
+                <div className="text-ochre-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  Service Finder
+                </div>
+                <h3 className="text-xl font-bold mb-2">Support Services</h3>
+                <p className="text-gray-600 mb-4">
+                  Find legal, health, and support services connected to youth justice in your area.
+                </p>
+                <span className="text-ochre-600 font-bold inline-flex items-center gap-1">
+                  Find Services <ChevronRight className="h-4 w-4" />
+                </span>
+              </Link>
+
+              <Link
+                href="/youth-justice-report/interventions"
+                className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+              >
+                <div className="text-blue-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  ALMA Evidence
+                </div>
+                <h3 className="text-xl font-bold mb-2">Rated Interventions</h3>
+                <p className="text-gray-600 mb-4">
+                  See how specific interventions are rated by our evidence analysis system.
+                </p>
+                <span className="text-blue-600 font-bold inline-flex items-center gap-1">
+                  View Evidence <ChevronRight className="h-4 w-4" />
+                </span>
+              </Link>
+            </div>
+
+            <div className="mt-8 grid md:grid-cols-2 gap-6">
+              <Link
+                href="/centre-of-excellence/global-insights"
+                className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+              >
+                <div className="text-purple-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  Global Insights
+                </div>
+                <h3 className="text-xl font-bold mb-2">International Models</h3>
+                <p className="text-gray-600 mb-4">
+                  Compare Australian approaches with successful models from around the world.
+                </p>
+                <span className="text-purple-600 font-bold inline-flex items-center gap-1">
+                  Explore Global <ChevronRight className="h-4 w-4" />
+                </span>
+              </Link>
+
+              <Link
+                href="/network"
+                className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+              >
+                <div className="text-green-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  Network
+                </div>
+                <h3 className="text-xl font-bold mb-2">JusticeHub Nodes</h3>
+                <p className="text-gray-600 mb-4">
+                  Connect with state-based nodes coordinating reform efforts across Australia.
+                </p>
+                <span className="text-green-600 font-bold inline-flex items-center gap-1">
+                  View Network <ChevronRight className="h-4 w-4" />
+                </span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* CTA */}
         <section className="section-padding bg-gradient-to-br from-green-400 to-blue-400 border-t-2 border-black">
           <div className="container-justice text-center">

@@ -16,7 +16,11 @@ import {
   CheckCircle,
   AlertTriangle,
   ExternalLink,
-  Bot
+  Bot,
+  FileText,
+  ArrowRight,
+  Info,
+  ChevronRight
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import ProfileCard from '@/components/ProfileCard';
@@ -52,6 +56,12 @@ interface ServiceDetail {
   source?: string;
   aiDiscovered: boolean;
   eligibility?: string[];
+  referralInfo?: {
+    selfReferral: boolean;
+    professionalReferral: boolean;
+    referralProcess?: string;
+    waitTime?: string;
+  };
   contactInfo?: {
     phone?: string;
     email?: string;
@@ -374,6 +384,108 @@ export default function ServiceDetailPage() {
                     <div className="text-gray-900">{service.lastUpdated}</div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Referral Information */}
+            <div className="mt-8 border-2 border-black p-6 bg-white">
+              <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                How to Access This Service
+              </h3>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-bold mb-3">Referral Options</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className={`h-4 w-4 ${service.referralInfo?.selfReferral !== false ? 'text-green-500' : 'text-gray-300'}`} />
+                      <span className={service.referralInfo?.selfReferral !== false ? 'text-gray-700' : 'text-gray-400'}>
+                        Self-referral accepted
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className={`h-4 w-4 ${service.referralInfo?.professionalReferral !== false ? 'text-green-500' : 'text-gray-300'}`} />
+                      <span className={service.referralInfo?.professionalReferral !== false ? 'text-gray-700' : 'text-gray-400'}>
+                        Professional referral accepted
+                      </span>
+                    </div>
+                  </div>
+
+                  {service.referralInfo?.referralProcess && (
+                    <div className="mt-4">
+                      <h4 className="font-medium text-gray-700 mb-1">Referral Process</h4>
+                      <p className="text-gray-600 text-sm">{service.referralInfo.referralProcess}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <h4 className="font-bold mb-3">What to Expect</h4>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    {service.referralInfo?.waitTime ? (
+                      <p><strong>Typical wait time:</strong> {service.referralInfo.waitTime}</p>
+                    ) : (
+                      <p><strong>Wait times:</strong> Contact service for current availability</p>
+                    )}
+                    <p><strong>First contact:</strong> Call or visit website to begin intake process</p>
+                    <p><strong>Documentation:</strong> May require ID or referral letter depending on service type</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 p-3 bg-blue-50 border-l-4 border-blue-500 text-sm">
+                <div className="flex items-start gap-2">
+                  <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-blue-800">
+                    Need help navigating services? <Link href="/intelligence#alma-chat" className="font-bold underline">Ask ALMA</Link> for personalized guidance on finding and accessing support.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Related Resources */}
+            <div className="mt-8">
+              <h3 className="font-bold text-xl mb-4">Related Resources</h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                <Link
+                  href={`/services?category=${service.category}`}
+                  className="border-2 border-black p-4 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+                >
+                  <div className="text-ochre-600 font-bold text-sm uppercase tracking-wider mb-1">
+                    More Services
+                  </div>
+                  <h4 className="font-bold mb-2">Similar {service.category} Services</h4>
+                  <span className="text-ochre-600 font-medium inline-flex items-center gap-1 text-sm">
+                    Browse <ChevronRight className="h-4 w-4" />
+                  </span>
+                </Link>
+
+                <Link
+                  href="/community-programs"
+                  className="border-2 border-black p-4 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+                >
+                  <div className="text-eucalyptus-600 font-bold text-sm uppercase tracking-wider mb-1">
+                    Programs
+                  </div>
+                  <h4 className="font-bold mb-2">Community Programs</h4>
+                  <span className="text-eucalyptus-600 font-medium inline-flex items-center gap-1 text-sm">
+                    Explore <ChevronRight className="h-4 w-4" />
+                  </span>
+                </Link>
+
+                <Link
+                  href="/youth-justice-report/interventions"
+                  className="border-2 border-black p-4 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+                >
+                  <div className="text-blue-600 font-bold text-sm uppercase tracking-wider mb-1">
+                    Evidence
+                  </div>
+                  <h4 className="font-bold mb-2">ALMA Interventions</h4>
+                  <span className="text-blue-600 font-medium inline-flex items-center gap-1 text-sm">
+                    Research <ChevronRight className="h-4 w-4" />
+                  </span>
+                </Link>
               </div>
             </div>
 

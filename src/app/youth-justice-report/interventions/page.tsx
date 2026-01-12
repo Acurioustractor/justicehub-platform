@@ -57,43 +57,54 @@ export default function InterventionsByStatePage() {
     async function fetchData() {
       setLoading(true);
 
-      let query = supabase
-        .from('alma_interventions')
-        .select('id, name, description, type, geography, evidence_level, consent_level, operating_organization, website, metadata')
-        .eq('review_status', 'Published')
-        .limit(100);
+      try {
+        // Build the base query - removed review_status filter to show all interventions
+        let query = supabase
+          .from('alma_interventions')
+          .select('id, name, description, type, geography, evidence_level, consent_level, operating_organization, website, metadata')
+          .limit(100);
 
-      if (selectedState) {
-        query = query.contains('metadata', { state: selectedState });
-      }
-
-      if (selectedType) {
-        query = query.eq('type', selectedType);
-      }
-
-      const { data, error } = await query.order('name');
-
-      if (!error && data) {
-        setInterventions(data);
-      }
-
-      // Get state counts
-      const { data: allData } = await supabase
-        .from('alma_interventions')
-        .select('metadata')
-        .eq('review_status', 'Published')
-        .limit(2000);
-
-      const counts: Record<string, number> = {};
-      allData?.forEach((row: any) => {
-        const state = row.metadata?.state;
-        if (state) {
-          counts[state] = (counts[state] || 0) + 1;
+        if (selectedState) {
+          query = query.contains('metadata', { state: selectedState });
         }
-      });
-      setStateCounts(counts);
 
-      setLoading(false);
+        if (selectedType) {
+          query = query.eq('type', selectedType);
+        }
+
+        const { data, error } = await query.order('name');
+
+        if (error) {
+          console.error('Error fetching interventions:', error);
+        }
+
+        if (data) {
+          setInterventions(data);
+        }
+
+        // Get state counts from all interventions
+        const { data: allData, error: countError } = await supabase
+          .from('alma_interventions')
+          .select('metadata')
+          .limit(2000);
+
+        if (countError) {
+          console.error('Error fetching state counts:', countError);
+        }
+
+        const counts: Record<string, number> = {};
+        allData?.forEach((row: any) => {
+          const state = row.metadata?.state;
+          if (state) {
+            counts[state] = (counts[state] || 0) + 1;
+          }
+        });
+        setStateCounts(counts);
+      } catch (err) {
+        console.error('Unexpected error:', err);
+      } finally {
+        setLoading(false);
+      }
     }
 
     fetchData();

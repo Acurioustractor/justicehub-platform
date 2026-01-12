@@ -1,0 +1,2189 @@
+%PDF-1.7
+150 0 obj
+<</Linearized 1/L 2111310/O 153/E 39583/N 19/T 2108189/H [ 816 1004]>>
+          
+0000000016 00000 n
+0000001820 00000 n
+0000001965 00000 n
+0000002001 00000 n
+0000003088 00000 n
+0000003125 00000 n
+0000003239 00000 n
+0000004122 00000 n
+0000004996 00000 n
+0000005881 00000 n
+0000006810 00000 n
+0000007678 00000 n
+0000008570 00000 n
+0000008978 00000 n
+0000009501 00000 n
+0000009770 00000 n
+0000010323 00000 n
+0000010593 00000 n
+0000010985 00000 n
+0000011874 00000 n
+0000012758 00000 n
+0000015408 00000 n
+0000026027 00000 n
+0000033338 00000 n
+0000039544 00000 n
+0000000816 00000 n
+<</Size 176/Root 151 0 R/Info 149 0 R/ID[<A620E087E361F54FA81328D2678A7DA9><9F11F4A1F0BEF64DA2B1D77D1B9040A8>]/Prev 2108177>>
+startxref
+175 0 obj
+<</E 1195/Filter/FlateDecode/I 1211/Length 899/O 1179/S 961/T 1108>>stream
+b```b``>
+endstream
+151 0 obj
+<</Lang(en-US)/Metadata 148 0 R/Names 152 0 R/Outlines 123 0 R/Pages 144 0 R/Type/Catalog/ViewerPreferences<</Direction/L2R>>>>
+152 0 obj
+<</Dests 143 0 R>>
+153 0 obj
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents[156 0 R 157 0 R 158 0 R 159 0 R 160 0 R 161 0 R 168 0 R 169 0 R]/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 145 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R>>/Font<</TT0 162 0 R/TT1 163 0 R>>/ProcSet[/PDF/Text]/Properties<</MC0 174 0 R>>>>/Rotate 0/Tabs/W/Thumb 124 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340036005A>/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 3131>>/PageWidthList<</0 1920.0>>>>>>>>
+154 0 obj
+[/ICCBased 170 0 R]
+155 0 obj
+<</AIS false/BM/Normal/CA 1.0/OP false/OPM 1/SA true/SMask/None/Type/ExtGState/ca 1.0/op false>>
+156 0 obj
+<</Filter/FlateDecode/Length 812>>stream
+wD#!L!Q/V
+endstream
+157 0 obj
+<</Filter/FlateDecode/Length 803>>stream
+endstream
+158 0 obj
+<</Filter/FlateDecode/Length 814>>stream
+endstream
+159 0 obj
+<</Filter/FlateDecode/Length 858>>stream
+endstream
+160 0 obj
+<</Filter/FlateDecode/Length 797>>stream
+endstream
+161 0 obj
+<</Filter/FlateDecode/Length 821>>stream
+endstream
+162 0 obj
+<</BaseFont/SQSNCE+DenimINK-RegularItalic/Encoding/WinAnsiEncoding/FirstChar 32/FontDescriptor 166 0 R/LastChar 121/Subtype/TrueType/ToUnicode 167 0 R/Type/Font/Widths[230 0 0 0 0 0 0 0 0 0 0 0 196 0 0 0 602 0 543 0 0 547 0 0 0 0 0 0 0 0 0 0 0 628 0 0 0 0 0 0 0 0 514 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 513 0 515 563 523 0 0 0 218 0 0 217 847 555 543 0 0 0 0 360 555 480 0 0 480]>>
+163 0 obj
+<</BaseFont/QNTBAI+DenimINK-Medium/Encoding/WinAnsiEncoding/FirstChar 32/FontDescriptor 164 0 R/LastChar 146/Subtype/TrueType/ToUnicode 165 0 R/Type/Font/Widths[218 0 0 0 0 0 656 0 0 0 0 0 0 404 223 0 610 357 540 565 583 550 585 495 574 585 225 0 0 0 0 0 0 640 624 681 689 583 553 707 0 256 535 0 515 837 0 0 598 0 636 574 548 0 0 0 0 587 0 0 0 0 0 0 0 521 570 520 570 528 372 523 559 230 230 505 229 844 559 544 570 0 350 462 376 559 494 741 459 493 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 206]>>
+164 0 obj
+<</Ascent 1069/CapHeight 700/Descent -232/Flags 32/FontBBox[-193 -232 1041 1069]/FontFamily(Denim INK Medium)/FontFile2 171 0 R/FontName/QNTBAI+DenimINK-Medium/FontStretch/Normal/FontWeight 500/ItalicAngle 0/StemV 108/Type/FontDescriptor/XHeight 504>>
+165 0 obj
+<</Filter/FlateDecode/Length 482>>stream
+:x:x8x:x8x:x8x
+endstream
+166 0 obj
+<</Ascent 1054/CapHeight 700/Descent -227/Flags 96/FontBBox[-241 -227 1065 1054]/FontFamily(Denim INK)/FontFile2 172 0 R/FontName/SQSNCE+DenimINK-RegularItalic/FontStretch/Normal/FontWeight 400/ItalicAngle -12/StemV 80/Type/FontDescriptor/XHeight 504>>
+167 0 obj
+<</Filter/FlateDecode/Length 321>>stream
+endstream
+168 0 obj
+<</Filter/FlateDecode/Length 818>>stream
+endstream
+169 0 obj
+<</Filter/FlateDecode/Length 813>>stream
+ttwnk>a"
+endstream
+170 0 obj
+<</Filter/FlateDecode/Length 2574/N 3>>stream
+endstream
+171 0 obj
+<</Filter/FlateDecode/Length 10532/Length1 18920>>stream
+%"}a}cWuq
+Ra6mA|V*H
+GdV:|wf*5
+*[PGfM;a
+endstream
+172 0 obj
+<</Filter/FlateDecode/Length 7225/Length1 13370>>stream
+;Q7EPK}1
+T%%,*dk5
+endstream
+173 0 obj
+<</Length 6127/Subtype/XML/Type/Metadata>>stream
+<?xpacket begin="
+" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 9.1-c002 79.b7c64cc, 2024/07/16-07:59:40        ">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+            xmlns:xmpTPg="http://ns.adobe.com/xap/1.0/t/pg/"
+            xmlns:stDim="http://ns.adobe.com/xap/1.0/sType/Dimensions#"
+            xmlns:xmpG="http://ns.adobe.com/xap/1.0/g/"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:illustrator="http://ns.adobe.com/illustrator/1.0/"
+            xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+            xmlns:stRef="http://ns.adobe.com/xap/1.0/sType/ResourceRef#"
+            xmlns:stEvt="http://ns.adobe.com/xap/1.0/sType/ResourceEvent#"
+            xmlns:pdf="http://ns.adobe.com/pdf/1.3/">
+         <xmp:CreatorTool>Adobe Illustrator 28.4 (Windows)</xmp:CreatorTool>
+         <xmp:CreateDate>2024-05-22T09:46:30+10:00</xmp:CreateDate>
+         <xmp:MetadataDate>2024-05-22T09:46:30+10:00</xmp:MetadataDate>
+         <xmp:ModifyDate>2024-05-22T09:46:30+10:00</xmp:ModifyDate>
+         <xmpTPg:NPages>1</xmpTPg:NPages>
+         <xmpTPg:HasVisibleTransparency>False</xmpTPg:HasVisibleTransparency>
+         <xmpTPg:HasVisibleOverprint>False</xmpTPg:HasVisibleOverprint>
+         <xmpTPg:MaxPageSize rdf:parseType="Resource">
+            <stDim:w>587.710122</stDim:w>
+            <stDim:h>106.143780</stDim:h>
+            <stDim:unit>Millimeters</stDim:unit>
+         </xmpTPg:MaxPageSize>
+         <xmpTPg:PlateNames>
+            <rdf:Seq>
+               <rdf:li>Cyan</rdf:li>
+               <rdf:li>Magenta</rdf:li>
+               <rdf:li>Yellow</rdf:li>
+               <rdf:li>Black</rdf:li>
+            </rdf:Seq>
+         </xmpTPg:PlateNames>
+         <xmpTPg:SwatchGroups>
+            <rdf:Seq>
+               <rdf:li rdf:parseType="Resource">
+                  <xmpG:groupName>Default Swatch Group</xmpG:groupName>
+                  <xmpG:groupType>0</xmpG:groupType>
+                  <xmpG:Colorants>
+                     <rdf:Seq>
+                        <rdf:li rdf:parseType="Resource">
+                           <xmpG:swatchName>Bright Green</xmpG:swatchName>
+                           <xmpG:type>PROCESS</xmpG:type>
+                           <xmpG:tint>100.000000</xmpG:tint>
+                           <xmpG:mode>RGB</xmpG:mode>
+                           <xmpG:red>160</xmpG:red>
+                           <xmpG:green>238</xmpG:green>
+                           <xmpG:blue>199</xmpG:blue>
+                        </rdf:li>
+                        <rdf:li rdf:parseType="Resource">
+                           <xmpG:swatchName>Peach</xmpG:swatchName>
+                           <xmpG:type>PROCESS</xmpG:type>
+                           <xmpG:tint>100.000000</xmpG:tint>
+                           <xmpG:mode>RGB</xmpG:mode>
+                           <xmpG:red>255</xmpG:red>
+                           <xmpG:green>182</xmpG:green>
+                           <xmpG:blue>169</xmpG:blue>
+                        </rdf:li>
+                        <rdf:li rdf:parseType="Resource">
+                           <xmpG:swatchName>Brown</xmpG:swatchName>
+                           <xmpG:type>PROCESS</xmpG:type>
+                           <xmpG:tint>100.000000</xmpG:tint>
+                           <xmpG:mode>RGB</xmpG:mode>
+                           <xmpG:red>179</xmpG:red>
+                           <xmpG:green>95</xmpG:green>
+                           <xmpG:blue>41</xmpG:blue>
+                        </rdf:li>
+                     </rdf:Seq>
+                  </xmpG:Colorants>
+               </rdf:li>
+            </rdf:Seq>
+         </xmpTPg:SwatchGroups>
+         <dc:format>application/postscript</dc:format>
+         <dc:title>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">PRF0001B__PRF_LOGO_LOCKUP</rdf:li>
+            </rdf:Alt>
+         </dc:title>
+         <dc:creator>
+            <rdf:Seq>
+               <rdf:li>Dave Wells</rdf:li>
+            </rdf:Seq>
+         </dc:creator>
+         <illustrator:CreatorSubTool>Adobe Illustrator</illustrator:CreatorSubTool>
+         <xmpMM:DocumentID>xmp.did:a5e22609-1a08-9044-b60b-6c17d9e5a2af</xmpMM:DocumentID>
+         <xmpMM:InstanceID>xmp.iid:b45f34c7-7c59-db45-bb47-d1ede4e8ae35</xmpMM:InstanceID>
+         <xmpMM:OriginalDocumentID>xmp.did:21080f62-e836-4e62-bd27-d10ea5a8bd7a</xmpMM:OriginalDocumentID>
+         <xmpMM:RenditionClass>default</xmpMM:RenditionClass>
+         <xmpMM:DerivedFrom rdf:parseType="Resource">
+            <stRef:instanceID>uuid:5d863555-7e01-4710-b64b-c8ff8a878ff3</stRef:instanceID>
+            <stRef:documentID>xmp.did:21080f62-e836-4e62-bd27-d10ea5a8bd7a</stRef:documentID>
+            <stRef:originalDocumentID>xmp.did:21080f62-e836-4e62-bd27-d10ea5a8bd7a</stRef:originalDocumentID>
+            <stRef:renditionClass>default</stRef:renditionClass>
+         </xmpMM:DerivedFrom>
+         <xmpMM:History>
+            <rdf:Seq>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>saved</stEvt:action>
+                  <stEvt:instanceID>xmp.iid:21080f62-e836-4e62-bd27-d10ea5a8bd7a</stEvt:instanceID>
+                  <stEvt:when>2024-05-01T13:42:15+10:00</stEvt:when>
+                  <stEvt:softwareAgent>Adobe Illustrator 28.4 (Macintosh)</stEvt:softwareAgent>
+                  <stEvt:changed>/</stEvt:changed>
+               </rdf:li>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>saved</stEvt:action>
+                  <stEvt:instanceID>xmp.iid:a5e22609-1a08-9044-b60b-6c17d9e5a2af</stEvt:instanceID>
+                  <stEvt:when>2024-05-22T09:46:30+10:00</stEvt:when>
+                  <stEvt:softwareAgent>Adobe Illustrator 28.4 (Windows)</stEvt:softwareAgent>
+                  <stEvt:changed>/</stEvt:changed>
+               </rdf:li>
+            </rdf:Seq>
+         </xmpMM:History>
+         <pdf:Producer>Adobe PDF library 17.00</pdf:Producer>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="r"?>
+endstream
+174 0 obj
+<</Metadata 173 0 R>>
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 2 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 145 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R>>/Font<</TT0 85 0 R/TT1 163 0 R>>/ProcSet[/PDF/Text]/Properties<</MC0 4 0 R>>/XObject<</Fm0 7 0 R>>>>/Rotate 0/Tabs/W/Thumb 125 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340036005A>/NumberOfPageItemsInPage 1/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[3025.0 0.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 6363>>/PageWidthList<</0 1920.0>>>>>>>>
+<</Filter/FlateDecode/Length 5488>>stream
+IV?v}0|5
+endstream
+<</Length 6127/Subtype/XML/Type/Metadata>>stream
+<?xpacket begin="
+" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 9.1-c002 79.b7c64cc, 2024/07/16-07:59:40        ">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+            xmlns:xmpTPg="http://ns.adobe.com/xap/1.0/t/pg/"
+            xmlns:stDim="http://ns.adobe.com/xap/1.0/sType/Dimensions#"
+            xmlns:xmpG="http://ns.adobe.com/xap/1.0/g/"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:illustrator="http://ns.adobe.com/illustrator/1.0/"
+            xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+            xmlns:stRef="http://ns.adobe.com/xap/1.0/sType/ResourceRef#"
+            xmlns:stEvt="http://ns.adobe.com/xap/1.0/sType/ResourceEvent#"
+            xmlns:pdf="http://ns.adobe.com/pdf/1.3/">
+         <xmp:CreatorTool>Adobe Illustrator 28.4 (Windows)</xmp:CreatorTool>
+         <xmp:CreateDate>2024-05-22T09:46:30+10:00</xmp:CreateDate>
+         <xmp:MetadataDate>2024-05-22T09:46:30+10:00</xmp:MetadataDate>
+         <xmp:ModifyDate>2024-05-22T09:46:30+10:00</xmp:ModifyDate>
+         <xmpTPg:NPages>1</xmpTPg:NPages>
+         <xmpTPg:HasVisibleTransparency>False</xmpTPg:HasVisibleTransparency>
+         <xmpTPg:HasVisibleOverprint>False</xmpTPg:HasVisibleOverprint>
+         <xmpTPg:MaxPageSize rdf:parseType="Resource">
+            <stDim:w>587.710122</stDim:w>
+            <stDim:h>106.143780</stDim:h>
+            <stDim:unit>Millimeters</stDim:unit>
+         </xmpTPg:MaxPageSize>
+         <xmpTPg:PlateNames>
+            <rdf:Seq>
+               <rdf:li>Cyan</rdf:li>
+               <rdf:li>Magenta</rdf:li>
+               <rdf:li>Yellow</rdf:li>
+               <rdf:li>Black</rdf:li>
+            </rdf:Seq>
+         </xmpTPg:PlateNames>
+         <xmpTPg:SwatchGroups>
+            <rdf:Seq>
+               <rdf:li rdf:parseType="Resource">
+                  <xmpG:groupName>Default Swatch Group</xmpG:groupName>
+                  <xmpG:groupType>0</xmpG:groupType>
+                  <xmpG:Colorants>
+                     <rdf:Seq>
+                        <rdf:li rdf:parseType="Resource">
+                           <xmpG:swatchName>Bright Green</xmpG:swatchName>
+                           <xmpG:type>PROCESS</xmpG:type>
+                           <xmpG:tint>100.000000</xmpG:tint>
+                           <xmpG:mode>RGB</xmpG:mode>
+                           <xmpG:red>160</xmpG:red>
+                           <xmpG:green>238</xmpG:green>
+                           <xmpG:blue>199</xmpG:blue>
+                        </rdf:li>
+                        <rdf:li rdf:parseType="Resource">
+                           <xmpG:swatchName>Peach</xmpG:swatchName>
+                           <xmpG:type>PROCESS</xmpG:type>
+                           <xmpG:tint>100.000000</xmpG:tint>
+                           <xmpG:mode>RGB</xmpG:mode>
+                           <xmpG:red>255</xmpG:red>
+                           <xmpG:green>182</xmpG:green>
+                           <xmpG:blue>169</xmpG:blue>
+                        </rdf:li>
+                        <rdf:li rdf:parseType="Resource">
+                           <xmpG:swatchName>Brown</xmpG:swatchName>
+                           <xmpG:type>PROCESS</xmpG:type>
+                           <xmpG:tint>100.000000</xmpG:tint>
+                           <xmpG:mode>RGB</xmpG:mode>
+                           <xmpG:red>179</xmpG:red>
+                           <xmpG:green>95</xmpG:green>
+                           <xmpG:blue>41</xmpG:blue>
+                        </rdf:li>
+                     </rdf:Seq>
+                  </xmpG:Colorants>
+               </rdf:li>
+            </rdf:Seq>
+         </xmpTPg:SwatchGroups>
+         <dc:format>application/postscript</dc:format>
+         <dc:title>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">PRF0001B__PRF_LOGO_LOCKUP</rdf:li>
+            </rdf:Alt>
+         </dc:title>
+         <dc:creator>
+            <rdf:Seq>
+               <rdf:li>Dave Wells</rdf:li>
+            </rdf:Seq>
+         </dc:creator>
+         <illustrator:CreatorSubTool>Adobe Illustrator</illustrator:CreatorSubTool>
+         <xmpMM:DocumentID>xmp.did:a5e22609-1a08-9044-b60b-6c17d9e5a2af</xmpMM:DocumentID>
+         <xmpMM:InstanceID>xmp.iid:b45f34c7-7c59-db45-bb47-d1ede4e8ae35</xmpMM:InstanceID>
+         <xmpMM:OriginalDocumentID>xmp.did:21080f62-e836-4e62-bd27-d10ea5a8bd7a</xmpMM:OriginalDocumentID>
+         <xmpMM:RenditionClass>default</xmpMM:RenditionClass>
+         <xmpMM:DerivedFrom rdf:parseType="Resource">
+            <stRef:instanceID>uuid:5d863555-7e01-4710-b64b-c8ff8a878ff3</stRef:instanceID>
+            <stRef:documentID>xmp.did:21080f62-e836-4e62-bd27-d10ea5a8bd7a</stRef:documentID>
+            <stRef:originalDocumentID>xmp.did:21080f62-e836-4e62-bd27-d10ea5a8bd7a</stRef:originalDocumentID>
+            <stRef:renditionClass>default</stRef:renditionClass>
+         </xmpMM:DerivedFrom>
+         <xmpMM:History>
+            <rdf:Seq>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>saved</stEvt:action>
+                  <stEvt:instanceID>xmp.iid:21080f62-e836-4e62-bd27-d10ea5a8bd7a</stEvt:instanceID>
+                  <stEvt:when>2024-05-01T13:42:15+10:00</stEvt:when>
+                  <stEvt:softwareAgent>Adobe Illustrator 28.4 (Macintosh)</stEvt:softwareAgent>
+                  <stEvt:changed>/</stEvt:changed>
+               </rdf:li>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>saved</stEvt:action>
+                  <stEvt:instanceID>xmp.iid:a5e22609-1a08-9044-b60b-6c17d9e5a2af</stEvt:instanceID>
+                  <stEvt:when>2024-05-22T09:46:30+10:00</stEvt:when>
+                  <stEvt:softwareAgent>Adobe Illustrator 28.4 (Windows)</stEvt:softwareAgent>
+                  <stEvt:changed>/</stEvt:changed>
+               </rdf:li>
+            </rdf:Seq>
+         </xmpMM:History>
+         <pdf:Producer>Adobe PDF library 17.00</pdf:Producer>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="r"?>
+endstream
+<</Metadata 3 0 R>>
+<</Filter/FlateDecode/Length 348>>stream
+endstream
+<</BaseFont/QNTBAI+DenimINK-Medium/Encoding/WinAnsiEncoding/FirstChar 32/FontDescriptor 164 0 R/LastChar 124/Subtype/TrueType/ToUnicode 5 0 R/Type/Font/Widths[218 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 610 0 540 0 0 550 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 535 0 0 837 0 0 598 0 636 0 0 0 0 0 0 0 0 0 0 0 0 0 0 521 0 520 570 528 0 523 0 230 0 505 0 844 559 0 570 0 350 462 376 559 494 741 0 493 0 0 240]>>
+<</BBox[0.0 1080.0 1920.0 0.0]/Filter/FlateDecode/Length 190/Matrix[1.0 0.0 0.0 1.0 0.0 0.0]/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R>>/Font<</TT0 6 0 R>>/ProcSet[/PDF/Text]>>/Subtype/Form>>stream
+endstream
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 9 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 145 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</C2_0 101 0 R/TT0 163 0 R/TT1 85 0 R/TT2 88 0 R>>/ProcSet[/PDF/Text]/XObject<</Fm0 91 0 R/Fm1 87 0 R>>>>/Rotate 0/Tabs/W/Thumb 126 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340036005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 4703>>/PageWidthList<</0 1920.0>>>>>>>>
+<</Filter/FlateDecode/Length 4018>>stream
+NFC'UEO]
+W_:bR9oO
+endstream
+10 0 obj
+<</Annots 11 0 R/ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 16 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 145 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</C2_0 101 0 R/TT0 163 0 R/TT1 88 0 R/TT2 85 0 R>>/ProcSet[/PDF/Text]/XObject<</Fm0 91 0 R/Fm1 87 0 R>>>>/Rotate 0/Tabs/W/Thumb 127 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340036005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 37909>>/PageWidthList<</0 1920.0>>>>>>>>
+11 0 obj
+[12 0 R 13 0 R 14 0 R 15 0 R]
+12 0 obj
+<</A 17 0 R/BS<</S/S/Type/Border/W 0>>/Border[0 0 0]/H/N/Rect[528.0 118.0 958.0 103.5]/Subtype/Link/Type/Annot>>
+13 0 obj
+<</A 18 0 R/BS<</S/S/Type/Border/W 0>>/Border[0 0 0]/H/N/Rect[545.0 104.0 609.0 89.5]/Subtype/Link/Type/Annot>>
+14 0 obj
+<</A 19 0 R/BS<</S/S/Type/Border/W 0>>/Border[0 0 0]/H/N/Rect[166.0 91.0 638.667 76.5]/Subtype/Link/Type/Annot>>
+15 0 obj
+<</A 20 0 R/BS<</S/S/Type/Border/W 0>>/Border[0 0 0]/H/N/Rect[207.0 80.5 649.0 68.0]/Subtype/Link/Type/Annot>>
+16 0 obj
+<</Filter/FlateDecode/Length 6622>>stream
+lA&)LH_7
+endstream
+17 0 obj
+<</IsMap false/S/URI/URI(https://www.aihw.gov.au/reports/youth-justice/youth-justice-in-australia-2023-24/contents/characteristics-of-young-people-under-supervision/socioeconomic-area)>>
+18 0 obj
+<</IsMap false/S/URI/URI(https://www.towardstruth.org.au/about)>>
+19 0 obj
+<</IsMap false/S/URI/URI(https://www.aihw.gov.au/reports/youth-justice/young-people-returning-to-sentenced-supervision/summary)>>
+20 0 obj
+<</IsMap false/S/URI/URI(https://www.aihw.gov.au/reports/youth-justice/youth-justice-in-australia-2023-24/contents/detention/unsentenced-detention)>>
+21 0 obj
+<</Annots 22 0 R/ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 24 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 145 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</C2_0 101 0 R/C2_1 113 0 R/TT0 163 0 R/TT1 85 0 R/TT2 88 0 R/TT3 162 0 R>>/ProcSet[/PDF/Text/ImageC]/XObject<</Fm0 91 0 R/Fm1 87 0 R/Im0 26 0 R>>>>/Rotate 0/Tabs/W/Thumb 128 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340036005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 38003>>/PageWidthList<</0 1920.0>>>>>>>>
+22 0 obj
+[23 0 R]
+23 0 obj
+<</A 27 0 R/BS<</S/S/Type/Border/W 0>>/Border[0 0 0]/H/N/Rect[44.0 100.114 364.0 50.0]/Subtype/Link/Type/Annot>>
+24 0 obj
+<</Filter/FlateDecode/Length 3352>>stream
+NED)OsDxF
+rr[Qz>f:
+endstream
+25 0 obj
+<</Length 446/Subtype/XML/Type/Metadata>>stream
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 9.1-c002 79.b7c64cc, 2024/07/16-07:59:40        ">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:tiff="http://ns.adobe.com/tiff/1.0/"
+    xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+   tiff:ImageWidth="2840"
+   tiff:ImageLength="2226"
+   tiff:Orientation="1"
+   xmp:ModifyDate="2023-03-31T08:09:35"/>
+ </rdf:RDF>
+</x:xmpmeta>
+endstream
+26 0 obj
+<</BitsPerComponent 8/ColorSpace 154 0 R/Filter/DCTDecode/Height 1743/Intent/RelativeColorimetric/Length 1276326/Metadata 25 0 R/Name/X/Subtype/Image/Type/XObject/Width 2840>>stream
+'()*56789:EFGHIJTUVWXYZdefghijuvwxyz
+$%&'()*456789:CDEFGHIJSTUVWXYZcdefghijstuvwx
+ j}!3.~%
+HQ/8|laPK
+.()KYY!! 
+<{.a9a2T2,('
+s%/J~kD 
++ }L"'Ga
+9aqx&hllv;
+m*6=nyBfH`
+"U-.,Z!%=
+fHP#O?Xg
+~qeXEH|3
+jR8.YD3$
+r([|j)i"K@
+~{#j6Ju;
+!=Nb0e>B}
+{}O@d#@o
+o(INiv<s
+l+19w=?3
+R\F[SN w
+?8WQ=/RL
+yG=l,8l=a
+8-9aNw6-
+9:nI'm!v
+>q#{5t}R=
+<rjl?8cz.{
+i1c91L?EN
+BXE9NhnP
+}"&b(-pM(&g+
+eMH($;%*
+mha,)V*Q
+]>zRDJM'
+MWEJu$iq2
+"ne*W2BM
+Ro5:`>pk
+=!Q&oT7^yS7l
+K7%?=55,
+I=!;5z!L1
+aK]:iHqF
+naan$eRN
+],K%IthJ
+vbNu)I/)i
+n9D{d;\M
+/'>ZP#np
+NL:<.%JJ
+qZjlwKY)
++3_`^~he
+<E9OG{,P
+sm!pL7Z?
+6;}"$vYU
+EBqs+-5|
+@)[%:[*T
+6]n/8S[a
++IBjURH+
+sG[>?gn
+UN=*XZU.
+S{O8/bz
+[iJNvFRS
+o*](pe6 
+H-PC6 C]
+I6>f#JdC
+JmryzE>k
+y+<94{5L
+_~s2\B\k
+/Hu}*eE*
+Q]&mHEBT
+-"Y9Zq;6
+h*~eVuys
+Q+F"^Wx~
+VeA"W>P@
+Y |;BtR*
+[Pl~(Th~
+RV=aq;tF
+*6+qCD$}
+PRJV,RH#
+"^%~k&N `
+<I4iOfNT
+jW^VC.d9
+U)>+b'q]vna
+njUjiNy(
+weknQEK-
+y}DXq1u+
+[n6me%IRT
+r/N{xvE+uE
+56[.L8FW
+zUEF]IW;7
+b@.e+!j^b
+9JnQr[A#
+T*$VMZNg
+H`iz[n%.
+R1vTH5`w
+\q#nqZ3k
+!$$|J9~(j
+b]Q>.CxC
+1E^bi%/.
+!DU3Pjbm6;
++ib_K%S3
+n4--zGDt
+@mnvI }@
+zW2y~}!&)
+KM)@XY']
+OSEjm?kPl)
+bY9uhW6^Y
+w;Sj|XgO>
+Qv1}skKM
+G9\L;>'$e
+SxYMjzq(
+s:mIVM~P
+SEE*9@+ 
+T}EGSxOIZk
+(A:lu,'+Rh
+jsD[LBN-
+;<[nvqiBL
+kJ|/<u9@
+Ijd%)HJR
+eHC.whCn%
+OL$)^.H<
+$*()Qq%E
+j^JFY9[X
+z{kXJSr]Q
+*H%@khTT
+t*B[t|*LC
++*KcmAGNP
+:A(veKGx
+)BT@9yx37
+9B KSAeV
+!+He$_1Fm
+Y@uiqdL"
+t@)|eRlS
+m+qC0% rH
+:}!N\lD'Dm
+n}!=eD03U%f
+:cmz~}UE
+Xf9|jVS
+CSkRnCaZ[
+3u+uj:Djw
+iSsh +)Kw
+Ovn?(I-Qt
+%)q*H!iH
+.f$)C@T7Jm
+CUs9-X+6V
+[Sk:ks}4#
+^%!$]D'7
+IN^m3MeQ
+$d]nmI)i
+~}y}!3wt
+jU./T0k.
+(tOXrr"N
+3/]=6FE&
+3st{=/5J *
+(ciQ]66%
+A}L%RxK6M
+9:j!;$IS*
+ZBHliQZny
+h?8L:XggTuW
+:w(y'P'{
+.M.NXaN?L-
+Q:$HI:XX
+B^^]L:S6
++s)O['.o
+rE7rrU*;%D
+ehuj:Y(ZI?
+T'Zo"YKr
+[HKn(]VR
+}.!/z^9WS$
+/~gXny3{y
+<3)KCOXT
+f;~?X^\z
+85Nu|-f\
+c."V*K]n
+e0U1J(st
+HVR<}:C3
+A(re:rO~
+nlLq[ln#
+n.%?+/P!e
+evj^vy7l
+-%9{iQ;hu
+:sJjx9`w
+*KSi$obs
+D$V$JR^J
+U>FRfr{()n]
+7`3(ns]KQ"
+^GfB.o}-
+)t:Aq(Ox
+~9bk5C+r
+)3J8Cv(
+/o]n-3I)"
+M6\uv$xQ
+IPys*XIu
+rHb9lGNu
+j.-JQ%JR
+'Vob^uJD
+IQHA+P)HH
+:A%grbeb 
+W?h5nFUT
+^p)@_(=@
+m%yA._!VU(
+YH8jY.qK
+?56$kH@R
+eRt#/Qhr/
+IK!E;(]II
+ZJP>I>-3m
+|(H**J|P
+6r#m*veO
+km(^E)dw
+b9&1*E:^}
+*I"^e9]GBT
+./1?=|Q/
+~_@O'Qlw
+2n/o+_4J
+?-b.H9YDk`
+ ]V6^D->
+'d;C;,3i
+7Y $u'hn`
+,9#+14%[JP
+Ffc8NPBn?_X
+eb]U,3TmH
+E?"R)/+C
+Sa+mWhwi
+7RI7>f:;
+^o(yN)*Q
+10lTlzG9
+X[HjS+/d
+rURj}AWA
+>[R]m*Qo
+-SVIN~cHc'c
+`W25#nM5|6
+YCU6EJYr
+hv,DU,Iq
+Rv="*\Ki
+PSjKk#R9x|C
+|ENEb]m|D
+.Z;N{Zv=
+!Q.H.5+.
+)W!Jv+'g
+bZ^,eR3E
+R|DjzCSS
+DkOro.|>
+%RaiVU%I
+W[~QO6VW=
+)f7#:OH;
+/LSBbNzj
+gOEwj#_3
+.+6!C^(Xi
+8Ea Q&FK
+dKxbaS`);
+iaIujq#U$
+/a"U*rRy
+Z421v,UjU
+rRa+PmGsq
+cy%[q"fu
+gVR@>+ip
+mNfRRHP)Z
+]ivQkmi#/
+G9vBe%]Al
+nN\^^iIP
+QsRu=bEk
+C)IfQ rRA./^
+)}!{[C8>
+?+\~QeK(2
+uq}u:|1U
+JMKnrFuj
+1mA3k[GpA
+G jX2Q@_
+(_PKn-JYh}
+`A!T}YQ-0
+1U-!*$"y
+=ImjI$'Qh
+SAv\4l>f
++Bf^CWJI
+p5'Slgu(
+5|[jUZ;u
+:,G>f$kj
+BvPL[9*m
+BiI%'ma:s
+vs+~P?iO
+]IVnp52#
+I1]?ZXKa
+5imt>/KK
+]YqKZ,@R
+V~^tL\(Z
+39a=:y/SsAW
+YpXixoD[&
+kuyW%_HSO!M
+=LWg_q`fa
+`+)ZR"m0D
+*c*RHfa'2
+fvf~nim{Z
+6yJ_v/}c
+rfZ\]D_q
+!PjN$fSsR/;
+dT50kmZbL9{z
+Q3*?u3KT
+Smvnl Y^
+j6>{B4k't
+nr4w*`\\
+P);f#7(]r
+t=aQ$Lu<
+?i`(\UnqE3
+u(|L)AwS
+ZI'Sm!0V
+bu{ m-4V
+^CkP(Cl%#
+VRQw?(bNK<
+3'"{"3Mnh! x
+70c\0Qv`
+kBf^=IoHi
+XIY!iQ$YV
+QbO.{G|N
+KjnQ*X*U
+na}$l^S?l
+-AeAZxBG<
+-[m.%hZ-a
+xs[jRim9
+uN{ce#2tm
+6K;iQBHh
+JaQR~->m%
++v_R."TI
+!7.^g'Ra
+]D15/HjnpL+2E
+%edmkyD\
+Vcc}.B~B
+r<AI:,mx
+-*ImN-!+T
+]I*l!ADY''
+nlYd[eD9
+<;XtT%QP
++r&Q%-B\
+KT\jm{\
+' kQ1C<E
+SNR4;yG9
+KNf;y?&7
+)RRs%Hp%Ij
+.{kvWM!/>-u
+tIXvis9E
+\Kib^lg%
+?Y{Q,\'/
+yChgP<Go(D
+goo=U9nO 
+zRk;O8~S
+36t:&s-$
+_$*tU7)'
+J_dg9.n<
+zZ"Li/[{
+7PR]SkNb,
+HQ.K_wb#
+;/{6+yJp
+c@l-o/XTJ4_
+'0)K.K(,
+ePH)QY% 
+}92/-%9nI
+XUk,3{!J#
+^l=Dp(-GM,
+0-iRIQ2N
+E*ueGblbN
+Pc$4|[Lry
+Bvv!Z.%pb
+xT,L&jU2
+7R!D4|o+
+]=SU?hFR
+j5.8R]n~~M
+!?XTd&cMvc
+osp|?#s
+Xy7yg?e
+f*q_t%!D
+AT{TR8C&
+IHhfW?(z 
+7T;X1yiX
+I=R76',;
+iU>".i*Ch
+@%Z[Xja6
+%fH{Q(-n
+[c"N[&n@Z
+;+Yraa'~q
+!}(S:lT$7JesJ>"2
+bD5)]L}J
+l+P.OHv!
+M2I)>-au
+&^K=7]nM
+@+>@$!?#
+'d^5Objr&
+\xS}yGFh
+):i~]L;Iy5(
+SIyw6[kW
+tn\hL)s@
+--9IHRr|
+[}?M|1kI
+0_aAA'(H
+*ljdPvl
+G}!Q.m5g=
+]=4"%!E4
+@zG;O5feo 
+L(q-nVU^&
+QT*bZBTM
+5lO&*-[A
+5e*^m!m:
+nTDKp~u7
+so-J}grv
+6:PnaA`jQb
+_J<'@zZ9
+lGXA.IBf
+]$#qe);'rs^
+[2d~iwq
+&feR,5w-
+endstream
+27 0 obj
+<</IsMap false/S/URI/URI(https://www.justreinvest.org.au/community/mt-druitt/)>>
+28 0 obj
+<</Annots 29 0 R/ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 32 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 146 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</C2_0 120 0 R/C2_1 101 0 R/C2_2 113 0 R/TT0 163 0 R/TT1 88 0 R/TT2 85 0 R/TT3 162 0 R>>/ProcSet[/PDF/Text]/XObject<</Fm0 91 0 R/Fm1 87 0 R>>>>/Rotate 0/Tabs/W/Thumb 129 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340036005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 38168>>/PageWidthList<</0 1920.0>>>>>>>>
+29 0 obj
+[30 0 R 31 0 R]
+30 0 obj
+<</A 33 0 R/BS<</S/S/Type/Border/W 0>>/Border[0 0 0]/H/N/Rect[1524.0 94.0 1746.0 77.5]/Subtype/Link/Type/Annot>>
+31 0 obj
+<</A 34 0 R/BS<</S/S/Type/Border/W 0>>/Border[0 0 0]/H/N/Rect[65.0 81.5 255.0 67.0]/Subtype/Link/Type/Annot>>
+32 0 obj
+<</Filter/FlateDecode/Length 5190>>stream
+endstream
+33 0 obj
+<</IsMap false/S/URI/URI(https://www.indigenoushpf.gov.au/measures/2-11-contact-with-the-criminal-justice-system)>>
+34 0 obj
+<</IsMap false/S/URI/URI(https://www.indigenoushpf.gov.au/measures/2-11-contact-with-the-criminal-justice-system)>>
+35 0 obj
+<</Annots 36 0 R/ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 38 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 146 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</C2_0 120 0 R/C2_1 101 0 R/TT0 163 0 R/TT1 88 0 R/TT2 85 0 R>>/ProcSet[/PDF/Text]/XObject<</Fm0 91 0 R/Fm1 87 0 R>>>>/Rotate 0/Tabs/W/Thumb 130 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340036005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 38283>>/PageWidthList<</0 1920.0>>>>>>>>
+36 0 obj
+[37 0 R]
+37 0 obj
+<</A 39 0 R/BS<</S/S/Type/Border/W 0>>/Border[0 0 0]/H/N/Rect[1298.0 239.0 1801.0 186.0]/Subtype/Link/Type/Annot>>
+38 0 obj
+<</Filter/FlateDecode/Length 4926>>stream
+r:@W]=3L
+flj5H_OP
+endstream
+39 0 obj
+<</IsMap false/S/URI/URI(https://www.socialreinvestmentwa.org.au/srwas-role-in-supporting-justice-reinvestment)>>
+40 0 obj
+<</Annots 41 0 R/ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 43 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 146 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</C2_0 101 0 R/C2_1 120 0 R/TT0 163 0 R/TT1 85 0 R/TT2 88 0 R>>/ProcSet[/PDF/Text/ImageC]/XObject<</Fm0 91 0 R/Fm1 87 0 R/Im0 45 0 R>>>>/Rotate 0/Tabs/W/Thumb 131 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340036005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 38420>>/PageWidthList<</0 1920.0>>>>>>>>
+41 0 obj
+[42 0 R]
+42 0 obj
+<</A 46 0 R/BS<</S/S/Type/Border/W 0>>/Border[0 0 0]/H/N/Rect[1295.0 196.0 1737.0 137.55]/Subtype/Link/Type/Annot>>
+43 0 obj
+<</Filter/FlateDecode/Length 3584>>stream
+I/[Ax?uC
+endstream
+44 0 obj
+<</BitsPerComponent 8/ColorSpace/DeviceGray/Filter/DCTDecode/Height 547/Intent/RelativeColorimetric/Length 2329/Name/X/Subtype/Image/Type/XObject/Width 813>>stream
+!"#$%&'()*123456789:ABCDEFGHIJQRSTUVWXYZabcdefghijqrstuvwxyz
+endstream
+45 0 obj
+<</BitsPerComponent 8/ColorSpace 154 0 R/Filter/DCTDecode/Height 547/Intent/RelativeColorimetric/Length 57131/Name/X/SMask 44 0 R/Subtype/Image/Type/XObject/Width 813>>stream
+%&'()*689:CDEFGHIJRTUXYZbcefghijrsvwxyz
+%&'()*6789:BCDEFGHIJTUVWXYZbcdefghijstuvwxyz
+qx#<%$f|
+E-$J.$|
+63n-6sT6e
+fE!HvKHu
+_3DNW+e]8
+zH,,2]!`
+)W%F}"EF
+.7cU<Tvc
+tSUy[&b&b)
+A.F\TvSi"qN
+3z'aDTsq[
+endstream
+46 0 obj
+<</IsMap false/S/URI/URI(https://maranguka.org.au/palimaa-interactive-platform/)>>
+47 0 obj
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 48 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 146 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</C2_0 101 0 R/TT0 163 0 R/TT1 85 0 R/TT2 88 0 R>>/ProcSet[/PDF/Text]/XObject<</Fm0 91 0 R/Fm1 87 0 R>>>>/Rotate 0/Tabs/W/Thumb 132 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340036005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 38708>>/PageWidthList<</0 1920.0>>>>>>>>
+48 0 obj
+<</Filter/FlateDecode/Length 3554>>stream
+fT|j}</'
+endstream
+49 0 obj
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 50 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 146 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</C2_0 101 0 R/TT0 163 0 R/TT1 85 0 R/TT2 88 0 R>>/ProcSet[/PDF/Text/ImageC]/XObject<</Fm0 91 0 R/Fm1 87 0 R/Im0 52 0 R>>>>/Rotate 0/Tabs/W/Thumb 133 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340036005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 38843>>/PageWidthList<</0 1920.0>>>>>>>>
+50 0 obj
+<</Filter/FlateDecode/Length 3090>>stream
+[`\BS}kS
+endstream
+51 0 obj
+<</Length 2295/Subtype/XML/Type/Metadata>>stream
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 9.1-c002 79.b7c64cc, 2024/07/16-07:59:40        ">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+    xmlns:stEvt="http://ns.adobe.com/xap/1.0/sType/ResourceEvent#"
+    xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+    xmlns:xmpDM="http://ns.adobe.com/xmp/1.0/DynamicMedia/"
+    xmlns:stDim="http://ns.adobe.com/xap/1.0/sType/Dimensions#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmpMM:InstanceID="xmp.iid:41480c3b-f34c-4220-a4b5-b5873c5df91a"
+   xmpMM:DocumentID="122dac61-a0ea-19ab-eeda-74dc00000037"
+   xmpMM:OriginalDocumentID="xmp.did:8fc46d2f-d158-4db4-b750-307f466ff50c"
+   xmp:MetadataDate="2024-11-26T14:53:33+11:00"
+   xmp:ModifyDate="2024-11-26T14:53:33+11:00"
+   xmp:CreateDate="2024-11-26T14:53:03+11:00"
+   xmpDM:videoFrameRate="23.976024"
+   xmpDM:videoFieldOrder="Progressive"
+   xmpDM:videoPixelAspectRatio="1/1"
+   xmpDM:startTimeScale="24000"
+   xmpDM:startTimeSampleSize="1001"
+   dc:format="JPEG">
+   <xmpMM:History>
+    <rdf:Seq>
+     <rdf:li
+      stEvt:action="saved"
+      stEvt:instanceID="bea48e67-8c9a-ebaa-450b-97be00000064"
+      stEvt:when="2024-11-26T14:53:33+11:00"
+      stEvt:softwareAgent="Adobe Premiere Pro 2025.0 (Macintosh)"
+      stEvt:changed="/"/>
+     <rdf:li
+      stEvt:action="saved"
+      stEvt:instanceID="xmp.iid:640144fc-3c9f-4c8e-80e3-3c8778c357a7"
+      stEvt:when="2024-11-26T14:53:33+11:00"
+      stEvt:softwareAgent="Adobe Premiere Pro 2025.0 (Macintosh)"
+      stEvt:changed="/"/>
+     <rdf:li
+      stEvt:action="saved"
+      stEvt:instanceID="xmp.iid:41480c3b-f34c-4220-a4b5-b5873c5df91a"
+      stEvt:when="2024-11-26T14:53:33+11:00"
+      stEvt:softwareAgent="Adobe Premiere Pro 2025.0 (Macintosh)"
+      stEvt:changed="/metadata"/>
+    </rdf:Seq>
+   </xmpMM:History>
+   <xmpDM:videoFrameSize
+    stDim:w="1920"
+    stDim:h="1080"
+    stDim:unit="pixel"/>
+   <xmpDM:duration
+    xmpDM:value="21280"
+    xmpDM:scale="1001/24000"/>
+   <xmpDM:startTimecode
+    xmpDM:timeFormat="23976Timecode"
+    xmpDM:timeValue="00:50:44:01"/>
+   <xmpDM:altTimecode
+    xmpDM:timeValue="00:50:44:01"
+    xmpDM:timeFormat="23976Timecode"/>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+endstream
+52 0 obj
+<</BitsPerComponent 8/ColorSpace 154 0 R/Filter/DCTDecode/Height 892/Intent/RelativeColorimetric/Length 87273/Metadata 51 0 R/Name/X/Subtype/Image/Type/XObject/Width 570>>stream
+&'()*456789:DEFGHIJSTUVWXYZcdefghijstuvwxyz
+#$%&'()*34567b
+89:CDEFGHIJSTUVWXYZcdefghijrstuvwxyz
+4XI=Wh=LD
+5{6=R:VzF
+JAyVZu_b
+=e!df,-y\)t
+ rJK_t:&~D
+^:\b%qw+  
+V4KZ#Ty&
+j6ZZd[nk
+\\I2I&J^nN
+0Uau1nfWA
+c&TjrAjm%
+<Yprb%$
+<M\MRgH/&
+RAetOc+5
+_1.-cn\!v
+DrOqr\obg
+LQ}f0KhVq
+nJk._-Rr
+U}(|^==>
+;:R\K21?
+MHR-.q-1h\;-6
+ew7gBIEpl
+ZhYK]F: OD
+Y'wt\X?GK5T
+endstream
+53 0 obj
+<</Annots 54 0 R/ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 56 0 R/CropBox[0.0 0.0 1920.0 1080.0]/Group 62 0 R/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 147 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</C2_0 101 0 R/C2_1 120 0 R/TT0 163 0 R/TT1 88 0 R/TT2 85 0 R>>/ProcSet[/PDF/Text/ImageC]/XObject<</Fm0 91 0 R/Fm1 87 0 R/Im0 60 0 R>>>>/Rotate 0/Tabs/W/Thumb 134 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340036005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 38930>>/PageWidthList<</0 1920.0>>>>>>>>
+54 0 obj
+[55 0 R]
+55 0 obj
+<</A 61 0 R/BS<</S/S/Type/Border/W 0>>/Border[0 0 0]/H/N/Rect[80.0 81.0 414.0 66.5]/Subtype/Link/Type/Annot>>
+56 0 obj
+<</Filter/FlateDecode/Length 3300>>stream
+endstream
+57 0 obj
+<</Length 494/Subtype/XML/Type/Metadata>>stream
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 9.1-c002 79.b7c64cc, 2024/07/16-07:59:40        ">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:exif="http://ns.adobe.com/exif/1.0/"
+   exif:PixelYDimension="2880"
+   exif:PixelXDimension="5120">
+   <exif:UserComment>
+    <rdf:Alt>
+     <rdf:li xml:lang="x-default">Screenshot</rdf:li>
+    </rdf:Alt>
+   </exif:UserComment>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+endstream
+58 0 obj
+<</Length 494/Subtype/XML/Type/Metadata>>stream
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 9.1-c002 79.b7c64cc, 2024/07/16-07:59:40        ">
+ <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about=""
+    xmlns:exif="http://ns.adobe.com/exif/1.0/"
+   exif:PixelYDimension="2880"
+   exif:PixelXDimension="5120">
+   <exif:UserComment>
+    <rdf:Alt>
+     <rdf:li xml:lang="x-default">Screenshot</rdf:li>
+    </rdf:Alt>
+   </exif:UserComment>
+  </rdf:Description>
+ </rdf:RDF>
+</x:xmpmeta>
+endstream
+59 0 obj
+<</BitsPerComponent 8/ColorSpace/DeviceGray/Filter/DCTDecode/Height 2880/Intent/RelativeColorimetric/Length 22288/Metadata 58 0 R/Name/X/Subtype/Image/Type/XObject/Width 1845>>stream
+!"#$%&'()*123456789:ABCDEFGHIJQRSTUVWXYZabcdefghijqrstuvwxyz
+endstream
+60 0 obj
+<</BitsPerComponent 8/ColorSpace 154 0 R/Filter/DCTDecode/Height 2880/Intent/RelativeColorimetric/Length 421390/Metadata 57 0 R/Name/X/SMask 59 0 R/Subtype/Image/Type/XObject/Width 1845>>stream
+%&'()*456789:CDEFGHIJSTUVWXYZcdefghijrstuvwxyz
+"#$%&'()*3456789:BCDEFGHIJQRSTUVWXYZabcdefghijqrstuvwxyz
+J4"p"|"|"|"x
+d}SWDf|"r
+5-p1:PB,
+EA!CG,r|
+F|"|"|"|
+(/5cRhcQi
+=B'b',b{
+B QT"v#>
+f|"|"|"|"
+rx"|"|"t
+ah?uXxms
+%=7h8jum
+9 o$doZ^
+"x"|"|"|"t
+|Ib:|hcl
+T"z"|"|"|"|"|"z
+b|"|"|"|"|"|"|"|"|"|"|"|"|"|"|"|"|"|"|"|"{B'
+"yT"x"|"|"|"|"|"|"
+"|"|"|"|"|"|"|"z
+N$"r"|"|"z
+HE|y(r)b
+"|"|"|"yb'
+O$"r"|"v
+"t"|"|"|"|"|"p
+b|"|"|"|"|"|"u
+F|"|"|"|"|"v
+Pz~<Y?H|e
+"t"|"|"v
+J}&EbIChu3
+b3o!$ v0
+"t"|"|"|"t
+ RJnj1r#
+v"t"|"uB'
+"|"x"z"}t"
+"t"|"|"|
+|"|"|"|"|"|"|"w
+"z"|"|"u
+x"|"|"|"|"|"x
+!$EJx3r&
+"|"|"|"|"y!
+"t"|"|"|"|"r
+UdU<27udV$
+"|"|"|"|"|
+v"z"|"|"|"|"v
+~VQzr~|]
+ghGz"|"|"|"|
+[>_Kk2isFJ
+jIL]l{dv$
+V93w(%dU4E;
+E|]E,lb
+X)$$t_$DB
+NDA""ub 
+Wb'T"x#>
+k3(I>2ud
+0`"k!b".u@
+C`G1Qa7U
+>T?3Oi/Y
+h|'4#>HD
+4IjPn`ZpO 
+"x%dvGB#
+(zwiyqrW
+v"ut"yv"|"ub'
+W0jXszUFY
+'qT"v"|"t
+b|"|"|"v
+O$"r"|9>
+,(a-OhpR6Ln
+lzer0}?'Z
+rx"z"|"s!
+r#,;w)rf
+r|"|"|"z<'\
+EAjsR%Gi
+%j~@N'jH"
+i"iU,)BV5
+b|"|"|"x"t
+38b!=Gb1>q
+?k_B?Oo3
+-'pT-6;b
+$#?#NQZ/
+FEzK!~;o
+5b 2T<"&
+r|"z"}B;
+B<I$HqzwO
+x"|"|"}B;
+WVK9E{X]
+, 6,'hXwq
+z7lZ<qMxF?}
+"|"|"|"x
+b|"|"|"|"|"x
+V"}%B'Fqv
+Ty*CX@4x
+G|"|"z"|"x"z
+yrrah4Ns
+T?2:xdOd
+$M 4ibYIy
+*tX!XSv
+u /%:<4{
+?`WO%"IQ`?u
+b|"|"|"|"|"|"|"{t"
+= ,(gRT9<S
+Yz+Wv:=yV<!yv
+r|"|"|"|"|"r
+I -&>R"K!fx
+aHBym2HO
+Iv*EM>U.
+~Ie1/q\XZxMx
+:W0l-%Koi
+ZR>zw 4X
+"t"|"|"x 
+#&?nAhB/
+|%d}vI(p
+,s/#i`|`
+I)oG.ez=8
+r|"|"|"|
+6K hyjmP`
+5&K trSQ
+|"|"|"|"|"|"u
+Z1)l*_@>
+|"|"|"|"|"u
+eG_c|CEF
+h`];x@I(
+!hxv5'N|X
+Jc2zyi_aa
+<s{}y],
+`XZthed6$
+,zOtzy%e~
+PZphn^H/#
+fn9^Y2NQ
+lF{v"|"yb'
+%d5,9"EF
+u\_dx)N-6
+1|F'^DO(
+Q|3/(ZX'
+V,'0t,"N
+(`,rq,b'
+ `/lrs,hAqT9
+V8^Sb'\haJ
+NVGI.QFuO
+5B!IH},x
+"z"x"x98
+G|"|"|"|"|"x
+UlpQyt9GP
+"{v#<b'!
+~+-~du$K
+"'qT"wB'qt"t
+lxpY1)*a#
+UM[_BiV8
+)." 2v"s
+"T"wb'HD
+wHFy%b |
+hFyT"s)R
+"r"{B',D
+R=puDU$,
+Y#hA!jbI
++D4cq]B:
+,ZAT-Aa
+(F}B>>hFr
+"|"|"|"{
+'^DplFp#c
+byb'qb'LG
+)> zV[&yE
+A|"|"v"r
+F|"|"|"|"|"|"w
+$F0T"wb Y
+ rV8\{v"
+96"qB'j"'
+NDADplFr
+ lFx"|"u
+DGt"|"z
+Nd"r"}V#
+ Rv9=Lr{
+"yB sv"{
+%EL-d\dM
+;1R~(iVF
+FLU$")<2
+"t"|"|"|
+b'6"|"z"
+wI%6ESr~m
+v"}$"}T"p
+'J4#;Hjp
+Nd"x"{B'
+|y&< nC
+b'|DODOn
+B'.b V"r
+`24_&?t)
+2b rb'"!
+{6"y,|D@
+V"qB'QB 
+Lr}b'.b3
+F|"|"|"|"s!
+=ljNlbx"v
+G|"|#<lGt"
+plF|"|#=LGv#
+"ub'qt!hU*
+ayHbqV"sCi<
+r|"|"|"z5'q
+5'^A'WB'
+G}T9=B9OM":(7'@
+"x"w$<'6
+r|"|"z5'#
+O,rz1;B'
+ Sv"p<'5A
+ lr|"|"|"z
+v"t"|"s!
+N_b'qt"{
+b'QV"wT#
+v"z"z#;B;
+"r"t"|"|"t
+B'LGp"|"x
+x"|"|"|"|"|
+F}'B .v"x
+6"yb'\DAR
+"t"|"|"z9<
+/1a=lXO#1a
+O_b8'HF}
+r|"{b'b'
+"}B,}B,}B'
+Nd"x"|"u
+br"{B'.6"qT"z
+D"z"yv"z"|
+G|"|"|"u
+Ob"t"|"|"w
+v"|"|1WNV5(
+NlFz"|"u
+endstream
+61 0 obj
+<</IsMap false/S/URI/URI(https://www.pc.gov.au/ongoing/report-on-government-services/2025/justice)>>
+62 0 obj
+<</CS 154 0 R/S/Transparency/Type/Group>>
+63 0 obj
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 64 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 147 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</C2_0 120 0 R/C2_1 101 0 R/C2_2 113 0 R/TT0 163 0 R/TT1 88 0 R/TT2 85 0 R>>/ProcSet[/PDF/Text]/XObject<</Fm0 91 0 R/Fm1 87 0 R>>>>/Rotate 0/Tabs/W/Thumb 135 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340037005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 38994>>/PageWidthList<</0 1920.0>>>>>>>>
+64 0 obj
+<</Filter/FlateDecode/Length 4024>>stream
+|KJG-mw|[
+q}z-&_'_&
+5Nni(~[O
+endstream
+65 0 obj
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 66 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 147 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</C2_0 101 0 R/C2_1 120 0 R/C2_2 113 0 R/TT0 163 0 R/TT1 85 0 R/TT2 88 0 R>>/ProcSet[/PDF/Text]/XObject<</Fm0 91 0 R/Fm1 87 0 R>>>>/Rotate 0/Tabs/W/Thumb 136 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340037005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 39450>>/PageWidthList<</0 1920.0>>>>>>>>
+66 0 obj
+<</Filter/FlateDecode/Length 2324>>stream
+|ASQk#^.mw
+S 6y$%W?n
+endstream
+67 0 obj
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 68 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 147 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R>>/Font<</TT0 163 0 R>>/ProcSet[/PDF/Text]/Properties<</MC0 70 0 R>>>>/Rotate 0/Tabs/W/Thumb 137 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340037005A>/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 37213>>/PageWidthList<</0 1920.0>>>>>>>>
+68 0 obj
+<</Filter/FlateDecode/Length 5232>>stream
+1!4wzE+e
+endstream
+69 0 obj
+<</Length 6127/Subtype/XML/Type/Metadata>>stream
+<?xpacket begin="
+" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 9.1-c002 79.b7c64cc, 2024/07/16-07:59:40        ">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+            xmlns:xmpTPg="http://ns.adobe.com/xap/1.0/t/pg/"
+            xmlns:stDim="http://ns.adobe.com/xap/1.0/sType/Dimensions#"
+            xmlns:xmpG="http://ns.adobe.com/xap/1.0/g/"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:illustrator="http://ns.adobe.com/illustrator/1.0/"
+            xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+            xmlns:stRef="http://ns.adobe.com/xap/1.0/sType/ResourceRef#"
+            xmlns:stEvt="http://ns.adobe.com/xap/1.0/sType/ResourceEvent#"
+            xmlns:pdf="http://ns.adobe.com/pdf/1.3/">
+         <xmp:CreatorTool>Adobe Illustrator 28.4 (Windows)</xmp:CreatorTool>
+         <xmp:CreateDate>2024-05-22T09:46:30+10:00</xmp:CreateDate>
+         <xmp:MetadataDate>2024-05-22T09:46:30+10:00</xmp:MetadataDate>
+         <xmp:ModifyDate>2024-05-22T09:46:30+10:00</xmp:ModifyDate>
+         <xmpTPg:NPages>1</xmpTPg:NPages>
+         <xmpTPg:HasVisibleTransparency>False</xmpTPg:HasVisibleTransparency>
+         <xmpTPg:HasVisibleOverprint>False</xmpTPg:HasVisibleOverprint>
+         <xmpTPg:MaxPageSize rdf:parseType="Resource">
+            <stDim:w>587.710122</stDim:w>
+            <stDim:h>106.143780</stDim:h>
+            <stDim:unit>Millimeters</stDim:unit>
+         </xmpTPg:MaxPageSize>
+         <xmpTPg:PlateNames>
+            <rdf:Seq>
+               <rdf:li>Cyan</rdf:li>
+               <rdf:li>Magenta</rdf:li>
+               <rdf:li>Yellow</rdf:li>
+               <rdf:li>Black</rdf:li>
+            </rdf:Seq>
+         </xmpTPg:PlateNames>
+         <xmpTPg:SwatchGroups>
+            <rdf:Seq>
+               <rdf:li rdf:parseType="Resource">
+                  <xmpG:groupName>Default Swatch Group</xmpG:groupName>
+                  <xmpG:groupType>0</xmpG:groupType>
+                  <xmpG:Colorants>
+                     <rdf:Seq>
+                        <rdf:li rdf:parseType="Resource">
+                           <xmpG:swatchName>Bright Green</xmpG:swatchName>
+                           <xmpG:type>PROCESS</xmpG:type>
+                           <xmpG:tint>100.000000</xmpG:tint>
+                           <xmpG:mode>RGB</xmpG:mode>
+                           <xmpG:red>160</xmpG:red>
+                           <xmpG:green>238</xmpG:green>
+                           <xmpG:blue>199</xmpG:blue>
+                        </rdf:li>
+                        <rdf:li rdf:parseType="Resource">
+                           <xmpG:swatchName>Peach</xmpG:swatchName>
+                           <xmpG:type>PROCESS</xmpG:type>
+                           <xmpG:tint>100.000000</xmpG:tint>
+                           <xmpG:mode>RGB</xmpG:mode>
+                           <xmpG:red>255</xmpG:red>
+                           <xmpG:green>182</xmpG:green>
+                           <xmpG:blue>169</xmpG:blue>
+                        </rdf:li>
+                        <rdf:li rdf:parseType="Resource">
+                           <xmpG:swatchName>Brown</xmpG:swatchName>
+                           <xmpG:type>PROCESS</xmpG:type>
+                           <xmpG:tint>100.000000</xmpG:tint>
+                           <xmpG:mode>RGB</xmpG:mode>
+                           <xmpG:red>179</xmpG:red>
+                           <xmpG:green>95</xmpG:green>
+                           <xmpG:blue>41</xmpG:blue>
+                        </rdf:li>
+                     </rdf:Seq>
+                  </xmpG:Colorants>
+               </rdf:li>
+            </rdf:Seq>
+         </xmpTPg:SwatchGroups>
+         <dc:format>application/postscript</dc:format>
+         <dc:title>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">PRF0001B__PRF_LOGO_LOCKUP</rdf:li>
+            </rdf:Alt>
+         </dc:title>
+         <dc:creator>
+            <rdf:Seq>
+               <rdf:li>Dave Wells</rdf:li>
+            </rdf:Seq>
+         </dc:creator>
+         <illustrator:CreatorSubTool>Adobe Illustrator</illustrator:CreatorSubTool>
+         <xmpMM:DocumentID>xmp.did:a5e22609-1a08-9044-b60b-6c17d9e5a2af</xmpMM:DocumentID>
+         <xmpMM:InstanceID>xmp.iid:b45f34c7-7c59-db45-bb47-d1ede4e8ae35</xmpMM:InstanceID>
+         <xmpMM:OriginalDocumentID>xmp.did:21080f62-e836-4e62-bd27-d10ea5a8bd7a</xmpMM:OriginalDocumentID>
+         <xmpMM:RenditionClass>default</xmpMM:RenditionClass>
+         <xmpMM:DerivedFrom rdf:parseType="Resource">
+            <stRef:instanceID>uuid:5d863555-7e01-4710-b64b-c8ff8a878ff3</stRef:instanceID>
+            <stRef:documentID>xmp.did:21080f62-e836-4e62-bd27-d10ea5a8bd7a</stRef:documentID>
+            <stRef:originalDocumentID>xmp.did:21080f62-e836-4e62-bd27-d10ea5a8bd7a</stRef:originalDocumentID>
+            <stRef:renditionClass>default</stRef:renditionClass>
+         </xmpMM:DerivedFrom>
+         <xmpMM:History>
+            <rdf:Seq>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>saved</stEvt:action>
+                  <stEvt:instanceID>xmp.iid:21080f62-e836-4e62-bd27-d10ea5a8bd7a</stEvt:instanceID>
+                  <stEvt:when>2024-05-01T13:42:15+10:00</stEvt:when>
+                  <stEvt:softwareAgent>Adobe Illustrator 28.4 (Macintosh)</stEvt:softwareAgent>
+                  <stEvt:changed>/</stEvt:changed>
+               </rdf:li>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>saved</stEvt:action>
+                  <stEvt:instanceID>xmp.iid:a5e22609-1a08-9044-b60b-6c17d9e5a2af</stEvt:instanceID>
+                  <stEvt:when>2024-05-22T09:46:30+10:00</stEvt:when>
+                  <stEvt:softwareAgent>Adobe Illustrator 28.4 (Windows)</stEvt:softwareAgent>
+                  <stEvt:changed>/</stEvt:changed>
+               </rdf:li>
+            </rdf:Seq>
+         </xmpMM:History>
+         <pdf:Producer>Adobe PDF library 17.00</pdf:Producer>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="r"?>
+endstream
+70 0 obj
+<</Metadata 69 0 R>>
+71 0 obj
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 72 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 147 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R/GS2 122 0 R>>/Font<</C2_0 101 0 R/TT0 163 0 R/TT1 88 0 R/TT2 85 0 R>>/ProcSet[/PDF/Text]/XObject<</Fm0 91 0 R/Fm1 87 0 R>>>>/Rotate 0/Tabs/W/Thumb 138 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340037005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 39791>>/PageWidthList<</0 1920.0>>>>>>>>
+72 0 obj
+<</Filter/FlateDecode/Length 2348>>stream
+endstream
+73 0 obj
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 74 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 147 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R/GS2 122 0 R>>/Font<</C2_0 101 0 R/TT0 163 0 R/TT1 85 0 R/TT2 88 0 R>>/ProcSet[/PDF/Text]/XObject<</Fm0 91 0 R/Fm1 87 0 R>>>>/Rotate 0/Tabs/W/Thumb 139 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340037005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 18149>>/PageWidthList<</0 1920.0>>>>>>>>
+74 0 obj
+<</Filter/FlateDecode/Length 3861>>stream
+*I 0I^&3
+`?Pinl0;j
+endstream
+75 0 obj
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 76 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 147 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R/GS2 122 0 R>>/Font<</C2_0 101 0 R/TT0 163 0 R/TT1 85 0 R/TT2 88 0 R>>/ProcSet[/PDF/Text]/XObject<</Fm0 91 0 R/Fm1 87 0 R>>>>/Rotate 0/Tabs/W/Thumb 140 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340037005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 18522>>/PageWidthList<</0 1920.0>>>>>>>>
+76 0 obj
+<</Filter/FlateDecode/Length 3909>>stream
+endstream
+77 0 obj
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 78 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 147 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</TT0 163 0 R/TT1 88 0 R/TT2 85 0 R>>/ProcSet[/PDF/Text]/XObject<</Fm0 91 0 R/Fm1 87 0 R>>>>/Rotate 0/Tabs/W/Thumb 141 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340037005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 17108>>/PageWidthList<</0 1920.0>>>>>>>>
+78 0 obj
+<</Filter/FlateDecode/Length 3715>>stream
+endstream
+79 0 obj
+<</ArtBox[0.0 0.0 1920.0 1080.0]/BleedBox[0.0 0.0 1920.0 1080.0]/Contents 80 0 R/CropBox[0.0 0.0 1920.0 1080.0]/MediaBox[0.0 0.0 1920.0 1080.0]/Parent 147 0 R/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</TT0 163 0 R/TT1 85 0 R>>/ProcSet[/PDF/Text]/XObject<</Fm0 91 0 R/Fm1 87 0 R>>>>/Rotate 0/Tabs/W/Thumb 142 0 R/TrimBox[0.0 0.0 1920.0 1080.0]/Type/Page/PieceInfo<</InDesign<</DocumentID<FEFF0078006D0070002E006400690064003A00350063003800630063003200310035002D0061003200650030002D0033006400340035002D0038003400320062002D006300340033003500640033003200630064006500640062>/LastModified<FEFF0044003A00320030003200350030003800310033003100300031003300340037005A>/NumberOfPageItemsInPage 3/NumberofPages 1/OriginalDocumentID<FEFF0078006D0070002E006400690064003A00610062003000300035003900340039002D0037006500620039002D0033003800340065002D0038003700640030002D006300360063003800630066003600300063003000310062>/PageItemUIDToLocationDataMap<</0[1039.0 0.0 3.0 -960.0 524.0 960.0 540.0 1.0 0.0 0.0 1.0 0.0 68.0]/1[2944.0 1.0 3.0 -890.0 -470.0 -397.333 -459.5 1.0 0.0 0.0 1.0 -575.0 -446.0]/2[2992.0 2.0 3.0 866.0 -470.0 896.0 -459.5 1.0 0.0 0.0 1.0 944.25 -446.0]>>/PageTransformationMatrixList<</0[1.0 0.0 0.0 1.0 0.0 0.0]>>/PageUIDList<</0 40761>>/PageWidthList<</0 1920.0>>>>>>>>
+80 0 obj
+<</Filter/FlateDecode/Length 2668>>stream
+l4{d4{\4;T4{L
+endstream
+81 0 obj
+[/Indexed/DeviceRGB 255 82 0 R]
+82 0 obj
+<</Filter[/ASCII85Decode/FlateDecode]/Length 428>>stream
+8;X]O>EqN@%''O_@%e@?J;%+8(9e>X=MR6S?i^YgA3=].HDXF.R$lIL@"pJ+EP(%0
+b]6ajmNZn*!='OQZeQ^Y*,=]?C.B+\Ulg9dhD*"iC[;*=3`oP1[!S^)?1)IZ4dup`
+E1r!/,*0[*9.aFIR2&b-C#s<Xl5FH@[<=!#6V)uDBXnIr.F>oRZ7Dl%MLY\.?d>Mn
+6%Q2oYfNRF$$+ON<+]RUJmC0I<jlL.oXisZ;SYU[/7#<&37rclQKqeJe#,UF7Rgb1
+VNWFKf>nDZ4OTs0S!saG>GGKUlQ*Q?45:CI&4J'_2j<etJICj7e7nPMb=O6S7UOH<
+PO7r\I.Hu&e0d&E<.')fERr/l+*W,)q^D*ai5<uuLX.7g/>$XKrcYp0n+Xl_nU*O(
+l[$6Nn+Z_Nq0]s7hs]`XX1nZ8&94a\~>
+endstream
+83 0 obj
+<</Filter/FlateDecode/Length 7869/Length1 13290>>stream
+(C5&`"&c*
+endstream
+84 0 obj
+<</Filter/FlateDecode/Length 574>>stream
+endstream
+85 0 obj
+<</BaseFont/GYTTQC+DenimINK-Regular/Encoding/WinAnsiEncoding/FirstChar 32/FontDescriptor 86 0 R/LastChar 151/Subtype/TrueType/ToUnicode 84 0 R/Type/Font/Widths[230 0 0 0 560 706 641 189 273 273 0 0 197 402 207 0 606 339 532 561 575 544 579 486 569 579 208 228 0 0 0 479 0 627 621 677 689 580 549 703 674 242 516 591 511 827 678 737 596 751 627 566 541 676 609 939 0 579 556 0 0 0 0 0 0 514 567 516 567 526 362 519 555 218 218 487 217 847 555 541 567 567 337 455 366 555 482 737 447 482 453 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 198 197 324 323 0 535 755]>>
+86 0 obj
+<</Ascent 1057/CapHeight 700/Descent -227/Flags 32/FontBBox[-192 -227 1042 1057]/FontFamily(Denim INK)/FontFile2 83 0 R/FontName/GYTTQC+DenimINK-Regular/FontStretch/Normal/FontWeight 400/ItalicAngle 0/StemV 80/Type/FontDescriptor/XHeight 504>>
+87 0 obj
+<</BBox[0.0 1080.0 1920.0 0.0]/Filter/FlateDecode/Length 4357/Matrix[1.0 0.0 0.0 1.0 0.0 0.0]/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R>>/Properties<</MC0 90 0 R>>>>/Subtype/Form>>stream
+WnZ@!ezB
+endstream
+88 0 obj
+<</BaseFont/YMSXIS+DenimINK-SemiBold/Encoding/WinAnsiEncoding/FirstChar 32/FontDescriptor 100 0 R/LastChar 151/Subtype/TrueType/ToUnicode 97 0 R/Type/Font/Widths[206 0 0 0 0 706 669 0 309 309 0 0 232 407 237 0 615 373 547 570 590 556 0 502 0 0 241 0 0 0 0 507 0 652 627 684 690 586 558 711 686 269 552 0 519 846 690 746 601 778 644 581 556 0 619 950 0 0 571 0 0 0 0 0 0 528 572 523 572 530 381 527 563 241 241 522 241 841 563 546 572 572 363 469 385 563 506 746 469 504 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 217 215 383 381 0 554 760]>>
+89 0 obj
+<</BaseFont/QNTBAI+DenimINK-Medium/Encoding/WinAnsiEncoding/FirstChar 32/FontDescriptor 164 0 R/LastChar 124/Subtype/TrueType/ToUnicode 99 0 R/Type/Font/Widths[218 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 610 0 540 0 0 550 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 535 0 0 0 0 0 598 0 636 0 0 0 0 0 0 0 0 0 0 0 0 0 0 521 0 520 570 528 372 0 0 230 0 0 229 844 559 544 570 0 350 462 376 559 494 741 0 493 0 0 240]>>
+90 0 obj
+<</Metadata 92 0 R>>
+91 0 obj
+<</BBox[0.0 1080.0 1920.0 0.0]/Filter/FlateDecode/Length 286/Matrix[1.0 0.0 0.0 1.0 0.0 0.0]/Resources<</ColorSpace<</CS0 154 0 R>>/ExtGState<</GS0 155 0 R/GS1 105 0 R>>/Font<</TT0 89 0 R>>/ProcSet[/PDF/Text]>>/Subtype/Form>>stream
+endstream
+92 0 obj
+<</Length 6127/Subtype/XML/Type/Metadata>>stream
+<?xpacket begin="
+" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 9.1-c002 79.b7c64cc, 2024/07/16-07:59:40        ">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+            xmlns:xmpTPg="http://ns.adobe.com/xap/1.0/t/pg/"
+            xmlns:stDim="http://ns.adobe.com/xap/1.0/sType/Dimensions#"
+            xmlns:xmpG="http://ns.adobe.com/xap/1.0/g/"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:illustrator="http://ns.adobe.com/illustrator/1.0/"
+            xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+            xmlns:stRef="http://ns.adobe.com/xap/1.0/sType/ResourceRef#"
+            xmlns:stEvt="http://ns.adobe.com/xap/1.0/sType/ResourceEvent#"
+            xmlns:pdf="http://ns.adobe.com/pdf/1.3/">
+         <xmp:CreatorTool>Adobe Illustrator 28.4 (Windows)</xmp:CreatorTool>
+         <xmp:CreateDate>2024-05-22T09:46:30+10:00</xmp:CreateDate>
+         <xmp:MetadataDate>2024-05-22T09:46:30+10:00</xmp:MetadataDate>
+         <xmp:ModifyDate>2024-05-22T09:46:30+10:00</xmp:ModifyDate>
+         <xmpTPg:NPages>1</xmpTPg:NPages>
+         <xmpTPg:HasVisibleTransparency>False</xmpTPg:HasVisibleTransparency>
+         <xmpTPg:HasVisibleOverprint>False</xmpTPg:HasVisibleOverprint>
+         <xmpTPg:MaxPageSize rdf:parseType="Resource">
+            <stDim:w>587.710122</stDim:w>
+            <stDim:h>106.143780</stDim:h>
+            <stDim:unit>Millimeters</stDim:unit>
+         </xmpTPg:MaxPageSize>
+         <xmpTPg:PlateNames>
+            <rdf:Seq>
+               <rdf:li>Cyan</rdf:li>
+               <rdf:li>Magenta</rdf:li>
+               <rdf:li>Yellow</rdf:li>
+               <rdf:li>Black</rdf:li>
+            </rdf:Seq>
+         </xmpTPg:PlateNames>
+         <xmpTPg:SwatchGroups>
+            <rdf:Seq>
+               <rdf:li rdf:parseType="Resource">
+                  <xmpG:groupName>Default Swatch Group</xmpG:groupName>
+                  <xmpG:groupType>0</xmpG:groupType>
+                  <xmpG:Colorants>
+                     <rdf:Seq>
+                        <rdf:li rdf:parseType="Resource">
+                           <xmpG:swatchName>Bright Green</xmpG:swatchName>
+                           <xmpG:type>PROCESS</xmpG:type>
+                           <xmpG:tint>100.000000</xmpG:tint>
+                           <xmpG:mode>RGB</xmpG:mode>
+                           <xmpG:red>160</xmpG:red>
+                           <xmpG:green>238</xmpG:green>
+                           <xmpG:blue>199</xmpG:blue>
+                        </rdf:li>
+                        <rdf:li rdf:parseType="Resource">
+                           <xmpG:swatchName>Peach</xmpG:swatchName>
+                           <xmpG:type>PROCESS</xmpG:type>
+                           <xmpG:tint>100.000000</xmpG:tint>
+                           <xmpG:mode>RGB</xmpG:mode>
+                           <xmpG:red>255</xmpG:red>
+                           <xmpG:green>182</xmpG:green>
+                           <xmpG:blue>169</xmpG:blue>
+                        </rdf:li>
+                        <rdf:li rdf:parseType="Resource">
+                           <xmpG:swatchName>Brown</xmpG:swatchName>
+                           <xmpG:type>PROCESS</xmpG:type>
+                           <xmpG:tint>100.000000</xmpG:tint>
+                           <xmpG:mode>RGB</xmpG:mode>
+                           <xmpG:red>179</xmpG:red>
+                           <xmpG:green>95</xmpG:green>
+                           <xmpG:blue>41</xmpG:blue>
+                        </rdf:li>
+                     </rdf:Seq>
+                  </xmpG:Colorants>
+               </rdf:li>
+            </rdf:Seq>
+         </xmpTPg:SwatchGroups>
+         <dc:format>application/postscript</dc:format>
+         <dc:title>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">PRF0001B__PRF_LOGO_LOCKUP</rdf:li>
+            </rdf:Alt>
+         </dc:title>
+         <dc:creator>
+            <rdf:Seq>
+               <rdf:li>Dave Wells</rdf:li>
+            </rdf:Seq>
+         </dc:creator>
+         <illustrator:CreatorSubTool>Adobe Illustrator</illustrator:CreatorSubTool>
+         <xmpMM:DocumentID>xmp.did:a5e22609-1a08-9044-b60b-6c17d9e5a2af</xmpMM:DocumentID>
+         <xmpMM:InstanceID>xmp.iid:b45f34c7-7c59-db45-bb47-d1ede4e8ae35</xmpMM:InstanceID>
+         <xmpMM:OriginalDocumentID>xmp.did:21080f62-e836-4e62-bd27-d10ea5a8bd7a</xmpMM:OriginalDocumentID>
+         <xmpMM:RenditionClass>default</xmpMM:RenditionClass>
+         <xmpMM:DerivedFrom rdf:parseType="Resource">
+            <stRef:instanceID>uuid:5d863555-7e01-4710-b64b-c8ff8a878ff3</stRef:instanceID>
+            <stRef:documentID>xmp.did:21080f62-e836-4e62-bd27-d10ea5a8bd7a</stRef:documentID>
+            <stRef:originalDocumentID>xmp.did:21080f62-e836-4e62-bd27-d10ea5a8bd7a</stRef:originalDocumentID>
+            <stRef:renditionClass>default</stRef:renditionClass>
+         </xmpMM:DerivedFrom>
+         <xmpMM:History>
+            <rdf:Seq>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>saved</stEvt:action>
+                  <stEvt:instanceID>xmp.iid:21080f62-e836-4e62-bd27-d10ea5a8bd7a</stEvt:instanceID>
+                  <stEvt:when>2024-05-01T13:42:15+10:00</stEvt:when>
+                  <stEvt:softwareAgent>Adobe Illustrator 28.4 (Macintosh)</stEvt:softwareAgent>
+                  <stEvt:changed>/</stEvt:changed>
+               </rdf:li>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>saved</stEvt:action>
+                  <stEvt:instanceID>xmp.iid:a5e22609-1a08-9044-b60b-6c17d9e5a2af</stEvt:instanceID>
+                  <stEvt:when>2024-05-22T09:46:30+10:00</stEvt:when>
+                  <stEvt:softwareAgent>Adobe Illustrator 28.4 (Windows)</stEvt:softwareAgent>
+                  <stEvt:changed>/</stEvt:changed>
+               </rdf:li>
+            </rdf:Seq>
+         </xmpMM:History>
+         <pdf:Producer>Adobe PDF library 17.00</pdf:Producer>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="r"?>
+endstream
+93 0 obj
+<</Filter/FlateDecode/Length 573>>stream
+endstream
+94 0 obj
+<</Filter/FlateDecode/Length 11360/Length1 20287>>stream
+_!6J|Rb/R
+aQ#LS6uZ3
+LEUD%(PIni
+]_\g%N@o
+xxbqxxq"\L
+nY'K,wYTg
+endstream
+95 0 obj
+<</Filter/FlateDecode/Length 65>>stream
+endstream
+96 0 obj
+<</Filter/FlateDecode/Length 6182/Length1 11162>>stream
+_gs0`"2Y
+NSv5)TTUOE/]LY
+endstream
+97 0 obj
+<</Filter/FlateDecode/Length 537>>stream
+x:{8{:{8{:{8{:{8{zzxzzzxz
+endstream
+98 0 obj
+<</Ascent 1057/CIDSet 95 0 R/CapHeight 700/Descent -227/Flags 4/FontBBox[-192 -227 1042 1057]/FontFamily(Denim INK)/FontFile2 96 0 R/FontName/LIGXIS+DenimINK-Regular/FontStretch/Normal/FontWeight 400/ItalicAngle 0/StemV 80/Type/FontDescriptor/XHeight 504>>
+99 0 obj
+<</Filter/FlateDecode/Length 347>>stream
+endstream
+100 0 obj
+<</Ascent 1080/CapHeight 700/Descent -237/Flags 32/FontBBox[-194 -237 1039 1080]/FontFamily(Denim INK SemiBold)/FontFile2 94 0 R/FontName/YMSXIS+DenimINK-SemiBold/FontStretch/Normal/FontWeight 600/ItalicAngle 0/StemV 128/Type/FontDescriptor/XHeight 504>>
+101 0 obj
+<</BaseFont/LIGXIS+DenimINK-Regular/DescendantFonts 103 0 R/Encoding/Identity-H/Subtype/Type0/ToUnicode 93 0 R/Type/Font>>
+102 0 obj
+<</BaseFont/LIGXIS+DenimINK-Regular/CIDSystemInfo 104 0 R/CIDToGIDMap/Identity/DW 1000/FontDescriptor 98 0 R/Subtype/CIDFontType2/Type/Font/W[2[230 627]17[621 677]24[689]28[580]41[549 703]49[674]52[242]64[516]67[591]69[511]75[827 678]83[737]97[596]100[627]104[566]111[541]116[676]128[609 939]135[579]142[556]146[514]160[567 516]167[567]171[526]184[362 519]192[555]195[218]208[218]212[487]215[217]221[847 555]230[541]244[567]246[567 337]251[455]259[366]264[555]276[482 737]282[447 482]320[667]325[685]334[606 339 532 561 575 544 579 486 569 579]424[207 197 208]438[427]444[402]446[535]451 452 273 467[198 197]489[229]498[560]]>>
+103 0 obj
+[102 0 R]
+104 0 obj
+<</Ordering(Identity)/Registry(Adobe)/Supplement 0>>
+105 0 obj
+<</AIS false/BM/Normal/CA 1.0/OP true/OPM 1/SA true/SMask/None/Type/ExtGState/ca 1.0/op true>>
+106 0 obj
+<</Filter/FlateDecode/Length 436>>stream
+endstream
+107 0 obj
+<</Ordering(Identity)/Registry(Adobe)/Supplement 0>>
+108 0 obj
+<</Filter/FlateDecode/Length 55>>stream
+endstream
+109 0 obj
+<</Filter/FlateDecode/Length 8293/Length1 15444>>stream
+7J).aQjv
+l91t}:0[V
+endstream
+110 0 obj
+<</Ascent 1054/CIDSet 108 0 R/CapHeight 700/Descent -227/Flags 68/FontBBox[-241 -227 1065 1054]/FontFamily(Denim INK)/FontFile2 109 0 R/FontName/VXGFSY+DenimINK-RegularItalic/FontStretch/Normal/FontWeight 400/ItalicAngle -12/StemV 80/Type/FontDescriptor/XHeight 504>>
+111 0 obj
+<</BaseFont/VXGFSY+DenimINK-RegularItalic/CIDSystemInfo 107 0 R/CIDToGIDMap/Identity/DW 1000/FontDescriptor 110 0 R/Subtype/CIDFontType2/Type/Font/W[2[230 628]18[677]24[694]64[514]75[829 679]83[738]97[598]100[629]104[565]111[536]129[937]142[553]146[513]160[563 515]167[563]171[523]184[360 518]192[555]195[218]212[484]215[217]221[847 555]230[543]244[563]247[337]251[460]259[360]264[555]276[480 735]283[480]290[450]325[679]334[602]336[543]338[575]424[209 196]]>>
+112 0 obj
+[111 0 R]
+113 0 obj
+<</BaseFont/VXGFSY+DenimINK-RegularItalic/DescendantFonts 112 0 R/Encoding/Identity-H/Subtype/Type0/ToUnicode 106 0 R/Type/Font>>
+114 0 obj
+<</Ordering(Identity)/Registry(Adobe)/Supplement 0>>
+115 0 obj
+<</Ascent 1080/CIDSet 116 0 R/CapHeight 700/Descent -237/Flags 4/FontBBox[-194 -237 1039 1080]/FontFamily(Denim INK SemiBold)/FontFile2 121 0 R/FontName/BOGPYM+DenimINK-SemiBold/FontStretch/Normal/FontWeight 600/ItalicAngle 0/StemV 128/Type/FontDescriptor/XHeight 504>>
+116 0 obj
+<</Filter/FlateDecode/Length 50>>stream
+endstream
+117 0 obj
+<</Filter/FlateDecode/Length 401>>stream
+)EBU1iTKc
+endstream
+118 0 obj
+<</BaseFont/BOGPYM+DenimINK-SemiBold/CIDSystemInfo 114 0 R/CIDToGIDMap/Identity/DW 1000/FontDescriptor 115 0 R/Subtype/CIDFontType2/Type/Font/W[2[206]18[684]28[586]52[269]75[846]83[746]100[644]146[528]160[572 523]167[572]171[530]184[381 527]192[563]195[241]208[241]212[522]215[241]221[841 563]230[546]244[572]247[363]251[469]259[385]264[563]276[506 746]283[504]320[704]325[715]425[232]428[659]444[407]]>>
+119 0 obj
+[118 0 R]
+120 0 obj
+<</BaseFont/BOGPYM+DenimINK-SemiBold/DescendantFonts 119 0 R/Encoding/Identity-H/Subtype/Type0/ToUnicode 117 0 R/Type/Font>>
+121 0 obj
+<</Filter/FlateDecode/Length 7098/Length1 13973>>stream
+13wsxd}4
+9mQKuQC~^
+`joQ1WaWQP
+endstream
+122 0 obj
+<</AIS false/BM/Normal/CA 1.0/OP true/OPM 1/SA false/SMask/None/Type/ExtGState/ca 1.0/op true>>
+123 0 obj
+<</Count 0/Type/Outlines>>
+124 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 585/Width 105>>stream
+8;Z]!9oalL&;?Hn(fm4@<csR.E=5ioUnN6&73*TSl00&URKbjUO09TaJ:XDXTTa]0
+E%ct^cW&<<J;F20'a`tS[LOf#EoFR"&,5**FW=DDP55.],sl//11/(#=?W>iq>h%M
+'&\)M)C6^RNZ>Y<P^l62lV:"S3Q"1HbTEgGd(\eJ<$OmLR<h7q*-&+JT0@<(NuW.W
+W7mJt<1Uj:FhN08HM#r>3MIOTm]0>X5%C0h*615&;3':_Ak@]>/!+O'(O@6-84cmT
+er(O\)0Q]MAT?b/[._f9ZC?X9qFs;%eZlS_@7'E::UdBbZNIl2]_Y<ZWJIM8Qs0Cs
+RNbYO;5@]'],eg.@tL[4b8dX)6t_YMFM.4e(h2sA?M*$aaXC/[99f\N4>Js`I`YU3
+Y+Eq0gFCBDJZ@hq9)!E!kBl$a$I5D\*p9XD]m7ra1i?=i<cF1rnBWobX>jtAVD3#^
+rG[d;6L:WWV2WdNJ.OQ3EK[(LC.%#@8%fmj)l6ko^6-j5UJE90k3,$+Wr(Ss8i-+]
+UII7aIanjT2Bqc,4=#LM9aKG1+iu:mX&GbU=&(8T7-`#oEVgaV2+JO(~>
+endstream
+125 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 350/Width 105>>stream
+8;Z]!4VEAi&;<ae6cCLJiZtM5"dO2u3WX@9-%E6?=A<no4@'q=I=;8fBk;t!KIit4
+QLh+)cY])2j5d*1)!/I$hM:+'?<GDj-fhr5Ze+eU9Lq+to6X+b,g&tX7.!".M'LBY
+%;nK]%[#g*3C7umT=^*=Etm)b87lprjiSFPGB-+0#]hB09jga:9a'8X!LK!uUpL:q
+\V',BhoTk+X93:!Ui$UX*7_pJ&bS7ipsjScs7&5J5E:O$Q_P]:`C`]O+]GS'LNh7[
+"08.*3's*_+-WI?^B_,LSP\6BF#]1LUDb*MGNX7i:?Z/X*Sn7MD1`5&gG/:ncJI*T
+VJS?YQBHp(!s%1DGHq~>
+endstream
+126 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 634/Width 105>>stream
+8;Z\7acXI`&F:LT&Es*-M-j.7UpC]#?l3:10]h$B<[$/[(n,%HN;:LQA,BD>BA;#T
+1)oUW+#^'V;RYh0;_PI9g,p@GjoG6]d89tu1P\h2WEgV2]%Z%S?eXX.`!PsK#9$&^
++QgKg"(!;9S$i\^A"[bV\$eoi'1b@8k2l#;._r%bY6na2l^n@FW^AO\:*A\Jp;"cM
+QGog3Ejai.3T*<!;kKQ>%-7oCJ\)e@s5e$R"bQYi"]2u0YTKQ8#PD*KADthulraR<
+fhUfo]H7;im2N(_,>*+VBEUJPH@D)P;+A$*<`,e9(]&k(7dYTQN=:IAR(KLs()`\g
+7'rO-h'3A]A1-UOj\/J]mb;&jT^VJ&]rFqtIqnfC3Q)fDRc5Ru8g(bBg]U<q8"^i<
+"GcH,a>.g/:<%?6739$>_QD<=]]2M=;^+VCWG]F2J1Mcc3QGLd-*ejUoHN,flME#`
+q1snaJ8-^Rh!"\r+,SCF()TMZmilX26ksh/\d(:LW(+:mQ-gRBr?t._]Jb-FTdm`Y
+TWZ`4bXFBc-j<1J-c`5:Ltfb?mRM8>O0%eZ%tR]ZBHZmhO?K8T::bLPYWlkZ7j008
+;@`Z=I.RkEqDoB/dRp'r()U3bXVMql!s",=oJl~>
+endstream
+127 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 523/Width 105>>stream
+8;Z\7f5\_O&:K$BUI+pW@b_CZfV\^c6:(h6)8@+9&N;@ihZ%(tXC$VDXP[Lnq/m7>
+!4TI6F2rWGhRV$]1rM!UC]8]3_"!(<B6D8Q[#PrC$-#mB+@c&*ckUR%lekZW^-eHH
+5%bsp\0ouWItBkBj#C.1D?9qA/Y*(AKF?(g@CBtJg36;/@So&uRf8QpgH]5+kE+T6
+\61>8g*YAqVns=+-!N1NI:lu(W:$FW9/(Qck=nuG!(B%XAXbV!-jNc)(neIY70K>H
+Kd8tt!::nL<M;*n/$i0peCto(AbnAH/#T<$QS`ajV:PbB:FT%MIg')O,_2U:+MIX7
+e,]uM#0@-k71IB9rW&0]"g;F$0UgH+)%a9Oj-bH'`J<W:i+`+d7B4^V?c6JS;AgWu
+I&<Y[Tr=l=+P^j,PgtqlTo&E"gMLDTcX]q%N"e[VFjThmMNJVhd:F]m8_ZAs93/]&
+XgDSB-I`GS+[&MFjlJf.fu;O6dSbRpqjapQ1G/Ul8G1EIqcMXHhp2:F#H'-~>
+endstream
+128 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 2496/Width 105>>stream
+8;Z\75Ed%q'n8oNQ+mRRm,Oo2VbigL)W7WC">sUt5gA;WA&T<cFqLtci3B[tF"H^u
+WOt%///2BGYEL&o4Pl5k3GW>l8S3PpE3WLr*e*S8mkO#*\,YU!])</]=kueXH+R7/
+<hF[`b>]/8U7kq/+.M/sK;=BG<H2#=\N1`Q"o[F5^YFPW/>j\4\u`)"5mEOGR`Dua
+>^>OY1tjm#-?oB:cJtH:Puc@.N7SS9i]'T,V]mVR&e>ae*oQR)7U6qk'R`d*<j=3=
+`M0F[*@uR03]bsfkmUE[Xk6;3PhD+b6Ep*6aHb#\[\<E#N.E):'j"t;%=QI0(QX%q
+A<1E\gRql7m''u4,^ujQg96bN+emWm8\T(gl\)[i[DWq$*nGHX:5pK3fqtF8VVjU/
+$2]lfYVRJj[FHlj?fjKTYC7T3p`0UCnJ./.*[eLSk`R&VOUpP(WDbBOEOR_Tn$s+e
+m+oMiot+IU?kC:D``c8m7;^-#UY!o@166/h.BomL<Y<NH5EK4tSpeZ!a"DO:&jXSG
+lui4>)&YBW?a:H1UDWno6+.VWh%R\b)UIAVF'N"S[l_m)bW4gqBk$mtK)a!+h(\Q<
+PD1jrbi=O_^@aYNDJBZuVjr[_qVIJX[]sir]T5F4Kc'".1<7XO'/RNcYF3,d(g4_)
+Zk`Ph3#Vq]4QdcO`?7XUY/o8+jR[dn=;(;5R#><bD.Vl(0$$^eB,<M(47bLHFK@tn
+Nd5;_msY*LHU[?3E9R)qQ[dX?n9e0o8*UAmQmNcil_;o\oaYn/G<6T20f.3bULGOH
+cBkS==@gB%kh]G>=qqt#:a'5`VeppK@TGJmQabAqIVKkqHt^MNN"#3bclkHCW4Jte
+!>/G0d+UJh_e?`LI@JhOK$2Rh3n*!c9+cM^G(Jg&ZQLS]BIreil_AQOQHg3R)4S#6
+X@(C8ekPP`IVfmeK'!beWmu`B0'R40iV`e@bmS4Oq\ZUTqLoJTN_C?fQl6,Y3`sJB
+YEX3)DB/K+`Tq2cGT'(/H@1sqg@fq%WE1fuRe?.$CQD"lXFKue;%2fQ\\HR;d<OJV
+@gKtRO\;9Rfm,M6NYFTAL(nI"Fn_)["cF20=M+]:GbbGpG@!nI`]sUCl[V!-(PW@E
+\t'g2qT%S%'!^;MT9-Z$DkfTn]:.(/AFh_pNe&1*9LJsPbd7*R?TDEd1-k*ONP05*
+\hbr#/GUq([qcd5?U,^>QYS7mQ,en@iWWH#BCh(tFE2s)3h-*A2tQK?=hZB>9B#SG
++Y)iE_b6kT9ECJ.grm%lIY[muJIA;K)2Om1T7>c_KRmjD4-(U)3Pd[8B`<SW/0=g>
+$L>rEJ*0'!lct<S^Sa7.@YX,[1@;=:q&JIQYUCE,g(QkrU:(`=e,&A2&HmBI"ZW2f
+=XjO#Vc'nQ/O_fFqV-OiV0iN678Uq>o!'5,d5eS/5`E+&lKHd!2_rs'Y,aE.W0AD^
+FiF]$A>'5&*)Wg1:dL=lZ^5hQ35,-mSa:K9$&^_hW>`LkOf^9a6m`g`A@>M^gXrCc
+B2!TRDjXfr06)b_H_6=S`dm9iY][)4/HVe]!sq&&#FUfM*DiZhG_6?t%A;FP-_se`
+4e[IH8qI33/A2uIU.go;GA43sH`n"o;NtDqg7[$Y\tcoE',&gQD_+j.>,tK!r+stj
+WL%G#K6BeIG@Nr%D,dYBk;uhE:/Yrg&Gmc?9&pq]s2M]O=%7QKJo2:p'KU1=d\?2'
+L5^cmBlXq&@d%)2HC2bhF3tu3ZL;q0g$!dI4TG1<pg`'WKSYfWB&JpAW^S8Oh*)rB
+ZO<="[pXt6K1AUcL+lmJrq'M5^OC%45`UcM`/R0n6ZMHam'UPhpRUi8EC?^WA(>_3
+[6W6?OCT;RZ2C_L#=-R:EeP@_990dR_1!pSeAuHpI5KKN:60E3VIo9"4Za@M9k_;W
+el6CdS[PBILM%.ul0BY$o`duo;(ZV_:u.JdbIDd<7j!ZDco+H>2VQg/YB,5)$:YkN
+MuR?"KODL<Rg)m%*;EB&<?lB-0Z+oSE@R]k9s*:2Gcq!SDS7pLY)O"^!M%-3CI@Y>
+DjJg$-$9YLCtgYr#ft0'MfV:.rWhcj<=9rg?\9\gp$]3uYY&E%[4c=U;2$6+\9k`6
+NS6@CQVs=23(6lIeP\K:$GuV#9+j&dQBgBC'"(mk.?lb`87YjL97@P9,?rMcBQ5Mh
+E)r_8LXb("3;LM%O6IYa_K8'WG:Ap[+79-'WDS\#O"@DdLD#O4V/.E/'c>(.P>8+5
+`KX+/d3sh71`ri;=3JqU,<K/9cbn7I[CdG>+7@0USNL!N4.iZ)IA2^%bNbBD"R=?8
+qn>0Tj1_OJpVWHMER"J'3\Xi%rt4*"jD)*6qn.ATap$=$epK@28eY3+[(k55MQ>]>
+XU]P]QM]LP0?a6$I+^!1N_SQ4IIt1MBB2k*n<CW4[.r<TRG,XdWmRfHIBW.S3^NC0
+;Xu5rVY8EHHX#oneROQ&IR2>ablsk\5ITbTIQPKe^]4/n!"mT6\G~>
+endstream
+129 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 645/Width 105>>stream
+8;Z\79pUDS%*gJ\ERe"5Y(rELY_$/`1R&sf+e\O+mC_UPd>0O<,7l9NNGli.kG3Qu
+^ZT],cR^3d,2Op24pAG=^8eZ"8Z)9QgMphL-Qk2pPp39';;P/^9L3SsT^j\2&W-?c
+TL8rFYt)f*<G9FJaLXr>79p#d06m'O=M,8C0!I6RMBHSa,"7eqPJ,C.)7q0LkUDL\
+C0ln?QQoE3mc8rf1(+*Ue?bs4h\a:XV???j664_YN'p@H]O_2rLE[.Znq,1HD$d=3
+T>#R:IAU4@V0HYM9S>s4^dfk\OmfrpH;5f-&aook-7/b0je"?USNbUB2lsq(e[_F!
+k.lF6>U!g^ETjIfeAg=(6*#BAWkOg3%@DD7I!edrIk*Y4HYpH5RgTR;T,D=+L4G=O
+SG/&IKj8J([*_N*Ha&f;KZ(E=XW^<e\ZU![/,?mHPkT!!.EJ@)YS^)"L_-:`rA?G[
+X/'Q$,!G9p^M1ADg,4PglCT)hGV1c2/H!0%%)Y+U_[\d9FDR]C(ocW$lQ'*6;/16!
+!o-R#7;1)TSEsdNlS]W7-lEG;([aIRT$%-ZHdIh6e6Ge)XPps2kXS.lju_]1GJ83d
+\9`@iLcmiWN>jh=,+]IC=SC<[[cOK&NoBGYp>>Hdj_k.jOYL,~>
+endstream
+130 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 747/Width 105>>stream
+8;Z\7;0'St#j'CMjD.QE^HG0&ZA7C"eL6;APh781l1F?sTlESMqZ&))5CPEF?Ot,$
+DpJR'2`V@fC"AT_EZs5t>VNq)\*,pBkP#1^\97.!Hj5mu=X6B6GJ2<"pe.DB)ZTqe
+JcT9f(=m`37l]%HYZ<9'6ZB!/H6t-S_-fWqr-,I$0#^mg<d#;GN.)8?Jla2d!$kQZ
+dgcm<+Z_dUL$W"=[!Tu'%Ea#=%u=*0A_itb&YEuY/Qi*kkQ^DG+ifcg:NLAjlcKp"
+n6*BuCb?e\SirAuLt%%fRF`<O\VA85W\[P)PY)-S*A-^@P&W^Todh7P4<p_fg)6@I
+O?+GKc@DW&ngG`:AhQ=Zq/<=/_IkWCpFan[kbqfU5:@hlHUSrG5,?tLE\8(jn8`GP
+&Xj`b>":q:U4<qlYG%C`m<<arO=H&YKKEo&%lHL-(kOno+*I"Gq)X\KMN?1EWk),D
+#Ei)0Uia.D`@j_#`HBBFnMWi]KXn6c"_8X=]?%RgP(g.WOGu9*p7e[';[a^BhJBoq
+669*NfQ/M_:QKpc'(j@=Pq5Go/G/'c;#'N'D&5cB8r9!DS\L4t_<rC"/Q@r!BL!7O
+Ld.[p8"GYS]+/Sa_/UL?@AFIb;<i$to,MCB9rB*On]>j4d9UgaKWQn`N'#W,4>uCH
+f?oF(j9U$01u1Zp4Y4*ZXu"$8X&QJtOT$*J3YIfVmA[)$"rd%-$Y?uB6C^Ltfr>SV
+TC*d'9m!jo^'=Z'ma^n~>
+endstream
+131 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 720/Width 105>>stream
+8;Z\76'd-G%/i6t_lB'fQ)5qmWnbCT2t.$X)QklI!.pr<ph8Qtq7[+DQ4Q6:;<r^Z
+1*0eNm#7"1O!4Jk*MKm"oJ4n-"@<H(K]][/IHlnHOaRYM=*L;kmQ>*b6f79aH!o,(
+$q@$8]k4eb@mP-#FD#iJ`5Y"GkE3^n9/-@K:)L'MZ)n!jO4&2i!Ii&=$oKhe-FW$c
+=u$q//7Ja?p,pu@0Ka#NJa<+>i>7-lk`**dd>?tn4X8%9K!T:U:h"*NpL"Wl&brIJ
+"gK@Y?R',rmG(!OB22,gfbR><X_d1[,["\;KM3a/REe<J9,tq-d%'7PH2:@7_`T_Q
+FV.2O_p$@#2\JI+`n`[o-R2IsEcUgkb641A0Iu(_jF:MA(GeV7&[Td"SYSq`BdJY2
+%ArtGN=f)(*1`e1i\6BLD?BF[8#o]?C/ukjPI[Kb`SH<]]UMSALO"7Th=Fkd8iq7i
+cDmjO-WJrj/1kTf3"FGZIp@#ji*%_n\]R34>97&T]Ai(O?CE-LD/ni/ElnmBU4rj;
+&W+rYX!b<$'"M(@2=-4NP<:$dhdQAJMT1tu\I+\DXk%dI#((fU*TDmBqOXW]$Ib'U
+%>;EMh*\3G7-me#T9f$$P&H__(W?uCqOu+,3O[f6(#+Q0pJE_m^5lI;57b3R!eG,I
+`-#DFqrf0DL<*!$qEBl>=Z"Xbn&NO'fF,OQ<ZMUZn&%?q.6:bL!ru)6Cle~>
+endstream
+132 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 624/Width 105>>stream
+8;Z\7bE]sf%%J9UjKqqTc'@@S'Vfi;58%XH+L[p6T#VuYiW.C\&gk20ALtSDc*P(.
+R>@/.0gq(fkLP)$JpA3nMB1)nKmG/3m[(b:UL_/i'_l!I'c!cZ4*e](on(*9(&K*-
+Y0,ue6)gM6(i.e7hY4CX?8&^MdLE#JdS@L@@qaGD2EdtaVBIVo_2`&@%daV7G9%Vg
+ef0O?24QOa$/c]Cous)5'HWU9+moE^CX@K4=b'IIXKco)]heq"j/CMQBfa[Zg0AfX
+H<"tTK"R++43u.%MN0m.aQj#0<Sa6&-,,/%:<CBJ^_T:Wf0'PW8@2o^@!aNoc.J_p
+ib_*INsfP[M"8,e]*h1dpc$n9,>&".OeGE%WfSs9UK7:TM*U<#2O3KcH3`kk>!GPp
+N9c:R,W-tBYf+gPXnoY1@9Gk>5H&W:50-5G]T++E6=:4\+g1>qA9Pak;KRTYp\'j"
+CJh!i+RWaGA0$5:#=mo$E#jZ"\\F/Nc?89i7VQ(#.CO03U(Ro3h0/p1"beBZ?$V)S
+7$KK)c;9/e<+f4(g3)C,+k29!g1"bLA;24:[`VFlBf%B=WI-NMfo[8t7j">c`f1or
+XpF,@lPL&#GJ=RWrUmtlDZHW4Bsd~>
+endstream
+133 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 1347/Width 105>>stream
+8;Z\75G"W2%$iDNA@<APH)/S3W#hLNO.dK@fG-p/.]Fa0Qf0u$P&2n(A0B(`Di5u5
+r(H%qTCl>BIK.(\c.9HjK[Y*o#,lIhL$j;XIMJJKTAnp\nt#7'p5,\R;/:@OD`if%
+nihAEeq\<2HoKt'$YdZ/:V$?ck(Tp#Rc>jn;JVp&(\/MWcju*(4>;Yf5:.J7a`h7E
+4lp168TeurSf($gpU\Zp(SVelj\^jsMJP3,fG3l\+M1drL=o"'[(t]YHH$4+\pHte
+Ao86DH#qm:Y\5.HJ8?4m]Pj!\<#s2;*kId[k-LMET1!5H7b'f]fb/E#]D6uE&Ok^'
+DTmsm`,iS/n,G'Pot!-Y8%P9H>&!I+\;S`oRuGrJ3aHt(h5mJmBC6^.mZgP6XHQ0`
+9c&%$2KI'_HUb3.1XR,45gWWbUlMAYC+fLGZ3f'MQs7un4Bi'?&jg*@*#m7D5\n\d
+(HAf):-["C>Kn*s%D*o+!3PPO)Ds,tG/&?6]_1W5e3J(P<YaG[F5UU"H?>M?[UhNr
+o4EV2,6UCR(^1uu-"4QaD6hI`e;S#[dR+]DYRdad8]'<ok8K?jUI^U`2&uB&:\Q&a
+R<9kIC"P;sb"@=4DY.aM7fXEj]^Dn3k="-l3MAd@.U.[2MteMA=NG!5'&/#G@I3\Q
+.U]&>D0[3$c/&<BhX%RScmJ?b<i6.)Ml^hJN#rdtXeY^M@u4C.Wg3QSCW(s)L_H53
+fLYVYa=-L0;r6e^`&Iq^*atf\lTe,-k.LK)BP#7,>K:J'(nr6XP#/ALoF`=>X6pd`
+7pR7@*XHcF)*HiTNL@oU"iQ?F3\kmt$UQ;Hrk)RPI)[SI-S4VaK<JcQC_R29)(DO>
+De4@m[$RiLP7adSHflrXL_CCBQ;mgcQ`o]kc!F<(Y\+&?>e8g]Q^f'6M(*g*bIYDm
+^+N-G]r-Bp%;j/pQ?"la;BZap#m^d@]_oEKY8JQ#ppY/UcP^^d+@VWj7]6[`%GsD8
+91;Bm7P@tY,X-#Y*G/9u1(&)(U,VtOUU*i2*>Bm_eH".s^E<7@UT.#JipZM(1lU5c
+SSP`B`MenZ$]VA]Ji/j4<W/+2i3&#`:DX2$9YJpA6-6aCa=-E>`jQm9m"-'F5u;ee
+UZD)n4b?A[)t`<)pBYh%R/;4%CR45t.7,Q,%'2Wbht$^-f2UC&]_m%_7+I+"S`632
+Q[No"kh1=7)PiDj1Q\no<57_VjXE\QW@k$WD)="hr"`^oO\Q7=@bg^iNVu!s@<@Z)
+Y+g*u;#%CB2gaL[4lXl4b\7@5&%("'+W@I-H?DN2!3OA]$#_AHpnkH_aZ<$K$4R`P
++_(*744dhXdk(54gOB;*0F<uK~>
+endstream
+134 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 1550/Width 105>>stream
+8;Z]"0p\Ro&;E')pE8l,Fjb[Le-U0FVs$jN$!'rU,2ZcUJk[d/pL1SWrZqjZ[Mdiu
+fQe-Hd<^?1<q30g.M[C3^\uHdYCD\,rUJK!lM&38VXO?YX3K>nQMKQis-#1]`]"hT
+n4)U2*`r+f?Jk>&r7)Lo&H#pg`@+.uB].h'@a"_@c[4.7k0R)?&sWo]J:XbCPSJs4
+0d+H5mPcB4Bacf&adJ.[Zf0=kVKoZ!b)hF4J/;'`M+Yq@LlP2>K(Cl/k(7a,8r;)_
+;N%Wf3QL]4F.DKmF^pC&2L=p2i::lD6?4(=e_/Ss>'Bo4q'A[%#9tf[?p_4P]X^#+
+L/Q1'Hh3&!hTR(8DGA##;/jhB&,g,b$<HYRCFSQ=J(Z[8l%WKR=>j'JjPK\[nLD'D
+porWf,tiIpBg;XneQM'n[G[EO-_9r!r7gh/1X60FE+Yhp^<]d!AlH!Nla7!h7-56T
+L6#F8#!Yp'j'/\92578nLg!Lu"[c,]gQVEmSM:[i;3C,JU?U]FlKSj@2Qa6k<iA!F
+H<U]P2#IKY7.p7ZS5dNUTk>/OQKlIl4%OLK@`#TY<ff7OZp`EFTT$RQ7pe$o,==jU
+[]#u`\$M5bhjQkWB6j-UL"ao2Uo'bc&eMGn6A/H<<^gPOn8'AM`;N(D1\-!?[ij5/
+Bn"$nigCa^XYh#RUr>oJf<fpXE`sXa5dY+6r$[iWW^3!j.0V/+XLK>io!DC`PrP"/
+XjTXjihOVZ=N[D^*Ts6:Z%Pne6$+e4j_'uD.Fi/X@g1k$ggRB>ct.'%Mn_HanC0dC
+V%Ab]=aMj>9&*F&fkOeh<#pc3#SN8^fOHL'N1^S[YN>!#*cRc6&Wm>7'^BLn&LuY[
+6jJr;XBh5V.Fi*k3_)TN:-XY>&i6B1h,_[eRpFTYaJ8H:jbK_),VqaF=?e5QjOAM+
+Rqc4Zs->&:Uk_jaTrL6Kh,p)Nl<_gt^>Sfo1=+-cgd_L,*SU2rRjo<h9a=]/qM$Bn
+D'[ir^94*Zji</qUFgWr&:&@C\l.UI>O#"SGO'CO7mf\i;K(`ts3[+Y>$/BE^-cOT
+Xua#<]%o4.l\qUaa&DHe^gSblP^>#!lG`dNcl!F(:)k;X(**t?8.g"c:0m)]MKr`(
+#P%&8iYh(V*mf?^mlqtAd.[/T(OKTJ3FW8S,1FO+J1/Xu-E`<>*I1<Vn<D&^L9?oT
+nb)T#o&5G`1I`[DcUa4D5/Sq4mXP4/o.JF8mlHfq''*i\V7usFd0"ffc"e"[k(lBJ
+c]grU738;YQWrfFX1cd*Yt5Th5*iR2qte/)(@C>6)Kenk?&hbE,q&Z9Lo)i)GIBdN
+X)mBR\+-RR^1#.uV0`!uMsBn!3SMsKPWRgnM'f9@-g@u1p7iV&'UPW-`9!e#cD/E1
+lTT&9;7MaD,5(aO_@k87cb8b.5J`<d5E-gek<r\0+Hg<dAZ"CtGs5NYUG#c@@l%)<
+iB4?pCH4H<pnu1AA>_u#jX1\O0d]7n=KuTOQL]j7nFWjoaU=il%p`YOV)Qm#NN2^i
+Ti`W3^,52!X()#S2YPu,p$qJNIEAnr~>
+endstream
+135 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 828/Width 105>>stream
+8;Z\74*lN5%//i$0QFL<S=iQi!B8(f:;I(&Y>`Qa[cBr/6IM`<j\N,a"R5[LLTpJZ
+I^>Ef(WA,hCB@Z!%;fr,Ds:pn8Uj'KUGXO6$P[EH-sUuB4F"okNXtbC\Sil&+d.^2
+,&"Q*j#n:aMDK/6Q'`[HDr,,o";X03+s=q!`6@[7Ar*dhTLHI8noit(7!*>jRhg@1
+]g\D83\O\GnHGscVM`%eP+dJtNLsVmops?>>p5SWKWXf5OG2P)kd?sn@V5B8n(+Qk
+M1eO#Pbb'@d,&ne>*+HpHl>oPK5GqKN`>pVOdCkZ*Ce$J6*WmhH;\:T&,n:WjY?@.
+O9L['-Lb<RgHkOfo^:!IYZp/5U;JMsQSQ^NYp('\=f2l>10ReEap&J\EIGi//^[2Q
+@eP^r`f-0s%ZRTco+G.CM3VXY-;qhpT2Nf'Wm['K8QhGs^p7^$*oUc\)(#bfK2oj9
+^0#m5Yk,lRK'[o<pT@PL^H6&`4ud^k8!4VTm9`@EShJW,*%UD=F=SkmTc,+H:VNTi
++!1S8*O-4o!^q7HH[fN0#X"]DKif5(cqa#c+rOqM@gENkf?]ZP%^%&L#Ua/Bfe:^F
+Y9IG@.a?^MpZtKR=m-uT;Xf<%FB@(:&d.`g\uo/]Ka2uo*pPg+I/NI4\h8l'1cra;
+AF%c$4''UfFlOs)G"$qLYC18#:tr#uP9Y5+VPs-Si#1maK(?7N^'teEGU=V==QA4f
+618/,YH7&5Hlk6)Ua^cO>_bn+0@pRtrhpf$'i#!3q5%_ZZtZ6)<cWS+3tj1FP#R-p
+l.tF&PCJu?fe6,-<>C![dPL*$m:u^9;^M_~>
+endstream
+136 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 763/Width 105>>stream
+8;Z]"0p755%#4"e(b/=lh)ij;JkA),ZTnR;!L2b,c5).'7,Acu`uiqF?Mi(Bq0C'-
+kP#iaiM66mp-\!rQ0peC"&L#mmOjdn6f6qu?)['!9`>F9],a#PLuW]*<j<1\6b\?R
+%-mW^&`jn>nK"TRYdO7HFV[@_1TFeWpSFk8nr1JX@KM?,WPo4D:LgMu0J`9@Ia&Jp
+fn\A"G"QK45l<L#,pGf*q>nZJ'X=g4&a9`B#s(VOJ*&7);9#jYhSY-^,=*L%faB*&
+PWDN14=3`Qca\+%qUTm5l$stt`iL:O,T!@2cT%#P@bW*]j][SmdlOT/9Pi*Rd8<r&
+G>(_758-JNLl>Zd;FVk^_.'8DB0/Rm2GD(XThr"G^d\HT,6pW?O^+D;e.5o)Pm2%"
+=R2`Z;ujqb1q&f.NKM;#[cTcsZCpZ-U"5?g),JQAJ-#-idX^,Z0I#)]Ef:DUJBVPi
+BQ7Lil7,63?.@8X&F)oMEjEBO,HVg-MD8YC\m-VIA*!6A&*&1dZ)ga.;G;f(H:4.F
+J83LHCJ1Mo^"hXd[#PQ1ol:U)_@5U0lXY1&PWBh=IXOjYV"NCi%bPo85>m5?8#&GX
+c;c-qTA#2Qb;D[V7uS(]6tAE_F>VhDaI&!4As7O<qbYCX,9:n5_XLgnBid?'0dkU6
+)6LHmBCGAYiQ1dC@,X4,W/H[,7m-lA@U>BG=t,@_4-&Mo%Yp(18DN.eoT]=!T(CZO
+YJ'Y`Fi+mf"-.=2I_a@k2YjQ>rphuJB6cWm~>
+endstream
+137 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 339/Width 105>>stream
+8;Z]!9b)h!%#($29NR_s<^"R+38r598>;;&()WPuc1<mA5/+b0!sCPS0M/T#]do2B
+MphB?6klgs7Hg`jXWn7Rf+4$kcs0LH.fI5XrtDU1V_5+.[ef'b#Xj>4A\6!C1ca8j
+T,iFf"6=MPmYK#%WcGJMIYa^dKqFk@M1G=GM@)[]l6&k:AbkU?qodU'jTpd!k6Ogq
+Db?$";D>s@*kLNJ!1!-qor%Aun'Mj&+2dr>AeFl08sZ7&$!E:[5fn&R3[)\o'.@"D
+<[VE<H30qWI0ZAPGq3N[EYMt]aP0"6?HGPLjS]WV5'a*DrO=p8m_<^ULbU@%dHu5j
+!&(?(h>~>
+endstream
+138 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 436/Width 105>>stream
+8;Z\796S2q%%Nju_a1p+8\1XOd<-oX45hD&Oed$a6p*V?^et49@l&W$Q#6A<atlJY
+6p)3tYVesDM&6*qMuqDn][i!^et0oWB/"r_6,i+3aG7BaYZWpQJ(pFWkI*aq@=*1f
+PUBcX;4_.KaDp9^[P;=<Q[4&i73(Ke/+stJ7ZXd6FP(3OTXWt0[;:H]m*f,#pl?ul
+CBb"fC-UWYAGDIS><!gA%/$,IYJoQ:[91!X9Y>q2A*BfEPBDX._esd"oG]s1c+09)
+0:f\p:p<0]TW5@A(-=YERPSkm*R/_O;a%E3Jd*-&\1O8K1U[57odC.lhH#^*\q8A"
+0NJ(BaKU^H0a10,;uc`nUIT>,;%0Y)8#3L+1?`-0Y[GBZY"-DHD&LnL$=,gCDR%3T
+iQW<fhjp,%'IN!MMF4+'1uC/<Zp7CJG6#KGjg5~>
+endstream
+139 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 416/Width 105>>stream
+8;Z\76#sjc%,@<n_l9j+bqJV/r^^r':*jRc$3doq-5t=;(`?Ht]Kp3W8+i%5AU+g'
+=gf.i?0YXnmA*0TruXXlMBjp!>Dd:doN@+0I<tYf63+dq]?N[NU8>iI_6]j0k=,CZ
+#\Sipij.l^5@D\+>qrQh<GsdWYLUG([S_!;nN$@3gLhBqE@^Vs`P;ro>uWR55ZT&2
+oQJpF'MVnB?tUd0UjJ,H_]qjk,;+(K^aIDgoa^p0k^^l>OS.m1.g('ukCEioa&e!-
+O76g(EW&G[<%>e#eR6q%d([3Ub.sP[Z_OHTideW>3$(5V1(^-(UE0,8QNDGcRO],6
+d.6DcYQt0jn>Ps7q9k7`=>fpSUMeC<mRQ&mLsQ`,\7?G$kM]8`d!5p"RS>('#QRI@
+L(jV%/kLZ7`rL)M\sN~>
+endstream
+140 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 503/Width 105>>stream
+8;Z\76'?mD%.%1>_eEJg2daEn5N6DKSIH^:6#jrh<,-SkRYo%ZYU+sYbTFJQL2SH2
+@It`&6/RjV!uG\=%tF]p"VOBf'j[E!H7no%j(c=25e<b(Mh\<YUZKFNmlkN"(*5lR
+$Ib)q8VU!:YC_e+KmDeu1ESFnB[SBV-kdVB?No*GNK6+!`#0b=-U@>R^N\lMaZth#
+CQJInlU:C<Am%(3(a1[%"?0W^$dZmk-5pr4"W]a_ADQgL4`I&#]L-m+)&DPSK)[Rj
+<K!k/FG<XkA6E`/dnXl2Q+st=WaJZR9]*<CCXsBsO^%%@R1(IBn$nG6.YFm=>?NJH
+nh9I@Hr2->M?Z8qA,a@!6C2a"3j7%]lT8<ek_mIRI:OS.`PM!CBnQ_R0m)#UbW5id
+p<*1pZGA,7q%SkO[#U0\T%ImRN4JR\d*WrrnX5Ns)J->tHa9>dH@%!djq$NOK"CI+
+7hjfq+(_s1q#3K+UujoVLkNm$a;oi%g@#"f^qA.~>
+endstream
+141 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 792/Width 105>>stream
+8;Z]"0lk2T$q8]d(oj*H?#c%0lr-_Ha)utZ0F6FdC]I6X'/k`aRga\?-U\7?m5Huq
+\7m"jhD8"_Ei<=C]l$=ns.a:##GnebQMU-,9XBHNI<cX5+8!0$h::)\9t&ic)iPLt
+C#KrMj6]0qGM]&'<clto(G,jA(9AVBV5#)Z.Z.M)I:JSN_tI1lm&2PL=<*gL4?DhS
+V$PV!YjpAaCk[Fl:LQN7j*PLl**%l0**7jc<3(ZW/0J"(HQO.pCD@<,iXB"mpm]<0
+*a2:Wd><Y<>$+^N=4RW"8Y<@TX/";^8&[i/?gdpfm#n,I&\[Lf\VE3(LtEj]V,*+4
+g_gO4HM=-$6ff'N_^.h@fpkFO6]!$9&I%W;C,kd[kX0ZpE7A<Z,JR5NR&/VSSXDca
+A<UpIp.i[;%HkeE5I:XE,hVC@3m!L!*g1=WMQ;p-i%3p-kPcN4oSOk`r+&6e?MTI'
+/,2tn0B+C_QW\oa]d,UYCWZm?_8p,`et"%SJXJCKp.YH0K1h50S`R'[XZSJ*,<AId
+<[^WNjTrQ,@<U*l\)*Qm*bho<gC<78S?V''_]DGjbrCbBiMCW;!QQ5"'>17,WikB>
+JTmKpPW9@<%mT,'>N1M3E7LV-F2N9/kCTWHkY.`)%5S)cRI/$7D>@G:laeMbm90?`
+2,("8@c\^l;Ub&(5')sIZJ^]=Ola1e1PF;f\!-5Ml(44lDa-k?nU>!h51=f<`nY%L
+'VPl'T>"Z,;097Ielt*$#((JWRUHG]-J?(ir^Pq,H,E%Lo([j>Xl?4+4pM'-B(^]~>
+endstream
+142 0 obj
+<</BitsPerComponent 8/ColorSpace 81 0 R/Filter[/ASCII85Decode/FlateDecode]/Height 59/Length 807/Width 105>>stream
+8;Z\76'A;l%"12Jj$@<YS:lT5T>FU7K'Q)qcicd7]<2+2-E0NAJa`rMD<Lo^?RGGg
+;]O?F'?DWUD-"#/D1&d[r@g+2CRV[TnTkjj(FA]Z'Q<keW-?RKaHE,)_*//4](A?U
+GDL=+M"F3u*9i&]p6+K4o36XB,^&G'XhCB6WUD*4l^^?&:Qr"*@JVf)Q,GD*<M2T/
+W87.l+8FSL"edKl)'VJ+BC))&YsA<&`sfen<@:b:,CrD;h)`81TOo;g/+0Q\::VU\
+:K5omeNf_G)T$Y<>n%M68F>!URh-`8q:8g\[&>53p0L.QeuN3nFH)HMc4J+D+WW*Y
+C\sLP1#7#6Y1o9_OX*S"B47dIkcJKNVmcQJO"N0,(;sLunm,m0&D9o/?poM_&J,OS
+E/l(0ceR!<8Mno>+.qZ(i(B$6R\LNIY@.@4PDId,8=>sTF[,DC"F50bNl:qLl&-NE
+8mXTgNmi6F``]m;o>M+r+qWir@X>$\Itq=/?:=c'e59q0<tR%MBO*8iL58iL4X*XK
+NaA1&8.gt-Y'R-XBuA5dqX9(NLl.BY,%HUhP1@rj2rqr"2sYW;PC+l;b8M4D?hcTM
+p_a<P7Q[^g>'Sq86Pr%<Lljs@#D?/m`YP9tRc!K6O_;TO_nAYuFqLjJ\2HHr>^%`G
+#8!;S[PjKR,]3U6(+b"kl+iDYEc#>0otjlmU>[u9ILYaTq(iV7]k@pR*7JPOD_VT^
+*HR.(3?AbC6MVmkY9]S$=!`L*O\8GNs2/a1caWq04hTVh7)+ACf(0?%g8:Q72[$^_
+g?'a])$"u7IWt~>
+endstream
+143 0 obj
+<</Names[(025_JusticeReinvestment_Truncated_V3.indd:.37085:10)[73 0 R/XYZ null null null]]>>
+144 0 obj
+<</Count 19/Kids[145 0 R 146 0 R 147 0 R]/Type/Pages>>
+145 0 obj
+<</Count 5/Kids[153 0 R 1 0 R 8 0 R 10 0 R 21 0 R]/Parent 144 0 R/Type/Pages>>
+146 0 obj
+<</Count 5/Kids[28 0 R 35 0 R 40 0 R 47 0 R 49 0 R]/Parent 144 0 R/Type/Pages>>
+147 0 obj
+<</Count 9/Kids[53 0 R 63 0 R 65 0 R 67 0 R 71 0 R 73 0 R 75 0 R 77 0 R 79 0 R]/Parent 144 0 R/Type/Pages>>
+148 0 obj
+<</Length 2479/Subtype/XML/Type/Metadata>>stream
+<?xpacket begin="
+" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 9.1-c002 79.b7c64cc, 2024/07/16-07:59:40        ">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+            xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+            xmlns:stRef="http://ns.adobe.com/xap/1.0/sType/ResourceRef#"
+            xmlns:stEvt="http://ns.adobe.com/xap/1.0/sType/ResourceEvent#"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:pdf="http://ns.adobe.com/pdf/1.3/">
+         <xmp:CreateDate>2025-08-13T20:13:46+10:00</xmp:CreateDate>
+         <xmp:MetadataDate>2025-08-13T20:13:47+10:00</xmp:MetadataDate>
+         <xmp:ModifyDate>2025-08-13T20:13:47+10:00</xmp:ModifyDate>
+         <xmp:CreatorTool>Adobe InDesign 20.0 (Windows)</xmp:CreatorTool>
+         <xmpMM:InstanceID>uuid:df0f43fc-d1cd-46e2-994d-078db9550c27</xmpMM:InstanceID>
+         <xmpMM:OriginalDocumentID>xmp.did:ab005949-7eb9-384e-87d0-c6c8cf60c01b</xmpMM:OriginalDocumentID>
+         <xmpMM:DocumentID>xmp.id:797993d0-3f51-9748-916e-354b5bd61911</xmpMM:DocumentID>
+         <xmpMM:RenditionClass>proof:pdf</xmpMM:RenditionClass>
+         <xmpMM:DerivedFrom rdf:parseType="Resource">
+            <stRef:instanceID>xmp.iid:eaec938f-90e6-3247-8918-9a4acd688077</stRef:instanceID>
+            <stRef:documentID>xmp.did:5c8cc215-a2e0-3d45-842b-c435d32cdedb</stRef:documentID>
+            <stRef:originalDocumentID>xmp.did:ab005949-7eb9-384e-87d0-c6c8cf60c01b</stRef:originalDocumentID>
+            <stRef:renditionClass>default</stRef:renditionClass>
+         </xmpMM:DerivedFrom>
+         <xmpMM:History>
+            <rdf:Seq>
+               <rdf:li rdf:parseType="Resource">
+                  <stEvt:action>converted</stEvt:action>
+                  <stEvt:parameters>from application/x-indesign to application/pdf</stEvt:parameters>
+                  <stEvt:softwareAgent>Adobe InDesign 20.0 (Windows)</stEvt:softwareAgent>
+                  <stEvt:changed>/</stEvt:changed>
+                  <stEvt:when>2025-08-13T20:13:46+10:00</stEvt:when>
+               </rdf:li>
+            </rdf:Seq>
+         </xmpMM:History>
+         <dc:format>application/pdf</dc:format>
+         <pdf:Producer>Adobe PDF Library 17.0</pdf:Producer>
+         <pdf:Trapped>False</pdf:Trapped>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="r"?>
+endstream
+149 0 obj
+<</CreationDate(D:20250813201346+10'00')/Creator(Adobe InDesign 20.0 \(Windows\))/ModDate(D:20250813201347+10'00')/Producer(Adobe PDF Library 17.0)/Trapped/False>>
+0000000000 65535 f
+0000039583 00000 n
+0000040765 00000 n
+0000046323 00000 n
+0000052527 00000 n
+0000052562 00000 n
+0000052979 00000 n
+0000053394 00000 n
+0000053831 00000 n
+0000055178 00000 n
+0000059266 00000 n
+0000060630 00000 n
+0000060676 00000 n
+0000060805 00000 n
+0000060933 00000 n
+0000061062 00000 n
+0000061189 00000 n
+0000067882 00000 n
+0000068085 00000 n
+0000068167 00000 n
+0000068313 00000 n
+0000068479 00000 n
+0000069886 00000 n
+0000069911 00000 n
+0000070040 00000 n
+0000073463 00000 n
+0000073986 00000 n
+0001350523 00000 n
+0001350620 00000 n
+0001352022 00000 n
+0001352054 00000 n
+0001352183 00000 n
+0001352309 00000 n
+0001357570 00000 n
+0001357702 00000 n
+0001357834 00000 n
+0001359211 00000 n
+0001359236 00000 n
+0001359367 00000 n
+0001364364 00000 n
+0001364494 00000 n
+0001365889 00000 n
+0001365914 00000 n
+0001366046 00000 n
+0001369701 00000 n
+0001372223 00000 n
+0001429558 00000 n
+0001429657 00000 n
+0001431007 00000 n
+0001434632 00000 n
+0001436000 00000 n
+0001439161 00000 n
+0001441534 00000 n
+0001529014 00000 n
+0001530422 00000 n
+0001530447 00000 n
+0001530573 00000 n
+0001533944 00000 n
+0001534515 00000 n
+0001535086 00000 n
+0001557586 00000 n
+0001979199 00000 n
+0001979316 00000 n
+0001979374 00000 n
+0001980750 00000 n
+0001984845 00000 n
+0001986221 00000 n
+0001988616 00000 n
+0001989632 00000 n
+0001994935 00000 n
+0002001140 00000 n
+0002001177 00000 n
+0002002539 00000 n
+0002004958 00000 n
+0002006320 00000 n
+0002010252 00000 n
+0002011614 00000 n
+0002015594 00000 n
+0002016931 00000 n
+0002020717 00000 n
+0002022043 00000 n
+0002024782 00000 n
+0002024830 00000 n
+0002025344 00000 n
+0002033298 00000 n
+0002033942 00000 n
+0002034521 00000 n
+0002034781 00000 n
+0002039375 00000 n
+0002039936 00000 n
+0002040353 00000 n
+0002040390 00000 n
+0002040937 00000 n
+0002047142 00000 n
+0002047785 00000 n
+0002059231 00000 n
+0002059365 00000 n
+0002065632 00000 n
+0002066239 00000 n
+0002066512 00000 n
+0002066929 00000 n
+0002067201 00000 n
+0002067341 00000 n
+0002067986 00000 n
+0002068013 00000 n
+0002068083 00000 n
+0002068195 00000 n
+0002068702 00000 n
+0002068772 00000 n
+0002068897 00000 n
+0002077276 00000 n
+0002077561 00000 n
+0002078039 00000 n
+0002078066 00000 n
+0002078213 00000 n
+0002078283 00000 n
+0002078570 00000 n
+0002078690 00000 n
+0002079162 00000 n
+0002079584 00000 n
+0002079611 00000 n
+0002079753 00000 n
+0002086937 00000 n
+0002087050 00000 n
+0002087094 00000 n
+0002087823 00000 n
+0002088317 00000 n
+0002089095 00000 n
+0002089762 00000 n
+0002092403 00000 n
+0002093192 00000 n
+0002094083 00000 n
+0002094947 00000 n
+0002095715 00000 n
+0002097207 00000 n
+0002098902 00000 n
+0002099874 00000 n
+0002100781 00000 n
+0002101264 00000 n
+0002101844 00000 n
+0002102404 00000 n
+0002103051 00000 n
+0002103987 00000 n
+0002104938 00000 n
+0002105048 00000 n
+0002105120 00000 n
+0002105216 00000 n
+0002105313 00000 n
+0002105438 00000 n
+0002107996 00000 n
+<</Size 150/ID[<A620E087E361F54FA81328D2678A7DA9><9F11F4A1F0BEF64DA2B1D77D1B9040A8>]>>
+startxref

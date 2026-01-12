@@ -121,16 +121,14 @@ export function ServicesMap({ services, selectedService, onServiceClick }: Servi
       el.style.border = '2px solid white';
       el.style.cursor = 'pointer';
       el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+      el.style.transition = 'box-shadow 0.15s ease';
 
-      // Hover effect
+      // Hover effect - use box-shadow instead of size change to avoid marker jumping
       el.addEventListener('mouseenter', () => {
-        el.style.width = '16px';
-        el.style.height = '16px';
-        el.style.zIndex = '1000';
+        el.style.boxShadow = `0 0 0 3px ${color}66, 0 2px 6px rgba(0,0,0,0.4)`;
       });
       el.addEventListener('mouseleave', () => {
-        el.style.width = '12px';
-        el.style.height = '12px';
+        el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
       });
 
       // Create popup

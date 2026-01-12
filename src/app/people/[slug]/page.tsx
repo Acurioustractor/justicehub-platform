@@ -3,7 +3,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 export const dynamic = 'force-dynamic';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Mail, Globe, Linkedin, Twitter, Edit } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Mail, Globe, Linkedin, Twitter, Edit, Building2, Briefcase, MapPin, Users, Sparkles } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 
 interface PublicProfile {
@@ -22,6 +22,7 @@ interface PublicProfile {
   email: string | null;
   social_links: Record<string, string>;
   is_featured: boolean;
+  is_public: boolean;
 
   // Related content
   art_innovation_profiles: Array<{
@@ -75,19 +76,19 @@ export default async function ProfilePage({
   console.log('🔍 Auth check:', user ? `User ID: ${user.id}` : 'Not logged in');
 
   if (user) {
-    const { data: userData } = await supabase
-      .from('users')
-      .select('user_role')
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('is_super_admin')
       .eq('id', user.id)
       .single();
 
-    console.log('👤 User data:', userData);
-    canEdit = userData?.user_role === 'admin';
+    console.log('👤 Profile data:', profileData);
+    canEdit = profileData?.is_super_admin === true;
   }
 
   // Fetch profile - allow private profiles if user owns them
   const { data: profile, error } = await supabase
-    .from('public_profiles')
+    .from('profiles')
     .select(`
       *,
       art_innovation_profiles (
@@ -132,18 +133,20 @@ export default async function ProfilePage({
   }
 
   // Check if profile is private and user doesn't own it
-  if (!profile.is_public && (!user || profile.user_id !== user.id)) {
+  // Note: user_id in profiles is usually the same as id for auth-linked profiles
+  const profileUserId = profile.user_id || profile.id;
+  if (!profile.is_public && (!user || profileUserId !== user.id)) {
     // Private profile - only owner can view
     notFound();
   }
 
-  const typedProfile = profile as PublicProfile;
+  const typedProfile = profile as any; // Cast as any or update interface if needed
 
   // Check if user owns this profile
-  console.log('🔗 Profile user_id:', typedProfile.user_id);
+  console.log('🔗 Profile user_id:', profileUserId);
   console.log('👤 Current user:', user?.id);
 
-  if (user && typedProfile.user_id === user.id) {
+  if (user && profileUserId === user.id) {
     console.log('✅ User owns this profile!');
     canEdit = true;
   }
@@ -214,7 +217,7 @@ export default async function ProfilePage({
               )}
 
               {typedProfile.tagline && (
-                <p className="text-2xl text-earth-700 font-medium mb-6">
+                <p className="text-2xl text-earth-700 font-medium mb-4">
                   {typedProfile.tagline}
                 </p>
               )}
@@ -298,99 +301,127 @@ export default async function ProfilePage({
       )}
 
       {/* Connected Content */}
-      <section className="container-justice py-16">
+      <section className="container-justice py-16 border-t-2 border-black">
         <div className="max-w-6xl">
-          <h2 className="text-3xl font-black mb-12">Connected Work</h2>
-
-          <div className="grid gap-12">
-            {/* Art & Innovation Projects */}
-            {typedProfile.art_innovation_profiles && typedProfile.art_innovation_profiles.length > 0 && (
-              <div>
-                <h3 className="text-2xl font-black mb-6">Art & Innovation</h3>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {typedProfile.art_innovation_profiles.map((link: any) => (
-                    <Link
-                      key={link.art_innovation.id}
-                      href={`/art-innovation/${link.art_innovation.slug}`}
-                      className="group border-2 border-black overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
-                    >
-                      {link.art_innovation.featured_image_url && (
-                        <div className="w-full h-48 relative overflow-hidden bg-gray-900">
-                          <img
-                            src={link.art_innovation.featured_image_url}
-                            alt={link.art_innovation.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      )}
-                      <div className="p-4 bg-white">
-                        <span className="inline-block px-2 py-1 bg-ochre-100 text-xs font-bold uppercase mb-2">
-                          {link.art_innovation.type}
-                        </span>
-                        <h4 className="font-bold text-lg mb-2 group-hover:text-ochre-600 transition-colors">
-                          {link.art_innovation.title}
-                        </h4>
-                        <p className="text-sm text-earth-600 font-medium">
-                          {link.role_description || link.role}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Community Programs */}
-            {typedProfile.community_programs_profiles && typedProfile.community_programs_profiles.length > 0 && (
-              <div>
-                <h3 className="text-2xl font-black mb-6">Community Programs</h3>
-                <div className="grid md:grid-cols-2 gap-6">
-                  {typedProfile.community_programs_profiles.map((link: any) => (
-                    <div
-                      key={link.community_programs.id}
-                      className="border-2 border-black p-6 bg-white"
-                    >
-                      <h4 className="font-bold text-lg mb-2">
-                        {link.community_programs.name}
-                      </h4>
-                      <p className="text-sm text-earth-700 mb-2">
-                        {link.community_programs.organization}
-                      </p>
-                      <p className="text-sm text-earth-600 mb-3">
-                        {link.community_programs.location}, {link.community_programs.state}
-                      </p>
-                      <p className="text-sm text-ochre-600 font-bold">
-                        {link.role_description || link.role}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Services */}
-            {typedProfile.services_profiles && typedProfile.services_profiles.length > 0 && (
-              <div>
-                <h3 className="text-2xl font-black mb-6">Services</h3>
-                <div className="grid md:grid-cols-2 gap-6">
-                  {typedProfile.services_profiles.map((link: any) => (
-                    <Link
-                      key={link.services.id}
-                      href={`/services/${link.services.slug}`}
-                      className="border-2 border-black p-6 bg-white hover:bg-sand-50 transition-colors"
-                    >
-                      <h4 className="font-bold text-lg mb-2 hover:text-ochre-600 transition-colors">
-                        {link.services.name}
-                      </h4>
-                      <p className="text-sm text-ochre-600 font-bold">
-                        {link.role_description || link.role}
-                      </p>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+          <div className="flex items-center gap-3 mb-8">
+            <Briefcase className="h-8 w-8" />
+            <h2 className="text-3xl font-black">Connected Work</h2>
           </div>
+
+          {/* Check if there's any connected work */}
+          {(typedProfile.art_innovation_profiles?.length > 0 ||
+            typedProfile.community_programs_profiles?.length > 0 ||
+            typedProfile.services_profiles?.length > 0) ? (
+            <div className="grid gap-12">
+              {/* Art & Innovation Projects */}
+              {typedProfile.art_innovation_profiles && typedProfile.art_innovation_profiles.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <Sparkles className="h-5 w-5 text-ochre-600" />
+                    <h3 className="text-2xl font-bold">Art & Innovation</h3>
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {typedProfile.art_innovation_profiles.map((link: any) => (
+                      <Link
+                        key={link.art_innovation.id}
+                        href={`/art-innovation/${link.art_innovation.slug}`}
+                        className="group border-2 border-black overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+                      >
+                        {link.art_innovation.featured_image_url && (
+                          <div className="w-full h-48 relative overflow-hidden bg-gray-900">
+                            <img
+                              src={link.art_innovation.featured_image_url}
+                              alt={link.art_innovation.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        )}
+                        <div className="p-4 bg-white">
+                          <span className="inline-block px-2 py-1 bg-ochre-100 text-xs font-bold uppercase mb-2">
+                            {link.art_innovation.type}
+                          </span>
+                          <h4 className="font-bold text-lg mb-2 group-hover:text-ochre-600 transition-colors">
+                            {link.art_innovation.title}
+                          </h4>
+                          <p className="text-sm text-earth-600 font-medium">
+                            <span className="text-ochre-600">Role:</span> {link.role_description || link.role}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Community Programs */}
+              {typedProfile.community_programs_profiles && typedProfile.community_programs_profiles.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <Users className="h-5 w-5 text-eucalyptus-600" />
+                    <h3 className="text-2xl font-bold">Community Programs</h3>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {typedProfile.community_programs_profiles.map((link: any) => (
+                      <Link
+                        key={link.community_programs.id}
+                        href={`/community-programs/${link.community_programs.id}`}
+                        className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group"
+                      >
+                        <h4 className="font-bold text-lg mb-2 group-hover:text-eucalyptus-600 transition-colors">
+                          {link.community_programs.name}
+                        </h4>
+                        <p className="text-sm text-earth-700 mb-2">
+                          {link.community_programs.organization}
+                        </p>
+                        <div className="flex items-center gap-1 text-sm text-earth-600 mb-3">
+                          <MapPin className="h-4 w-4" />
+                          {link.community_programs.location}, {link.community_programs.state}
+                        </div>
+                        <p className="text-sm font-medium">
+                          <span className="text-eucalyptus-600">Role:</span> {link.role_description || link.role}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Services */}
+              {typedProfile.services_profiles && typedProfile.services_profiles.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <Building2 className="h-5 w-5 text-blue-600" />
+                    <h3 className="text-2xl font-bold">Services</h3>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {typedProfile.services_profiles.map((link: any) => (
+                      <Link
+                        key={link.services.id}
+                        href={`/services/${link.services.slug}`}
+                        className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group"
+                      >
+                        <h4 className="font-bold text-lg mb-2 group-hover:text-blue-600 transition-colors">
+                          {link.services.name}
+                        </h4>
+                        <p className="text-sm font-medium">
+                          <span className="text-blue-600">Role:</span> {link.role_description || link.role}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="border-2 border-dashed border-earth-300 p-8 text-center bg-sand-50">
+              <Briefcase className="h-12 w-12 text-earth-400 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-earth-700 mb-2">No Connected Work Yet</h3>
+              <p className="text-earth-600 max-w-md mx-auto">
+                This profile doesn't have any linked programs, services, or projects yet.
+                {canEdit && ' Edit your profile to add connections.'}
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

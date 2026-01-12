@@ -21,6 +21,7 @@ import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createClient } from '@supabase/supabase-js';
+import { extractMediaSentiment, storeMediaSentiment, calculateSentimentMetrics } from './lib/sentiment-extraction.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
@@ -83,6 +84,41 @@ const DATA_SOURCES = {
     {
       name: 'Northern Territory Youth Justice',
       url: 'https://justice.nt.gov.au/youth-justice',
+      type: 'program',
+      update_frequency: 'monthly',
+      consent_level: 'Public Knowledge Commons',
+    },
+    {
+      name: 'Tasmania Youth Justice Services',
+      url: 'https://www.decyp.tas.gov.au/safe-children/youth-justice-services/',
+      type: 'program',
+      update_frequency: 'monthly',
+      consent_level: 'Public Knowledge Commons',
+    },
+    {
+      name: 'Tasmania Youth Justice Reform',
+      url: 'https://www.decyp.tas.gov.au/safe-children/youth-justice-services/youth-justice-reform-in-tasmania/',
+      type: 'program',
+      update_frequency: 'monthly',
+      consent_level: 'Public Knowledge Commons',
+    },
+    {
+      name: 'South Australia Youth Justice',
+      url: 'https://www.childprotection.sa.gov.au/youth-justice',
+      type: 'program',
+      update_frequency: 'monthly',
+      consent_level: 'Public Knowledge Commons',
+    },
+    {
+      name: 'Western Australia Youth Justice Services',
+      url: 'https://www.wa.gov.au/organisation/department-of-justice/youth-justice-services',
+      type: 'program',
+      update_frequency: 'monthly',
+      consent_level: 'Public Knowledge Commons',
+    },
+    {
+      name: 'ACT Youth Justice',
+      url: 'https://www.communityservices.act.gov.au/children-and-families/youth-justice',
       type: 'program',
       update_frequency: 'monthly',
       consent_level: 'Public Knowledge Commons',
@@ -454,6 +490,26 @@ Return ONLY valid JSON, no other text.`
 
       console.log(`   ✅ Inserted ${insertedCount} interventions`);
 
+      // Extract sentiment for media sources
+      let sentimentCount = 0;
+      if (category === 'media') {
+        try {
+          console.log(`   📊 Extracting media sentiment...`);
+          const { articles } = await extractMediaSentiment(markdown, source, job.id, env);
+
+          if (articles.length > 0) {
+            const { stored } = await storeMediaSentiment(articles, job.id, source.name, supabase);
+            sentimentCount = stored;
+            const metrics = calculateSentimentMetrics(articles);
+            console.log(`   ✅ Stored ${sentimentCount} articles`);
+            console.log(`   📈 Sentiment: ${metrics.avgSentiment.toFixed(2)} (${metrics.positive}+ ${metrics.negative}- ${metrics.neutral}=)`);
+            console.log(`   🏷️  Top topics: ${metrics.topTopics.slice(0, 3).join(', ')}`);
+          }
+        } catch (sentimentError) {
+          console.error(`   ⚠️  Sentiment extraction failed:`, sentimentError.message);
+        }
+      }
+
       // Update job status
       await supabase
         .from('alma_ingestion_jobs')
@@ -464,6 +520,10 @@ Return ONLY valid JSON, no other text.`
           evidence_found: extracted.evidence?.length || 0,
           outcomes_found: extracted.outcomes?.length || 0,
           interventions_inserted: insertedCount,
+          metadata: {
+            ...job.metadata,
+            sentiment_articles: sentimentCount,
+          }
         })
         .eq('id', job.id);
 

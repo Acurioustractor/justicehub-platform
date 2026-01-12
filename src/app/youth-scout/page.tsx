@@ -129,6 +129,9 @@ export default function YouthScoutLandingPage() {
               
               <h1 className="text-4xl md:text-6xl font-black mb-6 bg-gradient-to-r from-blue-800 via-purple-800 to-orange-600 bg-clip-text text-transparent">
                 YOUTH SCOUT
+                <span className="ml-3 inline-flex items-center px-3 py-1 bg-purple-600 text-white text-sm font-bold uppercase tracking-wider align-middle rounded-sm">
+                  Beta
+                </span>
               </h1>
               
               <p className="text-xl md:text-2xl max-w-4xl mx-auto mb-8 leading-relaxed text-gray-800">

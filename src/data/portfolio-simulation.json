@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-01-10T04:03:14.608Z",
+  "stats": {
+    "interventionCount": 1000,
+    "totalInvestment": 200000000,
+    "totalAvoidedCost": 1240400000,
+    "totalNPS": 1040400000,
+    "portfolioYield": 6.202
+  },
+  "breakdown": {
+    "Proven": {
+      "count": 5,
+      "nps": 17000000
+    },
+    "Effective": {
+      "count": 146,
+      "nps": 379600000
+    },
+    "Promising": {
+      "count": 168,
+      "nps": 235200000
+    },
+    "Untested": {
+      "count": 681,
+      "nps": 408600000
+    }
+  },
+  "topPerformers": [
+    {
+      "name": "Youth Justice System Statistics - ROGS 2025",
+      "category": "Proven",
+      "nps": 3400000,
+      "yield": 18
+    },
+    {
+      "name": "GEBIE GANG Program (Groote Eylandt)",
+      "category": "Proven",
+      "nps": 3400000,
+      "yield": 18
+    },
+    {
+      "name": "Royal Commission into Protection and Detention of Children in Northern Territory",
+      "category": "Proven",
+      "nps": 3400000,
+      "yield": 18
+    },
+    {
+      "name": "Deaths in Custody Crisis - 2024-2025 Statistics",
+      "category": "Proven",
+      "nps": 3400000,
+      "yield": 18
+    },
+    {
+      "name": "Maranguka Justice Reinvestment Project (Bourke)",
+      "category": "Proven",
+      "nps": 3400000,
+      "yield": 18
+    }
+  ]
+}

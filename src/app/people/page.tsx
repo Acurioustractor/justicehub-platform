@@ -25,8 +25,13 @@ export default async function PeoplePage() {
           <h1 className="text-5xl md:text-6xl font-black mb-6">
             People
           </h1>
-          <p className="text-xl md:text-2xl text-earth-700 max-w-3xl">
+          <p className="text-xl md:text-2xl text-earth-700 max-w-3xl mb-6">
             Advocates, artists, researchers, and changemakers working to transform youth justice in Australia.
+          </p>
+
+          <p className="text-sm max-w-2xl text-earth-600 border-l-4 border-ochre-400 pl-4 text-left">
+            <strong>Want to be listed?</strong> People are featured here by application or invitation.
+            Once listed, you can manage your own profile and be connected to stories, organizations, and content across JusticeHub.
           </p>
         </div>
       </section>

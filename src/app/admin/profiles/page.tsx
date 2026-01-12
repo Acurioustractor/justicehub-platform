@@ -18,18 +18,15 @@ export default async function AdminProfilesPage({
     redirect('/login?redirect=/admin/profiles');
   }
 
-  const { data: userData, error: userError } = await supabase
-    .from('users')
-    .select('user_role')
+  // Check admin role
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('is_super_admin')
     .eq('id', user.id)
     .single();
 
-  console.log('Admin check - User ID:', user.id);
-  console.log('Admin check - User data:', userData);
-  console.log('Admin check - Error:', userError);
-
-  if (userData?.user_role !== 'admin') {
-    console.log('Not admin - redirecting. Role:', userData?.user_role);
+  if (!profileData?.is_super_admin) {
+    console.log('Not super admin - redirecting.');
     redirect('/');
   }
 
@@ -37,14 +34,9 @@ export default async function AdminProfilesPage({
 
   // Fetch all profiles with filters
   let query = supabase
-    .from('public_profiles')
+    .from('profiles')
     .select(`
       *,
-      users!public_profiles_user_id_fkey (
-        email,
-        user_role,
-        is_active
-      ),
       art_innovation_profiles (count),
       community_programs_profiles (count),
       services_profiles (count)
@@ -123,41 +115,36 @@ export default async function AdminProfilesPage({
           <div className="flex flex-wrap gap-2">
             <Link
               href="/admin/profiles"
-              className={`px-4 py-2 font-bold text-sm border-2 border-black transition-colors ${
-                !filter ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'
-              }`}
+              className={`px-4 py-2 font-bold text-sm border-2 border-black transition-colors ${!filter ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'
+                }`}
             >
               All Profiles
             </Link>
             <Link
               href="/admin/profiles?filter=public"
-              className={`px-4 py-2 font-bold text-sm border-2 border-black transition-colors ${
-                filter === 'public' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'
-              }`}
+              className={`px-4 py-2 font-bold text-sm border-2 border-black transition-colors ${filter === 'public' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'
+                }`}
             >
               Public Only
             </Link>
             <Link
               href="/admin/profiles?filter=private"
-              className={`px-4 py-2 font-bold text-sm border-2 border-black transition-colors ${
-                filter === 'private' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'
-              }`}
+              className={`px-4 py-2 font-bold text-sm border-2 border-black transition-colors ${filter === 'private' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'
+                }`}
             >
               Private Only
             </Link>
             <Link
               href="/admin/profiles?filter=featured"
-              className={`px-4 py-2 font-bold text-sm border-2 border-black transition-colors ${
-                filter === 'featured' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'
-              }`}
+              className={`px-4 py-2 font-bold text-sm border-2 border-black transition-colors ${filter === 'featured' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'
+                }`}
             >
               Featured
             </Link>
             <Link
               href="/admin/profiles?filter=no-user"
-              className={`px-4 py-2 font-bold text-sm border-2 border-black transition-colors ${
-                filter === 'no-user' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'
-              }`}
+              className={`px-4 py-2 font-bold text-sm border-2 border-black transition-colors ${filter === 'no-user' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'
+                }`}
             >
               No User Account
             </Link>
@@ -199,13 +186,13 @@ export default async function AdminProfilesPage({
                     </td>
                     <td className="px-4 py-4">
                       <div className="text-sm">
-                        {profile.users?.[0]?.email || (
-                          <span className="text-gray-400 italic">No account</span>
+                        {profile.email || (
+                          <span className="text-gray-400 italic">No email</span>
                         )}
                       </div>
-                      {profile.users?.[0]?.user_role && (
-                        <div className="text-xs text-earth-600">
-                          {profile.users[0].user_role}
+                      {profile.is_super_admin && (
+                        <div className="text-xs text-earth-600 font-bold">
+                          SUPER ADMIN
                         </div>
                       )}
                     </td>
@@ -243,8 +230,8 @@ export default async function AdminProfilesPage({
                         {(!profile.art_innovation_profiles?.[0]?.count &&
                           !profile.community_programs_profiles?.[0]?.count &&
                           !profile.services_profiles?.[0]?.count) && (
-                          <span className="text-gray-400 italic">No connections</span>
-                        )}
+                            <span className="text-gray-400 italic">No connections</span>
+                          )}
                       </div>
                     </td>
                     <td className="px-4 py-4">

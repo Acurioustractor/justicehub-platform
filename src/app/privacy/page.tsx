@@ -33,7 +33,7 @@ export default function PrivacyPolicyPage() {
               <h1 className="text-4xl font-black mb-4">PRIVACY POLICY</h1>
 
               <p className="text-lg text-gray-700 mb-4">
-                <strong>Effective Date:</strong> January 1, 2024
+                <strong>Effective Date:</strong> January 1, 2026
               </p>
 
               <p className="text-gray-700">

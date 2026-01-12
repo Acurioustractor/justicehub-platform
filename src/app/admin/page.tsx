@@ -14,13 +14,13 @@ export default async function AdminDashboard() {
   }
 
   // Check admin role
-  const { data: userData } = await supabase
-    .from('users')
-    .select('user_role')
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('is_super_admin')
     .eq('id', user.id)
     .single();
 
-  if (userData?.user_role !== 'admin') {
+  if (!profileData?.is_super_admin) {
     redirect('/');
   }
 
@@ -42,8 +42,8 @@ export default async function AdminDashboard() {
     { count: empathyProfilesCount },
     { count: empathyTranscriptsCount },
   ] = await Promise.all([
-    supabase.from('public_profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('public_profiles').select('*', { count: 'exact', head: true }).eq('is_public', true),
+    supabase.from('profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_public', true),
     supabase.from('articles').select('*', { count: 'exact', head: true }),
     supabase.from('art_innovation').select('*', { count: 'exact', head: true }),
     supabase.from('community_programs').select('*', { count: 'exact', head: true }),
@@ -55,7 +55,7 @@ export default async function AdminDashboard() {
     supabase.from('organizations').select('*', { count: 'exact', head: true }),
     supabase.from('organizations_profiles').select('*', { count: 'exact', head: true }),
     supabase.from('blog_posts_profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('public_profiles').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
     supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
   ]);
 

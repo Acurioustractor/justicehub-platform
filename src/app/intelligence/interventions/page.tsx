@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { InterventionCard } from '@/components/alma';
 import type { Database } from '@/types/supabase';
 
+export const dynamic = 'force-dynamic';
+
 type Intervention = Database['public']['Tables']['alma_interventions']['Row'];
 
 interface InterventionsPageProps {
@@ -329,11 +331,10 @@ export default async function InterventionsPage({ searchParams }: InterventionsP
                               ...searchParams,
                               page: pageNum.toString(),
                             })}`}
-                            className={`px-4 py-2 border-2 font-bold ${
-                              pageNum === currentPage
+                            className={`px-4 py-2 border-2 font-bold ${pageNum === currentPage
                                 ? 'bg-black text-white border-black'
                                 : 'border-black hover:bg-gray-100'
-                            }`}
+                              }`}
                           >
                             {pageNum}
                           </Link>

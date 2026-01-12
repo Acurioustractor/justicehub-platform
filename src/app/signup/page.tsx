@@ -8,6 +8,40 @@ import { Shield, Users, Heart, TrendingUp, Loader2 } from 'lucide-react';
 
 const supabase = createClient();
 
+/**
+ * Sync signup data with GoHighLevel CRM
+ */
+async function syncWithGHL(data: {
+  user_id: string;
+  email: string;
+  full_name: string;
+  preferred_name?: string;
+  is_steward: boolean;
+  steward_motivation?: string;
+  steward_experience?: string;
+  steward_commitments?: string[];
+  newsletter?: boolean;
+}) {
+  try {
+    const response = await fetch('/api/ghl/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      console.warn('GHL sync warning:', result.error);
+    } else {
+      console.log('GHL sync success:', result);
+    }
+    return result;
+  } catch (err) {
+    console.warn('GHL sync failed:', err);
+    // Don't throw - GHL sync is non-blocking
+    return null;
+  }
+}
+
 function SignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,6 +63,7 @@ function SignupContent() {
   const [pronouns, setPronouns] = useState('');
   const [tagline, setTagline] = useState('');
   const [bio, setBio] = useState('');
+  const [newsletter, setNewsletter] = useState(true);
 
   // Steward-specific fields
   const [stewardMotivation, setStewardMotivation] = useState('');
@@ -109,31 +144,13 @@ function SignupContent() {
         slug = `${slug}-${randomSuffix}`;
       }
 
-      // Create users table record
-      const { error: userError } = await supabase
-        .from('users')
-        .insert({
-          id: user.id,
-          email: user.email,
-          username: slug,
-          name: fullName,
-          user_role: 'user',
-          password_hash: 'managed_by_supabase_auth',
-          is_active: true
-        });
-
-      if (userError) {
-        console.error('User table error:', userError);
-        // Continue even if users table insert fails
-      }
-
-      // Create public profile with steward role if applicable
+      // Update the profile created by Auth trigger (or create if not exists)
       const roleTags = isStewardSignup ? ['steward'] : [];
 
       const { data: profile, error: profileError } = await supabase
-        .from('public_profiles')
-        .insert({
-          user_id: user.id,
+        .from('profiles')
+        .upsert({
+          id: user.id, // Match auth user ID
           full_name: fullName,
           preferred_name: preferredName || null,
           pronouns: pronouns || null,
@@ -142,7 +159,9 @@ function SignupContent() {
           bio: bio || null,
           is_public: false, // Start as private until user approves
           is_featured: false,
-          role_tags: roleTags
+          role_tags: roleTags,
+          email: user.email,
+          onboarding_completed: true
         })
         .select()
         .single();
@@ -151,12 +170,22 @@ function SignupContent() {
 
       console.log('Profile created:', profile);
 
-      // If steward signup, go to steward info step
+      // If steward signup, go to steward info step (GHL sync happens after steward info)
       if (isStewardSignup) {
         setStep('steward-info');
         setLoading(false);
         return;
       }
+
+      // For regular signups, sync with GHL now
+      await syncWithGHL({
+        user_id: user.id,
+        email: user.email || email,
+        full_name: fullName,
+        preferred_name: preferredName,
+        is_steward: false,
+        newsletter,
+      });
 
       // Redirect to profile editing
       window.location.href = `/people/${slug}/edit`;
@@ -221,6 +250,7 @@ function SignupContent() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-4 py-3 border-2 border-black focus:outline-none focus:ring-2 focus:ring-ochre-600"
+                    autoComplete="new-password"
                     minLength={8}
                     required
                   />
@@ -234,6 +264,7 @@ function SignupContent() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full px-4 py-3 border-2 border-black focus:outline-none focus:ring-2 focus:ring-ochre-600"
+                    autoComplete="new-password"
                     minLength={8}
                     required
                   />
@@ -328,6 +359,22 @@ function SignupContent() {
                   />
                 </div>
 
+                {/* Newsletter opt-in */}
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={newsletter}
+                    onChange={(e) => setNewsletter(e.target.checked)}
+                    className="w-5 h-5 mt-0.5 border-2 border-black accent-ochre-600"
+                  />
+                  <div>
+                    <span className="font-medium">Subscribe to JusticeHub updates</span>
+                    <p className="text-sm text-earth-600 mt-1">
+                      Get monthly insights on youth justice research, programs, and community impact.
+                    </p>
+                  </div>
+                </label>
+
                 <div className="bg-ochre-50 border-2 border-ochre-600 p-4">
                   <p className="text-sm font-bold mb-2">Note:</p>
                   <p className="text-sm">
@@ -408,6 +455,19 @@ function SignupContent() {
                         }
                       })
                       .eq('user_id', user.id);
+
+                    // Sync with GoHighLevel CRM
+                    await syncWithGHL({
+                      user_id: user.id,
+                      email: user.email || email,
+                      full_name: fullName,
+                      preferred_name: preferredName,
+                      is_steward: true,
+                      steward_motivation: stewardMotivation,
+                      steward_experience: stewardExperience,
+                      steward_commitments: stewardCommitment,
+                      newsletter,
+                    });
 
                     // Redirect to stewards page or profile
                     window.location.href = profile?.slug ? `/people/${profile.slug}` : '/stewards';

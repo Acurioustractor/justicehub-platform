@@ -46,7 +46,7 @@ export default function YouthJusticeReportLayout({
 
             <div className="mt-8 pt-6 border-t-2 border-gray-200">
               <Link
-                href="/chat"
+                href="/youth-justice-report/chat"
                 className="flex items-center gap-3 px-3 py-3 bg-ochre-100 border-2 border-black text-sm font-bold hover:bg-ochre-200 transition-colors"
               >
                 <span className="text-lg">💬</span>

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 interface Story {
   id: string;
@@ -11,6 +10,7 @@ interface Story {
   summary: string;
   story_image_url: string | null;
   story_category: string | null;
+  storyteller_name: string | null;
   is_featured: boolean;
 }
 
@@ -81,13 +81,15 @@ export default function EmpathyLedgerStories() {
             <p className="text-gray-700 mb-4 line-clamp-3">
               {story.excerpt || story.summary || 'A story from our community...'}
             </p>
-            {story.story_category && (
+            {(story.story_category || story.storyteller_name) && (
               <p className="text-sm font-bold text-gray-600 mb-2">
-                — {story.story_category}
+                {story.storyteller_name && `— ${story.storyteller_name}`}
+                {story.storyteller_name && story.story_category && ' · '}
+                {story.story_category}
               </p>
             )}
             <Link
-              href={`/stories/${story.id}`}
+              href={`/stories/empathy-ledger/${story.id}`}
               className="text-sm font-bold underline mt-2 inline-block"
             >
               Read full story →

@@ -1,10 +1,13 @@
 import { createServiceClient } from '@/lib/supabase/service'
 import { NextResponse } from 'next/server'
 
-export async function GET(request: Request) {
-  const supabase = createServiceClient()
+export const dynamic = 'force-dynamic';
 
-  const { searchParams } = new URL(request.url)
+export async function GET(request: Request) {
+  try {
+    const supabase = createServiceClient()
+
+    const { searchParams } = new URL(request.url)
   const limit = parseInt(searchParams.get('limit') || '12')
   const page = parseInt(searchParams.get('page') || '1')
   const category = searchParams.get('category')
@@ -60,4 +63,11 @@ export async function GET(request: Request) {
       totalPages: Math.ceil((count || 0) / limit)
     }
   })
+  } catch (error) {
+    console.error('Services API error:', error);
+    return NextResponse.json({
+      success: false,
+      error: 'Internal server error'
+    }, { status: 500 });
+  }
 }

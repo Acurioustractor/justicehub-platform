@@ -354,9 +354,292 @@ export type Database = {
         }
         Relationships: []
       }
+      alma_content_entities: {
+        Row: {
+          content_end_pos: number | null
+          content_start_pos: number | null
+          created_at: string | null
+          entity_id: string
+          entity_type: string
+          extracted_at: string | null
+          extraction_confidence: number | null
+          extraction_method: string | null
+          id: string
+          matched_text: string | null
+          raw_content_id: string
+        }
+        Insert: {
+          content_end_pos?: number | null
+          content_start_pos?: number | null
+          created_at?: string | null
+          entity_id: string
+          entity_type: string
+          extracted_at?: string | null
+          extraction_confidence?: number | null
+          extraction_method?: string | null
+          id?: string
+          matched_text?: string | null
+          raw_content_id: string
+        }
+        Update: {
+          content_end_pos?: number | null
+          content_start_pos?: number | null
+          created_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          extracted_at?: string | null
+          extraction_confidence?: number | null
+          extraction_method?: string | null
+          id?: string
+          matched_text?: string | null
+          raw_content_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alma_content_entities_raw_content_id_fkey"
+            columns: ["raw_content_id"]
+            isOneToOne: false
+            referencedRelation: "alma_raw_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alma_coverage_metrics: {
+        Row: {
+          calculated_at: string | null
+          coverage_score: number | null
+          dimension_type: string | null
+          dimension_value: string
+          evidence_count: number | null
+          id: string
+          intervention_count: number | null
+          last_update: string | null
+          metadata: Json | null
+          priority_rank: number | null
+          recommended_sources: string[] | null
+          source_count: number | null
+          update_frequency_avg: number | null
+        }
+        Insert: {
+          calculated_at?: string | null
+          coverage_score?: number | null
+          dimension_type?: string | null
+          dimension_value: string
+          evidence_count?: number | null
+          id?: string
+          intervention_count?: number | null
+          last_update?: string | null
+          metadata?: Json | null
+          priority_rank?: number | null
+          recommended_sources?: string[] | null
+          source_count?: number | null
+          update_frequency_avg?: number | null
+        }
+        Update: {
+          calculated_at?: string | null
+          coverage_score?: number | null
+          dimension_type?: string | null
+          dimension_value?: string
+          evidence_count?: number | null
+          id?: string
+          intervention_count?: number | null
+          last_update?: string | null
+          metadata?: Json | null
+          priority_rank?: number | null
+          recommended_sources?: string[] | null
+          source_count?: number | null
+          update_frequency_avg?: number | null
+        }
+        Relationships: []
+      }
+      alma_discovered_links: {
+        Row: {
+          added_to_registry: boolean | null
+          created_at: string | null
+          discovered_from: string
+          error_message: string | null
+          id: string
+          jurisdiction_hint: string | null
+          metadata: Json | null
+          predicted_relevance: number | null
+          predicted_type: string | null
+          priority: number | null
+          rejection_reason: string | null
+          relevance_category: string | null
+          scraped_at: string | null
+          status: string | null
+          title: string | null
+          url: string
+        }
+        Insert: {
+          added_to_registry?: boolean | null
+          created_at?: string | null
+          discovered_from: string
+          error_message?: string | null
+          id?: string
+          jurisdiction_hint?: string | null
+          metadata?: Json | null
+          predicted_relevance?: number | null
+          predicted_type?: string | null
+          priority?: number | null
+          rejection_reason?: string | null
+          relevance_category?: string | null
+          scraped_at?: string | null
+          status?: string | null
+          title?: string | null
+          url: string
+        }
+        Update: {
+          added_to_registry?: boolean | null
+          created_at?: string | null
+          discovered_from?: string
+          error_message?: string | null
+          id?: string
+          jurisdiction_hint?: string | null
+          metadata?: Json | null
+          predicted_relevance?: number | null
+          predicted_type?: string | null
+          priority?: number | null
+          rejection_reason?: string | null
+          relevance_category?: string | null
+          scraped_at?: string | null
+          status?: string | null
+          title?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
+      alma_embeddings: {
+        Row: {
+          created_at: string | null
+          embedding_data: Json
+          embedding_dimensions: number
+          embedding_model: string
+          entity_id: string
+          entity_type: string
+          id: string
+          metadata: Json | null
+          source_text: string
+          source_text_hash: string
+        }
+        Insert: {
+          created_at?: string | null
+          embedding_data: Json
+          embedding_dimensions?: number
+          embedding_model?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          metadata?: Json | null
+          source_text: string
+          source_text_hash: string
+        }
+        Update: {
+          created_at?: string | null
+          embedding_data?: Json
+          embedding_dimensions?: number
+          embedding_model?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          metadata?: Json | null
+          source_text?: string
+          source_text_hash?: string
+        }
+        Relationships: []
+      }
+      alma_entity_sources: {
+        Row: {
+          citation_context: string | null
+          created_at: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          page_numbers: string | null
+          quote: string | null
+          section_reference: string | null
+          source_document_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          citation_context?: string | null
+          created_at?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          page_numbers?: string | null
+          quote?: string | null
+          section_reference?: string | null
+          source_document_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          citation_context?: string | null
+          created_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          page_numbers?: string | null
+          quote?: string | null
+          section_reference?: string | null
+          source_document_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alma_entity_sources_source_document_id_fkey"
+            columns: ["source_document_id"]
+            isOneToOne: false
+            referencedRelation: "alma_source_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alma_entity_tags: {
+        Row: {
+          confidence: number | null
+          created_at: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          tag_id: string
+          tagged_by: string | null
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          tag_id: string
+          tagged_by?: string | null
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          tag_id?: string
+          tagged_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alma_entity_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "alma_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       alma_evidence: {
         Row: {
           author: string | null
+          author_profile_id: string | null
           consent_level: string
           contributors: string[] | null
           created_at: string | null
@@ -381,6 +664,7 @@ export type Database = {
         }
         Insert: {
           author?: string | null
+          author_profile_id?: string | null
           consent_level?: string
           contributors?: string[] | null
           created_at?: string | null
@@ -405,6 +689,7 @@ export type Database = {
         }
         Update: {
           author?: string | null
+          author_profile_id?: string | null
           consent_level?: string
           contributors?: string[] | null
           created_at?: string | null
@@ -427,7 +712,15 @@ export type Database = {
           title?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "alma_evidence_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       alma_evidence_outcomes: {
         Row: {
@@ -464,6 +757,149 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      alma_extraction_patterns: {
+        Row: {
+          avg_entities: number | null
+          created_at: string | null
+          extraction_prompt: string
+          id: string
+          is_active: boolean | null
+          last_used_at: string | null
+          metadata: Json | null
+          pattern_name: string
+          pattern_version: number | null
+          source_type: string
+          success_rate: number | null
+          successful_extractions: number | null
+          superseded_by: string | null
+          times_used: number | null
+          total_entities_extracted: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          avg_entities?: number | null
+          created_at?: string | null
+          extraction_prompt: string
+          id?: string
+          is_active?: boolean | null
+          last_used_at?: string | null
+          metadata?: Json | null
+          pattern_name: string
+          pattern_version?: number | null
+          source_type: string
+          success_rate?: number | null
+          successful_extractions?: number | null
+          superseded_by?: string | null
+          times_used?: number | null
+          total_entities_extracted?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          avg_entities?: number | null
+          created_at?: string | null
+          extraction_prompt?: string
+          id?: string
+          is_active?: boolean | null
+          last_used_at?: string | null
+          metadata?: Json | null
+          pattern_name?: string
+          pattern_version?: number | null
+          source_type?: string
+          success_rate?: number | null
+          successful_extractions?: number | null
+          superseded_by?: string | null
+          times_used?: number | null
+          total_entities_extracted?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alma_extraction_patterns_superseded_by_fkey"
+            columns: ["superseded_by"]
+            isOneToOne: false
+            referencedRelation: "alma_extraction_patterns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alma_funding_data: {
+        Row: {
+          community_expenditure: number | null
+          completion_rate: number | null
+          cost_per_day_community: number | null
+          cost_per_day_detention: number | null
+          cost_per_participant: number | null
+          created_at: string | null
+          detention_expenditure: number | null
+          diversion_expenditure: number | null
+          id: string
+          indigenous_percentage: number | null
+          jurisdiction: string | null
+          metadata: Json | null
+          prevention_expenditure: number | null
+          raw_data: Json | null
+          recidivism_rate: number | null
+          report_year: string
+          source_name: string
+          source_type: string | null
+          source_url: string
+          total_expenditure: number | null
+          updated_at: string | null
+          young_people_detained: number | null
+          young_people_supervised: number | null
+        }
+        Insert: {
+          community_expenditure?: number | null
+          completion_rate?: number | null
+          cost_per_day_community?: number | null
+          cost_per_day_detention?: number | null
+          cost_per_participant?: number | null
+          created_at?: string | null
+          detention_expenditure?: number | null
+          diversion_expenditure?: number | null
+          id?: string
+          indigenous_percentage?: number | null
+          jurisdiction?: string | null
+          metadata?: Json | null
+          prevention_expenditure?: number | null
+          raw_data?: Json | null
+          recidivism_rate?: number | null
+          report_year: string
+          source_name: string
+          source_type?: string | null
+          source_url: string
+          total_expenditure?: number | null
+          updated_at?: string | null
+          young_people_detained?: number | null
+          young_people_supervised?: number | null
+        }
+        Update: {
+          community_expenditure?: number | null
+          completion_rate?: number | null
+          cost_per_day_community?: number | null
+          cost_per_day_detention?: number | null
+          cost_per_participant?: number | null
+          created_at?: string | null
+          detention_expenditure?: number | null
+          diversion_expenditure?: number | null
+          id?: string
+          indigenous_percentage?: number | null
+          jurisdiction?: string | null
+          metadata?: Json | null
+          prevention_expenditure?: number | null
+          raw_data?: Json | null
+          recidivism_rate?: number | null
+          report_year?: string
+          source_name?: string
+          source_type?: string | null
+          source_url?: string
+          total_expenditure?: number | null
+          updated_at?: string | null
+          young_people_detained?: number | null
+          young_people_supervised?: number | null
+        }
+        Relationships: []
       }
       alma_government_programs: {
         Row: {
@@ -648,6 +1084,90 @@ export type Database = {
           },
         ]
       }
+      alma_intervention_funding: {
+        Row: {
+          annual_budget: number | null
+          comparison_to_detention: number | null
+          confidence_level: string | null
+          cost_benefit_ratio: number | null
+          cost_per_participant: number | null
+          cost_per_successful_outcome: number | null
+          created_at: string | null
+          data_source: string | null
+          data_year: number | null
+          funding_amount: number | null
+          funding_data_id: string | null
+          funding_period_end: string | null
+          funding_period_start: string | null
+          funding_source: string | null
+          funding_type: string | null
+          id: string
+          intervention_id: string
+          notes: string | null
+          participants_per_year: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          annual_budget?: number | null
+          comparison_to_detention?: number | null
+          confidence_level?: string | null
+          cost_benefit_ratio?: number | null
+          cost_per_participant?: number | null
+          cost_per_successful_outcome?: number | null
+          created_at?: string | null
+          data_source?: string | null
+          data_year?: number | null
+          funding_amount?: number | null
+          funding_data_id?: string | null
+          funding_period_end?: string | null
+          funding_period_start?: string | null
+          funding_source?: string | null
+          funding_type?: string | null
+          id?: string
+          intervention_id: string
+          notes?: string | null
+          participants_per_year?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          annual_budget?: number | null
+          comparison_to_detention?: number | null
+          confidence_level?: string | null
+          cost_benefit_ratio?: number | null
+          cost_per_participant?: number | null
+          cost_per_successful_outcome?: number | null
+          created_at?: string | null
+          data_source?: string | null
+          data_year?: number | null
+          funding_amount?: number | null
+          funding_data_id?: string | null
+          funding_period_end?: string | null
+          funding_period_start?: string | null
+          funding_source?: string | null
+          funding_type?: string | null
+          id?: string
+          intervention_id?: string
+          notes?: string | null
+          participants_per_year?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alma_intervention_funding_funding_data_id_fkey"
+            columns: ["funding_data_id"]
+            isOneToOne: false
+            referencedRelation: "alma_funding_data"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alma_intervention_funding_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "alma_interventions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       alma_intervention_outcomes: {
         Row: {
           created_at: string | null
@@ -684,6 +1204,57 @@ export type Database = {
           },
         ]
       }
+      alma_intervention_profiles: {
+        Row: {
+          created_at: string | null
+          ended_date: string | null
+          id: string
+          intervention_id: string
+          notes: string | null
+          public_profile_id: string
+          role: string
+          started_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          ended_date?: string | null
+          id?: string
+          intervention_id: string
+          notes?: string | null
+          public_profile_id: string
+          role: string
+          started_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          ended_date?: string | null
+          id?: string
+          intervention_id?: string
+          notes?: string | null
+          public_profile_id?: string
+          role?: string
+          started_date?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alma_intervention_profiles_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "alma_interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alma_intervention_profiles_public_profile_id_fkey"
+            columns: ["public_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       alma_interventions: {
         Row: {
           community_authority_signal: number | null
@@ -705,11 +1276,15 @@ export type Database = {
           id: string
           implementation_capability_signal: number | null
           implementation_cost: string | null
+          latitude: number | null
           linked_community_program_id: string | null
           linked_service_id: string | null
+          location_type: string | null
+          longitude: number | null
           metadata: Json | null
           name: string
           operating_organization: string | null
+          operating_organization_id: string | null
           option_value_signal: number | null
           permitted_uses: string[] | null
           portfolio_score: number | null
@@ -720,6 +1295,7 @@ export type Database = {
           risks: string | null
           scalability: string | null
           search_vector: unknown
+          service_area_km: number | null
           source_documents: Json | null
           target_cohort: string[] | null
           type: string
@@ -747,11 +1323,15 @@ export type Database = {
           id?: string
           implementation_capability_signal?: number | null
           implementation_cost?: string | null
+          latitude?: number | null
           linked_community_program_id?: string | null
           linked_service_id?: string | null
+          location_type?: string | null
+          longitude?: number | null
           metadata?: Json | null
           name: string
           operating_organization?: string | null
+          operating_organization_id?: string | null
           option_value_signal?: number | null
           permitted_uses?: string[] | null
           portfolio_score?: number | null
@@ -762,6 +1342,7 @@ export type Database = {
           risks?: string | null
           scalability?: string | null
           search_vector?: unknown
+          service_area_km?: number | null
           source_documents?: Json | null
           target_cohort?: string[] | null
           type: string
@@ -789,11 +1370,15 @@ export type Database = {
           id?: string
           implementation_capability_signal?: number | null
           implementation_cost?: string | null
+          latitude?: number | null
           linked_community_program_id?: string | null
           linked_service_id?: string | null
+          location_type?: string | null
+          longitude?: number | null
           metadata?: Json | null
           name?: string
           operating_organization?: string | null
+          operating_organization_id?: string | null
           option_value_signal?: number | null
           permitted_uses?: string[] | null
           portfolio_score?: number | null
@@ -804,6 +1389,7 @@ export type Database = {
           risks?: string | null
           scalability?: string | null
           search_vector?: unknown
+          service_area_km?: number | null
           source_documents?: Json | null
           target_cohort?: string[] | null
           type?: string
@@ -834,6 +1420,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "alma_interventions_operating_organization_id_fkey"
+            columns: ["operating_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "alma_interventions_reviewed_by_fkey"
             columns: ["reviewed_by"]
             isOneToOne: false
@@ -841,6 +1434,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      alma_locations: {
+        Row: {
+          id: string
+          indigenous_population_pct: number | null
+          latitude: number | null
+          lga_name: string | null
+          location_type: string | null
+          longitude: number | null
+          name: string
+          postcode: string | null
+          sa3_name: string | null
+          state: string
+          traditional_country: string | null
+        }
+        Insert: {
+          id?: string
+          indigenous_population_pct?: number | null
+          latitude?: number | null
+          lga_name?: string | null
+          location_type?: string | null
+          longitude?: number | null
+          name: string
+          postcode?: string | null
+          sa3_name?: string | null
+          state: string
+          traditional_country?: string | null
+        }
+        Update: {
+          id?: string
+          indigenous_population_pct?: number | null
+          latitude?: number | null
+          lga_name?: string | null
+          location_type?: string | null
+          longitude?: number | null
+          name?: string
+          postcode?: string | null
+          sa3_name?: string | null
+          state?: string
+          traditional_country?: string | null
+        }
+        Relationships: []
       }
       alma_media_articles: {
         Row: {
@@ -912,6 +1547,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      alma_metrics_history: {
+        Row: {
+          id: string
+          intervention_type: string | null
+          jurisdiction: string | null
+          metadata: Json | null
+          metric_category: string
+          metric_name: string
+          recorded_at: string | null
+          source_type: string | null
+          value_count: number | null
+          value_numeric: number | null
+          value_percentage: number | null
+        }
+        Insert: {
+          id?: string
+          intervention_type?: string | null
+          jurisdiction?: string | null
+          metadata?: Json | null
+          metric_category: string
+          metric_name: string
+          recorded_at?: string | null
+          source_type?: string | null
+          value_count?: number | null
+          value_numeric?: number | null
+          value_percentage?: number | null
+        }
+        Update: {
+          id?: string
+          intervention_type?: string | null
+          jurisdiction?: string | null
+          metadata?: Json | null
+          metric_category?: string
+          metric_name?: string
+          recorded_at?: string | null
+          source_type?: string | null
+          value_count?: number | null
+          value_numeric?: number | null
+          value_percentage?: number | null
+        }
+        Relationships: []
       }
       alma_outcomes: {
         Row: {
@@ -1004,6 +1681,401 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "alma_sentiment_program_correlation"
             referencedColumns: ["program_id"]
+          },
+        ]
+      }
+      alma_raw_content: {
+        Row: {
+          content_hash: string
+          content_length: number | null
+          created_at: string | null
+          evidence_extracted: number | null
+          extracted_at: string | null
+          extraction_method: string | null
+          file_hash: string | null
+          file_mime_type: string | null
+          file_path: string | null
+          file_size_bytes: number | null
+          funding_data_extracted: number | null
+          id: string
+          interventions_extracted: number | null
+          language: string | null
+          last_processed_at: string | null
+          page_count: number | null
+          processed_at: string | null
+          processing_error: string | null
+          processing_status: string | null
+          raw_content: string
+          relevance_score: number | null
+          search_vector: unknown
+          source_type: string | null
+          source_url: string
+          updated_at: string | null
+          word_count: number | null
+        }
+        Insert: {
+          content_hash: string
+          content_length?: number | null
+          created_at?: string | null
+          evidence_extracted?: number | null
+          extracted_at?: string | null
+          extraction_method?: string | null
+          file_hash?: string | null
+          file_mime_type?: string | null
+          file_path?: string | null
+          file_size_bytes?: number | null
+          funding_data_extracted?: number | null
+          id?: string
+          interventions_extracted?: number | null
+          language?: string | null
+          last_processed_at?: string | null
+          page_count?: number | null
+          processed_at?: string | null
+          processing_error?: string | null
+          processing_status?: string | null
+          raw_content: string
+          relevance_score?: number | null
+          search_vector?: unknown
+          source_type?: string | null
+          source_url: string
+          updated_at?: string | null
+          word_count?: number | null
+        }
+        Update: {
+          content_hash?: string
+          content_length?: number | null
+          created_at?: string | null
+          evidence_extracted?: number | null
+          extracted_at?: string | null
+          extraction_method?: string | null
+          file_hash?: string | null
+          file_mime_type?: string | null
+          file_path?: string | null
+          file_size_bytes?: number | null
+          funding_data_extracted?: number | null
+          id?: string
+          interventions_extracted?: number | null
+          language?: string | null
+          last_processed_at?: string | null
+          page_count?: number | null
+          processed_at?: string | null
+          processing_error?: string | null
+          processing_status?: string | null
+          raw_content?: string
+          relevance_score?: number | null
+          search_vector?: unknown
+          source_type?: string | null
+          source_url?: string
+          updated_at?: string | null
+          word_count?: number | null
+        }
+        Relationships: []
+      }
+      alma_scrape_history: {
+        Row: {
+          completed_at: string | null
+          content_length: number | null
+          created_at: string | null
+          duration_seconds: number | null
+          entities_found: number | null
+          entities_inserted: number | null
+          error_message: string | null
+          extracted_data: Json | null
+          id: string
+          links_discovered: string[] | null
+          metadata: Json | null
+          novelty_score: number | null
+          pattern_id: string | null
+          quality_score: number | null
+          relevance_score: number | null
+          source_id: string | null
+          source_url: string
+          started_at: string | null
+          status: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          content_length?: number | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          entities_found?: number | null
+          entities_inserted?: number | null
+          error_message?: string | null
+          extracted_data?: Json | null
+          id?: string
+          links_discovered?: string[] | null
+          metadata?: Json | null
+          novelty_score?: number | null
+          pattern_id?: string | null
+          quality_score?: number | null
+          relevance_score?: number | null
+          source_id?: string | null
+          source_url: string
+          started_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          content_length?: number | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          entities_found?: number | null
+          entities_inserted?: number | null
+          error_message?: string | null
+          extracted_data?: Json | null
+          id?: string
+          links_discovered?: string[] | null
+          metadata?: Json | null
+          novelty_score?: number | null
+          pattern_id?: string | null
+          quality_score?: number | null
+          relevance_score?: number | null
+          source_id?: string | null
+          source_url?: string
+          started_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alma_scrape_history_pattern_id_fkey"
+            columns: ["pattern_id"]
+            isOneToOne: false
+            referencedRelation: "alma_extraction_patterns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alma_scrape_history_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "alma_source_registry"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alma_source_documents: {
+        Row: {
+          abstract: string | null
+          author: string | null
+          authority_level: string | null
+          citation_count: number | null
+          created_at: string | null
+          document_type: string
+          downloaded_at: string | null
+          file_hash: string | null
+          file_name: string | null
+          file_path: string | null
+          file_size_bytes: number | null
+          id: string
+          is_accessible: boolean | null
+          jurisdiction: string | null
+          key_findings: Json | null
+          last_verified_at: string | null
+          mime_type: string | null
+          page_count: number | null
+          publication_date: string | null
+          report_period: string | null
+          scope: string | null
+          search_vector: unknown
+          source_organization: string | null
+          source_url: string
+          title: string
+          topics: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          abstract?: string | null
+          author?: string | null
+          authority_level?: string | null
+          citation_count?: number | null
+          created_at?: string | null
+          document_type: string
+          downloaded_at?: string | null
+          file_hash?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          file_size_bytes?: number | null
+          id?: string
+          is_accessible?: boolean | null
+          jurisdiction?: string | null
+          key_findings?: Json | null
+          last_verified_at?: string | null
+          mime_type?: string | null
+          page_count?: number | null
+          publication_date?: string | null
+          report_period?: string | null
+          scope?: string | null
+          search_vector?: unknown
+          source_organization?: string | null
+          source_url: string
+          title: string
+          topics?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          abstract?: string | null
+          author?: string | null
+          authority_level?: string | null
+          citation_count?: number | null
+          created_at?: string | null
+          document_type?: string
+          downloaded_at?: string | null
+          file_hash?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          file_size_bytes?: number | null
+          id?: string
+          is_accessible?: boolean | null
+          jurisdiction?: string | null
+          key_findings?: Json | null
+          last_verified_at?: string | null
+          mime_type?: string | null
+          page_count?: number | null
+          publication_date?: string | null
+          report_period?: string | null
+          scope?: string | null
+          search_vector?: unknown
+          source_organization?: string | null
+          source_url?: string
+          title?: string
+          topics?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      alma_source_registry: {
+        Row: {
+          avg_entities_per_scrape: number | null
+          child_links: string[] | null
+          consent_level: string | null
+          created_at: string | null
+          cultural_authority: boolean | null
+          discovered_at: string | null
+          discovered_from: string | null
+          failure_count: number | null
+          id: string
+          jurisdiction: string | null
+          last_scraped_at: string | null
+          metadata: Json | null
+          name: string
+          next_scrape_at: string | null
+          organization: string | null
+          priority_score: number | null
+          quality_score: number | null
+          scrape_count: number | null
+          source_type: string | null
+          success_count: number | null
+          success_rate: number | null
+          total_entities_extracted: number | null
+          update_frequency: string | null
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          avg_entities_per_scrape?: number | null
+          child_links?: string[] | null
+          consent_level?: string | null
+          created_at?: string | null
+          cultural_authority?: boolean | null
+          discovered_at?: string | null
+          discovered_from?: string | null
+          failure_count?: number | null
+          id?: string
+          jurisdiction?: string | null
+          last_scraped_at?: string | null
+          metadata?: Json | null
+          name: string
+          next_scrape_at?: string | null
+          organization?: string | null
+          priority_score?: number | null
+          quality_score?: number | null
+          scrape_count?: number | null
+          source_type?: string | null
+          success_count?: number | null
+          success_rate?: number | null
+          total_entities_extracted?: number | null
+          update_frequency?: string | null
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          avg_entities_per_scrape?: number | null
+          child_links?: string[] | null
+          consent_level?: string | null
+          created_at?: string | null
+          cultural_authority?: boolean | null
+          discovered_at?: string | null
+          discovered_from?: string | null
+          failure_count?: number | null
+          id?: string
+          jurisdiction?: string | null
+          last_scraped_at?: string | null
+          metadata?: Json | null
+          name?: string
+          next_scrape_at?: string | null
+          organization?: string | null
+          priority_score?: number | null
+          quality_score?: number | null
+          scrape_count?: number | null
+          source_type?: string | null
+          success_count?: number | null
+          success_rate?: number | null
+          total_entities_extracted?: number | null
+          update_frequency?: string | null
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
+      alma_tags: {
+        Row: {
+          category: string
+          color: string | null
+          created_at: string | null
+          description: string | null
+          display_name: string | null
+          icon: string | null
+          id: string
+          is_system: boolean | null
+          name: string
+          parent_id: string | null
+          slug: string
+          usage_count: number | null
+        }
+        Insert: {
+          category: string
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_name?: string | null
+          icon?: string | null
+          id?: string
+          is_system?: boolean | null
+          name: string
+          parent_id?: string | null
+          slug: string
+          usage_count?: number | null
+        }
+        Update: {
+          category?: string
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_name?: string | null
+          icon?: string | null
+          id?: string
+          is_system?: boolean | null
+          name?: string
+          parent_id?: string | null
+          slug?: string
+          usage_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alma_tags_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "alma_tags"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -1427,6 +2499,90 @@ export type Database = {
             columns: ["related_article_id"]
             isOneToOne: false
             referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_related_evidence: {
+        Row: {
+          article_id: string
+          created_at: string | null
+          evidence_id: string
+          id: string
+          relevance_note: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          article_id: string
+          created_at?: string | null
+          evidence_id: string
+          id?: string
+          relevance_note?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          article_id?: string
+          created_at?: string | null
+          evidence_id?: string
+          id?: string
+          relevance_note?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_related_evidence_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_related_evidence_evidence_id_fkey"
+            columns: ["evidence_id"]
+            isOneToOne: false
+            referencedRelation: "alma_evidence"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_related_interventions: {
+        Row: {
+          article_id: string
+          created_at: string | null
+          id: string
+          intervention_id: string
+          relevance_note: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          article_id: string
+          created_at?: string | null
+          id?: string
+          intervention_id: string
+          relevance_note?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          article_id?: string
+          created_at?: string | null
+          id?: string
+          intervention_id?: string
+          relevance_note?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_related_interventions_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_related_interventions_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "alma_interventions"
             referencedColumns: ["id"]
           },
         ]
@@ -3860,6 +5016,47 @@ export type Database = {
           },
         ]
       }
+      coe_key_people: {
+        Row: {
+          bio_override: string | null
+          created_at: string | null
+          display_order: number | null
+          expertise_area: string | null
+          id: string
+          is_active: boolean | null
+          profile_id: string
+          role_title: string
+        }
+        Insert: {
+          bio_override?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          expertise_area?: string | null
+          id?: string
+          is_active?: boolean | null
+          profile_id: string
+          role_title: string
+        }
+        Update: {
+          bio_override?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          expertise_area?: string | null
+          id?: string
+          is_active?: boolean | null
+          profile_id?: string
+          role_title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coe_key_people_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       collection_media: {
         Row: {
           caption: string | null
@@ -4334,7 +5531,10 @@ export type Database = {
           indigenous_knowledge: boolean | null
           is_featured: boolean | null
           last_synced_at: string | null
+          latitude: number | null
           location: string
+          location_type: string | null
+          longitude: number | null
           name: string
           organization: string
           organization_id: string | null
@@ -4365,7 +5565,10 @@ export type Database = {
           indigenous_knowledge?: boolean | null
           is_featured?: boolean | null
           last_synced_at?: string | null
+          latitude?: number | null
           location: string
+          location_type?: string | null
+          longitude?: number | null
           name: string
           organization: string
           organization_id?: string | null
@@ -4396,7 +5599,10 @@ export type Database = {
           indigenous_knowledge?: boolean | null
           is_featured?: boolean | null
           last_synced_at?: string | null
+          latitude?: number | null
           location?: string
+          location_type?: string | null
+          longitude?: number | null
           name?: string
           organization?: string
           organization_id?: string | null
@@ -5199,6 +6405,98 @@ export type Database = {
           },
         ]
       }
+      cultural_protocols: {
+        Row: {
+          created_at: string | null
+          cultural_nation: string | null
+          elder_consent: Json | null
+          elder_reviewer_id: string | null
+          elder_status: boolean | null
+          empathy_ledger_user_id: string | null
+          ghl_contact_id: string | null
+          id: string
+          ocap_access: string | null
+          ocap_control: string | null
+          ocap_ownership: string | null
+          ocap_possession: string | null
+          requires_elder_review: boolean | null
+          review_notes: string | null
+          review_status: string | null
+          reviewed_at: string | null
+          sacred_knowledge_notes: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          cultural_nation?: string | null
+          elder_consent?: Json | null
+          elder_reviewer_id?: string | null
+          elder_status?: boolean | null
+          empathy_ledger_user_id?: string | null
+          ghl_contact_id?: string | null
+          id?: string
+          ocap_access?: string | null
+          ocap_control?: string | null
+          ocap_ownership?: string | null
+          ocap_possession?: string | null
+          requires_elder_review?: boolean | null
+          review_notes?: string | null
+          review_status?: string | null
+          reviewed_at?: string | null
+          sacred_knowledge_notes?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          cultural_nation?: string | null
+          elder_consent?: Json | null
+          elder_reviewer_id?: string | null
+          elder_status?: boolean | null
+          empathy_ledger_user_id?: string | null
+          ghl_contact_id?: string | null
+          id?: string
+          ocap_access?: string | null
+          ocap_control?: string | null
+          ocap_ownership?: string | null
+          ocap_possession?: string | null
+          requires_elder_review?: boolean | null
+          review_notes?: string | null
+          review_status?: string | null
+          reviewed_at?: string | null
+          sacred_knowledge_notes?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cultural_protocols_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "ghl_contacts"
+            referencedColumns: ["ghl_id"]
+          },
+          {
+            foreignKeyName: "cultural_protocols_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_contacts_with_protocols"
+            referencedColumns: ["ghl_id"]
+          },
+          {
+            foreignKeyName: "cultural_protocols_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_donor_summary"
+            referencedColumns: ["ghl_id"]
+          },
+          {
+            foreignKeyName: "cultural_protocols_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_volunteer_summary"
+            referencedColumns: ["ghl_id"]
+          },
+        ]
+      }
       data_quality_audit: {
         Row: {
           created_at: string | null
@@ -5549,6 +6847,92 @@ export type Database = {
         }
         Relationships: []
       }
+      donations: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string | null
+          donation_date: string
+          donation_method: string | null
+          frequency: string | null
+          ghl_contact_id: string | null
+          ghl_opportunity_id: string | null
+          id: string
+          project: string | null
+          receipt_sent: boolean | null
+          receipt_sent_at: string | null
+          stripe_customer_id: string | null
+          stripe_payment_id: string | null
+          synced_to_ghl: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency?: string | null
+          donation_date: string
+          donation_method?: string | null
+          frequency?: string | null
+          ghl_contact_id?: string | null
+          ghl_opportunity_id?: string | null
+          id?: string
+          project?: string | null
+          receipt_sent?: boolean | null
+          receipt_sent_at?: string | null
+          stripe_customer_id?: string | null
+          stripe_payment_id?: string | null
+          synced_to_ghl?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string | null
+          donation_date?: string
+          donation_method?: string | null
+          frequency?: string | null
+          ghl_contact_id?: string | null
+          ghl_opportunity_id?: string | null
+          id?: string
+          project?: string | null
+          receipt_sent?: boolean | null
+          receipt_sent_at?: string | null
+          stripe_customer_id?: string | null
+          stripe_payment_id?: string | null
+          synced_to_ghl?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donations_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "ghl_contacts"
+            referencedColumns: ["ghl_id"]
+          },
+          {
+            foreignKeyName: "donations_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_contacts_with_protocols"
+            referencedColumns: ["ghl_id"]
+          },
+          {
+            foreignKeyName: "donations_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_donor_summary"
+            referencedColumns: ["ghl_id"]
+          },
+          {
+            foreignKeyName: "donations_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_volunteer_summary"
+            referencedColumns: ["ghl_id"]
+          },
+        ]
+      }
       elder_review_queue: {
         Row: {
           assigned_at: string | null
@@ -5830,7 +7214,149 @@ export type Database = {
         }
         Relationships: []
       }
+      event_registrations: {
+        Row: {
+          accessibility_needs: string | null
+          created_at: string | null
+          dietary_requirements: string | null
+          email: string
+          event_id: string
+          full_name: string
+          ghl_contact_id: string | null
+          id: string
+          notes: string | null
+          organization: string | null
+          phone: string | null
+          plus_one: boolean | null
+          registration_status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          accessibility_needs?: string | null
+          created_at?: string | null
+          dietary_requirements?: string | null
+          email: string
+          event_id: string
+          full_name: string
+          ghl_contact_id?: string | null
+          id?: string
+          notes?: string | null
+          organization?: string | null
+          phone?: string | null
+          plus_one?: boolean | null
+          registration_status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          accessibility_needs?: string | null
+          created_at?: string | null
+          dietary_requirements?: string | null
+          email?: string
+          event_id?: string
+          full_name?: string
+          ghl_contact_id?: string | null
+          id?: string
+          notes?: string | null
+          organization?: string | null
+          phone?: string | null
+          plus_one?: boolean | null
+          registration_status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
+        Row: {
+          created_at: string | null
+          current_attendees: number | null
+          description: string | null
+          end_date: string | null
+          event_type: string | null
+          ghl_event_id: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          is_public: boolean | null
+          latitude: number | null
+          location_address: string | null
+          location_name: string | null
+          location_state: string | null
+          longitude: number | null
+          max_attendees: number | null
+          node_id: string | null
+          registration_url: string | null
+          slug: string | null
+          start_date: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_attendees?: number | null
+          description?: string | null
+          end_date?: string | null
+          event_type?: string | null
+          ghl_event_id?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          is_public?: boolean | null
+          latitude?: number | null
+          location_address?: string | null
+          location_name?: string | null
+          location_state?: string | null
+          longitude?: number | null
+          max_attendees?: number | null
+          node_id?: string | null
+          registration_url?: string | null
+          slug?: string | null
+          start_date: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_attendees?: number | null
+          description?: string | null
+          end_date?: string | null
+          event_type?: string | null
+          ghl_event_id?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          is_public?: boolean | null
+          latitude?: number | null
+          location_address?: string | null
+          location_name?: string | null
+          location_state?: string | null
+          longitude?: number | null
+          max_attendees?: number | null
+          node_id?: string | null
+          registration_url?: string | null
+          slug?: string | null
+          start_date?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_node_id_fkey"
+            columns: ["node_id"]
+            isOneToOne: false
+            referencedRelation: "justicehub_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events_old_backup: {
         Row: {
           category: Database["public"]["Enums"]["event_category"]
           contactEmail: string
@@ -6277,6 +7803,196 @@ export type Database = {
           },
         ]
       }
+      facility_partnerships: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          end_date: string | null
+          facility_id: string | null
+          id: string
+          is_active: boolean | null
+          organization_id: string | null
+          participants_served: number | null
+          partner_type: string
+          partnership_type: string
+          program_id: string | null
+          service_id: string | null
+          start_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          facility_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          organization_id?: string | null
+          participants_served?: number | null
+          partner_type: string
+          partnership_type: string
+          program_id?: string | null
+          service_id?: string | null
+          start_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          facility_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          organization_id?: string | null
+          participants_served?: number | null
+          partner_type?: string
+          partnership_type?: string
+          program_id?: string | null
+          service_id?: string | null
+          start_date?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_partnerships_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "v_facilities_with_partnerships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_partnerships_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "youth_detention_facilities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_partnerships_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_partnerships_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "community_programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_partnerships_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_partnerships_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services_complete"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facility_statistics: {
+        Row: {
+          age_10_13_count: number | null
+          age_14_15_count: number | null
+          age_16_17_count: number | null
+          assaults_count: number | null
+          average_daily_population: number | null
+          created_at: string | null
+          data_source: string | null
+          education_participation_percentage: number | null
+          escapes_count: number | null
+          facility_id: string | null
+          female_percentage: number | null
+          id: string
+          incidents_count: number | null
+          indigenous_percentage: number | null
+          peak_population: number | null
+          period_end: string
+          period_start: string
+          program_completion_count: number | null
+          remand_percentage: number | null
+          reporting_period: string | null
+          self_harm_count: number | null
+          source_url: string | null
+          total_admissions: number | null
+          total_releases: number | null
+        }
+        Insert: {
+          age_10_13_count?: number | null
+          age_14_15_count?: number | null
+          age_16_17_count?: number | null
+          assaults_count?: number | null
+          average_daily_population?: number | null
+          created_at?: string | null
+          data_source?: string | null
+          education_participation_percentage?: number | null
+          escapes_count?: number | null
+          facility_id?: string | null
+          female_percentage?: number | null
+          id?: string
+          incidents_count?: number | null
+          indigenous_percentage?: number | null
+          peak_population?: number | null
+          period_end: string
+          period_start: string
+          program_completion_count?: number | null
+          remand_percentage?: number | null
+          reporting_period?: string | null
+          self_harm_count?: number | null
+          source_url?: string | null
+          total_admissions?: number | null
+          total_releases?: number | null
+        }
+        Update: {
+          age_10_13_count?: number | null
+          age_14_15_count?: number | null
+          age_16_17_count?: number | null
+          assaults_count?: number | null
+          average_daily_population?: number | null
+          created_at?: string | null
+          data_source?: string | null
+          education_participation_percentage?: number | null
+          escapes_count?: number | null
+          facility_id?: string | null
+          female_percentage?: number | null
+          id?: string
+          incidents_count?: number | null
+          indigenous_percentage?: number | null
+          peak_population?: number | null
+          period_end?: string
+          period_start?: string
+          program_completion_count?: number | null
+          remand_percentage?: number | null
+          reporting_period?: string | null
+          self_harm_count?: number | null
+          source_url?: string | null
+          total_admissions?: number | null
+          total_releases?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_statistics_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "v_facilities_with_partnerships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "facility_statistics_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "youth_detention_facilities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fellows: {
         Row: {
           additional_data: Json | null
@@ -6421,6 +8137,81 @@ export type Database = {
         }
         Relationships: []
       }
+      ghl_contacts: {
+        Row: {
+          company_name: string | null
+          created_at: string | null
+          custom_fields: Json | null
+          email: string | null
+          engagement_status: string | null
+          first_contact_date: string | null
+          first_name: string | null
+          full_name: string | null
+          ghl_created_at: string | null
+          ghl_id: string
+          ghl_location_id: string
+          ghl_updated_at: string | null
+          id: string
+          last_contact_date: string | null
+          last_name: string | null
+          last_synced_at: string | null
+          phone: string | null
+          projects: string[] | null
+          sync_error: string | null
+          sync_status: string | null
+          tags: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string | null
+          custom_fields?: Json | null
+          email?: string | null
+          engagement_status?: string | null
+          first_contact_date?: string | null
+          first_name?: string | null
+          full_name?: string | null
+          ghl_created_at?: string | null
+          ghl_id: string
+          ghl_location_id: string
+          ghl_updated_at?: string | null
+          id?: string
+          last_contact_date?: string | null
+          last_name?: string | null
+          last_synced_at?: string | null
+          phone?: string | null
+          projects?: string[] | null
+          sync_error?: string | null
+          sync_status?: string | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string | null
+          custom_fields?: Json | null
+          email?: string | null
+          engagement_status?: string | null
+          first_contact_date?: string | null
+          first_name?: string | null
+          full_name?: string | null
+          ghl_created_at?: string | null
+          ghl_id?: string
+          ghl_location_id?: string
+          ghl_updated_at?: string | null
+          id?: string
+          last_contact_date?: string | null
+          last_name?: string | null
+          last_synced_at?: string | null
+          phone?: string | null
+          projects?: string[] | null
+          sync_error?: string | null
+          sync_status?: string | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       ghl_engagement_metrics: {
         Row: {
           act_energy_percent: number | null
@@ -6521,6 +8312,218 @@ export type Database = {
             referencedColumns: ["person_id"]
           },
         ]
+      }
+      ghl_opportunities: {
+        Row: {
+          assigned_to: string | null
+          created_at: string | null
+          custom_fields: Json | null
+          ghl_contact_id: string | null
+          ghl_created_at: string | null
+          ghl_id: string
+          ghl_pipeline_id: string
+          ghl_stage_id: string
+          ghl_updated_at: string | null
+          id: string
+          last_synced_at: string | null
+          monetary_value: number | null
+          name: string
+          pipeline_name: string | null
+          stage_name: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string | null
+          custom_fields?: Json | null
+          ghl_contact_id?: string | null
+          ghl_created_at?: string | null
+          ghl_id: string
+          ghl_pipeline_id: string
+          ghl_stage_id: string
+          ghl_updated_at?: string | null
+          id?: string
+          last_synced_at?: string | null
+          monetary_value?: number | null
+          name: string
+          pipeline_name?: string | null
+          stage_name?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string | null
+          custom_fields?: Json | null
+          ghl_contact_id?: string | null
+          ghl_created_at?: string | null
+          ghl_id?: string
+          ghl_pipeline_id?: string
+          ghl_stage_id?: string
+          ghl_updated_at?: string | null
+          id?: string
+          last_synced_at?: string | null
+          monetary_value?: number | null
+          name?: string
+          pipeline_name?: string | null
+          stage_name?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ghl_opportunities_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "ghl_contacts"
+            referencedColumns: ["ghl_id"]
+          },
+          {
+            foreignKeyName: "ghl_opportunities_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_contacts_with_protocols"
+            referencedColumns: ["ghl_id"]
+          },
+          {
+            foreignKeyName: "ghl_opportunities_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_donor_summary"
+            referencedColumns: ["ghl_id"]
+          },
+          {
+            foreignKeyName: "ghl_opportunities_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_volunteer_summary"
+            referencedColumns: ["ghl_id"]
+          },
+        ]
+      }
+      ghl_pipelines: {
+        Row: {
+          created_at: string | null
+          ghl_id: string
+          ghl_location_id: string
+          id: string
+          last_synced_at: string | null
+          name: string
+          stages: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          ghl_id: string
+          ghl_location_id: string
+          id?: string
+          last_synced_at?: string | null
+          name: string
+          stages?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          ghl_id?: string
+          ghl_location_id?: string
+          id?: string
+          last_synced_at?: string | null
+          name?: string
+          stages?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      ghl_sync_log: {
+        Row: {
+          completed_at: string | null
+          direction: string
+          duration_ms: number | null
+          entity_id: string | null
+          entity_type: string
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          operation: string
+          records_created: number | null
+          records_failed: number | null
+          records_processed: number | null
+          records_skipped: number | null
+          records_updated: number | null
+          started_at: string | null
+          status: string
+          triggered_by: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          direction: string
+          duration_ms?: number | null
+          entity_id?: string | null
+          entity_type: string
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          operation: string
+          records_created?: number | null
+          records_failed?: number | null
+          records_processed?: number | null
+          records_skipped?: number | null
+          records_updated?: number | null
+          started_at?: string | null
+          status: string
+          triggered_by?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          direction?: string
+          duration_ms?: number | null
+          entity_id?: string | null
+          entity_type?: string
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          operation?: string
+          records_created?: number | null
+          records_failed?: number | null
+          records_processed?: number | null
+          records_skipped?: number | null
+          records_updated?: number | null
+          started_at?: string | null
+          status?: string
+          triggered_by?: string | null
+        }
+        Relationships: []
+      }
+      ghl_tags: {
+        Row: {
+          category: string | null
+          color: string | null
+          created_at: string | null
+          ghl_location_id: string
+          id: string
+          last_synced_at: string | null
+          name: string
+        }
+        Insert: {
+          category?: string | null
+          color?: string | null
+          created_at?: string | null
+          ghl_location_id: string
+          id?: string
+          last_synced_at?: string | null
+          name: string
+        }
+        Update: {
+          category?: string | null
+          color?: string | null
+          created_at?: string | null
+          ghl_location_id?: string
+          id?: string
+          last_synced_at?: string | null
+          name?: string
+        }
+        Relationships: []
       }
       gmail_auth_tokens: {
         Row: {
@@ -6836,6 +8839,60 @@ export type Database = {
           source?: string
           updated_at?: string | null
           url?: string | null
+        }
+        Relationships: []
+      }
+      historical_inquiries: {
+        Row: {
+          created_at: string | null
+          id: string
+          implementation_status: string | null
+          inquiry_type: string | null
+          jurisdiction: string | null
+          key_findings: Json | null
+          pdf_url: string | null
+          recommendations_count: number | null
+          related_intervention_ids: string[] | null
+          source_url: string | null
+          summary: string | null
+          title: string
+          updated_at: string | null
+          year_published: number | null
+          year_started: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          implementation_status?: string | null
+          inquiry_type?: string | null
+          jurisdiction?: string | null
+          key_findings?: Json | null
+          pdf_url?: string | null
+          recommendations_count?: number | null
+          related_intervention_ids?: string[] | null
+          source_url?: string | null
+          summary?: string | null
+          title: string
+          updated_at?: string | null
+          year_published?: number | null
+          year_started?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          implementation_status?: string | null
+          inquiry_type?: string | null
+          jurisdiction?: string | null
+          key_findings?: Json | null
+          pdf_url?: string | null
+          recommendations_count?: number | null
+          related_intervention_ids?: string[] | null
+          source_url?: string | null
+          summary?: string | null
+          title?: string
+          updated_at?: string | null
+          year_published?: number | null
+          year_started?: number | null
         }
         Relationships: []
       }
@@ -7281,6 +9338,60 @@ export type Database = {
           visit_status?: string | null
           website_url?: string | null
           year_established?: number | null
+        }
+        Relationships: []
+      }
+      justicehub_nodes: {
+        Row: {
+          contact_email: string | null
+          country: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          latitude: number | null
+          lead_organization_id: string | null
+          logo_url: string | null
+          longitude: number | null
+          name: string
+          node_type: string | null
+          state_code: string | null
+          status: string | null
+          updated_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          lead_organization_id?: string | null
+          logo_url?: string | null
+          longitude?: number | null
+          name: string
+          node_type?: string | null
+          state_code?: string | null
+          status?: string | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          latitude?: number | null
+          lead_organization_id?: string | null
+          logo_url?: string | null
+          longitude?: number | null
+          name?: string
+          node_type?: string | null
+          state_code?: string | null
+          status?: string | null
+          updated_at?: string | null
+          website_url?: string | null
         }
         Relationships: []
       }
@@ -8038,6 +10149,81 @@ export type Database = {
           },
         ]
       }
+      media_item: {
+        Row: {
+          attribution_text: string | null
+          consent_level: string | null
+          created_at: string | null
+          creator_name: string | null
+          creator_profile_id: string | null
+          description: string | null
+          duration: string | null
+          file_size_bytes: number | null
+          id: string
+          is_featured: boolean | null
+          is_public: boolean | null
+          media_type: string
+          media_url: string
+          mime_type: string | null
+          organization_id: string | null
+          organization_name: string | null
+          program_id: string | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string | null
+          views: number | null
+        }
+        Insert: {
+          attribution_text?: string | null
+          consent_level?: string | null
+          created_at?: string | null
+          creator_name?: string | null
+          creator_profile_id?: string | null
+          description?: string | null
+          duration?: string | null
+          file_size_bytes?: number | null
+          id?: string
+          is_featured?: boolean | null
+          is_public?: boolean | null
+          media_type: string
+          media_url: string
+          mime_type?: string | null
+          organization_id?: string | null
+          organization_name?: string | null
+          program_id?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Update: {
+          attribution_text?: string | null
+          consent_level?: string | null
+          created_at?: string | null
+          creator_name?: string | null
+          creator_profile_id?: string | null
+          description?: string | null
+          duration?: string | null
+          file_size_bytes?: number | null
+          id?: string
+          is_featured?: boolean | null
+          is_public?: boolean | null
+          media_type?: string
+          media_url?: string
+          mime_type?: string | null
+          organization_id?: string | null
+          organization_name?: string | null
+          program_id?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Relationships: []
+      }
       media_items: {
         Row: {
           ai_confidence: number | null
@@ -8483,6 +10669,45 @@ export type Database = {
           name?: string | null
           status?: string | null
           subscribed_at?: string | null
+          unsubscribed_at?: string | null
+        }
+        Relationships: []
+      }
+      newsletter_subscriptions: {
+        Row: {
+          email: string
+          full_name: string | null
+          ghl_contact_id: string | null
+          id: string
+          is_active: boolean | null
+          organization: string | null
+          source: string | null
+          subscribed_at: string | null
+          subscription_type: string | null
+          unsubscribed_at: string | null
+        }
+        Insert: {
+          email: string
+          full_name?: string | null
+          ghl_contact_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          organization?: string | null
+          source?: string | null
+          subscribed_at?: string | null
+          subscription_type?: string | null
+          unsubscribed_at?: string | null
+        }
+        Update: {
+          email?: string
+          full_name?: string | null
+          ghl_contact_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          organization?: string | null
+          source?: string | null
+          subscribed_at?: string | null
+          subscription_type?: string | null
           unsubscribed_at?: string | null
         }
         Relationships: []
@@ -13457,6 +15682,48 @@ export type Database = {
           },
         ]
       }
+      story_related_interventions: {
+        Row: {
+          created_at: string | null
+          id: string
+          intervention_id: string
+          relevance_note: string | null
+          story_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          intervention_id: string
+          relevance_note?: string | null
+          story_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          intervention_id?: string
+          relevance_note?: string | null
+          story_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_related_interventions_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "alma_interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "story_related_interventions_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       story_related_programs: {
         Row: {
           created_at: string | null
@@ -15294,6 +17561,74 @@ export type Database = {
         }
         Relationships: []
       }
+      volunteer_hours: {
+        Row: {
+          activity: string
+          created_at: string | null
+          date: string
+          ghl_contact_id: string | null
+          hours: number
+          id: string
+          project: string | null
+          verified: boolean | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          activity: string
+          created_at?: string | null
+          date: string
+          ghl_contact_id?: string | null
+          hours: number
+          id?: string
+          project?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          activity?: string
+          created_at?: string | null
+          date?: string
+          ghl_contact_id?: string | null
+          hours?: number
+          id?: string
+          project?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "volunteer_hours_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "ghl_contacts"
+            referencedColumns: ["ghl_id"]
+          },
+          {
+            foreignKeyName: "volunteer_hours_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_contacts_with_protocols"
+            referencedColumns: ["ghl_id"]
+          },
+          {
+            foreignKeyName: "volunteer_hours_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_donor_summary"
+            referencedColumns: ["ghl_id"]
+          },
+          {
+            foreignKeyName: "volunteer_hours_ghl_contact_id_fkey"
+            columns: ["ghl_contact_id"]
+            isOneToOne: false
+            referencedRelation: "v_volunteer_summary"
+            referencedColumns: ["ghl_id"]
+          },
+        ]
+      }
       volunteer_interest: {
         Row: {
           availability: string | null
@@ -16173,6 +18508,129 @@ export type Database = {
         }
         Relationships: []
       }
+      youth_detention_facilities: {
+        Row: {
+          age_range_max: number | null
+          age_range_min: number | null
+          capacity_beds: number | null
+          city: string
+          closed_date: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          current_population: number | null
+          data_source: string | null
+          data_source_url: string | null
+          facility_type: string
+          female_capacity: number | null
+          government_department: string
+          has_cultural_programs: boolean | null
+          has_education_programs: boolean | null
+          has_indigenous_liaison: boolean | null
+          has_remand_section: boolean | null
+          has_sentenced_section: boolean | null
+          has_therapeutic_programs: boolean | null
+          id: string
+          indigenous_population_percentage: number | null
+          last_data_update: string | null
+          latitude: number | null
+          longitude: number | null
+          male_capacity: number | null
+          managing_agency: string | null
+          name: string
+          opened_date: string | null
+          operational_status: string | null
+          postcode: string | null
+          security_level: string | null
+          slug: string | null
+          state: string
+          street_address: string | null
+          suburb: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          age_range_max?: number | null
+          age_range_min?: number | null
+          capacity_beds?: number | null
+          city: string
+          closed_date?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          current_population?: number | null
+          data_source?: string | null
+          data_source_url?: string | null
+          facility_type?: string
+          female_capacity?: number | null
+          government_department: string
+          has_cultural_programs?: boolean | null
+          has_education_programs?: boolean | null
+          has_indigenous_liaison?: boolean | null
+          has_remand_section?: boolean | null
+          has_sentenced_section?: boolean | null
+          has_therapeutic_programs?: boolean | null
+          id?: string
+          indigenous_population_percentage?: number | null
+          last_data_update?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          male_capacity?: number | null
+          managing_agency?: string | null
+          name: string
+          opened_date?: string | null
+          operational_status?: string | null
+          postcode?: string | null
+          security_level?: string | null
+          slug?: string | null
+          state: string
+          street_address?: string | null
+          suburb?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          age_range_max?: number | null
+          age_range_min?: number | null
+          capacity_beds?: number | null
+          city?: string
+          closed_date?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          current_population?: number | null
+          data_source?: string | null
+          data_source_url?: string | null
+          facility_type?: string
+          female_capacity?: number | null
+          government_department?: string
+          has_cultural_programs?: boolean | null
+          has_education_programs?: boolean | null
+          has_indigenous_liaison?: boolean | null
+          has_remand_section?: boolean | null
+          has_sentenced_section?: boolean | null
+          has_therapeutic_programs?: boolean | null
+          id?: string
+          indigenous_population_percentage?: number | null
+          last_data_update?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          male_capacity?: number | null
+          managing_agency?: string | null
+          name?: string
+          opened_date?: string | null
+          operational_status?: string | null
+          postcode?: string | null
+          security_level?: string | null
+          slug?: string | null
+          state?: string
+          street_address?: string | null
+          suburb?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       active_wiki_pages: {
@@ -16344,17 +18802,120 @@ export type Database = {
           },
         ]
       }
+      alma_cost_analysis: {
+        Row: {
+          community_expenditure: number | null
+          community_percent: number | null
+          cost_per_day_community: number | null
+          cost_per_day_detention: number | null
+          detention_expenditure: number | null
+          detention_percent: number | null
+          detention_vs_community_ratio: number | null
+          indigenous_percentage: number | null
+          jurisdiction: string | null
+          recidivism_rate: number | null
+          report_year: string | null
+          total_expenditure: number | null
+        }
+        Insert: {
+          community_expenditure?: number | null
+          community_percent?: never
+          cost_per_day_community?: number | null
+          cost_per_day_detention?: number | null
+          detention_expenditure?: number | null
+          detention_percent?: never
+          detention_vs_community_ratio?: never
+          indigenous_percentage?: number | null
+          jurisdiction?: string | null
+          recidivism_rate?: number | null
+          report_year?: string | null
+          total_expenditure?: number | null
+        }
+        Update: {
+          community_expenditure?: number | null
+          community_percent?: never
+          cost_per_day_community?: number | null
+          cost_per_day_detention?: number | null
+          detention_expenditure?: number | null
+          detention_percent?: never
+          detention_vs_community_ratio?: never
+          indigenous_percentage?: number | null
+          jurisdiction?: string | null
+          recidivism_rate?: number | null
+          report_year?: string | null
+          total_expenditure?: number | null
+        }
+        Relationships: []
+      }
       alma_daily_sentiment: {
         Row: {
-          all_topics: string[] | null
           article_count: number | null
           avg_sentiment: number | null
           date: string | null
+          mixed_count: number | null
           negative_count: number | null
           neutral_count: number | null
           positive_count: number | null
           sentiment_stddev: number | null
           source_name: string | null
+        }
+        Relationships: []
+      }
+      alma_dashboard_funding: {
+        Row: {
+          avg_community_cost_per_day: number | null
+          avg_detention_cost_per_day: number | null
+          community_expenditure: number | null
+          detention_expenditure: number | null
+          detention_percentage: number | null
+          jurisdiction: string | null
+          report_year: string | null
+          total_expenditure: number | null
+        }
+        Relationships: []
+      }
+      alma_dashboard_interventions: {
+        Row: {
+          avg_portfolio_score: number | null
+          count: number | null
+          evidence_backed_count: number | null
+          evidence_level: string | null
+          intervention_type: string | null
+          jurisdiction: string | null
+          published_count: number | null
+        }
+        Relationships: []
+      }
+      alma_dashboard_queue: {
+        Row: {
+          avg_priority: number | null
+          count: number | null
+          jurisdiction: string | null
+          oldest_pending: string | null
+          source_type: string | null
+          status: string | null
+        }
+        Relationships: []
+      }
+      alma_dashboard_sources: {
+        Row: {
+          avg_quality_score: number | null
+          avg_success_rate: number | null
+          jurisdiction: string | null
+          last_scraped: string | null
+          source_count: number | null
+          source_type: string | null
+          total_entities: number | null
+        }
+        Relationships: []
+      }
+      alma_dashboard_tags: {
+        Row: {
+          category: string | null
+          name: string | null
+          slug: string | null
+          unique_entities: number | null
+          usage_count: number | null
         }
         Relationships: []
       }
@@ -16396,6 +18957,20 @@ export type Database = {
           sentiment_after: number | null
           sentiment_before: number | null
           sentiment_shift: number | null
+        }
+        Relationships: []
+      }
+      alma_unified_search: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          entity_id: string | null
+          entity_type: string | null
+          jurisdiction: string | null
+          relevance_boost: number | null
+          search_vector: unknown
+          title: string | null
         }
         Relationships: []
       }
@@ -17191,6 +19766,123 @@ export type Database = {
         }
         Relationships: []
       }
+      v_contacts_with_protocols: {
+        Row: {
+          company_name: string | null
+          created_at: string | null
+          cultural_nation: string | null
+          custom_fields: Json | null
+          elder_status: boolean | null
+          email: string | null
+          engagement_status: string | null
+          first_contact_date: string | null
+          first_name: string | null
+          full_name: string | null
+          ghl_created_at: string | null
+          ghl_id: string | null
+          ghl_location_id: string | null
+          ghl_updated_at: string | null
+          has_cultural_protocols: boolean | null
+          id: string | null
+          last_contact_date: string | null
+          last_name: string | null
+          last_synced_at: string | null
+          phone: string | null
+          projects: string[] | null
+          requires_elder_review: boolean | null
+          review_status: string | null
+          sync_error: string | null
+          sync_status: string | null
+          tags: string[] | null
+          updated_at: string | null
+        }
+        Relationships: []
+      }
+      v_donor_summary: {
+        Row: {
+          donation_count: number | null
+          donor_status: string | null
+          email: string | null
+          first_donation: string | null
+          full_name: string | null
+          ghl_id: string | null
+          last_donation: string | null
+          lifetime_value: number | null
+        }
+        Relationships: []
+      }
+      v_facilities_with_partnerships: {
+        Row: {
+          active_partnerships: number | null
+          age_range_max: number | null
+          age_range_min: number | null
+          capacity_beds: number | null
+          city: string | null
+          closed_date: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          current_population: number | null
+          data_source: string | null
+          data_source_url: string | null
+          facility_type: string | null
+          female_capacity: number | null
+          government_department: string | null
+          has_cultural_programs: boolean | null
+          has_education_programs: boolean | null
+          has_indigenous_liaison: boolean | null
+          has_remand_section: boolean | null
+          has_sentenced_section: boolean | null
+          has_therapeutic_programs: boolean | null
+          id: string | null
+          indigenous_population_percentage: number | null
+          last_data_update: string | null
+          latitude: number | null
+          longitude: number | null
+          male_capacity: number | null
+          managing_agency: string | null
+          name: string | null
+          opened_date: string | null
+          operational_status: string | null
+          organization_partners: number | null
+          partnership_count: number | null
+          postcode: string | null
+          program_partners: number | null
+          security_level: string | null
+          service_partners: number | null
+          slug: string | null
+          state: string | null
+          street_address: string | null
+          suburb: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Relationships: []
+      }
+      v_state_ecosystem_summary: {
+        Row: {
+          community_programs: number | null
+          operational_facilities: number | null
+          organizations: number | null
+          services: number | null
+          state: string | null
+          total_capacity: number | null
+          total_population: number | null
+        }
+        Relationships: []
+      }
+      v_volunteer_summary: {
+        Row: {
+          email: string | null
+          full_name: string | null
+          ghl_id: string | null
+          last_volunteered: string | null
+          projects_volunteered: string[] | null
+          session_count: number | null
+          total_hours: number | null
+        }
+        Relationships: []
+      }
       vw_alma_intervention_matches: {
         Row: {
           alignment_score: number | null
@@ -17534,6 +20226,21 @@ export type Database = {
         Args: { p_program_id: string }
         Returns: string
       }
+      calculate_community_authority_signal: {
+        Args: { intervention_id: string }
+        Returns: number
+      }
+      calculate_community_investment_score: {
+        Args: { p_jurisdiction: string }
+        Returns: {
+          community_percent: number
+          detention_cost_ratio: number
+          investment_score: number
+          jurisdiction: string
+          recommendation: string
+        }[]
+      }
+      calculate_coverage_metrics: { Args: never; Returns: undefined }
       calculate_empowerment_score: {
         Args: { analysis_data: Json }
         Returns: number
@@ -17547,9 +20254,44 @@ export type Database = {
         }
         Returns: number
       }
+      calculate_evidence_signal: {
+        Args: { intervention_id: string }
+        Returns: number
+      }
+      calculate_harm_risk_signal: {
+        Args: { intervention_id: string }
+        Returns: number
+      }
+      calculate_implementation_signal: {
+        Args: { intervention_id: string }
+        Returns: number
+      }
       calculate_migration_priority: {
         Args: { sub_amount: number; sub_confidence: number; sub_metadata: Json }
         Returns: number
+      }
+      calculate_next_scrape: {
+        Args: { p_priority_score: number; p_update_frequency: string }
+        Returns: string
+      }
+      calculate_option_value_signal: {
+        Args: { intervention_id: string }
+        Returns: number
+      }
+      calculate_portfolio_score: {
+        Args: { int_id: string }
+        Returns: {
+          community_authority: number
+          composite_score: number
+          evidence_strength: number
+          harm_risk: number
+          implementation: number
+          intervention_id: string
+          intervention_name: string
+          intervention_type: string
+          option_value: number
+          recommendation: string
+        }[]
       }
       calculate_portfolio_signals: {
         Args: { p_intervention_id: string }
@@ -17560,6 +20302,23 @@ export type Database = {
           implementation_capability: number
           option_value: number
           portfolio_score: number
+        }[]
+      }
+      calculate_potential_savings: {
+        Args: {
+          p_avg_detention_days?: number
+          p_community_cost_per_day?: number
+          p_detention_cost_per_day?: number
+          p_young_people_diverted: number
+        }
+        Returns: {
+          community_program_cost: number
+          detention_cost_avoided: number
+          generational_multiplier: number
+          net_savings: number
+          savings_per_person: number
+          total_generational_impact: number
+          young_people_diverted: number
         }[]
       }
       calculate_project_sovereignty_score: {
@@ -17641,6 +20400,7 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: undefined
       }
+      exec: { Args: { sql: string }; Returns: Json }
       exec_sql: { Args: { query: string }; Returns: undefined }
       execute_sql: { Args: { sql_query: string }; Returns: Json }
       find_similar_knowledge: {
@@ -17850,11 +20610,30 @@ export type Database = {
         }
         Returns: string
       }
+      refresh_alma_dashboards: { Args: never; Returns: undefined }
+      refresh_portfolio_rankings: { Args: never; Returns: undefined }
       refresh_sentiment_analytics: { Args: never; Returns: undefined }
       refresh_trust_scores: { Args: never; Returns: undefined }
       reset_failed_sync_events: {
         Args: { max_age_hours?: number; table_filter?: string }
         Returns: number
+      }
+      search_alma_unified: {
+        Args: {
+          entity_types?: string[]
+          jurisdictions?: string[]
+          limit_results?: number
+          query_text: string
+        }
+        Returns: {
+          category: string
+          description: string
+          entity_id: string
+          entity_type: string
+          jurisdiction: string
+          rank: number
+          title: string
+        }[]
       }
       search_interventions_unified: {
         Args: {
@@ -17907,6 +20686,7 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      snapshot_alma_metrics: { Args: never; Returns: undefined }
       sync_linkedin_contacts_from_imports: { Args: never; Returns: number }
       track_exa_api_usage: {
         Args: { p_request_type?: string; p_requests_used: number }
@@ -17920,6 +20700,14 @@ export type Database = {
           p_items_extracted: number
           p_items_found: number
           p_status?: string
+        }
+        Returns: undefined
+      }
+      update_source_after_scrape: {
+        Args: {
+          p_entities_found: number
+          p_source_url: string
+          p_success: boolean
         }
         Returns: undefined
       }

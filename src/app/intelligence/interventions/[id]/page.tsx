@@ -1,14 +1,40 @@
 import { notFound } from 'next/navigation';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createServiceClient } from '@/lib/supabase/service';
 import Link from 'next/link';
-import { PortfolioScoreCard, ConsentIndicator, InterventionCard } from '@/components/alma';
-import type { Database } from '@/types/supabase';
+import { PortfolioScoreCard, ConsentIndicator } from '@/components/alma';
 
-type Intervention = Database['public']['Tables']['alma_interventions']['Row'];
-type Evidence = Database['public']['Tables']['alma_evidence']['Row'];
-type Outcome = Database['public']['Tables']['alma_outcomes']['Row'];
-type Context = Database['public']['Tables']['alma_community_contexts']['Row'];
+// Define types inline to avoid supabase type issues
+type Intervention = {
+  id: string;
+  name: string;
+  description: string | null;
+  type: string | null;
+  consent_level: string | null;
+  cultural_authority: string | null;
+  metadata: any;
+  source_url?: string | null;
+  organization_name?: string | null;
+};
+
+type Evidence = {
+  id: string;
+  evidence_type: string | null;
+  created_at: string;
+  metadata: any;
+  source_url?: string | null;
+};
+
+type Outcome = {
+  id: string;
+  outcome_type: string | null;
+  metadata: any;
+};
+
+type Context = {
+  id: string;
+  context_type: string | null;
+  metadata: any;
+};
 
 interface InterventionDetailProps {
   params: {
@@ -16,8 +42,10 @@ interface InterventionDetailProps {
   };
 }
 
+export const dynamic = 'force-dynamic';
+
 async function getIntervention(id: string) {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServiceClient();
 
   const { data: intervention, error } = await supabase
     .from('alma_interventions')
@@ -29,11 +57,11 @@ async function getIntervention(id: string) {
     return null;
   }
 
-  return intervention;
+  return intervention as Intervention;
 }
 
 async function getInterventionEvidence(interventionId: string) {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServiceClient();
 
   const { data } = await supabase
     .from('alma_evidence')
@@ -41,11 +69,11 @@ async function getInterventionEvidence(interventionId: string) {
     .eq('intervention_id', interventionId)
     .order('created_at', { ascending: false });
 
-  return data || [];
+  return (data || []) as Evidence[];
 }
 
 async function getInterventionOutcomes(interventionId: string) {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServiceClient();
 
   const { data } = await supabase
     .from('alma_outcomes')
@@ -53,11 +81,11 @@ async function getInterventionOutcomes(interventionId: string) {
     .eq('intervention_id', interventionId)
     .order('created_at', { ascending: false });
 
-  return data || [];
+  return (data || []) as Outcome[];
 }
 
 async function getInterventionContexts(interventionId: string) {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServiceClient();
 
   const { data } = await supabase
     .from('alma_community_contexts')
@@ -65,26 +93,23 @@ async function getInterventionContexts(interventionId: string) {
     .eq('intervention_id', interventionId)
     .order('created_at', { ascending: false });
 
-  return data || [];
+  return (data || []) as Context[];
 }
 
 async function getSimilarInterventions(intervention: Intervention) {
-  const supabase = createServerComponentClient<Database>({ cookies });
+  const supabase = createServiceClient();
 
   const metadata = intervention.metadata as any;
 
-  // Find similar by type and state
+  // Find similar by type only (simpler query)
   const { data } = await supabase
     .from('alma_interventions')
-    .select(`
-      *,
-      evidence:alma_evidence(count)
-    `)
+    .select('*')
     .neq('id', intervention.id)
-    .or(`type.eq.${intervention.type},metadata->>state.eq.${metadata?.state || ''}`)
+    .eq('type', intervention.type || '')
     .limit(3);
 
-  return data || [];
+  return (data || []) as Intervention[];
 }
 
 async function getPortfolioScore(interventionId: string) {

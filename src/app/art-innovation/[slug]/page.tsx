@@ -1,8 +1,10 @@
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, ExternalLink, Play, MapPin, Calendar, Users } from 'lucide-react';
 import Image from 'next/image';
+
+export const dynamic = 'force-dynamic';
 
 interface LinkedProfile {
   role: string;
@@ -54,7 +56,7 @@ export default async function ArtInnovationDetailPage({
 }: {
   params: { slug: string };
 }) {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const { data: project, error } = await supabase
     .from('art_innovation')

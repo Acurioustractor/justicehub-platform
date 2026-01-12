@@ -59,7 +59,7 @@ export default async function ResearchPage() {
               />
             </div>
             <p className="text-sm text-earth-600 mt-2">
-              Or use <Link href="/chat" className="text-ochre-600 font-medium hover:underline">ALMA Chat</Link> to ask questions about the research
+              Or use <Link href="/youth-justice-report/chat" className="text-ochre-600 font-medium hover:underline">ALMA Chat</Link> to ask questions about the research
             </p>
           </div>
 

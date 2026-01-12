@@ -85,6 +85,12 @@ export class GHLClient {
       if (existing) {
         // Update existing contact
         await this.updateContact(existing.id, contact);
+
+        // IMPORTANT: Explicitly add tags because updateContact does not handle them
+        if (contact.tags && contact.tags.length > 0) {
+          await this.addTags(existing.id, contact.tags);
+        }
+
         return existing.id;
       }
 
@@ -262,6 +268,32 @@ export class GHLClient {
   }
 
   /**
+   * Get opportunities for a contact
+   */
+  async getOpportunities(contactId: string): Promise<any[]> {
+    if (!this.isConfigured()) {
+      return [];
+    }
+
+    try {
+      const response = await fetch(`${GHL_API_BASE}/opportunities/search?locationId=${this.locationId}&contact_id=${contactId}`, {
+        method: 'GET',
+        headers: this.headers,
+      });
+
+      if (!response.ok) {
+        return [];
+      }
+
+      const data = await response.json();
+      return data.opportunities || [];
+    } catch (error) {
+      console.error('GHL getOpportunities error:', error);
+      return [];
+    }
+  }
+
+  /**
    * Add contact to a workflow
    */
   async addToWorkflow(contactId: string, workflowId: string): Promise<boolean> {
@@ -284,6 +316,86 @@ export class GHLClient {
       return false;
     }
   }
+
+  /**
+   * Get contacts by tag
+   */
+  async getContactsByTag(tag: string): Promise<GHLContact[]> {
+    return this.getAllContacts(tag);
+  }
+
+  /**
+   * Get all contacts (with optional tag query)
+   * Handles pagination automatically
+   */
+  async getAllContacts(query?: string): Promise<GHLContact[]> {
+    if (!this.isConfigured()) {
+      return [];
+    }
+
+    let allContacts: GHLContact[] = [];
+    let nextPageUrl: string | null = `${GHL_API_BASE}/contacts/?locationId=${this.locationId}&limit=100`;
+
+    if (query) {
+      nextPageUrl += `&query=${encodeURIComponent(query)}`;
+    }
+
+    try {
+      while (nextPageUrl) {
+        console.log(`Fetching page: ${nextPageUrl.replace(GHL_API_BASE, '')}`);
+
+        const response: Response = await fetch(nextPageUrl, {
+          method: 'GET',
+          headers: this.headers,
+        });
+
+        if (!response.ok) {
+          console.error(`Failed to fetch contacts: ${response.statusText}`);
+          break;
+        }
+
+        const data = await response.json();
+        const contacts = (data.contacts || []).map((c: any) => ({
+          id: c.id,
+          email: c.email,
+          firstName: c.firstName,
+          lastName: c.lastName,
+          name: c.contactName,
+          phone: c.phone,
+          tags: c.tags,
+          customFields: c.customFields,
+        }));
+
+        allContacts = [...allContacts, ...contacts];
+
+        // Check for next page
+        if (data.meta?.nextPageUrl) {
+          // Ensure we use the full URL provided, or construct it if relative
+          // Usually GHL returns full URL or partial logic. 
+          // The debug output showed full URL: https://services.leadconnectorhq.com/...
+          nextPageUrl = data.meta.nextPageUrl;
+        } else if (data.meta?.startAfterId && data.meta?.startAfter) {
+          // Fallback manual construction if nextPageUrl missing but tokens present (rare if nextPageUrl exists)
+          // But usually nextPageUrl is reliable if present.
+          // Reset to null if no more pages
+          nextPageUrl = null;
+        } else {
+          nextPageUrl = null;
+        }
+
+        // Safety break
+        if (allContacts.length > 5000) {
+          console.warn('Hit 5000 contact safety limit, stopping fetch.');
+          break;
+        }
+      }
+
+      return allContacts;
+    } catch (error) {
+      console.error('GHL getAllContacts error:', error);
+      return allContacts;
+    }
+  }
 }
 
 // Singleton instance
@@ -304,7 +416,10 @@ export const GHL_TAGS = {
   PRACTITIONER: 'Practitioner',
   EVENT_REGISTRANT: 'Event Registrant',
   CONTAINED_LAUNCH: 'CONTAINED Launch 2026',
+  VIP_DINNER_2026: 'VIP Dinner 2026',
   YOUTH_VOICE: 'Youth Voice',
+  SEEDS_JUSTICEHUB: 'Seeds: JusticeHub',
+  PROJECT_LINKS_JUSTICEHUB: 'Project Links: JusticeHub',
 } as const;
 
 export const GHL_PIPELINES = {

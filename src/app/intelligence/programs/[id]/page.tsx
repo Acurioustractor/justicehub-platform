@@ -1,8 +1,10 @@
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { notFound } from 'next/navigation';
 import RelatedContent from '@/components/alma/RelatedContent';
 import { ArrowLeft, MapPin, Users, Calendar, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{
@@ -12,7 +14,7 @@ interface PageProps {
 
 export default async function InterventionDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   // Fetch intervention details
   const { data: intervention, error } = await supabase

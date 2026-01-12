@@ -463,6 +463,66 @@ export default function ProgramDetailPage() {
           </section>
         )}
 
+        {/* Related Evidence & Research */}
+        <section className="py-16 border-b-2 border-black bg-sand-50">
+          <div className="container-justice">
+            <h2 className="text-3xl font-bold mb-4">Related Evidence & Research</h2>
+            <p className="text-lg text-gray-700 mb-8">
+              Explore the evidence base supporting programs like this one.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Link
+                href={`/youth-justice-report/interventions?approach=${encodeURIComponent(program.approach)}`}
+                className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+              >
+                <div className="text-ochre-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  ALMA Interventions
+                </div>
+                <h3 className="text-xl font-bold mb-2">Evidence-Based Approaches</h3>
+                <p className="text-gray-600 mb-4">
+                  View interventions rated by our ALMA system that align with {program.approach} programs.
+                </p>
+                <span className="text-ochre-600 font-bold inline-flex items-center gap-1">
+                  Explore <ChevronRight className="h-4 w-4" />
+                </span>
+              </Link>
+
+              <Link
+                href={`/centre-of-excellence/best-practice?state=${program.state}`}
+                className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+              >
+                <div className="text-eucalyptus-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  Best Practice
+                </div>
+                <h3 className="text-xl font-bold mb-2">State-Based Research</h3>
+                <p className="text-gray-600 mb-4">
+                  Best practice frameworks and case studies from {program.state}.
+                </p>
+                <span className="text-eucalyptus-600 font-bold inline-flex items-center gap-1">
+                  Learn More <ChevronRight className="h-4 w-4" />
+                </span>
+              </Link>
+
+              <Link
+                href="/centre-of-excellence/global-insights"
+                className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+              >
+                <div className="text-blue-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  Global Insights
+                </div>
+                <h3 className="text-xl font-bold mb-2">International Models</h3>
+                <p className="text-gray-600 mb-4">
+                  See how similar programs work in other countries around the world.
+                </p>
+                <span className="text-blue-600 font-bold inline-flex items-center gap-1">
+                  Discover <ChevronRight className="h-4 w-4" />
+                </span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Related Programs - Commented out until programs list is available */}
         {/* <section className="py-16 bg-gray-50">
           <div className="container-justice">

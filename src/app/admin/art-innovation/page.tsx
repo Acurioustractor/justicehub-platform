@@ -10,13 +10,16 @@ export default async function AdminArtInnovationPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login?redirect=/admin/art-innovation');
 
-  const { data: userData } = await supabase
-    .from('users')
-    .select('user_role')
+  // Check admin role
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('is_super_admin')
     .eq('id', user.id)
     .single();
 
-  if (userData?.user_role !== 'admin') redirect('/');
+  if (!profileData?.is_super_admin) {
+    redirect('/');
+  }
 
   // Fetch all art projects with profile connection counts
   const { data: projects } = await supabase
@@ -25,7 +28,7 @@ export default async function AdminArtInnovationPage() {
       *,
       art_innovation_profiles(count)
     `)
-    .order('created_at', { ascending: false});
+    .order('created_at', { ascending: false });
 
   return (
     <div className="min-h-screen bg-gray-50 page-content">

@@ -59,7 +59,8 @@ export default function EvidencePage() {
 
       if (!error && data) {
         setEvidence(data);
-        setTotalCount(count || 0);
+        // Use count from query if available, otherwise use actual data length
+        setTotalCount(count ?? data.length);
       }
 
       setLoading(false);

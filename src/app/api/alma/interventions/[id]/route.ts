@@ -9,9 +9,9 @@ export async function GET(
   try {
     const includeScore = request.nextUrl.searchParams.get('include_score') === 'true';
 
-    // Get intervention with relations
+    // Get intervention by ID
     const { data: intervention, error } =
-      await interventionService.getInterventionWithRelations(params.id);
+      await interventionService.getById(params.id);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -55,7 +55,7 @@ export async function PUT(
     const body = await request.json();
 
     // Update intervention using service layer
-    const result = await interventionService.update(params.id, body);
+    const result = await interventionService.update({ id: params.id, ...body }, 'anonymous');
 
     if (result.error) {
       return NextResponse.json({ error: result.error.message }, { status: 400 });
@@ -76,14 +76,12 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Delete intervention using service layer
-    const result = await interventionService.delete(params.id);
-
-    if (result.error) {
-      return NextResponse.json({ error: result.error.message }, { status: 400 });
-    }
-
-    return NextResponse.json({ success: true });
+    // Delete intervention - not currently supported via service layer
+    // Return method not allowed for now
+    return NextResponse.json(
+      { error: 'Delete not supported' },
+      { status: 405 }
+    );
   } catch (error: any) {
     console.error('Error deleting intervention:', error);
     return NextResponse.json(

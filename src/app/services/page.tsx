@@ -183,9 +183,13 @@ export default function ServicesPage() {
               <h1 className="headline-truth mb-4">
                 SERVICE FINDER
               </h1>
-              <p className="text-xl max-w-3xl mx-auto mb-8">
-                AI-powered comprehensive directory of youth justice support services across Australia. 
-                Real-time data. Verified providers. Immediate connections. All available services, mapped and accessible.
+              <p className="text-xl max-w-3xl mx-auto mb-6">
+                AI-powered comprehensive directory of youth justice support services across Australia.
+                Real-time data. Verified providers. Immediate connections.
+              </p>
+              <p className="text-sm max-w-2xl mx-auto mb-8 text-gray-600 border-l-4 border-ochre-400 pl-4 text-left">
+                <strong>Services</strong> are scraped and indexed from government and community sources across Australia.
+                Looking for curated, verified community programs? Visit our <a href="/community-programs" className="text-ochre-600 hover:underline font-medium">Community Programs</a> page.
               </p>
               
               {/* Search */}
@@ -210,7 +214,9 @@ export default function ServicesPage() {
           <div className="container-justice">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
               <div>
-                <div className="text-3xl font-bold text-black mb-2">{services.length}</div>
+                <div className="text-3xl font-bold text-black mb-2">
+                  {loading ? '...' : services.length}
+                </div>
                 <div className="text-sm font-medium">AI-Discovered Services</div>
                 <div className="text-xs text-gray-600 mt-1">Live from government sources</div>
               </div>

@@ -4,7 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Image as ImageIcon, Check } from 'lucide-react';
+import { copyNapkinPrompt } from '@/lib/napkin-visualizer';
 
 interface Story {
   id: string;
@@ -12,6 +13,8 @@ interface Story {
   status: string;
   created_at: string;
   content_type?: 'article' | 'blog';
+  excerpt?: string;
+  category?: string;
   public_profiles?: {
     full_name: string;
     slug: string;
@@ -22,6 +25,17 @@ export function StoriesTable({ initialStories }: { initialStories: Story[] }) {
   const router = useRouter();
   const [stories, setStories] = useState(initialStories);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [copyingId, setCopyingId] = useState<string | null>(null);
+
+  const handleCopyPrompt = async (story: Story) => {
+    setCopyingId(story.id);
+    const success = await copyNapkinPrompt(story);
+    if (success) {
+      setTimeout(() => setCopyingId(null), 2000);
+    } else {
+      setCopyingId(null);
+    }
+  };
 
   const handleDelete = async (story: Story) => {
     const storyType = story.content_type === 'blog' ? 'blog post' : 'article';
@@ -93,11 +107,10 @@ export function StoriesTable({ initialStories }: { initialStories: Story[] }) {
             <tr key={story.id} className="border-b border-gray-200 hover:bg-gray-50">
               <td className="px-6 py-4 font-medium">{story.title}</td>
               <td className="px-6 py-4">
-                <span className={`text-xs font-bold px-2 py-1 border ${
-                  story.content_type === 'blog'
+                <span className={`text-xs font-bold px-2 py-1 border ${story.content_type === 'blog'
                     ? 'bg-purple-50 text-purple-600 border-purple-600'
                     : 'bg-blue-50 text-blue-600 border-blue-600'
-                }`}>
+                  }`}>
                   {story.content_type === 'blog' ? 'BLOG' : 'ARTICLE'}
                 </span>
               </td>
@@ -105,11 +118,10 @@ export function StoriesTable({ initialStories }: { initialStories: Story[] }) {
                 {story.public_profiles?.full_name || 'Unknown'}
               </td>
               <td className="px-6 py-4">
-                <span className={`text-xs font-bold px-2 py-1 border ${
-                  story.status === 'published'
+                <span className={`text-xs font-bold px-2 py-1 border ${story.status === 'published'
                     ? 'bg-green-50 text-green-600 border-green-600'
                     : 'bg-yellow-50 text-yellow-600 border-yellow-600'
-                }`}>
+                  }`}>
                   {story.status.toUpperCase()}
                 </span>
               </td>
@@ -122,6 +134,24 @@ export function StoriesTable({ initialStories }: { initialStories: Story[] }) {
               </td>
               <td className="px-6 py-4 text-right">
                 <div className="flex items-center justify-end gap-3">
+                  <button
+                    onClick={() => handleCopyPrompt(story)}
+                    className={`flex items-center gap-1 text-sm font-bold transition-colors ${copyingId === story.id ? 'text-green-600' : 'text-ochre-600 hover:text-ochre-800'
+                      }`}
+                    title="Copy visual prompt for Napkin AI"
+                  >
+                    {copyingId === story.id ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <ImageIcon className="w-4 h-4" />
+                        Visualize
+                      </>
+                    )}
+                  </button>
                   <Link
                     href={`/admin/stories/${story.id}`}
                     className="text-sm font-bold text-blue-600 hover:text-blue-800"

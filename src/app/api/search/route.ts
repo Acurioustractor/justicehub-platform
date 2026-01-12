@@ -1,5 +1,7 @@
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { NextRequest, NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 
 /**
  * Unified Search API
@@ -42,21 +44,23 @@ export interface SearchResponse {
 
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
-  const { searchParams } = new URL(request.url);
 
-  const query = searchParams.get('q');
-  const typeFilter = searchParams.get('type') || 'all';
-  const stateFilter = searchParams.get('state');
-  const limit = Math.min(parseInt(searchParams.get('limit') || '10'), 50);
+  try {
+    const { searchParams } = new URL(request.url);
 
-  if (!query || query.trim().length < 2) {
-    return NextResponse.json(
-      { error: 'Query parameter "q" is required and must be at least 2 characters' },
-      { status: 400 }
-    );
-  }
+    const query = searchParams.get('q');
+    const typeFilter = searchParams.get('type') || 'all';
+    const stateFilter = searchParams.get('state');
+    const limit = Math.min(parseInt(searchParams.get('limit') || '10'), 50);
 
-  const supabase = await createClient();
+    if (!query || query.trim().length < 2) {
+      return NextResponse.json(
+        { error: 'Query parameter "q" is required and must be at least 2 characters' },
+        { status: 400 }
+      );
+    }
+
+    const supabase = createServiceClient();
   const results: SearchResult[] = [];
   const counts = {
     interventions: 0,
@@ -202,4 +206,11 @@ export async function GET(request: NextRequest) {
   };
 
   return NextResponse.json(response);
+  } catch (error) {
+    console.error('Search API error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
 }

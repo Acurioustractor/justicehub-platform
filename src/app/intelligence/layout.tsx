@@ -9,7 +9,7 @@ export default function IntelligenceLayout({
     <div className="min-h-screen bg-white text-black">
       <Navigation />
 
-      <main className="pt-20">
+      <main className="pt-40">
         {children}
       </main>
 

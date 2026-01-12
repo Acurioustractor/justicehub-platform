@@ -403,10 +403,10 @@ export default function CommunityMapPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white page-content">
+    <div className="min-h-screen bg-white">
       <Navigation />
 
-      <main className="header-offset">
+      <main className="page-content">
         <section className="border-b-2 border-black bg-gradient-to-br from-blue-100 via-white to-purple-100">
           <div className="container-justice py-16">
             <p className="font-mono uppercase tracking-[0.4em] text-xs text-gray-600 mb-4 text-center md:text-left">

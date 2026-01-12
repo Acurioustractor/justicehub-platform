@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Play,
@@ -8,133 +8,178 @@ import {
   Calendar,
   ExternalLink,
   Filter,
-  Search
+  Search,
+  Loader2
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import ImageGallery from '@/components/ImageGallery';
 import FeaturedVideo from '@/components/FeaturedVideo';
+import { createClient } from '@/lib/supabase/client';
 
 interface MediaItem {
   id: string;
   title: string;
   description: string;
-  media_type: 'photo' | 'video' | 'artwork' | 'story';
+  media_type: 'photo' | 'video' | 'artwork' | 'story' | 'audio';
   thumbnail_url: string;
   media_url?: string;
   creator_name: string;
   organization_name?: string;
   organization_id?: string;
-  person_id?: string;
+  creator_profile_id?: string;
   views: number;
-  duration?: string; // for videos
+  duration?: string;
   created_at: string;
   tags: string[];
-  featured: boolean;
+  is_featured: boolean;
 }
+
+// Fallback sample data if database is empty
+const sampleMedia: MediaItem[] = [
+  {
+    id: '1',
+    title: 'BackTrack Youth Welding Workshop',
+    description: 'Young people learning welding skills through hands-on mentorship program',
+    media_type: 'video',
+    thumbnail_url: '/api/placeholder/400/300',
+    media_url: '/api/placeholder/video',
+    creator_name: 'Marcus Thompson',
+    organization_name: 'BackTrack Youth Works',
+    organization_id: '1',
+    views: 2847,
+    duration: '3:24',
+    created_at: '2024-01-15',
+    tags: ['Skills Training', 'Mentorship', 'BackTrack', 'Armidale', 'Vocational'],
+    is_featured: true
+  },
+  {
+    id: '2',
+    title: 'Traditional Healing Circle Ceremony',
+    description: 'Elder Mary leading traditional healing practices with young Aboriginal people',
+    media_type: 'photo',
+    thumbnail_url: '/api/placeholder/400/300',
+    creator_name: 'Elder Mary Nganyinpa',
+    organization_name: 'Healing Circles Program',
+    organization_id: '2',
+    views: 1923,
+    created_at: '2024-01-20',
+    tags: ['Indigenous Knowledge', 'Cultural Healing', 'Alice Springs', 'Traditional'],
+    is_featured: true
+  },
+  {
+    id: '3',
+    title: 'Youth-Led Community Mural',
+    description: 'Collaborative artwork created by Logan Youth Collective members',
+    media_type: 'artwork',
+    thumbnail_url: '/api/placeholder/400/300',
+    creator_name: 'Logan Youth Collective',
+    organization_name: 'Logan Youth Collective',
+    organization_id: '3',
+    views: 1456,
+    created_at: '2024-01-25',
+    tags: ['Creative Arts', 'Community Organizing', 'Logan', 'Youth Leadership'],
+    is_featured: false
+  },
+  {
+    id: '4',
+    title: "From Homelessness to Hope: Jayden's Journey",
+    description: 'Personal story of overcoming challenges through community support',
+    media_type: 'story',
+    thumbnail_url: '/api/placeholder/400/300',
+    creator_name: 'Jayden Williams',
+    views: 3201,
+    created_at: '2024-01-30',
+    tags: ['Personal Story', 'Housing Support', 'Mental Health', 'Recovery'],
+    is_featured: true
+  },
+  {
+    id: '5',
+    title: 'Tech Skills Workshop - Coding for Change',
+    description: 'Neurodivergent youth learning programming skills in supportive environment',
+    media_type: 'photo',
+    thumbnail_url: '/api/placeholder/400/300',
+    creator_name: 'TechStart Youth',
+    organization_name: 'TechStart Youth',
+    organization_id: '6',
+    views: 892,
+    created_at: '2024-02-05',
+    tags: ['Technology', 'Neurodiversity', 'Adelaide', 'Digital Skills'],
+    is_featured: false
+  },
+  {
+    id: '6',
+    title: 'Community BBQ Success Stories',
+    description: 'Local organizations coming together to celebrate youth achievements',
+    media_type: 'video',
+    thumbnail_url: '/api/placeholder/400/300',
+    media_url: '/api/placeholder/video',
+    creator_name: 'Community Events Team',
+    views: 1654,
+    duration: '5:12',
+    created_at: '2024-02-10',
+    tags: ['Community Events', 'Celebration', 'Achievements', 'Networking'],
+    is_featured: false
+  }
+];
 
 export default function GalleryPage() {
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Sample media data - will be replaced with Supabase query
-  const sampleMedia: MediaItem[] = [
-    {
-      id: '1',
-      title: 'BackTrack Youth Welding Workshop',
-      description: 'Young people learning welding skills through hands-on mentorship program',
-      media_type: 'video',
-      thumbnail_url: '/api/placeholder/400/300',
-      media_url: '/api/placeholder/video',
-      creator_name: 'Marcus Thompson',
-      organization_name: 'BackTrack Youth Works',
-      organization_id: '1',
-      views: 2847,
-      duration: '3:24',
-      created_at: '2024-01-15',
-      tags: ['Skills Training', 'Mentorship', 'BackTrack', 'Armidale', 'Vocational'],
-      featured: true
-    },
-    {
-      id: '2',
-      title: 'Traditional Healing Circle Ceremony',
-      description: 'Elder Mary leading traditional healing practices with young Aboriginal people',
-      media_type: 'photo',
-      thumbnail_url: '/api/placeholder/400/300',
-      creator_name: 'Elder Mary Nganyinpa',
-      organization_name: 'Healing Circles Program',
-      organization_id: '2',
-      views: 1923,
-      created_at: '2024-01-20',
-      tags: ['Indigenous Knowledge', 'Cultural Healing', 'Alice Springs', 'Traditional'],
-      featured: true
-    },
-    {
-      id: '3',
-      title: 'Youth-Led Community Mural',
-      description: 'Collaborative artwork created by Logan Youth Collective members',
-      media_type: 'artwork',
-      thumbnail_url: '/api/placeholder/400/300',
-      creator_name: 'Logan Youth Collective',
-      organization_name: 'Logan Youth Collective', 
-      organization_id: '3',
-      views: 1456,
-      created_at: '2024-01-25',
-      tags: ['Creative Arts', 'Community Organizing', 'Logan', 'Youth Leadership'],
-      featured: false
-    },
-    {
-      id: '4',
-      title: 'From Homelessness to Hope: Jayden\'s Journey',
-      description: 'Personal story of overcoming challenges through community support',
-      media_type: 'story',
-      thumbnail_url: '/api/placeholder/400/300',
-      creator_name: 'Jayden Williams',
-      views: 3201,
-      created_at: '2024-01-30',
-      tags: ['Personal Story', 'Housing Support', 'Mental Health', 'Recovery'],
-      featured: true
-    },
-    {
-      id: '5',
-      title: 'Tech Skills Workshop - Coding for Change',
-      description: 'Neurodivergent youth learning programming skills in supportive environment',
-      media_type: 'photo',
-      thumbnail_url: '/api/placeholder/400/300',
-      creator_name: 'TechStart Youth',
-      organization_name: 'TechStart Youth',
-      organization_id: '6',
-      views: 892,
-      created_at: '2024-02-05',
-      tags: ['Technology', 'Neurodiversity', 'Adelaide', 'Digital Skills'],
-      featured: false
-    },
-    {
-      id: '6',
-      title: 'Community BBQ Success Stories',
-      description: 'Local organizations coming together to celebrate youth achievements',
-      media_type: 'video',
-      thumbnail_url: '/api/placeholder/400/300',
-      media_url: '/api/placeholder/video',
-      creator_name: 'Community Events Team',
-      views: 1654,
-      duration: '5:12',
-      created_at: '2024-02-10',
-      tags: ['Community Events', 'Celebration', 'Achievements', 'Networking'],
-      featured: false
+  useEffect(() => {
+    async function fetchMedia() {
+      const supabase = createClient();
+
+      const { data, error } = await supabase
+        .from('media_item')
+        .select('*')
+        .eq('is_public', true)
+        .order('created_at', { ascending: false });
+
+      if (error || !data || data.length === 0) {
+        // Use sample data as fallback
+        setMediaItems(sampleMedia);
+      } else {
+        // Transform database data to match interface
+        const transformed = data.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description || '',
+          media_type: item.media_type,
+          thumbnail_url: item.thumbnail_url || '/api/placeholder/400/300',
+          media_url: item.media_url,
+          creator_name: item.creator_name || 'Unknown',
+          organization_name: item.organization_name,
+          organization_id: item.organization_id,
+          creator_profile_id: item.creator_profile_id,
+          views: item.views || 0,
+          duration: item.duration,
+          created_at: item.created_at,
+          tags: item.tags || [],
+          is_featured: item.is_featured || false
+        }));
+        setMediaItems(transformed);
+      }
+      setLoading(false);
     }
-  ];
+
+    fetchMedia();
+  }, []);
 
   const mediaTypes = [
-    { id: 'all', label: 'All Media', count: sampleMedia.length },
-    { id: 'video', label: 'Videos', count: sampleMedia.filter(m => m.media_type === 'video').length },
-    { id: 'photo', label: 'Photos', count: sampleMedia.filter(m => m.media_type === 'photo').length },
-    { id: 'artwork', label: 'Artworks', count: sampleMedia.filter(m => m.media_type === 'artwork').length },
-    { id: 'story', label: 'Stories', count: sampleMedia.filter(m => m.media_type === 'story').length }
-  ];
+    { id: 'all', label: 'All Media', count: mediaItems.length },
+    { id: 'video', label: 'Videos', count: mediaItems.filter(m => m.media_type === 'video').length },
+    { id: 'photo', label: 'Photos', count: mediaItems.filter(m => m.media_type === 'photo').length },
+    { id: 'artwork', label: 'Artworks', count: mediaItems.filter(m => m.media_type === 'artwork').length },
+    { id: 'story', label: 'Stories', count: mediaItems.filter(m => m.media_type === 'story').length },
+    { id: 'audio', label: 'Audio', count: mediaItems.filter(m => m.media_type === 'audio').length }
+  ].filter(t => t.id === 'all' || t.count > 0);
 
-  const filteredMedia = sampleMedia.filter(item => {
+  const filteredMedia = mediaItems.filter(item => {
     const matchesFilter = selectedFilter === 'all' || item.media_type === selectedFilter;
-    const matchesSearch = searchQuery === '' || 
+    const matchesSearch = searchQuery === '' ||
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -147,6 +192,7 @@ export default function GalleryPage() {
       case 'photo': return <Eye className="h-4 w-4" />;
       case 'artwork': return <Eye className="h-4 w-4" />;
       case 'story': return <ExternalLink className="h-4 w-4" />;
+      case 'audio': return <Play className="h-4 w-4" />;
       default: return <Eye className="h-4 w-4" />;
     }
   };
@@ -157,6 +203,7 @@ export default function GalleryPage() {
       case 'photo': return 'bg-blue-600 text-white';
       case 'artwork': return 'bg-purple-600 text-white';
       case 'story': return 'bg-green-600 text-white';
+      case 'audio': return 'bg-orange-600 text-white';
       default: return 'bg-gray-600 text-white';
     }
   };
@@ -173,12 +220,14 @@ export default function GalleryPage() {
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 1) return '1 day ago';
     if (diffDays < 7) return `${diffDays} days ago`;
     if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
     return `${Math.ceil(diffDays / 30)} months ago`;
   };
+
+  const featuredItems = mediaItems.filter(item => item.is_featured);
 
   return (
     <div className="min-h-screen bg-white">
@@ -193,10 +242,10 @@ export default function GalleryPage() {
                 GALLERY
               </h1>
               <p className="text-xl max-w-4xl mx-auto mb-8 leading-relaxed">
-                Visual stories of transformation. Real programs in action. Youth voices amplified. 
+                Visual stories of transformation. Real programs in action. Youth voices amplified.
                 Community impact documented. Watch, learn, and be inspired by authentic change.
               </p>
-              
+
               {/* Search */}
               <div className="max-w-2xl mx-auto">
                 <div className="relative">
@@ -223,8 +272,8 @@ export default function GalleryPage() {
                   key={type.id}
                   onClick={() => setSelectedFilter(type.id)}
                   className={`px-6 py-3 font-bold tracking-wider transition-all flex items-center gap-2 ${
-                    selectedFilter === type.id 
-                      ? 'bg-black text-white' 
+                    selectedFilter === type.id
+                      ? 'bg-black text-white'
                       : 'border-2 border-black hover:bg-black hover:text-white'
                   }`}
                 >
@@ -241,17 +290,22 @@ export default function GalleryPage() {
           <div className="container-justice">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-bold">
-                {filteredMedia.length} {selectedFilter === 'all' ? 'Media Items' : mediaTypes.find(t => t.id === selectedFilter)?.label}
+                {loading ? '...' : filteredMedia.length} {selectedFilter === 'all' ? 'Media Items' : mediaTypes.find(t => t.id === selectedFilter)?.label}
               </h2>
               <p className="text-sm text-gray-600">
                 Real stories from real programs making real impact
               </p>
             </div>
 
-            {filteredMedia.length === 0 ? (
+            {loading ? (
+              <div className="flex items-center justify-center py-20">
+                <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                <span className="ml-3 text-gray-600">Loading gallery...</span>
+              </div>
+            ) : filteredMedia.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-xl text-gray-600 mb-4">No media found matching your criteria</p>
-                <button 
+                <button
                   onClick={() => {
                     setSearchQuery('');
                     setSelectedFilter('all');
@@ -275,22 +329,22 @@ export default function GalleryPage() {
                       <div className="absolute inset-0 flex items-center justify-center bg-gray-300">
                         <span className="font-mono text-gray-500">MEDIA PREVIEW</span>
                       </div>
-                      
+
                       {/* Media type badge */}
                       <div className={`absolute top-2 left-2 px-2 py-1 text-xs font-bold uppercase tracking-wider flex items-center gap-1 ${getMediaTypeColor(item.media_type)}`}>
                         {getMediaTypeIcon(item.media_type)}
                         {item.media_type}
                       </div>
-                      
-                      {/* Duration for videos */}
+
+                      {/* Duration for videos/audio */}
                       {item.duration && (
                         <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white px-2 py-1 text-xs font-mono">
                           {item.duration}
                         </div>
                       )}
-                      
+
                       {/* Featured badge */}
-                      {item.featured && (
+                      {item.is_featured && (
                         <div className="absolute top-2 right-2 bg-orange-600 text-white px-2 py-1 text-xs font-bold uppercase">
                           Featured
                         </div>
@@ -302,11 +356,11 @@ export default function GalleryPage() {
                       <h3 className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-blue-800 transition-colors">
                         {item.title}
                       </h3>
-                      
+
                       <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                         {item.description}
                       </p>
-                      
+
                       {/* Creator and organization info */}
                       <div className="mb-3">
                         <p className="text-sm font-medium">{item.creator_name}</p>
@@ -316,7 +370,7 @@ export default function GalleryPage() {
                           </p>
                         )}
                       </div>
-                      
+
                       {/* Meta info */}
                       <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
                         <span className="flex items-center gap-1">
@@ -328,11 +382,11 @@ export default function GalleryPage() {
                           {formatDate(item.created_at)}
                         </span>
                       </div>
-                      
+
                       {/* Tags */}
                       <div className="flex flex-wrap gap-1">
                         {item.tags.slice(0, 3).map(tag => (
-                          <span 
+                          <span
                             key={tag}
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-xs font-medium transition-colors cursor-pointer"
                           >
@@ -354,33 +408,35 @@ export default function GalleryPage() {
         </section>
 
         {/* Featured Section */}
-        <section className="py-16 bg-gray-50 border-t-2 border-black">
-          <div className="container-justice">
-            <h2 className="text-3xl font-bold mb-8 text-center">FEATURED CONTENT</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {sampleMedia.filter(item => item.featured).slice(0, 3).map((item) => (
-                <Link
-                  key={item.id}
-                  href={`/gallery/${item.id}`}
-                  className="group data-card hover:shadow-lg transition-all"
-                  style={{textDecoration: 'none'}}
-                >
-                  <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
-                    <div className="w-full h-full flex items-center justify-center">
-                      <span className="font-mono text-gray-500">FEATURED MEDIA</span>
+        {featuredItems.length > 0 && (
+          <section className="py-16 bg-gray-50 border-t-2 border-black">
+            <div className="container-justice">
+              <h2 className="text-3xl font-bold mb-8 text-center">FEATURED CONTENT</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {featuredItems.slice(0, 3).map((item) => (
+                  <Link
+                    key={item.id}
+                    href={`/gallery/${item.id}`}
+                    className="group data-card hover:shadow-lg transition-all"
+                    style={{textDecoration: 'none'}}
+                  >
+                    <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="font-mono text-gray-500">FEATURED MEDIA</span>
+                      </div>
                     </div>
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{item.description}</p>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="font-medium">{item.creator_name}</span>
-                    <span className="text-gray-600">{formatViews(item.views)}</span>
-                  </div>
-                </Link>
-              ))}
+                    <h3 className="font-bold text-lg mb-2">{item.title}</h3>
+                    <p className="text-sm text-gray-600 mb-3">{item.description}</p>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="font-medium">{item.creator_name}</span>
+                      <span className="text-gray-600">{formatViews(item.views)}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Example: ImageGallery Component Showcase */}
         <section className="py-16 bg-gray-50 border-t-2 border-black">

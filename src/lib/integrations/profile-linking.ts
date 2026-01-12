@@ -90,19 +90,31 @@ export function isJusticeRelated(story: EmpathyLedgerStory): boolean {
 
 /**
  * Get full profile data with justice-related stories
+ * Note: Due to RLS recursion issue on profiles table, we fetch profile data via stories
  */
 export async function getProfileWithJusticeStories(empathyLedgerProfileId: string) {
-  // Fetch profile from Empathy Ledger
-  const { data: profile, error: profileError } = await empathyLedgerClient
+  // Try direct profile fetch first (may fail due to RLS recursion)
+  let profile: EmpathyLedgerProfile | null = null;
+
+  const { data: profileData, error: profileError } = await empathyLedgerClient
     .from('profiles')
-    .select(`
-      *,
-      organization:organizations!profiles_primary_organization_id_fkey(*)
-    `)
+    .select('*')
     .eq('id', empathyLedgerProfileId)
     .single();
 
-  if (profileError || !profile) {
+  if (!profileError && profileData) {
+    profile = profileData;
+  } else if (profileError?.message?.includes('infinite recursion')) {
+    // Known RLS issue - create minimal profile from ID
+    console.warn('Profile RLS recursion - using minimal profile data');
+    profile = {
+      id: empathyLedgerProfileId,
+      tenant_id: '',
+      display_name: undefined,
+      bio: undefined,
+      avatar_url: undefined,
+    };
+  } else {
     console.error('Error fetching profile:', profileError);
     return null;
   }
@@ -120,14 +132,15 @@ export async function getProfileWithJusticeStories(empathyLedgerProfileId: strin
   const justiceStories = (allStories || []).filter(isJusticeRelated);
 
   // Get JusticeHub appearances
-  const { data: appearances } = await justiceHubClient
+  const jhClient = getJusticeHubClient();
+  const { data: appearances } = await jhClient
     .from('profile_appearances')
     .select('*')
     .eq('empathy_ledger_profile_id', empathyLedgerProfileId);
 
   return {
     profile,
-    organization: profile.organization,
+    organization: null, // Organization join removed due to RLS issues
     justiceStories,
     allStories: allStories || [],
     appearances: appearances || []
@@ -139,7 +152,8 @@ export async function getProfileWithJusticeStories(empathyLedgerProfileId: strin
  */
 export async function getProfilesFor(type: 'program' | 'service' | 'article', id: string) {
   // Get appearances
-  const { data: appearances } = await justiceHubClient
+  const jhClient = getJusticeHubClient();
+  const { data: appearances } = await jhClient
     .from('profile_appearances')
     .select('*')
     .eq('appears_on_type', type)
@@ -177,7 +191,8 @@ export async function createProfileAppearance(params: {
   storyExcerpt?: string;
   featured?: boolean;
 }) {
-  const { data, error } = await justiceHubClient
+  const jhClient = getJusticeHubClient();
+  const { data, error } = await jhClient
     .from('profile_appearances')
     .upsert({
       empathy_ledger_profile_id: params.empathyLedgerProfileId,
@@ -272,7 +287,8 @@ export async function syncProfilesFromStories() {
  * Get featured profiles for homepage/highlights
  */
 export async function getFeaturedProfiles(limit = 6) {
-  const { data: appearances } = await justiceHubClient
+  const jhClient = getJusticeHubClient();
+  const { data: appearances } = await jhClient
     .from('profile_appearances')
     .select('empathy_ledger_profile_id')
     .eq('featured', true)

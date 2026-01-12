@@ -38,11 +38,20 @@ export async function POST(request: NextRequest) {
     let ghlContactId: string | null = null;
 
     if (ghl.isConfigured()) {
-      const tags = [GHL_TAGS.EVENT_REGISTRANT];
+      const tags: string[] = [
+        GHL_TAGS.EVENT_REGISTRANT,
+        GHL_TAGS.SEEDS_JUSTICEHUB,
+        GHL_TAGS.PROJECT_LINKS_JUSTICEHUB
+      ];
 
       // Add event-specific tag if it's the CONTAINED launch
-      if (event_name?.includes('CONTAINED')) {
+      if (event_name?.toUpperCase().includes('CONTAINED')) {
         tags.push(GHL_TAGS.CONTAINED_LAUNCH);
+      }
+
+      // Add event-specific tag for VIP Dinner
+      if (event_name?.toUpperCase().includes('VIP')) {
+        tags.push(GHL_TAGS.VIP_DINNER_2026);
       }
 
       if (newsletter) {

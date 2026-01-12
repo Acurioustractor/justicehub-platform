@@ -1,5 +1,7 @@
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { NextRequest, NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 
 /**
  * JusticeHub AI Assistant - "ALMA Chat"
@@ -87,7 +89,7 @@ interface SearchResult {
  * Search across all JusticeHub data sources
  */
 async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
   const results: SearchResult[] = [];
   const searchTerms = query.toLowerCase().split(' ').filter(t => t.length > 2);
 
@@ -265,7 +267,7 @@ function calculateRelevance(query: string, name: string, description?: string): 
  * Get current statistics from the database
  */
 async function getStats() {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const [
     { count: totalInterventions },

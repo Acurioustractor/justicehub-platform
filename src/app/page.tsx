@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { ArrowRight, ArrowDown, Target, Award, DollarSign, TrendingUp, Users, Sparkles, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import FeaturedStories from '@/components/FeaturedStories';
+import CoELeaders from '@/components/CoELeaders';
+import HomepageNetworkMap from '@/components/HomepageNetworkMap';
 import EmpathyLedgerStories from '@/components/EmpathyLedgerStories';
 
 interface HomepageStats {
@@ -250,8 +251,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Stories from Empathy Ledger */}
-      <FeaturedStories />
+      {/* Centre of Excellence Leadership */}
+      <CoELeaders />
+
+      {/* National Network Map */}
+      <HomepageNetworkMap />
 
       {/* What We Build */}
       <section className="section-padding bg-black">

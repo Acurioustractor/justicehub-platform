@@ -11,52 +11,42 @@ export default async function AdminStoriesPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login?redirect=/admin/stories');
 
-  const { data: userData } = await supabase
-    .from('users')
-    .select('user_role')
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('is_super_admin')
     .eq('id', user.id)
     .single();
 
-  if (userData?.user_role !== 'admin') redirect('/');
+  if (!profileData?.is_super_admin) redirect('/');
 
-  // Fetch all stories from both articles and blog_posts tables
-  const [articlesResult, blogsResult] = await Promise.all([
-    supabase
-      .from('articles')
-      .select(`
-        *,
-        public_profiles!articles_author_id_fkey (
-          full_name,
-          slug
-        )
-      `)
-      .order('created_at', { ascending: false }),
-    supabase
-      .from('blog_posts')
-      .select(`
-        *,
-        public_profiles!blog_posts_author_id_fkey (
-          full_name,
-          slug
-        )
-      `)
-      .order('created_at', { ascending: false }),
-  ]);
+  // Fetch stories with author profiles using any to bypass strict linting on missing DB types
+  const { data: storiesData, error: storiesError } = await supabase
+    .from('stories')
+    .select(`
+      *,
+      profiles!stories_author_id_fkey (
+        full_name
+      )
+    `)
+    .order('created_at', { ascending: false });
 
-  // Merge both sources with content_type indicator
-  const articles = (articlesResult.data || []).map((item: any) => ({
-    ...item,
+  if (storiesError) {
+    console.error('Error fetching stories:', storiesError);
+  }
+
+  // Map to the Story interface expected by StoriesTable with safe fallbacks
+  const stories = (storiesData || []).map((item: any) => ({
+    id: item.id,
+    title: item.title || 'Untitled',
+    status: item.status || 'draft',
+    created_at: item.created_at || new Date().toISOString(),
     content_type: 'article' as const,
+    excerpt: item.excerpt || '',
+    public_profiles: item.profiles ? {
+      full_name: item.profiles.full_name,
+      slug: '' // profiles table doesn't have slug, will need to handle this
+    } : undefined
   }));
-
-  const blogs = (blogsResult.data || []).map((item: any) => ({
-    ...item,
-    content_type: 'blog' as const,
-  }));
-
-  const stories = [...articles, ...blogs].sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  );
 
   return (
     <div className="min-h-screen bg-gray-50 page-content">

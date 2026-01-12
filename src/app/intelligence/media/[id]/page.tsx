@@ -1,7 +1,9 @@
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ExternalLink, Newspaper, Calendar, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import Link from 'next/link';
+
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   params: Promise<{
@@ -37,7 +39,7 @@ function getSentimentIcon(sentiment: string | null) {
 
 export default async function MediaArticleDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   // Fetch media article details
   const { data: article, error } = await supabase

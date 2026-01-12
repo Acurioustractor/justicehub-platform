@@ -5,8 +5,8 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { MapPin, Calendar, Users, ArrowRight, ExternalLink, Mail, Filter, X } from 'lucide-react';
-import AustraliaNodesMap from '@/components/AustraliaNodesMap';
-import type { JusticeHubNode } from '@/components/AustraliaNodesMap';
+import SimpleNodesMap from '@/components/SimpleNodesMap';
+import type { JusticeHubNode } from '@/components/SimpleNodesMap';
 
 type NodeStatus = 'all' | 'active' | 'forming' | 'planned';
 
@@ -200,7 +200,7 @@ export default function NetworkPage() {
                   </div>
                 </div>
               ) : (
-                <AustraliaNodesMap
+                <SimpleNodesMap
                   nodes={filteredNodes}
                   height="600px"
                   onNodeSelect={handleNodeSelect}

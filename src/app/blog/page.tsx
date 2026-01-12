@@ -1,28 +1,27 @@
-import { createServiceClient } from '@/lib/supabase/service';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Calendar, User, Tag, ArrowRight } from 'lucide-react';
+import { Calendar, User, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import { fetchContentHubArticles } from '@/lib/empathy-ledger-content-hub';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Blog - JusticeHub',
   description: 'Stories, insights, and updates from the youth justice revolution',
+  openGraph: {
+    title: 'Blog - JusticeHub',
+    description: 'Stories, insights, and updates from the youth justice revolution',
+    type: 'website',
+    images: ['/images/og/blog.png'],
+  },
+  alternates: {
+    canonical: 'https://justicehub.org.au/blog',
+  },
 };
 
 export default async function BlogPage() {
-  const supabase = createServiceClient();
-
-  // Fetch all published blog posts
-  const { data: posts } = await supabase
-    .from('blog_posts')
-    .select(`
-      *,
-      public_profiles!blog_posts_author_id_fkey(full_name, slug, photo_url)
-    `)
-    .eq('status', 'published')
-    .order('published_at', { ascending: false });
+  const posts = await fetchContentHubArticles({ project: 'justicehub', limit: 60 });
 
   return (
     <div className="min-h-screen bg-white">
@@ -54,10 +53,10 @@ export default async function BlogPage() {
                   className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200"
                 >
                   {/* Featured Image */}
-                  {post.featured_image_url && (
+                  {post.featuredImageUrl && (
                     <div className="aspect-video border-b-2 border-black overflow-hidden">
                       <Image
-                        src={post.featured_image_url}
+                        src={post.featuredImageUrl}
                         alt={post.title}
                         width={600}
                         height={400}
@@ -102,16 +101,16 @@ export default async function BlogPage() {
                     <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
-                        {new Date(post.published_at).toLocaleDateString('en-AU', {
+                        {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-AU', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
-                        })}
+                        }) : 'Draft'}
                       </div>
-                      {post.public_profiles && (
+                      {post.authorName && (
                         <div className="flex items-center gap-1">
                           <User className="w-4 h-4" />
-                          {post.public_profiles.full_name}
+                          {post.authorName}
                         </div>
                       )}
                     </div>

@@ -185,13 +185,13 @@ export async function middleware(request: NextRequest) {
 
         // Check if user is admin (for /admin path protection)
         if (user && path.startsWith('/admin')) {
-          const { data: userData } = await supabase
-            .from('users')
-            .select('user_role')
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('is_super_admin')
             .eq('id', user.id)
             .single();
 
-          isAdminUser = userData?.user_role === 'admin';
+          isAdminUser = profileData?.is_super_admin === true;
           console.log('🔑 Admin check for /admin path:', { userId: user.id, isAdmin: isAdminUser });
         }
       } catch (error) {
@@ -216,18 +216,18 @@ export async function middleware(request: NextRequest) {
   if (path.startsWith('/api/')) {
     const clientId = getClientIdentifier(request);
     const rateLimitKey = `${clientId}:${path}`;
-    
+
     // Different limits for different endpoints
     const limit = path.includes('/upload') ? 10 : path.includes('/auth') ? 5 : 100;
-    
+
     if (!checkRateLimit(rateLimitKey, limit, 60000)) {
-      return new NextResponse(JSON.stringify({ error: 'Rate limit exceeded' }), { 
+      return new NextResponse(JSON.stringify({ error: 'Rate limit exceeded' }), {
         status: 429,
         headers: { 'Content-Type': 'application/json', 'Retry-After': '60' }
       });
     }
   }
-  
+
   // Most routes are public - no auth required
   // Protected routes can handle auth in their own page components
   return response;

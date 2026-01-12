@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { InterventionCard } from '@/components/alma';
 import type { Database } from '@/types/supabase';
 
+export const dynamic = 'force-dynamic';
+
 type Intervention = Database['public']['Tables']['alma_interventions']['Row'];
 
 interface PortfolioAnalytics {
@@ -93,23 +95,28 @@ async function getStats() {
   const [
     { count: totalInterventions },
     { count: communityControlled },
-    { count: withEvidence },
   ] = await Promise.all([
     supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
     supabase
       .from('alma_interventions')
       .select('*', { count: 'exact', head: true })
       .eq('consent_level', 'Community Controlled'),
-    supabase
-      .from('alma_interventions')
-      .select('id', { count: 'exact', head: true })
-      .not('id', 'is', null),
   ]);
+
+  // Count interventions that have at least one evidence record linked
+  const { data: interventionsWithEvidence } = await supabase
+    .from('alma_interventions')
+    .select('id, evidence:alma_evidence(count)')
+    .limit(2000);
+
+  const withEvidence = interventionsWithEvidence?.filter(
+    (i: any) => (i.evidence?.[0]?.count || 0) > 0
+  ).length || 0;
 
   return {
     totalInterventions: totalInterventions || 0,
     communityControlled: communityControlled || 0,
-    withEvidence: withEvidence || 0,
+    withEvidence,
   };
 }
 
@@ -335,13 +342,12 @@ export default async function PortfolioPage() {
                         {opportunity.title}
                       </h3>
                       <span
-                        className={`inline-flex items-center px-3 py-1 border-2 border-black text-xs font-bold uppercase tracking-wider ${
-                          opportunity.type === 'policy_tension'
+                        className={`inline-flex items-center px-3 py-1 border-2 border-black text-xs font-bold uppercase tracking-wider ${opportunity.type === 'policy_tension'
                             ? 'bg-sand-100 text-black'
                             : opportunity.type === 'cross_state'
-                            ? 'bg-eucalyptus-100 text-black'
-                            : 'bg-ochre-100 text-black'
-                        }`}
+                              ? 'bg-eucalyptus-100 text-black'
+                              : 'bg-ochre-100 text-black'
+                          }`}
                       >
                         {opportunity.type.replace('_', ' ')}
                       </span>
@@ -378,8 +384,8 @@ export default async function PortfolioPage() {
                     {opportunity.type === 'policy_tension'
                       ? 'Policy researchers can analyze the gap between evidence and implementation. Research partnerships provide access to this intelligence with Indigenous co-authorship requirements.'
                       : opportunity.type === 'cross_state'
-                      ? 'Cross-jurisdictional comparisons reveal best practices and transferable models. State governments can license ALMA to benchmark their programs against national data.'
-                      : 'Emerging practices indicate innovation happening at community level. Corporate sponsors can support these programs with direct grants and implementation funding.'}
+                        ? 'Cross-jurisdictional comparisons reveal best practices and transferable models. State governments can license ALMA to benchmark their programs against national data.'
+                        : 'Emerging practices indicate innovation happening at community level. Corporate sponsors can support these programs with direct grants and implementation funding.'}
                   </p>
                 </div>
               </div>
