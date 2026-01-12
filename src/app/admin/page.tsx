@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, CheckCircle2, FileText, Network, Database } from 'lucide-react';
+import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, CheckCircle2, FileText, Network, Database, Share2 } from 'lucide-react';
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -41,6 +41,8 @@ export default async function AdminDashboard() {
     { count: blogPostLinksCount },
     { count: empathyProfilesCount },
     { count: empathyTranscriptsCount },
+    { count: clearinghouseServicesCount },
+    { count: clearinghouseDocsCount },
   ] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_public', true),
@@ -57,6 +59,8 @@ export default async function AdminDashboard() {
     supabase.from('blog_posts_profiles').select('*', { count: 'exact', head: true }),
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
     supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
+    supabase.from('services').select('*', { count: 'exact', head: true }).eq('project', 'clearinghouse'),
+    supabase.from('clearinghouse_documents').select('*', { count: 'exact', head: true }),
   ]);
 
   // Calculate connection rates
@@ -149,6 +153,16 @@ export default async function AdminDashboard() {
       bgColor: 'bg-violet-50',
       textColor: 'text-violet-600',
     },
+    {
+      title: 'Clearinghouse',
+      count: clearinghouseServicesCount || 0,
+      subtitle: `${clearinghouseDocsCount || 0} docs`,
+      icon: Share2,
+      href: '/admin/clearinghouse',
+      color: 'from-amber-500 to-amber-600',
+      bgColor: 'bg-amber-50',
+      textColor: 'text-amber-600',
+    },
   ];
 
   return (
@@ -158,11 +172,20 @@ export default async function AdminDashboard() {
       <div className="pt-8 pb-16">
         <div className="container-justice">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-black text-black mb-2">Admin Dashboard</h1>
-            <p className="text-lg text-gray-600">
-              Manage your content and connections across the platform
-            </p>
+          <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-4xl font-black text-black mb-2">Admin Dashboard</h1>
+              <p className="text-lg text-gray-600">
+                Manage your content and connections across the platform
+              </p>
+            </div>
+            <Link
+              href="/admin/clearinghouse"
+              className="inline-flex items-center gap-2 px-5 py-3 bg-black text-white font-bold border-2 border-black hover:bg-gray-800 transition-colors"
+            >
+              <Share2 className="h-4 w-4" />
+              Go to Clearinghouse
+            </Link>
           </div>
 
           {/* Stats Grid - SimCity Style */}

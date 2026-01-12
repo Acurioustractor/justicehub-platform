@@ -1,0 +1,126 @@
+{
+  "info": {
+    "name": "JusticeHub Clearinghouse",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Submit Service (POST /api/clearinghouse)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "x-api-key", "value": "{{CLEARINGHOUSE_API_KEY}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clearinghouse",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "clearinghouse"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"source\": {\n    \"system\": \"alternativefirstresponders.com.au\",\n    \"record_id\": \"afr-123\",\n    \"url\": \"https://alternativefirstresponders.com.au/ref/123\",\n    \"submitted_by\": \"ops@partner.org\"\n  },\n  \"organization\": {\n    \"name\": \"Community First Responders QLD\",\n    \"website\": \"https://alternativefirstresponders.com.au\",\n    \"email\": \"info@alternativefirstresponders.com.au\",\n    \"phone\": \"+61-7-5555-5555\",\n    \"state\": \"QLD\",\n    \"city\": \"Brisbane\"\n  },\n  \"service\": {\n    \"name\": \"Wellbeing Response Team\",\n    \"description\": \"Non-police response for welfare and mental health calls\",\n    \"category\": \"crisis_response\",\n    \"website\": \"https://alternativefirstresponders.com.au/teams/qld\",\n    \"contact_email\": \"dispatch@alternativefirstresponders.com.au\",\n    \"contact_phone\": \"+61-7-5555-5556\",\n    \"state\": \"QLD\",\n    \"city\": \"Brisbane\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Submit Document (POST /api/clearinghouse/documents)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "x-api-key", "value": "{{CLEARINGHOUSE_API_KEY}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clearinghouse/documents",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "clearinghouse", "documents"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"source\": {\n    \"system\": \"alternativefirstresponders.com.au\",\n    \"record_id\": \"afr-doc-001\",\n    \"url\": \"https://alternativefirstresponders.com.au/resources/protocol-v1\",\n    \"submitted_by\": \"ops@partner.org\"\n  },\n  \"document\": {\n    \"title\": \"Community Wellbeing Response Protocol\",\n    \"description\": \"Field protocol for non-police crisis response teams.\",\n    \"url\": \"https://alternativefirstresponders.com.au/resources/protocol-v1.pdf\",\n    \"format\": \"pdf\",\n    \"tags\": [\"protocol\", \"crisis_response\", \"training\"],\n    \"summary\": \"Step-by-step triage and de-escalation guidance for community-led responders.\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "List Documents (GET /api/clearinghouse/documents)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "x-api-key", "value": "{{CLEARINGHOUSE_API_KEY}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clearinghouse/documents?source=alternativefirstresponders.com.au&status=pending&page=1&limit=100",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "clearinghouse", "documents"],
+          "query": [
+            { "key": "source", "value": "alternativefirstresponders.com.au" },
+            { "key": "status", "value": "pending" },
+            { "key": "page", "value": "1" },
+            { "key": "limit", "value": "100" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Export Documents CSV (GET /api/clearinghouse/documents?format=csv)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "x-api-key", "value": "{{CLEARINGHOUSE_API_KEY}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clearinghouse/documents?source=alternativefirstresponders.com.au&format=csv",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "clearinghouse", "documents"],
+          "query": [
+            { "key": "source", "value": "alternativefirstresponders.com.au" },
+            { "key": "format", "value": "csv" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Services (GET /api/clearinghouse)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "x-api-key", "value": "{{CLEARINGHOUSE_API_KEY}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clearinghouse?source=alternativefirstresponders.com.au&status=pending&page=1&limit=100",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "clearinghouse"],
+          "query": [
+            { "key": "source", "value": "alternativefirstresponders.com.au" },
+            { "key": "status", "value": "pending" },
+            { "key": "page", "value": "1" },
+            { "key": "limit", "value": "100" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Export CSV (GET /api/clearinghouse?format=csv)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "x-api-key", "value": "{{CLEARINGHOUSE_API_KEY}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/clearinghouse?source=alternativefirstresponders.com.au&format=csv",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "clearinghouse"],
+          "query": [
+            { "key": "source", "value": "alternativefirstresponders.com.au" },
+            { "key": "format", "value": "csv" }
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "CLEARINGHOUSE_API_KEY", "value": "replace-with-your-key" }
+  ]
+}

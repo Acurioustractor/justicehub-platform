@@ -1,0 +1,27 @@
+{
+  "source": {
+    "system": "alternativefirstresponders.com.au",
+    "record_id": "afr-123",
+    "url": "https://alternativefirstresponders.com.au/ref/123",
+    "submitted_by": "ops@partner.org"
+  },
+  "organization": {
+    "name": "Community First Responders QLD",
+    "website": "https://alternativefirstresponders.com.au",
+    "email": "info@alternativefirstresponders.com.au",
+    "phone": "+61-7-5555-5555",
+    "description": "Community-led wellbeing and crisis de-escalation responders.",
+    "state": "QLD",
+    "city": "Brisbane"
+  },
+  "service": {
+    "name": "Wellbeing Response Team",
+    "description": "Non-police response for welfare, mental health, and homelessness calls.",
+    "category": "crisis_response",
+    "website": "https://alternativefirstresponders.com.au/teams/qld",
+    "contact_email": "dispatch@alternativefirstresponders.com.au",
+    "contact_phone": "+61-7-5555-5556",
+    "state": "QLD",
+    "city": "Brisbane"
+  }
+}

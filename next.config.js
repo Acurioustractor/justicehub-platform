@@ -1,3 +1,4 @@
+const path = require('path');
 const createMDX = require('@next/mdx');
 const remarkGfm = require('remark-gfm');
 const rehypeHighlight = require('rehype-highlight');
@@ -16,6 +17,7 @@ const nextConfig = {
     // serverActions are now enabled by default in Next.js 14
     optimizeServerReact: true,
     mdxRs: true, // Use faster Rust-based MDX compiler
+    serverComponentsExternalPackages: ['onnxruntime-node'],
   },
   images: {
     remotePatterns: [
@@ -96,6 +98,11 @@ const nextConfig = {
     ];
   },
   webpack: (config, { isServer }) => {
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      '@chroma-core/default-embed': path.resolve(__dirname, 'src/lib/chroma/default-embed.ts'),
+    };
+
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
