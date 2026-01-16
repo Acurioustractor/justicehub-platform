@@ -29,16 +29,6 @@ async function getStoriesData() {
       .eq('status', 'published')
       .order('published_at', { ascending: false });
 
-    // Fetch blog posts
-    const blogsQuery = supabase
-      .from('blog_posts')
-      .select(`
-        *,
-        public_profiles!blog_posts_author_id_fkey(full_name, slug, photo_url)
-      `)
-      .eq('status', 'published')
-      .order('published_at', { ascending: false });
-
     // Fetch Empathy Ledger stories (only those tagged for JusticeHub display)
     // Note: We don't join storytellers table due to RLS restrictions
     const empathyLedgerQuery = empathyLedgerClient
@@ -62,11 +52,17 @@ async function getStoriesData() {
       .eq('justicehub_featured', true)  // Only stories tagged for JusticeHub
       .order('published_at', { ascending: false });
 
-    const [articlesResult, blogsResult, empathyLedgerResult] = await Promise.all([
+    const [articlesResult, empathyLedgerResult] = await Promise.all([
       articlesQuery,
-      blogsQuery,
       empathyLedgerQuery,
     ]);
+
+    // Log Empathy Ledger result for debugging
+    if (empathyLedgerResult.error) {
+      console.error('Empathy Ledger query error:', empathyLedgerResult.error);
+    } else {
+      console.log(`Empathy Ledger: Found ${empathyLedgerResult.data?.length || 0} stories with justicehub_featured=true`);
+    }
 
     // Transform and merge data
     const articles = (articlesResult.data || []).map((article: any) => ({
@@ -74,13 +70,6 @@ async function getStoriesData() {
       content_type: 'article' as const,
       author: article.public_profiles,
       primary_tag: article.category,
-    }));
-
-    const blogs = (blogsResult.data || []).map((blog: any) => ({
-      ...blog,
-      content_type: 'blog' as const,
-      author: blog.public_profiles,
-      primary_tag: blog.tags?.[0] || 'Editorial',
     }));
 
     // Map story_type to human-readable category
@@ -117,8 +106,8 @@ async function getStoriesData() {
       };
     });
 
-    // Merge and sort by published date
-    const allContent = [...articles, ...blogs, ...empathyLedgerStories].sort(
+    // Merge and sort by published date (articles + Empathy Ledger voices)
+    const allContent = [...articles, ...empathyLedgerStories].sort(
       (a, b) =>
         new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
     );
