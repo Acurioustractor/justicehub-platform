@@ -1,5 +1,11 @@
 # ALMA 2.0: Australia's Community Justice Intelligence System
 
+> **ALMA** = **A**uthentic **L**earning for **M**eaningful **A**ccountability
+>
+> The name also comes from the Spanish/Latin word **"alma"** meaning **"soul"** - because true impact measurement must capture the human spirit, not just statistics.
+
+---
+
 > **Mission**: Demonstrate irrefutably that community-based services produce better outcomes than state detention, and provide the evidence infrastructure to shift resources from incarceration to community support.
 
 ## The Problem We're Solving

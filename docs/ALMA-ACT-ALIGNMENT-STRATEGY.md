@@ -10,6 +10,15 @@ This document defines how ALMA (Australian Justice Intelligence) operates within
 
 ### 1.1 What ALMA Means
 
+> **ALMA** = **A**uthentic **L**earning for **M**eaningful **A**ccountability
+
+The name also comes from the Spanish/Latin word **"alma"** meaning **"soul"** - reflecting ACT's belief that true impact measurement must capture the human spirit, not just numbers. This dual meaning is intentional: ALMA brings soul to accountability.
+
+**Simple Explanation:**
+> "ALMA means 'soul' in Spanish. It also stands for Authentic Learning for Meaningful Accountability. We chose this name because measuring what matters in justice reform requires seeing the whole person - their story, their community, their potential - not just statistics."
+
+---
+
 **Within JusticeHub:**
 ALMA is the intelligence layer - a community-powered evidence platform that:
 - Aggregates intervention data from government, academic, and community sources
@@ -344,7 +353,7 @@ ALMA-ACT alignment is successful when:
 
 | Term | Definition |
 |------|------------|
-| ALMA | Australian Justice Intelligence - JusticeHub's evidence platform |
+| ALMA | **A**uthentic **L**earning for **M**eaningful **A**ccountability. Also Spanish/Latin for "soul" - reflecting human-centered impact measurement. JusticeHub's evidence platform. |
 | ACT | A Curious Tractor - parent regenerative innovation organization |
 | LCAA | Listen, Curiosity, Action, Art - ACT methodology |
 | OCAP | Ownership, Control, Access, Possession - Indigenous data sovereignty principles |
