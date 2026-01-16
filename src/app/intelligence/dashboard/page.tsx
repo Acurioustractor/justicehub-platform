@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Activity, Globe, Shield, AlertTriangle, ArrowRight, TrendingUp, Calculator } from 'lucide-react';
+import { Activity, Globe, Shield, AlertTriangle, ArrowRight, TrendingUp, Calculator, Brain } from 'lucide-react';
 import { Navigation } from '@/components/ui/navigation';
 
 type DashboardData = {
@@ -250,6 +250,19 @@ export default function MasterDashboard() {
                                 </p>
                                 <div className="flex items-center gap-2 text-sm font-bold text-emerald-800 group-hover:underline">
                                     Calculate Impact <ArrowRight className="w-4 h-4" />
+                                </div>
+                            </Link>
+
+                            {/* Research Agent CTA */}
+                            <Link href="/intelligence/research" className="block border-2 border-blue-600 bg-blue-50 p-6 hover:bg-blue-100 transition-colors group">
+                                <h3 className="font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2 text-blue-800">
+                                    <Brain className="w-4 h-4" /> Research Agent
+                                </h3>
+                                <p className="text-sm text-blue-700 mb-3">
+                                    Ask questions and get evidence-based answers from ALMA.
+                                </p>
+                                <div className="flex items-center gap-2 text-sm font-bold text-blue-800 group-hover:underline">
+                                    Start Research <ArrowRight className="w-4 h-4" />
                                 </div>
                             </Link>
 
