@@ -38,10 +38,10 @@ interface PublicProfile {
     };
   }>;
 
-  community_programs_profiles: Array<{
+  registered_services_profiles: Array<{
     role: string;
     role_description: string | null;
-    community_programs: {
+    registered_services: {
       id: string;
       name: string;
       organization: string;
@@ -103,10 +103,10 @@ export default async function ProfilePage({
           featured_image_url
         )
       ),
-      community_programs_profiles (
+      registered_services_profiles (
         role,
         role_description,
-        community_programs:program_id (
+        registered_services:program_id (
           id,
           name,
           organization,
@@ -310,7 +310,7 @@ export default async function ProfilePage({
 
           {/* Check if there's any connected work */}
           {(typedProfile.art_innovation_profiles?.length > 0 ||
-            typedProfile.community_programs_profiles?.length > 0 ||
+            typedProfile.registered_services_profiles?.length > 0 ||
             typedProfile.services_profiles?.length > 0) ? (
             <div className="grid gap-12">
               {/* Art & Innovation Projects */}
@@ -354,28 +354,28 @@ export default async function ProfilePage({
               )}
 
               {/* Community Programs */}
-              {typedProfile.community_programs_profiles && typedProfile.community_programs_profiles.length > 0 && (
+              {typedProfile.registered_services_profiles && typedProfile.registered_services_profiles.length > 0 && (
                 <div>
                   <div className="flex items-center gap-2 mb-6">
                     <Users className="h-5 w-5 text-eucalyptus-600" />
                     <h3 className="text-2xl font-bold">Community Programs</h3>
                   </div>
                   <div className="grid md:grid-cols-2 gap-6">
-                    {typedProfile.community_programs_profiles.map((link: any) => (
+                    {typedProfile.registered_services_profiles.map((link: any) => (
                       <Link
-                        key={link.community_programs.id}
-                        href={`/community-programs/${link.community_programs.id}`}
+                        key={link.registered_services.id}
+                        href={`/community-programs/${link.registered_services.id}`}
                         className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group"
                       >
                         <h4 className="font-bold text-lg mb-2 group-hover:text-eucalyptus-600 transition-colors">
-                          {link.community_programs.name}
+                          {link.registered_services.name}
                         </h4>
                         <p className="text-sm text-earth-700 mb-2">
-                          {link.community_programs.organization}
+                          {link.registered_services.organization}
                         </p>
                         <div className="flex items-center gap-1 text-sm text-earth-600 mb-3">
                           <MapPin className="h-4 w-4" />
-                          {link.community_programs.location}, {link.community_programs.state}
+                          {link.registered_services.location}, {link.registered_services.state}
                         </div>
                         <p className="text-sm font-medium">
                           <span className="text-eucalyptus-600">Role:</span> {link.role_description || link.role}

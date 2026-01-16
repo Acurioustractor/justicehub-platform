@@ -14,7 +14,7 @@ async function getGrassrootsData() {
   try {
     // Fetch featured/curated community programs for grassroots page
     const { data: programs, error } = await supabase
-      .from('community_programs')
+      .from('registered_services')
       .select('*')
       .order('is_featured', { ascending: false })
       .order('success_rate', { ascending: false })

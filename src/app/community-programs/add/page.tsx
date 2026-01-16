@@ -60,7 +60,7 @@ export default function AddProgramPage() {
 
     try {
       const { data, error: supabaseError } = await supabase
-        .from('community_programs')
+        .from('registered_services')
         .insert([formData])
         .select()
         .single();

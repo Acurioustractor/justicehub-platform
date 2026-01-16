@@ -24,7 +24,7 @@ export async function GET() {
 
     // Fetch program counts
     const { data: programs } = await supabase
-      .from('community_programs')
+      .from('registered_services')
       .select('organization_id');
 
     const programCounts: Record<string, number> = {};

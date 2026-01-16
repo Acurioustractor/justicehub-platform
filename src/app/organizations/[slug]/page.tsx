@@ -111,7 +111,7 @@ async function getOrganization(slugOrId: string): Promise<Organization | null> {
 async function getOrganizationPrograms(orgId: string): Promise<Program[]> {
   const supabase = createServiceClient();
   const { data, error } = await supabase
-    .from('community_programs')
+    .from('registered_services')
     .select('*')
     .eq('organization_id', orgId)
     .order('is_featured', { ascending: false })

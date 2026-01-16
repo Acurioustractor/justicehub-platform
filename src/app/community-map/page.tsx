@@ -164,7 +164,7 @@ function transformDbService(dbService: any): CommunityMapService | null {
     return null;
   }
 
-  // Handle both services_complete view format and community_programs format
+  // Handle both services_complete view format and registered_services format
   const state = dbService.location?.state || dbService.state || 'Unknown';
   const city = dbService.location?.city || dbService.location?.suburb || dbService.suburb || dbService.city || 'Unknown';
 

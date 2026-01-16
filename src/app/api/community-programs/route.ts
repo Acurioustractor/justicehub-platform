@@ -7,8 +7,9 @@ export async function GET() {
   const supabase = createServiceClient();
 
   try {
+    // Table renamed from community_programs to registered_services
     const { data: programs, error } = await supabase
-      .from('community_programs')
+      .from('registered_services')
       .select('*')
       .order('is_featured', { ascending: false })
       .order('name');

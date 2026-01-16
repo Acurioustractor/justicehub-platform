@@ -530,7 +530,7 @@ export interface PortfolioAnalysis {
 // =====================================
 
 export interface ALMAInterventionUnified extends ALMAIntervention {
-  source: 'alma' | 'community_programs';
+  source: 'alma' | 'registered_services';
   outcomes: Array<{
     id: string;
     name: string;

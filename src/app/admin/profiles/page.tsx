@@ -38,7 +38,7 @@ export default async function AdminProfilesPage({
     .select(`
       *,
       art_innovation_profiles (count),
-      community_programs_profiles (count),
+      registered_services_profiles (count),
       services_profiles (count)
     `)
     .order('created_at', { ascending: false });
@@ -221,14 +221,14 @@ export default async function AdminProfilesPage({
                         {profile.art_innovation_profiles?.[0]?.count > 0 && (
                           <div>🎨 {profile.art_innovation_profiles[0].count} art projects</div>
                         )}
-                        {profile.community_programs_profiles?.[0]?.count > 0 && (
-                          <div>🏘️ {profile.community_programs_profiles[0].count} programs</div>
+                        {profile.registered_services_profiles?.[0]?.count > 0 && (
+                          <div>🏘️ {profile.registered_services_profiles[0].count} programs</div>
                         )}
                         {profile.services_profiles?.[0]?.count > 0 && (
                           <div>🔧 {profile.services_profiles[0].count} services</div>
                         )}
                         {(!profile.art_innovation_profiles?.[0]?.count &&
-                          !profile.community_programs_profiles?.[0]?.count &&
+                          !profile.registered_services_profiles?.[0]?.count &&
                           !profile.services_profiles?.[0]?.count) && (
                             <span className="text-gray-400 italic">No connections</span>
                           )}

@@ -46,7 +46,7 @@ export default function ProfileConnectionsPage({ params }: { params: { id: strin
       .order('title');
 
     const { data: programsData } = await supabase
-      .from('community_programs')
+      .from('registered_services')
       .select('id, name, organization')
       .order('name');
 
@@ -81,10 +81,10 @@ export default function ProfileConnectionsPage({ params }: { params: { id: strin
       .eq('profile_id', params.id);
 
     const { data: programLinks } = await supabase
-      .from('community_programs_profiles')
+      .from('registered_services_profiles')
       .select(`
         *,
-        community_programs:program_id (id, name, organization)
+        registered_services:program_id (id, name, organization)
       `)
       .eq('profile_id', params.id);
 
@@ -145,7 +145,7 @@ export default function ProfileConnectionsPage({ params }: { params: { id: strin
     if (!role) return;
 
     const { error } = await supabase
-      .from('community_programs_profiles')
+      .from('registered_services_profiles')
       .insert({
         program_id: programId,
         profile_id: params.id,
@@ -197,7 +197,7 @@ export default function ProfileConnectionsPage({ params }: { params: { id: strin
     if (!confirm('Remove this connection?')) return;
 
     const { error } = await supabase
-      .from('community_programs_profiles')
+      .from('registered_services_profiles')
       .delete()
       .eq('id', linkId);
 
@@ -368,7 +368,7 @@ export default function ProfileConnectionsPage({ params }: { params: { id: strin
               {linkedPrograms.map((link: any) => (
                 <div key={link.id} className="flex items-center justify-between p-3 bg-sand-50 border border-black">
                   <div>
-                    <div className="font-bold">{link.community_programs.name}</div>
+                    <div className="font-bold">{link.registered_services.name}</div>
                     <div className="text-sm text-earth-600">{link.role}</div>
                   </div>
                   <button

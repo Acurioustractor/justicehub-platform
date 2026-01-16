@@ -25,9 +25,9 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Profile not found. Please create a profile first.' }, { status: 404 });
         }
 
-        // 3. Insert Claim (community_programs_profiles)
+        // 3. Insert Claim (registered_services_profiles)
         const { data, error } = await supabase
-            .from('community_programs_profiles')
+            .from('registered_services_profiles')
             .insert({
                 program_id: programId,
                 public_profile_id: profile.id,

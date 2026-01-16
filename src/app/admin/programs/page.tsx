@@ -23,10 +23,10 @@ export default async function AdminProgramsPage() {
 
   // Fetch all programs with profile connection counts
   const { data: programs } = await supabase
-    .from('community_programs')
+    .from('registered_services')
     .select(`
       *,
-      community_programs_profiles(count)
+      registered_services_profiles(count)
     `)
     .order('created_at', { ascending: false });
 
@@ -67,7 +67,7 @@ export default async function AdminProgramsPage() {
                 </thead>
                 <tbody>
                   {programs.map((program: any) => {
-                    const connectionCount = program.community_programs_profiles?.[0]?.count || 0;
+                    const connectionCount = program.registered_services_profiles?.[0]?.count || 0;
                     return (
                       <tr key={program.id} className="border-b border-gray-200 hover:bg-gray-50">
                         <td className="px-6 py-4 font-medium">{program.name}</td>

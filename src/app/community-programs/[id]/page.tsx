@@ -81,7 +81,7 @@ export default function ProgramDetailPage() {
     async function fetchProgram() {
       setLoading(true);
       const { data, error } = await supabase
-        .from('community_programs')
+        .from('registered_services')
         .select(`
           *,
           organizations:organization_id (

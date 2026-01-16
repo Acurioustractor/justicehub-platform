@@ -13,7 +13,7 @@ async function getCommunityProgramsData() {
 
   try {
     const { data: programs, error } = await supabase
-      .from('community_programs')
+      .from('registered_services')
       .select('*')
       .order('is_featured', { ascending: false })
       .order('name');

@@ -134,7 +134,7 @@ export default function ContentHealthPage() {
 
     // 4. Community Programs
     const { data: programs, count: progCount } = await supabase
-      .from('community_programs')
+      .from('registered_services')
       .select('id, name, description, organization, impact_summary, is_featured', { count: 'exact' });
 
     const progComplete = programs?.filter(p =>
@@ -146,7 +146,7 @@ export default function ContentHealthPage() {
 
     results.push({
       name: 'Community Programs',
-      table: 'community_programs',
+      table: 'registered_services',
       icon: <Briefcase className="w-5 h-5" />,
       total: progCount || 0,
       complete: progComplete,

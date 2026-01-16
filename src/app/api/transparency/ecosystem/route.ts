@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch community programs with coordinates
     let programsQuery = supabase
-      .from('community_programs')
+      .from('registered_services')
       .select('id, name, organization, location, state, latitude, longitude, approach')
       .not('latitude', 'is', null)
       .order('name');
