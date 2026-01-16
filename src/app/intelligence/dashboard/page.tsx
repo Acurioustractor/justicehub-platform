@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Activity, Globe, Shield, AlertTriangle, ArrowRight, TrendingUp } from 'lucide-react';
+import { Activity, Globe, Shield, AlertTriangle, ArrowRight, TrendingUp, Calculator } from 'lucide-react';
 import { Navigation } from '@/components/ui/navigation';
 
 type DashboardData = {
@@ -239,6 +239,19 @@ export default function MasterDashboard() {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Impact Calculator CTA */}
+                            <Link href="/intelligence/impact-calculator" className="block border-2 border-emerald-600 bg-emerald-50 p-6 hover:bg-emerald-100 transition-colors group">
+                                <h3 className="font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2 text-emerald-800">
+                                    <Calculator className="w-4 h-4" /> Impact Calculator
+                                </h3>
+                                <p className="text-sm text-emerald-700 mb-3">
+                                    Compare the true cost of detention vs community-based services.
+                                </p>
+                                <div className="flex items-center gap-2 text-sm font-bold text-emerald-800 group-hover:underline">
+                                    Calculate Impact <ArrowRight className="w-4 h-4" />
+                                </div>
+                            </Link>
 
                             {/* Attention Required */}
                             <div className="bg-black text-white p-6 border-2 border-black">
