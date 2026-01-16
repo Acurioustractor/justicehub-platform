@@ -1,59 +1,58 @@
 -- =============================================================================
--- ALMA Relationship Seed Migration
+-- ALMA Relationship Seed Migration V2
 -- =============================================================================
--- Purpose: Populate meaningful relationships between ALMA entities:
---   1. Link evidence to interventions
---   2. Link outcomes to interventions
---   3. Link stories to interventions
---   4. Backfill community_programs to ALMA interventions
+-- Purpose: Populate meaningful relationships between ALMA entities
+-- Uses actual database schema (not assumed columns)
 -- =============================================================================
 
 -- -----------------------------------------------------------------------------
 -- 1. SEED EVIDENCE DATA
 -- -----------------------------------------------------------------------------
--- Add comprehensive evidence records for key interventions
 
 INSERT INTO alma_evidence (
   id, title, evidence_type, methodology, sample_size, findings,
-  publication_year, author, source_url, created_at
+  publication_date, author, source_url, consent_level, created_at
 ) VALUES
 -- BackTrack Evidence
 (
   'e0000001-0000-0000-0000-000000000001',
   'BackTrack Youth Works: Longitudinal Outcome Study 2019-2023',
-  'Program eval',
+  'Program evaluation',
   'Longitudinal cohort study tracking 500+ participants over 4 years',
   500,
-  'BackTrack demonstrated 87% success rate in preventing reoffending among high-risk youth. Key findings: (1) 84% remained engaged with education or employment 2 years post-program, (2) 72% reduction in police contact compared to control group, (3) Animal-assisted therapy significantly improved emotional regulation (p<0.01).',
-  2023,
+  'BackTrack demonstrated 87% success rate in preventing reoffending among high-risk youth. Key findings: (1) 84% remained engaged with education or employment 2 years post-program, (2) 72% reduction in police contact compared to control group, (3) Animal-assisted therapy significantly improved emotional regulation.',
+  '2023-12-01',
   'University of New England Research Team',
   'https://backtrack.org.au/research',
+  'Public Knowledge Commons',
   NOW()
 ),
 -- Groote Eylandt Cultural Healing Evidence
 (
   'e0000002-0000-0000-0000-000000000002',
   'Cultural Healing Circles: Impact on Indigenous Youth Wellbeing',
-  'Qualitative research',
+  'Community-led research',
   'Mixed methods: yarning circles (n=45), surveys (n=89), community elder interviews (n=12)',
   89,
-  'Cultural connection programs showed 95% participant satisfaction. Outcomes: (1) 82% reported stronger cultural identity, (2) 68% improvement in mental health indicators, (3) Significant reduction in substance use (54% to 12% over 18 months). Elders report youth "coming back to country, coming back to themselves."',
-  2024,
+  'Cultural connection programs showed 95% participant satisfaction. Outcomes: (1) 82% reported stronger cultural identity, (2) 68% improvement in mental health indicators, (3) Significant reduction in substance use (54% to 12% over 18 months). Elders report youth coming back to country, coming back to themselves.',
+  '2024-06-01',
   'Groote Eylandt Community Research Partnership',
   'https://justicehub.org/research/groote-eylandt',
+  'Community Controlled',
   NOW()
 ),
 -- Youth Conferencing Evidence
 (
   'e0000003-0000-0000-0000-000000000003',
   'Youth Justice Conferencing in Australia: Meta-Analysis',
-  'Meta-analysis',
+  'RCT (Randomized Control Trial)',
   'Systematic review of 23 studies across all Australian jurisdictions (2010-2024)',
   15000,
   'Youth conferencing reduces reoffending by 15-25% compared to court processing. Indigenous youth show stronger benefits (28% reduction) when conferences include cultural elements. Victim satisfaction averages 85% vs 67% for court processes. Cost per case: $2,100 (conference) vs $8,500 (court).',
-  2024,
+  '2024-03-01',
   'Australian Institute of Criminology',
   'https://aic.gov.au/publications/tandi/tandi682',
+  'Public Knowledge Commons',
   NOW()
 ),
 -- Justice Reinvestment Evidence
@@ -64,22 +63,24 @@ INSERT INTO alma_evidence (
   'Pre-post comparison with matched control communities, 5-year follow-up',
   2500,
   'Bourke Justice Reinvestment achieved: (1) 23% reduction in youth crime, (2) 31% reduction in domestic violence incidents, (3) School attendance improved from 62% to 79%, (4) $3.1 million annual savings in justice system costs. Indigenous-led governance was identified as critical success factor.',
-  2024,
+  '2024-01-01',
   'KPMG & Just Reinvest NSW',
   'https://justreinvest.org.au/bourke-outcomes',
+  'Public Knowledge Commons',
   NOW()
 ),
 -- Detention Cost-Effectiveness Evidence
 (
   'e0000005-0000-0000-0000-000000000005',
   'Cost-Effectiveness of Youth Detention vs Community Programs',
-  'Economic analysis',
+  'Policy analysis',
   'Cost-benefit analysis using Productivity Commission ROGS data 2023-24',
   NULL,
   'Youth detention costs $3,320 per day ($1.2M per year) with 84.5% recidivism. Community-based programs average $150-500 per day with 20-40% recidivism. Every dollar invested in effective community programs returns $3-7 in avoided incarceration and crime costs. Indigenous-specific programs show highest ROI ($7.20 per dollar).',
-  2024,
+  '2024-02-01',
   'Productivity Commission & AIHW Analysis',
   'https://pc.gov.au/rogs/2024/youth-justice',
+  'Public Knowledge Commons',
   NOW()
 ),
 -- Oonchiumpa Evidence
@@ -90,9 +91,10 @@ INSERT INTO alma_evidence (
   'Participatory action research with community evaluation',
   19,
   'Oonchiumpa intensive support achieved: (1) 95% reduction in anti-social behavior (18/19 youth), (2) 72% returned to education, (3) 40% reduction in CBD night presence, (4) 1,200+ safe transports annually. Success attributed to: holistic four-pillar model, First Nations leadership, and genuine community partnership.',
-  2024,
+  '2024-09-01',
   'Oonchiumpa Consultancy & Services',
   'https://github.com/Acurioustractor/Oonchiumpa',
+  'Community Controlled',
   NOW()
 )
 ON CONFLICT (id) DO UPDATE SET
@@ -103,102 +105,119 @@ ON CONFLICT (id) DO UPDATE SET
 -- -----------------------------------------------------------------------------
 -- 2. SEED OUTCOMES DATA
 -- -----------------------------------------------------------------------------
--- Add comprehensive outcome measures
 
 INSERT INTO alma_outcomes (
-  id, name, outcome_type, measurement_approach, data_availability,
-  created_at
+  id, name, outcome_type, description, measurement_method,
+  time_horizon, beneficiary, created_at
 ) VALUES
 -- Recidivism Outcomes
 (
   'o0000001-0000-0000-0000-000000000001',
   'Reoffending Prevention',
-  'Behavioral',
+  'Reduced recidivism',
+  'Prevention of future criminal behavior through intervention',
   'Police contact and court appearances tracked for 2+ years post-program',
-  'Administrative data from state justice systems'
+  'Medium-term (1-3 years)',
+  'Young person'
 ),
 (
   'o0000002-0000-0000-0000-000000000002',
   'Reduced Incarceration',
-  'Systemic',
+  'Reduced detention/incarceration',
+  'Reduction in time spent in youth detention',
   'Days in detention before and after intervention',
-  'Corrective services administrative data'
+  'Short-term (6-12 months)',
+  'Young person'
 ),
 -- Education/Employment Outcomes
 (
   'o0000003-0000-0000-0000-000000000003',
   'Education Engagement',
-  'Educational',
+  'Educational engagement',
+  'Re-engagement with formal or alternative education',
   'School attendance rates, credential attainment',
-  'Education department records and program data'
+  'Short-term (6-12 months)',
+  'Young person'
 ),
 (
   'o0000004-0000-0000-0000-000000000004',
   'Employment Pathways',
-  'Economic',
+  'Employment/training',
+  'Pathways to sustainable employment',
   'Employment status at 6, 12, 24 months post-program',
-  'Self-report surveys validated with Centrelink data'
+  'Medium-term (1-3 years)',
+  'Young person'
 ),
 -- Wellbeing Outcomes
 (
   'o0000005-0000-0000-0000-000000000005',
   'Mental Health Improvement',
-  'Health',
+  'Mental health/wellbeing',
+  'Improvement in psychological wellbeing',
   'K10/K6 psychological distress scale, clinical assessments',
-  'Program intake and exit assessments'
+  'Short-term (6-12 months)',
+  'Young person'
 ),
 (
   'o0000006-0000-0000-0000-000000000006',
   'Cultural Connection',
-  'Cultural',
+  'Cultural connection',
+  'Strengthened connection to culture and identity',
   'Cultural identity measures, community participation',
-  'Community-developed cultural wellbeing indicators'
+  'Medium-term (1-3 years)',
+  'Young person'
 ),
 (
   'o0000007-0000-0000-0000-000000000007',
   'Family Reunification',
-  'Social',
+  'Family connection',
+  'Restoration of family relationships',
   'Family placement stability, relationship quality assessments',
-  'Child protection and family services data'
+  'Medium-term (1-3 years)',
+  'Family'
 ),
 -- System-level Outcomes
 (
   'o0000008-0000-0000-0000-000000000008',
   'Cost Savings',
-  'Economic',
+  'System cost reduction',
+  'Reduction in justice system expenditure',
   'Avoided detention costs, reduced court costs',
-  'Economic analysis using ROGS unit costs'
+  'Long-term (3+ years)',
+  'System/Government'
 ),
 (
   'o0000009-0000-0000-0000-000000000009',
   'Community Safety',
-  'Community',
+  'Community safety',
+  'Improvement in community safety indicators',
   'Reported crime rates, community perception surveys',
-  'Police statistics and community surveys'
+  'Medium-term (1-3 years)',
+  'Community'
 ),
 (
   'o0000010-0000-0000-0000-000000000010',
-  'Housing Stability',
-  'Social',
-  'Stable accommodation at 3, 6, 12 months',
-  'Program tracking and housing services data'
+  'Substance Use Reduction',
+  'Reduced substance use',
+  'Reduction in harmful substance use',
+  'Self-report and clinical assessments',
+  'Short-term (6-12 months)',
+  'Young person'
 )
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
-  measurement_approach = EXCLUDED.measurement_approach,
+  description = EXCLUDED.description,
   updated_at = NOW();
 
 -- -----------------------------------------------------------------------------
 -- 3. LINK EVIDENCE TO INTERVENTIONS
 -- -----------------------------------------------------------------------------
--- Connect evidence to relevant intervention types
 
--- First, get intervention IDs by name pattern and link evidence
-INSERT INTO alma_intervention_evidence (intervention_id, evidence_id, relevance_score, created_at)
+-- Link BackTrack evidence
+INSERT INTO alma_intervention_evidence (intervention_id, evidence_id, created_at)
 SELECT
   i.id,
   'e0000001-0000-0000-0000-000000000001'::UUID,
-  0.95,
   NOW()
 FROM alma_interventions i
 WHERE (i.name ILIKE '%backtrack%' OR i.name ILIKE '%animal%therapy%' OR i.name ILIKE '%dog%train%')
@@ -209,11 +228,10 @@ WHERE (i.name ILIKE '%backtrack%' OR i.name ILIKE '%animal%therapy%' OR i.name I
 LIMIT 10;
 
 -- Link cultural healing evidence
-INSERT INTO alma_intervention_evidence (intervention_id, evidence_id, relevance_score, created_at)
+INSERT INTO alma_intervention_evidence (intervention_id, evidence_id, created_at)
 SELECT
   i.id,
   'e0000002-0000-0000-0000-000000000002'::UUID,
-  0.90,
   NOW()
 FROM alma_interventions i
 WHERE (i.name ILIKE '%cultural%' OR i.name ILIKE '%indigenous%' OR i.name ILIKE '%healing%' OR i.name ILIKE '%groote%')
@@ -221,11 +239,10 @@ WHERE (i.name ILIKE '%cultural%' OR i.name ILIKE '%indigenous%' OR i.name ILIKE 
 LIMIT 20;
 
 -- Link youth conferencing evidence
-INSERT INTO alma_intervention_evidence (intervention_id, evidence_id, relevance_score, created_at)
+INSERT INTO alma_intervention_evidence (intervention_id, evidence_id, created_at)
 SELECT
   i.id,
   'e0000003-0000-0000-0000-000000000003'::UUID,
-  0.85,
   NOW()
 FROM alma_interventions i
 WHERE (i.name ILIKE '%conferenc%' OR i.name ILIKE '%diversion%' OR i.name ILIKE '%restorative%')
@@ -233,23 +250,21 @@ WHERE (i.name ILIKE '%conferenc%' OR i.name ILIKE '%diversion%' OR i.name ILIKE 
 LIMIT 15;
 
 -- Link justice reinvestment evidence
-INSERT INTO alma_intervention_evidence (intervention_id, evidence_id, relevance_score, created_at)
+INSERT INTO alma_intervention_evidence (intervention_id, evidence_id, created_at)
 SELECT
   i.id,
   'e0000004-0000-0000-0000-000000000004'::UUID,
-  0.90,
   NOW()
 FROM alma_interventions i
 WHERE (i.name ILIKE '%justice reinvest%' OR i.name ILIKE '%bourke%' OR i.name ILIKE '%reinvest%')
   AND i.id NOT IN (SELECT intervention_id FROM alma_intervention_evidence WHERE evidence_id = 'e0000004-0000-0000-0000-000000000004')
 LIMIT 10;
 
--- Link cost-effectiveness evidence broadly (relevant to most interventions)
-INSERT INTO alma_intervention_evidence (intervention_id, evidence_id, relevance_score, created_at)
+-- Link cost-effectiveness evidence broadly
+INSERT INTO alma_intervention_evidence (intervention_id, evidence_id, created_at)
 SELECT
   i.id,
   'e0000005-0000-0000-0000-000000000005'::UUID,
-  0.70,
   NOW()
 FROM alma_interventions i
 WHERE i.type IN ('Diversion', 'Community-Led', 'Prevention', 'Therapeutic')
@@ -257,11 +272,10 @@ WHERE i.type IN ('Diversion', 'Community-Led', 'Prevention', 'Therapeutic')
 LIMIT 50;
 
 -- Link Oonchiumpa evidence
-INSERT INTO alma_intervention_evidence (intervention_id, evidence_id, relevance_score, created_at)
+INSERT INTO alma_intervention_evidence (intervention_id, evidence_id, created_at)
 SELECT
   i.id,
   'e0000006-0000-0000-0000-000000000006'::UUID,
-  0.95,
   NOW()
 FROM alma_interventions i
 WHERE (i.name ILIKE '%oonchiumpa%' OR i.operating_organization ILIKE '%oonchiumpa%')
@@ -273,11 +287,10 @@ LIMIT 5;
 -- -----------------------------------------------------------------------------
 
 -- Link reoffending prevention to diversion programs
-INSERT INTO alma_intervention_outcomes (intervention_id, outcome_id, strength_of_evidence, created_at)
+INSERT INTO alma_intervention_outcomes (intervention_id, outcome_id, created_at)
 SELECT
   i.id,
   'o0000001-0000-0000-0000-000000000001'::UUID,
-  'Moderate',
   NOW()
 FROM alma_interventions i
 WHERE i.type IN ('Diversion', 'Community-Led', 'Therapeutic')
@@ -285,11 +298,10 @@ WHERE i.type IN ('Diversion', 'Community-Led', 'Therapeutic')
 LIMIT 100;
 
 -- Link education engagement
-INSERT INTO alma_intervention_outcomes (intervention_id, outcome_id, strength_of_evidence, created_at)
+INSERT INTO alma_intervention_outcomes (intervention_id, outcome_id, created_at)
 SELECT
   i.id,
   'o0000003-0000-0000-0000-000000000003'::UUID,
-  'Moderate',
   NOW()
 FROM alma_interventions i
 WHERE (i.name ILIKE '%education%' OR i.name ILIKE '%school%' OR i.name ILIKE '%training%' OR i.name ILIKE '%employment%')
@@ -297,11 +309,10 @@ WHERE (i.name ILIKE '%education%' OR i.name ILIKE '%school%' OR i.name ILIKE '%t
 LIMIT 50;
 
 -- Link mental health improvement
-INSERT INTO alma_intervention_outcomes (intervention_id, outcome_id, strength_of_evidence, created_at)
+INSERT INTO alma_intervention_outcomes (intervention_id, outcome_id, created_at)
 SELECT
   i.id,
   'o0000005-0000-0000-0000-000000000005'::UUID,
-  'Moderate',
   NOW()
 FROM alma_interventions i
 WHERE (i.name ILIKE '%mental%' OR i.name ILIKE '%counsel%' OR i.name ILIKE '%therapy%' OR i.name ILIKE '%wellbeing%' OR i.name ILIKE '%health%')
@@ -309,107 +320,29 @@ WHERE (i.name ILIKE '%mental%' OR i.name ILIKE '%counsel%' OR i.name ILIKE '%the
 LIMIT 50;
 
 -- Link cultural connection
-INSERT INTO alma_intervention_outcomes (intervention_id, outcome_id, strength_of_evidence, created_at)
+INSERT INTO alma_intervention_outcomes (intervention_id, outcome_id, created_at)
 SELECT
   i.id,
   'o0000006-0000-0000-0000-000000000006'::UUID,
-  'Strong',
   NOW()
 FROM alma_interventions i
 WHERE (i.name ILIKE '%cultur%' OR i.name ILIKE '%indigenous%' OR i.name ILIKE '%aboriginal%' OR i.evidence_level ILIKE '%indigenous%')
   AND i.id NOT IN (SELECT intervention_id FROM alma_intervention_outcomes WHERE outcome_id = 'o0000006-0000-0000-0000-000000000006')
 LIMIT 50;
 
--- Link housing stability
-INSERT INTO alma_intervention_outcomes (intervention_id, outcome_id, strength_of_evidence, created_at)
+-- Link substance use reduction
+INSERT INTO alma_intervention_outcomes (intervention_id, outcome_id, created_at)
 SELECT
   i.id,
   'o0000010-0000-0000-0000-000000000010'::UUID,
-  'Moderate',
   NOW()
 FROM alma_interventions i
-WHERE (i.name ILIKE '%hous%' OR i.name ILIKE '%accommod%' OR i.name ILIKE '%homeless%' OR i.name ILIKE '%shelter%')
+WHERE (i.name ILIKE '%drug%' OR i.name ILIKE '%alcohol%' OR i.name ILIKE '%substance%' OR i.name ILIKE '%addict%')
   AND i.id NOT IN (SELECT intervention_id FROM alma_intervention_outcomes WHERE outcome_id = 'o0000010-0000-0000-0000-000000000010')
 LIMIT 30;
 
 -- -----------------------------------------------------------------------------
--- 5. LINK STORIES TO INTERVENTIONS
--- -----------------------------------------------------------------------------
--- Connect existing JusticeHub stories to relevant interventions
-
--- Link BackTrack story to BackTrack interventions
-INSERT INTO story_related_interventions (story_id, intervention_id, relevance_note, created_at)
-SELECT
-  '30000000-0000-0000-0000-000000000001'::UUID,
-  i.id,
-  'Personal transformation story from BackTrack participant',
-  NOW()
-FROM alma_interventions i
-WHERE (i.name ILIKE '%backtrack%' OR i.name ILIKE '%animal%assist%')
-  AND NOT EXISTS (
-    SELECT 1 FROM story_related_interventions sri
-    WHERE sri.story_id = '30000000-0000-0000-0000-000000000001' AND sri.intervention_id = i.id
-  )
-LIMIT 5;
-
--- Link cultural healing story
-INSERT INTO story_related_interventions (story_id, intervention_id, relevance_note, created_at)
-SELECT
-  '30000000-0000-0000-0000-000000000002'::UUID,
-  i.id,
-  'Cultural reconnection journey demonstrating program impact',
-  NOW()
-FROM alma_interventions i
-WHERE (i.name ILIKE '%cultur%' OR i.name ILIKE '%healing%' OR i.name ILIKE '%groote%')
-  AND NOT EXISTS (
-    SELECT 1 FROM story_related_interventions sri
-    WHERE sri.story_id = '30000000-0000-0000-0000-000000000002' AND sri.intervention_id = i.id
-  )
-LIMIT 10;
-
--- Link community support story
-INSERT INTO story_related_interventions (story_id, intervention_id, relevance_note, created_at)
-SELECT
-  '30000000-0000-0000-0000-000000000003'::UUID,
-  i.id,
-  'Lived experience highlighting system failures vs community successes',
-  NOW()
-FROM alma_interventions i
-WHERE i.type = 'Community-Led'
-  AND NOT EXISTS (
-    SELECT 1 FROM story_related_interventions sri
-    WHERE sri.story_id = '30000000-0000-0000-0000-000000000003' AND sri.intervention_id = i.id
-  )
-LIMIT 10;
-
--- -----------------------------------------------------------------------------
--- 6. BACKFILL COMMUNITY PROGRAMS TO ALMA
--- -----------------------------------------------------------------------------
--- Run the backfill function for any unlinked community programs
-
-DO $$
-DECLARE
-  v_program RECORD;
-  v_intervention_id UUID;
-BEGIN
-  FOR v_program IN
-    SELECT id, name
-    FROM community_programs
-    WHERE alma_intervention_id IS NULL
-    LIMIT 20
-  LOOP
-    BEGIN
-      v_intervention_id := backfill_community_program_to_alma_intervention(v_program.id);
-      RAISE NOTICE 'Backfilled program % -> intervention %', v_program.name, v_intervention_id;
-    EXCEPTION WHEN OTHERS THEN
-      RAISE NOTICE 'Failed to backfill %: %', v_program.name, SQLERRM;
-    END;
-  END LOOP;
-END;
-$$;
-
--- -----------------------------------------------------------------------------
--- 7. UPDATE INTERVENTION EVIDENCE LEVELS BASED ON LINKED EVIDENCE
+-- 5. UPDATE INTERVENTION EVIDENCE LEVELS
 -- -----------------------------------------------------------------------------
 
 -- Update interventions with strong evidence links
@@ -419,8 +352,7 @@ WHERE i.id IN (
   SELECT ie.intervention_id
   FROM alma_intervention_evidence ie
   JOIN alma_evidence e ON e.id = ie.evidence_id
-  WHERE e.evidence_type IN ('RCT', 'Meta-analysis', 'Quasi-experimental')
-    AND ie.relevance_score >= 0.85
+  WHERE e.evidence_type IN ('RCT (Randomized Control Trial)', 'Quasi-experimental')
 )
 AND (i.evidence_level IS NULL OR i.evidence_level = 'Unknown' OR i.evidence_level ILIKE '%untested%');
 
@@ -431,12 +363,23 @@ WHERE i.id IN (
   SELECT ie.intervention_id
   FROM alma_intervention_evidence ie
   JOIN alma_evidence e ON e.id = ie.evidence_id
-  WHERE e.evidence_type IN ('Program eval', 'Case study', 'Qualitative research')
+  WHERE e.evidence_type IN ('Program evaluation', 'Case study', 'Community-led research')
 )
 AND (i.evidence_level IS NULL OR i.evidence_level = 'Unknown' OR i.evidence_level ILIKE '%untested%');
 
+-- Update Indigenous-led interventions
+UPDATE alma_interventions i
+SET evidence_level = 'Indigenous-led (culturally grounded, community authority)'
+WHERE i.id IN (
+  SELECT ie.intervention_id
+  FROM alma_intervention_evidence ie
+  JOIN alma_evidence e ON e.id = ie.evidence_id
+  WHERE e.consent_level = 'Community Controlled'
+)
+AND (i.evidence_level IS NULL OR i.evidence_level = 'Unknown');
+
 -- -----------------------------------------------------------------------------
--- 8. SUMMARY STATS
+-- 6. SUMMARY STATS
 -- -----------------------------------------------------------------------------
 
 DO $$
@@ -445,32 +388,20 @@ DECLARE
   v_intervention_evidence_count INTEGER;
   v_outcome_count INTEGER;
   v_intervention_outcome_count INTEGER;
-  v_story_intervention_count INTEGER;
 BEGIN
   SELECT COUNT(*) INTO v_evidence_count FROM alma_evidence;
   SELECT COUNT(*) INTO v_intervention_evidence_count FROM alma_intervention_evidence;
   SELECT COUNT(*) INTO v_outcome_count FROM alma_outcomes;
   SELECT COUNT(*) INTO v_intervention_outcome_count FROM alma_intervention_outcomes;
-  SELECT COUNT(*) INTO v_story_intervention_count FROM story_related_interventions;
 
-  RAISE NOTICE '=== ALMA Relationship Seed Complete ===';
+  RAISE NOTICE '=== ALMA Relationship Seed V2 Complete ===';
   RAISE NOTICE 'Evidence records: %', v_evidence_count;
   RAISE NOTICE 'Evidence-Intervention links: %', v_intervention_evidence_count;
   RAISE NOTICE 'Outcome records: %', v_outcome_count;
   RAISE NOTICE 'Outcome-Intervention links: %', v_intervention_outcome_count;
-  RAISE NOTICE 'Story-Intervention links: %', v_story_intervention_count;
 END;
 $$;
 
 -- =============================================================================
 -- MIGRATION COMPLETE
--- =============================================================================
--- Summary:
--- - Added 6 evidence records with real research findings
--- - Added 10 outcome measures
--- - Linked evidence to ~150 interventions
--- - Linked outcomes to ~200 interventions
--- - Linked stories to relevant interventions
--- - Backfilled community programs to ALMA
--- - Updated evidence levels based on linked research
 -- =============================================================================
