@@ -112,7 +112,7 @@ MIT License - see LICENSE file for details
 
 ## 🔗 Links
 
-- [Production Site](https://justicehub.vercel.app)
+- [Production Site](https://justicehub-act.vercel.app)
 - [GitHub Repository](https://github.com/Acurioustractor/justicehub-platform)
 - [Supabase Dashboard](https://supabase.com/dashboard)
 
