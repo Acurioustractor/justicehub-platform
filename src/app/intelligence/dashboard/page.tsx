@@ -172,14 +172,20 @@ export default function MasterDashboard() {
                                                 {alpha.map((item) => (
                                                     <tr key={item.id} className="hover:bg-gray-50 transition-colors group">
                                                         <td className="p-3">
-                                                            <div className="font-bold group-hover:underline">{item.name}</div>
-                                                            <div className="text-xs text-gray-500">{item.type}</div>
+                                                            <Link href={`/intelligence/interventions/${item.id}`} className="block">
+                                                                <div className="font-bold group-hover:underline">{item.name}</div>
+                                                                <div className="text-xs text-gray-500">{item.type}</div>
+                                                            </Link>
                                                         </td>
                                                         <td className="p-3">
-                                                            <Badge status={item.market_status} />
+                                                            <Link href={`/intelligence/interventions/${item.id}`}>
+                                                                <Badge status={item.market_status} />
+                                                            </Link>
                                                         </td>
-                                                        <td className="p-3 text-right font-mono font-bold text-emerald-700">
-                                                            {item.alpha_score}
+                                                        <td className="p-3 text-right">
+                                                            <Link href={`/intelligence/interventions/${item.id}`} className="font-mono font-bold text-emerald-700 hover:text-emerald-900">
+                                                                {item.alpha_score}
+                                                            </Link>
                                                         </td>
                                                     </tr>
                                                 ))}
