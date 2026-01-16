@@ -61,8 +61,8 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
         : "fixed top-0 left-0 right-0 w-full bg-white z-50 border-b-2 border-black";
 
     return (
-        <header className={headerClasses}>
-            <div className="container-justice">
+        <header className={headerClasses} suppressHydrationWarning>
+            <div className="container-justice" suppressHydrationWarning>
                 {/* Top Row - Logo Centered */}
                 <div className="flex items-center justify-between py-4 border-b border-gray-200">
                     {/* Left spacer for mobile menu */}
@@ -209,30 +209,33 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
                             </Link>
 
                             {/* Show SIGN UP or Profile Dropdown based on auth state */}
-                            {mounted && user && userProfile ? (
-                                <UserMenu
-                                    user={user}
-                                    userProfile={userProfile}
-                                    onSignOut={signOut}
-                                />
-                            ) : mounted ? (
-                                <div className="flex items-center gap-3">
-                                    <Link
-                                        href="/login"
-                                        className="px-5 py-2.5 bg-white text-black font-bold text-xs uppercase tracking-wider hover:bg-gray-100 transition-colors border-2 border-black shadow-lg rounded-sm"
-                                        aria-label="Log in to your account"
-                                    >
-                                        LOG IN
-                                    </Link>
-                                    <Link
-                                        href="/signup"
-                                        className="px-5 py-2.5 bg-black text-white font-bold text-xs uppercase tracking-wider hover:bg-gray-800 transition-colors border-2 border-black shadow-lg rounded-sm"
-                                        aria-label="Create your profile"
-                                    >
-                                        SIGN UP
-                                    </Link>
-                                </div>
-                            ) : null}
+                            {/* Use suppressHydrationWarning to prevent hydration mismatch due to client-only auth state */}
+                            <div suppressHydrationWarning>
+                                {mounted && user && userProfile ? (
+                                    <UserMenu
+                                        user={user}
+                                        userProfile={userProfile}
+                                        onSignOut={signOut}
+                                    />
+                                ) : (
+                                    <div className="flex items-center gap-3">
+                                        <Link
+                                            href="/login"
+                                            className="px-5 py-2.5 bg-white text-black font-bold text-xs uppercase tracking-wider hover:bg-gray-100 transition-colors border-2 border-black shadow-lg rounded-sm"
+                                            aria-label="Log in to your account"
+                                        >
+                                            LOG IN
+                                        </Link>
+                                        <Link
+                                            href="/signup"
+                                            className="px-5 py-2.5 bg-black text-white font-bold text-xs uppercase tracking-wider hover:bg-gray-800 transition-colors border-2 border-black shadow-lg rounded-sm"
+                                            aria-label="Create your profile"
+                                        >
+                                            SIGN UP
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </nav>
                 </div>

@@ -34,6 +34,57 @@
 
 ---
 
+## THREE-TIER DATA ARCHITECTURE
+
+JusticeHub uses a three-layer approach to service data:
+
+### Layer 1: Services (Discovery)
+**Table**: `services`
+- **Source**: Discovered via web scraping, government databases, research
+- **Update frequency**: Continuously enriched by AI/scraping system
+- **Evidence level**: Unverified discovery data
+- **Count**: 507 services
+
+### Layer 2: ALMA Interventions (Evidence)
+**Table**: `alma_interventions`
+- **Source**: Services with documented evidence (annual reports, media, impact reporting)
+- **Update frequency**: Curated additions
+- **Evidence level**: Has supporting evidence
+- **Count**: ~500+ interventions
+
+### Layer 3: Registered Services (Relationship)
+**Table**: `registered_services`
+- **Source**: Services with direct partnerships, interviews, verified relationships
+- **Update frequency**: Manual verification
+- **Evidence level**: Active collaboration with JusticeHub
+- **Count**: 12 registered services
+
+### Service Categories (19 total)
+
+| Category | Services | Description |
+|----------|----------|-------------|
+| case_management | 211 | Wrap-around support coordination |
+| support_group | 177 | Peer support and group programs |
+| mentoring | 168 | One-on-one guidance |
+| advocacy | 97 | Rights and representation |
+| life_skills | 66 | Practical skills development |
+| leadership | 61 | Youth leadership programs |
+| education_training | 37 | Formal learning support |
+| diversion | 36 | Alternative to justice system |
+| employment | 32 | Job readiness and placement |
+| counselling | 31 | Therapeutic support |
+| family_support | 29 | Family strengthening |
+| mental_health | 25 | Mental health services |
+| court_support | 12 | Court navigation assistance |
+| legal_aid | 11 | Legal representation |
+| crisis_support | 3 | Emergency intervention |
+| substance_abuse | 3 | Addiction support |
+| health | 2 | General health services |
+| housing | 2 | Accommodation support |
+| recreation | 1 | Sports and activities |
+
+---
+
 ## 1. CORE ENTITIES
 
 ### People (`public_profiles`)
@@ -100,9 +151,9 @@
 
 ---
 
-### Community Programs (`community_programs`)
+### Registered Services (`registered_services`)
 
-**Purpose**: Grassroots, community-led youth justice programs emphasizing Indigenous knowledge.
+**Purpose**: Services with direct partnerships, verified relationships, and active collaboration with JusticeHub.
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -129,6 +180,8 @@
 - → ALMA Interventions (linked evidence)
 - → Stories (program stories)
 - → Services (related services)
+
+> **Note**: Renamed from `community_programs` to `registered_services` in January 2026 to better reflect the three-tier data architecture.
 
 ---
 
@@ -511,7 +564,55 @@ The site uses a **Seeds → Growth → Harvest → Roots** metaphor:
 
 ---
 
-## 10. CONTENT NEEDED
+## 10. YOUTH JUSTICE INFRASTRUCTURE
+
+Australian youth detention facilities and justice centres documented in the database:
+
+### Detention Centres (7)
+
+| State | Name | City |
+|-------|------|------|
+| NT | Alice Springs Youth Detention Centre | Alice Springs |
+| NT | Don Dale Youth Detention Centre | Darwin |
+| QLD | Brisbane Youth Detention Centre | Wacol |
+| QLD | Cleveland Youth Detention Centre | Townsville |
+| QLD | Wacol Youth Remand Centre | Wacol |
+| QLD | West Moreton Youth Detention Centre | West Moreton |
+| TAS | Ashley Youth Detention Centre | Hobart |
+| WA | Banksia Hill Detention Centre | Perth |
+
+### Youth Justice Centres (10)
+
+| State | Name | City |
+|-------|------|------|
+| ACT | Bimberi Youth Justice Centre | Canberra |
+| NSW | Acmena Youth Justice Centre | South Grafton |
+| NSW | Cobham Youth Justice Centre | Werrington |
+| NSW | Frank Baxter Youth Justice Centre | Kariong |
+| NSW | Orana Youth Justice Centre | Dubbo |
+| NSW | Reiby Youth Justice Centre | Airds |
+| NSW | Riverina Youth Justice Centre | Wagga Wagga |
+| SA | Kurlana Tapa Youth Justice Centre | Adelaide |
+| VIC | Cherry Creek Youth Justice Centre | Melbourne |
+| VIC | Parkville Youth Justice Centre | Melbourne |
+
+### Infrastructure Types
+
+| Type | Count | Description |
+|------|-------|-------------|
+| `community_service` | 482 | Community-based services and programs |
+| `youth_justice_centre` | 10 | State-operated youth justice facilities |
+| `court` | 8 | Youth courts and court support services |
+| `detention_centre` | 8 | Youth detention/remand facilities |
+
+### Key Statistics (January 2026)
+- 884 young people in detention on average night (June quarter 2025)
+- 91% male, 56% First Nations young people
+- First Nations overrepresentation: 27x non-Indigenous rate
+
+---
+
+## 11. CONTENT NEEDED
 
 ### High Priority (Empty/Sparse)
 - [ ] `alma_evidence` - Research papers need titles populated

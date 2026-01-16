@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get('featured') === 'true';
     const storytellerId = searchParams.get('storyteller_id');
 
-    // Build query for stories with storyteller info for fallback images
+    // Build query for stories (avoiding storytellers join due to RLS recursion)
     let query = empathyLedgerClient
       .from('stories')
       .select(`
@@ -41,11 +41,7 @@ export async function GET(request: NextRequest) {
         published_at,
         created_at,
         storyteller_id,
-        organization_id,
-        storytellers (
-          display_name,
-          avatar_url
-        )
+        organization_id
       `)
       // Core consent controls - only public stories
       .eq('is_public', true)
@@ -89,22 +85,15 @@ export async function GET(request: NextRequest) {
       'cultural_practice': 'Cultural Practice',
     };
 
-    // Enrich stories with excerpt, category, and fallback image
+    // Enrich stories with excerpt and category (storyteller join removed due to RLS recursion)
     const enrichedStories = (stories || []).map(story => {
-      // Supabase returns single relation as object, not array
-      const storytellerData = story.storytellers;
-      const storyteller = storytellerData && typeof storytellerData === 'object' && !Array.isArray(storytellerData)
-        ? storytellerData as { display_name: string; avatar_url: string | null }
-        : null;
       return {
         ...story,
         excerpt: story.summary || (story.content ? story.content.substring(0, 200) + '...' : ''),
         // Map story_type to story_category for display
         story_category: story.story_type ? storyTypeLabels[story.story_type] || story.story_type : null,
-        // Use story image, fall back to storyteller avatar
-        story_image_url: story.story_image_url || storyteller?.avatar_url || null,
-        // Include storyteller name for attribution
-        storyteller_name: storyteller?.display_name || null,
+        // Storyteller info not available due to RLS - would need separate query
+        storyteller_name: null,
       };
     });
 
