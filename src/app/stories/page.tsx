@@ -40,6 +40,7 @@ async function getStoriesData() {
       .order('published_at', { ascending: false });
 
     // Fetch Empathy Ledger stories (only those tagged for JusticeHub display)
+    // Note: We don't join storytellers table due to RLS restrictions
     const empathyLedgerQuery = empathyLedgerClient
       .from('stories')
       .select(`
@@ -54,12 +55,7 @@ async function getStoriesData() {
         justicehub_featured,
         cultural_sensitivity_level,
         published_at,
-        created_at,
-        storyteller_id,
-        storytellers (
-          display_name,
-          avatar_url
-        )
+        created_at
       `)
       .eq('is_public', true)
       .eq('privacy_level', 'public')
@@ -100,7 +96,6 @@ async function getStoriesData() {
 
     // Transform Empathy Ledger stories to match unified format
     const empathyLedgerStories = (empathyLedgerResult.data || []).map((story: any) => {
-      const storyteller = story.storytellers;
       return {
         id: story.id,
         title: story.title,
@@ -108,14 +103,10 @@ async function getStoriesData() {
         excerpt: story.summary || (story.content ? story.content.substring(0, 200) + '...' : ''),
         category: 'voices', // New category for Empathy Ledger stories
         tags: story.themes || [],
-        featured_image_url: story.story_image_url || storyteller?.avatar_url || null,
+        featured_image_url: story.story_image_url || null,
         reading_time_minutes: story.content ? Math.ceil(story.content.split(/\s+/).length / 200) : null,
         location_tags: [],
-        author: storyteller ? {
-          full_name: storyteller.display_name,
-          slug: null,
-          photo_url: storyteller.avatar_url,
-        } : null,
+        author: null, // Storyteller data not available due to RLS
         published_at: story.published_at || story.created_at,
         status: 'published',
         content_type: 'empathy-ledger' as const,
