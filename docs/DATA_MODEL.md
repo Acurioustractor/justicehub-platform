@@ -373,10 +373,84 @@
 
 ---
 
-## 5. DATA SOURCES
+## 5. DATA LINKING & RECONCILIATION
+
+### Services ↔ ALMA Interventions (January 2026)
+
+The `services` and `alma_interventions` tables contained significant overlap - **492 of 511 services** are duplicates of ALMA interventions (matched by name). These are now linked:
+
+**Linking Fields:**
+- `services.alma_intervention_id` → FK to `alma_interventions.id` (502 services linked)
+- `alma_interventions.linked_service_id` → FK to `services.id` (499 interventions linked)
+- `services.service_type` → Populated from `alma_interventions.type` (501 services)
+
+**Service Type Distribution:**
+| Type | Count |
+|------|-------|
+| Wraparound Support | 194 |
+| Cultural Connection | 61 |
+| Community-Led | 56 |
+| Prevention | 47 |
+| Education/Employment | 34 |
+| Diversion | 34 |
+| Therapeutic | 25 |
+| Justice Reinvestment | 23 |
+| Early Intervention | 18 |
+| Family Strengthening | 10 |
+
+### Unified Services View
+
+A unified view (`services_unified`) merges all service-related tables:
+
+```sql
+-- Query unified services
+SELECT * FROM services_unified;
+
+-- Get statistics
+SELECT * FROM get_unified_services_stats();
+```
+
+The view:
+- Deduplicates by name matching across `services`, `community_programs`, and `alma_interventions`
+- Prefers `services` as source of truth (geocoded, verified)
+- Includes evidence level, portfolio scores from ALMA
+- Tracks source table for each record
+
+**Current Stats (January 2026):**
+| Metric | Count |
+|--------|-------|
+| Total unified records | 1,026 |
+| With coordinates | 515 |
+| From services | 511 |
+| From ALMA (unlinked) | 503 |
+| From community_programs | 12 |
+
+**Migration file:** `supabase/migrations/20260113100001_create_unified_services_view.sql`
+**Applied:** Yes (via psql pooler connection)
+
+### Geocoding
+
+All services and community programs have been geocoded for map visualization:
+- **Services:** 505 with coordinates (latitude/longitude)
+- **Community Programs:** 12 with coordinates
+- **Scripts:** `src/scripts/geocode-services.ts`, `src/scripts/geocode-community-programs.mjs`
+
+---
+
+## 6. DATA SOURCES
 
 ### Primary (Supabase)
 All tables above stored in Supabase PostgreSQL.
+
+**Direct Database Access:**
+```bash
+source .env.local
+PROJECT_ID=$(echo $NEXT_PUBLIC_SUPABASE_URL | sed 's|https://||' | sed 's|\.supabase\.co||')
+DB_URL="postgresql://postgres.${PROJECT_ID}:${SUPABASE_DB_PASSWORD}@aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres"
+psql "$DB_URL" -c "SELECT * FROM table;"
+```
+
+Required env vars: `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_DB_PASSWORD`
 
 ### Synced (Empathy Ledger)
 - Profiles → `public_profiles.empathy_ledger_profile_id`
@@ -391,7 +465,7 @@ All tables above stored in Supabase PostgreSQL.
 
 ---
 
-## 6. CONTENT CATEGORIES
+## 7. CONTENT CATEGORIES
 
 The site uses a **Seeds → Growth → Harvest → Roots** metaphor:
 
@@ -404,7 +478,7 @@ The site uses a **Seeds → Growth → Harvest → Roots** metaphor:
 
 ---
 
-## 7. STATUS & VISIBILITY
+## 8. STATUS & VISIBILITY
 
 | Field | Values | Used By |
 |-------|--------|---------|
@@ -417,7 +491,7 @@ The site uses a **Seeds → Growth → Harvest → Roots** metaphor:
 
 ---
 
-## 8. GEOGRAPHIC COVERAGE
+## 9. GEOGRAPHIC COVERAGE
 
 **States/Territories tracked**:
 - QLD (Queensland)
@@ -437,7 +511,7 @@ The site uses a **Seeds → Growth → Harvest → Roots** metaphor:
 
 ---
 
-## 9. CONTENT NEEDED
+## 10. CONTENT NEEDED
 
 ### High Priority (Empty/Sparse)
 - [ ] `alma_evidence` - Research papers need titles populated
