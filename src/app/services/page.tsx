@@ -334,7 +334,7 @@ export default function ServicesPage() {
             {viewMode === 'cards' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {sortedServices.map((service) => (
-                  <div key={service.id} className="border-2 border-black bg-white hover:shadow-lg transition-shadow">
+                  <div key={service.id} className="border-2 border-black bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow">
                     <div className="p-6">
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-1">

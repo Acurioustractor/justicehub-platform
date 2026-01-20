@@ -5,8 +5,8 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const supabaseUrl = process.env['NEXT_PUBLIC_SUPABASE_URL']
+const supabaseKey = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']
 
 if (!supabaseUrl || !supabaseKey) {
   console.error('❌ Missing Supabase environment variables')
@@ -18,7 +18,7 @@ if (!supabaseUrl || !supabaseKey) {
 async function testConnection() {
   console.log('🔍 Testing Supabase Connection...\n')
   
-  const supabase = createClient(supabaseUrl, supabaseKey)
+  const supabase = createClient(supabaseUrl!, supabaseKey!)
 
   // Test 1: Check stories table
   console.log('1️⃣  Testing stories table...')

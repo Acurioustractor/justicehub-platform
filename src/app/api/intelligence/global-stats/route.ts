@@ -36,8 +36,10 @@ export async function GET() {
             supabase.from('alma_outcomes').select('*', { count: 'exact', head: true }),
             supabase.from('alma_community_contexts').select('*', { count: 'exact', head: true }),
 
-            supabase.from('data_sources').select('*', { count: 'exact', head: true }).eq('active', true),
-            supabase.from('scraped_services').select('*', { count: 'exact', head: true }),
+            // Use ALMA source registry for active sources
+            supabase.from('alma_source_registry').select('*', { count: 'exact', head: true }).eq('active', true),
+            // Use ALMA discovered links (scraped status) for services count
+            supabase.from('alma_discovered_links').select('*', { count: 'exact', head: true }).eq('status', 'scraped'),
 
             // Get distribution of evidence levels (limit to 1000 for perfs if needed, but grouping is better done in SQL or RPC. 
             // Here we fetch minimal data to calc distributions in JS for simplicity without new RPCs)

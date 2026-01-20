@@ -7,9 +7,10 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Save, Eye, ArrowLeft, Upload, X, Clock, FileText, Maximize2, Minimize2 } from 'lucide-react';
+import { Save, Eye, ArrowLeft, Upload, X, Clock, FileText, Maximize2, Minimize2, Users, Plus, Trash2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import dynamic from 'next/dynamic';
+import RoleSelector, { RoleBadge } from '@/components/admin/RoleSelector';
 
 // Dynamically import the editor to avoid SSR issues
 const NovelEditor = dynamic(() => import('@/components/NovelEditor'), {
@@ -95,6 +96,14 @@ export default function EnhancedBlogPostPage() {
   const [currentTag, setCurrentTag] = useState('');
   const [uploading, setUploading] = useState(false);
   const [savedArticleId, setSavedArticleId] = useState<string | null>(null); // Track article ID after first save
+
+  // Contributors state
+  const [availableProfiles, setAvailableProfiles] = useState<{ id: string; full_name: string; photo_url: string | null }[]>([]);
+  const [contributors, setContributors] = useState<{ profile_id: string; profile_name: string; role: string; role_description: string }[]>([]);
+  const [showContributorModal, setShowContributorModal] = useState(false);
+  const [selectedContributorId, setSelectedContributorId] = useState('');
+  const [contributorRole, setContributorRole] = useState('');
+  const [contributorRoleDesc, setContributorRoleDesc] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const autoSaveTimerRef = useRef<NodeJS.Timeout>();
   const editorRef = useRef<any>(null);
@@ -107,6 +116,42 @@ export default function EnhancedBlogPostPage() {
     .filter(Boolean).length;
   const charCount = formData.content.replace(/<[^>]*>/g, '').length;
   const readingTime = Math.ceil(wordCount / 200);
+
+  // Load available profiles for contributors
+  useEffect(() => {
+    async function loadProfiles() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from('public_profiles')
+        .select('id, full_name, photo_url')
+        .order('full_name');
+      if (data) setAvailableProfiles(data);
+    }
+    loadProfiles();
+  }, []);
+
+  // Add contributor handler
+  const handleAddContributor = () => {
+    if (!selectedContributorId || !contributorRole) return;
+    const profile = availableProfiles.find(p => p.id === selectedContributorId);
+    if (!profile) return;
+
+    setContributors([...contributors, {
+      profile_id: selectedContributorId,
+      profile_name: profile.full_name,
+      role: contributorRole,
+      role_description: contributorRoleDesc,
+    }]);
+    setSelectedContributorId('');
+    setContributorRole('');
+    setContributorRoleDesc('');
+    setShowContributorModal(false);
+  };
+
+  // Remove contributor handler
+  const handleRemoveContributor = (profileId: string) => {
+    setContributors(contributors.filter(c => c.profile_id !== profileId));
+  };
 
   // Auto-generate slug from title
   const handleTitleChange = (title: string) => {
@@ -318,6 +363,25 @@ export default function EnhancedBlogPostPage() {
         });
         console.error('Post data being saved:', postData);
         throw error;
+      }
+
+      // Save contributors if we have an article ID
+      const articleId = data?.id || savedArticleId;
+      if (articleId && contributors.length > 0) {
+        // First delete existing contributors
+        await supabase.from('blog_posts_profiles').delete().eq('blog_post_id', articleId);
+
+        // Then insert new ones
+        const contributorInserts = contributors.map((c, index) => ({
+          blog_post_id: articleId,
+          public_profile_id: c.profile_id,
+          role: c.role,
+          role_description: c.role_description || null,
+          is_featured: index === 0, // First contributor is featured
+        }));
+
+        const { error: contribError } = await supabase.from('blog_posts_profiles').insert(contributorInserts);
+        if (contribError) console.error('Error saving contributors:', contribError);
       }
 
       if (!silent) {
@@ -626,6 +690,56 @@ export default function EnhancedBlogPostPage() {
                 )}
               </div>
 
+              {/* Contributors */}
+              <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-sm font-bold text-black flex items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    Contributors
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowContributorModal(true)}
+                    className="text-sm font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Add
+                  </button>
+                </div>
+
+                {contributors.length > 0 ? (
+                  <div className="space-y-2">
+                    {contributors.map((contributor, index) => (
+                      <div key={contributor.profile_id} className="flex items-center justify-between p-2 bg-gray-50 border border-gray-200">
+                        <div className="flex-1">
+                          <div className="font-bold text-sm">{contributor.profile_name}</div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <RoleBadge role={contributor.role} size="sm" />
+                            {contributor.role_description && (
+                              <span className="text-xs text-gray-500">— {contributor.role_description}</span>
+                            )}
+                          </div>
+                          {index === 0 && (
+                            <span className="text-xs text-green-600 font-bold">PRIMARY</span>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveContributor(contributor.profile_id)}
+                          className="p-1 text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 text-center py-4">
+                    No contributors added yet. The logged-in user will be the author.
+                  </p>
+                )}
+              </div>
+
               {/* Tags */}
               <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
                 <label className="block text-sm font-bold text-black mb-2">
@@ -715,6 +829,83 @@ export default function EnhancedBlogPostPage() {
                 }}
                 placeholder="Start writing your story... Press Escape to exit fullscreen"
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Contributor Modal */}
+      {showContributorModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-lg w-full">
+            <div className="p-4 border-b-2 border-black flex justify-between items-center">
+              <h2 className="text-xl font-black flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Add Contributor
+              </h2>
+              <button onClick={() => setShowContributorModal(false)} className="p-2 hover:bg-gray-100">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {/* Person Selection */}
+              <div>
+                <label className="block text-sm font-bold mb-2">Select Person *</label>
+                <select
+                  value={selectedContributorId}
+                  onChange={(e) => setSelectedContributorId(e.target.value)}
+                  className="w-full p-3 border-2 border-black"
+                >
+                  <option value="">Choose a person...</option>
+                  {availableProfiles
+                    .filter(p => !contributors.find(c => c.profile_id === p.id))
+                    .map((profile) => (
+                      <option key={profile.id} value={profile.id}>
+                        {profile.full_name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* Role Selection */}
+              <RoleSelector
+                value={contributorRole}
+                onChange={setContributorRole}
+                label="Role"
+                required
+                allowCustom
+                filterCategories={['content', 'testimonial']}
+                helperText="e.g., Author, Subject, Interviewer, Mentioned"
+              />
+
+              {/* Role Description */}
+              <div>
+                <label className="block text-sm font-bold mb-2">Role Description (optional)</label>
+                <input
+                  type="text"
+                  value={contributorRoleDesc}
+                  onChange={(e) => setContributorRoleDesc(e.target.value)}
+                  className="w-full p-3 border-2 border-black"
+                  placeholder="e.g., Co-wrote the introduction"
+                />
+              </div>
+            </div>
+
+            <div className="p-4 border-t-2 border-black flex justify-end gap-4">
+              <button
+                onClick={() => setShowContributorModal(false)}
+                className="px-6 py-2 border-2 border-black font-bold hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddContributor}
+                disabled={!selectedContributorId || !contributorRole}
+                className="px-6 py-2 bg-black text-white border-2 border-black font-bold hover:bg-gray-800 disabled:opacity-50"
+              >
+                Add Contributor
+              </button>
             </div>
           </div>
         </div>

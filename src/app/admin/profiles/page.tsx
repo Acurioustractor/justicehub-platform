@@ -32,9 +32,11 @@ export default async function AdminProfilesPage({
 
   console.log('Admin access granted!');
 
-  // Fetch all profiles with filters
+  // Fetch all public profiles with filters
+  // Note: public_profiles is the display-focused table with slug, photo_url, role_tags
+  // The 'profiles' table is auth-linked and used for is_super_admin checks
   let query = supabase
-    .from('profiles')
+    .from('public_profiles')
     .select(`
       *,
       art_innovation_profiles (count),

@@ -5,14 +5,14 @@ export default function NetworkMapPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-green-50">
       {/* Header */}
-      <header className="bg-white border-b-2 border-gray-200 shadow-sm">
+      <header className="bg-white border-b-2 border-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <Link href="/visuals" className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+              <Link href="/visuals" className="text-black hover:underline text-sm font-bold">
                 ← Back to All Visuals
               </Link>
-              <h1 className="text-4xl font-bold text-gray-900 mt-2">
+              <h1 className="text-4xl font-black text-black mt-2">
                 The Network Effect
               </h1>
               <p className="text-gray-600 mt-2">
@@ -28,8 +28,8 @@ export default function NetworkMapPage() {
         <NetworkMap />
 
         {/* Context */}
-        <div className="mt-12 bg-white rounded-xl shadow-lg p-8 border-2 border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">What This Shows</h2>
+        <div className="mt-12 bg-white p-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <h2 className="text-2xl font-black text-black mb-4">What This Shows</h2>
           <div className="space-y-4 text-gray-700">
             <p>
               <strong className="text-gray-900">BEFORE:</strong> Communities work in isolation.
@@ -56,7 +56,7 @@ export default function NetworkMapPage() {
           <div className="grid md:grid-cols-3 gap-6">
             <Link
               href="/visuals/transformation"
-              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-600 hover:shadow-lg transition-all"
+              className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
               <h4 className="font-bold text-lg mb-2">System Transformation</h4>
               <p className="text-gray-600 text-sm">
@@ -65,7 +65,7 @@ export default function NetworkMapPage() {
             </Link>
             <Link
               href="/visuals/flow"
-              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-600 hover:shadow-lg transition-all"
+              className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
               <h4 className="font-bold text-lg mb-2">Local to Scale</h4>
               <p className="text-gray-600 text-sm">
@@ -74,7 +74,7 @@ export default function NetworkMapPage() {
             </Link>
             <Link
               href="/visuals/connections"
-              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-600 hover:shadow-lg transition-all"
+              className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
               <h4 className="font-bold text-lg mb-2">Connection Web</h4>
               <p className="text-gray-600 text-sm">

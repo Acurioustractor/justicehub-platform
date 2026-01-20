@@ -2,13 +2,14 @@ import { createServiceClient } from '@/lib/supabase/service';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { Users, Mail, ExternalLink, ArrowRight } from 'lucide-react';
+import { Users, Mail, ExternalLink, ArrowRight, ArrowLeft } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 interface CoEPerson {
   id: string;
-  role_title: string;
+  role: string;          // New standardized field
+  role_title?: string;   // Legacy field (backward compatibility)
   expertise_area: string;
   display_order: number;
   profile: {
@@ -32,6 +33,7 @@ async function getKeyPeople(): Promise<CoEPerson[]> {
     .from('coe_key_people')
     .select(`
       id,
+      role,
       role_title,
       expertise_area,
       display_order,
@@ -57,32 +59,30 @@ export default async function CoEPeoplePage() {
   const team = keyPeople.slice(6);
 
   return (
-    <div className="min-h-screen bg-white page-content">
+    <div className="min-h-screen bg-white">
       <Navigation />
 
-      <main>
+      <main className="header-offset">
         {/* Hero */}
-        <section className="bg-gradient-to-br from-eucalyptus-50 via-sand-50 to-ochre-50 py-16 border-b-2 border-black">
+        <section className="section-padding bg-gradient-to-br from-eucalyptus-50 via-sand-50 to-ochre-50 border-b-2 border-black">
           <div className="container-justice">
-            <div className="flex items-center gap-2 text-sm text-earth-600 mb-6">
-              <Link href="/centre-of-excellence" className="hover:text-ochre-600">
-                Centre of Excellence
-              </Link>
-              <span>/</span>
-              <span>Key People</span>
+            <Link
+              href="/centre-of-excellence"
+              className="inline-flex items-center gap-2 font-bold text-gray-700 hover:text-black mb-6 transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              Back to Centre of Excellence
+            </Link>
+
+            <div className="inline-block px-4 py-2 bg-eucalyptus-100 border-2 border-black mb-6">
+              <span className="font-bold">KEY PEOPLE</span>
             </div>
 
-            <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-eucalyptus-100 border-2 border-black">
-                <Users className="w-8 h-8" />
-              </div>
-              <div>
-                <h1 className="text-5xl font-black">Key People</h1>
-                <p className="text-earth-600">The team driving youth justice reform</p>
-              </div>
-            </div>
+            <h1 className="headline-truth mb-6">
+              Leadership & Experts
+            </h1>
 
-            <p className="text-xl text-earth-700 max-w-3xl">
+            <p className="text-xl text-gray-700 max-w-4xl leading-relaxed">
               Our Centre of Excellence brings together researchers, practitioners, advocates,
               and people with lived experience to build the evidence base for what works
               in youth justice.
@@ -230,7 +230,7 @@ function PersonCard({ person, featured = false }: { person: CoEPerson; featured?
         </h3>
 
         <div className="text-ochre-600 font-medium text-sm">
-          {person.role_title}
+          {person.role || person.role_title}
         </div>
 
         <div className="text-xs font-bold uppercase tracking-wider px-2 py-1 bg-eucalyptus-100 text-eucalyptus-800 inline-block">

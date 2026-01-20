@@ -36,9 +36,6 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log('📝 Extracting quotes from transcript for:', storytellerName);
-    console.log('📊 Transcript length:', transcript.length, 'characters');
-
     // Use Claude to extract quotes, themes, and case studies
     const message = await anthropic.messages.create({
       model: 'claude-3-5-sonnet-20241022',
@@ -134,11 +131,6 @@ Return ONLY the JSON object, no other text.`
       throw new Error('Invalid response structure: missing quotes array');
     }
 
-    console.log('✅ Successfully extracted:');
-    console.log('   - Quotes:', extractedData.quotes?.length || 0);
-    console.log('   - Themes:', extractedData.themes?.length || 0);
-    console.log('   - Case Studies:', extractedData.case_studies?.length || 0);
-
     return NextResponse.json({
       success: true,
       data: {
@@ -155,7 +147,7 @@ Return ONLY the JSON object, no other text.`
     });
 
   } catch (error: any) {
-    console.error('❌ Error extracting quotes:', error);
+    console.error('Extract quotes error:', error.message);
 
     // Provide helpful error messages
     if (error.message?.includes('API key')) {

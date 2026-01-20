@@ -35,7 +35,7 @@ export function Footer() {
                         </p>
 
                         <div className="bg-gray-900 p-6 border border-gray-800 rounded-sm">
-                            <h4 className="font-bold text-white mb-2 uppercase tracking-wider text-sm">Stay Updated</h4>
+                            <p className="font-bold text-white mb-2 uppercase tracking-wider text-sm" role="heading" aria-level={2}>Stay Updated</p>
                             <p className="text-gray-400 text-sm mb-4">Join our community newsletter for the latest updates.</p>
 
                             {subscribed ? (
@@ -66,9 +66,9 @@ export function Footer() {
                     {/* Links Columns */}
                     {footerSections.map((section) => (
                         <div key={section.title}>
-                            <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm border-b border-gray-800 pb-2 inline-block">
+                            <p className="font-bold text-white mb-6 uppercase tracking-wider text-sm border-b border-gray-800 pb-2 inline-block" role="heading" aria-level={2}>
                                 {section.title}
-                            </h4>
+                            </p>
                             <ul className="space-y-4">
                                 {section.links.map((link) => (
                                     <li key={link.label}>
@@ -95,7 +95,7 @@ export function Footer() {
                     <div className="flex gap-6">
                         <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
                         <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
-                        <Link href="/accessibility" className="hover:text-white transition-colors">Accessibility</Link>
+                        <Link href="/about" className="hover:text-white transition-colors">About</Link>
                     </div>
                 </div>
             </div>

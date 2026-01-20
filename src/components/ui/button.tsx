@@ -25,7 +25,7 @@ const buttonVariants = cva(
         // JusticeHub specific variants
         cta: "bg-black text-white font-bold uppercase tracking-wider hover:bg-gray-800 border-2 border-black",
         "cta-outline": "bg-transparent text-black font-bold uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white",
-        justice: "bg-orange-600 text-white font-bold hover:bg-orange-700 shadow-lg",
+        justice: "bg-orange-700 text-white font-bold hover:bg-orange-800 shadow-lg",
         success: "bg-green-600 text-white font-medium hover:bg-green-700",
         warning: "bg-yellow-500 text-black font-medium hover:bg-yellow-600",
       },

@@ -1,8 +1,9 @@
 import { createServiceClient } from '@/lib/supabase/service';
 import { notFound } from 'next/navigation';
 import RelatedContent from '@/components/alma/RelatedContent';
-import { ArrowLeft, FileText, ExternalLink, User, Calendar } from 'lucide-react';
+import { ArrowLeft, FileText, ExternalLink, User, Calendar, Building2 } from 'lucide-react';
 import Link from 'next/link';
+import { Navigation, Footer } from '@/components/ui/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,22 +17,15 @@ export default async function EvidenceDetailPage({ params }: PageProps) {
   const { id } = await params;
   const supabase = createServiceClient();
 
-  // Fetch evidence details
+  // Fetch evidence details (simplified query - author profile join removed)
   const { data: evidence, error } = await supabase
     .from('alma_evidence')
-    .select(`
-      *,
-      author_profile:author_profile_id (
-        id,
-        first_name,
-        last_name,
-        slug
-      )
-    `)
+    .select('*')
     .eq('id', id)
     .single();
 
   if (error || !evidence) {
+    console.error('Evidence fetch error:', error);
     notFound();
   }
 
@@ -63,24 +57,23 @@ export default async function EvidenceDetailPage({ params }: PageProps) {
       ...item.articles,
       relevance_note: item.relevance_note,
     })) || [],
-    author: evidence.author_profile ? [{
-      ...evidence.author_profile,
-      role: 'Author'
-    }] : [],
+    author: [],
     evidence: relatedEvidenceData.data || [],
   };
 
   return (
     <div className="min-h-screen bg-white">
+      <Navigation />
+
       {/* Header */}
-      <div className="border-b-2 border-black bg-white">
+      <div className="border-b-2 border-black bg-white page-content">
         <div className="max-w-6xl mx-auto px-6 py-8">
           <Link
-            href="/stories/intelligence"
+            href="/intelligence/evidence"
             className="inline-flex items-center gap-2 mb-6 hover:underline"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Intelligence Studio
+            Back to Evidence Library
           </Link>
 
           <div className="mb-4">
@@ -105,27 +98,32 @@ export default async function EvidenceDetailPage({ params }: PageProps) {
               </div>
             </div>
 
-            {evidence.author_profile && (
+            {evidence.author && (
               <div className="flex items-start gap-3">
                 <User className="w-5 h-5 mt-1 flex-shrink-0" />
                 <div>
                   <div className="font-bold mb-1">Author</div>
-                  <Link
-                    href={`/profiles/${evidence.author_profile.slug}`}
-                    className="text-sm hover:underline"
-                  >
-                    {evidence.author_profile.first_name} {evidence.author_profile.last_name}
-                  </Link>
+                  <div className="text-sm">{evidence.author}</div>
                 </div>
               </div>
             )}
 
-            {evidence.publication_year && (
+            {evidence.publication_date && (
               <div className="flex items-start gap-3">
                 <Calendar className="w-5 h-5 mt-1 flex-shrink-0" />
                 <div>
-                  <div className="font-bold mb-1">Year</div>
-                  <div className="text-sm">{evidence.publication_year}</div>
+                  <div className="font-bold mb-1">Published</div>
+                  <div className="text-sm">{new Date(evidence.publication_date).toLocaleDateString('en-AU', { year: 'numeric', month: 'long' })}</div>
+                </div>
+              </div>
+            )}
+
+            {evidence.organization && (
+              <div className="flex items-start gap-3">
+                <Building2 className="w-5 h-5 mt-1 flex-shrink-0" />
+                <div>
+                  <div className="font-bold mb-1">Organization</div>
+                  <div className="text-sm">{evidence.organization}</div>
                 </div>
               </div>
             )}
@@ -138,10 +136,20 @@ export default async function EvidenceDetailPage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Evidence Details */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Key Findings */}
-            {evidence.key_findings && evidence.key_findings.length > 0 && (
+            {/* Findings */}
+            {evidence.findings && (
               <div className="border-2 border-black p-6 bg-white">
                 <h2 className="text-2xl font-bold mb-4">Key Findings</h2>
+                <div className="prose prose-lg max-w-none whitespace-pre-wrap">
+                  {evidence.findings}
+                </div>
+              </div>
+            )}
+
+            {/* Key Findings Array (if present) */}
+            {evidence.key_findings && evidence.key_findings.length > 0 && (
+              <div className="border-2 border-black p-6 bg-white">
+                <h2 className="text-2xl font-bold mb-4">Summary Points</h2>
                 <ul className="space-y-3">
                   {evidence.key_findings.map((finding: string, idx: number) => (
                     <li key={idx} className="flex gap-3">
@@ -298,6 +306,8 @@ export default async function EvidenceDetailPage({ params }: PageProps) {
           />
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

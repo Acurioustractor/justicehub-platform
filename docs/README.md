@@ -90,6 +90,12 @@ Each system has an `index.md` entry point:
 - [systems/alma/](systems/alma/) - ALMA intelligence
 - [systems/scraper/](systems/scraper/) - Data ingestion
 - [systems/empathy-ledger/](systems/empathy-ledger/) - EL integration
+- [systems/JUSTICEHUB_SITE_MAP_AND_ROUTES.md](systems/JUSTICEHUB_SITE_MAP_AND_ROUTES.md) - Complete site architecture
+
+### Security
+- Security utilities: `src/lib/security.ts` - Input sanitization, XSS prevention
+- Consent service: `src/lib/alma/consent-service.ts` - ALMA governance gates
+- Rate limiting: `src/middleware.ts` - API protection
 
 ---
 
@@ -128,15 +134,20 @@ See [operations/deployment/QUICK_START.md](operations/deployment/QUICK_START.md)
 
 | Category | Count | Purpose |
 |----------|-------|---------|
-| Knowledge Base | 5 | AI-consumable reference |
+| Knowledge Base | 6 | AI-consumable reference |
 | Vision | 3 | Strategic direction |
+| Strategic | 5 | Planning & roadmaps |
 | System Docs | ~30 | Technical reference |
 | Guides | ~25 | How-to instructions |
 | Archive | 155+ | Historical reference |
 
-**Reduction**: 400 → ~65 active docs (84% reduction in active docs)
+**Key Reference Files:**
+- `docs/SYSTEM-MAP.md` - Complete system architecture
+- `docs/knowledge/JUSTICEHUB.md` - Main AI knowledge doc
+- `src/lib/security.ts` - Security utility library
 
 ---
 
-*Last Updated: January 2026*
+*Last Updated: January 18, 2026*
 *Structure: Optimized for LLM consumption + human navigation*
+*Security Audit: Complete (see src/lib/security.ts)*

@@ -15,10 +15,11 @@ import {
   Heart,
   ChevronRight,
   ArrowLeft,
-  ExternalLink
+  ExternalLink,
+  Mountain
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
 import ProfileCard from '@/components/ProfileCard';
 
 interface ProfileData {
@@ -37,10 +38,10 @@ interface ProfileData {
   isFeatured?: boolean;
 }
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
+const supabase = createClient();
+
+// Founding Basecamps - Centre of Excellence network
+const FOUNDING_BASECAMP_SLUGS = ['oonchiumpa', 'bg-fit', 'bg fit', 'mounty-yarns', 'mounty yarns', 'picc'];
 
 interface CommunityProgram {
   id: string;
@@ -74,8 +75,10 @@ export default function ProgramDetailPage() {
   const programId = params?.id as string;
   const [program, setProgram] = useState<CommunityProgram | null>(null);
   const [profiles, setProfiles] = useState<ProfileData[]>([]);
+  const [relatedPrograms, setRelatedPrograms] = useState<CommunityProgram[]>([]);
   const [loading, setLoading] = useState(true);
   const [profilesLoading, setProfilesLoading] = useState(false);
+  const [isBasecampAffiliated, setIsBasecampAffiliated] = useState(false);
 
   useEffect(() => {
     async function fetchProgram() {
@@ -97,6 +100,33 @@ export default function ProgramDetailPage() {
         setProgram(null);
       } else if (data) {
         setProgram(data);
+
+        // Check if affiliated with a founding basecamp
+        const orgSlug = data.organizations?.slug?.toLowerCase() || '';
+        const orgName = data.organizations?.name?.toLowerCase() || '';
+        const orgText = data.organization?.toLowerCase() || ''; // Text field fallback
+        const isBasecamp = FOUNDING_BASECAMP_SLUGS.some(
+          basecamp => orgSlug.includes(basecamp) || orgName.includes(basecamp) || orgText.includes(basecamp)
+        );
+        setIsBasecampAffiliated(isBasecamp);
+
+        // Fetch related programs (same approach or state, excluding current)
+        const { data: related } = await supabase
+          .from('registered_services')
+          .select(`
+            *,
+            organizations:organization_id (
+              name,
+              slug
+            )
+          `)
+          .neq('id', programId)
+          .or(`approach.eq.${data.approach},state.eq.${data.state}`)
+          .limit(3);
+
+        if (related) {
+          setRelatedPrograms(related);
+        }
       }
       setLoading(false);
     }
@@ -196,6 +226,15 @@ export default function ProgramDetailPage() {
                     <span className="px-4 py-2 bg-yellow-100 text-yellow-800 text-sm font-bold uppercase tracking-wider">
                       ★ Featured
                     </span>
+                  )}
+                  {isBasecampAffiliated && (
+                    <Link
+                      href="/centre-of-excellence"
+                      className="px-4 py-2 bg-ochre-600 text-white text-sm font-bold uppercase tracking-wider inline-flex items-center gap-2 hover:bg-ochre-700 transition-colors"
+                    >
+                      <Mountain className="w-4 h-4" />
+                      Centre of Excellence
+                    </Link>
                   )}
                 </div>
 
@@ -523,16 +562,17 @@ export default function ProgramDetailPage() {
           </div>
         </section>
 
-        {/* Related Programs - Commented out until programs list is available */}
-        {/* <section className="py-16 bg-gray-50">
-          <div className="container-justice">
-            <h2 className="text-3xl font-bold mb-8 text-center">More Programs Like This</h2>
+        {/* Related Programs */}
+        {relatedPrograms.length > 0 && (
+          <section className="py-16 bg-gray-50">
+            <div className="container-justice">
+              <h2 className="text-3xl font-bold mb-8 text-center">More Programs Like This</h2>
+              <p className="text-center text-gray-600 mb-8">
+                Similar programs by approach or location
+              </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {programs
-                .filter(p => p.id !== program.id && (p.approach === program.approach || p.state === program.state))
-                .slice(0, 3)
-                .map((relatedProgram) => (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {relatedPrograms.map((relatedProgram) => (
                   <div key={relatedProgram.id} className="data-card bg-white">
                     <div className="flex items-center justify-between mb-3">
                       <span className={`px-2 py-1 text-xs font-bold uppercase tracking-wider ${getApproachColor(relatedProgram.approach)}`}>
@@ -561,9 +601,16 @@ export default function ProgramDetailPage() {
                     </Link>
                   </div>
                 ))}
+              </div>
+
+              <div className="text-center mt-8">
+                <Link href="/community-programs" className="cta-secondary">
+                  VIEW ALL PROGRAMS
+                </Link>
+              </div>
             </div>
-          </div>
-        </section> */}
+          </section>
+        )}
       </main>
 
       <Footer />

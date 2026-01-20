@@ -19,13 +19,16 @@ export default async function AdminStoriesPage() {
 
   if (!profileData?.is_super_admin) redirect('/');
 
-  // Fetch stories with author profiles using any to bypass strict linting on missing DB types
+  // Fetch stories with author profiles from public_profiles via public_profile_id
+  // Falls back to legacy author_id -> profiles join for backwards compatibility
   const { data: storiesData, error: storiesError } = await supabase
     .from('stories')
     .select(`
       *,
-      profiles!stories_author_id_fkey (
-        full_name
+      public_profiles!stories_public_profile_id_fkey (
+        id,
+        full_name,
+        slug
       )
     `)
     .order('created_at', { ascending: false });
@@ -42,9 +45,9 @@ export default async function AdminStoriesPage() {
     created_at: item.created_at || new Date().toISOString(),
     content_type: 'article' as const,
     excerpt: item.excerpt || '',
-    public_profiles: item.profiles ? {
-      full_name: item.profiles.full_name,
-      slug: '' // profiles table doesn't have slug, will need to handle this
+    public_profiles: item.public_profiles ? {
+      full_name: item.public_profiles.full_name,
+      slug: item.public_profiles.slug || ''
     } : undefined
   }));
 
@@ -67,7 +70,7 @@ export default async function AdminStoriesPage() {
             <div className="flex gap-4">
               <Link
                 href="/admin/stories/transcript"
-                className="px-6 py-3 bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors border-2 border-blue-600 shadow-lg flex items-center gap-2"
+                className="px-6 py-3 bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -76,7 +79,7 @@ export default async function AdminStoriesPage() {
               </Link>
               <Link
                 href="/admin/stories/new"
-                className="px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors border-2 border-black shadow-lg"
+                className="px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
               >
                 Blank Story
               </Link>

@@ -7,6 +7,8 @@ import { Navigation, Footer } from '@/components/ui/navigation';
 import CoELeaders from '@/components/CoELeaders';
 import HomepageNetworkMap from '@/components/HomepageNetworkMap';
 import EmpathyLedgerStories from '@/components/EmpathyLedgerStories';
+import { basecampLocations } from '@/content/excellence-map-locations';
+import { MapPin, Building2 } from 'lucide-react';
 
 interface HomepageStats {
   programs_documented: number;
@@ -25,6 +27,7 @@ export default function HomePage() {
   const [mounted, setMounted] = useState(false);
   const [stats, setStats] = useState<HomepageStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
+  const [isStatsFallback, setIsStatsFallback] = useState(false);
 
   // Fetch live stats from database
   useEffect(() => {
@@ -33,6 +36,9 @@ export default function HomePage() {
       .then(data => {
         if (data.stats) {
           setStats(data.stats);
+        }
+        if (data.is_fallback) {
+          setIsStatsFallback(true);
         }
       })
       .catch(console.error)
@@ -172,7 +178,13 @@ export default function HomePage() {
 
           {/* Platform Impact Metrics - Live from Database */}
           <div className="mb-16">
-            <h3 className="text-2xl font-bold mb-8 text-center">JUSTICEHUB IMPACT</h3>
+            <h3 className="text-2xl font-bold mb-2 text-center">JUSTICEHUB IMPACT</h3>
+            {isStatsFallback && (
+              <p className="text-sm text-gray-500 text-center mb-6">
+                (using cached data)
+              </p>
+            )}
+            {!isStatsFallback && <div className="mb-8" />}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="data-card text-center">
                 <div className="flex justify-center mb-4">
@@ -253,6 +265,72 @@ export default function HomePage() {
 
       {/* Centre of Excellence Leadership */}
       <CoELeaders />
+
+      {/* Founding Network - Basecamps */}
+      <section className="section-padding bg-gradient-to-br from-ochre-50 to-orange-50 border-t-2 border-b-2 border-black">
+        <div className="container-justice">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-ochre-600 text-white font-bold text-sm uppercase tracking-wider mb-4">
+              <MapPin className="h-4 w-4" />
+              Founding Network
+            </div>
+            <h2 className="headline-truth mb-4">
+              4 basecamps. 4 regions. One mission.
+            </h2>
+            <p className="text-xl max-w-3xl mx-auto">
+              These founding organizations anchor the JusticeHub network—proving that
+              community-led solutions work from the red centre to urban Sydney.
+            </p>
+          </div>
+
+          {/* Basecamp Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {basecampLocations.map((basecamp) => (
+              <Link
+                key={basecamp.id}
+                href={basecamp.detailUrl}
+                className="bg-white border-2 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-3 h-3 bg-ochre-600 rounded-full"></div>
+                  <span className="text-sm font-bold text-gray-600 uppercase tracking-wider">
+                    {basecamp.city}, {basecamp.state}
+                  </span>
+                </div>
+                <h3 className="text-xl font-black mb-2">{basecamp.name}</h3>
+                <p className="text-sm text-gray-700 mb-4 line-clamp-2">
+                  {basecamp.description}
+                </p>
+                <div className="space-y-1">
+                  {basecamp.keyStats.slice(0, 2).map((stat, i) => (
+                    <div key={i} className="text-sm font-bold text-ochre-700 flex items-center gap-1">
+                      <span className="text-green-600">✓</span> {stat}
+                    </div>
+                  ))}
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* CTA to see full network */}
+          <div className="text-center flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/centre-of-excellence/map?category=basecamp"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-black text-white font-bold uppercase tracking-wider hover:bg-gray-800 transition-colors"
+            >
+              <MapPin className="h-5 w-5" />
+              VIEW NETWORK MAP
+            </Link>
+            <Link
+              href="/people"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-black font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
+            >
+              <Users className="h-5 w-5" />
+              MEET THE MOVEMENT
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* National Network Map */}
       <HomepageNetworkMap />
@@ -383,7 +461,7 @@ export default function HomePage() {
           <div className="mb-12 border-2 border-black bg-gradient-to-r from-green-50 to-blue-50 p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="flex-shrink-0">
-                <div className="w-20 h-20 bg-black rounded-lg flex items-center justify-center">
+                <div className="w-20 h-20 bg-black flex items-center justify-center">
                   <Sparkles className="w-10 h-10 text-green-400" />
                 </div>
               </div>
@@ -401,7 +479,7 @@ export default function HomePage() {
               </div>
               <div className="flex-shrink-0">
                 <Link
-                  href="#alma-chat"
+                  href="/intelligence/chat"
                   className="inline-flex items-center gap-2 px-8 py-4 bg-black text-white font-bold border-2 border-black hover:bg-green-700 transition-colors"
                 >
                   <Sparkles className="w-5 h-5" />

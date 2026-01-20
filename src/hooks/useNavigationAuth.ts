@@ -30,25 +30,44 @@ export function useNavigationAuth() {
                 setUser(user);
 
                 if (user) {
-                    // Fetch user's profile and role
-                    // Using 'profiles' table instead of 'public_profiles' as per latest schema
-                    const { data: profile, error: profileError } = await supabase
+                    // Fetch user's public profile (linked by user_id)
+                    const { data: publicProfile, error: publicProfileError } = await supabase
+                        .from('public_profiles')
+                        .select('slug, full_name, photo_url')
+                        .eq('user_id', user.id)
+                        .single();
+
+                    // Fetch admin status from profiles table
+                    const { data: authProfile } = await supabase
                         .from('profiles')
-                        .select('slug, full_name, photo_url, is_super_admin')
+                        .select('role, is_super_admin')
                         .eq('id', user.id)
                         .single();
 
-                    if (profileError) {
-                        console.error('Error fetching profile:', profileError);
-                        return;
+                    // Check if super admin (role-based or is_super_admin flag)
+                    const isAdmin = authProfile?.is_super_admin === true ||
+                                    authProfile?.role === 'admin' ||
+                                    authProfile?.role === 'super_admin';
+
+                    if (publicProfileError && publicProfileError.code !== 'PGRST116') {
+                        // PGRST116 = no rows returned, which is OK for users without public profile
+                        console.error('Error fetching profile:', publicProfileError);
                     }
 
-                    if (profile) {
+                    if (publicProfile) {
                         setUserProfile({
-                            slug: profile.slug || '',
-                            full_name: profile.full_name || '',
-                            photo_url: profile.photo_url,
-                            user_role: profile.is_super_admin ? 'admin' : 'user'
+                            slug: publicProfile.slug || '',
+                            full_name: publicProfile.full_name || '',
+                            photo_url: publicProfile.photo_url,
+                            user_role: isAdmin ? 'admin' : 'user'
+                        });
+                    } else {
+                        // User has no public profile, use email as fallback
+                        setUserProfile({
+                            slug: '',
+                            full_name: user.email?.split('@')[0] || 'User',
+                            photo_url: null,
+                            user_role: isAdmin ? 'admin' : 'user'
                         });
                     }
                 }

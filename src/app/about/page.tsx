@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { Navigation, Footer, QuickNav } from '@/components/ui/navigation';
+import { basecampLocations } from '@/content/excellence-map-locations';
 
 interface PlatformStats {
   interventions: number;
@@ -62,13 +63,13 @@ export default function AboutPage() {
     fetch('/api/homepage-stats')
       .then(res => res.json())
       .then(data => {
-        if (data.interventions || data.services) {
+        if (data.stats) {
           setStats({
-            interventions: data.interventions || 1000,
-            services: data.services || 500,
-            organizations: data.organizations || 450,
-            stories: data.stories || 100,
-            profiles: data.profiles || 30
+            interventions: data.stats.programs_documented || 624,
+            services: data.stats.total_services || 150,
+            organizations: data.stats.total_organizations || 67,
+            stories: data.stats.stories || 100,
+            profiles: data.stats.total_people || 34
           });
         }
       })
@@ -223,7 +224,7 @@ export default function AboutPage() {
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-red-600 rounded-full mt-3"></div>
-                    <p className="text-black"><strong>70% recidivism rate</strong> in detention systems</p>
+                    <p className="text-black"><strong>84.5% recidivism rate</strong> in detention systems</p>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 bg-red-600 rounded-full mt-3"></div>
@@ -525,6 +526,42 @@ export default function AboutPage() {
           </div>
         </section>
 
+        {/* Founding Network Section */}
+        <section className="section-padding border-b-2 border-black">
+          <div className="container-justice">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white font-bold text-sm uppercase tracking-wider mb-4">
+                <MapPin className="h-4 w-4" />
+                Founding Network
+              </div>
+              <h2 className="text-3xl font-bold mb-4 text-black">4 Basecamps Anchoring the Movement</h2>
+              <p className="text-lg text-black font-medium max-w-3xl mx-auto">
+                From Alice Springs to Western Sydney, four founding organizations prove that community-led
+                solutions work across diverse contexts. They're the living proof behind our evidence.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+              {basecampLocations.map((basecamp) => (
+                <div key={basecamp.id} className="text-center p-4 border-2 border-black">
+                  <div className="text-2xl font-black text-orange-600">{basecamp.name}</div>
+                  <div className="text-sm text-black">{basecamp.city}, {basecamp.state}</div>
+                  <div className="text-xs text-green-700 font-bold mt-1">{basecamp.keyStats[0]}</div>
+                </div>
+              ))}
+            </div>
+            <div className="text-center flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/centre-of-excellence/map?category=basecamp" className="inline-flex items-center justify-center gap-2 bg-orange-600 text-white px-6 py-3 font-bold hover:bg-orange-700 transition-colors">
+                <MapPin className="h-4 w-4" />
+                View Network Map
+              </Link>
+              <Link href="/people" className="inline-flex items-center justify-center gap-2 border-2 border-black px-6 py-3 font-bold hover:bg-black hover:text-white transition-colors">
+                <Users className="h-4 w-4" />
+                Meet the Movement
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Mobile Experience Section */}
         <section className="section-padding">
           <div className="container-justice">
@@ -580,7 +617,7 @@ export default function AboutPage() {
                           {/* Mobile Interface Mockup */}
                           <div className="space-y-3 h-full">
                             {/* Hero Section */}
-                            <div className="text-center py-4 bg-gradient-to-r from-blue-800 to-purple-700 text-white rounded-lg">
+                            <div className="text-center py-4 bg-black text-white">
                               <div className="text-xs font-bold">24x</div>
                               <div className="text-xs">Indigenous kids locked up</div>
                             </div>

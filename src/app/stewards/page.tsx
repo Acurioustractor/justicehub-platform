@@ -107,7 +107,7 @@ export default async function StewardsPage() {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="border-2 border-black p-8 bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-shadow">
-              <div className="inline-flex p-4 bg-blue-50 rounded-lg mb-6">
+              <div className="inline-flex p-4 bg-blue-50 mb-6">
                 <BookOpen className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-bold mb-3">Protect Knowledge</h3>
@@ -124,7 +124,7 @@ export default async function StewardsPage() {
             </div>
 
             <div className="border-2 border-black p-8 bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-shadow">
-              <div className="inline-flex p-4 bg-green-50 rounded-lg mb-6">
+              <div className="inline-flex p-4 bg-green-50 mb-6">
                 <Users className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="text-xl font-bold mb-3">Nurture Communities</h3>
@@ -141,7 +141,7 @@ export default async function StewardsPage() {
             </div>
 
             <div className="border-2 border-black p-8 bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-shadow">
-              <div className="inline-flex p-4 bg-orange-50 rounded-lg mb-6">
+              <div className="inline-flex p-4 bg-orange-50 mb-6">
                 <TrendingUp className="w-8 h-8 text-orange-600" />
               </div>
               <h3 className="text-xl font-bold mb-3">Guide Resources</h3>

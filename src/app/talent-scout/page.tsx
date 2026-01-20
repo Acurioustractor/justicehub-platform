@@ -135,7 +135,7 @@ export default function TalentScoutPage() {
                     placeholder="Discover your creative path: music, tech, media, design..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 text-lg border-2 border-purple-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 rounded-lg"
+                    className="w-full pl-12 pr-4 py-4 text-lg border-2 border-black focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   />
                 </div>
               </div>
@@ -182,10 +182,10 @@ export default function TalentScoutPage() {
                   <button
                     key={category.id}
                     onClick={() => setSelectedCategory(category.id)}
-                    className={`px-6 py-3 font-bold tracking-wider transition-all flex items-center gap-2 rounded-lg
-                      ${selectedCategory === category.id 
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg' 
-                        : 'border-2 border-purple-400 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white'
+                    className={`px-6 py-3 font-bold tracking-wider transition-all flex items-center gap-2 border-2 border-black
+                      ${selectedCategory === category.id
+                        ? 'bg-purple-600 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                        : 'bg-white hover:bg-purple-600 hover:text-white'
                       }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -211,7 +211,7 @@ export default function TalentScoutPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredPrograms.map((program) => (
-                <div key={program.id} className="border-2 border-purple-300 bg-white hover:shadow-lg hover:border-purple-500 transition-all rounded-lg overflow-hidden">
+                <div key={program.id} className="border-2 border-black bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all overflow-hidden">
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="font-bold text-lg leading-tight">{program.name}</h3>
@@ -243,7 +243,7 @@ export default function TalentScoutPage() {
                       </div>
                     </div>
                     
-                    <div className="mt-4 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border-l-4 border-purple-400">
+                    <div className="mt-4 p-3 bg-purple-50 border-l-4 border-purple-600">
                       <div className="text-xs font-medium text-purple-800 mb-1">SUCCESS OUTCOMES</div>
                       <div className="text-sm text-purple-700">{program.outcomes}</div>
                     </div>
@@ -290,21 +290,21 @@ export default function TalentScoutPage() {
           <div className="container-justice">
             <h2 className="text-2xl font-bold mb-8 text-center">CREATOR SUCCESS STORIES</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white border-2 border-purple-300 p-6 rounded-lg hover:border-purple-500 transition-colors">
+              <div className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
                 <div className="text-4xl mb-4">🎵</div>
-                <h3 className="font-bold mb-2 text-purple-800">From Beats to Business</h3>
+                <h3 className="font-bold mb-2">From Beats to Business</h3>
                 <p className="text-sm mb-4 text-gray-700">Jamie learned music production and now runs their own studio, mentoring other young producers.</p>
                 <Link href="/stories" className="text-sm font-bold text-purple-600 hover:text-purple-800 transition-colors">Read Journey →</Link>
               </div>
-              <div className="bg-white border-2 border-purple-300 p-6 rounded-lg hover:border-purple-500 transition-colors">
+              <div className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
                 <div className="text-4xl mb-4">📱</div>
-                <h3 className="font-bold mb-2 text-purple-800">Coding Changed Everything</h3>
+                <h3 className="font-bold mb-2">Coding Changed Everything</h3>
                 <p className="text-sm mb-4 text-gray-700">Alex went from no tech experience to landing a developer role at a startup in just 6 months.</p>
                 <Link href="/stories" className="text-sm font-bold text-purple-600 hover:text-purple-800 transition-colors">Read Journey →</Link>
               </div>
-              <div className="bg-white border-2 border-purple-300 p-6 rounded-lg hover:border-purple-500 transition-colors">
+              <div className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
                 <div className="text-4xl mb-4">🎬</div>
-                <h3 className="font-bold mb-2 text-purple-800">Telling My Truth</h3>
+                <h3 className="font-bold mb-2">Telling My Truth</h3>
                 <p className="text-sm mb-4 text-gray-700">Maya discovered filmmaking and now creates documentaries about youth justice reform.</p>
                 <Link href="/stories" className="text-sm font-bold text-purple-600 hover:text-purple-800 transition-colors">Read Journey →</Link>
               </div>
@@ -317,21 +317,21 @@ export default function TalentScoutPage() {
           <div className="container-justice">
             <h2 className="text-2xl font-bold mb-8 text-center">YOUR CREATIVE ECOSYSTEM</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Link href="/services" className="group border-2 border-purple-300 bg-white p-6 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white transition-all rounded-lg">
+              <Link href="/services" className="group border-2 border-black bg-white p-6 hover:bg-purple-600 hover:text-white transition-all">
                 <h3 className="font-bold mb-2">🤖 Service Finder</h3>
                 <p className="text-sm">AI-powered discovery of support services when you need them most</p>
               </Link>
-              <Link href="/grassroots" className="group border-2 border-purple-300 bg-white p-6 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white transition-all rounded-lg">
+              <Link href="/grassroots" className="group border-2 border-black bg-white p-6 hover:bg-purple-600 hover:text-white transition-all">
                 <h3 className="font-bold mb-2">🌱 Grassroots Programs</h3>
                 <p className="text-sm">Deep-dive into programs that create real transformation for young creators</p>
               </Link>
-              <Link href="/gallery" className="group border-2 border-purple-300 bg-white p-6 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white transition-all rounded-lg">
+              <Link href="/gallery" className="group border-2 border-black bg-white p-6 hover:bg-purple-600 hover:text-white transition-all">
                 <h3 className="font-bold mb-2">📸 Creative Gallery</h3>
                 <p className="text-sm">Showcase your work and get inspired by other young creators</p>
               </Link>
             </div>
             
-            <div className="mt-8 p-6 bg-white border-2 border-purple-300 rounded-lg">
+            <div className="mt-8 p-6 bg-white border-2 border-black">
               <div className="text-center">
                 <h3 className="font-bold text-lg mb-2 text-purple-800">Talent Scout vs Other Platforms</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 text-left">
@@ -357,10 +357,10 @@ export default function TalentScoutPage() {
               Join thousands of young creators building careers they love. Discover your talents, build your skills, and create your future.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/dashboard/youth" className="px-8 py-4 bg-white text-purple-600 font-bold tracking-wider rounded-lg hover:bg-gray-100 transition-colors shadow-lg">
+              <Link href="/dashboard/youth" className="px-8 py-4 bg-white text-purple-600 font-bold tracking-wider hover:bg-gray-100 transition-colors border-2 border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]">
                 START YOUR JOURNEY
               </Link>
-              <Link href="/dashboard/dreamtrack" className="px-8 py-4 border-2 border-white text-white font-bold tracking-wider rounded-lg hover:bg-white hover:text-purple-600 transition-colors">
+              <Link href="/dashboard/dreamtrack" className="px-8 py-4 border-2 border-white text-white font-bold tracking-wider hover:bg-white hover:text-purple-600 transition-colors">
                 DREAMTRACK STUDIO
               </Link>
             </div>

@@ -15,8 +15,9 @@ export default function EditEventPage() {
 
     useEffect(() => {
         async function fetchEvent() {
-            if (!params.id) return;
-            const id = Array.isArray(params.id) ? params.id[0] : params.id;
+            const paramId = params['id'];
+            if (!paramId) return;
+            const id = Array.isArray(paramId) ? paramId[0] : paramId;
 
             const supabase = createClient();
             const { data, error } = await supabase
@@ -34,7 +35,7 @@ export default function EditEventPage() {
             setLoading(false);
         }
         fetchEvent();
-    }, [params.id]);
+    }, [params]);
 
     if (loading) return <div className="p-20 text-center">Loading event data...</div>;
     if (!eventData) return <div className="p-20 text-center">Event not found</div>;

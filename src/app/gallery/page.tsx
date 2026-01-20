@@ -321,7 +321,7 @@ export default function GalleryPage() {
                   <Link
                     key={item.id}
                     href={`/gallery/${item.id}`}
-                    className="group border-2 border-black bg-white hover:shadow-lg transition-all block"
+                    className="group border-2 border-black bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all block"
                     style={{textDecoration: 'none'}}
                   >
                     {/* Thumbnail */}
@@ -417,7 +417,7 @@ export default function GalleryPage() {
                   <Link
                     key={item.id}
                     href={`/gallery/${item.id}`}
-                    className="group data-card hover:shadow-lg transition-all"
+                    className="group data-card hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
                     style={{textDecoration: 'none'}}
                   >
                     <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">

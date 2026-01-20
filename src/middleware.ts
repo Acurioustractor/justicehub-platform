@@ -2,21 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
-// Add a mock session for development
-const mockSession = {
-  user: {
-    sub: 'auth0|dev-user',
-    name: 'Dev User',
-    email: 'dev@example.com',
-    picture: 'https://placehold.co/100x100',
-    'https://justicehub.org/role': 'admin',
-    'https://justicehub.org/organization_id': 'org_123_dev',
-  },
-  accessToken: 'mock_access_token',
-  idToken: 'mock_id_token',
-  token_type: 'Bearer',
-  expires_at: Math.floor(Date.now() / 1000) + 3600,
-};
+// NOTE: Mock session removed for security - use proper auth flow in development
 
 // Security headers
 const securityHeaders = {
@@ -159,9 +145,7 @@ export async function middleware(request: NextRequest) {
           {
             cookies: {
               getAll() {
-                const cookies = request.cookies.getAll()
-                console.log('🍪 Middleware cookies:', cookies.map(c => c.name).join(', '))
-                return cookies
+                return request.cookies.getAll()
               },
               setAll(cookiesToSet) {
                 cookiesToSet.forEach(({ name, value, options }) => {
@@ -181,7 +165,6 @@ export async function middleware(request: NextRequest) {
         // Refresh session if expired - this is crucial!
         const { data: { user: authUser }, error } = await supabase.auth.getUser();
         user = authUser;
-        console.log('🔐 Middleware auth check:', user ? `User: ${user.email}` : `No user (${error?.message})`);
 
         // Check if user is admin (for /admin path protection)
         if (user && path.startsWith('/admin')) {
@@ -192,7 +175,6 @@ export async function middleware(request: NextRequest) {
             .single();
 
           isAdminUser = profileData?.is_super_admin === true;
-          console.log('🔑 Admin check for /admin path:', { userId: user.id, isAdmin: isAdminUser });
         }
       } catch (error) {
         console.error('Middleware Supabase error:', error);

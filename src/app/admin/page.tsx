@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, CheckCircle2, FileText, Network, Database } from 'lucide-react';
+import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, CheckCircle2, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign } from 'lucide-react';
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -28,6 +28,7 @@ export default async function AdminDashboard() {
   const [
     { count: profilesCount },
     { count: publicProfilesCount },
+    { count: peopleWithConnectionsCount },
     { count: storiesCount },
     { count: artCount },
     { count: programsCount },
@@ -41,9 +42,20 @@ export default async function AdminDashboard() {
     { count: blogPostLinksCount },
     { count: empathyProfilesCount },
     { count: empathyTranscriptsCount },
+    { count: frameworksCount },
+    { count: researchCount },
+    { count: coePeopleCount },
+    { count: eventsCount },
+    { count: upcomingEventsCount },
+    { count: blogPostsCount },
+    { count: draftPostsCount },
+    { count: photosCount },
+    { count: videosCount },
+    { count: intlProgramsCount },
   ] = await Promise.all([
-    supabase.from('profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_public', true),
+    supabase.from('public_profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('public_profiles').select('*', { count: 'exact', head: true }).eq('is_public', true),
+    supabase.from('organizations_profiles').select('public_profile_id', { count: 'exact', head: true }),
     supabase.from('articles').select('*', { count: 'exact', head: true }),
     supabase.from('art_innovation').select('*', { count: 'exact', head: true }),
     supabase.from('registered_services').select('*', { count: 'exact', head: true }),
@@ -57,6 +69,16 @@ export default async function AdminDashboard() {
     supabase.from('blog_posts_profiles').select('*', { count: 'exact', head: true }),
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
     supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
+    supabase.from('australian_frameworks').select('*', { count: 'exact', head: true }),
+    supabase.from('research_items').select('*', { count: 'exact', head: true }),
+    supabase.from('coe_key_people').select('*', { count: 'exact', head: true }),
+    supabase.from('events').select('*', { count: 'exact', head: true }),
+    supabase.from('events').select('*', { count: 'exact', head: true }).gte('start_time', new Date().toISOString()),
+    supabase.from('blog_posts').select('*', { count: 'exact', head: true }),
+    supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
+    supabase.from('partner_photos').select('*', { count: 'exact', head: true }),
+    supabase.from('partner_videos').select('*', { count: 'exact', head: true }),
+    supabase.from('international_programs').select('*', { count: 'exact', head: true }),
   ]);
 
   // Calculate connection rates
@@ -70,9 +92,9 @@ export default async function AdminDashboard() {
     {
       title: 'People',
       count: profilesCount || 0,
-      subtitle: `${publicProfilesCount || 0} public`,
+      subtitle: `${peopleWithConnectionsCount || 0} with connections`,
       icon: Users,
-      href: '/admin/profiles',
+      href: '/admin/people',
       color: 'from-blue-500 to-blue-600',
       bgColor: 'bg-blue-50',
       textColor: 'text-blue-600',
@@ -149,6 +171,36 @@ export default async function AdminDashboard() {
       bgColor: 'bg-violet-50',
       textColor: 'text-violet-600',
     },
+    {
+      title: 'Events',
+      count: eventsCount || 0,
+      subtitle: `${upcomingEventsCount || 0} upcoming`,
+      icon: Calendar,
+      href: '/admin/events',
+      color: 'from-red-500 to-red-600',
+      bgColor: 'bg-red-50',
+      textColor: 'text-red-600',
+    },
+    {
+      title: 'Blog Posts',
+      count: blogPostsCount || 0,
+      subtitle: `${draftPostsCount || 0} drafts`,
+      icon: FileText,
+      href: '/admin/blog',
+      color: 'from-emerald-500 to-emerald-600',
+      bgColor: 'bg-emerald-50',
+      textColor: 'text-emerald-600',
+    },
+    {
+      title: 'Media',
+      count: (photosCount || 0) + (videosCount || 0),
+      subtitle: `${photosCount || 0} photos, ${videosCount || 0} videos`,
+      icon: Image,
+      href: '/admin/media',
+      color: 'from-amber-500 to-amber-600',
+      bgColor: 'bg-amber-50',
+      textColor: 'text-amber-600',
+    },
   ];
 
   return (
@@ -186,7 +238,7 @@ export default async function AdminDashboard() {
 
                   <div className="p-6">
                     {/* Icon */}
-                    <div className={`inline-flex p-3 ${stat.bgColor} rounded-lg mb-4`}>
+                    <div className={`inline-flex p-3 ${stat.bgColor} mb-4`}>
                       <Icon className={`w-6 h-6 ${stat.textColor}`} />
                     </div>
 
@@ -261,6 +313,111 @@ export default async function AdminDashboard() {
                 <MapPin className="w-5 h-5" />
                 Import Services
               </Link>
+
+              <Link
+                href="/admin/events/new"
+                className="flex items-center gap-3 px-4 py-3 bg-red-50 border-2 border-red-600 text-red-600 font-bold hover:bg-red-100 transition-colors"
+              >
+                <Calendar className="w-5 h-5" />
+                Create Event
+              </Link>
+
+              <Link
+                href="/admin/media"
+                className="flex items-center gap-3 px-4 py-3 bg-amber-50 border-2 border-amber-600 text-amber-600 font-bold hover:bg-amber-100 transition-colors"
+              >
+                <Image className="w-5 h-5" />
+                Media Library
+              </Link>
+
+              <Link
+                href="/admin/data-operations"
+                className="flex items-center gap-3 px-4 py-3 bg-slate-50 border-2 border-slate-600 text-slate-600 font-bold hover:bg-slate-100 transition-colors"
+              >
+                <Database className="w-5 h-5" />
+                Data Operations
+              </Link>
+
+              <Link
+                href="/admin/funding"
+                className="flex items-center gap-3 px-4 py-3 bg-green-50 border-2 border-green-600 text-green-600 font-bold hover:bg-green-100 transition-colors"
+              >
+                <DollarSign className="w-5 h-5" />
+                Funding Pipeline
+              </Link>
+
+              <Link
+                href="/admin/research"
+                className="flex items-center gap-3 px-4 py-3 bg-purple-50 border-2 border-purple-600 text-purple-600 font-bold hover:bg-purple-100 transition-colors"
+              >
+                <BookOpen className="w-5 h-5" />
+                Evidence Library
+              </Link>
+            </div>
+          </div>
+
+          {/* Centre of Excellence Admin */}
+          <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8 mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-black text-black">Centre of Excellence</h2>
+                <p className="text-sm text-gray-600">Manage research, frameworks, and key people</p>
+              </div>
+              <GraduationCap className="w-8 h-8 text-blue-600" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Frameworks */}
+              <Link
+                href="/admin/coe/frameworks"
+                className="group p-6 bg-blue-50 border-2 border-blue-600 hover:bg-blue-100 transition-colors"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <Award className="w-6 h-6 text-blue-600" />
+                  <span className="text-3xl font-black text-blue-600">{frameworksCount || 0}</span>
+                </div>
+                <div className="font-bold text-blue-800">Australian Frameworks</div>
+                <div className="text-sm text-blue-600">State-based best practice models</div>
+              </Link>
+
+              {/* Research */}
+              <Link
+                href="/admin/coe/research"
+                className="group p-6 bg-purple-50 border-2 border-purple-600 hover:bg-purple-100 transition-colors"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <FlaskConical className="w-6 h-6 text-purple-600" />
+                  <span className="text-3xl font-black text-purple-600">{researchCount || 0}</span>
+                </div>
+                <div className="font-bold text-purple-800">Research Items</div>
+                <div className="text-sm text-purple-600">Evidence-based resources</div>
+              </Link>
+
+              {/* Key People */}
+              <Link
+                href="/admin/coe/people"
+                className="group p-6 bg-green-50 border-2 border-green-600 hover:bg-green-100 transition-colors"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <Users className="w-6 h-6 text-green-600" />
+                  <span className="text-3xl font-black text-green-600">{coePeopleCount || 0}</span>
+                </div>
+                <div className="font-bold text-green-800">Key People</div>
+                <div className="text-sm text-green-600">Leadership and experts</div>
+              </Link>
+
+              {/* International Programs */}
+              <Link
+                href="/centre-of-excellence/map"
+                className="group p-6 bg-cyan-50 border-2 border-cyan-600 hover:bg-cyan-100 transition-colors"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <Globe className="w-6 h-6 text-cyan-600" />
+                  <span className="text-3xl font-black text-cyan-600">{intlProgramsCount || 0}</span>
+                </div>
+                <div className="font-bold text-cyan-800">International Programs</div>
+                <div className="text-sm text-cyan-600">Global basecamps on map</div>
+              </Link>
             </div>
           </div>
 
@@ -307,6 +464,13 @@ export default async function AdminDashboard() {
                     {programLinksCount} of {programsCount} programs have profile connections
                   </p>
                 </div>
+
+                <Link
+                  href="/admin/content-health"
+                  className="flex items-center gap-2 text-sm font-bold text-blue-600 hover:underline mt-4"
+                >
+                  View Content Health Report →
+                </Link>
               </div>
             </div>
 

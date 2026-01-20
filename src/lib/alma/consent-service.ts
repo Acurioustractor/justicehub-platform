@@ -408,7 +408,7 @@ export class ConsentService {
     error: Error | null;
   }> {
     try {
-      let query = supabase
+      let query = getSupabase()
         .from('alma_usage_log')
         .select('*')
         .eq('entity_type', entityType)

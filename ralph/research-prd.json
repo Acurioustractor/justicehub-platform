@@ -1,0 +1,214 @@
+{
+  "name": "ALMA Research & Evidence Collection",
+  "description": "Scrape government papers, parliamentary inquiries, and research submissions for the evidence library",
+  "target_table": "alma_evidence",
+  "features": [
+    {
+      "id": "parliament-inquiries",
+      "title": "Parliamentary Inquiry Submissions",
+      "description": "Scrape submissions from major youth justice parliamentary inquiries",
+      "priority": 1,
+      "passes": false,
+      "sources": [
+        {
+          "name": "NT Royal Commission into Youth Detention",
+          "url": "https://www.royalcommission.gov.au/royal-commission-detention-and-protection-children-northern-territory",
+          "type": "royal_commission"
+        },
+        {
+          "name": "QLD Youth Justice Reform Select Committee",
+          "url": "https://www.parliament.qld.gov.au/Work-of-Committees/Committees/Committee-Details?cid=227",
+          "type": "parliamentary_inquiry"
+        },
+        {
+          "name": "NSW Inquiry into Youth Justice Centres",
+          "url": "https://www.parliament.nsw.gov.au/committees/inquiries/Pages/inquiry-details.aspx?pk=2986",
+          "type": "parliamentary_inquiry"
+        },
+        {
+          "name": "VIC Inquiry into Youth Justice System",
+          "url": "https://www.parliament.vic.gov.au/lsic-la/inquiries/article/4683",
+          "type": "parliamentary_inquiry"
+        },
+        {
+          "name": "SA Review of Child Protection",
+          "url": "https://www.childprotection.sa.gov.au/department/reviews-and-reports",
+          "type": "government_review"
+        }
+      ]
+    },
+    {
+      "id": "alrc-reports",
+      "title": "Australian Law Reform Commission Reports",
+      "description": "Index ALRC reports on youth justice, Indigenous incarceration, and child welfare",
+      "priority": 2,
+      "passes": false,
+      "sources": [
+        {
+          "name": "ALRC Pathways to Justice",
+          "url": "https://www.alrc.gov.au/publication/pathways-to-justice-inquiry-into-the-incarceration-rate-of-aboriginal-and-torres-strait-islander-peoples-alrc-report-133/",
+          "type": "law_reform"
+        },
+        {
+          "name": "ALRC Family Violence",
+          "url": "https://www.alrc.gov.au/publication/family-violence-a-national-legal-response-alrc-report-114/",
+          "type": "law_reform"
+        }
+      ]
+    },
+    {
+      "id": "aihw-reports",
+      "title": "AIHW Youth Justice Reports",
+      "description": "Index all AIHW statistical reports on youth justice",
+      "priority": 3,
+      "passes": false,
+      "sources": [
+        {
+          "name": "Youth Justice in Australia 2023-24",
+          "url": "https://www.aihw.gov.au/reports/youth-justice/youth-justice-in-australia-2023-24",
+          "type": "statistical_report"
+        },
+        {
+          "name": "Youth Detention Population",
+          "url": "https://www.aihw.gov.au/reports/youth-justice/youth-detention-population-in-australia-2024",
+          "type": "statistical_report"
+        },
+        {
+          "name": "Indigenous Youth Justice",
+          "url": "https://www.aihw.gov.au/reports/australias-welfare/youth-justice",
+          "type": "statistical_report"
+        }
+      ]
+    },
+    {
+      "id": "productivity-commission",
+      "title": "Productivity Commission ROGS",
+      "description": "Index Productivity Commission Report on Government Services youth justice data",
+      "priority": 4,
+      "passes": false,
+      "sources": [
+        {
+          "name": "ROGS 2024 Youth Justice",
+          "url": "https://www.pc.gov.au/ongoing/report-on-government-services/2024/community-services/youth-justice",
+          "type": "statistical_report"
+        },
+        {
+          "name": "ROGS 2024 Corrective Services",
+          "url": "https://www.pc.gov.au/ongoing/report-on-government-services/2024/justice/corrective-services",
+          "type": "statistical_report"
+        }
+      ]
+    },
+    {
+      "id": "academic-research",
+      "title": "Academic Research Papers",
+      "description": "Index key academic papers from criminology and youth justice journals",
+      "priority": 5,
+      "passes": false,
+      "sources": [
+        {
+          "name": "AIC Research Reports",
+          "url": "https://www.aic.gov.au/publications",
+          "type": "academic"
+        },
+        {
+          "name": "Griffith Criminology Institute",
+          "url": "https://www.griffith.edu.au/criminology-institute/research",
+          "type": "academic"
+        },
+        {
+          "name": "UNSW Law Youth Justice",
+          "url": "https://www.unsw.edu.au/law-justice/our-research/research-areas/criminal-law-justice",
+          "type": "academic"
+        }
+      ]
+    },
+    {
+      "id": "advocacy-submissions",
+      "title": "Advocacy Organization Submissions",
+      "description": "Index submissions from key advocacy organizations",
+      "priority": 6,
+      "passes": false,
+      "sources": [
+        {
+          "name": "Human Rights Commission",
+          "url": "https://humanrights.gov.au/our-work/childrens-rights/publications",
+          "type": "advocacy"
+        },
+        {
+          "name": "Jesuit Social Services Research",
+          "url": "https://jss.org.au/what-we-do/research-advocacy/",
+          "type": "advocacy"
+        },
+        {
+          "name": "Raise the Age Evidence",
+          "url": "https://raisetheage.org.au/evidence",
+          "type": "advocacy"
+        },
+        {
+          "name": "NATSILS Submissions",
+          "url": "https://www.natsils.org.au/submissions/",
+          "type": "advocacy"
+        },
+        {
+          "name": "SNAICC Policy Submissions",
+          "url": "https://www.snaicc.org.au/policy-submissions/",
+          "type": "advocacy"
+        }
+      ]
+    },
+    {
+      "id": "state-reviews",
+      "title": "State Government Reviews",
+      "description": "Index state-level reviews and reform reports",
+      "priority": 7,
+      "passes": false,
+      "sources": [
+        {
+          "name": "TAS Commission of Inquiry",
+          "url": "https://www.commissionofinquiry.tas.gov.au/reports",
+          "type": "royal_commission"
+        },
+        {
+          "name": "QLD Youth Justice Strategy",
+          "url": "https://www.cyjma.qld.gov.au/about-us/strategy-reporting/youth-justice-strategy",
+          "type": "government_strategy"
+        },
+        {
+          "name": "WA Youth Justice Framework",
+          "url": "https://www.wa.gov.au/organisation/department-of-justice/youth-justice-framework",
+          "type": "government_strategy"
+        },
+        {
+          "name": "VIC Youth Justice Strategic Plan",
+          "url": "https://www.justice.vic.gov.au/youth-justice/youth-justice-strategic-plan",
+          "type": "government_strategy"
+        }
+      ]
+    },
+    {
+      "id": "closing-the-gap",
+      "title": "Closing the Gap Reports",
+      "description": "Index Closing the Gap justice targets and progress reports",
+      "priority": 8,
+      "passes": false,
+      "sources": [
+        {
+          "name": "Closing the Gap Dashboard",
+          "url": "https://www.closingthegap.gov.au/national-agreement/targets",
+          "type": "policy"
+        },
+        {
+          "name": "CTG Implementation Plans",
+          "url": "https://www.closingthegap.gov.au/implementation-plans",
+          "type": "policy"
+        },
+        {
+          "name": "CTG Annual Reports",
+          "url": "https://www.closingthegap.gov.au/annual-data-compilation-report",
+          "type": "statistical_report"
+        }
+      ]
+    }
+  ]
+}

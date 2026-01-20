@@ -130,7 +130,7 @@ export default function YouthLoginPage() {
             </div>
 
             {/* Login/Signup Form */}
-            <div className="bg-white border-2 border-black p-8 shadow-lg">
+            <div className="bg-white border-2 border-black p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               {error && (
                 <div className="mb-6 bg-red-50 border-2 border-red-600 p-4 flex items-start gap-3">
                   <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />

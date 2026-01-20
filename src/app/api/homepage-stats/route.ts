@@ -66,6 +66,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
+      is_fallback: false,
       stats: {
         programs_documented: totalInterventions || 0,
         programs_with_outcomes: withOutcomes || 0,
@@ -84,8 +85,9 @@ export async function GET() {
     return NextResponse.json(
       {
         success: false,
+        is_fallback: true,
         error: 'Failed to fetch statistics',
-        // Return fallback stats
+        // Return fallback stats - last known good values
         stats: {
           programs_documented: 624,
           programs_with_outcomes: 418,
@@ -97,6 +99,7 @@ export async function GET() {
           states_covered: 7,
           estimated_cost_savings_millions: 45,
         },
+        fallback_note: 'Using cached data due to temporary database issue',
       },
       { status: 200 }
     ); // Return 200 with fallback data

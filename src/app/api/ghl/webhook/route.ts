@@ -1,5 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
+import { createHmac, timingSafeEqual } from 'crypto';
+
+/**
+ * Verify webhook signature using HMAC-SHA256 with timing-safe comparison
+ */
+function verifyWebhookSignature(
+  payload: string,
+  signature: string,
+  secret: string
+): boolean {
+  try {
+    const expectedSignature = createHmac('sha256', secret)
+      .update(payload)
+      .digest('hex');
+
+    // Handle both raw hex and prefixed formats (e.g., "sha256=...")
+    const providedSignature = signature.startsWith('sha256=')
+      ? signature.slice(7)
+      : signature;
+
+    // Use timing-safe comparison to prevent timing attacks
+    const expectedBuffer = Buffer.from(expectedSignature, 'hex');
+    const providedBuffer = Buffer.from(providedSignature, 'hex');
+
+    if (expectedBuffer.length !== providedBuffer.length) {
+      return false;
+    }
+
+    return timingSafeEqual(expectedBuffer, providedBuffer);
+  } catch {
+    return false;
+  }
+}
 
 /**
  * POST /api/ghl/webhook
@@ -11,17 +44,40 @@ import { createServiceClient } from '@/lib/supabase/service';
  */
 export async function POST(request: NextRequest) {
   try {
-    // Verify webhook signature if configured
+    // Get raw body for signature verification
+    const rawBody = await request.text();
+
+    // Verify webhook signature (required in production)
     const webhookSecret = process.env.GHL_WEBHOOK_SECRET;
     const signature = request.headers.get('x-ghl-signature');
 
-    if (webhookSecret && signature) {
-      // In production, verify the signature
-      // For now, we'll just log a warning if not matching
-      // TODO: Implement proper HMAC verification
+    if (webhookSecret) {
+      if (!signature) {
+        console.warn('Webhook rejected: missing signature');
+        return NextResponse.json(
+          { error: 'Missing webhook signature' },
+          { status: 401 }
+        );
+      }
+
+      if (!verifyWebhookSignature(rawBody, signature, webhookSecret)) {
+        console.warn('Webhook rejected: invalid signature');
+        return NextResponse.json(
+          { error: 'Invalid webhook signature' },
+          { status: 401 }
+        );
+      }
+    } else if (process.env.NODE_ENV === 'production') {
+      // In production, require webhook secret to be configured
+      console.error('SECURITY: GHL_WEBHOOK_SECRET not configured in production');
+      return NextResponse.json(
+        { error: 'Webhook not configured' },
+        { status: 500 }
+      );
     }
 
-    const body = await request.json();
+    // Parse the verified body
+    const body = JSON.parse(rawBody);
     const { type, locationId, contact, opportunity } = body;
 
     // Verify location ID
@@ -85,20 +141,15 @@ export async function POST(request: NextRequest) {
 
       case 'OpportunityCreate':
       case 'OpportunityUpdate': {
+        // Handle opportunity updates for steward pipeline tracking
         if (!opportunity?.contactId) break;
-
-        // Log opportunity updates for steward pipeline tracking
-        console.log('GHL Opportunity update:', {
-          id: opportunity.id,
-          contactId: opportunity.contactId,
-          status: opportunity.status,
-          pipelineStageId: opportunity.pipelineStageId,
-        });
+        // TODO: Implement opportunity status sync to database
         break;
       }
 
       default:
-        console.log('Unhandled GHL webhook type:', type);
+        // Unhandled webhook type - no action needed
+        break;
     }
 
     return NextResponse.json({ success: true });

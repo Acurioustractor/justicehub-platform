@@ -373,7 +373,7 @@ JusticeHub
 
 ## 📈 SECTION 2: INTELLIGENCE & DATA PAGES
 
-**Style:** Dark background (#0a0f16), ALMA green/orange, data visualization focus
+**Style:** White background, black borders (consistent brutalist design), with data visualization focus
 
 ### 2.1 Intelligence Hub `/intelligence`
 **Route:** `src/app/intelligence/page.tsx`
@@ -382,7 +382,7 @@ JusticeHub
 
 #### UI Structure
 ```tsx
-<DarkLayout>
+<Layout>
   <ProgressBar gradient="green-to-orange" />
 
   <Hero dark>
@@ -432,7 +432,7 @@ JusticeHub
       BECOME A DATA STEWARD
     </CTA>
   </CTASection>
-</DarkLayout>
+</Layout>
 ```
 
 ---
@@ -497,7 +497,7 @@ JusticeHub
 
 #### UI Structure
 ```tsx
-<DarkLayout>
+<Layout>
   <Header>
     <Badge color="green">EVIDENCE</Badge>
     <Title>{evidence.title}</Title>
@@ -528,7 +528,7 @@ JusticeHub
     <SectionHeadline>Programs Using This Evidence</SectionHeadline>
     <ProgramsList programs={evidence.programs} />
   </RelatedPrograms>
-</DarkLayout>
+</Layout>
 ```
 
 ---
@@ -540,7 +540,7 @@ JusticeHub
 
 #### UI Structure
 ```tsx
-<DarkLayout>
+<Layout>
   <Hero>
     <Headline>Justice Investment Portfolio</Headline>
     <Body>Where Australia invests in youth justice, and what it achieves</Body>
@@ -575,7 +575,7 @@ JusticeHub
       <Impact>84,000 more youth succeed (vs current system)</Impact>
     </Recommendation>
   </RecommendationsSection>
-</DarkLayout>
+</Layout>
 ```
 
 ---
@@ -587,7 +587,7 @@ JusticeHub
 
 #### UI Structure
 ```tsx
-<DarkLayout>
+<Layout>
   <Hero>
     <Headline>NT: Communities Taking Back Justice</Headline>
     <Body>Real programs, real results, real futures</Body>
@@ -620,7 +620,7 @@ JusticeHub
       </ShowcaseCard>
     ))}
   </ProgramShowcase>
-</DarkLayout>
+</Layout>
 ```
 
 ---
@@ -2026,7 +2026,7 @@ Cache-Control: no-cache
 This site map defines **every page, every UI component, every user flow** for JusticeHub, aligned with:
 
 ✅ **Brand Voice:** Blunt, data-driven, uncompromising
-✅ **Design System:** SimCity brutalist with three style modes (white, dark, green)
+✅ **Design System:** SimCity brutalist with consistent white backgrounds + black borders. Semantic accents: green (stewards), black (emphasis sections), gray (alternating)
 ✅ **Accessibility:** WCAG AAA, keyboard nav, screen reader optimized
 ✅ **User Journeys:** Crisis users → immediate help, Policy makers → evidence, Community → stewardship
 ✅ **ACT Ecosystem:** Integrated with Empathy Ledger, ALMA intelligence, ACT Farm

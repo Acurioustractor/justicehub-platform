@@ -55,7 +55,7 @@ export default async function PeoplePage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     {profile.is_featured && (
-                      <div className="absolute top-4 right-4 bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-wider shadow-lg">
+                      <div className="absolute top-4 right-4 bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-wider">
                         Featured
                       </div>
                     )}

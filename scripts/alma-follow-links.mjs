@@ -12,6 +12,8 @@ import { fileURLToPath } from 'url';
 import { createHash } from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 import Anthropic from '@anthropic-ai/sdk';
+import Groq from 'groq-sdk';
+import OpenAI from 'openai';
 import FirecrawlApp from '@mendable/firecrawl-js';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
 
@@ -46,8 +48,79 @@ const supabase = createClient(
   env.SUPABASE_SERVICE_ROLE_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
-const anthropic = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+// Initialize LLM clients with fallback chain
+const anthropic = env.ANTHROPIC_API_KEY ? new Anthropic({ apiKey: env.ANTHROPIC_API_KEY }) : null;
+const groq = env.GROQ_API_KEY ? new Groq({ apiKey: env.GROQ_API_KEY }) : null;
+const openai = env.OPENAI_API_KEY ? new OpenAI({ apiKey: env.OPENAI_API_KEY }) : null;
 const firecrawl = new FirecrawlApp({ apiKey: env.FIRECRAWL_API_KEY });
+
+// Track which provider is working
+let currentProvider = 'anthropic';
+let providerFailures = { anthropic: 0, groq: 0, openai: 0 };
+
+/**
+ * Call LLM with fallback chain: Anthropic -> Groq -> OpenAI
+ */
+async function callLLMWithFallback(prompt, maxTokens = 4000) {
+  const providers = [
+    { name: 'anthropic', client: anthropic },
+    { name: 'groq', client: groq },
+    { name: 'openai', client: openai }
+  ].filter(p => p.client && providerFailures[p.name] < 3);
+
+  for (const provider of providers) {
+    try {
+      let response;
+
+      if (provider.name === 'anthropic') {
+        response = await anthropic.messages.create({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: maxTokens,
+          messages: [{ role: 'user', content: prompt }]
+        });
+        currentProvider = 'anthropic';
+        providerFailures.anthropic = 0;
+        return response.content[0].text;
+
+      } else if (provider.name === 'groq') {
+        response = await groq.chat.completions.create({
+          model: 'llama-3.3-70b-versatile',
+          max_tokens: maxTokens,
+          messages: [{ role: 'user', content: prompt }]
+        });
+        currentProvider = 'groq';
+        providerFailures.groq = 0;
+        return response.choices[0].message.content;
+
+      } else if (provider.name === 'openai') {
+        response = await openai.chat.completions.create({
+          model: 'gpt-4o-mini',
+          max_tokens: maxTokens,
+          messages: [{ role: 'user', content: prompt }]
+        });
+        currentProvider = 'openai';
+        providerFailures.openai = 0;
+        return response.choices[0].message.content;
+      }
+
+    } catch (error) {
+      const isCreditsError = error.message?.includes('credit') ||
+                            error.message?.includes('quota') ||
+                            error.message?.includes('rate') ||
+                            error.status === 429 ||
+                            error.status === 402;
+
+      if (isCreditsError) {
+        providerFailures[provider.name]++;
+        console.log(`   ⚠️ ${provider.name} unavailable (credits/quota), trying fallback...`);
+        continue;
+      }
+      throw error;
+    }
+  }
+
+  throw new Error('All LLM providers exhausted');
+}
 
 /**
  * Priority keywords for youth justice relevance
@@ -190,7 +263,8 @@ async function getPendingLinks(limit = 100, priorityFilter = null) {
   }
 
   // Order by priority (1 = highest, 5 = lowest)
-  query = query.order('priority', { ascending: true }).limit(limit);
+  // Order by priority DESCENDING (higher priority = process first)
+  query = query.order('priority', { ascending: false }).limit(limit);
 
   const { data: links, error } = await query;
 
@@ -364,44 +438,84 @@ async function scrapeLink(link) {
 async function extractEntities(content, jurisdiction) {
   if (content.length < 200) return null;
 
-  const prompt = `Extract youth justice programs and services from this Australian ${jurisdiction} content.
+  const prompt = `Extract ALL youth justice information from this Australian ${jurisdiction} content. Be THOROUGH.
+
+IMPORTANT: Look for:
+1. Programs and services (diversion, rehabilitation, support)
+2. Research findings and statistics
+3. Royal Commission/Inquiry recommendations
+4. Government reports (ROGS, AIHW, ABS data)
+5. Court cases or legal precedents
+6. Detention facilities
+7. Policy changes or reforms
 
 Return ONLY valid JSON (no markdown, no code blocks):
 {
   "interventions": [
     {
-      "name": "Program name",
+      "name": "Program/service name",
       "type": "Prevention|Diversion|Cultural Connection|Education/Employment|Family Strengthening|Therapeutic|Community-Led|Justice Reinvestment|Wraparound Support|Early Intervention",
-      "description": "Brief description",
-      "target_cohort": ["Young people aged 10-17"],
-      "geography": ["${jurisdiction}"]
+      "description": "Detailed description (2-3 sentences)",
+      "target_cohort": ["Target groups"],
+      "geography": ["${jurisdiction}", "specific locations"],
+      "operating_org": "Organization running it"
     }
   ],
-  "evidence": [
+  "research": [
     {
-      "title": "Finding title",
-      "summary": "Key finding"
+      "title": "Report/study title",
+      "source": "Organization (e.g., AIHW, Productivity Commission, University)",
+      "year": "Publication year",
+      "key_findings": ["Finding 1", "Finding 2"],
+      "statistics": [{"metric": "e.g., recidivism rate", "value": "e.g., 54%", "context": "explanation"}]
+    }
+  ],
+  "inquiries": [
+    {
+      "name": "Inquiry/Royal Commission name",
+      "year": "Year",
+      "recommendations": ["Key recommendation 1", "Key recommendation 2"],
+      "status": "implemented|pending|rejected"
+    }
+  ],
+  "cases": [
+    {
+      "name": "Case name or citation",
+      "year": "Year",
+      "significance": "Why this case matters for youth justice",
+      "outcome": "What was decided"
+    }
+  ],
+  "statistics": [
+    {
+      "metric": "What is measured (e.g., youth detention rate)",
+      "value": "The number/percentage",
+      "year": "Year of data",
+      "jurisdiction": "${jurisdiction}",
+      "source": "Data source"
     }
   ],
   "fundingMentions": [
     {
-      "amount": "Dollar amount if mentioned",
-      "context": "What it's for"
+      "amount": "Dollar amount",
+      "program": "What it funds",
+      "year": "Budget year"
     }
   ]
 }
 
+Extract EVERYTHING relevant to youth justice - programs, data, recommendations, cases.
+
 Content:
-${content.substring(0, 30000)}`;
+${content.substring(0, 35000)}`;
 
   try {
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 4000,
-      messages: [{ role: 'user', content: prompt }]
-    });
+    const responseText = await callLLMWithFallback(prompt, 4000);
+    if (currentProvider !== 'anthropic') {
+      console.log(`   🔄 Using ${currentProvider} for extraction`);
+    }
 
-    let jsonText = response.content[0].text;
+    let jsonText = responseText;
     jsonText = jsonText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
 
     return JSON.parse(jsonText);

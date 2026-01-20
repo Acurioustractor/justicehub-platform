@@ -46,7 +46,7 @@ export default function AdminEventsPage() {
                 {loading ? (
                     <div className="text-center py-20">Loading events...</div>
                 ) : events.length === 0 ? (
-                    <div className="bg-white border-2 border-gray-200 p-12 text-center rounded-lg">
+                    <div className="bg-white border-2 border-black p-12 text-center">
                         <Calendar className="w-12 h-12 mx-auto text-gray-300 mb-4" />
                         <h3 className="text-xl font-bold text-gray-900 mb-2">No events found</h3>
                         <p className="text-gray-500 mb-6">Get started by creating your first event.</p>
@@ -58,7 +58,7 @@ export default function AdminEventsPage() {
                         </Link>
                     </div>
                 ) : (
-                    <div className="bg-white border shadow-sm rounded-lg overflow-hidden">
+                    <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
                         <table className="w-full">
                             <thead className="bg-gray-50 border-b">
                                 <tr>
@@ -129,7 +129,7 @@ export default function AdminEventsPage() {
                                                 </Link>
                                                 <Link
                                                     href={`/admin/events/${event.id}`}
-                                                    className="bg-white border border-gray-300 text-gray-700 px-3 py-1.5 rounded-md text-sm font-bold hover:bg-gray-50 flex items-center gap-2"
+                                                    className="bg-white border-2 border-black text-gray-700 px-3 py-1.5 text-sm font-bold hover:bg-gray-50 flex items-center gap-2"
                                                 >
                                                     <Edit2 className="w-3 h-3" /> Edit
                                                 </Link>

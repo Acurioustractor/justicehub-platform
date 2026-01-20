@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { User, LogOut, ChevronDown } from 'lucide-react';
+import { User, LogOut, ChevronDown, Settings } from 'lucide-react';
 import { UserProfile } from '@/hooks/useNavigationAuth';
 
 interface UserMenuProps {
@@ -73,7 +73,7 @@ export function UserMenu({ user, userProfile, onSignOut }: UserMenuProps) {
                             onClick={() => setIsOpen(false)}
                         >
                             <div className="flex items-center gap-2">
-                                <User className="w-4 h-4" />
+                                <Settings className="w-4 h-4" />
                                 Admin Dashboard
                             </div>
                         </Link>

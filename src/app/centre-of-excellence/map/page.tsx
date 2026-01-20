@@ -2,7 +2,8 @@
 
 import type { ComponentType } from 'react';
 import type { StyleSpecification } from 'maplibre-gl';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import maplibregl, { LngLatBounds } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Link from 'next/link';
@@ -16,7 +17,8 @@ import {
   BookOpen,
   Target,
   Filter,
-  Home
+  Home,
+  Mountain
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import {
@@ -26,7 +28,8 @@ import {
   excellenceCategoryColors,
   internationalModels,
   australianFrameworks,
-  researchSources
+  researchSources,
+  basecampLocations
 } from '@/content/excellence-map-locations';
 
 type CategoryOption = {
@@ -42,6 +45,12 @@ const categoryOptions: CategoryOption[] = [
     label: 'All Resources',
     description: 'Complete global view',
     icon: Layers
+  },
+  {
+    id: 'basecamp',
+    label: 'Founding Basecamps',
+    description: 'JusticeHub network hubs',
+    icon: Mountain
   },
   {
     id: 'international-model',
@@ -66,6 +75,9 @@ const categoryOptions: CategoryOption[] = [
 const VECTOR_STYLE_URL = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 const MAPLIBRE_DEMO_STYLE_URL = 'https://demotiles.maplibre.org/style.json';
 const LOCAL_STYLE_URL = '/map-style.json';
+
+// Valid category options for URL param validation
+const VALID_CATEGORIES: Array<'all' | ExcellenceCategory> = ['all', 'basecamp', 'international-model', 'australian-framework', 'research-source', 'training-hub'];
 
 const FALLBACK_RASTER_STYLE: StyleSpecification = {
   version: 8,
@@ -126,11 +138,26 @@ function createPopupHTML(location: ExcellenceLocation) {
   return lines.join('');
 }
 
-export default function ExcellenceMapPage() {
-  const [selectedCategory, setSelectedCategory] = useState<'all' | ExcellenceCategory>('all');
+function ExcellenceMapContent() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category');
+
+  // Validate category param against valid options
+  const initialCategory = categoryParam && VALID_CATEGORIES.includes(categoryParam as ExcellenceCategory)
+    ? (categoryParam as ExcellenceCategory)
+    : 'all';
+
+  const [selectedCategory, setSelectedCategory] = useState<'all' | ExcellenceCategory>(initialCategory);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
   const [mapReady, setMapReady] = useState(false);
+
+  // Sync category from URL params
+  useEffect(() => {
+    if (categoryParam && VALID_CATEGORIES.includes(categoryParam as ExcellenceCategory)) {
+      setSelectedCategory(categoryParam as ExcellenceCategory);
+    }
+  }, [categoryParam]);
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -333,27 +360,34 @@ export default function ExcellenceMapPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="border-2 border-black bg-white p-6">
+                <div className="text-3xl font-bold mb-2" style={{ color: excellenceCategoryColors['basecamp'] }}>
+                  {basecampLocations.length}
+                </div>
+                <div className="text-sm font-semibold uppercase tracking-wide mb-2">Founding Basecamps</div>
+                <p className="text-xs text-gray-600">JusticeHub network hubs across Australia</p>
+              </div>
               <div className="border-2 border-black bg-white p-6">
                 <div className="text-3xl font-bold mb-2" style={{ color: excellenceCategoryColors['international-model'] }}>
                   {internationalModels.length}
                 </div>
                 <div className="text-sm font-semibold uppercase tracking-wide mb-2">International Models</div>
-                <p className="text-xs text-gray-600">Best practice from Spain, NZ, Scotland, Nordic countries, Canada, USA</p>
+                <p className="text-xs text-gray-600">Spain, NZ, Scotland, Nordic countries, USA</p>
               </div>
               <div className="border-2 border-black bg-white p-6">
                 <div className="text-3xl font-bold mb-2" style={{ color: excellenceCategoryColors['australian-framework'] }}>
                   {australianFrameworks.length}
                 </div>
                 <div className="text-sm font-semibold uppercase tracking-wide mb-2">Australian Frameworks</div>
-                <p className="text-xs text-gray-600">NSW, Victoria, Queensland, WA state-level innovations</p>
+                <p className="text-xs text-gray-600">NSW, Victoria, Queensland, WA innovations</p>
               </div>
               <div className="border-2 border-black bg-white p-6">
                 <div className="text-3xl font-bold mb-2" style={{ color: excellenceCategoryColors['research-source'] }}>
                   {researchSources.length}
                 </div>
                 <div className="text-sm font-semibold uppercase tracking-wide mb-2">Research Sources</div>
-                <p className="text-xs text-gray-600">AIFS, BOCSAR, Lowitja, Oranga Tamariki, Annie E. Casey</p>
+                <p className="text-xs text-gray-600">AIFS, BOCSAR, Lowitja, Annie E. Casey</p>
               </div>
             </div>
           </div>
@@ -396,7 +430,7 @@ export default function ExcellenceMapPage() {
               </div>
 
               {/* Category Filters */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 {categoryOptions.map((category) => {
                   const Icon = category.icon;
                   const active = selectedCategory === category.id;
@@ -445,7 +479,14 @@ export default function ExcellenceMapPage() {
                 <MapPin className="h-5 w-5 text-black" />
                 <div className="font-bold uppercase tracking-wide text-sm">Map Legend</div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{ backgroundColor: excellenceCategoryColors['basecamp'] }}
+                  />
+                  <span>Founding Basecamps</span>
+                </div>
                 <div className="flex items-center gap-2">
                   <div
                     className="w-4 h-4 rounded-full"
@@ -490,7 +531,7 @@ export default function ExcellenceMapPage() {
                 <article
                   key={location.id}
                   className={`border-2 border-black bg-white p-6 flex flex-col gap-4 transition-shadow ${
-                    selectedLocationId === location.id ? 'shadow-lg shadow-black/20' : 'hover:shadow-md'
+                    selectedLocationId === location.id ? 'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]' : 'hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -570,5 +611,21 @@ export default function ExcellenceMapPage() {
 
       <Footer />
     </div>
+  );
+}
+
+// Wrap with Suspense for useSearchParams
+export default function ExcellenceMapPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-black mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg font-bold">Loading Map...</p>
+        </div>
+      </div>
+    }>
+      <ExcellenceMapContent />
+    </Suspense>
   );
 }

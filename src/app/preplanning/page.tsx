@@ -49,7 +49,7 @@ export default function PreplanningPage() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-black focus:outline-none"
+                className="w-full px-4 py-2 border-2 border-gray-300 focus:border-black focus:outline-none"
                 placeholder="Enter password"
               />
               {error && (
@@ -59,7 +59,7 @@ export default function PreplanningPage() {
 
             <button
               type="submit"
-              className="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition-colors"
+              className="w-full bg-black text-white py-2 px-4 border-2 border-black font-bold hover:bg-gray-800 transition-colors"
             >
               Access Preplanning
             </button>

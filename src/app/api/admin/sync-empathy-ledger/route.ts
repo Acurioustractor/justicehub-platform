@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
 
 interface EmpathyLedgerProfile {
@@ -68,10 +69,7 @@ export async function POST(request: NextRequest) {
     let failed = 0;
 
     // Create service-role client for database operations
-    const serviceSupabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.YJSF_SUPABASE_SERVICE_KEY!
-    );
+    const serviceSupabase = createServiceClient();
 
     for (const profile of empathyProfiles as EmpathyLedgerProfile[]) {
       try {

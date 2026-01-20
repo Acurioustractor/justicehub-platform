@@ -7,16 +7,23 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Search, 
+import {
+  Search,
   X,
   Loader2,
   ArrowRight,
-  Tag,
-  FileText,
-  User
+  Target,
+  Building2,
+  Users,
+  Image,
+  BookOpen,
+  BarChart3,
+  Newspaper,
+  Briefcase,
+  Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
+import type { SearchResult as UnifiedSearchResult, SearchResultType, SearchIntent } from '@/lib/search/types';
 
 interface QuickSearchProps {
   placeholder?: string;
@@ -24,23 +31,49 @@ interface QuickSearchProps {
   isModal?: boolean;
 }
 
-interface SearchResult {
-  id: string;
-  title: string;
-  excerpt: string;
-  storyType: string;
-  author?: { name?: string };
-  tags: string[];
-}
+// Map result types to icons
+const TYPE_ICONS: Record<SearchResultType, React.ReactNode> = {
+  intervention: <Target className="h-4 w-4 text-amber-500" />,
+  service: <Briefcase className="h-4 w-4 text-blue-500" />,
+  person: <Users className="h-4 w-4 text-green-500" />,
+  organization: <Building2 className="h-4 w-4 text-purple-500" />,
+  media: <Image className="h-4 w-4 text-pink-500" />,
+  story: <BookOpen className="h-4 w-4 text-orange-500" />,
+  research: <BarChart3 className="h-4 w-4 text-cyan-500" />,
+  news: <Newspaper className="h-4 w-4 text-gray-500" />,
+};
 
-export function QuickSearch({ 
-  placeholder = "Search stories...", 
+// Map result types to labels
+const TYPE_LABELS: Record<SearchResultType, string> = {
+  intervention: 'Program',
+  service: 'Service',
+  person: 'Person',
+  organization: 'Organization',
+  media: 'Media',
+  story: 'Story',
+  research: 'Research',
+  news: 'News',
+};
+
+// Map intents to display labels
+const INTENT_LABELS: Record<SearchIntent, string> = {
+  find_program: 'Programs',
+  find_person: 'People',
+  find_organization: 'Organizations',
+  find_media: 'Media',
+  find_research: 'Research',
+  general: 'All',
+};
+
+export function QuickSearch({
+  placeholder = "Search programs, services, organizations...",
   onClose,
-  isModal = false 
+  isModal = false,
 }: QuickSearchProps) {
   const router = useRouter();
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [results, setResults] = useState<UnifiedSearchResult[]>([]);
+  const [intent, setIntent] = useState<SearchIntent | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -89,21 +122,23 @@ export function QuickSearch({
     setIsOpen(true);
 
     try {
-      const response = await fetch('/api/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: debouncedQuery,
-          limit: 5
-        })
+      // Use unified search API with limit=5 for quick results
+      const params = new URLSearchParams({
+        q: debouncedQuery,
+        limit: '5',
       });
+
+      const response = await fetch(`/api/intelligence/search?${params}`);
 
       if (response.ok) {
         const data = await response.json();
-        setResults(data.results.slice(0, 5));
+        setResults(data.results || []);
+        setIntent(data.intent || null);
       }
     } catch (error) {
       console.error('Quick search error:', error);
+      setResults([]);
+      setIntent(null);
     } finally {
       setIsSearching(false);
     }
@@ -182,46 +217,72 @@ export function QuickSearch({
               </div>
             ) : results.length > 0 ? (
               <>
-                <div className="space-y-3">
-                  {results.map((result) => (
-                    <Link
-                      key={result.id}
-                      href={`/stories/${result.id}`}
-                      onClick={handleResultClick}
-                      className="block hover:bg-gray-50 dark:hover:bg-gray-800 -mx-2 px-2 py-2 rounded"
-                    >
-                      <h4 className="font-medium text-sm mb-1">{result.title}</h4>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
-                        {result.excerpt}
-                      </p>
-                      <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-                        <span className="flex items-center gap-1">
-                          <FileText className="h-3 w-3" />
-                          {result.storyType}
-                        </span>
-                        {result.author?.name && (
-                          <span className="flex items-center gap-1">
-                            <User className="h-3 w-3" />
-                            {result.author.name}
-                          </span>
+                {/* Intent indicator */}
+                {intent && intent !== 'general' && (
+                  <div className="flex items-center gap-2 mb-3 pb-3 border-b">
+                    <Sparkles className="h-3 w-3 text-amber-500" />
+                    <span className="text-xs text-gray-500">
+                      Searching {INTENT_LABELS[intent]}
+                    </span>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  {results.map((result) => {
+                    // Build the result URL based on type
+                    const resultUrl = getResultUrl(result);
+
+                    return (
+                      <Link
+                        key={`${result.type}-${result.id}`}
+                        href={resultUrl}
+                        onClick={handleResultClick}
+                        className="flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-800 -mx-2 px-2 py-2 rounded transition-colors"
+                      >
+                        {/* Type Icon */}
+                        <div className="flex-shrink-0 mt-0.5">
+                          {TYPE_ICONS[result.type]}
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-medium text-sm truncate">
+                              {result.title}
+                            </h4>
+                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 flex-shrink-0">
+                              {TYPE_LABELS[result.type]}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-1 mt-0.5">
+                            {result.description}
+                          </p>
+                          {result.metadata.state && (
+                            <span className="text-[10px] text-gray-400 mt-1 inline-block">
+                              {result.metadata.state}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Score indicator (subtle) */}
+                        {result.score > 0.8 && (
+                          <div className="flex-shrink-0">
+                            <span className="text-[10px] text-green-500 font-medium">
+                              Best match
+                            </span>
+                          </div>
                         )}
-                        {result.tags.length > 0 && (
-                          <span className="flex items-center gap-1">
-                            <Tag className="h-3 w-3" />
-                            {result.tags.length}
-                          </span>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    );
+                  })}
                 </div>
-                
+
                 <Link
                   href={`/search?q=${encodeURIComponent(query)}`}
                   onClick={handleResultClick}
                   className="flex items-center justify-between mt-4 pt-4 border-t text-sm text-primary hover:underline"
                 >
-                  <span>View all results for "{query}"</span>
+                  <span>View all results for &quot;{query}&quot;</span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </>
@@ -243,4 +304,30 @@ export function QuickSearch({
       )}
     </div>
   );
+}
+
+/**
+ * Get the URL for a search result based on its type
+ */
+function getResultUrl(result: UnifiedSearchResult): string {
+  switch (result.type) {
+    case 'intervention':
+      return `/programs/${result.id}`;
+    case 'service':
+      return `/services/${result.id}`;
+    case 'organization':
+      return `/organizations/${result.id}`;
+    case 'person':
+      return `/people/${result.id}`;
+    case 'story':
+      return `/stories/${result.id}`;
+    case 'media':
+      return `/media/${result.id}`;
+    case 'research':
+      return `/research/${result.id}`;
+    case 'news':
+      return `/news/${result.id}`;
+    default:
+      return result.url || '#';
+  }
 }

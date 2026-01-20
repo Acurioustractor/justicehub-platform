@@ -1,44 +1,266 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Globe, Shield, Activity, FileText } from 'lucide-react';
+import Image from 'next/image';
+import { Globe, Shield, Activity, FileText, MapPin, ExternalLink } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import dynamic from 'next/dynamic';
 
-const EquityMapClient = dynamic(
-  () => import('@/components/intelligence/EquityMapClient'),
-  { ssr: false }
-);
+// Dynamic import for Leaflet map component (client-side only)
+const BasecampMap = dynamic(() => import('@/components/coe/BasecampMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="border-2 border-black bg-gray-100 h-[400px] flex items-center justify-center">
+      <div className="text-gray-500 font-bold">Loading map...</div>
+    </div>
+  )
+});
+
+// Basecamp location type
+interface BasecampLocation {
+  slug: string;
+  name: string;
+  region: string;
+  description: string;
+  coordinates: { lat: number; lng: number };
+  stats?: { label: string; value: string }[];
+  image?: string;
+}
+
+// Fallback basecamp data (used if API fails or during initial load)
+const FALLBACK_BASECAMPS: BasecampLocation[] = [
+  {
+    slug: 'oonchiumpa',
+    name: 'Oonchiumpa',
+    region: 'Central Australia (NT)',
+    description: 'Cultural healing and deep listening on country. Supporting young Aboriginal people to stay strong in culture.',
+    coordinates: { lat: -23.698, lng: 133.880 },
+    stats: [
+      { label: 'Reduced anti-social behavior', value: '95% reduced anti-social behavior' },
+      { label: 'Return to education', value: '72% return to education' }
+    ],
+  },
+  {
+    slug: 'bg-fit',
+    name: 'BG Fit',
+    region: 'North West Queensland',
+    description: 'Fitness-based youth engagement in Mount Isa. Using sport and discipline to redirect young people toward positive futures.',
+    coordinates: { lat: -20.725, lng: 139.498 },
+    stats: [
+      { label: 'Diversion rate', value: '85% diversion rate' },
+      { label: 'Youth engaged', value: '400+ youth engaged/year' }
+    ],
+  },
+  {
+    slug: 'mounty-yarns',
+    name: 'Mounty Yarns',
+    region: 'Western Sydney (NSW)',
+    description: 'Youth-led storytelling and media production. Amplifying youth voices and challenging deficit narratives about Western Sydney.',
+    coordinates: { lat: -33.770, lng: 150.820 },
+    stats: [
+      { label: 'Stories published', value: '150+ stories published' },
+      { label: 'Into media careers', value: '30% into media careers' }
+    ],
+  },
+  {
+    slug: 'picc-townsville',
+    name: 'PICC Townsville',
+    region: 'North Queensland',
+    description: 'Pacific Islander Community Council supporting Pasifika families through cultural connection and community strength.',
+    coordinates: { lat: -19.26, lng: 146.82 },
+    stats: [
+      { label: 'Diversion success', value: '78% diversion success' },
+      { label: 'Pacific languages', value: '12 Pacific languages' }
+    ],
+  }
+];
 
 export default function CentreOfExcellencePage() {
+  const [basecamps, setBasecamps] = useState<BasecampLocation[]>(FALLBACK_BASECAMPS);
+
+  useEffect(() => {
+    async function loadBasecamps() {
+      try {
+        const res = await fetch('/api/basecamps');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            // Merge API data with fallback (API takes precedence)
+            const merged = FALLBACK_BASECAMPS.map(fallback => {
+              const fromApi = data.find((d: BasecampLocation) => d.slug === fallback.slug);
+              return fromApi ? { ...fallback, ...fromApi } : fallback;
+            });
+            setBasecamps(merged);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load basecamps:', err);
+      }
+    }
+    loadBasecamps();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white text-black font-sans">
       <Navigation />
 
-      <main className="page-content">
-        {/* Hero Section - Stark & Direct */}
-        <section className="min-h-[80vh] flex items-center justify-center header-offset border-b-2 border-black">
-          <div className="container-justice text-center">
-            <div className="inline-block border-2 border-black bg-black text-white px-4 py-1 mb-8 font-bold uppercase tracking-widest text-sm">
-              JUSTICEHUB ARCHIVE
+      <main className="header-offset bg-gradient-to-br from-eucalyptus-50 via-white to-blue-50">
+        {/* Hero Section */}
+        <section className="section-padding border-b-2 border-black">
+          <div className="container-justice">
+            <div className="inline-block px-4 py-2 bg-black text-white border-2 border-black mb-6">
+              <span className="font-bold">CENTRE OF EXCELLENCE</span>
             </div>
 
-            <h1 className="headline-truth mb-8">
-              THE ARCHIVE <br />
-              IS ALIVE.
+            <h1 className="headline-truth mb-6">
+              Australia's Hub for Youth Justice
             </h1>
 
-            <p className="body-truth mx-auto mb-12 max-w-2xl">
-              We verify, track, and scale the world's most undervalued asset class: <span className="font-bold border-b-2 border-black">Community Safety.</span>
+            <p className="text-xl text-gray-700 max-w-4xl mb-8 leading-relaxed">
+              Join the network proving what works. Access peer-reviewed research, connect with experts, and learn from international best practice. <span className="font-bold border-b-2 border-black">Community works better than detention.</span>
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="#mission" className="cta-primary">
-                EXPLORE THE MISSION
+            <div className="flex flex-col sm:flex-row gap-4 mb-12">
+              <Link href="#basecamps" className="cta-primary">
+                MEET THE BASECAMPS
               </Link>
-              <Link href="/intelligence/reports/portfolio" className="cta-secondary">
-                VIEW 2026 REPORT
+              <Link href="/centre-of-excellence/research" className="cta-secondary">
+                RESEARCH LIBRARY
+              </Link>
+              <Link href="/centre-of-excellence/people" className="cta-secondary">
+                MEET THE EXPERTS
+              </Link>
+            </div>
+
+            {/* Key Stats - Honest Metrics */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="border-2 border-black p-4 bg-white text-center">
+                <div className="text-3xl font-black text-blue-600">27</div>
+                <div className="text-sm font-bold">Research Items</div>
+                <div className="text-xs text-gray-500">Peer-reviewed</div>
+              </div>
+              <div className="border-2 border-black p-4 bg-white text-center">
+                <div className="text-3xl font-black text-green-600">4</div>
+                <div className="text-sm font-bold">Australian Frameworks</div>
+                <div className="text-xs text-gray-500">State models</div>
+              </div>
+              <div className="border-2 border-black p-4 bg-white text-center">
+                <div className="text-3xl font-black text-purple-600">16</div>
+                <div className="text-sm font-bold">International Models</div>
+                <div className="text-xs text-gray-500">Global best practice</div>
+              </div>
+              <div className="border-2 border-black p-4 bg-white text-center">
+                <div className="text-3xl font-black text-ochre-600">4</div>
+                <div className="text-sm font-bold">Basecamp Partners</div>
+                <div className="text-xs text-gray-500">Founding network</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Network Hubs - Basecamps (NOW AT TOP) */}
+        <section id="basecamps" className="section-padding bg-ochre-50">
+          <div className="container-justice">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+              <div>
+                <div className="inline-block px-4 py-2 bg-ochre-100 border-2 border-black mb-4">
+                  <span className="font-bold">FOUNDING BASECAMPS</span>
+                </div>
+                <h2 className="headline-truth mb-2">
+                  Meet the Basecamps
+                </h2>
+                <p className="text-lg text-gray-600 max-w-2xl">
+                  The 4 founding organizations anchoring the Centre of Excellence network. They hold local knowledge, launch initiatives, and ground our work in community.
+                </p>
+              </div>
+              <Link
+                href="/centre-of-excellence/map?category=basecamp"
+                className="cta-secondary flex items-center gap-2 shrink-0"
+              >
+                <MapPin className="w-5 h-5" />
+                VIEW ON MAP
+              </Link>
+            </div>
+
+            {/* Basecamp Map */}
+            <div className="mb-8">
+              <BasecampMap locations={basecamps} height="400px" />
+            </div>
+
+            {/* Basecamp Grid with Images */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {basecamps.map((basecamp) => (
+                <Link
+                  key={basecamp.slug}
+                  href={`/organizations/${basecamp.slug}`}
+                  className="border-2 border-black bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group overflow-hidden"
+                >
+                  {/* Image Container */}
+                  <div className="relative h-48 bg-gray-200 border-b-2 border-black overflow-hidden">
+                    {basecamp.image ? (
+                      <Image
+                        src={basecamp.image}
+                        alt={basecamp.name}
+                        fill
+                        unoptimized
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          // Fallback to placeholder on error
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.parentElement!.innerHTML = `
+                            <div class="absolute inset-0 bg-gradient-to-br from-ochre-100 to-ochre-200 flex items-center justify-center">
+                              <span class="text-4xl font-black text-ochre-600">${basecamp.name.charAt(0)}</span>
+                            </div>
+                          `;
+                        }}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-ochre-100 to-ochre-200 flex items-center justify-center">
+                        <span className="text-4xl font-black text-ochre-600">{basecamp.name.charAt(0)}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <div className="inline-block px-2 py-1 bg-ochre-600 text-white text-xs font-bold uppercase tracking-wider mb-2">
+                          Founding Basecamp
+                        </div>
+                        <div className="text-xs font-bold text-ochre-600 uppercase tracking-wider mb-1">{basecamp.region}</div>
+                        <h3 className="text-2xl font-black">{basecamp.name}</h3>
+                      </div>
+                      <MapPin className="w-6 h-6 text-gray-400 group-hover:text-ochre-600 transition-colors" />
+                    </div>
+                    <p className="text-gray-600 mb-4">
+                      {basecamp.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {basecamp.stats?.map((stat, idx) => (
+                        <span
+                          key={idx}
+                          className={`text-xs font-bold px-2 py-1 ${idx === 0 ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}
+                        >
+                          {stat.value}
+                        </span>
+                      ))}
+                    </div>
+                    <span className="font-bold text-ochre-600">View profile →</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Expansion Note */}
+            <div className="mt-8 p-6 bg-white border-2 border-black text-center">
+              <p className="text-gray-600 mb-4">
+                We're building the network. Interested in becoming a basecamp partner?
+              </p>
+              <Link href="/contact" className="font-bold text-ochre-600 hover:underline">
+                Get in touch →
               </Link>
             </div>
           </div>
@@ -61,91 +283,135 @@ export default function CentreOfExcellencePage() {
           </div>
         </section>
 
-        {/* Map Section - Interactive */}
-        <section className="section-padding">
+        {/* Global Map Preview */}
+        <section className="section-padding bg-white">
           <div className="container-justice">
             <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
-              <h2 className="headline-truth max-w-2xl">
-                Intelligence Grid
-              </h2>
-              <Link href="/intelligence/dashboard" className="cta-secondary flex items-center gap-2">
-                <Activity className="w-5 h-5" />
-                LIVE DASHBOARD
+              <div>
+                <h2 className="headline-truth max-w-2xl mb-2">
+                  Global Excellence Map
+                </h2>
+                <p className="text-lg text-gray-600">
+                  Explore 16 international models, 4 Australian frameworks, and key research sources
+                </p>
+              </div>
+              <Link href="/centre-of-excellence/map" className="cta-primary flex items-center gap-2">
+                <MapPin className="w-5 h-5" />
+                OPEN FULL MAP
               </Link>
             </div>
 
-            <div className="border-2 border-black p-1 bg-gray-50 h-[600px]">
-              {/* Map Component */}
-              <EquityMapClient />
-            </div>
-            <div className="mt-4 flex justify-between items-start text-sm font-mono">
-              <div>
-                <span className="block font-bold">STATUS:</span>
-                ACTIVE MONITORING
-              </div>
-              <div className="text-right">
-                <span className="block font-bold">DATA SOURCES:</span>
-                42 LIVE STREAMS
-              </div>
+            {/* Map Preview Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* International Models */}
+              <Link
+                href="/centre-of-excellence/map?category=international-model"
+                className="border-2 border-black p-6 bg-purple-50 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group"
+              >
+                <Globe className="w-10 h-10 mb-4 text-purple-600" />
+                <div className="text-4xl font-black text-purple-600 mb-2">16</div>
+                <h3 className="text-xl font-bold mb-2">International Models</h3>
+                <p className="text-gray-600 mb-4">
+                  Spain, New Zealand, Finland, Scotland, Missouri and more
+                </p>
+                <span className="font-bold text-purple-600 flex items-center gap-1">
+                  View on map <ExternalLink className="w-4 h-4" />
+                </span>
+              </Link>
+
+              {/* Australian Frameworks */}
+              <Link
+                href="/centre-of-excellence/map?category=australian-framework"
+                className="border-2 border-black p-6 bg-green-50 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group"
+              >
+                <MapPin className="w-10 h-10 mb-4 text-green-600" />
+                <div className="text-4xl font-black text-green-600 mb-2">4</div>
+                <h3 className="text-xl font-bold mb-2">Australian Frameworks</h3>
+                <p className="text-gray-600 mb-4">
+                  Queensland, NSW, Victoria, Western Australia
+                </p>
+                <span className="font-bold text-green-600 flex items-center gap-1">
+                  View on map <ExternalLink className="w-4 h-4" />
+                </span>
+              </Link>
+
+              {/* Research Sources */}
+              <Link
+                href="/centre-of-excellence/map?category=research-source"
+                className="border-2 border-black p-6 bg-blue-50 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group"
+              >
+                <FileText className="w-10 h-10 mb-4 text-blue-600" />
+                <div className="text-4xl font-black text-blue-600 mb-2">5+</div>
+                <h3 className="text-xl font-bold mb-2">Research Sources</h3>
+                <p className="text-gray-600 mb-4">
+                  Key institutions and evidence bases worldwide
+                </p>
+                <span className="font-bold text-blue-600 flex items-center gap-1">
+                  View on map <ExternalLink className="w-4 h-4" />
+                </span>
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* Core Pillars - Grid Layout */}
-        <section className="section-padding border-t-2 border-black bg-gray-50">
+        {/* What You'll Find - Grid Layout */}
+        <section id="network" className="section-padding border-t-2 border-black bg-gray-50">
           <div className="container-justice">
-            <h2 className="headline-truth mb-16 text-center">
-              Centre of Excellence Pillars
+            <h2 className="headline-truth mb-6 text-center">
+              What You'll Find Here
             </h2>
+            <p className="text-xl text-gray-600 text-center max-w-3xl mx-auto mb-16">
+              Everything you need to understand, advocate for, and implement evidence-based youth justice
+            </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Pillar 1 */}
-              <div className="border-2 border-black bg-white p-8 hover:bg-black hover:text-white transition-colors group">
-                <Globe className="w-12 h-12 mb-6" />
-                <h3 className="text-2xl font-bold mb-4 uppercase">Signal Processing</h3>
-                <p className="mb-8 text-lg leading-relaxed group-hover:text-gray-300">
-                  We use AI to scrape, structure, and verify data from thousands of fragmented sources, turning "anecdotes" into actionable intelligence.
+              {/* Research */}
+              <Link href="/centre-of-excellence/research" className="border-2 border-black bg-white p-8 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
+                <Globe className="w-12 h-12 mb-6 text-blue-600" />
+                <h3 className="text-2xl font-bold mb-4 uppercase">Research Library</h3>
+                <p className="mb-4 text-lg leading-relaxed text-gray-700">
+                  27 peer-reviewed studies on trauma-informed care, Indigenous diversion, restorative justice, and more. Searchable, categorised, and growing.
                 </p>
-                <Link href="/intelligence/dashboard" className="font-bold underline text-lg decoration-2 underline-offset-4 hover:decoration-white">
-                  VIEW SIGNALS →
-                </Link>
-              </div>
+                <span className="font-bold text-blue-600 text-lg">
+                  BROWSE RESEARCH →
+                </span>
+              </Link>
 
-              {/* Pillar 2 */}
-              <div className="border-2 border-black bg-white p-8 hover:bg-black hover:text-white transition-colors group">
-                <Shield className="w-12 h-12 mb-6" />
-                <h3 className="text-2xl font-bold mb-4 uppercase">Verification</h3>
-                <p className="mb-8 text-lg leading-relaxed group-hover:text-gray-300">
-                  Our "Claim Impact" protocol allows communities to take ownership of their data, adding the human context that algorithms miss.
+              {/* Best Practice */}
+              <Link href="/centre-of-excellence/best-practice" className="border-2 border-black bg-white p-8 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
+                <Shield className="w-12 h-12 mb-6 text-green-600" />
+                <h3 className="text-2xl font-bold mb-4 uppercase">Australian Frameworks</h3>
+                <p className="mb-4 text-lg leading-relaxed text-gray-700">
+                  Learn from Queensland, NSW, Victoria, and Western Australia. Each state's approach analysed with outcomes, strengths, and challenges.
                 </p>
-                <Link href="/claims" className="font-bold underline text-lg decoration-2 underline-offset-4 hover:decoration-white">
-                  CLAIM PROGRAM →
-                </Link>
-              </div>
+                <span className="font-bold text-green-600 text-lg">
+                  EXPLORE FRAMEWORKS →
+                </span>
+              </Link>
 
-              {/* Pillar 3 */}
-              <div className="border-2 border-black bg-white p-8 hover:bg-black hover:text-white transition-colors group">
-                <Activity className="w-12 h-12 mb-6" />
-                <h3 className="text-2xl font-bold mb-4 uppercase">Investment</h3>
-                <p className="mb-8 text-lg leading-relaxed group-hover:text-gray-300">
-                  We model the "Safety Dividend" of every intervention, creating a new asset class for impact investors and government coffers.
+              {/* Global */}
+              <Link href="/centre-of-excellence/global-insights" className="border-2 border-black bg-white p-8 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
+                <Activity className="w-12 h-12 mb-6 text-purple-600" />
+                <h3 className="text-2xl font-bold mb-4 uppercase">International Models</h3>
+                <p className="mb-4 text-lg leading-relaxed text-gray-700">
+                  16 global programs from Spain, New Zealand, Finland, Scotland, and more. See what recidivism rates are possible when you invest in community.
                 </p>
-                <Link href="/intelligence/reports/portfolio" className="font-bold underline text-lg decoration-2 underline-offset-4 hover:decoration-white">
-                  SEE ROI MODEL →
-                </Link>
-              </div>
+                <span className="font-bold text-purple-600 text-lg">
+                  VIEW GLOBAL →
+                </span>
+              </Link>
 
-              {/* Pillar 4 */}
-              <div className="border-2 border-black bg-white p-8 hover:bg-black hover:text-white transition-colors group">
-                <FileText className="w-12 h-12 mb-6" />
-                <h3 className="text-2xl font-bold mb-4 uppercase">Storytelling</h3>
-                <p className="mb-8 text-lg leading-relaxed group-hover:text-gray-300">
-                  Data without narrative is noise. We equip communities with tools to tell their own stories, backed by the irrefutable math of their impact.
+              {/* People */}
+              <Link href="/centre-of-excellence/people" className="border-2 border-black bg-white p-8 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
+                <FileText className="w-12 h-12 mb-6 text-ochre-600" />
+                <h3 className="text-2xl font-bold mb-4 uppercase">Expert Network</h3>
+                <p className="mb-4 text-lg leading-relaxed text-gray-700">
+                  Connect with researchers, practitioners, and advocates. Our growing network includes Indigenous leaders, academics, and frontline workers.
                 </p>
-                <Link href="/stories" className="font-bold underline text-lg decoration-2 underline-offset-4 hover:decoration-white">
-                  READ STORIES →
-                </Link>
-              </div>
+                <span className="font-bold text-ochre-600 text-lg">
+                  MEET EXPERTS →
+                </span>
+              </Link>
             </div>
           </div>
         </section>
@@ -153,15 +419,18 @@ export default function CentreOfExcellencePage() {
         {/* Final CTA */}
         <section className="section-padding bg-black text-white">
           <div className="container-justice text-center">
-            <h2 className="headline-truth mb-8">
-              Ready to unlock the dividend?
+            <h2 className="headline-truth mb-6">
+              Join the Network
             </h2>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-8">
+              Whether you're a researcher, practitioner, funder, or community organisation — there's a place for you in Australia's youth justice centre of excellence.
+            </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/contact" className="bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors">
-                PARTNER WITH US
+                GET INVOLVED
               </Link>
-              <Link href="/intelligence/reports/portfolio" className="border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-colors">
-                DOWNLOAD REPORT
+              <Link href="/stewards" className="border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-colors">
+                BECOME A STEWARD
               </Link>
             </div>
           </div>

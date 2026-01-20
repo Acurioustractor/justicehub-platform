@@ -131,14 +131,14 @@ export default async function WikiDocPage({ params }: { params: { slug: string }
                     );
                   }
                   return (
-                    <code className="block bg-gray-900 text-gray-100 p-6 rounded-lg overflow-x-auto text-sm font-mono my-6 leading-relaxed" {...props}>
+                    <code className="block bg-gray-900 text-gray-100 p-6 overflow-x-auto text-sm font-mono my-6 leading-relaxed border-2 border-black" {...props}>
                       {children}
                     </code>
                   );
                 },
                 table: ({ children }) => (
                   <div className="overflow-x-auto my-8">
-                    <table className="min-w-full divide-y divide-gray-300 border border-gray-300 rounded-lg">
+                    <table className="min-w-full divide-y divide-gray-300 border-2 border-black">
                       {children}
                     </table>
                   </div>

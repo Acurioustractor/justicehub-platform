@@ -7,7 +7,8 @@ export type ExcellenceCategory =
   | 'international-model'
   | 'australian-framework'
   | 'research-source'
-  | 'training-hub';
+  | 'training-hub'
+  | 'basecamp';
 
 export interface ExcellenceLocation {
   id: string;
@@ -528,12 +529,96 @@ export const researchSources: ExcellenceLocation[] = [
 ];
 
 /**
+ * Founding Basecamps - JusticeHub Network Hubs
+ * The 4 founding organizations anchoring the Centre of Excellence
+ */
+export const basecampLocations: ExcellenceLocation[] = [
+  {
+    id: 'oonchiumpa',
+    name: 'Oonchiumpa',
+    category: 'basecamp',
+    type: 'training',
+    description: 'Cultural healing and deep listening on country. Supporting young Aboriginal people through connection to culture, country, and community.',
+    coordinates: { lat: -23.698, lng: 133.880 }, // Alice Springs, NT
+    country: 'Australia',
+    city: 'Alice Springs',
+    state: 'NT',
+    keyStats: [
+      '95% reduced anti-social behavior',
+      '72% return to education',
+      'On-country healing programs'
+    ],
+    tags: ['Aboriginal-led', 'cultural-healing', 'deep-listening', 'on-country'],
+    detailUrl: '/organizations/oonchiumpa',
+    featured: true
+  },
+  {
+    id: 'bg-fit',
+    name: 'BG Fit',
+    category: 'basecamp',
+    type: 'training',
+    description: 'Fitness-based youth engagement in Mount Isa. Using sport and discipline to redirect young people toward positive futures.',
+    coordinates: { lat: -20.725, lng: 139.498 }, // Mount Isa, QLD
+    country: 'Australia',
+    city: 'Mount Isa',
+    state: 'QLD',
+    keyStats: [
+      '85% diversion rate',
+      '400+ youth engaged/year',
+      'Fitness & mentorship focus'
+    ],
+    tags: ['fitness', 'mentorship', 'diversion', 'regional'],
+    detailUrl: '/organizations/bg-fit',
+    featured: true
+  },
+  {
+    id: 'mounty-yarns',
+    name: 'Mounty Yarns',
+    category: 'basecamp',
+    type: 'training',
+    description: 'Youth-led storytelling and media production. Amplifying youth voices and challenging deficit narratives about Western Sydney.',
+    coordinates: { lat: -33.770, lng: 150.820 }, // Western Sydney, NSW
+    country: 'Australia',
+    city: 'Mount Druitt',
+    state: 'NSW',
+    keyStats: [
+      '150+ stories published',
+      '30% into media careers',
+      'Youth-led media production'
+    ],
+    tags: ['youth-voice', 'storytelling', 'media', 'urban'],
+    detailUrl: '/organizations/mounty-yarns',
+    featured: true
+  },
+  {
+    id: 'picc-townsville',
+    name: 'PICC Townsville',
+    category: 'basecamp',
+    type: 'training',
+    description: 'Pacific Islander Community Council supporting Pasifika families through cultural connection and community strength.',
+    coordinates: { lat: -19.26, lng: 146.82 }, // Townsville, QLD
+    country: 'Australia',
+    city: 'Townsville',
+    state: 'QLD',
+    keyStats: [
+      '78% diversion success',
+      '12 Pacific languages supported',
+      'Pasifika family strength'
+    ],
+    tags: ['Pasifika', 'family-centered', 'cultural-connection', 'community'],
+    detailUrl: '/organizations/picc-townsville',
+    featured: true
+  }
+];
+
+/**
  * All Centre of Excellence locations combined
  */
 export const allExcellenceLocations: ExcellenceLocation[] = [
   ...internationalModels,
   ...australianFrameworks,
-  ...researchSources
+  ...researchSources,
+  ...basecampLocations
 ];
 
 /**
@@ -543,5 +628,6 @@ export const excellenceCategoryColors: Record<ExcellenceCategory, string> = {
   'international-model': '#2563eb', // Blue
   'australian-framework': '#dc2626', // Red
   'research-source': '#059669', // Green
-  'training-hub': '#7c3aed' // Purple
+  'training-hub': '#7c3aed', // Purple
+  'basecamp': '#d97706' // Ochre/Orange - JusticeHub founding network
 };

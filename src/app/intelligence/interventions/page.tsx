@@ -1,366 +1,480 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+'use client';
+
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
-import { InterventionCard } from '@/components/alma';
-import type { Database } from '@/types/supabase';
+import { createClient } from '@/lib/supabase/client';
+import { Navigation, Footer } from '@/components/ui/navigation';
+import {
+  LayoutGrid,
+  List,
+  Table2,
+  Search,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+  Tag,
+  Shield,
+  ExternalLink,
+  Loader2,
+} from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+type ViewMode = 'grid' | 'list' | 'table';
 
-type Intervention = Database['public']['Tables']['alma_interventions']['Row'];
+interface Intervention {
+  id: string;
+  name: string;
+  description: string | null;
+  type: string | null;
+  geography: string[] | null;
+  evidence_level: string | null;
+  consent_level: string | null;
+  created_at: string;
+}
 
-interface InterventionsPageProps {
-  searchParams: {
-    state?: string;
-    type?: string;
-    consent?: string;
-    search?: string;
-    sort?: string;
-    page?: string;
+const EVIDENCE_COLORS: Record<string, string> = {
+  'Effective (strong evaluation, positive outcomes)': 'bg-emerald-100 text-emerald-800 border-emerald-300',
+  'Promising (community-endorsed, emerging evidence)': 'bg-blue-100 text-blue-800 border-blue-300',
+  'Theoretical (evidence-based design, limited evaluation)': 'bg-amber-100 text-amber-800 border-amber-300',
+  'Unknown': 'bg-gray-100 text-gray-600 border-gray-300',
+};
+
+const TYPE_COLORS: Record<string, string> = {
+  'Community-Led': 'bg-purple-600',
+  'Cultural Connection': 'bg-orange-600',
+  'Diversion': 'bg-green-600',
+  'Early Intervention': 'bg-blue-600',
+  'Education/Employment': 'bg-cyan-600',
+  'Family Strengthening': 'bg-pink-600',
+  'Justice Reinvestment': 'bg-indigo-600',
+  'Prevention': 'bg-teal-600',
+  'Therapeutic': 'bg-rose-600',
+  'Wraparound Support': 'bg-amber-600',
+};
+
+export default function InterventionsPage() {
+  const [interventions, setInterventions] = useState<Intervention[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
+
+  // Filters
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState('');
+  const [selectedEvidence, setSelectedEvidence] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 24;
+
+  // Filter options
+  const [types, setTypes] = useState<string[]>([]);
+  const [evidenceLevels, setEvidenceLevels] = useState<string[]>([]);
+
+  // Fetch interventions
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      const supabase = createClient();
+
+      // Build query
+      let query = supabase
+        .from('alma_interventions')
+        .select('id, name, description, type, geography, evidence_level, consent_level, created_at', { count: 'exact' });
+
+      if (searchQuery) {
+        query = query.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+      }
+      if (selectedType) {
+        query = query.eq('type', selectedType);
+      }
+      if (selectedEvidence) {
+        query = query.eq('evidence_level', selectedEvidence);
+      }
+
+      const offset = (currentPage - 1) * pageSize;
+      query = query.order('name').range(offset, offset + pageSize - 1);
+
+      const { data, count, error } = await query;
+
+      if (error) {
+        console.error('Error fetching interventions:', error);
+      } else {
+        setInterventions(data || []);
+        setTotal(count || 0);
+      }
+      setLoading(false);
+    }
+
+    fetchData();
+  }, [searchQuery, selectedType, selectedEvidence, currentPage]);
+
+  // Fetch filter options once
+  useEffect(() => {
+    async function fetchFilterOptions() {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from('alma_interventions')
+        .select('type, evidence_level');
+
+      const typeSet = new Set<string>();
+      const evidenceSet = new Set<string>();
+
+      data?.forEach((item) => {
+        if (item.type) typeSet.add(item.type);
+        if (item.evidence_level) evidenceSet.add(item.evidence_level);
+      });
+
+      setTypes(Array.from(typeSet).sort());
+      setEvidenceLevels(Array.from(evidenceSet).sort());
+    }
+
+    fetchFilterOptions();
+  }, []);
+
+  const totalPages = Math.ceil(total / pageSize);
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedType('');
+    setSelectedEvidence('');
+    setCurrentPage(1);
   };
-}
 
-async function getInterventions(filters: InterventionsPageProps['searchParams']) {
-  const supabase = createServerComponentClient<Database>({ cookies });
-
-  const page = parseInt(filters.page || '1');
-  const limit = 20;
-  const offset = (page - 1) * limit;
-
-  let query = supabase
-    .from('alma_interventions')
-    .select('*', { count: 'exact' });
-
-  // Apply filters
-  if (filters.state) {
-    query = query.eq('metadata->>state', filters.state);
-  }
-
-  if (filters.type) {
-    query = query.eq('type', filters.type);
-  }
-
-  if (filters.consent) {
-    query = query.eq('consent_level', filters.consent);
-  }
-
-  if (filters.search) {
-    query = query.or(`name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
-  }
-
-  // Apply sorting
-  switch (filters.sort) {
-    case 'name':
-      query = query.order('name', { ascending: true });
-      break;
-    case 'recent':
-      query = query.order('created_at', { ascending: false });
-      break;
-    default:
-      query = query.order('name', { ascending: true });
-  }
-
-  // Apply pagination
-  query = query.range(offset, offset + limit - 1);
-
-  const { data, error, count } = await query;
-
-  if (error) {
-    console.error('Error fetching interventions:', error);
-    return { interventions: [], total: 0 };
-  }
-
-  return { interventions: data || [], total: count || 0 };
-}
-
-async function getFilterOptions() {
-  const supabase = createServerComponentClient<Database>({ cookies });
-
-  const { data: interventions } = await supabase
-    .from('alma_interventions')
-    .select('metadata, type, consent_level');
-
-  const states = new Set<string>();
-  const types = new Set<string>();
-  const consentLevels = new Set<string>();
-
-  interventions?.forEach((intervention) => {
-    const metadata = intervention.metadata as any;
-    if (metadata?.state) states.add(metadata.state);
-    if (intervention.type) types.add(intervention.type);
-    if (intervention.consent_level) consentLevels.add(intervention.consent_level);
-  });
-
-  return {
-    states: Array.from(states).sort(),
-    types: Array.from(types).sort(),
-    consentLevels: Array.from(consentLevels).sort(),
-  };
-}
-
-export default async function InterventionsPage({ searchParams }: InterventionsPageProps) {
-  const [{ interventions, total }, filterOptions] = await Promise.all([
-    getInterventions(searchParams),
-    getFilterOptions(),
-  ]);
-
-  const currentPage = parseInt(searchParams.page || '1');
-  const totalPages = Math.ceil(total / 20);
-  const hasFilters = searchParams.state || searchParams.type || searchParams.consent || searchParams.search;
+  const hasFilters = searchQuery || selectedType || selectedEvidence;
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <section className="section-padding border-b-2 border-black">
-        <div className="container-justice">
-          <h1 className="text-4xl font-bold text-black mb-4">
-            Youth Justice Interventions
-          </h1>
-          <p className="text-lg text-gray-700">
-            <strong>{total} programs</strong> documented across Australia. Filter by state, type, or consent level.
-          </p>
-        </div>
-      </section>
+    <div className="min-h-screen bg-white text-black font-sans">
+      <Navigation />
 
-      <div className="section-padding">
-        <div className="container-justice">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Filters Sidebar */}
-            <aside className="lg:col-span-1">
-              <div className="border-2 border-black p-6 sticky top-24">
-                <h2 className="text-xl font-bold text-black mb-6">
-                  Filter Programs
-                </h2>
-
-                <form method="get" className="space-y-6">
-                  {/* Search */}
-                  <div>
-                    <label htmlFor="search" className="block text-sm font-bold text-black mb-2 uppercase tracking-wider">
-                      Search
-                    </label>
-                    <input
-                      type="text"
-                      id="search"
-                      name="search"
-                      defaultValue={searchParams.search}
-                      placeholder="Search programs..."
-                      className="w-full px-3 py-2 border-2 border-black focus:outline-none focus:ring-2 focus:ring-black"
-                    />
-                  </div>
-
-                  {/* State Filter */}
-                  <div>
-                    <label htmlFor="state" className="block text-sm font-bold text-black mb-2 uppercase tracking-wider">
-                      State
-                    </label>
-                    <select
-                      id="state"
-                      name="state"
-                      defaultValue={searchParams.state || ''}
-                      className="w-full px-3 py-2 border-2 border-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
-                    >
-                      <option value="">All States</option>
-                      {filterOptions.states.map((state) => (
-                        <option key={state} value={state}>
-                          {state}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Type Filter */}
-                  <div>
-                    <label htmlFor="type" className="block text-sm font-bold text-black mb-2 uppercase tracking-wider">
-                      Type
-                    </label>
-                    <select
-                      id="type"
-                      name="type"
-                      defaultValue={searchParams.type || ''}
-                      className="w-full px-3 py-2 border-2 border-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
-                    >
-                      <option value="">All Types</option>
-                      {filterOptions.types.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Consent Level Filter */}
-                  <div>
-                    <label className="block text-sm font-bold text-black mb-3 uppercase tracking-wider">
-                      Consent Level
-                    </label>
-                    <div className="space-y-2">
-                      {filterOptions.consentLevels.map((level) => (
-                        <label key={level} className="flex items-center cursor-pointer">
-                          <input
-                            type="radio"
-                            name="consent"
-                            value={level}
-                            defaultChecked={searchParams.consent === level}
-                            className="h-4 w-4 border-2 border-black text-black focus:ring-black"
-                          />
-                          <span className="ml-2 text-sm text-gray-800">{level}</span>
-                        </label>
-                      ))}
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="consent"
-                          value=""
-                          defaultChecked={!searchParams.consent}
-                          className="h-4 w-4 border-2 border-black text-black focus:ring-black"
-                        />
-                        <span className="ml-2 text-sm text-gray-800">All Levels</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Sort Options */}
-                  <div>
-                    <label htmlFor="sort" className="block text-sm font-bold text-black mb-2 uppercase tracking-wider">
-                      Sort By
-                    </label>
-                    <select
-                      id="sort"
-                      name="sort"
-                      defaultValue={searchParams.sort || 'name'}
-                      className="w-full px-3 py-2 border-2 border-black focus:outline-none focus:ring-2 focus:ring-black bg-white"
-                    >
-                      <option value="name">Name (A-Z)</option>
-                      <option value="recent">Recently Added</option>
-                    </select>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full bg-black text-white py-3 px-4 font-bold uppercase tracking-wider hover:bg-gray-800 transition"
-                  >
-                    Apply Filters
-                  </button>
-
-                  {/* Clear Filters */}
-                  {hasFilters && (
-                    <Link
-                      href="/intelligence/interventions"
-                      className="block w-full text-center border-2 border-black py-3 px-4 font-bold uppercase tracking-wider hover:bg-gray-100 transition text-sm"
-                    >
-                      Clear Filters
-                    </Link>
-                  )}
-                </form>
+      <main className="page-content bg-gray-50 min-h-screen">
+        {/* Header */}
+        <section className="border-b-2 border-black bg-white">
+          <div className="container-justice py-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+              <div>
+                <div className="inline-block bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-4">
+                  Evidence Database
+                </div>
+                <h1 className="text-3xl md:text-4xl font-black tracking-tighter uppercase">
+                  Youth Justice Interventions
+                </h1>
+                <p className="text-lg text-gray-700 mt-2">
+                  <strong className="font-mono">{total.toLocaleString()}</strong> programs documented across Australia
+                </p>
               </div>
-            </aside>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-widest text-gray-500 mr-2">View:</span>
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 border-2 ${viewMode === 'grid' ? 'bg-black text-white border-black' : 'border-gray-300 hover:border-black'}`}
+                  title="Grid View"
+                >
+                  <LayoutGrid className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 border-2 ${viewMode === 'list' ? 'bg-black text-white border-black' : 'border-gray-300 hover:border-black'}`}
+                  title="List View"
+                >
+                  <List className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setViewMode('table')}
+                  className={`p-2 border-2 ${viewMode === 'table' ? 'bg-black text-white border-black' : 'border-gray-300 hover:border-black'}`}
+                  title="Table View"
+                >
+                  <Table2 className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
 
-            {/* Results */}
-            <main className="lg:col-span-3">
-              {/* Results Header */}
-              <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-black">
-                <p className="text-sm font-bold uppercase tracking-wider text-gray-700">
-                  {interventions.length === 0 ? '0' : `${((currentPage - 1) * 20) + 1}–${Math.min(currentPage * 20, total)}`} of {total}
+        {/* Filters Bar */}
+        <section className="border-b-2 border-black bg-gray-100">
+          <div className="container-justice py-4">
+            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+              {/* Search */}
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                  placeholder="Search programs..."
+                  className="w-full pl-10 pr-4 py-2 border-2 border-black focus:outline-none focus:ring-2 focus:ring-black"
+                />
+              </div>
+
+              {/* Type Filter */}
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-gray-500" />
+                <select
+                  value={selectedType}
+                  onChange={(e) => { setSelectedType(e.target.value); setCurrentPage(1); }}
+                  className="border-2 border-black px-3 py-2 bg-white font-mono text-sm focus:outline-none"
+                >
+                  <option value="">All Types</option>
+                  {types.map((type) => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Evidence Filter */}
+              <select
+                value={selectedEvidence}
+                onChange={(e) => { setSelectedEvidence(e.target.value); setCurrentPage(1); }}
+                className="border-2 border-black px-3 py-2 bg-white font-mono text-sm focus:outline-none"
+              >
+                <option value="">All Evidence Levels</option>
+                {evidenceLevels.map((level) => (
+                  <option key={level} value={level}>{level.split(' (')[0]}</option>
+                ))}
+              </select>
+
+              {/* Clear Filters */}
+              {hasFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="px-4 py-2 border-2 border-black bg-white hover:bg-black hover:text-white transition-colors text-sm font-bold"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Results */}
+        <section className="container-justice py-8">
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+              <span className="ml-3 text-gray-500 font-mono">Loading interventions...</span>
+            </div>
+          ) : interventions.length === 0 ? (
+            <div className="border-2 border-black p-12 text-center bg-white">
+              <p className="text-xl font-bold mb-4">No programs found</p>
+              <p className="text-gray-600 mb-6">Try adjusting your filters or search terms.</p>
+              {hasFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="px-6 py-3 bg-black text-white font-bold uppercase tracking-wider hover:bg-gray-800"
+                >
+                  Clear All Filters
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              {/* Results Count */}
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-sm font-mono text-gray-600">
+                  Showing {((currentPage - 1) * pageSize) + 1}–{Math.min(currentPage * pageSize, total)} of {total}
                 </p>
               </div>
 
-              {/* Interventions Grid */}
-              {interventions.length === 0 ? (
-                <div className="border-2 border-black p-12 text-center">
-                  <p className="text-xl font-bold text-black mb-4">
-                    No programs found
-                  </p>
-                  <p className="text-gray-600 mb-6">
-                    Try adjusting your filters or search terms.
-                  </p>
-                  {hasFilters && (
+              {/* Grid View */}
+              {viewMode === 'grid' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {interventions.map((item) => (
                     <Link
-                      href="/intelligence/interventions"
-                      className="inline-block bg-black text-white px-6 py-3 font-bold uppercase tracking-wider hover:bg-gray-800"
+                      key={item.id}
+                      href={`/intelligence/interventions/${item.id}`}
+                      className="border-2 border-black bg-white p-5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all group"
                     >
-                      Clear All Filters
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <h3 className="font-bold text-lg leading-tight group-hover:text-emerald-700 transition-colors">
+                          {item.name}
+                        </h3>
+                        <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-black shrink-0" />
+                      </div>
+
+                      {item.description && (
+                        <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                          {item.description}
+                        </p>
+                      )}
+
+                      <div className="flex flex-wrap gap-2">
+                        {item.type && (
+                          <span className={`px-2 py-1 text-[10px] font-bold uppercase text-white ${TYPE_COLORS[item.type] || 'bg-gray-600'}`}>
+                            {item.type}
+                          </span>
+                        )}
+                        {item.geography && item.geography[0] && (
+                          <span className="px-2 py-1 text-[10px] font-bold uppercase bg-gray-100 border border-gray-300 flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            {item.geography[0]}
+                          </span>
+                        )}
+                      </div>
+
+                      {item.evidence_level && (
+                        <div className={`mt-3 px-2 py-1 text-[10px] font-bold border ${EVIDENCE_COLORS[item.evidence_level] || EVIDENCE_COLORS['Unknown']}`}>
+                          <Shield className="w-3 h-3 inline mr-1" />
+                          {item.evidence_level.split(' (')[0]}
+                        </div>
+                      )}
                     </Link>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {interventions.map((intervention) => (
-                    <InterventionCard
-                      key={intervention.id}
-                      intervention={intervention}
-                      showEvidenceBadge
-                    />
                   ))}
+                </div>
+              )}
+
+              {/* List View */}
+              {viewMode === 'list' && (
+                <div className="space-y-3">
+                  {interventions.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={`/intelligence/interventions/${item.id}`}
+                      className="block border-2 border-black bg-white p-4 hover:bg-gray-50 transition-colors group"
+                    >
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-1">
+                            <h3 className="font-bold text-lg truncate group-hover:text-emerald-700">
+                              {item.name}
+                            </h3>
+                            {item.type && (
+                              <span className={`px-2 py-0.5 text-[10px] font-bold uppercase text-white shrink-0 ${TYPE_COLORS[item.type] || 'bg-gray-600'}`}>
+                                {item.type}
+                              </span>
+                            )}
+                          </div>
+                          {item.description && (
+                            <p className="text-sm text-gray-600 truncate">
+                              {item.description}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3 shrink-0">
+                          {item.geography && item.geography[0] && (
+                            <span className="text-sm text-gray-500 flex items-center gap-1">
+                              <MapPin className="w-4 h-4" />
+                              {item.geography[0]}
+                            </span>
+                          )}
+                          {item.evidence_level && (
+                            <span className={`px-2 py-1 text-[10px] font-bold border ${EVIDENCE_COLORS[item.evidence_level] || EVIDENCE_COLORS['Unknown']}`}>
+                              {item.evidence_level.split(' (')[0]}
+                            </span>
+                          )}
+                          <ChevronRight className="w-5 h-5 text-gray-400" />
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+
+              {/* Table View */}
+              {viewMode === 'table' && (
+                <div className="border-2 border-black overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-black text-white">
+                      <tr>
+                        <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Name</th>
+                        <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Type</th>
+                        <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Location</th>
+                        <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Evidence</th>
+                        <th className="px-4 py-3 text-center font-bold uppercase tracking-wider w-20">View</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {interventions.map((item, idx) => (
+                        <tr key={item.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`}>
+                          <td className="px-4 py-3 font-medium">
+                            <Link href={`/intelligence/interventions/${item.id}`} className="hover:text-emerald-700 hover:underline">
+                              {item.name}
+                            </Link>
+                          </td>
+                          <td className="px-4 py-3">
+                            {item.type && (
+                              <span className={`px-2 py-0.5 text-[10px] font-bold uppercase text-white ${TYPE_COLORS[item.type] || 'bg-gray-600'}`}>
+                                {item.type}
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600">
+                            {item.geography?.join(', ') || '-'}
+                          </td>
+                          <td className="px-4 py-3">
+                            {item.evidence_level ? (
+                              <span className={`px-2 py-0.5 text-[10px] font-bold border ${EVIDENCE_COLORS[item.evidence_level] || EVIDENCE_COLORS['Unknown']}`}>
+                                {item.evidence_level.split(' (')[0]}
+                              </span>
+                            ) : '-'}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <Link
+                              href={`/intelligence/interventions/${item.id}`}
+                              className="inline-flex items-center justify-center w-8 h-8 border border-black hover:bg-black hover:text-white transition-colors"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="mt-12 pt-8 border-t-2 border-black">
-                  <div className="flex items-center justify-center gap-2">
-                    {/* Previous Button */}
-                    {currentPage > 1 && (
-                      <Link
-                        href={`/intelligence/interventions?${new URLSearchParams({
-                          ...searchParams,
-                          page: (currentPage - 1).toString(),
-                        })}`}
-                        className="px-4 py-2 border-2 border-black font-bold uppercase tracking-wider hover:bg-black hover:text-white transition"
-                      >
-                        ← Prev
-                      </Link>
-                    )}
+                <div className="flex items-center justify-center gap-2 mt-8 pt-8 border-t-2 border-black">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 border-2 border-black font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-black hover:text-white transition-colors"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
 
-                    {/* Page Numbers */}
-                    <div className="flex gap-2">
-                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                        let pageNum;
-                        if (totalPages <= 5) {
-                          pageNum = i + 1;
-                        } else if (currentPage <= 3) {
-                          pageNum = i + 1;
-                        } else if (currentPage >= totalPages - 2) {
-                          pageNum = totalPages - 4 + i;
-                        } else {
-                          pageNum = currentPage - 2 + i;
-                        }
-
-                        return (
-                          <Link
-                            key={pageNum}
-                            href={`/intelligence/interventions?${new URLSearchParams({
-                              ...searchParams,
-                              page: pageNum.toString(),
-                            })}`}
-                            className={`px-4 py-2 border-2 font-bold ${pageNum === currentPage
-                                ? 'bg-black text-white border-black'
-                                : 'border-black hover:bg-gray-100'
-                              }`}
-                          >
-                            {pageNum}
-                          </Link>
-                        );
-                      })}
-                    </div>
-
-                    {/* Next Button */}
-                    {currentPage < totalPages && (
-                      <Link
-                        href={`/intelligence/interventions?${new URLSearchParams({
-                          ...searchParams,
-                          page: (currentPage + 1).toString(),
-                        })}`}
-                        className="px-4 py-2 border-2 border-black font-bold uppercase tracking-wider hover:bg-black hover:text-white transition"
-                      >
-                        Next →
-                      </Link>
-                    )}
+                  <div className="flex gap-1">
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNum = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNum = totalPages - 4 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`w-10 h-10 border-2 font-bold font-mono ${
+                            pageNum === currentPage
+                              ? 'bg-black text-white border-black'
+                              : 'border-black hover:bg-gray-100'
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
                   </div>
+
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 border-2 border-black font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-black hover:text-white transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
                 </div>
               )}
-            </main>
-          </div>
-        </div>
-      </div>
+            </>
+          )}
+        </section>
+      </main>
+
+      <Footer />
     </div>
   );
 }

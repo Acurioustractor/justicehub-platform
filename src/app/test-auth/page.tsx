@@ -9,7 +9,7 @@ export default async function TestAuthPage() {
     <div className="min-h-screen bg-white p-8">
       <h1 className="text-4xl font-black mb-8">Auth Test Page</h1>
 
-      <div className="bg-gray-100 p-6 rounded-lg mb-8">
+      <div className="bg-gray-100 p-6 border-2 border-black mb-8">
         <h2 className="text-2xl font-bold mb-4">Server-Side Auth Check</h2>
 
         {user ? (
@@ -27,7 +27,7 @@ export default async function TestAuthPage() {
         )}
       </div>
 
-      <div className="bg-blue-50 p-6 rounded-lg">
+      <div className="bg-blue-50 p-6 border-2 border-black">
         <h2 className="text-xl font-bold mb-4">What This Means:</h2>
 
         {user ? (

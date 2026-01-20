@@ -1,12 +1,40 @@
-
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import { sanitizeInput, sanitizeUrl } from '@/lib/security';
+
+// Allowed roles for claims
+const ALLOWED_ROLES = ['staff', 'volunteer', 'board', 'founder', 'advisor', 'alumni'];
 
 export async function POST(request: Request) {
     try {
         const supabase = await createClient();
         const body = await request.json();
         const { programId, role, roleDescription, proofUrl } = body;
+
+        // Validate required fields
+        if (!programId || typeof programId !== 'string') {
+            return NextResponse.json({ error: 'Program ID is required' }, { status: 400 });
+        }
+
+        // Validate programId is a valid UUID format
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(programId)) {
+            return NextResponse.json({ error: 'Invalid program ID format' }, { status: 400 });
+        }
+
+        // Validate and sanitize role
+        const sanitizedRole = role ? String(role).toLowerCase() : 'staff';
+        if (!ALLOWED_ROLES.includes(sanitizedRole)) {
+            return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
+        }
+
+        // Sanitize role description
+        const sanitizedRoleDescription = roleDescription
+            ? sanitizeInput(String(roleDescription), { maxLength: 500, allowNewlines: false })
+            : null;
+
+        // Validate and sanitize proof URL
+        const sanitizedProofUrl = proofUrl ? sanitizeUrl(String(proofUrl)) : null;
 
         // 1. Check Auth
         const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -31,10 +59,10 @@ export async function POST(request: Request) {
             .insert({
                 program_id: programId,
                 public_profile_id: profile.id,
-                role: role || 'staff', // Default
-                role_description: roleDescription,
+                role: sanitizedRole,
+                role_description: sanitizedRoleDescription,
                 verification_status: 'pending',
-                verification_notes: proofUrl ? `Proof: ${proofUrl}` : 'No proof provided'
+                verification_notes: sanitizedProofUrl ? `Proof: ${sanitizedProofUrl}` : 'No proof provided'
             })
             .select()
             .single();

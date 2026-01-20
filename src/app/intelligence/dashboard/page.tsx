@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Activity, Globe, Shield, AlertTriangle, ArrowRight, TrendingUp, Calculator, Brain } from 'lucide-react';
+import { Activity, Globe, Shield, AlertTriangle, ArrowRight, TrendingUp, Calculator, Brain, MessageCircle, MapPin } from 'lucide-react';
 import { Navigation } from '@/components/ui/navigation';
 
 type DashboardData = {
@@ -253,6 +253,19 @@ export default function MasterDashboard() {
                                 </div>
                             </Link>
 
+                            {/* System Map CTA */}
+                            <Link href="/intelligence/map" className="block border-2 border-red-600 bg-red-50 p-6 hover:bg-red-100 transition-colors group">
+                                <h3 className="font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2 text-red-800">
+                                    <MapPin className="w-4 h-4" /> System Map
+                                </h3>
+                                <p className="text-sm text-red-700 mb-3">
+                                    Geographic view of detention centres and programs.
+                                </p>
+                                <div className="flex items-center gap-2 text-sm font-bold text-red-800 group-hover:underline">
+                                    View Map <ArrowRight className="w-4 h-4" />
+                                </div>
+                            </Link>
+
                             {/* Research Agent CTA */}
                             <Link href="/intelligence/research" className="block border-2 border-blue-600 bg-blue-50 p-6 hover:bg-blue-100 transition-colors group">
                                 <h3 className="font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2 text-blue-800">
@@ -263,6 +276,19 @@ export default function MasterDashboard() {
                                 </p>
                                 <div className="flex items-center gap-2 text-sm font-bold text-blue-800 group-hover:underline">
                                     Start Research <ArrowRight className="w-4 h-4" />
+                                </div>
+                            </Link>
+
+                            {/* Chat with ALMA CTA */}
+                            <Link href="/intelligence/chat" className="block border-2 border-purple-600 bg-purple-50 p-6 hover:bg-purple-100 transition-colors group">
+                                <h3 className="font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2 text-purple-800">
+                                    <MessageCircle className="w-4 h-4" /> Ask ALMA
+                                </h3>
+                                <p className="text-sm text-purple-700 mb-3">
+                                    Chat conversationally about youth justice evidence.
+                                </p>
+                                <div className="flex items-center gap-2 text-sm font-bold text-purple-800 group-hover:underline">
+                                    Start Chat <ArrowRight className="w-4 h-4" />
                                 </div>
                             </Link>
 

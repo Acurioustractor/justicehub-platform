@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { ArrowLeft, Edit, ExternalLink, Sparkles, Mail, Globe, MapPin } from 'lucide-react';
+import { ArrowLeft, Edit, ExternalLink, Sparkles, Mail, Globe, MapPin, Pencil, Users } from 'lucide-react';
 
 export default async function AdminOrganizationDetailPage({ params }: { params: { slug: string } }) {
   const supabase = await createClient();
@@ -93,6 +93,22 @@ export default async function AdminOrganizationDetailPage({ params }: { params: 
                   {organization.description}
                 </p>
               )}
+            </div>
+            <div className="flex gap-3">
+              <Link
+                href={`/admin/organizations/${params.slug}/storytellers`}
+                className="flex items-center gap-2 px-6 py-3 bg-cyan-600 text-white font-bold hover:bg-cyan-700 transition-colors"
+              >
+                <Users className="h-4 w-4" />
+                Storytellers
+              </Link>
+              <Link
+                href={`/admin/organizations/${params.slug}/edit`}
+                className="flex items-center gap-2 px-6 py-3 bg-ochre-600 text-white font-bold hover:bg-ochre-700 transition-colors"
+              >
+                <Pencil className="h-4 w-4" />
+                Edit Organization
+              </Link>
             </div>
           </div>
 

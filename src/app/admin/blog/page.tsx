@@ -49,7 +49,7 @@ export default async function AdminBlogPage() {
             </div>
             <Link
               href="/admin/blog/new"
-              className="flex items-center gap-2 px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors border-2 border-black shadow-lg"
+              className="flex items-center gap-2 px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
               <Plus className="w-5 h-5" />
               New Blog Post

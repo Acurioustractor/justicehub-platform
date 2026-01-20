@@ -411,7 +411,7 @@ export default function RoadmapPage() {
           </div>
 
           {/* Filters */}
-          <div className="mb-8 p-6 bg-gray-50 border-2 border-gray-200 rounded-lg">
+          <div className="mb-8 p-6 bg-gray-50 border-2 border-black">
             <h3 className="text-lg font-bold text-black mb-4">Filter Roadmap</h3>
             <div className="grid md:grid-cols-3 gap-6">
               {/* Category Filter */}
@@ -510,7 +510,7 @@ export default function RoadmapPage() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-3">
-                            <div className={`p-2 rounded-lg bg-gray-100`}>
+                            <div className={`p-2 bg-gray-100`}>
                               <CategoryIcon className={`h-5 w-5 ${categoryData?.color}`} />
                             </div>
                             <div className="flex items-center gap-2">
@@ -712,7 +712,7 @@ export default function RoadmapPage() {
 
           {/* Community Engagement CTA */}
           <div className="border-t-2 border-black pt-12">
-            <div className="text-center py-12 bg-gradient-to-r from-green-50 to-blue-50 border-2 border-black rounded-lg">
+            <div className="text-center py-12 bg-gray-50 border-2 border-black">
               <h2 className="text-3xl font-bold text-black mb-4">Shape the Future of JusticeHub</h2>
               <p className="text-lg text-black font-medium mb-8 max-w-2xl mx-auto">
                 Your voice matters. Vote on features, suggest ideas, and help us build a platform 

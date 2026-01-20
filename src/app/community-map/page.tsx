@@ -734,7 +734,7 @@ export default function CommunityMapPage() {
                 <article
                   key={service.id}
                   className={`border-2 border-black bg-white p-6 flex flex-col gap-4 transition-shadow ${
-                    selectedServiceId === service.id ? 'shadow-lg shadow-black/20' : 'hover:shadow-md'
+                    selectedServiceId === service.id ? 'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]' : 'hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">

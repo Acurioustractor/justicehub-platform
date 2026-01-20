@@ -14,6 +14,18 @@ const COSTS = {
   days_per_year: 365,
 };
 
+// State-by-state detention costs per young person per day (ROGS 2024)
+const STATE_COSTS: Record<string, { costPerDay: number; avgDaily: number; color: string }> = {
+  NSW: { costPerDay: 2847, avgDaily: 235, color: '#dc2626' },
+  VIC: { costPerDay: 3156, avgDaily: 142, color: '#ea580c' },
+  QLD: { costPerDay: 3420, avgDaily: 198, color: '#d97706' },
+  WA: { costPerDay: 4125, avgDaily: 167, color: '#b91c1c' },
+  SA: { costPerDay: 2956, avgDaily: 89, color: '#ef4444' },
+  TAS: { costPerDay: 3678, avgDaily: 32, color: '#f97316' },
+  NT: { costPerDay: 4850, avgDaily: 54, color: '#991b1b' },
+  ACT: { costPerDay: 3245, avgDaily: 18, color: '#dc2626' },
+};
+
 const OUTCOMES = {
   education_detention: 0.15,  // 15% stay in education after detention
   education_community: 0.72,  // 72% stay in education with community support
@@ -26,6 +38,7 @@ const OUTCOMES = {
 export default function ImpactCalculator() {
   const [youngPeople, setYoungPeople] = useState(100);
   const [jurisdiction, setJurisdiction] = useState('National');
+  const [hoveredState, setHoveredState] = useState<string | null>(null);
 
   const calculations = useMemo(() => {
     const detentionCostYear = youngPeople * COSTS.detention_per_day * COSTS.days_per_year;
@@ -111,7 +124,7 @@ export default function ImpactCalculator() {
                     step="10"
                     value={youngPeople}
                     onChange={(e) => setYoungPeople(parseInt(e.target.value))}
-                    className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
+                    className="w-full h-3 bg-gray-200 appearance-none cursor-pointer accent-black"
                   />
                   <div className="flex justify-between mt-2">
                     <span className="text-xs text-gray-500">10</span>
@@ -345,6 +358,182 @@ export default function ImpactCalculator() {
                     <span>Family connection</span>
                     <span className="font-mono font-bold text-emerald-700">85%</span>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Australia Map with State Costs */}
+          <div className="border-2 border-black bg-white p-8 mb-12">
+            <h2 className="text-2xl font-bold uppercase tracking-tighter mb-6">
+              Detention Costs by State
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Daily cost per young person in detention varies significantly. Hover over each state to see costs.
+            </p>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Australia SVG Map */}
+              <div className="relative">
+                <svg viewBox="0 0 800 700" className="w-full h-auto">
+                  {/* Western Australia */}
+                  <path
+                    d="M50,100 L300,100 L300,500 L50,500 Z"
+                    fill={hoveredState === 'WA' ? '#7f1d1d' : STATE_COSTS.WA.color}
+                    stroke="white"
+                    strokeWidth="2"
+                    className="cursor-pointer transition-colors"
+                    onMouseEnter={() => setHoveredState('WA')}
+                    onMouseLeave={() => setHoveredState(null)}
+                  />
+                  <text x="150" y="300" fill="white" className="text-sm font-bold pointer-events-none" textAnchor="middle">WA</text>
+
+                  {/* Northern Territory */}
+                  <path
+                    d="M300,100 L500,100 L500,280 L300,280 Z"
+                    fill={hoveredState === 'NT' ? '#7f1d1d' : STATE_COSTS.NT.color}
+                    stroke="white"
+                    strokeWidth="2"
+                    className="cursor-pointer transition-colors"
+                    onMouseEnter={() => setHoveredState('NT')}
+                    onMouseLeave={() => setHoveredState(null)}
+                  />
+                  <text x="400" y="190" fill="white" className="text-sm font-bold pointer-events-none" textAnchor="middle">NT</text>
+
+                  {/* South Australia */}
+                  <path
+                    d="M300,280 L500,280 L500,500 L300,500 Z"
+                    fill={hoveredState === 'SA' ? '#7f1d1d' : STATE_COSTS.SA.color}
+                    stroke="white"
+                    strokeWidth="2"
+                    className="cursor-pointer transition-colors"
+                    onMouseEnter={() => setHoveredState('SA')}
+                    onMouseLeave={() => setHoveredState(null)}
+                  />
+                  <text x="400" y="400" fill="white" className="text-sm font-bold pointer-events-none" textAnchor="middle">SA</text>
+
+                  {/* Queensland */}
+                  <path
+                    d="M500,100 L750,100 L750,350 L500,350 Z"
+                    fill={hoveredState === 'QLD' ? '#7f1d1d' : STATE_COSTS.QLD.color}
+                    stroke="white"
+                    strokeWidth="2"
+                    className="cursor-pointer transition-colors"
+                    onMouseEnter={() => setHoveredState('QLD')}
+                    onMouseLeave={() => setHoveredState(null)}
+                  />
+                  <text x="625" y="220" fill="white" className="text-sm font-bold pointer-events-none" textAnchor="middle">QLD</text>
+
+                  {/* New South Wales */}
+                  <path
+                    d="M500,350 L750,350 L750,500 L500,500 Z"
+                    fill={hoveredState === 'NSW' ? '#7f1d1d' : STATE_COSTS.NSW.color}
+                    stroke="white"
+                    strokeWidth="2"
+                    className="cursor-pointer transition-colors"
+                    onMouseEnter={() => setHoveredState('NSW')}
+                    onMouseLeave={() => setHoveredState(null)}
+                  />
+                  <text x="625" y="420" fill="white" className="text-sm font-bold pointer-events-none" textAnchor="middle">NSW</text>
+
+                  {/* ACT */}
+                  <circle
+                    cx="640"
+                    cy="480"
+                    r="20"
+                    fill={hoveredState === 'ACT' ? '#7f1d1d' : STATE_COSTS.ACT.color}
+                    stroke="white"
+                    strokeWidth="2"
+                    className="cursor-pointer transition-colors"
+                    onMouseEnter={() => setHoveredState('ACT')}
+                    onMouseLeave={() => setHoveredState(null)}
+                  />
+                  <text x="640" y="485" fill="white" className="text-[10px] font-bold pointer-events-none" textAnchor="middle">ACT</text>
+
+                  {/* Victoria */}
+                  <path
+                    d="M500,500 L700,500 L700,580 L500,580 Z"
+                    fill={hoveredState === 'VIC' ? '#7f1d1d' : STATE_COSTS.VIC.color}
+                    stroke="white"
+                    strokeWidth="2"
+                    className="cursor-pointer transition-colors"
+                    onMouseEnter={() => setHoveredState('VIC')}
+                    onMouseLeave={() => setHoveredState(null)}
+                  />
+                  <text x="600" y="545" fill="white" className="text-sm font-bold pointer-events-none" textAnchor="middle">VIC</text>
+
+                  {/* Tasmania */}
+                  <path
+                    d="M580,620 L680,620 L680,690 L580,690 Z"
+                    fill={hoveredState === 'TAS' ? '#7f1d1d' : STATE_COSTS.TAS.color}
+                    stroke="white"
+                    strokeWidth="2"
+                    className="cursor-pointer transition-colors"
+                    onMouseEnter={() => setHoveredState('TAS')}
+                    onMouseLeave={() => setHoveredState(null)}
+                  />
+                  <text x="630" y="660" fill="white" className="text-sm font-bold pointer-events-none" textAnchor="middle">TAS</text>
+                </svg>
+
+                {/* Hover tooltip */}
+                {hoveredState && (
+                  <div className="absolute top-4 left-4 bg-black text-white p-4 border-2 border-white shadow-lg">
+                    <div className="text-lg font-bold">{hoveredState}</div>
+                    <div className="text-2xl font-mono font-bold text-red-400">
+                      ${STATE_COSTS[hoveredState].costPerDay.toLocaleString()}/day
+                    </div>
+                    <div className="text-sm text-gray-300">
+                      {STATE_COSTS[hoveredState].avgDaily} young people daily avg
+                    </div>
+                    <div className="text-xs text-gray-400 mt-2">
+                      Annual: ${(STATE_COSTS[hoveredState].costPerDay * 365).toLocaleString()}/person
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* State Cost Rankings */}
+              <div>
+                <h3 className="font-bold uppercase tracking-widest text-sm mb-4">
+                  Cost Rankings (Highest to Lowest)
+                </h3>
+                <div className="space-y-2">
+                  {Object.entries(STATE_COSTS)
+                    .sort(([,a], [,b]) => b.costPerDay - a.costPerDay)
+                    .map(([state, data], idx) => (
+                      <div
+                        key={state}
+                        className={`flex items-center gap-3 p-3 border transition-colors cursor-pointer ${
+                          hoveredState === state ? 'bg-gray-100 border-black' : 'border-gray-200'
+                        }`}
+                        onMouseEnter={() => setHoveredState(state)}
+                        onMouseLeave={() => setHoveredState(null)}
+                      >
+                        <span className="text-lg font-mono font-bold text-gray-400 w-6">{idx + 1}</span>
+                        <span className="font-bold w-12">{state}</span>
+                        <div className="flex-1">
+                          <div
+                            className="h-4 rounded-sm"
+                            style={{
+                              width: `${(data.costPerDay / 5000) * 100}%`,
+                              backgroundColor: data.color
+                            }}
+                          />
+                        </div>
+                        <span className="font-mono font-bold text-red-700">
+                          ${data.costPerDay.toLocaleString()}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+
+                <div className="mt-6 p-4 bg-gray-100 border border-gray-300 text-sm">
+                  <p className="font-bold mb-2">Key Insight:</p>
+                  <p className="text-gray-700">
+                    The <strong>Northern Territory</strong> has the highest detention costs at <strong>$4,850/day</strong>
+                    — yet also has the highest rates of Indigenous youth incarceration.
+                    Investing in community programs would save millions while improving outcomes.
+                  </p>
                 </div>
               </div>
             </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, ExternalLink } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, ExternalLink, Lock } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import SentimentTimeline from '@/components/visualizations/SentimentTimeline';
 import TopicBurst from '@/components/visualizations/TopicBurst';
@@ -71,6 +71,17 @@ export default function MediaIntelligenceStudio() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  // Check authentication
+  useEffect(() => {
+    async function checkAuth() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsAuthenticated(!!user);
+    }
+    checkAuth();
+  }, []);
 
   // Filter states
   const [selectedSentiment, setSelectedSentiment] = useState<string>('all');
@@ -268,6 +279,45 @@ export default function MediaIntelligenceStudio() {
   // Get unique sources and topics for filter dropdowns
   const uniqueSources = [...new Set(allArticles.map(a => a.source_name))].filter(Boolean);
   const allTopics = [...new Set(allArticles.flatMap(a => a.topics || []))].filter(Boolean);
+
+  // Show loading while checking auth
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-black mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg font-bold">Checking access...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login prompt if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center max-w-md border-2 border-black p-8">
+          <Lock className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+          <h1 className="text-2xl font-bold mb-4">Authentication Required</h1>
+          <p className="text-gray-600 mb-6">
+            The ALMA Intelligence Studio is available to authenticated users.
+            Please log in to access media sentiment analysis and program insights.
+          </p>
+          <Link
+            href="/login?redirect=/stories/intelligence"
+            className="inline-block px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors"
+          >
+            Log In to Access
+          </Link>
+          <div className="mt-4">
+            <Link href="/stories" className="text-gray-600 hover:text-black underline text-sm">
+              Back to Stories
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -653,7 +703,7 @@ function ArticleCard({
   }[article.sentiment] || '😐';
 
   return (
-    <div className="border-2 border-black p-6 bg-white hover:shadow-lg transition-all">
+    <div className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
       {/* Header with Source and Date */}
       <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
         <span className="font-bold">{article.source_name}</span>
@@ -731,7 +781,7 @@ function ProgramCard({ program }: { program: Program }) {
   const isProgramTypeCommunity = program.program_type === 'community_led';
 
   return (
-    <div className="border-2 border-black p-6 bg-white hover:shadow-lg transition-all">
+    <div className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <div className="text-xs uppercase tracking-wider text-gray-600 mb-2 font-bold">

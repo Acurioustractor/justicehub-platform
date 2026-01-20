@@ -82,24 +82,47 @@ export function GetInvolvedSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This would integrate with your Notion API or form handling system
-    console.log("Form submitted:", { ...formData, involvementType: selectedOption });
 
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      organization: "",
-      role: "",
-      message: "",
-      involvementType: "",
-      commitment: "",
-      timeline: ""
-    });
-    setSelectedOption(null);
+    try {
+      // Sync to GoHighLevel with involvement type as tag
+      const response = await fetch('/api/ghl/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          full_name: formData.name,
+          organization: formData.organization,
+          subscription_type: 'general',
+          source: 'get_involved_form',
+          tags: [
+            `Interest: ${selectedOption}`,
+            formData.role ? `Role: ${formData.role}` : null,
+          ].filter(Boolean),
+        }),
+      });
 
-    // Show success message (you could use a toast notification here)
-    alert("Thank you! We'll be in touch soon to discuss how you can be part of the transformation.");
+      if (!response.ok) {
+        throw new Error('Failed to submit');
+      }
+
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        organization: "",
+        role: "",
+        message: "",
+        involvementType: "",
+        commitment: "",
+        timeline: ""
+      });
+      setSelectedOption(null);
+
+      alert("Thank you! We'll be in touch soon to discuss how you can be part of the transformation.");
+    } catch (err) {
+      console.error('Form submission error:', err);
+      alert("Something went wrong. Please try again or email us directly.");
+    }
   };
 
   const renderForm = () => {

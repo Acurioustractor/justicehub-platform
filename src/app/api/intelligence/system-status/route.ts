@@ -1,4 +1,3 @@
-
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 
@@ -8,55 +7,75 @@ export async function GET() {
     try {
         const supabase = await createClient();
 
-        // 1. Fetch Stats in parallel
+        // Fetch Stats from ALMA tables in parallel
         const [
-            { count: totalServices, error: servicesError },
-            { count: activeSources, error: sourcesError },
-            { data: confidenceData, error: confidenceError },
-            { count: pendingJobs, error: jobsError },
+            { count: totalInterventions },
+            { count: scrapedLinks },
+            { count: pendingLinks },
+            { data: recentScrapes },
         ] = await Promise.all([
-            // Total Services
-            supabase.from('scraped_services').select('*', { count: 'exact', head: true }),
+            // Total interventions discovered
+            supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
 
-            // Active Sources
-            supabase.from('data_sources').select('*', { count: 'exact', head: true }).eq('active', true),
+            // Scraped links (completed)
+            supabase.from('alma_discovered_links').select('*', { count: 'exact', head: true }).eq('status', 'scraped'),
 
-            // Average AI Confidence (getting raw data to average manually for now, or use RPC if exists)
-            // For simplicity/performance on small dataset, selecting just the score column
-            supabase.from('scraped_services').select('confidence_score').not('confidence_score', 'is', null).limit(100),
+            // Pending links (queue depth)
+            supabase.from('alma_discovered_links').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
 
-            // Pending/Running Jobs
-            supabase.from('processing_jobs').select('*', { count: 'exact', head: true }).in('status', ['queued', 'running']),
+            // Recent scrape activity (last 24h) for source list
+            supabase
+                .from('alma_discovered_links')
+                .select('id, url, status, scraped_at, predicted_type, priority')
+                .eq('status', 'scraped')
+                .order('scraped_at', { ascending: false })
+                .limit(50),
         ]);
 
-        // 2. Fetch Data Sources List
-        const { data: sources, error: listError } = await supabase
-            .from('data_sources')
-            .select('*')
-            .order('last_successful_scrape', { ascending: false });
+        // Calculate success rate from recent scrapes
+        const { count: errorCount } = await supabase
+            .from('alma_discovered_links')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'error');
 
-        if (servicesError || sourcesError || listError) {
-            console.error('Database Error:', servicesError || sourcesError || listError);
-            throw new Error('Failed to fetch system stats');
-        }
+        const totalProcessed = (scrapedLinks || 0) + (errorCount || 0);
+        const successRate = totalProcessed > 0 ? Math.round(((scrapedLinks || 0) / totalProcessed) * 100) : 0;
 
-        // Calculate Average Confidence
-        let avgConfidence = 0;
-        if (confidenceData && confidenceData.length > 0) {
-            const sum = confidenceData.reduce((acc, curr) => acc + (curr.confidence_score || 0), 0);
-            avgConfidence = (sum / confidenceData.length) * 100; // as percentage
-        }
+        // Format sources from recent scrapes
+        const sources = (recentScrapes || []).map((scrape) => {
+            // Extract domain from URL
+            let domain = 'Unknown';
+            try {
+                domain = new URL(scrape.url).hostname.replace('www.', '');
+            } catch {}
+
+            return {
+                id: scrape.id,
+                name: domain,
+                type: scrape.predicted_type || 'website',
+                reliability_score: scrape.priority ? scrape.priority / 15 : 0.5, // Normalize priority to 0-1
+                last_successful_scrape: scrape.scraped_at,
+                active: true,
+            };
+        });
+
+        // Dedupe sources by domain
+        const uniqueSources = sources.reduce((acc: any[], source: any) => {
+            if (!acc.find((s) => s.name === source.name)) {
+                acc.push(source);
+            }
+            return acc;
+        }, []);
 
         return NextResponse.json({
             stats: {
-                totalServices: totalServices || 0,
-                activeSources: activeSources || 0,
-                avgConfidence: Math.round(avgConfidence),
-                pendingJobs: pendingJobs || 0
+                totalServices: totalInterventions || 0,
+                activeSources: scrapedLinks || 0,
+                avgConfidence: successRate,
+                pendingJobs: pendingLinks || 0,
             },
-            sources: sources || []
+            sources: uniqueSources.slice(0, 30), // Top 30 unique sources
         });
-
     } catch (error) {
         console.error('Error fetching system status:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

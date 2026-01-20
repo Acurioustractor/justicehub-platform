@@ -1,14 +1,18 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Search,
   MapPin,
   Grid3X3,
   List,
-  ChevronRight
+  ChevronRight,
+  Microscope,
+  Mountain,
+  BookOpen
 } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import FeaturedVideo from '@/components/FeaturedVideo';
 import ImageGallery from '@/components/ImageGallery';
@@ -35,33 +39,30 @@ interface CommunityProgram {
   founded_year: number;
 }
 
-// Sample stories related to community programs
-const communityStories = [
-  {
-    id: 1,
-    title: "From Prison to Purpose: Marcus's Welding Journey",
-    author: "Marcus Thompson",
-    program: "BackTrack Youth Works",
-    summary: "How working with rescue dogs and learning welding transformed a young man's life trajectory.",
-    image: "/placeholder-marcus.jpg"
-  },
-  {
-    id: 2,
-    title: "Culture Saved My Life: Jayden's Healing Journey",
-    author: "Jayden Williams",
-    program: "Healing Circles Program",
-    summary: "Traditional Aboriginal healing practices help a young person overcome trauma and find identity.",
-    image: "/placeholder-jayden.jpg"
-  },
-  {
-    id: 3,
-    title: "Finding My Voice: Aisha's Social Work Path",
-    author: "Aisha Patel",
-    program: "Logan Youth Collective",
-    summary: "From 'problem student' to social work advocate through youth-led community organizing.",
-    image: "/placeholder-aisha.jpg"
-  }
+// Story type from database
+interface Story {
+  id: string;
+  title: string;
+  slug: string | null;
+  excerpt: string | null;
+  featured_image_url: string | null;
+  participant_name: string;
+  tags: string[] | null;
+}
+
+// Founding Basecamps - Centre of Excellence network
+const FOUNDING_BASECAMP_NAMES = [
+  'oonchiumpa',
+  'bg fit',
+  'mounty yarns',
+  'picc'
 ];
+
+// Helper to check if program is affiliated with a founding basecamp
+function isBasecampAffiliated(program: CommunityProgram): boolean {
+  const orgName = program.organization?.toLowerCase() || '';
+  return FOUNDING_BASECAMP_NAMES.some(name => orgName.includes(name));
+}
 
 interface CommunityProgramsContentProps {
   initialPrograms: CommunityProgram[];
@@ -72,6 +73,27 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
   const [selectedApproach, setSelectedApproach] = useState<string>('all');
   const [selectedState, setSelectedState] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const [stories, setStories] = useState<Story[]>([]);
+  const [storiesLoading, setStoriesLoading] = useState(true);
+
+  // Fetch stories from database
+  useEffect(() => {
+    async function fetchStories() {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('stories')
+        .select('id, title, slug, excerpt, featured_image_url, participant_name, tags')
+        .eq('status', 'published')
+        .order('published_at', { ascending: false })
+        .limit(6);
+
+      if (!error && data) {
+        setStories(data);
+      }
+      setStoriesLoading(false);
+    }
+    fetchStories();
+  }, []);
 
   const approaches = [
     { id: 'all', label: 'All Approaches' },
@@ -147,6 +169,31 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
                 Looking for a broader directory of services? Visit our <a href="/services" className="text-ochre-600 hover:underline font-medium">Services Directory</a> with 500+ indexed entries.
               </p>
 
+              {/* Quick Links */}
+              <div className="flex flex-wrap justify-center gap-4 mb-8">
+                <Link
+                  href="/intelligence/evidence"
+                  className="inline-flex items-center gap-2 px-4 py-2 border-2 border-black bg-white hover:bg-eucalyptus-50 font-bold text-sm transition-colors"
+                >
+                  <Microscope className="w-4 h-4" />
+                  Research & Evidence (100+ studies)
+                </Link>
+                <Link
+                  href="/centre-of-excellence"
+                  className="inline-flex items-center gap-2 px-4 py-2 border-2 border-black bg-white hover:bg-ochre-50 font-bold text-sm transition-colors"
+                >
+                  <Mountain className="w-4 h-4" />
+                  Centre of Excellence
+                </Link>
+                <Link
+                  href="/centre-of-excellence/global-insights"
+                  className="inline-flex items-center gap-2 px-4 py-2 border-2 border-black bg-white hover:bg-purple-50 font-bold text-sm transition-colors"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  International Models
+                </Link>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
                 <div className="text-center">
                   <div className="font-mono text-4xl font-bold text-blue-800 mb-2">{initialPrograms.length}</div>
@@ -188,6 +235,12 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
                     {program.indigenous_knowledge && (
                       <span className="text-orange-600 font-bold text-sm">
                         Indigenous Knowledge
+                      </span>
+                    )}
+                    {isBasecampAffiliated(program) && (
+                      <span className="inline-flex items-center gap-1 text-ochre-600 font-bold text-sm">
+                        <Mountain className="w-3 h-3" />
+                        CoE Network
                       </span>
                     )}
                   </div>
@@ -323,9 +376,17 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
                       <span className={`px-2 py-1 text-xs font-bold uppercase tracking-wider ${getApproachColor(program.approach)}`}>
                         {program.approach}
                       </span>
-                      {program.indigenous_knowledge && (
-                        <span className="text-orange-600 text-xs font-bold">Indigenous</span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {program.indigenous_knowledge && (
+                          <span className="text-orange-600 text-xs font-bold">Indigenous</span>
+                        )}
+                        {isBasecampAffiliated(program) && (
+                          <span className="inline-flex items-center gap-1 text-ochre-600 text-xs font-bold">
+                            <Mountain className="w-3 h-3" />
+                            CoE
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     <h3 className="font-bold text-lg mb-1">{program.name}</h3>
@@ -381,9 +442,17 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
                           <div>
                             <div className="font-bold">{program.name}</div>
                             <div className="text-sm text-gray-600">{program.organization}</div>
-                            {program.indigenous_knowledge && (
-                              <div className="text-xs text-orange-600 font-bold mt-1">Indigenous Knowledge</div>
-                            )}
+                            <div className="flex items-center gap-2 mt-1">
+                              {program.indigenous_knowledge && (
+                                <span className="text-xs text-orange-600 font-bold">Indigenous Knowledge</span>
+                              )}
+                              {isBasecampAffiliated(program) && (
+                                <span className="inline-flex items-center gap-1 text-xs text-ochre-600 font-bold">
+                                  <Mountain className="w-3 h-3" />
+                                  CoE Network
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </td>
                         <td className="px-4 py-4">
@@ -433,60 +502,9 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
           </div>
         </section>
 
-        {/* Video Showcase Section */}
-        <section className="py-16 border-t-2 border-black">
-          <div className="container-justice">
-            <h2 className="text-3xl font-bold mb-4 text-center">PROGRAMS IN ACTION</h2>
-            <p className="text-center text-gray-700 mb-12 max-w-2xl mx-auto">
-              See community-driven programs transforming lives through cultural connection,
-              hands-on skills training, and Indigenous leadership.
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-              <FeaturedVideo
-                videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                title="BackTrack Youth Works: Building Futures"
-                description="Young people learning trade skills through work with rescue dogs and welding. Community-led mentorship creating real career pathways."
-              />
-
-              <FeaturedVideo
-                videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                title="Cultural Healing Circles Transform Lives"
-                description="Elder-led traditional practices help young Aboriginal people reconnect with culture, Country, and identity."
-              />
-            </div>
-
-            <ImageGallery
-              images={[
-                {
-                  src: '/api/placeholder/800/600',
-                  alt: 'Community program participants',
-                  caption: 'Maranguka Justice Reinvestment - Bourke',
-                  credit: 'JusticeHub'
-                },
-                {
-                  src: '/api/placeholder/800/600',
-                  alt: 'Youth cultural camp',
-                  caption: 'Cultural Connection on Country',
-                  credit: 'Community Programs'
-                },
-                {
-                  src: '/api/placeholder/800/600',
-                  alt: 'Skills training workshop',
-                  caption: 'Youth-Led Skills Workshop',
-                  credit: 'Logan Youth Collective'
-                },
-                {
-                  src: '/api/placeholder/800/600',
-                  alt: 'Elder and youth together',
-                  caption: 'Intergenerational Knowledge Sharing',
-                  credit: 'Healing Circles Program'
-                }
-              ]}
-              columns={4}
-            />
-          </div>
-        </section>
+        {/* Video Showcase Section - Hidden until real media content is available
+           TODO: Add real video URLs and images from basecamps/programs
+        */}
 
         {/* Stories Section */}
         <section className="py-16 bg-gray-50 border-t-2 border-black">
@@ -497,29 +515,63 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
               community-driven programs and indigenous wisdom.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {communityStories.map((story) => (
-                <div key={story.id} className="data-card bg-white">
-                  <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
-                    <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm">
-                      STORY IMAGE: {story.author}
+            {storiesLoading ? (
+              <div className="flex justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-800"></div>
+              </div>
+            ) : stories.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {stories.slice(0, 3).map((story) => (
+                  <div key={story.id} className="data-card bg-white">
+                    <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
+                      {story.featured_image_url ? (
+                        <img
+                          src={story.featured_image_url}
+                          alt={story.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm bg-gradient-to-br from-blue-100 to-ochre-100">
+                          <span className="text-4xl font-black text-blue-800/30">{story.title.charAt(0)}</span>
+                        </div>
+                      )}
                     </div>
+
+                    <h3 className="font-bold text-lg mb-2 line-clamp-2">{story.title}</h3>
+                    {story.participant_name && (
+                      <p className="text-sm text-blue-800 font-medium mb-2">By {story.participant_name}</p>
+                    )}
+                    {story.excerpt && (
+                      <p className="text-gray-700 mb-4 line-clamp-3">{story.excerpt}</p>
+                    )}
+                    {story.tags && story.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {story.tags.slice(0, 2).map((tag) => (
+                          <span key={tag} className="text-xs bg-gray-100 px-2 py-1 text-gray-600">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    <Link
+                      href={`/stories/${story.slug || story.id}`}
+                      className="inline-flex items-center gap-2 text-sm font-bold text-blue-800 hover:text-blue-600"
+                    >
+                      Read story
+                      <ChevronRight className="h-4 w-4" />
+                    </Link>
                   </div>
-
-                  <h3 className="font-bold text-lg mb-2 line-clamp-2">{story.title}</h3>
-                  <p className="text-sm text-blue-800 font-medium mb-2">{story.program}</p>
-                  <p className="text-gray-700 mb-4 line-clamp-3">{story.summary}</p>
-
-                  <Link
-                    href={`/stories/${story.id}`}
-                    className="inline-flex items-center gap-2 text-sm font-bold text-blue-800 hover:text-blue-600"
-                  >
-                    Read story
-                    <ChevronRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 border-2 border-dashed border-gray-300 bg-white">
+                <p className="text-gray-600 mb-4">Stories coming soon...</p>
+                <Link href="/stories/submit" className="text-blue-800 font-bold hover:underline">
+                  Share your story
+                </Link>
+              </div>
+            )}
 
             <div className="text-center mt-8">
               <Link href="/stories" className="cta-primary">

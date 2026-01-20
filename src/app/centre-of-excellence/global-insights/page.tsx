@@ -255,11 +255,11 @@ export default function GlobalInsightsPage() {
             </div>
 
             <h1 className="headline-truth mb-6">
-              International Best Practice Models
+              International Models
             </h1>
 
             <p className="text-xl text-gray-700 max-w-4xl mb-6 leading-relaxed">
-              Learning from the world's most effective youth justice systems. These jurisdictions demonstrate proven approaches to reducing incarceration, improving outcomes, and treating young people with dignity and respect.
+              16 global programs proving what's possible. Spain (13.6% recidivism), New Zealand (86% victim satisfaction), Finland (only 4 youth in custody). See what works when you invest in community.
             </p>
 
             {/* Top Stats */}

@@ -161,7 +161,7 @@ export default async function NTShowcasePage() {
             </div>
 
             <div className="max-w-5xl mx-auto">
-              <div className="border-4 border-green-500 rounded-lg p-8 bg-green-50">
+              <div className="border-4 border-green-500 p-8 bg-green-50">
                 <div className="grid md:grid-cols-3 gap-8 mb-8">
                   <div className="text-center">
                     <div className="text-5xl font-bold text-green-700 mb-2">95%</div>
@@ -247,7 +247,7 @@ export default async function NTShowcasePage() {
 
             <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               {aboriginalLed.map((intervention) => (
-                <div key={intervention.id} className="border-2 border-blue-400 rounded-lg p-6 bg-white">
+                <div key={intervention.id} className="border-2 border-blue-400 p-6 bg-white">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="font-bold text-xl mb-1">{intervention.name}</h3>
@@ -313,7 +313,7 @@ export default async function NTShowcasePage() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
               {governmentLowRisk.map((intervention) => (
-                <div key={intervention.id} className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50">
+                <div key={intervention.id} className="border-2 border-gray-300 p-4 bg-gray-50">
                   <div className="mb-3">
                     <h3 className="font-bold text-lg mb-1">{intervention.name}</h3>
                     <div className="text-yellow-500">{'⭐'.repeat(getStarRating(intervention))}</div>
@@ -357,7 +357,7 @@ export default async function NTShowcasePage() {
 
             <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
               {detention.map((intervention) => (
-                <div key={intervention.id} className="border-4 border-red-500 rounded-lg p-6 bg-white">
+                <div key={intervention.id} className="border-4 border-red-500 p-6 bg-white">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="font-bold text-xl mb-1">{intervention.name}</h3>
@@ -399,7 +399,7 @@ export default async function NTShowcasePage() {
             </div>
 
             <div className="mt-8 text-center max-w-4xl mx-auto">
-              <div className="p-6 bg-white border-4 border-red-500 rounded-lg">
+              <div className="p-6 bg-white border-4 border-red-500">
                 <h3 className="font-bold text-xl mb-3">The Alternative Exists</h3>
                 <p className="text-gray-800 mb-4">
                   <strong>Oochiumpa proves community-owned healing works better than detention.</strong><br />

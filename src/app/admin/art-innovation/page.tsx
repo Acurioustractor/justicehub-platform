@@ -48,7 +48,7 @@ export default async function AdminArtInnovationPage() {
             </div>
             <Link
               href="/admin/art-innovation/new"
-              className="px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors border-2 border-black shadow-lg"
+              className="px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
               Create Project
             </Link>

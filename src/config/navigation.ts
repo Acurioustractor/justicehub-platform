@@ -6,6 +6,18 @@ export interface NavigationItem {
     items?: NavigationItem[];
 }
 
+/**
+ * Navigation Configuration
+ *
+ * NOTE: Some descriptions contain counts that need periodic review:
+ * - Basecamps: 4 founding hubs (verified Jan 2026)
+ * - Research Library: 27+ studies (use X+ format for growth)
+ * - Best Practice: 4 Australian frameworks (QLD, NSW, VIC, NT)
+ * - Global Map: 16+ international models
+ *
+ * These are intentionally static for performance. Update quarterly
+ * or when significant changes occur.
+ */
 export const navigationItems: NavigationItem[] = [
     {
         label: 'Stories',
@@ -37,9 +49,50 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Support services directory'
             },
             {
-                label: 'Map',
+                label: 'Service Map',
                 href: '/community-map',
                 description: 'Locate services nationwide'
+            }
+        ]
+    },
+    {
+        label: 'Intelligence',
+        type: 'dropdown',
+        items: [
+            {
+                label: 'ALMA Dashboard',
+                href: '/intelligence/dashboard',
+                description: 'AI-powered evidence engine'
+            },
+            {
+                label: 'Ask ALMA',
+                href: '/intelligence/chat',
+                description: 'Chat with youth justice AI'
+            },
+            {
+                label: 'System Map',
+                href: '/intelligence/map',
+                description: 'Detention centres & programs'
+            },
+            {
+                label: 'Interventions',
+                href: '/intelligence/interventions',
+                description: 'Evidence-based programs database'
+            },
+            {
+                label: 'Research Agent',
+                href: '/intelligence/research',
+                description: 'AI research assistant'
+            },
+            {
+                label: 'Impact Calculator',
+                href: '/intelligence/impact-calculator',
+                description: 'Detention vs community costs'
+            },
+            {
+                label: 'Evidence Library',
+                href: '/intelligence/evidence',
+                description: 'Research and studies'
             }
         ]
     },
@@ -50,32 +103,37 @@ export const navigationItems: NavigationItem[] = [
             {
                 label: 'Overview',
                 href: '/centre-of-excellence',
-                description: 'Australian youth justice leadership'
+                description: 'Join the network proving what works'
             },
             {
-                label: 'ALMA Dashboard',
-                href: '/intelligence/dashboard',
-                description: 'System-wide intelligence '
+                label: 'Basecamps',
+                href: '/centre-of-excellence/map?category=basecamp',
+                description: '4 founding network hubs'
             },
             {
-                label: 'Intelligence Hub',
-                href: '/intelligence',
-                description: 'ALMA intelligence & portfolio analytics'
+                label: 'Key People',
+                href: '/centre-of-excellence/people',
+                description: 'Practitioners & researchers'
             },
             {
-                label: 'Research',
+                label: 'Research Library',
                 href: '/centre-of-excellence/research',
-                description: 'Evidence-based insights'
+                description: '27+ peer-reviewed studies'
             },
             {
                 label: 'Best Practice',
                 href: '/centre-of-excellence/best-practice',
-                description: 'Proven approaches'
+                description: '4 Australian state frameworks'
+            },
+            {
+                label: 'Global Map',
+                href: '/centre-of-excellence/map',
+                description: '16+ international models'
             },
             {
                 label: 'Global Insights',
                 href: '/centre-of-excellence/global-insights',
-                description: 'International perspectives'
+                description: 'International best practice'
             }
         ]
     },
@@ -84,9 +142,14 @@ export const navigationItems: NavigationItem[] = [
         type: 'dropdown',
         items: [
             {
-                label: 'Ask ALMA',
-                href: '#alma-chat',
-                description: 'AI-powered youth justice guide'
+                label: 'Blog',
+                href: '/blog',
+                description: 'News and updates'
+            },
+            {
+                label: 'Events',
+                href: '/events',
+                description: 'Upcoming gatherings'
             },
             {
                 label: 'Stewards',
@@ -137,13 +200,23 @@ export const footerSections = [
         ]
     },
     {
+        title: 'Intelligence',
+        links: [
+            { label: 'ALMA Dashboard', href: '/intelligence/dashboard', description: 'AI evidence engine' },
+            { label: 'Ask ALMA', href: '/intelligence/chat', description: 'Chat with AI' },
+            { label: 'System Map', href: '/intelligence/map', description: 'Detention & programs' },
+            { label: 'Interventions', href: '/intelligence/interventions', description: 'Evidence database' },
+            { label: 'Impact Calculator', href: '/intelligence/impact-calculator', description: 'Cost comparison' }
+        ]
+    },
+    {
         title: 'Platform',
         links: [
-            { label: 'Ask ALMA', href: '#alma-chat', description: 'AI youth justice guide' },
+            { label: 'Blog', href: '/blog', description: 'News and updates' },
+            { label: 'Events', href: '/events', description: 'Upcoming gatherings' },
             { label: 'Stewards', href: '/stewards', description: 'Protect what works' },
             { label: 'Gallery', href: '/gallery', description: 'Programs in action' },
-            { label: 'Money Trail', href: '/transparency', description: 'Financial transparency' },
-            { label: 'Centre of Excellence', href: '/centre-of-excellence', description: 'Research and best practice' }
+            { label: 'Transparency', href: '/transparency', description: 'Financial transparency' }
         ]
     },
     {

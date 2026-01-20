@@ -3,7 +3,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 export const dynamic = 'force-dynamic';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink, Mail, Globe, Linkedin, Twitter, Edit, Building2, Briefcase, MapPin, Users, Sparkles } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Mail, Globe, Linkedin, Twitter, Edit, Building2, Briefcase, MapPin, Users, Sparkles, FileText, BookOpen, Calendar } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 
 interface PublicProfile {
@@ -76,6 +76,7 @@ export default async function ProfilePage({
   console.log('🔍 Auth check:', user ? `User ID: ${user.id}` : 'Not logged in');
 
   if (user) {
+    // Check admin status from auth-linked profiles table
     const { data: profileData } = await supabase
       .from('profiles')
       .select('is_super_admin')
@@ -86,9 +87,9 @@ export default async function ProfilePage({
     canEdit = profileData?.is_super_admin === true;
   }
 
-  // Fetch profile - allow private profiles if user owns them
+  // Fetch public profile - allow private profiles if user owns them
   const { data: profile, error } = await supabase
-    .from('profiles')
+    .from('public_profiles')
     .select(`
       *,
       art_innovation_profiles (
@@ -153,6 +154,24 @@ export default async function ProfilePage({
 
   console.log('🔐 Can edit?', canEdit);
 
+  // Fetch articles by this person
+  const { data: articles } = await supabase
+    .from('articles')
+    .select('id, title, slug, excerpt, published_at, featured_image_url, category')
+    .eq('author_id', profile.id)
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+    .limit(6);
+
+  // Fetch stories by this person (using public_profile_id)
+  const { data: stories } = await supabase
+    .from('stories')
+    .select('id, title, slug, excerpt, published_at, featured_image_url, story_type')
+    .eq('public_profile_id', profile.id)
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+    .limit(6);
+
   return (
     <div className="min-h-screen bg-white page-content">
       <Navigation />
@@ -162,11 +181,11 @@ export default async function ProfilePage({
         <div className="container-justice">
           <div className="flex justify-between items-center mb-8">
             <Link
-              href="/art-innovation"
+              href="/people"
               className="inline-flex items-center gap-2 text-earth-700 hover:text-earth-900 transition-colors font-medium"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back
+              Back to People
             </Link>
 
             {canEdit && (
@@ -191,7 +210,7 @@ export default async function ProfilePage({
                     className="w-48 h-48 rounded-full border-4 border-black object-cover"
                   />
                   {typedProfile.is_featured && (
-                    <div className="absolute -top-2 -right-2 bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-wider border-2 border-black shadow-lg">
+                    <div className="absolute -top-2 -right-2 bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-wider border-2 border-black">
                       Featured
                     </div>
                   )}
@@ -295,6 +314,130 @@ export default async function ProfilePage({
               <p className="text-lg leading-relaxed text-earth-800 whitespace-pre-line">
                 {typedProfile.bio}
               </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* My Content - Articles & Stories by this person */}
+      {((articles && articles.length > 0) || (stories && stories.length > 0)) && (
+        <section className="container-justice py-16 border-t-2 border-black">
+          <div className="max-w-6xl">
+            <div className="flex items-center gap-3 mb-8">
+              <FileText className="h-8 w-8" />
+              <h2 className="text-3xl font-black">
+                Content by {typedProfile.preferred_name || typedProfile.full_name}
+              </h2>
+            </div>
+
+            <div className="grid gap-12">
+              {/* Articles Section */}
+              {articles && articles.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <BookOpen className="h-5 w-5 text-blue-600" />
+                    <h3 className="text-2xl font-bold">Articles</h3>
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {articles.map((article: any) => (
+                      <Link
+                        key={article.id}
+                        href={`/stories/${article.slug}`}
+                        className="group border-2 border-black overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all bg-white"
+                      >
+                        {article.featured_image_url && (
+                          <div className="w-full h-40 relative overflow-hidden bg-gray-100">
+                            <img
+                              src={article.featured_image_url}
+                              alt={article.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        )}
+                        <div className="p-4">
+                          {article.category && (
+                            <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-bold uppercase mb-2">
+                              {article.category}
+                            </span>
+                          )}
+                          <h4 className="font-bold text-lg mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                            {article.title}
+                          </h4>
+                          {article.excerpt && (
+                            <p className="text-sm text-earth-600 line-clamp-2 mb-3">
+                              {article.excerpt}
+                            </p>
+                          )}
+                          {article.published_at && (
+                            <div className="flex items-center gap-1 text-xs text-earth-500">
+                              <Calendar className="h-3 w-3" />
+                              {new Date(article.published_at).toLocaleDateString('en-AU', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Stories Section */}
+              {stories && stories.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <Users className="h-5 w-5 text-eucalyptus-600" />
+                    <h3 className="text-2xl font-bold">Stories</h3>
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {stories.map((story: any) => (
+                      <Link
+                        key={story.id}
+                        href={`/stories/${story.slug}`}
+                        className="group border-2 border-black overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all bg-white"
+                      >
+                        {story.featured_image_url && (
+                          <div className="w-full h-40 relative overflow-hidden bg-gray-100">
+                            <img
+                              src={story.featured_image_url}
+                              alt={story.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        )}
+                        <div className="p-4">
+                          {story.story_type && (
+                            <span className="inline-block px-2 py-1 bg-eucalyptus-100 text-eucalyptus-800 text-xs font-bold uppercase mb-2">
+                              {story.story_type}
+                            </span>
+                          )}
+                          <h4 className="font-bold text-lg mb-2 group-hover:text-eucalyptus-600 transition-colors line-clamp-2">
+                            {story.title}
+                          </h4>
+                          {story.excerpt && (
+                            <p className="text-sm text-earth-600 line-clamp-2 mb-3">
+                              {story.excerpt}
+                            </p>
+                          )}
+                          {story.published_at && (
+                            <div className="flex items-center gap-1 text-xs text-earth-500">
+                              <Calendar className="h-3 w-3" />
+                              {new Date(story.published_at).toLocaleDateString('en-AU', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>

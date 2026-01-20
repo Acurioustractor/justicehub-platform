@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
 
@@ -7,6 +8,8 @@ import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
  *
  * Syncs public stories from Empathy Ledger to JusticeHub's local database.
  * This allows for faster page loads and reduces load on Empathy Ledger.
+ *
+ * SECURITY: Requires admin authentication.
  *
  * Only syncs stories that meet consent requirements:
  * - is_public = true
@@ -17,6 +20,31 @@ import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
  */
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const authSupabase = await createClient();
+    const { data: { user } } = await authSupabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    // Check admin access
+    const { data: profileData } = await authSupabase
+      .from('profiles')
+      .select('is_super_admin')
+      .eq('id', user.id)
+      .single();
+
+    if (!profileData?.is_super_admin) {
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const force = searchParams.get('force') === 'true';
 

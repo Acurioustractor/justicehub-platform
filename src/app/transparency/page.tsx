@@ -161,7 +161,7 @@ export default function MoneyTrailPage() {
               {/* Key Stats */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
                 {keyMetrics.map((metric, index) => (
-                  <div key={index} className="bg-white border-2 border-black p-6 hover:shadow-lg transition-all">
+                  <div key={index} className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
                     <div className="flex items-center justify-center mb-3 text-red-600">
                       {metric.icon}
                     </div>

@@ -30,7 +30,7 @@ export default function LoginPage() {
       console.log('Logged in:', data);
 
       // Use window.location for hard redirect to ensure cookies are set
-      window.location.href = '/people/benjamin-knight';
+      window.location.href = '/admin/organizations';
     } catch (error: any) {
       console.error('Login error:', error);
       setError(error.message);

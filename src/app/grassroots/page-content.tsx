@@ -174,7 +174,7 @@ export function GrassrootsContent({ initialPrograms }: GrassrootsContentProps) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredPrograms.map((program) => (
-                <div key={program.id} className="border-2 border-black bg-white hover:shadow-lg transition-shadow">
+                <div key={program.id} className="border-2 border-black bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow">
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">

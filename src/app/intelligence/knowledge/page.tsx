@@ -16,7 +16,7 @@ export default function KnowledgePage() {
         <div className="min-h-screen bg-white text-black font-sans flex flex-col">
             {/* Header - Stark Overlay */}
             <div className="absolute top-0 left-0 w-full z-20 p-6 flex flex-col md:flex-row justify-between items-start pointer-events-none gap-4">
-                <div className="pointer-events-auto bg-white border-2 border-black p-4 shadow-lg min-w-[300px]">
+                <div className="pointer-events-auto bg-white border-2 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] min-w-[300px]">
                     <h1 className="text-xl font-black uppercase tracking-widest flex items-center gap-2 mb-4">
                         <Network className="w-5 h-5" /> Knowledge Graph
                     </h1>

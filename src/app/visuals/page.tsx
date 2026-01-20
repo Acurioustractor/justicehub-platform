@@ -4,13 +4,13 @@ export default function VisualsIndexPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-green-50">
       {/* Header */}
-      <header className="bg-white border-b-2 border-gray-200 shadow-sm">
+      <header className="bg-white border-b-2 border-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div>
-            <Link href="/" className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+            <Link href="/" className="text-black hover:underline text-sm font-bold">
               ← Back to Homepage
             </Link>
-            <h1 className="text-4xl font-bold text-gray-900 mt-2">
+            <h1 className="text-4xl font-black text-black mt-2">
               Impact Visualisations
             </h1>
             <p className="text-gray-600 mt-2 text-lg">
@@ -23,8 +23,8 @@ export default function VisualsIndexPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Introduction */}
-        <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-gray-200 mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Why These Visuals Matter</h2>
+        <div className="bg-white p-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-12">
+          <h2 className="text-2xl font-black text-black mb-4">Why These Visuals Matter</h2>
           <div className="space-y-4 text-gray-700">
             <p>
               These visualisations show the <strong>real impact</strong> of JusticeHub - not abstract concepts,
@@ -48,7 +48,7 @@ export default function VisualsIndexPage() {
           {/* Visual 1: Network Effect */}
           <Link
             href="/visuals/network"
-            className="group bg-white rounded-xl shadow-lg border-2 border-gray-200 hover:border-red-500 hover:shadow-xl transition-all overflow-hidden"
+            className="group bg-white border-2 border-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all overflow-hidden"
           >
             <div className="bg-gradient-to-br from-red-100 to-green-100 p-8">
               <div className="flex items-center justify-center space-x-8">
@@ -93,7 +93,7 @@ export default function VisualsIndexPage() {
           {/* Visual 2: System Transformation */}
           <Link
             href="/visuals/transformation"
-            className="group bg-white rounded-xl shadow-lg border-2 border-gray-200 hover:border-green-500 hover:shadow-xl transition-all overflow-hidden"
+            className="group bg-white border-2 border-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all overflow-hidden"
           >
             <div className="bg-gradient-to-br from-red-100 to-green-100 p-8">
               <div className="flex items-center justify-center space-x-4">
@@ -138,22 +138,22 @@ export default function VisualsIndexPage() {
           {/* Visual 3: Local to Scale */}
           <Link
             href="/visuals/flow"
-            className="group bg-white rounded-xl shadow-lg border-2 border-gray-200 hover:border-yellow-500 hover:shadow-xl transition-all overflow-hidden"
+            className="group bg-white border-2 border-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all overflow-hidden"
           >
             <div className="bg-gradient-to-r from-yellow-100 via-blue-100 to-green-100 p-8">
               <div className="flex items-center justify-center space-x-4">
                 <div className="text-center">
-                  <div className="w-20 h-28 bg-yellow-500 opacity-40 rounded-lg"></div>
+                  <div className="w-20 h-28 bg-yellow-500 opacity-40 "></div>
                   <p className="text-xs font-bold text-yellow-600 mt-2">LOCAL</p>
                 </div>
                 <div className="text-2xl text-gray-400">→</div>
                 <div className="text-center">
-                  <div className="w-20 h-28 bg-blue-500 opacity-60 rounded-lg"></div>
+                  <div className="w-20 h-28 bg-blue-500 opacity-60 "></div>
                   <p className="text-xs font-bold text-blue-600 mt-2">PLATFORM</p>
                 </div>
                 <div className="text-2xl text-gray-400">→</div>
                 <div className="text-center">
-                  <div className="w-20 h-28 bg-green-500 opacity-80 rounded-lg"></div>
+                  <div className="w-20 h-28 bg-green-500 opacity-80 "></div>
                   <p className="text-xs font-bold text-green-600 mt-2">SCALE</p>
                 </div>
               </div>
@@ -177,7 +177,7 @@ export default function VisualsIndexPage() {
           {/* Visual 4: Connection Web */}
           <Link
             href="/visuals/connections"
-            className="group bg-white rounded-xl shadow-lg border-2 border-gray-200 hover:border-purple-500 hover:shadow-xl transition-all overflow-hidden"
+            className="group bg-white border-2 border-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all overflow-hidden"
           >
             <div className="bg-gradient-to-br from-purple-100 to-blue-100 p-8">
               <div className="flex items-center justify-center relative">
@@ -217,7 +217,7 @@ export default function VisualsIndexPage() {
         </div>
 
         {/* Using These Visuals */}
-        <div className="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-8 text-white">
+        <div className="mt-12 bg-black p-8 text-white border-2 border-black">
           <h2 className="text-2xl font-bold mb-4">Using These Visuals</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
@@ -257,7 +257,7 @@ export default function VisualsIndexPage() {
           <div className="grid md:grid-cols-3 gap-6">
             <Link
               href="/wiki/mindaroo-strategic-pitch"
-              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-600 hover:shadow-lg transition-all"
+              className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
               <h4 className="font-bold text-lg mb-2">Strategic Pitch Document</h4>
               <p className="text-gray-600 text-sm">
@@ -266,7 +266,7 @@ export default function VisualsIndexPage() {
             </Link>
             <Link
               href="/wiki/three-scenarios-budget"
-              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-600 hover:shadow-lg transition-all"
+              className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
               <h4 className="font-bold text-lg mb-2">Budget Scenarios</h4>
               <p className="text-gray-600 text-sm">
@@ -275,7 +275,7 @@ export default function VisualsIndexPage() {
             </Link>
             <Link
               href="/wiki/design-tools-guide"
-              className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-600 hover:shadow-lg transition-all"
+              className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
               <h4 className="font-bold text-lg mb-2">Design Tools Guide</h4>
               <p className="text-gray-600 text-sm">

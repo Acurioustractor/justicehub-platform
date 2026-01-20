@@ -5,6 +5,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    "noImplicitOverride": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -28,7 +29,7 @@
       "@/types/*": ["./src/types/*"],
       "@/server/*": ["./src/server/*"]
     },
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
   "include": [
     "next-env.d.ts",
@@ -38,6 +39,9 @@
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ]
 }

@@ -21,7 +21,7 @@ export default function WikiHomePage() {
           </div>
 
           {/* FEATURED: Mindaroo Foundation Pitch Package */}
-          <section className="mb-8 bg-white p-8 rounded-lg border-2 border-gray-200">
+          <section className="mb-8 bg-white p-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <div className="mb-6">
               <div className="inline-block bg-blue-50 text-blue-700 px-3 py-1 rounded text-sm font-semibold mb-3">
                 🎯 FEATURED PITCH PACKAGE
@@ -91,7 +91,7 @@ export default function WikiHomePage() {
           {/* Content Sections */}
           <div className="space-y-6">
             {/* Strategic Planning */}
-            <section className="bg-white p-6 rounded-lg border border-gray-200">
+            <section className="bg-white p-6 border-2 border-black">
               <div className="flex items-start space-x-4">
                 <div className="bg-blue-50 p-2 rounded">
                   <Book className="w-6 h-6 text-blue-600" />
@@ -144,7 +144,7 @@ export default function WikiHomePage() {
             </section>
 
             {/* Budget & Funding */}
-            <section className="bg-white p-6 rounded-lg border border-gray-200">
+            <section className="bg-white p-6 border-2 border-black">
               <div className="flex items-start space-x-4">
                 <div className="bg-blue-50 p-2 rounded">
                   <DollarSign className="w-6 h-6 text-blue-600" />
@@ -188,7 +188,7 @@ export default function WikiHomePage() {
             </section>
 
             {/* Platform Documentation */}
-            <section className="bg-white p-6 rounded-lg border border-gray-200">
+            <section className="bg-white p-6 border-2 border-black">
               <div className="flex items-start space-x-4">
                 <div className="bg-blue-50 p-2 rounded">
                   <Settings className="w-6 h-6 text-blue-600" />
@@ -232,7 +232,7 @@ export default function WikiHomePage() {
             </section>
 
             {/* Technical Documentation */}
-            <section className="bg-white p-6 rounded-lg border border-gray-200">
+            <section className="bg-white p-6 border-2 border-black">
               <div className="flex items-start space-x-4">
                 <div className="bg-blue-50 p-2 rounded">
                   <FileText className="w-6 h-6 text-blue-600" />
@@ -277,7 +277,7 @@ export default function WikiHomePage() {
           </div>
 
           {/* Getting Started */}
-          <div className="mt-8 bg-white p-6 rounded-lg border border-gray-200">
+          <div className="mt-8 bg-white p-6 border-2 border-black">
             <h3 className="text-lg font-bold text-gray-900 mb-3">Getting Started</h3>
             <p className="text-sm text-gray-600 mb-4">
               New to JusticeHub planning? Start with these essential documents:

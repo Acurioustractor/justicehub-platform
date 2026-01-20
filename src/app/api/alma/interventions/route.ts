@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 import { interventionService } from '@/lib/alma/intervention-service';
 import { portfolioService } from '@/lib/alma/portfolio-service';
 
@@ -76,6 +77,31 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Require authentication for creating interventions
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    // Check admin access for creating interventions
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('is_super_admin')
+      .eq('id', user.id)
+      .single();
+
+    if (!profileData?.is_super_admin) {
+      return NextResponse.json(
+        { error: 'Admin access required to create interventions' },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
 
     // Create intervention using service layer

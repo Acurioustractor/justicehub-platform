@@ -1,13 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, Search } from 'lucide-react';
 import { navigationItems } from '@/config/navigation';
 import { useNavigationAuth } from '@/hooks/useNavigationAuth';
 import { UserMenu } from './UserMenu';
 import { MobileMenu } from './MobileMenu';
+import { QuickSearch } from '@/components/search/QuickSearch';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface NavigationProps {
     variant?: 'default' | 'transparent';
@@ -15,11 +22,28 @@ interface NavigationProps {
 
 export function MainNavigation({ variant = 'default' }: NavigationProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
     const pathname = usePathname();
 
     const { user, userProfile, mounted, signOut } = useNavigationAuth();
+
+    // Keyboard shortcut: Cmd/Ctrl + K to open search
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            setIsSearchOpen(true);
+        }
+        if (e.key === 'Escape') {
+            setIsSearchOpen(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [handleKeyDown]);
 
     useEffect(() => {
         return () => {
@@ -195,6 +219,17 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
                             About
                         </Link>
 
+                        {/* Search Button */}
+                        <button
+                            onClick={() => setIsSearchOpen(true)}
+                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 rounded-md border border-gray-200 hover:border-gray-300"
+                            aria-label="Search (⌘K)"
+                            title="Search (⌘K)"
+                        >
+                            <Search className="h-4 w-4" />
+                            <span className="hidden xl:inline text-xs text-gray-400">⌘K</span>
+                        </button>
+
                         {/* Youth Scout CTA - Special Floating Button */}
                         <div className="ml-4 flex items-center gap-3">
                             <Link
@@ -247,8 +282,25 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
                     user={user}
                     userProfile={userProfile}
                     onSignOut={signOut}
+                    onSearchOpen={() => setIsSearchOpen(true)}
                 />
             </div>
+
+            {/* Search Modal */}
+            <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+                <DialogContent className="sm:max-w-2xl p-0 gap-0">
+                    <DialogHeader className="sr-only">
+                        <DialogTitle>Search JusticeHub</DialogTitle>
+                    </DialogHeader>
+                    <div className="p-4">
+                        <QuickSearch
+                            placeholder="Search programs, services, organizations..."
+                            onClose={() => setIsSearchOpen(false)}
+                            isModal={true}
+                        />
+                    </div>
+                </DialogContent>
+            </Dialog>
         </header>
     );
 }

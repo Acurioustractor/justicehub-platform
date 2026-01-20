@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { User, LogOut } from 'lucide-react';
+import { User, LogOut, Search } from 'lucide-react';
 import { navigationItems } from '@/config/navigation';
 import { UserProfile } from '@/hooks/useNavigationAuth';
 
@@ -13,6 +13,7 @@ interface MobileMenuProps {
     user: any;
     userProfile: UserProfile | null;
     onSignOut: () => void;
+    onSearchOpen?: () => void;
 }
 
 export function MobileMenu({
@@ -21,7 +22,8 @@ export function MobileMenu({
     isActivePath,
     user,
     userProfile,
-    onSignOut
+    onSignOut,
+    onSearchOpen
 }: MobileMenuProps) {
     if (!isOpen) return null;
 
@@ -33,6 +35,20 @@ export function MobileMenu({
             aria-label="Mobile navigation"
         >
             <div className="flex flex-col space-y-4 mt-4">
+                {/* Mobile Search Button */}
+                {onSearchOpen && (
+                    <button
+                        onClick={() => {
+                            onClose();
+                            onSearchOpen();
+                        }}
+                        className="flex items-center gap-3 px-3 py-3 mx-3 text-left font-medium text-gray-700 hover:text-black hover:bg-gray-50 transition-colors rounded-lg border border-gray-200"
+                    >
+                        <Search className="h-5 w-5" />
+                        <span>Search programs, services...</span>
+                    </button>
+                )}
+
                 {navigationItems.map((item) => (
                     <div key={item.label}>
                         {item.type === 'dropdown' ? (

@@ -1,5 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/service';
 import { NextRequest, NextResponse } from 'next/server';
+import { sanitizeInput } from '@/lib/security';
 
 export const dynamic = 'force-dynamic';
 
@@ -86,12 +87,35 @@ interface SearchResult {
 }
 
 /**
+ * Escape special characters for LIKE/ILIKE queries
+ */
+function escapeLikePattern(term: string): string {
+  return term
+    .replace(/\\/g, '\\\\')
+    .replace(/%/g, '\\%')
+    .replace(/_/g, '\\_');
+}
+
+/**
  * Search across all JusticeHub data sources
  */
 async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
   const supabase = createServiceClient();
   const results: SearchResult[] = [];
-  const searchTerms = query.toLowerCase().split(' ').filter(t => t.length > 2);
+
+  // Sanitize and prepare search terms
+  const sanitizedQuery = sanitizeInput(query, { maxLength: 500, allowNewlines: false });
+  const searchTerms = sanitizedQuery
+    .toLowerCase()
+    .split(' ')
+    .filter(t => t.length > 2 && t.length < 50) // Limit term length
+    .slice(0, 10) // Limit number of terms
+    .map(escapeLikePattern);
+
+  // Return empty results if no valid search terms
+  if (searchTerms.length === 0) {
+    return results;
+  }
 
   // Search interventions/programs
   const { data: interventions } = await supabase
@@ -356,7 +380,7 @@ async function generateResponse(
       const response = await provider.fn(messages, context);
       if (response) return response;
     } catch (error) {
-      console.log(`${provider.name} failed, trying next...`);
+      // Provider failed, trying next
     }
   }
 
@@ -458,7 +482,8 @@ async function generateWithAnthropic(messages: ChatMessage[], context: string): 
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages, query } = await request.json();
+    const body = await request.json();
+    const { messages, query } = body;
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json(
@@ -467,10 +492,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate messages array length
+    if (messages.length > 50) {
+      return NextResponse.json(
+        { error: 'Too many messages' },
+        { status: 400 }
+      );
+    }
+
+    // Validate and sanitize each message
+    const validatedMessages: ChatMessage[] = messages
+      .filter((m: any) =>
+        m &&
+        typeof m === 'object' &&
+        ['user', 'assistant', 'system'].includes(m.role) &&
+        typeof m.content === 'string'
+      )
+      .map((m: any) => ({
+        role: m.role as 'user' | 'assistant' | 'system',
+        content: sanitizeInput(m.content, { maxLength: 4000 })
+      }));
+
+    if (validatedMessages.length === 0) {
+      return NextResponse.json(
+        { error: 'No valid messages provided' },
+        { status: 400 }
+      );
+    }
+
     // Get the latest user message for searching
-    const latestUserMessage = messages
+    const latestUserMessage = validatedMessages
       .filter((m: ChatMessage) => m.role === 'user')
-      .pop()?.content || query || '';
+      .pop()?.content || (query ? sanitizeInput(String(query), { maxLength: 500 }) : '');
 
     // Search knowledge base and get stats in parallel
     const [searchResults, stats] = await Promise.all([
@@ -481,8 +534,8 @@ export async function POST(request: NextRequest) {
     // Build context from search results
     const context = buildContext(searchResults, stats);
 
-    // Generate AI response
-    const response = await generateResponse(messages, context);
+    // Generate AI response with validated messages
+    const response = await generateResponse(validatedMessages, context);
 
     return NextResponse.json({
       response,

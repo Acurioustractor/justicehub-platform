@@ -3,16 +3,16 @@ import Link from 'next/link';
 
 export default function FlywheelPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white border-b-2 border-gray-200 shadow-sm">
+      <header className="bg-white border-b-2 border-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <Link href="/" className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+              <Link href="/" className="text-black hover:underline text-sm font-bold">
                 ← Back to Homepage
               </Link>
-              <h1 className="text-4xl font-bold text-gray-900 mt-2">
+              <h1 className="text-4xl font-black text-black mt-2">
                 The Sovereignty Flywheel
               </h1>
               <p className="text-gray-600 mt-2">
@@ -21,7 +21,7 @@ export default function FlywheelPage() {
             </div>
             <Link
               href="/wiki/sovereignty-flywheel-visual"
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-white text-black border-2 border-black font-bold hover:bg-black hover:text-white transition-colors text-sm"
             >
               View Documentation
             </Link>
@@ -36,8 +36,8 @@ export default function FlywheelPage() {
         {/* Additional Context */}
         <div className="mt-12 grid md:grid-cols-2 gap-8">
           {/* How It Works */}
-          <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">How the Flywheel Works</h2>
+          <div className="bg-white p-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <h2 className="text-2xl font-black text-black mb-4">How the Flywheel Works</h2>
             <div className="space-y-4 text-gray-700">
               <p>
                 <strong className="text-gray-900">A flywheel is a self-reinforcing cycle</strong> where each step
@@ -57,8 +57,8 @@ export default function FlywheelPage() {
           </div>
 
           {/* Why This Matters */}
-          <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Why This Visual Matters</h2>
+          <div className="bg-white p-8 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <h2 className="text-2xl font-black text-black mb-4">Why This Visual Matters</h2>
             <div className="space-y-4 text-gray-700">
               <p>
                 <strong className="text-gray-900">Traditional pitch decks show linear roadmaps.</strong> But
@@ -76,33 +76,33 @@ export default function FlywheelPage() {
         </div>
 
         {/* Links to Related Content */}
-        <div className="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-8 text-white">
-          <h2 className="text-2xl font-bold mb-4">Explore More</h2>
+        <div className="mt-12 bg-black p-8 text-white border-2 border-black">
+          <h2 className="text-2xl font-black mb-4">Explore More</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <Link
               href="/wiki/three-scenarios-budget"
-              className="bg-white/10 hover:bg-white/20 rounded-lg p-6 transition-all"
+              className="border-2 border-white p-6 hover:bg-white hover:text-black transition-all"
             >
               <h3 className="font-bold text-lg mb-2">📊 Budget Scenarios</h3>
-              <p className="text-blue-100 text-sm">
+              <p className="text-gray-300 text-sm group-hover:text-gray-700">
                 See how LEAN, BASE, and UPPER budgets all create the same flywheel effect
               </p>
             </Link>
             <Link
               href="/wiki/mindaroo-strategic-pitch"
-              className="bg-white/10 hover:bg-white/20 rounded-lg p-6 transition-all"
+              className="border-2 border-white p-6 hover:bg-white hover:text-black transition-all"
             >
               <h3 className="font-bold text-lg mb-2">📄 Strategic Pitch</h3>
-              <p className="text-blue-100 text-sm">
+              <p className="text-gray-300 text-sm">
                 Complete pitch document for Mindaroo Foundation with full context
               </p>
             </Link>
             <Link
               href="/wiki/design-tools-guide"
-              className="bg-white/10 hover:bg-white/20 rounded-lg p-6 transition-all"
+              className="border-2 border-white p-6 hover:bg-white hover:text-black transition-all"
             >
               <h3 className="font-bold text-lg mb-2">🎨 Design Tools</h3>
-              <p className="text-blue-100 text-sm">
+              <p className="text-gray-300 text-sm">
                 Create your own version using AI tools like Napkin AI or Canva
               </p>
             </Link>
@@ -110,11 +110,11 @@ export default function FlywheelPage() {
         </div>
 
         {/* Technical Info */}
-        <div className="mt-8 bg-gray-50 border-2 border-gray-200 rounded-lg p-6">
-          <h3 className="font-semibold text-gray-900 mb-2">Technical Details</h3>
+        <div className="mt-8 bg-gray-50 border-2 border-black p-6">
+          <h3 className="font-bold text-black mb-2">Technical Details</h3>
           <p className="text-sm text-gray-600">
             This interactive visual is built with React and SVG, rendered at{' '}
-            <code className="bg-gray-200 px-2 py-1 rounded text-xs">
+            <code className="bg-gray-200 px-2 py-1 text-xs font-mono border border-gray-300">
               /src/components/SovereigntyFlywheel.tsx
             </code>
             . Export functionality allows you to download as SVG (vector, scalable) or PNG (raster, presentation-ready).

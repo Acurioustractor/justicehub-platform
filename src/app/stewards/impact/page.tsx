@@ -103,7 +103,7 @@ export default async function ImpactDashboardPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="border-2 border-black p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-blue-100 rounded-lg">
+                <div className="p-2 bg-blue-100">
                   <BarChart3 className="w-5 h-5 text-blue-600" />
                 </div>
                 <span className="text-sm font-bold text-gray-600 uppercase">Total Programs</span>
@@ -113,7 +113,7 @@ export default async function ImpactDashboardPage() {
 
             <div className="border-2 border-black p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-green-100 rounded-lg">
+                <div className="p-2 bg-green-100">
                   <Target className="w-5 h-5 text-green-600" />
                 </div>
                 <span className="text-sm font-bold text-gray-600 uppercase">With Outcomes</span>
@@ -124,7 +124,7 @@ export default async function ImpactDashboardPage() {
 
             <div className="border-2 border-black p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-purple-100 rounded-lg">
+                <div className="p-2 bg-purple-100">
                   <Heart className="w-5 h-5 text-purple-600" />
                 </div>
                 <span className="text-sm font-bold text-gray-600 uppercase">Aboriginal-Led</span>
@@ -135,7 +135,7 @@ export default async function ImpactDashboardPage() {
 
             <div className="border-2 border-black p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-orange-100 rounded-lg">
+                <div className="p-2 bg-orange-100">
                   <MapPin className="w-5 h-5 text-orange-600" />
                 </div>
                 <span className="text-sm font-bold text-gray-600 uppercase">States Covered</span>

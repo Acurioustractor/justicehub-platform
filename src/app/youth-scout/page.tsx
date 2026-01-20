@@ -272,7 +272,7 @@ export default function YouthScoutLandingPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {successStories.map((story, index) => (
-                <div key={index} className="bg-white border-2 border-black p-6 hover:shadow-lg transition-all">
+                <div key={index} className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
                       {story.name[0]}
