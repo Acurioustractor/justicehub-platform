@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip, LayerGroup } from 'react-leaflet';
+import { MapContainer, TileLayer, CircleMarker, Tooltip, LayerGroup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MapPin, Users, ExternalLink, ChevronRight } from 'lucide-react';
 
 interface Basecamp {
   id: string;
@@ -113,54 +112,20 @@ export default function GrassrootsActivationMap({
                   weight: 3,
                   fillColor: '#10b981',
                   fillOpacity: 0.9,
+                  className: 'cursor-pointer'
                 }}
                 eventHandlers={{
                   click: () => onBasecampSelect?.(b),
                 }}
               >
-                <Tooltip direction="top" offset={[0, -10]}>
-                  <div className="font-bold text-xs">{b.name}</div>
-                  <div className="text-xs text-gray-600">{b.location}</div>
-                </Tooltip>
-                <Popup className="grassroots-popup">
-                  <div className="min-w-[280px]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded">
-                        FOUNDING BASECAMP
-                      </span>
-                      <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded">
-                        {b.state}
-                      </span>
-                    </div>
-                    <h3 className="font-bold text-lg mb-1">{b.name}</h3>
-                    <p className="text-xs text-gray-500 mb-3">{b.location}</p>
-
-                    <div className="bg-emerald-50 rounded-lg p-3 mb-3">
-                      <p className="text-xl font-bold text-emerald-700">{b.metrics.primaryStat}</p>
-                      <p className="text-xs text-emerald-600">{b.metrics.primaryLabel}</p>
-                    </div>
-
-                    <p className="text-xs text-gray-600 mb-3 line-clamp-2">{b.description}</p>
-
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      {b.programs.slice(0, 2).map((program, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded">
-                          {program}
-                        </span>
-                      ))}
-                    </div>
-
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onBasecampSelect?.(b);
-                      }}
-                      className="w-full text-xs bg-emerald-600 text-white px-3 py-2 rounded hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1"
-                    >
-                      View Full Profile <ChevronRight className="w-3 h-3" />
-                    </button>
+                <Tooltip direction="top" offset={[0, -10]} sticky>
+                  <div className="text-center">
+                    <div className="font-bold text-sm">{b.name}</div>
+                    <div className="text-xs text-gray-600">{b.location}</div>
+                    <div className="text-xs text-emerald-600 font-medium mt-1">{b.metrics.primaryStat}</div>
+                    <div className="text-xs text-emerald-500 mt-1">Click for details</div>
                   </div>
-                </Popup>
+                </Tooltip>
               </CircleMarker>
             ))}
           </LayerGroup>
@@ -182,20 +147,12 @@ export default function GrassrootsActivationMap({
                 }}
               >
                 <Tooltip direction="top" offset={[0, -10]}>
-                  <div className="font-bold text-xs">{c.name}</div>
-                  <div className="text-xs text-amber-600">CORE Partner</div>
-                </Tooltip>
-                <Popup>
-                  <div className="min-w-[200px]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded">
-                        CORE
-                      </span>
-                    </div>
-                    <h3 className="font-bold text-sm mb-1">{c.name}</h3>
-                    <p className="text-xs text-gray-500">{c.location}</p>
+                  <div className="text-center">
+                    <div className="font-bold text-xs">{c.name}</div>
+                    <div className="text-xs text-amber-600">CORE Partner</div>
+                    <div className="text-xs text-gray-500">{c.location}</div>
                   </div>
-                </Popup>
+                </Tooltip>
               </CircleMarker>
             ))}
           </LayerGroup>
@@ -217,20 +174,12 @@ export default function GrassrootsActivationMap({
                 }}
               >
                 <Tooltip direction="top" offset={[0, -10]}>
-                  <div className="font-bold text-xs">{c.name}</div>
-                  <div className="text-xs text-purple-600">NETWORK Partner</div>
-                </Tooltip>
-                <Popup>
-                  <div className="min-w-[200px]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded">
-                        NETWORK
-                      </span>
-                    </div>
-                    <h3 className="font-bold text-sm mb-1">{c.name}</h3>
-                    <p className="text-xs text-gray-500">{c.location}</p>
+                  <div className="text-center">
+                    <div className="font-bold text-xs">{c.name}</div>
+                    <div className="text-xs text-purple-600">NETWORK Partner</div>
+                    <div className="text-xs text-gray-500">{c.location}</div>
                   </div>
-                </Popup>
+                </Tooltip>
               </CircleMarker>
             ))}
           </LayerGroup>

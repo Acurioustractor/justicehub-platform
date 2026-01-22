@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip, LayerGroup } from 'react-leaflet';
+import { MapContainer, TileLayer, CircleMarker, Tooltip, LayerGroup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Scale, Users, ExternalLink, Award } from 'lucide-react';
+import { Scale, Users, Award } from 'lucide-react';
 
 interface Case {
   id: string;
@@ -67,12 +67,10 @@ export default function JusticeMatrixMap({
   };
 
   const getCaseRadius = (c: Case) => {
-    // Base radius + bonus for high precedent
     return c.precedent_strength === 'high' ? 12 : 8;
   };
 
   const getCampaignRadius = (c: Campaign) => {
-    // Ongoing campaigns are slightly larger
     return c.is_ongoing ? 10 : 8;
   };
 
@@ -102,6 +100,20 @@ export default function JusticeMatrixMap({
             <Users className="w-4 h-4 text-purple-600" />
             <span className="text-sm">Campaigns ({campaigns.length})</span>
           </label>
+        </div>
+        <div className="mt-3 pt-3 border-t text-xs text-gray-500">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-3 h-3 rounded-full bg-green-500" />
+            <span>Favorable</span>
+          </div>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-3 h-3 rounded-full bg-red-500" />
+            <span>Adverse</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-yellow-500" />
+            <span>Pending</span>
+          </div>
         </div>
       </div>
 
@@ -134,59 +146,20 @@ export default function JusticeMatrixMap({
                   click: () => onCaseSelect?.(c),
                 }}
               >
-                <Tooltip direction="top" offset={[0, -10]}>
-                  <div className="font-bold text-xs">{c.jurisdiction}</div>
-                  <div className="text-xs text-gray-600">{c.year}</div>
-                </Tooltip>
-                <Popup className="justice-matrix-popup">
-                  <div className="min-w-[250px]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
-                        {c.jurisdiction}
-                      </span>
-                      <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded">
-                        {c.year}
-                      </span>
+                <Tooltip direction="top" offset={[0, -10]} sticky>
+                  <div className="text-center max-w-[200px]">
+                    <div className="font-bold text-sm">{c.jurisdiction}</div>
+                    <div className="text-xs text-gray-600">{c.year} • {c.court}</div>
+                    <div className={`text-xs font-medium mt-1 ${
+                      c.outcome === 'favorable' ? 'text-green-600' :
+                      c.outcome === 'adverse' ? 'text-red-600' : 'text-yellow-600'
+                    }`}>
+                      {c.outcome.charAt(0).toUpperCase() + c.outcome.slice(1)}
+                      {c.precedent_strength === 'high' && ' • High Precedent'}
                     </div>
-                    <h3 className="font-bold text-sm mb-2 leading-tight">{c.case_citation}</h3>
-                    <p className="text-xs text-gray-500 mb-2">{c.court}</p>
-                    <p className="text-xs text-gray-600 mb-3 line-clamp-3">{c.strategic_issue}</p>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className={`px-2 py-0.5 text-xs font-medium rounded ${
-                        c.outcome === 'favorable' ? 'bg-green-100 text-green-700' :
-                        c.outcome === 'adverse' ? 'bg-red-100 text-red-700' :
-                        'bg-yellow-100 text-yellow-700'
-                      }`}>
-                        {c.outcome}
-                      </span>
-                      {c.precedent_strength === 'high' && (
-                        <span className="flex items-center gap-1 px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded">
-                          <Award className="w-3 h-3" /> High Precedent
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onCaseSelect?.(c);
-                        }}
-                        className="flex-1 text-xs bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700 transition-colors"
-                      >
-                        View Details
-                      </button>
-                      <a
-                        href={c.authoritative_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 px-2"
-                      >
-                        Source <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </div>
+                    <div className="text-xs text-blue-500 mt-1">Click for details</div>
                   </div>
-                </Popup>
+                </Tooltip>
               </CircleMarker>
             ))}
           </LayerGroup>
@@ -210,52 +183,18 @@ export default function JusticeMatrixMap({
                   click: () => onCampaignSelect?.(c),
                 }}
               >
-                <Tooltip direction="top" offset={[0, -10]}>
-                  <div className="font-bold text-xs">{c.campaign_name}</div>
-                  <div className="text-xs text-gray-600">{c.country_region}</div>
-                </Tooltip>
-                <Popup className="justice-matrix-popup">
-                  <div className="min-w-[250px]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
-                        {c.country_region}
-                      </span>
-                      <span className={`px-2 py-0.5 text-xs font-medium rounded ${
-                        c.is_ongoing
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : 'bg-gray-100 text-gray-600'
-                      }`}>
-                        {c.is_ongoing ? 'Ongoing' : 'Completed'}
-                      </span>
+                <Tooltip direction="top" offset={[0, -10]} sticky>
+                  <div className="text-center max-w-[200px]">
+                    <div className="font-bold text-sm">{c.campaign_name}</div>
+                    <div className="text-xs text-gray-600">{c.country_region}</div>
+                    <div className={`text-xs font-medium mt-1 ${
+                      c.is_ongoing ? 'text-purple-600' : 'text-gray-500'
+                    }`}>
+                      {c.is_ongoing ? 'Ongoing' : 'Completed'} • {c.start_year}-{c.end_year || 'Present'}
                     </div>
-                    <h3 className="font-bold text-sm mb-2">{c.campaign_name}</h3>
-                    <p className="text-xs text-gray-500 mb-2">{c.lead_organizations}</p>
-                    <p className="text-xs text-gray-600 mb-3 line-clamp-3">{c.goals}</p>
-                    <p className="text-xs text-gray-500 mb-3">
-                      {c.start_year} - {c.end_year || 'Present'}
-                    </p>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onCampaignSelect?.(c);
-                        }}
-                        className="flex-1 text-xs bg-purple-600 text-white px-3 py-1.5 rounded hover:bg-purple-700 transition-colors"
-                      >
-                        View Details
-                      </button>
-                      <a
-                        href={c.campaign_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 px-2"
-                      >
-                        Visit <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </div>
+                    <div className="text-xs text-purple-500 mt-1">Click for details</div>
                   </div>
-                </Popup>
+                </Tooltip>
               </CircleMarker>
             ))}
           </LayerGroup>
