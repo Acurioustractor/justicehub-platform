@@ -356,14 +356,10 @@ export default function JusticeProjectPreviewPage() {
                   <Scale className="w-8 h-8 text-blue-600" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Legal Triage</h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <p className="text-gray-600 text-sm">
                   Organizations refer clients to Hear Me Out for complaint pathway support.
                   No direct-to-consumer legal advice.
                 </p>
-                <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                  From George: "We might be prepared to triage legal inquiries...
-                  from the organizations, not direct to consumer."
-                </div>
               </div>
 
               {/* Governance Support */}
@@ -372,14 +368,10 @@ export default function JusticeProjectPreviewPage() {
                   <FileText className="w-8 h-8 text-orange-600" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Governance Support</h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <p className="text-gray-600 text-sm">
                   Centralized accounting, minute-taking, and governance support
                   for grassroots organizations.
                 </p>
-                <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                  "Centralized accounting, governance, maybe a lean back...
-                  Who's keeping the minutes?"
-                </div>
               </div>
 
               {/* Philanthropy Matching */}
@@ -388,14 +380,10 @@ export default function JusticeProjectPreviewPage() {
                   <Handshake className="w-8 h-8 text-green-600" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Philanthropy Matching</h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <p className="text-gray-600 text-sm">
                   Reverse the grant model—funders discover vetted organizations
                   through JusticeHub's trusted network.
                 </p>
-                <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                  "Why don't you show your philanthropists our people?...
-                  a smorgasbord that you can—"
-                </div>
               </div>
             </div>
           </div>
