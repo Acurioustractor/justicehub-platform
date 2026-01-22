@@ -592,32 +592,130 @@ export default function JusticeProjectPreviewPage() {
           </div>
 
           <div className="border-2 border-black rounded-lg overflow-hidden">
-            <div className="bg-gray-100 p-4 border-b-2 border-black flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="bg-gray-100 p-4 border-b-2 border-black flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-4">
                 <span className="font-bold">Community Map</span>
-                <span className="text-gray-500">|</span>
+                <span className="text-gray-500 hidden sm:inline">|</span>
                 <div className="flex items-center gap-2">
                   <input type="checkbox" id="services" className="rounded" defaultChecked />
-                  <label htmlFor="services" className="text-sm">Services</label>
+                  <label htmlFor="services" className="text-sm flex items-center gap-1">
+                    <span className="w-3 h-3 bg-blue-500 rounded-full inline-block"></span>
+                    Services (47)
+                  </label>
                 </div>
                 <div className="flex items-center gap-2">
                   <input type="checkbox" id="programs" className="rounded" defaultChecked />
-                  <label htmlFor="programs" className="text-sm">Programs</label>
+                  <label htmlFor="programs" className="text-sm flex items-center gap-1">
+                    <span className="w-3 h-3 bg-green-500 rounded-full inline-block"></span>
+                    Programs (23)
+                  </label>
                 </div>
                 <div className="flex items-center gap-2 bg-red-100 px-2 py-1 rounded border border-red-300">
                   <input type="checkbox" id="incidents" className="rounded border-red-400" defaultChecked />
-                  <label htmlFor="incidents" className="text-sm text-red-700 font-medium">
-                    Discrimination Incidents (Call It Out)
+                  <label htmlFor="incidents" className="text-sm text-red-700 font-medium flex items-center gap-1">
+                    <span className="w-3 h-3 bg-red-500/60 rounded-full inline-block"></span>
+                    Incidents (156)
                   </label>
                 </div>
               </div>
+              <div className="text-xs text-gray-500">
+                Sydney Metro • Last 12 months
+              </div>
             </div>
-            <div className="bg-gray-200 h-96 flex items-center justify-center">
-              <div className="text-center text-gray-500">
-                <MapPin className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <p className="text-lg font-medium">Map Preview</p>
-                <p className="text-sm">Heatmap overlay showing incident density</p>
-                <p className="text-xs mt-2">+ Service markers + Program locations</p>
+
+            {/* Mock Map with Visual Data */}
+            <div className="relative h-[500px] bg-[#e8e4d8] overflow-hidden">
+              {/* Simulated map background with street grid */}
+              <div className="absolute inset-0" style={{
+                backgroundImage: `
+                  linear-gradient(rgba(200,200,200,0.3) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(200,200,200,0.3) 1px, transparent 1px)
+                `,
+                backgroundSize: '40px 40px'
+              }}></div>
+
+              {/* Major roads simulation */}
+              <div className="absolute top-1/3 left-0 right-0 h-2 bg-gray-300/50"></div>
+              <div className="absolute top-2/3 left-0 right-0 h-1 bg-gray-300/40"></div>
+              <div className="absolute left-1/4 top-0 bottom-0 w-2 bg-gray-300/50"></div>
+              <div className="absolute left-2/3 top-0 bottom-0 w-1 bg-gray-300/40"></div>
+
+              {/* Water feature (harbour) */}
+              <div className="absolute top-0 right-0 w-1/3 h-1/4 bg-blue-200/40 rounded-bl-[100px]"></div>
+
+              {/* Incident Heatmap Zones */}
+              <div className="absolute top-[30%] left-[20%] w-32 h-32 bg-red-500/30 rounded-full blur-xl"></div>
+              <div className="absolute top-[40%] left-[25%] w-20 h-20 bg-red-500/40 rounded-full blur-lg"></div>
+              <div className="absolute top-[50%] left-[45%] w-40 h-40 bg-red-500/25 rounded-full blur-xl"></div>
+              <div className="absolute top-[35%] left-[50%] w-24 h-24 bg-red-500/35 rounded-full blur-lg"></div>
+              <div className="absolute top-[60%] left-[70%] w-28 h-28 bg-red-500/30 rounded-full blur-xl"></div>
+              <div className="absolute top-[20%] left-[60%] w-16 h-16 bg-red-500/25 rounded-full blur-lg"></div>
+
+              {/* Service Markers (Blue) */}
+              <div className="absolute top-[25%] left-[15%] w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform" title="Legal Aid NSW"></div>
+              <div className="absolute top-[45%] left-[30%] w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform" title="Redfern Legal Centre"></div>
+              <div className="absolute top-[35%] left-[55%] w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform" title="Aboriginal Legal Service"></div>
+              <div className="absolute top-[55%] left-[40%] w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform" title="Youth Law Australia"></div>
+              <div className="absolute top-[65%] left-[65%] w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform" title="Community Legal Centre"></div>
+              <div className="absolute top-[30%] left-[75%] w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform" title="Tenants Union"></div>
+              <div className="absolute top-[70%] left-[25%] w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform" title="Welfare Rights"></div>
+
+              {/* Program Markers (Green) */}
+              <div className="absolute top-[40%] left-[20%] w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform" title="Koori Youth Program"></div>
+              <div className="absolute top-[50%] left-[50%] w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform" title="Weave Youth Program"></div>
+              <div className="absolute top-[60%] left-[35%] w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform" title="BackTrack Youth Works"></div>
+              <div className="absolute top-[25%] left-[45%] w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform" title="PCYC Outreach"></div>
+              <div className="absolute top-[75%] left-[55%] w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-125 transition-transform" title="Youth Off The Streets"></div>
+
+              {/* Incident cluster markers */}
+              <div className="absolute top-[32%] left-[22%] w-8 h-8 bg-red-500/80 rounded-full border-2 border-red-600 shadow-lg flex items-center justify-center text-white text-xs font-bold">23</div>
+              <div className="absolute top-[48%] left-[47%] w-10 h-10 bg-red-500/80 rounded-full border-2 border-red-600 shadow-lg flex items-center justify-center text-white text-xs font-bold">41</div>
+              <div className="absolute top-[58%] left-[68%] w-7 h-7 bg-red-500/80 rounded-full border-2 border-red-600 shadow-lg flex items-center justify-center text-white text-xs font-bold">18</div>
+              <div className="absolute top-[22%] left-[58%] w-6 h-6 bg-red-500/80 rounded-full border-2 border-red-600 shadow-lg flex items-center justify-center text-white text-xs font-bold">9</div>
+
+              {/* Location labels */}
+              <div className="absolute top-[15%] left-[18%] text-xs font-medium text-gray-600 bg-white/80 px-1 rounded">Redfern</div>
+              <div className="absolute top-[42%] left-[42%] text-xs font-medium text-gray-600 bg-white/80 px-1 rounded">Sydney CBD</div>
+              <div className="absolute top-[55%] left-[62%] text-xs font-medium text-gray-600 bg-white/80 px-1 rounded">Bondi Junction</div>
+              <div className="absolute top-[68%] left-[20%] text-xs font-medium text-gray-600 bg-white/80 px-1 rounded">Bankstown</div>
+              <div className="absolute top-[25%] left-[70%] text-xs font-medium text-gray-600 bg-white/80 px-1 rounded">Parramatta</div>
+
+              {/* Map attribution */}
+              <div className="absolute bottom-2 right-2 text-[10px] text-gray-500 bg-white/80 px-1 rounded">
+                © OpenStreetMap contributors
+              </div>
+
+              {/* Zoom controls mockup */}
+              <div className="absolute top-4 left-4 bg-white rounded shadow-lg">
+                <button className="w-8 h-8 flex items-center justify-center border-b text-gray-600 hover:bg-gray-100">+</button>
+                <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100">−</button>
+              </div>
+            </div>
+
+            {/* Stats bar */}
+            <div className="bg-gray-50 border-t-2 border-black p-4">
+              <div className="flex flex-wrap justify-between items-center gap-4">
+                <div className="flex flex-wrap gap-6 text-sm">
+                  <div>
+                    <span className="text-gray-500">Incidents reported:</span>
+                    <span className="font-bold ml-1">156</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Hotspot areas:</span>
+                    <span className="font-bold ml-1 text-red-600">4</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Services nearby:</span>
+                    <span className="font-bold ml-1 text-blue-600">47</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Programs active:</span>
+                    <span className="font-bold ml-1 text-green-600">23</span>
+                  </div>
+                </div>
+                <div className="text-xs text-gray-400">
+                  Data from Call It Out • Updated daily
+                </div>
               </div>
             </div>
           </div>
