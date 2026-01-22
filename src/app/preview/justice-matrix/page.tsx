@@ -8,20 +8,14 @@ import {
   Scale,
   Globe,
   Users,
-  FileText,
   ExternalLink,
   Search,
-  Filter,
   Database,
   Zap,
-  Shield,
   BookOpen,
   Calendar,
   MapPin,
-  Building2,
-  ArrowRight,
   CheckCircle2,
-  Clock,
   Target,
   X,
   TrendingUp,
@@ -31,14 +25,50 @@ import {
   Lightbulb,
   AlertTriangle,
   Award,
-  ChevronRight
+  ChevronRight,
+  Loader2
 } from 'lucide-react';
 
-// Import seed data
-import seedData from '@/data/justice-matrix-seed.json';
+// Types for API responses
+interface Case {
+  id: string;
+  jurisdiction: string;
+  case_citation: string;
+  year: number;
+  court: string;
+  strategic_issue: string;
+  key_holding: string;
+  authoritative_link: string;
+  region: string;
+  country_code: string;
+  lat: number;
+  lng: number;
+  categories: string[];
+  outcome: string;
+  precedent_strength: string;
+  featured?: boolean;
+  verified?: boolean;
+}
 
-type Case = typeof seedData.cases[0];
-type Campaign = typeof seedData.campaigns[0];
+interface Campaign {
+  id: string;
+  country_region: string;
+  campaign_name: string;
+  lead_organizations: string;
+  goals: string;
+  notable_tactics: string;
+  outcome_status: string;
+  campaign_link: string;
+  is_ongoing: boolean;
+  start_year: number;
+  end_year?: number;
+  country_code: string;
+  lat: number;
+  lng: number;
+  categories: string[];
+  featured?: boolean;
+  verified?: boolean;
+}
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
 const JusticeMapClient = dynamic(
@@ -63,12 +93,52 @@ export default function JusticeMatrixPreviewPage() {
   const [selectedCase, setSelectedCase] = useState<Case | null>(null);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
 
+  // API data state
+  const [cases, setCases] = useState<Case[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [dataError, setDataError] = useState<string | null>(null);
+
   useEffect(() => {
     const auth = sessionStorage.getItem('justice-matrix-preview-auth');
     if (auth === 'true') {
       setIsAuthenticated(true);
     }
   }, []);
+
+  // Fetch data from API
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const fetchData = async () => {
+      setIsLoading(true);
+      setDataError(null);
+
+      try {
+        const [casesRes, campaignsRes] = await Promise.all([
+          fetch('/api/justice-matrix/cases?limit=100'),
+          fetch('/api/justice-matrix/campaigns?limit=100')
+        ]);
+
+        if (!casesRes.ok || !campaignsRes.ok) {
+          throw new Error('Failed to fetch data');
+        }
+
+        const casesData = await casesRes.json();
+        const campaignsData = await campaignsRes.json();
+
+        setCases(casesData.data || []);
+        setCampaigns(campaignsData.data || []);
+      } catch (err) {
+        console.error('Error fetching justice matrix data:', err);
+        setDataError('Failed to load data. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [isAuthenticated]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,59 +154,62 @@ export default function JusticeMatrixPreviewPage() {
 
   // Filter cases
   const filteredCases = useMemo(() => {
-    return seedData.cases.filter(c => {
+    return cases.filter(c => {
       const matchesSearch = searchQuery === '' ||
-        c.case_citation.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.jurisdiction.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.strategic_issue.toLowerCase().includes(searchQuery.toLowerCase());
+        c.case_citation?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.jurisdiction?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.strategic_issue?.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesRegion = selectedRegion === 'all' || c.region === selectedRegion;
       return matchesSearch && matchesRegion;
     });
-  }, [searchQuery, selectedRegion]);
+  }, [cases, searchQuery, selectedRegion]);
 
   // Filter campaigns
   const filteredCampaigns = useMemo(() => {
-    return seedData.campaigns.filter(c => {
+    return campaigns.filter(c => {
       const matchesSearch = searchQuery === '' ||
-        c.campaign_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.country_region.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.goals.toLowerCase().includes(searchQuery.toLowerCase());
+        c.campaign_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.country_region?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.goals?.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesSearch;
     });
-  }, [searchQuery]);
+  }, [campaigns, searchQuery]);
 
   // Get unique regions
   const regions = useMemo(() => {
-    const r = new Set(seedData.cases.map(c => c.region));
+    const r = new Set(cases.map(c => c.region).filter(Boolean));
     return ['all', ...Array.from(r)];
-  }, []);
+  }, [cases]);
 
   // Analytics computed values
   const analytics = useMemo(() => {
-    const casesByRegion = seedData.cases.reduce((acc, c) => {
-      acc[c.region] = (acc[c.region] || 0) + 1;
+    const casesByRegion = cases.reduce((acc, c) => {
+      if (c.region) acc[c.region] = (acc[c.region] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    const casesByOutcome = seedData.cases.reduce((acc, c) => {
-      acc[c.outcome] = (acc[c.outcome] || 0) + 1;
+    const casesByOutcome = cases.reduce((acc, c) => {
+      if (c.outcome) acc[c.outcome] = (acc[c.outcome] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    const casesByYear = seedData.cases.reduce((acc, c) => {
-      acc[c.year] = (acc[c.year] || 0) + 1;
+    const casesByYear = cases.reduce((acc, c) => {
+      if (c.year) acc[c.year] = (acc[c.year] || 0) + 1;
       return acc;
     }, {} as Record<number, number>);
 
     // Flatten all categories
-    const allCategories = seedData.cases.flatMap(c => c.categories);
+    const allCategories = cases.flatMap(c => c.categories || []);
     const categoryCount = allCategories.reduce((acc, cat) => {
       acc[cat] = (acc[cat] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
     // High precedent cases
-    const highPrecedentCases = seedData.cases.filter(c => c.precedent_strength === 'high');
+    const highPrecedentCases = cases.filter(c => c.precedent_strength === 'high');
+
+    const totalCases = cases.length;
+    const totalCampaigns = campaigns.length;
 
     return {
       casesByRegion,
@@ -144,11 +217,11 @@ export default function JusticeMatrixPreviewPage() {
       casesByYear,
       categoryCount,
       highPrecedentCases,
-      totalCases: seedData.cases.length,
-      totalCampaigns: seedData.campaigns.length,
-      favorableRate: Math.round((casesByOutcome['favorable'] || 0) / seedData.cases.length * 100)
+      totalCases,
+      totalCampaigns,
+      favorableRate: totalCases > 0 ? Math.round((casesByOutcome['favorable'] || 0) / totalCases * 100) : 0
     };
-  }, []);
+  }, [cases, campaigns]);
 
   if (!isAuthenticated) {
     return (
@@ -191,6 +264,36 @@ export default function JusticeMatrixPreviewPage() {
     );
   }
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading Justice Matrix data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (dataError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-red-600 mb-4">{dataError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -207,10 +310,10 @@ export default function JusticeMatrixPreviewPage() {
             </div>
           </div>
           <div className="flex items-center gap-2 text-sm text-blue-300">
-            <span className="px-2 py-1 bg-blue-600/30 text-blue-200 rounded">PREVIEW</span>
-            <span>{seedData.cases.length} cases</span>
+            <span className="px-2 py-1 bg-green-600/30 text-green-200 rounded">LIVE</span>
+            <span>{cases.length} cases</span>
             <span>•</span>
-            <span>{seedData.campaigns.length} campaigns</span>
+            <span>{campaigns.length} campaigns</span>
           </div>
         </div>
       </header>
@@ -249,7 +352,7 @@ export default function JusticeMatrixPreviewPage() {
               }`}
             >
               <Scale className="w-4 h-4" />
-              Cases ({seedData.cases.length})
+              Cases ({cases.length})
             </button>
             <button
               onClick={() => setActiveTab('campaigns')}
@@ -260,7 +363,7 @@ export default function JusticeMatrixPreviewPage() {
               }`}
             >
               <Users className="w-4 h-4" />
-              Campaigns ({seedData.campaigns.length})
+              Campaigns ({campaigns.length})
             </button>
             <button
               onClick={() => setActiveTab('insights')}
@@ -312,12 +415,12 @@ export default function JusticeMatrixPreviewPage() {
             <section className="grid md:grid-cols-4 gap-6">
               <div className="bg-white p-6 rounded-xl border shadow-sm text-center">
                 <Scale className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-                <p className="text-3xl font-bold">{seedData.cases.length}</p>
+                <p className="text-3xl font-bold">{cases.length}</p>
                 <p className="text-gray-600">Strategic Cases</p>
               </div>
               <div className="bg-white p-6 rounded-xl border shadow-sm text-center">
                 <Users className="w-8 h-8 text-green-600 mx-auto mb-3" />
-                <p className="text-3xl font-bold">{seedData.campaigns.length}</p>
+                <p className="text-3xl font-bold">{campaigns.length}</p>
                 <p className="text-gray-600">Advocacy Campaigns</p>
               </div>
               <div className="bg-white p-6 rounded-xl border shadow-sm text-center">
@@ -349,8 +452,8 @@ export default function JusticeMatrixPreviewPage() {
               </div>
               <div className="h-[400px]">
                 <JusticeMapClient
-                  cases={seedData.cases}
-                  campaigns={seedData.campaigns}
+                  cases={cases}
+                  campaigns={campaigns}
                   onCaseSelect={setSelectedCase}
                   onCampaignSelect={setSelectedCampaign}
                 />
@@ -509,8 +612,8 @@ export default function JusticeMatrixPreviewPage() {
               </div>
               <div className="h-[600px]">
                 <JusticeMapClient
-                  cases={seedData.cases}
-                  campaigns={seedData.campaigns}
+                  cases={cases}
+                  campaigns={campaigns}
                   onCaseSelect={setSelectedCase}
                   onCampaignSelect={setSelectedCampaign}
                 />
@@ -591,7 +694,7 @@ export default function JusticeMatrixPreviewPage() {
 
             {/* Results count */}
             <p className="text-sm text-gray-600">
-              Showing {filteredCases.length} of {seedData.cases.length} cases
+              Showing {filteredCases.length} of {cases.length} cases
             </p>
 
             {/* Cases Grid */}
@@ -680,7 +783,7 @@ export default function JusticeMatrixPreviewPage() {
 
             {/* Results count */}
             <p className="text-sm text-gray-600">
-              Showing {filteredCampaigns.length} of {seedData.campaigns.length} campaigns
+              Showing {filteredCampaigns.length} of {campaigns.length} campaigns
             </p>
 
             {/* Campaigns Grid */}
@@ -768,7 +871,7 @@ export default function JusticeMatrixPreviewPage() {
                   <span className="text-gray-600">Active Campaigns</span>
                 </div>
                 <p className="text-3xl font-bold">
-                  {seedData.campaigns.filter(c => c.is_ongoing).length}
+                  {campaigns.filter(c => c.is_ongoing).length}
                 </p>
               </div>
             </section>
@@ -893,29 +996,19 @@ export default function JusticeMatrixPreviewPage() {
                 {Object.entries(analytics.categoryCount)
                   .sort(([, a], [, b]) => b - a)
                   .slice(0, 9)
-                  .map(([category, count]) => {
-                    const catInfo = (seedData.insights?.categories as Record<string, { label: string; color: string; description: string }>)?.[category];
-                    return (
+                  .map(([category, count]) => (
                       <div
                         key={category}
-                        className="p-4 rounded-lg border-2"
-                        style={{ borderColor: catInfo?.color || '#e5e7eb' }}
+                        className="p-4 rounded-lg border-2 border-blue-200"
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <span
-                            className="font-bold capitalize"
-                            style={{ color: catInfo?.color || '#374151' }}
-                          >
-                            {catInfo?.label || category.replace(/-/g, ' ')}
+                          <span className="font-bold capitalize text-blue-700">
+                            {category.replace(/-/g, ' ')}
                           </span>
                           <span className="text-2xl font-bold">{count}</span>
                         </div>
-                        {catInfo?.description && (
-                          <p className="text-sm text-gray-600">{catInfo.description}</p>
-                        )}
                       </div>
-                    );
-                  })}
+                  ))}
               </div>
             </section>
 
@@ -934,7 +1027,7 @@ export default function JusticeMatrixPreviewPage() {
                   </p>
                   <div className="flex items-center gap-2 text-xs">
                     <CheckCircle2 className="w-4 h-4 text-green-400" />
-                    <span>{seedData.cases.filter(c => c.categories.includes('non-refoulement') && c.outcome === 'favorable').length} favorable cases</span>
+                    <span>{cases.filter(c => c.categories.includes('non-refoulement') && c.outcome === 'favorable').length} favorable cases</span>
                   </div>
                 </div>
                 <div className="bg-white/10 rounded-lg p-6">
@@ -1025,21 +1118,14 @@ export default function JusticeMatrixPreviewPage() {
               <div>
                 <h3 className="font-bold text-gray-900 mb-2">Categories</h3>
                 <div className="flex flex-wrap gap-2">
-                  {selectedCase.categories.map((cat, idx) => {
-                    const catInfo = (seedData.insights?.categories as Record<string, { label: string; color: string }>)?.[cat];
-                    return (
-                      <span
-                        key={idx}
-                        className="px-3 py-1 rounded-full text-sm font-medium"
-                        style={{
-                          backgroundColor: catInfo?.color ? `${catInfo.color}20` : '#f3f4f6',
-                          color: catInfo?.color || '#374151'
-                        }}
-                      >
-                        {catInfo?.label || cat.replace(/-/g, ' ')}
-                      </span>
-                    );
-                  })}
+                  {(selectedCase.categories || []).map((cat, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700"
+                    >
+                      {cat.replace(/-/g, ' ')}
+                    </span>
+                  ))}
                 </div>
               </div>
               <div className="flex items-center gap-4 pt-4 border-t">
