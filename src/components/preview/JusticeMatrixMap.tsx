@@ -131,7 +131,7 @@ export default function JusticeMatrixMap({
         {/* Cases Layer */}
         {showCases && (
           <LayerGroup>
-            {cases.map((c) => (
+            {cases.filter(c => c.lat != null && c.lng != null).map((c) => (
               <CircleMarker
                 key={c.id}
                 center={[c.lat, c.lng]}
@@ -154,7 +154,7 @@ export default function JusticeMatrixMap({
                       c.outcome === 'favorable' ? 'text-green-600' :
                       c.outcome === 'adverse' ? 'text-red-600' : 'text-yellow-600'
                     }`}>
-                      {c.outcome.charAt(0).toUpperCase() + c.outcome.slice(1)}
+                      {c.outcome ? c.outcome.charAt(0).toUpperCase() + c.outcome.slice(1) : 'Unknown'}
                       {c.precedent_strength === 'high' && ' • High Precedent'}
                     </div>
                     <div className="text-xs text-blue-500 mt-1">Click for details</div>
@@ -168,7 +168,7 @@ export default function JusticeMatrixMap({
         {/* Campaigns Layer */}
         {showCampaigns && (
           <LayerGroup>
-            {campaigns.map((c) => (
+            {campaigns.filter(c => c.lat != null && c.lng != null).map((c) => (
               <CircleMarker
                 key={c.id}
                 center={[c.lat, c.lng]}
