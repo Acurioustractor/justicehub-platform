@@ -250,25 +250,25 @@ export default function PreviewIndexPage() {
         </div>
 
         {/* Info Section */}
-        <section className="mt-16 bg-gray-900 rounded-2xl p-8 text-white">
+        <section className="mt-16 bg-gray-900 rounded-2xl p-8">
           <div className="grid md:grid-cols-3 gap-8">
             <div>
               <Lock className="w-8 h-8 text-amber-400 mb-4" />
-              <h3 className="font-bold mb-2">Password Protected</h3>
+              <h3 className="font-bold mb-2 text-white">Password Protected</h3>
               <p className="text-sm text-gray-400">
                 All previews use the same password for easy access. Share responsibly with stakeholders.
               </p>
             </div>
             <div>
               <FileText className="w-8 h-8 text-blue-400 mb-4" />
-              <h3 className="font-bold mb-2">Work in Progress</h3>
+              <h3 className="font-bold mb-2 text-white">Work in Progress</h3>
               <p className="text-sm text-gray-400">
                 These are mockups and prototypes. Features may change before public launch.
               </p>
             </div>
             <div>
               <Users className="w-8 h-8 text-emerald-400 mb-4" />
-              <h3 className="font-bold mb-2">Feedback Welcome</h3>
+              <h3 className="font-bold mb-2 text-white">Feedback Welcome</h3>
               <p className="text-sm text-gray-400">
                 Your input helps shape these features. Contact us with suggestions or concerns.
               </p>
