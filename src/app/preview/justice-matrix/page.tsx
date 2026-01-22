@@ -737,9 +737,9 @@ export default function JusticeMatrixPreviewPage() {
                         <p className="text-sm text-gray-600">{c.strategic_issue}</p>
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        {c.categories.map((cat, idx) => (
+                        {(c.categories || []).map((cat, idx) => (
                           <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
-                            {cat.replace(/-/g, ' ')}
+                            {cat?.replace(/-/g, ' ') || cat}
                           </span>
                         ))}
                       </div>
@@ -818,9 +818,9 @@ export default function JusticeMatrixPreviewPage() {
 
                   <div className="mt-4 pt-4 border-t flex items-center justify-between">
                     <div className="flex flex-wrap gap-1">
-                      {c.categories.map((cat, idx) => (
+                      {(c.categories || []).map((cat, idx) => (
                         <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
-                          {cat.replace(/-/g, ' ')}
+                          {cat?.replace(/-/g, ' ') || cat}
                         </span>
                       ))}
                     </div>
@@ -1205,9 +1205,9 @@ export default function JusticeMatrixPreviewPage() {
               <div>
                 <h3 className="font-bold text-gray-900 mb-2">Categories</h3>
                 <div className="flex flex-wrap gap-2">
-                  {selectedCampaign.categories.map((cat, idx) => (
+                  {(selectedCampaign.categories || []).map((cat, idx) => (
                     <span key={idx} className="px-3 py-1 bg-gray-100 rounded-full text-sm">
-                      {cat.replace(/-/g, ' ')}
+                      {cat?.replace(/-/g, ' ') || cat}
                     </span>
                   ))}
                 </div>
