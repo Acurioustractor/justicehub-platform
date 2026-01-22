@@ -978,7 +978,7 @@ export default function JusticeMatrixPreviewPage() {
 
       {/* Case Detail Modal */}
       {selectedCase && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setSelectedCase(null)}>
+        <div className="fixed inset-0 bg-black/50 z-[500] flex items-center justify-center p-4" onClick={() => setSelectedCase(null)}>
           <div
             className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
@@ -1065,7 +1065,7 @@ export default function JusticeMatrixPreviewPage() {
 
       {/* Campaign Detail Modal */}
       {selectedCampaign && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setSelectedCampaign(null)}>
+        <div className="fixed inset-0 bg-black/50 z-[500] flex items-center justify-center p-4" onClick={() => setSelectedCampaign(null)}>
           <div
             className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
