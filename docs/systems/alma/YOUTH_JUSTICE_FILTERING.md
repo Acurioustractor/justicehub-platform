@@ -110,11 +110,22 @@ Services **must** be relevant to one of these core needs:
 - Standard employment services (unless youth pathways)
 
 **Out of Scope:**
-- Disability services (unless youth justice focus)
-- NDIS providers (unless youth justice specific)
+- General disability services without youth justice focus
+- NDIS providers without youth justice specialisation
 - General health clinics
 - Financial counseling only
 - Tax help, consumer advice
+
+**IN SCOPE - Disability Services:**
+Services for young people with disability who are at risk of or involved with justice system:
+- Cognitive assessment and diagnosis
+- FASD support services
+- Intellectual disability advocacy
+- Communication support for police/court
+- NDIS navigation for justice-involved young people
+- Acquired brain injury support
+- Autism-specific justice programs
+- Culturally safe disability assessment (Indigenous)
 
 ---
 
@@ -488,6 +499,8 @@ Deprioritize:
 - Aged care providers
 - Adult-only services
 - Generic support services
+
+**Exception:** Prioritise disability services with youth justice specialisation (see inclusion criteria above)
 
 ### Manual Curation List
 Create allowlist of known high-value organizations:

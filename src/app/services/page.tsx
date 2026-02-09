@@ -15,6 +15,7 @@ import {
   List
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import { ThematicSection } from '@/components/thematic-section';
 
 interface Service {
   id: string;
@@ -76,7 +77,8 @@ export default function ServicesPage() {
     { id: 'education', label: 'Education & Training', icon: Users },
     { id: 'employment', label: 'Employment & Skills', icon: Target },
     { id: 'family', label: 'Family Support', icon: Users },
-    { id: 'substance', label: 'Substance Use Support', icon: Star }
+    { id: 'substance', label: 'Substance Use Support', icon: Star },
+    { id: 'disability', label: 'Disability Support', icon: Users }
   ];
 
   // Load services on component mount
@@ -579,6 +581,9 @@ export default function ServicesPage() {
             )}
           </div>
         </section>
+
+        {/* Thematic Areas Banner */}
+        <ThematicSection variant="banner" />
 
         {/* Quick Access Links */}
         <section className="section-padding bg-gray-50 border-t-2 border-black">

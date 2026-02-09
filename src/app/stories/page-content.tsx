@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import { ThematicSection } from '@/components/thematic-section';
 import { useSearchParams } from 'next/navigation';
 
 const categories = {
@@ -359,6 +360,9 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
             </div>
           )}
         </div>
+
+        {/* Thematic Areas */}
+        <ThematicSection variant="compact" />
       </main>
       <Footer />
     </>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
+import FirecrawlApp from '@mendable/firecrawl-js';
 
 // Helper to check admin status
 async function isAdmin(supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never, userId: string): Promise<boolean> {
@@ -24,6 +25,15 @@ function getServiceClient() {
   );
 }
 
+// Initialize Firecrawl
+function getFirecrawlClient() {
+  const apiKey = process.env.FIRECRAWL_API_KEY;
+  if (!apiKey) {
+    throw new Error('Missing Firecrawl API key');
+  }
+  return new FirecrawlApp({ apiKey });
+}
+
 interface ScrapeResult {
   success: boolean;
   linkId: string;
@@ -34,8 +44,204 @@ interface ScrapeResult {
     content?: string;
     type?: string;
     entities?: number;
+    summary?: string;
   };
   error?: string;
+  scrapeTimeMs?: number;
+}
+
+// Circuit breaker state
+const circuitBreakers = new Map<string, { failures: number; lastFailure: number; blocked: boolean }>();
+const CIRCUIT_BREAKER_THRESHOLD = 5;
+const CIRCUIT_BREAKER_RESET_MS = 60 * 60 * 1000; // 1 hour
+
+function checkCircuitBreaker(domain: string): boolean {
+  const state = circuitBreakers.get(domain);
+  if (!state) return true;
+  
+  if (state.blocked) {
+    if (Date.now() - state.lastFailure > CIRCUIT_BREAKER_RESET_MS) {
+      // Reset circuit breaker
+      circuitBreakers.delete(domain);
+      return true;
+    }
+    return false;
+  }
+  return true;
+}
+
+function recordFailure(domain: string) {
+  const state = circuitBreakers.get(domain) || { failures: 0, lastFailure: 0, blocked: false };
+  state.failures++;
+  state.lastFailure = Date.now();
+  
+  if (state.failures >= CIRCUIT_BREAKER_THRESHOLD) {
+    state.blocked = true;
+    console.warn(`[Circuit Breaker] Domain ${domain} blocked after ${state.failures} failures`);
+  }
+  
+  circuitBreakers.set(domain, state);
+}
+
+function recordSuccess(domain: string) {
+  circuitBreakers.delete(domain);
+}
+
+// Check URL health before scraping
+async function checkUrlHealth(url: string): Promise<{ healthy: boolean; redirectUrl?: string; error?: string }> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    
+    const response = await fetch(url, {
+      method: 'HEAD',
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'JusticeHub-ALMA-Scraper/1.0 (Research Bot)',
+      },
+    });
+    
+    clearTimeout(timeout);
+    
+    if (response.status === 200) {
+      return { healthy: true };
+    } else if (response.status >= 300 && response.status < 400 && response.headers.get('location')) {
+      return { healthy: true, redirectUrl: response.headers.get('location') || undefined };
+    } else {
+      return { healthy: false, error: `HTTP ${response.status}` };
+    }
+  } catch (err) {
+    return { healthy: false, error: err instanceof Error ? err.message : 'Network error' };
+  }
+}
+
+// Actual scraping with Firecrawl
+async function scrapeUrl(url: string, predictedType: string | null): Promise<{
+  success: boolean;
+  type?: string;
+  entities?: number;
+  data?: { title?: string; content?: string; summary?: string };
+  error?: string;
+  scrapeTimeMs?: number;
+}> {
+  const startTime = Date.now();
+  
+  try {
+    const urlObj = new URL(url);
+    const domain = urlObj.hostname;
+    
+    // Check circuit breaker
+    if (!checkCircuitBreaker(domain)) {
+      return { 
+        success: false, 
+        error: 'Circuit breaker open - domain temporarily blocked due to repeated failures',
+        scrapeTimeMs: Date.now() - startTime
+      };
+    }
+    
+    // Check URL health first
+    const healthCheck = await checkUrlHealth(url);
+    if (!healthCheck.healthy) {
+      recordFailure(domain);
+      return { 
+        success: false, 
+        error: `URL health check failed: ${healthCheck.error}`,
+        scrapeTimeMs: Date.now() - startTime
+      };
+    }
+    
+    // Use actual URL (follow redirect if needed)
+    const actualUrl = healthCheck.redirectUrl || url;
+    
+    // Block certain domains
+    const blockedDomains = ['facebook.com', 'twitter.com', 'instagram.com', 'linkedin.com'];
+    if (blockedDomains.some(d => urlObj.hostname.includes(d))) {
+      return { 
+        success: false, 
+        error: 'Social media URLs not supported',
+        scrapeTimeMs: Date.now() - startTime
+      };
+    }
+    
+    // Initialize Firecrawl
+    const firecrawl = getFirecrawlClient();
+    
+    // Scrape the URL
+    const scrapeResult = await firecrawl.scrapeUrl(actualUrl, {
+      formats: ['markdown', 'html'],
+      onlyMainContent: true,
+      timeout: 30000,
+    });
+    
+    if (!scrapeResult.success) {
+      recordFailure(domain);
+      return { 
+        success: false, 
+        error: scrapeResult.error || 'Scraping failed',
+        scrapeTimeMs: Date.now() - startTime
+      };
+    }
+    
+    // Extract content
+    const content = scrapeResult.markdown || scrapeResult.html || '';
+    const title = scrapeResult.metadata?.title || urlObj.hostname;
+    
+    // Validate content quality
+    const minLength = 500;
+    const hasMeaningfulWords = /youth|justice|program|community|child|young|detention|support/i.test(content);
+    
+    if (content.length < minLength || !hasMeaningfulWords) {
+      recordFailure(domain);
+      return { 
+        success: false, 
+        error: `Content quality check failed: ${content.length < minLength ? 'too short' : 'no relevant keywords'}`,
+        scrapeTimeMs: Date.now() - startTime
+      };
+    }
+    
+    // Determine type from content if not predicted
+    const isGov = urlObj.hostname.includes('.gov.');
+    const isEdu = urlObj.hostname.includes('.edu.');
+    const detectedType = predictedType || (isGov ? 'government' : isEdu ? 'research' : 'website');
+    
+    // Count entities (programs, organizations mentioned)
+    const entityMatches = content.match(/(?:program|service|initiative|organization|centre|project)/gi);
+    const entityCount = entityMatches ? Math.min(entityMatches.length, 10) : 1;
+    
+    // Generate summary (first 500 chars of content)
+    const summary = content.slice(0, 500).replace(/\n/g, ' ').trim() + '...';
+    
+    recordSuccess(domain);
+    
+    return {
+      success: true,
+      type: detectedType,
+      entities: entityCount,
+      data: {
+        title,
+        content: content.slice(0, 10000), // Limit stored content
+        summary,
+      },
+      scrapeTimeMs: Date.now() - startTime,
+    };
+    
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    
+    // Record failure for circuit breaker
+    try {
+      const urlObj = new URL(url);
+      recordFailure(urlObj.hostname);
+    } catch {
+      // Invalid URL, ignore
+    }
+    
+    return { 
+      success: false, 
+      error: errorMessage,
+      scrapeTimeMs: Date.now() - startTime
+    };
+  }
 }
 
 // POST - Process a single link or batch from the queue
@@ -75,7 +281,6 @@ export async function POST(request: NextRequest) {
       linksToProcess = [data];
     } else {
       // Get next batch from queue
-      // Status values: 'pending', 'queued', 'scraped', 'rejected', 'error'
       const statuses = mode === 'queued' ? ['queued'] : ['pending', 'queued'];
 
       const { data, error } = await serviceClient
@@ -117,20 +322,23 @@ export async function POST(request: NextRequest) {
           .update({ status: 'queued' })
           .eq('id', link.id);
 
-        // Fetch the URL content
-        // In production, this would use Firecrawl MCP or similar
-        // For now, we simulate the scrape and mark as processed
-        const scrapeData = await simulateScrape(link.url, link.predicted_type);
+        // ACTUAL SCRAPING (not simulated)
+        const scrapeData = await scrapeUrl(link.url, link.predicted_type);
+        result.scrapeTimeMs = scrapeData.scrapeTimeMs;
 
-        if (scrapeData.success) {
+        if (scrapeData.success && scrapeData.data) {
           // Store extracted data based on type
-          if (scrapeData.type === 'intervention' && scrapeData.data) {
+          if (scrapeData.type === 'intervention' || scrapeData.type === 'program') {
             await serviceClient.from('alma_interventions').insert({
               name: scrapeData.data.title,
-              description: scrapeData.data.content?.substring(0, 500),
+              description: scrapeData.data.summary,
               source_url: link.url,
               source_id: link.id,
-              metadata: { scraped_at: new Date().toISOString() },
+              metadata: { 
+                scraped_at: new Date().toISOString(),
+                scrape_time_ms: scrapeData.scrapeTimeMs,
+                content_length: scrapeData.data.content?.length,
+              },
             });
           }
 
@@ -142,7 +350,11 @@ export async function POST(request: NextRequest) {
             items_found: scrapeData.entities || 1,
             relevance_score: link.predicted_relevance,
             novelty_score: 0.5,
-            metadata: { type: link.predicted_type },
+            metadata: { 
+              type: link.predicted_type,
+              title: scrapeData.data.title,
+              scrape_time_ms: scrapeData.scrapeTimeMs,
+            },
           });
 
           // Update link status
@@ -153,7 +365,9 @@ export async function POST(request: NextRequest) {
               scraped_at: new Date().toISOString(),
               metadata: {
                 ...link.metadata,
-                extracted_title: scrapeData.data?.title,
+                extracted_title: scrapeData.data.title,
+                extracted_summary: scrapeData.data.summary,
+                scrape_time_ms: scrapeData.scrapeTimeMs,
               },
             })
             .eq('id', link.id);
@@ -161,9 +375,11 @@ export async function POST(request: NextRequest) {
           result.success = true;
           result.status = 'scraped';
           result.extractedData = {
-            title: scrapeData.data?.title,
+            title: scrapeData.data.title,
+            content: scrapeData.data.content?.slice(0, 200),
             type: scrapeData.type,
             entities: scrapeData.entities,
+            summary: scrapeData.data.summary,
           };
         } else {
           // Mark as error
@@ -175,6 +391,8 @@ export async function POST(request: NextRequest) {
               metadata: {
                 ...link.metadata,
                 failed_at: new Date().toISOString(),
+                error: scrapeData.error,
+                scrape_time_ms: scrapeData.scrapeTimeMs,
               },
             })
             .eq('id', link.id);
@@ -200,13 +418,15 @@ export async function POST(request: NextRequest) {
 
       results.push(result);
 
-      // Rate limiting delay
+      // Rate limiting delay between requests
       if (linksToProcess.length > 1) {
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
     }
 
     const successCount = results.filter(r => r.success).length;
+    const totalTime = results.reduce((sum, r) => sum + (r.scrapeTimeMs || 0), 0);
+    const avgTime = successCount > 0 ? Math.round(totalTime / successCount) : 0;
 
     return NextResponse.json({
       success: true,
@@ -214,6 +434,7 @@ export async function POST(request: NextRequest) {
       processed: results.length,
       successful: successCount,
       failed: results.length - successCount,
+      avgScrapeTimeMs: avgTime,
       results,
     });
   } catch (error: unknown) {
@@ -222,51 +443,6 @@ export async function POST(request: NextRequest) {
       { error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }
     );
-  }
-}
-
-// Simulate scraping (in production, use Firecrawl MCP)
-async function simulateScrape(url: string, predictedType: string | null): Promise<{
-  success: boolean;
-  type?: string;
-  entities?: number;
-  data?: { title?: string; content?: string };
-  error?: string;
-}> {
-  // Check if URL is accessible
-  try {
-    const urlObj = new URL(url);
-
-    // Block certain domains
-    const blockedDomains = ['facebook.com', 'twitter.com', 'instagram.com'];
-    if (blockedDomains.some(d => urlObj.hostname.includes(d))) {
-      return { success: false, error: 'Social media URLs not supported' };
-    }
-
-    // In production, this would actually fetch and parse the URL
-    // For now, return simulated success based on URL characteristics
-    const isGov = urlObj.hostname.includes('.gov.');
-    const isEdu = urlObj.hostname.includes('.edu.');
-    const isOrg = urlObj.hostname.includes('.org');
-
-    // Higher success rate for government and educational sources
-    const successRate = isGov ? 0.9 : isEdu ? 0.85 : isOrg ? 0.8 : 0.7;
-
-    if (Math.random() < successRate) {
-      return {
-        success: true,
-        type: predictedType || (isGov ? 'government' : isEdu ? 'research' : 'website'),
-        entities: Math.floor(Math.random() * 5) + 1,
-        data: {
-          title: `Content from ${urlObj.hostname}`,
-          content: `Extracted content from ${url}. This is simulated data that would be replaced by actual scraped content in production.`,
-        },
-      };
-    } else {
-      return { success: false, error: 'Simulated scrape failure for testing' };
-    }
-  } catch {
-    return { success: false, error: 'Invalid URL' };
   }
 }
 
@@ -291,7 +467,7 @@ export async function GET() {
       .order('created_at', { ascending: false })
       .limit(20);
 
-    // Get queue stats (status values: pending, queued, scraped, rejected, error)
+    // Get queue stats
     const [
       { count: pendingCount },
       { count: queuedCount },
@@ -309,6 +485,11 @@ export async function GET() {
     // Calculate success rate from recent scrapes
     const successfulScrapes = (recentScrapes || []).filter(s => s.status === 'success').length;
     const successRate = recentScrapes?.length ? (successfulScrapes / recentScrapes.length) * 100 : 0;
+    
+    // Get circuit breaker status
+    const blockedDomains = Array.from(circuitBreakers.entries())
+      .filter(([_, state]) => state.blocked)
+      .map(([domain, state]) => ({ domain, failures: state.failures }));
 
     return NextResponse.json({
       status: 'ready',
@@ -324,6 +505,10 @@ export async function GET() {
         scrapes: recentScrapes?.length || 0,
         successRate: Math.round(successRate),
         lastScrape: recentScrapes?.[0]?.created_at || null,
+      },
+      circuitBreakers: {
+        blockedDomains: blockedDomains.length,
+        domains: blockedDomains,
       },
       history: recentScrapes || [],
     });

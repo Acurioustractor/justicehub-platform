@@ -44,40 +44,52 @@ export async function fetchContentHubArticles(params: {
   if (params.project) searchParams.set('project', params.project);
   if (params.limit) searchParams.set('limit', String(params.limit));
 
-  const response = await fetch(
-    `${EMPATHY_LEDGER_URL}/api/v1/content-hub/articles?${searchParams.toString()}`,
-    {
-      headers: buildHeaders(),
-      cache: 'no-store',
+  try {
+    const response = await fetch(
+      `${EMPATHY_LEDGER_URL}/api/v1/content-hub/articles?${searchParams.toString()}`,
+      {
+        headers: buildHeaders(),
+        cache: 'no-store',
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`Empathy Ledger API error: ${response.status}`);
+      return [];
     }
-  );
 
-  if (!response.ok) {
-    throw new Error(`Empathy Ledger API error: ${response.status}`);
+    const data = await response.json();
+    return data.articles || [];
+  } catch (error) {
+    console.error('Failed to fetch content hub articles:', error);
+    return [];
   }
-
-  const data = await response.json();
-  return data.articles || [];
 }
 
 export async function fetchContentHubArticleBySlug(
   slug: string
 ): Promise<ContentHubArticleDetail | null> {
-  const response = await fetch(
-    `${EMPATHY_LEDGER_URL}/api/v1/content-hub/articles/${slug}`,
-    {
-      headers: buildHeaders(),
-      cache: 'no-store',
-    }
-  );
+  try {
+    const response = await fetch(
+      `${EMPATHY_LEDGER_URL}/api/v1/content-hub/articles/${slug}`,
+      {
+        headers: buildHeaders(),
+        cache: 'no-store',
+      }
+    );
 
-  if (response.status === 404) {
+    if (response.status === 404) {
+      return null;
+    }
+
+    if (!response.ok) {
+      console.error(`Empathy Ledger API error: ${response.status}`);
+      return null;
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error('Failed to fetch content hub article:', error);
     return null;
   }
-
-  if (!response.ok) {
-    throw new Error(`Empathy Ledger API error: ${response.status}`);
-  }
-
-  return response.json();
 }

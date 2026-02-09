@@ -52,6 +52,11 @@ export const navigationItems: NavigationItem[] = [
                 label: 'Service Map',
                 href: '/community-map',
                 description: 'Locate services nationwide'
+            },
+            {
+                label: 'Thematic Areas',
+                href: '/themes',
+                description: 'Explore by disability, health, housing, and more'
             }
         ]
     },
@@ -134,6 +139,11 @@ export const navigationItems: NavigationItem[] = [
                 label: 'Global Insights',
                 href: '/centre-of-excellence/global-insights',
                 description: 'International best practice'
+            },
+            {
+                label: 'International Exchange',
+                href: '/international-exchange',
+                description: 'June 2026 learning mission'
             }
         ]
     },
@@ -173,8 +183,8 @@ export const navigationItems: NavigationItem[] = [
             },
             {
                 label: 'Roadmap',
-                href: '/roadmap',
-                description: 'Community-driven features'
+                href: '/about/roadmap',
+                description: 'Our 2026-2028 journey to community ownership'
             }
         ]
     }
@@ -186,6 +196,7 @@ export const footerSections = [
         links: [
             { label: 'Youth Scout', href: '/youth-scout', description: 'Your personalized journey' },
             { label: 'Find Services', href: '/services', description: 'AI-powered directory' },
+            { label: 'Thematic Areas', href: '/themes', description: 'Explore by theme' },
             { label: 'Share Your Story', href: '/stories/new', description: 'Tell your story' },
             { label: 'Youth Login', href: '/youth-scout/youth-login', description: 'Access your dashboard' }
         ]
@@ -223,6 +234,8 @@ export const footerSections = [
         title: 'About',
         links: [
             { label: 'Our Mission', href: '/about', description: 'Why we exist' },
+            { label: 'Roadmap', href: '/about/roadmap', description: '2026-2028 journey' },
+            { label: 'International Exchange', href: '/international-exchange', description: 'June 2026 mission' },
             { label: 'How It Works', href: '/how-it-works', description: 'Platform overview' },
             { label: 'Privacy Policy', href: '/privacy', description: 'Your data protection' },
             { label: 'Terms of Service', href: '/terms', description: 'Usage guidelines' }

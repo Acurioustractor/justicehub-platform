@@ -1,6 +1,6 @@
 # JusticeHub — Linked Stories
 
-Stories that connect to JusticeHub's work in youth justice reform. JusticeHub has the most linked vignettes of any ACT project — reflecting the depth of lived experience evidence in justice work.
+Stories that connect to JusticeHub's work in youth justice reform. JusticeHub has the most linked vignettes of any ACT project — reflecting the depth of lived experience evidence in justice work. The addition of the **Disability in Youth Justice** research synthesis extends this to include systematic evidence on a critical but under-recognised intersection.
 
 ## ALMA Aggregate
 
@@ -8,12 +8,12 @@ Stories that connect to JusticeHub's work in youth justice reform. JusticeHub ha
 |--------|--------------|
 | Evidence Strength | 4.6/5 |
 | Community Authority | 4.4/5 |
-| Harm Risk (inverted) | 3.6/5 |
+| Harm Risk (inverted) | 3.5/5 |
 | Implementation Capability | 4.0/5 |
 | Option Value | 4.7/5 |
 | Community Value Return | 4.2/5 |
 
-**Total Linked Vignettes:** 9
+**Total Linked Vignettes:** 10
 
 ## Vignettes
 
@@ -61,3 +61,8 @@ Stories that connect to JusticeHub's work in youth justice reform. JusticeHub ha
 - **Consent:** EXTERNAL-LITE (identity protected)
 - **LCAA Shift:** Action → Art
 - [Read full vignette →](./m-homelessness-to-independent.md)
+
+### 10. The Hidden Epidemic: Disability in Australia's Youth Justice System
+- **Consent:** PUBLIC (research synthesis)
+- **LCAA Shift:** Listen → Action
+- [Read full research →](./disability-youth-justice-hidden-epidemic.md)

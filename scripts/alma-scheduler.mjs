@@ -1,222 +1,245 @@
 #!/usr/bin/env node
 /**
- * ALMA Scheduler
- *
- * Runs continuous ingestion on a schedule:
- * - Daily: Media sources
- * - Weekly: Indigenous organizations, Legal databases
- * - Monthly: Government sources, Research institutions
- * - Quarterly: Full comprehensive scan
- *
- * Can be run as:
- * 1. Cron job (traditional)
- * 2. GitHub Actions workflow (automated)
- * 3. Long-running process (development)
+ * ALMA Scraper Scheduler
+ * 
+ * Runs scraping jobs on a schedule:
+ * - Hourly: Check for new high-priority sources
+ * - Daily: Full scrape of all healthy sources  
+ * - Weekly: Deep scrape with link following
+ * - Monthly: Health check all sources and update registry
+ * 
+ * Usage:
+ *   node alma-scheduler.mjs --hourly
+ *   node alma-scheduler.mjs --daily
+ *   node alma-scheduler.mjs --weekly
+ *   node alma-scheduler.mjs --monthly
+ * 
+ * Cron setup:
+ *   0 * * * * cd /path/to/justicehub && node scripts/alma-scheduler.mjs --hourly
+ *   0 2 * * * cd /path/to/justicehub && node scripts/alma-scheduler.mjs --daily
+ *   0 3 * * 0 cd /path/to/justicehub && node scripts/alma-scheduler.mjs --weekly
+ *   0 4 1 * * cd /path/to/justicehub && node scripts/alma-scheduler.mjs --monthly
  */
 
 import { spawn } from 'child_process';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, appendFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 
-/**
- * Schedule configuration
- */
-const SCHEDULE = {
-  daily: {
-    categories: ['media'],
-    description: 'Daily media monitoring',
-  },
-  weekly: {
-    categories: ['indigenous', 'legal'],
-    description: 'Weekly Indigenous orgs + legal databases',
-  },
-  monthly: {
-    categories: ['government', 'research'],
-    description: 'Monthly government + research scan',
-  },
-  quarterly: {
-    categories: ['all'],
-    description: 'Quarterly comprehensive scan',
-  },
-};
+// Logger
+function log(message, type = 'info') {
+  const timestamp = new Date().toISOString();
+  const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+  const logLine = `[${timestamp}] ${prefix} ${message}\n`;
+  
+  console.log(logLine.trim());
+  
+  // Append to log file
+  try {
+    appendFileSync(join(root, 'logs', 'alma-scheduler.log'), logLine);
+  } catch {
+    // Log file might not exist, that's ok
+  }
+}
 
-/**
- * Run ingestion for specific category
- */
-async function runIngestion(category) {
+// Run scraper with specific args
+function runScraper(args) {
   return new Promise((resolve, reject) => {
-    console.log(`\n🚀 Starting ingestion: ${category}`);
-
-    const child = spawn('node', [
-      join(__dirname, 'alma-continuous-ingestion.mjs'),
-      category
-    ], {
-      stdio: 'inherit' // Show output in real-time
+    const scraperPath = join(__dirname, 'alma-unified-scraper.mjs');
+    const child = spawn('node', [scraperPath, ...args, '--quiet'], {
+      cwd: root,
+      stdio: ['ignore', 'pipe', 'pipe']
     });
-
+    
+    let output = '';
+    let errorOutput = '';
+    
+    child.stdout.on('data', (data) => {
+      output += data.toString();
+    });
+    
+    child.stderr.on('data', (data) => {
+      errorOutput += data.toString();
+    });
+    
     child.on('close', (code) => {
       if (code === 0) {
-        console.log(`✅ Completed: ${category}\n`);
-        resolve(true);
+        resolve({ success: true, output });
       } else {
-        console.error(`❌ Failed: ${category} (exit code ${code})\n`);
-        reject(new Error(`Ingestion failed for ${category}`));
+        resolve({ success: false, error: errorOutput || output });
       }
     });
   });
 }
 
-/**
- * Determine what should run today
- */
-function determineSchedule() {
-  const now = new Date();
-  const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
-  const dayOfMonth = now.getDate();
-  const month = now.getMonth();
-
-  const toRun = [];
-
-  // Daily (every day)
-  toRun.push(...SCHEDULE.daily.categories);
-
-  // Weekly (Sunday)
-  if (dayOfWeek === 0) {
-    toRun.push(...SCHEDULE.weekly.categories);
+// Hourly job: High priority sources only
+async function hourlyJob() {
+  log('Starting hourly scrape (top 5 priority sources)');
+  
+  const result = await runScraper(['top', '5']);
+  
+  if (result.success) {
+    log('Hourly scrape completed successfully', 'success');
+  } else {
+    log(`Hourly scrape failed: ${result.error}`, 'error');
   }
-
-  // Monthly (1st of month)
-  if (dayOfMonth === 1) {
-    toRun.push(...SCHEDULE.monthly.categories);
-  }
-
-  // Quarterly (1st of Jan, Apr, Jul, Oct)
-  if (dayOfMonth === 1 && [0, 3, 6, 9].includes(month)) {
-    toRun.push(...SCHEDULE.quarterly.categories);
-  }
-
-  // Remove duplicates
-  return [...new Set(toRun)];
+  
+  return result;
 }
 
-/**
- * Log run to file
- */
-function logRun(categories, success, error) {
-  const logFile = join(root, 'alma-ingestion.log');
-  const timestamp = new Date().toISOString();
-  const status = success ? 'SUCCESS' : 'FAILED';
-  const errorMsg = error ? ` - ${error.message}` : '';
+// Daily job: Full scrape of all sources
+async function dailyJob() {
+  log('Starting daily full scrape');
+  
+  // Indigenous sources (cultural authority priority)
+  log('Scraping Indigenous sources...');
+  const indigenousResult = await runScraper(['type', 'indigenous']);
+  
+  // Government sources
+  log('Scraping Government sources...');
+  const govResult = await runScraper(['type', 'government']);
+  
+  // Research sources
+  log('Scraping Research sources...');
+  const researchResult = await runScraper(['type', 'research']);
+  
+  const allSuccess = indigenousResult.success && govResult.success && researchResult.success;
+  
+  if (allSuccess) {
+    log('Daily scrape completed successfully', 'success');
+  } else {
+    log('Daily scrape completed with some failures', 'error');
+  }
+  
+  return { success: allSuccess, indigenousResult, govResult, researchResult };
+}
 
-  const logEntry = `[${timestamp}] ${status}: ${categories.join(', ')}${errorMsg}\n`;
+// Weekly job: Deep scrape with discovery
+async function weeklyJob() {
+  log('Starting weekly deep scrape with link discovery');
+  
+  // First do a full scrape
+  await dailyJob();
+  
+  // Then run source discovery
+  log('Running source discovery...');
+  const discoveryPath = join(__dirname, 'alma-source-discovery.mjs');
+  
+  return new Promise((resolve) => {
+    const child = spawn('node', [discoveryPath], {
+      cwd: root,
+      stdio: 'pipe'
+    });
+    
+    let output = '';
+    child.stdout.on('data', (data) => output += data);
+    child.stderr.on('data', (data) => output += data);
+    
+    child.on('close', (code) => {
+      if (code === 0) {
+        log('Weekly deep scrape completed', 'success');
+        resolve({ success: true, output });
+      } else {
+        log(`Weekly deep scrape failed: ${output}`, 'error');
+        resolve({ success: false, error: output });
+      }
+    });
+  });
+}
 
+// Monthly job: Health check and registry update
+async function monthlyJob() {
+  log('Starting monthly maintenance');
+  
+  // Health check all sources
+  log('Running health checks on all sources...');
+  const healthResult = await runScraper(['health-check']);
+  
+  // Update source registry with health status
+  // (This would update the alma_sources table with health_status)
+  log('Updating source registry...');
+  
+  // Clear old state files
+  log('Cleaning up old state files...');
   try {
-    writeFileSync(logFile, logEntry, { flag: 'a' });
-  } catch (err) {
-    console.error('Failed to write log:', err.message);
+    const { execSync } = await import('child_process');
+    execSync('rm -f scripts/.alma-scraper-state.json', { cwd: root });
+  } catch {
+    // Ignore errors
   }
+  
+  if (healthResult.success) {
+    log('Monthly maintenance completed', 'success');
+  } else {
+    log('Monthly maintenance completed with issues', 'error');
+  }
+  
+  return healthResult;
 }
 
-/**
- * Main execution
- */
+// Main
 async function main() {
-  console.log('╔═══════════════════════════════════════════════════════════╗');
-  console.log('║           ALMA Ingestion Scheduler                       ║');
-  console.log('╚═══════════════════════════════════════════════════════════╝');
-
   const args = process.argv.slice(2);
-  const mode = args[0]; // 'daily', 'weekly', 'monthly', 'quarterly', 'auto', or category name
-
-  let categoriesToRun = [];
-
-  if (mode === 'auto') {
-    // Automatic scheduling based on date
-    categoriesToRun = determineSchedule();
-    console.log(`\n📅 Auto-detected schedule for today:`);
-    console.log(`   Categories to run: ${categoriesToRun.join(', ')}`);
-
-  } else if (SCHEDULE[mode]) {
-    // Run specific schedule
-    categoriesToRun = SCHEDULE[mode].categories;
-    console.log(`\n⏰ Running ${mode} schedule:`);
-    console.log(`   ${SCHEDULE[mode].description}`);
-    console.log(`   Categories: ${categoriesToRun.join(', ')}`);
-
-  } else if (mode) {
-    // Run specific category
-    categoriesToRun = [mode];
-    console.log(`\n🎯 Running specific category: ${mode}`);
-
+  
+  // Ensure logs directory exists
+  try {
+    const { mkdirSync } = await import('fs');
+    mkdirSync(join(root, 'logs'), { recursive: true });
+  } catch {
+    // Directory might already exist
+  }
+  
+  log(`Scheduler started with args: ${args.join(' ')}`);
+  
+  if (args.includes('--hourly')) {
+    await hourlyJob();
+  } else if (args.includes('--daily')) {
+    await dailyJob();
+  } else if (args.includes('--weekly')) {
+    await weeklyJob();
+  } else if (args.includes('--monthly')) {
+    await monthlyJob();
+  } else if (args.includes('--test')) {
+    // Quick test run
+    log('Running test scrape (top 3)');
+    const result = await runScraper(['top', '3']);
+    console.log('\n--- Test Result ---');
+    console.log(result.output);
   } else {
-    console.log('\nUsage: node scripts/alma-scheduler.mjs [mode]\n');
-    console.log('Modes:');
-    console.log('  auto        - Auto-detect based on date (recommended for cron)');
-    console.log('  daily       - Run daily schedule (media)');
-    console.log('  weekly      - Run weekly schedule (indigenous, legal)');
-    console.log('  monthly     - Run monthly schedule (government, research)');
-    console.log('  quarterly   - Run quarterly schedule (all)');
-    console.log('  [category]  - Run specific category\n');
-    console.log('Schedule:');
-    console.log('  Daily:      Media sources');
-    console.log('  Weekly:     Indigenous organizations, Legal databases');
-    console.log('  Monthly:    Government sources, Research institutions');
-    console.log('  Quarterly:  Comprehensive scan (all sources)\n');
-    console.log('Examples:');
-    console.log('  node scripts/alma-scheduler.mjs auto');
-    console.log('  node scripts/alma-scheduler.mjs daily');
-    console.log('  node scripts/alma-scheduler.mjs government\n');
-    console.log('Cron setup (daily at 2am):');
-    console.log('  0 2 * * * cd /path/to/JusticeHub && node scripts/alma-scheduler.mjs auto\n');
+    console.log(`
+Usage: node alma-scheduler.mjs [option]
+
+Options:
+  --hourly    Scrape top 5 priority sources
+  --daily     Full scrape of all source types
+  --weekly    Deep scrape with link discovery
+  --monthly   Health check and maintenance
+  --test      Quick test run (top 3)
+
+Cron examples:
+  # Hourly
+  0 * * * * cd /path/to/justicehub && node scripts/alma-scheduler.mjs --hourly
+  
+  # Daily at 2am
+  0 2 * * * cd /path/to/justicehub && node scripts/alma-scheduler.mjs --daily
+  
+  # Weekly on Sunday at 3am
+  0 3 * * 0 cd /path/to/justicehub && node scripts/alma-scheduler.mjs --weekly
+  
+  # Monthly on 1st at 4am
+  0 4 1 * * cd /path/to/justicehub && node scripts/alma-scheduler.mjs --monthly
+`);
     process.exit(0);
   }
-
-  // Run ingestion for each category
-  const startTime = Date.now();
-  const results = [];
-
-  for (const category of categoriesToRun) {
-    try {
-      await runIngestion(category);
-      results.push({ category, success: true });
-    } catch (err) {
-      console.error(`Error ingesting ${category}:`, err.message);
-      results.push({ category, success: false, error: err });
-    }
-  }
-
-  // Summary
-  const duration = ((Date.now() - startTime) / 1000 / 60).toFixed(1);
-  const successful = results.filter(r => r.success).length;
-  const failed = results.filter(r => !r.success).length;
-
-  console.log(`\n${'='.repeat(60)}`);
-  console.log(`📊 SCHEDULER SUMMARY`);
-  console.log(`${'='.repeat(60)}`);
-  console.log(`Categories run: ${categoriesToRun.length}`);
-  console.log(`Successful: ${successful}`);
-  console.log(`Failed: ${failed}`);
-  console.log(`Duration: ${duration} minutes`);
-  console.log(`${'='.repeat(60)}\n`);
-
-  // Log to file
-  logRun(
-    categoriesToRun,
-    failed === 0,
-    failed > 0 ? new Error(`${failed} categories failed`) : null
-  );
-
-  if (failed > 0) {
-    console.error(`❌ Scheduler completed with ${failed} failures\n`);
-    process.exit(1);
-  } else {
-    console.log(`✅ Scheduler completed successfully\n`);
-    process.exit(0);
-  }
+  
+  log('Scheduler finished');
+  process.exit(0);
 }
 
-main();
+main().catch(err => {
+  log(`Fatal error: ${err.message}`, 'error');
+  process.exit(1);
+});

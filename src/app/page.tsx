@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import { ArrowRight, ArrowDown, Target, Award, DollarSign, TrendingUp, Users, Sparkles, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import CoELeaders from '@/components/CoELeaders';
+
 import HomepageNetworkMap from '@/components/HomepageNetworkMap';
 import EmpathyLedgerStories from '@/components/EmpathyLedgerStories';
+import { ThematicSection } from '@/components/thematic-section';
 import { basecampLocations } from '@/content/excellence-map-locations';
 import { MapPin, Building2 } from 'lucide-react';
 
@@ -263,9 +264,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Centre of Excellence Leadership */}
-      <CoELeaders />
-
       {/* Founding Network - Basecamps */}
       <section className="section-padding bg-gradient-to-br from-ochre-50 to-orange-50 border-t-2 border-b-2 border-black">
         <div className="container-justice">
@@ -385,6 +383,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Thematic Areas - Cross-cutting issues */}
+      <ThematicSection variant="full" featuredTheme="disability" />
 
       {/* Programs That Work - Grid Layout */}
       <section className="section-padding">

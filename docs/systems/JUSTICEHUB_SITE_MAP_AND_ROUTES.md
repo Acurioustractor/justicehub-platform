@@ -1624,9 +1624,28 @@ JusticeHub
 **Status:** ✅ Exists
 **Purpose:** Contact form, support
 
+### 7.4 Thematic Areas `/themes`
+**Route:** `src/app/themes/page.tsx`
+**Status:** ✅ Exists
+**Purpose:** Cross-cutting issues hub (disability, health, housing, etc.)
+
+#### Sub-pages
+- `/themes/disability` - Disability & Justice focus area
+- `/themes/health` - Health & Wellbeing (planned)
+- `/themes/marginalised` - Marginalised Groups (planned)
+- `/themes/housing` - Housing Stability (planned)
+- `/themes/education` - Education & Employment (planned)
+- `/themes/culture` - Culture & Healing (planned)
+
+#### Component: ThematicSection
+Reusable component for displaying thematic areas:
+- `variant: 'full'` - Full featured section with highlighted theme
+- `variant: 'compact'` - Grid of all themes
+- `variant: 'banner'` - Horizontal navigation banner
+
 ---
 
-### 7.4 Auth Pages
+### 7.5 Auth Pages
 - `/login` - User login
 - `/signup` - User registration (with steward option)
 
