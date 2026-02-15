@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import {
@@ -21,6 +20,12 @@ interface Evidence {
   publication_date: string | null;
   source_url: string | null;
   consent_level: string | null;
+}
+
+interface Provenance {
+  mode: 'authoritative' | 'computed';
+  summary: string;
+  generated_at: string;
 }
 
 // Evidence strength ranking (higher = stronger)
@@ -155,8 +160,8 @@ function getStrengthInfo(evidenceType: string | null) {
 }
 
 export default function EvidencePage() {
-  const supabase = createClient();
   const [evidence, setEvidence] = useState<Evidence[]>([]);
+  const [provenance, setProvenance] = useState<Provenance | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('');
@@ -164,41 +169,67 @@ export default function EvidencePage() {
   const [selectedStrength, setSelectedStrength] = useState<number | ''>('');
   const [sortBy, setSortBy] = useState<SortOption>('strength');
   const [totalCount, setTotalCount] = useState(0);
+  const [availableTypes, setAvailableTypes] = useState<string[]>([]);
 
   // Get actual evidence types from data
   const actualTypes = useMemo(() => {
+    if (availableTypes.length > 0) {
+      return availableTypes;
+    }
     const types = new Set(evidence.map(e => e.evidence_type).filter(Boolean));
     return Array.from(types).sort();
-  }, [evidence]);
+  }, [availableTypes, evidence]);
 
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchEvidence() {
-      setLoading(true);
+      try {
+        setLoading(true);
+        const params = new URLSearchParams({ limit: '200' });
+        if (searchQuery.trim()) {
+          params.set('search', searchQuery.trim());
+        }
+        if (selectedType) {
+          params.set('type', selectedType);
+        }
 
-      let query = supabase
-        .from('alma_evidence')
-        .select('id, title, evidence_type, methodology, findings, author, organization, publication_date, source_url, consent_level', { count: 'exact' })
-        .order('publication_date', { ascending: false, nullsFirst: false });
+        const response = await fetch(`/api/intelligence/evidence?${params.toString()}`, {
+          cache: 'no-store',
+        });
+        const payload = await response.json();
 
-      if (searchQuery) {
-        query = query.or(`title.ilike.%${searchQuery}%,findings.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%`);
+        if (!response.ok || !payload?.success) {
+          throw new Error(payload?.error || 'Failed to fetch evidence');
+        }
+
+        if (cancelled) {
+          return;
+        }
+
+        setEvidence(payload.evidence || []);
+        setTotalCount(payload.totalCount || 0);
+        setAvailableTypes(payload.filters?.types || []);
+        setProvenance(payload.provenance || null);
+      } catch (error) {
+        console.error('Error fetching evidence:', error);
+        if (!cancelled) {
+          setEvidence([]);
+          setTotalCount(0);
+          setAvailableTypes([]);
+          setProvenance(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
-
-      if (selectedType) {
-        query = query.eq('evidence_type', selectedType);
-      }
-
-      const { data, error, count } = await query.limit(200);
-
-      if (!error && data) {
-        setEvidence(data);
-        setTotalCount(count ?? data.length);
-      }
-
-      setLoading(false);
     }
 
     fetchEvidence();
+    return () => {
+      cancelled = true;
+    };
   }, [searchQuery, selectedType]);
 
   // Process and sort evidence client-side
@@ -306,6 +337,15 @@ export default function EvidencePage() {
               Browse peer-reviewed research, program evaluations, and government inquiries
               documenting what works - and what doesn't - in youth justice across Australia.
             </p>
+
+            {provenance && (
+              <div className="mb-6 inline-flex items-center gap-2 border border-black bg-white px-3 py-1 text-xs">
+                <span className={`font-bold uppercase ${provenance.mode === 'authoritative' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                  {provenance.mode}
+                </span>
+                <span className="text-gray-700">{provenance.summary}</span>
+              </div>
+            )}
 
             {/* Stats row */}
             <div className="flex flex-wrap items-center gap-6">

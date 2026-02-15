@@ -57,6 +57,37 @@ export const navigationItems: NavigationItem[] = [
                 label: 'Thematic Areas',
                 href: '/themes',
                 description: 'Explore by disability, health, housing, and more'
+            },
+            {
+                label: 'Opportunities',
+                href: '/opportunities',
+                description: 'Jobs, scholarships, and apprenticeships'
+            }
+        ]
+    },
+    {
+        label: 'For Partners',
+        type: 'dropdown',
+        items: [
+            {
+                label: 'Community Leaders',
+                href: '/for-community-leaders',
+                description: 'Practical tools for local leadership'
+            },
+            {
+                label: 'Funders',
+                href: '/for-funders',
+                description: 'Invest in proven community solutions'
+            },
+            {
+                label: 'Government',
+                href: '/for-government',
+                description: 'Evidence for policy and systems reform'
+            },
+            {
+                label: 'Researchers',
+                href: '/for-researchers',
+                description: 'Methods, datasets, and collaboration'
             }
         ]
     },
@@ -98,6 +129,21 @@ export const navigationItems: NavigationItem[] = [
                 label: 'Evidence Library',
                 href: '/intelligence/evidence',
                 description: 'Research and studies'
+            },
+            {
+                label: 'Funding',
+                href: '/intelligence/funding',
+                description: 'Grants and funding opportunities'
+            },
+            {
+                label: 'Reports',
+                href: '/intelligence/reports',
+                description: 'Weekly intelligence summaries'
+            },
+            {
+                label: 'Youth Justice Report',
+                href: '/youth-justice-report',
+                description: 'National youth justice analysis'
             }
         ]
     },
@@ -180,11 +226,32 @@ export const navigationItems: NavigationItem[] = [
                 label: 'Art & Innovation',
                 href: '/art-innovation',
                 description: 'Creative solutions'
+            }
+        ]
+    },
+    {
+        label: 'About',
+        type: 'dropdown',
+        items: [
+            {
+                label: 'Our Mission',
+                href: '/about',
+                description: 'Why JusticeHub exists'
             },
             {
                 label: 'Roadmap',
                 href: '/about/roadmap',
-                description: 'Our 2026-2028 journey to community ownership'
+                description: '2026-2028 journey to community ownership'
+            },
+            {
+                label: 'How It Works',
+                href: '/how-it-works',
+                description: 'Platform and collaboration model'
+            },
+            {
+                label: 'Contact',
+                href: '/contact',
+                description: 'Get in touch'
             }
         ]
     }
@@ -217,7 +284,9 @@ export const footerSections = [
             { label: 'Ask ALMA', href: '/intelligence/chat', description: 'Chat with AI' },
             { label: 'System Map', href: '/intelligence/map', description: 'Detention & programs' },
             { label: 'Interventions', href: '/intelligence/interventions', description: 'Evidence database' },
-            { label: 'Impact Calculator', href: '/intelligence/impact-calculator', description: 'Cost comparison' }
+            { label: 'Impact Calculator', href: '/intelligence/impact-calculator', description: 'Cost comparison' },
+            { label: 'Funding', href: '/intelligence/funding', description: 'Grants & opportunities' },
+            { label: 'Reports', href: '/intelligence/reports', description: 'Weekly summaries' }
         ]
     },
     {

@@ -19,7 +19,6 @@ import {
   Mountain
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { createClient } from '@/lib/supabase/client';
 import ProfileCard from '@/components/ProfileCard';
 
 interface ProfileData {
@@ -38,8 +37,6 @@ interface ProfileData {
   isFeatured?: boolean;
 }
 
-const supabase = createClient();
-
 // Founding Basecamps - Centre of Excellence network
 const FOUNDING_BASECAMP_SLUGS = ['oonchiumpa', 'bg-fit', 'bg fit', 'mounty-yarns', 'mounty yarns', 'picc'];
 
@@ -47,32 +44,159 @@ interface CommunityProgram {
   id: string;
   name: string;
   organization: string;
-  organization_id?: string;
+  organization_id?: string | null;
+  organization_slug?: string | null;
   location: string;
   state: string;
-  approach: 'Indigenous-led' | 'Community-based' | 'Grassroots' | 'Culturally-responsive';
+  approach: string;
   description: string;
   impact_summary: string;
   success_rate: number;
   participants_served: number;
   years_operating: number;
-  contact_phone?: string;
-  contact_email?: string;
-  website?: string;
+  contact_phone?: string | null;
+  contact_email?: string | null;
+  website?: string | null;
   is_featured: boolean;
   indigenous_knowledge: boolean;
   community_connection_score: number;
   tags: string[];
   founded_year: number;
-  organizations?: {
-    name: string;
-    slug: string;
+  alma_intervention_id?: string | null;
+}
+
+type ProgramApiRecord = {
+  id?: string | null;
+  name?: string | null;
+  organization_name?: string | null;
+  organization?: string | null;
+  organization_id?: string | null;
+  organization_slug?: string | null;
+  location?: string | null;
+  state?: string | null;
+  approach?: string | null;
+  description?: string | null;
+  impact_summary?: string | null;
+  success_rate?: number | null;
+  participants_served?: number | null;
+  years_operating?: number | null;
+  founded_year?: number | null;
+  contact_phone?: string | null;
+  contact_email?: string | null;
+  website?: string | null;
+  is_featured?: boolean | null;
+  indigenous_knowledge?: boolean | null;
+  community_connection_score?: number | null;
+  tags?: string[] | null;
+  alma_intervention_id?: string | null;
+};
+
+function toNumber(value: number | null | undefined, fallback = 0): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+}
+
+function asNullableString(value: unknown): string | null {
+  return typeof value === 'string' ? value : null;
+}
+
+function asNullableBoolean(value: unknown): boolean | null {
+  return typeof value === 'boolean' ? value : null;
+}
+
+function asStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.filter((item): item is string => typeof item === 'string');
+}
+
+function normalizeProgram(record: unknown): CommunityProgram | null {
+  if (!record || typeof record !== 'object') {
+    return null;
+  }
+
+  const raw = record as ProgramApiRecord;
+  const id = asNullableString(raw.id);
+  if (!id) {
+    return null;
+  }
+
+  const currentYear = new Date().getFullYear();
+  const yearsOperating = toNumber(raw.years_operating, 0);
+  const foundedYear = toNumber(
+    raw.founded_year,
+    yearsOperating > 0 ? Math.max(1900, currentYear - yearsOperating) : currentYear
+  );
+
+  return {
+    id,
+    name: asNullableString(raw.name) || 'Unnamed Program',
+    organization: asNullableString(raw.organization_name) || asNullableString(raw.organization) || 'Community Program',
+    organization_id: asNullableString(raw.organization_id),
+    organization_slug: asNullableString(raw.organization_slug),
+    location: asNullableString(raw.location) || 'Australia',
+    state: asNullableString(raw.state) || 'National',
+    approach: asNullableString(raw.approach) || 'Community-based',
+    description: asNullableString(raw.description) || 'No description available yet.',
+    impact_summary: asNullableString(raw.impact_summary) || 'No impact summary available yet.',
+    success_rate: toNumber(raw.success_rate, 0),
+    participants_served: toNumber(raw.participants_served, 0),
+    years_operating: yearsOperating,
+    contact_phone: asNullableString(raw.contact_phone),
+    contact_email: asNullableString(raw.contact_email),
+    website: asNullableString(raw.website),
+    is_featured: asNullableBoolean(raw.is_featured) ?? false,
+    indigenous_knowledge: asNullableBoolean(raw.indigenous_knowledge) ?? false,
+    community_connection_score: toNumber(raw.community_connection_score, 0),
+    tags: asStringArray(raw.tags),
+    founded_year: foundedYear,
+    alma_intervention_id: asNullableString(raw.alma_intervention_id),
+  };
+}
+
+function normalizeProfileData(input: unknown): ProfileData | null {
+  if (!input || typeof input !== 'object') {
+    return null;
+  }
+  const row = input as Record<string, unknown>;
+  const rawProfile = row.profile;
+  if (!rawProfile || typeof rawProfile !== 'object') {
+    return null;
+  }
+
+  const profileRecord = rawProfile as Record<string, unknown>;
+  const profileId = asNullableString(profileRecord.id);
+  if (!profileId) {
+    return null;
+  }
+
+  const organizationValue = profileRecord.organization;
+  let organization: { name: string } | undefined;
+  if (organizationValue && typeof organizationValue === 'object') {
+    const orgName = asNullableString((organizationValue as Record<string, unknown>).name);
+    if (orgName) {
+      organization = { name: orgName };
+    }
+  }
+
+  return {
+    profile: {
+      id: profileId,
+      name: asNullableString(profileRecord.name) ?? undefined,
+      preferred_name: asNullableString(profileRecord.preferred_name) ?? undefined,
+      bio: asNullableString(profileRecord.bio) ?? undefined,
+      profile_picture_url: asNullableString(profileRecord.profile_picture_url) ?? undefined,
+      organization,
+    },
+    appearanceRole: asNullableString(row.appearanceRole) ?? undefined,
+    appearanceExcerpt: asNullableString(row.appearanceExcerpt) ?? undefined,
+    isFeatured: asNullableBoolean(row.isFeatured) ?? undefined,
   };
 }
 
 export default function ProgramDetailPage() {
-  const params = useParams();
-  const programId = params?.id as string;
+  const params = useParams<{ id: string }>();
+  const programId = params?.id;
   const [program, setProgram] = useState<CommunityProgram | null>(null);
   const [profiles, setProfiles] = useState<ProfileData[]>([]);
   const [relatedPrograms, setRelatedPrograms] = useState<CommunityProgram[]>([]);
@@ -83,61 +207,87 @@ export default function ProgramDetailPage() {
   useEffect(() => {
     async function fetchProgram() {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('registered_services')
-        .select(`
-          *,
-          organizations:organization_id (
-            name,
-            slug
-          )
-        `)
-        .eq('id', programId)
-        .single();
+      try {
+        const response = await fetch(`/api/programs/${encodeURIComponent(programId)}`, { cache: 'no-store' });
+        if (!response.ok) {
+          console.error('Error fetching program:', response.status, response.statusText);
+          setProgram(null);
+          return;
+        }
 
-      if (error) {
-        console.error('Error fetching program:', error);
-        setProgram(null);
-      } else if (data) {
-        setProgram(data);
+        const payload = await response.json();
+        if (!payload || typeof payload !== 'object') {
+          setProgram(null);
+          return;
+        }
+        const payloadRecord = payload as Record<string, unknown>;
+        if (!payloadRecord.success || !payloadRecord.program) {
+          setProgram(null);
+          return;
+        }
+
+        const normalizedProgram = normalizeProgram(payloadRecord.program);
+        if (!normalizedProgram) {
+          setProgram(null);
+          return;
+        }
+        setProgram(normalizedProgram);
 
         // Check if affiliated with a founding basecamp
-        const orgSlug = data.organizations?.slug?.toLowerCase() || '';
-        const orgName = data.organizations?.name?.toLowerCase() || '';
-        const orgText = data.organization?.toLowerCase() || ''; // Text field fallback
+        const orgSlug = normalizedProgram.organization_slug?.toLowerCase() || '';
+        const orgName = normalizedProgram.organization.toLowerCase();
         const isBasecamp = FOUNDING_BASECAMP_SLUGS.some(
-          basecamp => orgSlug.includes(basecamp) || orgName.includes(basecamp) || orgText.includes(basecamp)
+          (basecamp) => orgSlug.includes(basecamp) || orgName.includes(basecamp)
         );
         setIsBasecampAffiliated(isBasecamp);
 
-        // Fetch related programs (same approach or state, excluding current)
-        const { data: related } = await supabase
-          .from('registered_services')
-          .select(`
-            *,
-            organizations:organization_id (
-              name,
-              slug
-            )
-          `)
-          .neq('id', programId)
-          .or(`approach.eq.${data.approach},state.eq.${data.state}`)
-          .limit(3);
-
-        if (related) {
-          setRelatedPrograms(related);
+        // Fetch related programs from canonical API, then filter by approach/state.
+        const relatedResponse = await fetch('/api/programs?limit=200', { cache: 'no-store' });
+        if (!relatedResponse.ok) {
+          return;
         }
+
+        const relatedPayload = await relatedResponse.json();
+        const relatedPayloadRecord = relatedPayload && typeof relatedPayload === 'object'
+          ? (relatedPayload as Record<string, unknown>)
+          : null;
+        const relatedRecords = Array.isArray(relatedPayloadRecord?.programs)
+          ? (relatedPayloadRecord.programs as unknown[])
+          : [];
+        const related = relatedRecords
+          .map(normalizeProgram)
+          .filter((item): item is CommunityProgram => item !== null)
+          .filter((item) => {
+            if (item.id === normalizedProgram.id) return false;
+            return item.approach === normalizedProgram.approach || item.state === normalizedProgram.state;
+          })
+          .slice(0, 3);
+
+        setRelatedPrograms(related);
+      } catch (error) {
+        console.error('Error fetching program:', error);
+        setProgram(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
 
     async function fetchProfiles() {
       setProfilesLoading(true);
       try {
-        const response = await fetch(`/api/programs/${programId}/profiles`);
+        const response = await fetch(`/api/programs/${encodeURIComponent(programId)}/profiles`);
         if (response.ok) {
           const data = await response.json();
-          setProfiles(data.profiles || []);
+          const dataRecord = data && typeof data === 'object'
+            ? (data as Record<string, unknown>)
+            : null;
+          const profileRows = Array.isArray(dataRecord?.profiles)
+            ? (dataRecord.profiles as unknown[])
+            : [];
+          const normalizedProfiles = profileRows
+            .map(normalizeProfileData)
+            .filter((row): row is ProfileData => row !== null);
+          setProfiles(normalizedProfiles);
         }
       } catch (error) {
         console.error('Error fetching profiles:', error);
@@ -146,7 +296,7 @@ export default function ProgramDetailPage() {
       }
     }
 
-    if (programId) {
+    if (typeof programId === 'string' && programId.length > 0) {
       fetchProgram();
       fetchProfiles();
     }
@@ -236,15 +386,24 @@ export default function ProgramDetailPage() {
                       Centre of Excellence
                     </Link>
                   )}
+                  {program.alma_intervention_id && (
+                    <Link
+                      href={`/intelligence/interventions/${program.alma_intervention_id}`}
+                      className="px-4 py-2 bg-emerald-600 text-white text-sm font-bold uppercase tracking-wider inline-flex items-center gap-2 hover:bg-emerald-700 transition-colors"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Evidence Context
+                    </Link>
+                  )}
                 </div>
 
                 <h1 className="text-5xl font-bold mb-4">{program.name}</h1>
-                {program.organizations ? (
+                {program.organization_slug ? (
                   <Link
-                    href={`/organizations/${program.organizations.slug}`}
+                    href={`/organizations/${program.organization_slug}`}
                     className="text-2xl text-blue-700 hover:text-blue-600 mb-4 inline-flex items-center gap-2 font-medium"
                   >
-                    {program.organizations.name}
+                    {program.organization}
                     <ExternalLink className="h-5 w-5" />
                   </Link>
                 ) : (

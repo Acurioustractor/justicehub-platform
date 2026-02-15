@@ -10,36 +10,33 @@ import {
   ChevronRight,
   Microscope,
   Mountain,
-  BookOpen
+  BookOpen,
+  Shield,
+  Filter,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import FeaturedVideo from '@/components/FeaturedVideo';
-import ImageGallery from '@/components/ImageGallery';
 
-interface CommunityProgram {
+interface ProgramCatalogRecord {
   id: string;
   name: string;
-  organization: string;
-  location: string;
-  state: string;
-  approach: 'Indigenous-led' | 'Community-based' | 'Grassroots' | 'Culturally-responsive';
-  description: string;
-  impact_summary: string;
-  success_rate: number;
-  participants_served: number;
-  years_operating: number;
-  contact_phone?: string;
-  contact_email?: string;
-  website?: string;
-  is_featured: boolean;
-  indigenous_knowledge: boolean;
-  community_connection_score: number;
-  tags: string[];
-  founded_year: number;
+  description: string | null;
+  organization_id: string | null;
+  organization_name: string | null;
+  state: string | null;
+  location: string | null;
+  approach: string | null;
+  impact_summary: string | null;
+  tags: string[] | null;
+  latitude: number | null;
+  longitude: number | null;
+  alma_intervention_id: string | null;
+  linked_service_id: string | null;
+  is_featured: boolean | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
-// Story type from database
 interface Story {
   id: string;
   title: string;
@@ -50,33 +47,32 @@ interface Story {
   tags: string[] | null;
 }
 
-// Founding Basecamps - Centre of Excellence network
-const FOUNDING_BASECAMP_NAMES = [
-  'oonchiumpa',
-  'bg fit',
-  'mounty yarns',
-  'picc'
-];
-
-// Helper to check if program is affiliated with a founding basecamp
-function isBasecampAffiliated(program: CommunityProgram): boolean {
-  const orgName = program.organization?.toLowerCase() || '';
-  return FOUNDING_BASECAMP_NAMES.some(name => orgName.includes(name));
-}
+const TYPE_COLORS: Record<string, string> = {
+  'Indigenous-led': 'bg-orange-700 text-white',
+  'Community-based': 'bg-blue-700 text-white',
+  Grassroots: 'bg-green-700 text-white',
+  'Culturally-responsive': 'bg-purple-700 text-white',
+  'Community-Led': 'bg-purple-600 text-white',
+  'Diversion': 'bg-green-600 text-white',
+  'Early Intervention': 'bg-blue-600 text-white',
+  'Family Strengthening': 'bg-pink-600 text-white',
+  'Prevention': 'bg-teal-600 text-white',
+  'Wraparound Support': 'bg-amber-600 text-white',
+};
 
 interface CommunityProgramsContentProps {
-  initialPrograms: CommunityProgram[];
+  initialPrograms: ProgramCatalogRecord[];
 }
 
 export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsContentProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedApproach, setSelectedApproach] = useState<string>('all');
+  const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedState, setSelectedState] = useState<string>('all');
+  const [selectedEvidence, setSelectedEvidence] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [stories, setStories] = useState<Story[]>([]);
   const [storiesLoading, setStoriesLoading] = useState(true);
 
-  // Fetch stories from database
   useEffect(() => {
     async function fetchStories() {
       const supabase = createClient();
@@ -95,57 +91,42 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
     fetchStories();
   }, []);
 
-  const approaches = [
-    { id: 'all', label: 'All Approaches' },
-    { id: 'Indigenous-led', label: 'Indigenous-led' },
-    { id: 'Community-based', label: 'Community-based' },
-    { id: 'Grassroots', label: 'Grassroots' },
-    { id: 'Culturally-responsive', label: 'Culturally-responsive' }
-  ];
+  const types = useMemo(() => {
+    const typeSet = new Set<string>();
+    initialPrograms.forEach((p) => {
+      if (p.approach) typeSet.add(p.approach);
+    });
+    return Array.from(typeSet).sort();
+  }, [initialPrograms]);
 
-  const states = [
-    { id: 'all', label: 'All States' },
-    { id: 'NSW', label: 'New South Wales' },
-    { id: 'VIC', label: 'Victoria' },
-    { id: 'QLD', label: 'Queensland' },
-    { id: 'SA', label: 'South Australia' },
-    { id: 'WA', label: 'Western Australia' },
-    { id: 'TAS', label: 'Tasmania' },
-    { id: 'NT', label: 'Northern Territory' },
-    { id: 'ACT', label: 'Australian Capital Territory' }
-  ];
+  const states = useMemo(() => {
+    const stateSet = new Set<string>();
+    initialPrograms.forEach((p) => {
+      if (p.state) stateSet.add(p.state);
+    });
+    return Array.from(stateSet).sort();
+  }, [initialPrograms]);
 
-  const featuredPrograms = useMemo(() =>
-    initialPrograms.filter(program => program.is_featured),
-    [initialPrograms]
-  );
+  const evidenceLevels = ['Linked Evidence', 'No Evidence Link'];
 
   const filteredPrograms = useMemo(() => {
     return initialPrograms.filter(program => {
-      const matchesSearch = program.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           program.organization?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           program.description?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesApproach = selectedApproach === 'all' || program.approach === selectedApproach;
+      const matchesSearch = !searchQuery ||
+        program.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        program.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesType = selectedType === 'all' || program.approach === selectedType;
       const matchesState = selectedState === 'all' || program.state === selectedState;
-      return matchesSearch && matchesApproach && matchesState;
+      const matchesEvidence =
+        selectedEvidence === 'all' ||
+        (selectedEvidence === 'Linked Evidence' && !!program.alma_intervention_id) ||
+        (selectedEvidence === 'No Evidence Link' && !program.alma_intervention_id);
+      return matchesSearch && matchesType && matchesState && matchesEvidence;
     });
-  }, [initialPrograms, searchQuery, selectedApproach, selectedState]);
+  }, [initialPrograms, searchQuery, selectedType, selectedState, selectedEvidence]);
 
-  const getApproachColor = (approach: string) => {
-    switch (approach) {
-      case 'Indigenous-led': return 'bg-orange-600 text-white';
-      case 'Community-based': return 'bg-blue-800 text-white';
-      case 'Grassroots': return 'bg-blue-600 text-white';
-      case 'Culturally-responsive': return 'bg-orange-700 text-white';
-      default: return 'bg-gray-600 text-white';
-    }
-  };
+  const hasFilters = searchQuery || selectedType !== 'all' || selectedState !== 'all' || selectedEvidence !== 'all';
 
-  // Calculate stats from actual data
-  const totalParticipants = initialPrograms.reduce((sum, p) => sum + (p.participants_served || 0), 0);
-  const avgSuccessRate = initialPrograms.length > 0
-    ? Math.round(initialPrograms.reduce((sum, p) => sum + (p.success_rate || 0), 0) / initialPrograms.length)
-    : 0;
+  const linkedEvidenceCount = initialPrograms.filter((p) => !!p.alma_intervention_id).length;
 
   return (
     <div className="min-h-screen bg-white page-content">
@@ -160,13 +141,17 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
                 Community Programs
               </h1>
               <p className="text-xl max-w-4xl mx-auto mb-6 leading-relaxed">
-                Curated profiles of programs that work. Indigenous knowledge. Community connection.
-                Grassroots approaches that transform lives through cultural strength and local wisdom.
+                Evidence-based community programs across Australia. Indigenous-led, diversion, mentoring,
+                and cultural programs that transform lives through community strength and local wisdom.
               </p>
 
               <p className="text-sm max-w-2xl mx-auto mb-8 text-gray-600 border-l-4 border-ochre-400 pl-4 text-left">
-                <strong>Community Programs</strong> are curated and verified by JusticeHub. We work directly with organizations to ensure accurate information and meaningful impact data.
-                Looking for a broader directory of services? Visit our <a href="/services" className="text-ochre-600 hover:underline font-medium">Services Directory</a> with 500+ indexed entries.
+                <strong>Community Programs</strong> are sourced from the canonical programs catalog.
+                Where evidence exists, programs link to ALMA intervention records for drill-through context.
+                Looking for all interventions? Visit our{' '}
+                <a href="/intelligence/interventions" className="text-ochre-600 hover:underline font-medium">
+                  Interventions Database
+                </a>.
               </p>
 
               {/* Quick Links */}
@@ -186,107 +171,40 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
                   Centre of Excellence
                 </Link>
                 <Link
-                  href="/centre-of-excellence/global-insights"
+                  href="/intelligence/interventions"
                   className="inline-flex items-center gap-2 px-4 py-2 border-2 border-black bg-white hover:bg-purple-50 font-bold text-sm transition-colors"
                 >
                   <BookOpen className="w-4 h-4" />
-                  International Models
+                  Linked Interventions ({linkedEvidenceCount})
                 </Link>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
                 <div className="text-center">
                   <div className="font-mono text-4xl font-bold text-blue-800 mb-2">{initialPrograms.length}</div>
-                  <p className="font-medium">Curated Programs</p>
-                  <p className="text-sm text-gray-600">Quality over quantity</p>
+                  <p className="font-medium">Community Programs</p>
+                  <p className="text-sm text-gray-600">Canonical catalog records</p>
                 </div>
                 <div className="text-center">
-                  <div className="font-mono text-4xl font-bold text-orange-600 mb-2">{avgSuccessRate}%</div>
-                  <p className="font-medium">Average Success Rate</p>
-                  <p className="text-sm text-gray-600">Community-driven results</p>
+                  <div className="font-mono text-4xl font-bold text-orange-600 mb-2">{types.length}</div>
+                  <p className="font-medium">Program Types</p>
+                  <p className="text-sm text-gray-600">Diverse approaches</p>
                 </div>
                 <div className="text-center">
-                  <div className="font-mono text-4xl font-bold text-blue-600 mb-2">{totalParticipants.toLocaleString()}+</div>
-                  <p className="font-medium">Lives Transformed</p>
-                  <p className="text-sm text-gray-600">Real community impact</p>
+                  <div className="font-mono text-4xl font-bold text-emerald-600 mb-2">{linkedEvidenceCount}</div>
+                  <p className="font-medium">Evidence Linked</p>
+                  <p className="text-sm text-gray-600">ALMA intervention references</p>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Featured Programs */}
-        {featuredPrograms.length > 0 && (
-          <section className="py-16 border-b-2 border-black">
-            <div className="container-justice">
-              <h2 className="text-3xl font-bold mb-2 text-center">FEATURED PROGRAMS</h2>
-              <p className="text-center text-gray-700 mb-12 max-w-2xl mx-auto">
-                Exceptional programs showcasing the power of community-driven approaches,
-                indigenous knowledge, and grassroots innovation.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {featuredPrograms.map((program) => (
-                <div key={program.id} className="data-card">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className={`px-3 py-1 text-sm font-bold uppercase tracking-wider ${getApproachColor(program.approach)}`}>
-                      {program.approach}
-                    </span>
-                    {program.indigenous_knowledge && (
-                      <span className="text-orange-600 font-bold text-sm">
-                        Indigenous Knowledge
-                      </span>
-                    )}
-                    {isBasecampAffiliated(program) && (
-                      <span className="inline-flex items-center gap-1 text-ochre-600 font-bold text-sm">
-                        <Mountain className="w-3 h-3" />
-                        CoE Network
-                      </span>
-                    )}
-                  </div>
-
-                  <h3 className="text-xl font-bold mb-2">{program.name}</h3>
-                  <p className="text-gray-600 mb-1">{program.organization}</p>
-                  <p className="text-sm text-gray-600 mb-4 flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    {program.location}, {program.state}
-                  </p>
-
-                  <p className="text-gray-700 mb-4 leading-relaxed">{program.impact_summary}</p>
-
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="text-center">
-                      <div className="font-mono text-2xl font-bold text-blue-800">{program.success_rate}%</div>
-                      <p className="text-xs text-gray-600">Success Rate</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="font-mono text-2xl font-bold text-orange-600">{program.participants_served}+</div>
-                      <p className="text-xs text-gray-600">Lives Changed</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="font-mono text-2xl font-bold text-blue-600">{program.years_operating}</div>
-                      <p className="text-xs text-gray-600">Years Impact</p>
-                    </div>
-                  </div>
-
-                  <Link
-                    href={`/community-programs/${program.id}`}
-                    className="block w-full text-center cta-primary"
-                  >
-                    EXPLORE PROGRAM
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-        )}
-
         {/* Search and Database */}
         <section className="py-16">
           <div className="container-justice">
             <div className="mb-8">
-              <h2 className="text-3xl font-bold mb-4">DISCOVER ALL PROGRAMS</h2>
+              <h2 className="text-3xl font-bold mb-4">DISCOVER PROGRAMS</h2>
 
               {/* Search */}
               <div className="mb-6">
@@ -294,7 +212,7 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Search programs, organizations, approaches..."
+                    placeholder="Search programs by name or description..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-12 pr-4 py-4 text-lg border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
@@ -305,39 +223,53 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
               {/* Filters */}
               <div className="flex flex-col md:flex-row gap-4 mb-6">
                 <div className="flex-1">
-                  <label className="block text-sm font-bold mb-2">APPROACH</label>
+                  <label className="block text-sm font-bold mb-2">TYPE</label>
                   <select
-                    value={selectedApproach}
-                    onChange={(e) => setSelectedApproach(e.target.value)}
+                    value={selectedType}
+                    onChange={(e) => setSelectedType(e.target.value)}
                     className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800"
                   >
-                    {approaches.map(approach => (
-                      <option key={approach.id} value={approach.id}>{approach.label}</option>
+                    <option value="all">All Types</option>
+                    {types.map(type => (
+                      <option key={type} value={type}>{type}</option>
                     ))}
                   </select>
                 </div>
 
                 <div className="flex-1">
-                  <label className="block text-sm font-bold mb-2">STATE</label>
+                  <label className="block text-sm font-bold mb-2">STATE / TERRITORY</label>
                   <select
                     value={selectedState}
                     onChange={(e) => setSelectedState(e.target.value)}
                     className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800"
                   >
+                    <option value="all">All States</option>
                     {states.map(state => (
-                      <option key={state.id} value={state.id}>{state.label}</option>
+                      <option key={state} value={state}>{state}</option>
                     ))}
                   </select>
                 </div>
 
-                <div className="flex items-end">
+                <div className="flex-1">
+                  <label className="block text-sm font-bold mb-2">EVIDENCE LEVEL</label>
+                  <select
+                    value={selectedEvidence}
+                    onChange={(e) => setSelectedEvidence(e.target.value)}
+                    className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800"
+                  >
+                    <option value="all">All Evidence Levels</option>
+                    {evidenceLevels.map(level => (
+                      <option key={level} value={level}>{level}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex items-end gap-2">
                   <div className="flex border-2 border-black">
                     <button
                       onClick={() => setViewMode('cards')}
                       className={`p-3 font-bold transition-all ${
-                        viewMode === 'cards'
-                          ? 'bg-black text-white'
-                          : 'hover:bg-gray-100'
+                        viewMode === 'cards' ? 'bg-black text-white' : 'hover:bg-gray-100'
                       }`}
                     >
                       <Grid3X3 className="h-5 w-5" />
@@ -345,9 +277,7 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
                     <button
                       onClick={() => setViewMode('table')}
                       className={`p-3 font-bold transition-all border-l-2 border-black ${
-                        viewMode === 'table'
-                          ? 'bg-black text-white'
-                          : 'hover:bg-gray-100'
+                        viewMode === 'table' ? 'bg-black text-white' : 'hover:bg-gray-100'
                       }`}
                     >
                       <List className="h-5 w-5" />
@@ -362,114 +292,130 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
               <p className="text-lg font-medium">
                 {filteredPrograms.length} programs found
               </p>
-              <p className="text-sm text-gray-600">
-                Curated for community impact and cultural connection
-              </p>
+              {hasFilters && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedType('all');
+                    setSelectedState('all');
+                    setSelectedEvidence('all');
+                  }}
+                  className="px-4 py-2 border-2 border-black bg-white hover:bg-black hover:text-white transition-colors text-sm font-bold"
+                >
+                  Clear Filters
+                </button>
+              )}
             </div>
 
             {/* Results Display */}
             {viewMode === 'cards' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredPrograms.map((program) => (
-                  <div key={program.id} className="data-card">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className={`px-2 py-1 text-xs font-bold uppercase tracking-wider ${getApproachColor(program.approach)}`}>
-                        {program.approach}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        {program.indigenous_knowledge && (
-                          <span className="text-orange-600 text-xs font-bold">Indigenous</span>
-                        )}
-                        {isBasecampAffiliated(program) && (
-                          <span className="inline-flex items-center gap-1 text-ochre-600 text-xs font-bold">
-                            <Mountain className="w-3 h-3" />
-                            CoE
-                          </span>
-                        )}
-                      </div>
+                  <div
+                    key={program.id}
+                    className="border-2 border-black bg-white p-5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all group"
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <Link
+                        href={`/community-programs/${program.id}`}
+                        className="font-bold text-lg leading-tight group-hover:text-emerald-700 transition-colors"
+                      >
+                        {program.name}
+                      </Link>
                     </div>
 
-                    <h3 className="font-bold text-lg mb-1">{program.name}</h3>
-                    <p className="text-sm text-gray-600 mb-2">{program.organization}</p>
-                    <p className="text-sm text-gray-600 mb-3 flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      {program.location}, {program.state}
-                    </p>
+                    {program.description && (
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                        {program.description}
+                      </p>
+                    )}
 
-                    <p className="text-sm text-gray-700 mb-4 line-clamp-2">{program.description}</p>
-
-                    <div className="flex justify-between items-center mb-4 text-xs">
-                      <div className="text-center">
-                        <div className="font-mono font-bold text-blue-800">{program.success_rate}%</div>
-                        <div className="text-gray-600">Success</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-mono font-bold text-orange-600">{program.participants_served}+</div>
-                        <div className="text-gray-600">Served</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="font-mono font-bold text-blue-600">{program.years_operating}y</div>
-                        <div className="text-gray-600">Operating</div>
-                      </div>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {program.approach && (
+                        <span className={`px-2 py-1 text-[10px] font-bold uppercase ${TYPE_COLORS[program.approach] || 'bg-gray-600 text-white'}`}>
+                          {program.approach}
+                        </span>
+                      )}
+                      {program.state && (
+                        <span className="px-2 py-1 text-[10px] font-bold uppercase bg-gray-100 border border-gray-300 flex items-center gap-1">
+                          <MapPin className="w-3 h-3" />
+                          {program.state}
+                        </span>
+                      )}
                     </div>
 
-                    <Link
-                      href={`/community-programs/${program.id}`}
-                      className="text-sm font-bold underline text-blue-800 hover:text-blue-600"
-                    >
-                      Learn more
-                    </Link>
+                    {program.organization_name && (
+                      <div className="text-xs text-ochre-700 font-medium mb-2">
+                        Organization: {program.organization_name}
+                      </div>
+                    )}
+
+                    {program.alma_intervention_id ? (
+                      <Link
+                        href={`/intelligence/interventions/${program.alma_intervention_id}`}
+                        className="inline-flex items-center px-2 py-1 text-[10px] font-bold border bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200"
+                      >
+                        <Shield className="w-3 h-3 inline mr-1" />
+                        Evidence Linked
+                      </Link>
+                    ) : (
+                      <div className="inline-flex items-center px-2 py-1 text-[10px] font-bold border bg-gray-100 text-gray-600 border-gray-300">
+                        <Shield className="w-3 h-3 inline mr-1" />
+                        No Evidence Link
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             ) : (
               <div className="overflow-x-auto border-2 border-black">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b-2 border-black">
+                <table className="w-full text-sm">
+                  <thead className="bg-black text-white">
                     <tr>
-                      <th className="px-4 py-3 text-left font-bold">Program</th>
-                      <th className="px-4 py-3 text-left font-bold">Approach</th>
-                      <th className="px-4 py-3 text-left font-bold">Location</th>
-                      <th className="px-4 py-3 text-center font-bold">Success Rate</th>
-                      <th className="px-4 py-3 text-center font-bold">Participants</th>
-                      <th className="px-4 py-3 text-center font-bold">Action</th>
+                      <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Program</th>
+                      <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Type</th>
+                      <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Location</th>
+                      <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Evidence</th>
+                      <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Organization</th>
+                      <th className="px-4 py-3 text-center font-bold uppercase tracking-wider w-20">View</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {filteredPrograms.map((program, index) => (
-                      <tr key={program.id} className={`border-b ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                        <td className="px-4 py-4">
-                          <div>
-                            <div className="font-bold">{program.name}</div>
-                            <div className="text-sm text-gray-600">{program.organization}</div>
-                            <div className="flex items-center gap-2 mt-1">
-                              {program.indigenous_knowledge && (
-                                <span className="text-xs text-orange-600 font-bold">Indigenous Knowledge</span>
-                              )}
-                              {isBasecampAffiliated(program) && (
-                                <span className="inline-flex items-center gap-1 text-xs text-ochre-600 font-bold">
-                                  <Mountain className="w-3 h-3" />
-                                  CoE Network
-                                </span>
-                              )}
-                            </div>
-                          </div>
+                  <tbody className="divide-y divide-gray-200">
+                    {filteredPrograms.map((program, idx) => (
+                      <tr key={program.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`}>
+                        <td className="px-4 py-3 font-medium">
+                          <Link href={`/community-programs/${program.id}`} className="hover:text-emerald-700 hover:underline">
+                            {program.name}
+                          </Link>
                         </td>
-                        <td className="px-4 py-4">
-                          <span className={`px-2 py-1 text-xs font-bold uppercase tracking-wider ${getApproachColor(program.approach)}`}>
-                            {program.approach}
-                          </span>
+                        <td className="px-4 py-3">
+                          {program.approach && (
+                            <span className={`px-2 py-0.5 text-[10px] font-bold uppercase ${TYPE_COLORS[program.approach] || 'bg-gray-600 text-white'}`}>
+                              {program.approach}
+                            </span>
+                          )}
                         </td>
-                        <td className="px-4 py-4 text-sm">
-                          {program.location}, {program.state}
+                        <td className="px-4 py-3 text-gray-600">
+                          {program.state || '-'}
                         </td>
-                        <td className="px-4 py-4 text-center">
-                          <span className="font-mono font-bold text-blue-800">{program.success_rate}%</span>
+                        <td className="px-4 py-3">
+                          {program.alma_intervention_id ? (
+                            <Link
+                              href={`/intelligence/interventions/${program.alma_intervention_id}`}
+                              className="px-2 py-0.5 text-[10px] font-bold border bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200"
+                            >
+                              Linked
+                            </Link>
+                          ) : (
+                            <span className="px-2 py-0.5 text-[10px] font-bold border bg-gray-100 text-gray-600 border-gray-300">
+                              None
+                            </span>
+                          )}
                         </td>
-                        <td className="px-4 py-4 text-center">
-                          <span className="font-mono font-bold text-orange-600">{program.participants_served}+</span>
+                        <td className="px-4 py-3 text-sm text-gray-600">
+                          {program.organization_name || '-'}
                         </td>
-                        <td className="px-4 py-4 text-center">
+                        <td className="px-4 py-3 text-center">
                           <Link
                             href={`/community-programs/${program.id}`}
                             className="text-blue-800 hover:text-blue-600 font-bold text-sm"
@@ -490,8 +436,9 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
                 <button
                   onClick={() => {
                     setSearchQuery('');
-                    setSelectedApproach('all');
+                    setSelectedType('all');
                     setSelectedState('all');
+                    setSelectedEvidence('all');
                   }}
                   className="cta-secondary"
                 >
@@ -501,10 +448,6 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
             )}
           </div>
         </section>
-
-        {/* Video Showcase Section - Hidden until real media content is available
-           TODO: Add real video URLs and images from basecamps/programs
-        */}
 
         {/* Stories Section */}
         <section className="py-16 bg-gray-50 border-t-2 border-black">
@@ -544,15 +487,6 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
                     {story.excerpt && (
                       <p className="text-gray-700 mb-4 line-clamp-3">{story.excerpt}</p>
                     )}
-                    {story.tags && story.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {story.tags.slice(0, 2).map((tag) => (
-                          <span key={tag} className="text-xs bg-gray-100 px-2 py-1 text-gray-600">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
 
                     <Link
                       href={`/stories/${story.slug || story.id}`}
@@ -588,7 +522,7 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
               Your Community. Your Solutions.
             </h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto" style={{color: 'white'}}>
-              Know of a program that's making real impact through community connection?
+              Know of a program that&apos;s making real impact through community connection?
               Help us share their story and amplify their work.
             </p>
 

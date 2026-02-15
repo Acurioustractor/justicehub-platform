@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createServiceClient } from '@/lib/supabase/service';
 
-function getSupabaseClient() {
-  return createClient(
-    process.env.SUPABASE_URL || 'https://tednluwflfhxyucgwigh.supabase.co',
-    process.env.SUPABASE_SERVICE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlZG5sdXdmbGZoeHl1Y2d3aWdoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjM0NjIyOSwiZXhwIjoyMDY3OTIyMjI5fQ.wyizbOWRxMULUp6WBojJPfey1ta8-Al1OlZqDDIPIHo'
-  );
-}
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = getSupabaseClient();
+    const supabase = createServiceClient();
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
     const search = searchParams.get('search');
@@ -72,15 +67,26 @@ export async function GET(request: NextRequest) {
       subcategory: service.subcategory
     })) || [];
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       services: transformedServices,
       total: transformedServices.length,
       metadata: {
-        source: 'AI Scraped Services',
+        source: 'legacy_scraped_services',
         lastUpdate: new Date().toISOString(),
-        confidence: 'AI-verified data'
-      }
+        confidence: 'AI-verified data',
+        legacy: true,
+        legacy_reason: 'Compatibility endpoint over staging table',
+        canonical_replacement: '/api/services',
+        status: 'deprecated-compat',
+      },
+      legacy: true,
+      canonical_replacement: '/api/services',
+      compatibility_note:
+        'This endpoint is a legacy compatibility surface and is not used by primary frontend service flows.',
     });
+    response.headers.set('X-JusticeHub-Endpoint-Status', 'legacy-compat');
+    response.headers.set('X-JusticeHub-Canonical-Replacement', '/api/services');
+    return response;
 
   } catch (error) {
     console.error('API error:', error);

@@ -19,6 +19,10 @@ interface SentimentTimelineProps {
   height?: number;
 }
 
+interface ParsedDataPoint extends DataPoint {
+  parsedDate: Date;
+}
+
 export default function SentimentTimeline({
   data,
   width = 800,
@@ -48,9 +52,9 @@ export default function SentimentTimeline({
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Parse dates and sort - filter out items with null/undefined sourceName
-    const parsedData = data
-      .filter(d => d.sourceName != null && d.sourceName !== '')
-      .map(d => ({
+    const parsedData: ParsedDataPoint[] = data
+      .filter((d): d is DataPoint => Boolean(d?.sourceName))
+      .map((d) => ({
         ...d,
         parsedDate: new Date(d.date),
       }))
@@ -60,7 +64,7 @@ export default function SentimentTimeline({
     if (parsedData.length === 0) return;
 
     // Group by source
-    const dataBySource = d3.group(parsedData, d => d.sourceName);
+    const dataBySource = d3.group(parsedData, (d) => d.sourceName) as Map<string, ParsedDataPoint[]>;
 
     // Scales
     const xScale = d3
@@ -87,8 +91,8 @@ export default function SentimentTimeline({
       .join('line')
       .attr('x1', 0)
       .attr('x2', innerWidth)
-      .attr('y1', d => yScale(d))
-      .attr('y2', d => yScale(d))
+      .attr('y1', (d) => yScale(d))
+      .attr('y2', (d) => yScale(d))
       .attr('stroke', 'rgba(255, 255, 255, 0.1)')
       .attr('stroke-width', 1);
 
@@ -104,9 +108,9 @@ export default function SentimentTimeline({
 
     // Line generator
     const line = d3
-      .line<typeof parsedData[0]>()
-      .x(d => xScale(d.parsedDate))
-      .y(d => yScale(d.avgSentiment))
+      .line<ParsedDataPoint>()
+      .x((d) => xScale(d.parsedDate))
+      .y((d) => yScale(d.avgSentiment))
       .curve(d3.curveMonotoneX);
 
     // Draw lines for each source
@@ -155,10 +159,10 @@ export default function SentimentTimeline({
         .delay(i * 50)
         .duration(300)
         .attr('r', 6)
-        .on('end', function() {
+        .on('end', function (this: SVGCircleElement) {
           // Add hover listeners after animation
           d3.select(this)
-            .on('mouseenter', function(event) {
+            .on('mouseenter', function (this: SVGCircleElement, event: MouseEvent) {
               d3.select(this)
                 .transition()
                 .duration(200)
@@ -167,7 +171,7 @@ export default function SentimentTimeline({
               setHoveredPoint(d);
               setMousePos({ x: event.pageX, y: event.pageY });
             })
-            .on('mouseleave', function() {
+            .on('mouseleave', function (this: SVGCircleElement) {
               d3.select(this)
                 .transition()
                 .duration(200)
@@ -179,7 +183,11 @@ export default function SentimentTimeline({
     });
 
     // X Axis
-    const xAxis = d3.axisBottom(xScale).ticks(6).tickFormat(d3.timeFormat('%b %d') as any);
+    const formatDate = d3.timeFormat('%b %d');
+    const xAxis = d3
+      .axisBottom(xScale)
+      .ticks(6)
+      .tickFormat((value) => formatDate(value instanceof Date ? value : new Date(value.valueOf())));
 
     g.append('g')
       .attr('transform', `translate(0,${innerHeight})`)
@@ -214,11 +222,9 @@ export default function SentimentTimeline({
       .attr('transform', `translate(${width - margin.right + 20}, ${margin.top})`);
 
     // Filter out any null/undefined sources and create legend
-    const validSources = Array.from(dataBySource.keys()).filter(
-      source => source != null && source !== ''
-    );
+    const validSources = Array.from(dataBySource.keys()).filter((source) => source.length > 0);
 
-    validSources.forEach((source, i) => {
+    validSources.forEach((source: string, i) => {
       const legendItem = legend
         .append('g')
         .attr('transform', `translate(0, ${i * 25})`);

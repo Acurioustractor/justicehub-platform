@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
+import {
+  empathyLedgerClient,
+  isEmpathyLedgerConfigured,
+} from '@/lib/supabase/empathy-ledger';
 
 /**
  * GET /api/empathy-ledger/stories
@@ -17,6 +20,20 @@ import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
  */
 export async function GET(request: NextRequest) {
   try {
+    if (!isEmpathyLedgerConfigured) {
+      return NextResponse.json({
+        success: true,
+        stories: [],
+        count: 0,
+        unavailable_reason: 'EMPATHY_LEDGER_NOT_CONFIGURED',
+        consent_info: {
+          is_public: true,
+          privacy_level: 'public',
+          description: 'Empathy Ledger is not configured in this environment',
+        },
+      });
+    }
+
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
     const featured = searchParams.get('featured') === 'true';

@@ -90,7 +90,7 @@ export default function MediaIntelligenceStudio() {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Demo data function for when database is empty
-  function useDemoData() {
+  function loadDemoData() {
     console.log('Using demo data');
 
     // Generate 30 days of demo sentiment data
@@ -154,7 +154,7 @@ export default function MediaIntelligenceStudio() {
         if (sentimentError) {
           console.error('Supabase error:', sentimentError);
           // Use demo data if database is empty/errored
-          useDemoData();
+          loadDemoData();
           return;
         }
 

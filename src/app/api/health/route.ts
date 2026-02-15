@@ -103,8 +103,8 @@ export async function GET() {
     supabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
     supabaseKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     serviceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-    empathyLedgerUrl: !!process.env.EMPATHY_LEDGER_SUPABASE_URL,
-    empathyLedgerKey: !!process.env.EMPATHY_LEDGER_SUPABASE_ANON_KEY,
+    empathyLedgerUrl: !!process.env.EMPATHY_LEDGER_URL,
+    empathyLedgerKey: !!process.env.EMPATHY_LEDGER_API_KEY,
   };
 
   const missingConfig = Object.entries(configChecks)

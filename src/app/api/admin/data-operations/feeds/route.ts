@@ -14,13 +14,51 @@ async function isAdmin(supabase: ReturnType<typeof createClient> extends Promise
 export interface DataFeed {
   id: string;
   name: string;
-  type: 'scraper' | 'sync' | 'manual' | 'api' | 'ai';
+  type: 'directory' | 'programs' | 'alma' | 'sync';
+  pipeline?: 'directory' | 'programs' | 'alma' | 'sync';
+  lifecycle?: 'canonical' | 'supporting' | 'legacy';
+  legacy?: boolean;
+  compatibilityOnly?: boolean;
+  canonicalPipeline?: 'directory' | 'programs' | 'alma' | 'sync';
+  canonicalTable?: string | null;
   source: string;
   table: string;
   recordCount: number;
   lastUpdated: string | null;
   status: 'active' | 'stale' | 'never' | 'healthy';
   description: string;
+}
+
+async function fetchAllScrapedServices(
+  supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never
+) {
+  const pageSize = 1000;
+  let from = 0;
+  const results: Array<{ id: string; source_url: string | null; created_at: string | null }> = [];
+
+  while (true) {
+    const to = from + pageSize - 1;
+    const { data, error } = await supabase
+      .from('scraped_services')
+      .select('id, source_url, created_at')
+      .order('created_at', { ascending: false })
+      .range(from, to);
+
+    if (error) {
+      throw error;
+    }
+
+    const rows = data || [];
+    results.push(...rows);
+
+    if (rows.length < pageSize) {
+      break;
+    }
+
+    from += pageSize;
+  }
+
+  return results;
 }
 
 export async function GET() {
@@ -37,11 +75,10 @@ export async function GET() {
     }
 
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const scrapedServices = await fetchAllScrapedServices(supabase);
 
     // Fetch all data in parallel
     const [
-      // Scraped services by source_url domain
-      { data: scrapedServices },
       // Empathy Ledger synced
       { count: empathyProfilesCount },
       { count: empathyStoriesCount },
@@ -50,11 +87,13 @@ export async function GET() {
       // Manual entries
       { count: servicesCount },
       { count: organizationsCount },
+      { count: programsCount },
       { count: eventsCount },
       { count: articlesCount },
       { count: blogPostsCount },
       { data: servicesLatest },
       { data: orgsLatest },
+      { data: programsLatest },
       { data: eventsLatest },
       { data: articlesLatest },
       { data: blogLatest },
@@ -75,8 +114,6 @@ export async function GET() {
       { count: researchCount },
       { count: intlProgramsCount },
     ] = await Promise.all([
-      // Scraped services
-      supabase.from('scraped_services').select('id, source_url, created_at').order('created_at', { ascending: false }).limit(1000),
       // Empathy Ledger
       supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
       supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
@@ -85,11 +122,13 @@ export async function GET() {
       // Manual entries
       supabase.from('services').select('*', { count: 'exact', head: true }),
       supabase.from('organizations').select('*', { count: 'exact', head: true }),
+      supabase.from('registered_services').select('*', { count: 'exact', head: true }),
       supabase.from('events').select('*', { count: 'exact', head: true }),
       supabase.from('articles').select('*', { count: 'exact', head: true }),
       supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', false),
       supabase.from('services').select('updated_at').order('updated_at', { ascending: false }).limit(1),
       supabase.from('organizations').select('updated_at').order('updated_at', { ascending: false }).limit(1),
+      supabase.from('registered_services').select('updated_at').order('updated_at', { ascending: false }).limit(1),
       supabase.from('events').select('updated_at').order('updated_at', { ascending: false }).limit(1),
       supabase.from('articles').select('updated_at').order('updated_at', { ascending: false }).limit(1),
       supabase.from('blog_posts').select('updated_at').eq('synced_from_empathy_ledger', false).order('updated_at', { ascending: false }).limit(1),
@@ -145,7 +184,7 @@ export async function GET() {
       feeds.push({
         id: `ds-${source.id}`,
         name: source.name,
-        type: 'scraper',
+        type: 'sync',
         source: 'Registered Scraper',
         table: 'data_sources',
         recordCount: 0, // No scrape count tracked
@@ -165,7 +204,7 @@ export async function GET() {
         feeds.push({
           id: `scraped-${domain}`,
           name: domain,
-          type: 'scraper',
+          type: 'directory',
           source: 'GitHub Actions',
           table: 'scraped_services',
           recordCount: data.count,
@@ -205,7 +244,7 @@ export async function GET() {
     feeds.push({
       id: 'manual-services',
       name: 'Services Directory',
-      type: 'manual',
+      type: 'directory',
       source: 'Admin Entry',
       table: 'services',
       recordCount: servicesCount || 0,
@@ -217,7 +256,7 @@ export async function GET() {
     feeds.push({
       id: 'manual-orgs',
       name: 'Organizations Directory',
-      type: 'manual',
+      type: 'directory',
       source: 'Admin Entry',
       table: 'organizations',
       recordCount: organizationsCount || 0,
@@ -227,9 +266,21 @@ export async function GET() {
     });
 
     feeds.push({
+      id: 'manual-programs',
+      name: 'Programs Catalog',
+      type: 'programs',
+      source: 'Curation + Sync',
+      table: 'registered_services',
+      recordCount: programsCount || 0,
+      lastUpdated: programsLatest?.[0]?.updated_at || null,
+      status: getStatus(programsLatest?.[0]?.updated_at || null),
+      description: 'Canonical curated programs',
+    });
+
+    feeds.push({
       id: 'manual-events',
       name: 'Events Calendar',
-      type: 'manual',
+      type: 'sync',
       source: 'Admin Entry',
       table: 'events',
       recordCount: eventsCount || 0,
@@ -241,7 +292,7 @@ export async function GET() {
     feeds.push({
       id: 'manual-articles',
       name: 'Articles & Stories',
-      type: 'manual',
+      type: 'sync',
       source: 'Admin Entry',
       table: 'articles',
       recordCount: articlesCount || 0,
@@ -253,7 +304,7 @@ export async function GET() {
     feeds.push({
       id: 'manual-blog',
       name: 'Blog Posts',
-      type: 'manual',
+      type: 'sync',
       source: 'Admin Entry',
       table: 'blog_posts',
       recordCount: blogPostsCount || 0,
@@ -266,7 +317,7 @@ export async function GET() {
     feeds.push({
       id: 'alma-discovery',
       name: 'ALMA Link Discovery',
-      type: 'ai',
+      type: 'alma',
       source: 'ALMA Agent',
       table: 'alma_discovered_links',
       recordCount: almaLinksCount || 0,
@@ -278,7 +329,7 @@ export async function GET() {
     feeds.push({
       id: 'alma-interventions',
       name: 'ALMA Interventions',
-      type: 'ai',
+      type: 'alma',
       source: 'ALMA Agent',
       table: 'alma_interventions',
       recordCount: almaInterventionsCount || 0,
@@ -291,7 +342,7 @@ export async function GET() {
     feeds.push({
       id: 'partner-photos',
       name: 'Partner Photos',
-      type: 'manual',
+      type: 'sync',
       source: 'Partner Upload',
       table: 'partner_photos',
       recordCount: photosCount || 0,
@@ -303,7 +354,7 @@ export async function GET() {
     feeds.push({
       id: 'partner-videos',
       name: 'Partner Videos',
-      type: 'manual',
+      type: 'sync',
       source: 'Partner Upload',
       table: 'partner_videos',
       recordCount: videosCount || 0,
@@ -316,7 +367,7 @@ export async function GET() {
     feeds.push({
       id: 'coe-frameworks',
       name: 'Australian Frameworks',
-      type: 'manual',
+      type: 'sync',
       source: 'Research Team',
       table: 'australian_frameworks',
       recordCount: frameworksCount || 0,
@@ -328,7 +379,7 @@ export async function GET() {
     feeds.push({
       id: 'coe-research',
       name: 'Research Items',
-      type: 'manual',
+      type: 'sync',
       source: 'Research Team',
       table: 'research_items',
       recordCount: researchCount || 0,
@@ -340,7 +391,7 @@ export async function GET() {
     feeds.push({
       id: 'coe-intl',
       name: 'International Programs',
-      type: 'manual',
+      type: 'sync',
       source: 'Research Team',
       table: 'international_programs',
       recordCount: intlProgramsCount || 0,
@@ -350,8 +401,29 @@ export async function GET() {
     });
 
     // Sort by type, then by record count
-    feeds.sort((a, b) => {
-      const typeOrder = { scraper: 0, sync: 1, ai: 2, api: 3, manual: 4 };
+    const classifiedFeeds = feeds.map((feed) => {
+      const isLegacy = feed.table === 'scraped_services' || feed.table === 'data_sources';
+      const canonicalPipeline = feed.table === 'scraped_services' ? 'directory' : feed.type;
+      const canonicalTable =
+        feed.table === 'scraped_services'
+          ? 'services'
+          : feed.table === 'data_sources'
+            ? 'alma_source_registry'
+            : feed.table;
+
+      return {
+        ...feed,
+        pipeline: feed.type,
+        lifecycle: isLegacy ? 'legacy' : 'canonical',
+        legacy: isLegacy,
+        compatibilityOnly: isLegacy,
+        canonicalPipeline,
+        canonicalTable,
+      };
+    });
+
+    classifiedFeeds.sort((a, b) => {
+      const typeOrder = { directory: 0, programs: 1, alma: 2, sync: 3 };
       if (typeOrder[a.type] !== typeOrder[b.type]) {
         return typeOrder[a.type] - typeOrder[b.type];
       }
@@ -360,20 +432,25 @@ export async function GET() {
 
     // Summary stats
     const summary = {
-      total: feeds.length,
-      byType: feeds.reduce((acc, f) => {
+      total: classifiedFeeds.length,
+      byPipeline: classifiedFeeds.reduce((acc, f) => {
         acc[f.type] = (acc[f.type] || 0) + 1;
         return acc;
       }, {} as Record<string, number>),
-      byStatus: feeds.reduce((acc, f) => {
+      byLifecycle: classifiedFeeds.reduce((acc, f) => {
+        const key = f.lifecycle || 'canonical';
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>),
+      byStatus: classifiedFeeds.reduce((acc, f) => {
         acc[f.status] = (acc[f.status] || 0) + 1;
         return acc;
       }, {} as Record<string, number>),
-      totalRecords: feeds.reduce((sum, f) => sum + f.recordCount, 0),
+      totalRecords: classifiedFeeds.reduce((sum, f) => sum + f.recordCount, 0),
     };
 
     return NextResponse.json({
-      feeds,
+      feeds: classifiedFeeds,
       summary,
     });
   } catch (error: unknown) {

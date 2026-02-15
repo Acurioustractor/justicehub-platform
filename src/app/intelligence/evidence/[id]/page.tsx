@@ -1,4 +1,4 @@
-import { createServiceClient } from '@/lib/supabase/service';
+import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import RelatedContent from '@/components/alma/RelatedContent';
 import { ArrowLeft, FileText, ExternalLink, User, Calendar, Building2 } from 'lucide-react';
@@ -13,53 +13,41 @@ interface PageProps {
   }>;
 }
 
+interface Provenance {
+  mode: 'authoritative' | 'computed';
+  summary: string;
+  generated_at: string;
+}
+
+function getRequestBaseUrl(): string {
+  const requestHeaders = headers();
+  const host = requestHeaders.get('x-forwarded-host') || requestHeaders.get('host');
+  const protocol = requestHeaders.get('x-forwarded-proto') || 'http';
+  if (host) {
+    return `${protocol}://${host}`;
+  }
+  return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+}
+
 export default async function EvidenceDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const supabase = createServiceClient();
-
-  // Fetch evidence details (simplified query - author profile join removed)
-  const { data: evidence, error } = await supabase
-    .from('alma_evidence')
-    .select('*')
-    .eq('id', id)
-    .single();
-
-  if (error || !evidence) {
-    console.error('Evidence fetch error:', error);
+  const response = await fetch(`${getRequestBaseUrl()}/api/intelligence/evidence/${encodeURIComponent(id)}`, {
+    cache: 'no-store',
+  });
+  if (!response.ok) {
     notFound();
   }
 
-  // Fetch related content directly from database
-  const [articlesData, relatedEvidenceData] = await Promise.all([
-    // Related articles
-    supabase
-      .from('article_related_evidence')
-      .select(`
-        relevance_note,
-        articles:article_id (
-          id,
-          title,
-          slug
-        )
-      `)
-      .eq('evidence_id', id),
+  const payload = await response.json();
+  if (!payload?.success || !payload?.evidence) {
+    notFound();
+  }
 
-    // Related evidence (same intervention)
-    supabase
-      .from('alma_evidence')
-      .select('id, title, source_title, related_interventions')
-      .neq('id', id)
-      .limit(5),
-  ]);
-
-  const relatedContent = {
-    articles: articlesData.data?.map((item: any) => ({
-      ...item.articles,
-      relevance_note: item.relevance_note,
-    })) || [],
-    author: [],
-    evidence: relatedEvidenceData.data || [],
-  };
+  const evidence = payload.evidence as any;
+  const relatedInterventionCount = payload.relatedInterventionCount || 0;
+  const relatedContent = payload.relatedContent || { articles: [], evidence: [] };
+  const provenance = (payload.provenance || null) as Provenance | null;
+  const sourceTitle = evidence.metadata?.source_title || evidence.source_url || 'Source unavailable';
 
   return (
     <div className="min-h-screen bg-white">
@@ -88,13 +76,22 @@ export default async function EvidenceDetailPage({ params }: PageProps) {
             <p className="text-xl mb-6">{evidence.description}</p>
           )}
 
+          {provenance && (
+            <div className="mb-6 inline-flex items-center gap-2 border border-black bg-white px-3 py-1 text-xs">
+              <span className={`font-bold uppercase ${provenance.mode === 'authoritative' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                {provenance.mode}
+              </span>
+              <span className="text-gray-700">{provenance.summary}</span>
+            </div>
+          )}
+
           {/* Key Metadata */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex items-start gap-3">
               <FileText className="w-5 h-5 mt-1 flex-shrink-0" />
               <div>
                 <div className="font-bold mb-1">Source</div>
-                <div className="text-sm">{evidence.source_title}</div>
+                <div className="text-sm">{sourceTitle}</div>
               </div>
             </div>
 
@@ -208,11 +205,11 @@ export default async function EvidenceDetailPage({ params }: PageProps) {
             )}
 
             {/* Related Interventions */}
-            {evidence.related_interventions && evidence.related_interventions.length > 0 && (
+            {relatedInterventionCount > 0 && (
               <div className="border-2 border-black p-6 bg-white">
                 <h2 className="text-2xl font-bold mb-4">Related Interventions</h2>
                 <div className="text-sm">
-                  This evidence relates to {evidence.related_interventions.length} intervention(s)
+                  This evidence relates to {relatedInterventionCount} intervention(s)
                 </div>
               </div>
             )}
@@ -300,7 +297,6 @@ export default async function EvidenceDetailPage({ params }: PageProps) {
         <div className="mt-12">
           <RelatedContent
             articles={relatedContent.articles}
-            author={relatedContent.author}
             evidence={relatedContent.evidence}
             title="Related Content"
           />

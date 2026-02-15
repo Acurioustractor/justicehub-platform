@@ -115,11 +115,11 @@ export function validateAPIKeys(): { valid: boolean; missing: string[]; warnings
     warnings.push('No AI service API keys configured');
   }
   
-  if (!(env as any).FIRECRAWL_API_KEY && (env as any).ENABLE_WEB_SCRAPING) {
+  if (!env.FIRECRAWL_API_KEY && env.ENABLE_WEB_SCRAPING) {
     warnings.push('Web scraping enabled but no Firecrawl API key');
   }
   
-  if (!(env as any).SENDGRID_API_KEY && env.NODE_ENV === 'production') {
+  if (!env.SENDGRID_API_KEY && env.NODE_ENV === 'production') {
     warnings.push('No email service configured for production');
   }
   
@@ -230,7 +230,7 @@ export class APIClient {
       signal: AbortSignal.timeout(this.config.timeout)
     };
     
-    let lastError: Error;
+    let lastError: Error = new Error('API request failed');
     
     // Retry logic
     for (let attempt = 0; attempt <= this.config.retries; attempt++) {
@@ -297,7 +297,8 @@ export const createOpenAIClient = () => {
 };
 
 export const createAnthropicClient = () => {
-  if (!env.ANTHROPIC_API_KEY) {
+  const anthropicApiKey = env.ANTHROPIC_API_KEY;
+  if (!anthropicApiKey) {
     throw new ConfigurationError('Anthropic API key not configured');
   }
   
@@ -306,9 +307,9 @@ export const createAnthropicClient = () => {
   // Override request method to use x-api-key header for Anthropic
   const originalRequest = client.request.bind(client);
   client.request = async function<T>(endpoint: string, options: RequestInit = {}, rateLimitKey?: string): Promise<T> {
-    const headers = {
+    const headers: HeadersInit = {
       ...options.headers,
-      'x-api-key': env.ANTHROPIC_API_KEY
+      'x-api-key': anthropicApiKey
     };
     
     return originalRequest(endpoint, { ...options, headers }, rateLimitKey);
@@ -349,11 +350,12 @@ export async function checkAPIHealth(): Promise<{
   
   // Test Supabase
   try {
-    const { testSupabaseConnection } = await import('@/lib/supabase/client');
-    const supabaseResult = await testSupabaseConnection();
-    results.supabase = supabaseResult.success;
-    if (!supabaseResult.success) {
-      results.errors.push(`Supabase: ${supabaseResult.message}`);
+    const { createServiceClient } = await import('@/lib/supabase/service');
+    const supabase = createServiceClient();
+    const { error } = await supabase.from('services').select('id', { head: true, count: 'exact' }).limit(1);
+    results.supabase = !error;
+    if (error) {
+      results.errors.push(`Supabase: ${error.message}`);
     }
   } catch (error) {
     results.errors.push(`Supabase: ${(error as Error).message}`);

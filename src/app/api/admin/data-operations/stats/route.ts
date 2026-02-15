@@ -1,13 +1,21 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getServiceClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !key) {
+    throw new Error('Missing required env: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
+  }
+
+  return createClient(url, key);
+}
 
 export async function GET() {
   try {
+    const supabase = getServiceClient();
+
     // Fetch counts from all major tables in parallel
     const [
       servicesResult,
@@ -38,24 +46,24 @@ export async function GET() {
     // Get services by state
     const { data: servicesByState } = await supabase
       .from('services')
-      .select('state')
-      .not('state', 'is', null);
+      .select('location_state')
+      .not('location_state', 'is', null);
 
     const stateCounts: Record<string, number> = {};
     servicesByState?.forEach((s) => {
-      const state = s.state || 'Unknown';
+      const state = s.location_state || 'Unknown';
       stateCounts[state] = (stateCounts[state] || 0) + 1;
     });
 
     // Get organizations by type
     const { data: orgsByType } = await supabase
       .from('organizations')
-      .select('organization_type')
-      .not('organization_type', 'is', null);
+      .select('type')
+      .not('type', 'is', null);
 
     const orgTypeCounts: Record<string, number> = {};
     orgsByType?.forEach((o) => {
-      const type = o.organization_type || 'Unknown';
+      const type = o.type || 'Unknown';
       orgTypeCounts[type] = (orgTypeCounts[type] || 0) + 1;
     });
 

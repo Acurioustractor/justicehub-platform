@@ -217,8 +217,8 @@ export function sanitizeUrl(url: string): string | null {
       return null;
     }
 
-    // Block javascript: and data: URLs
-    if (parsed.href.toLowerCase().includes('javascript:')) {
+    // Block script URL payloads
+    if (/^javascript:/i.test(parsed.href.trim())) {
       return null;
     }
 

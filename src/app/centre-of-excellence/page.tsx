@@ -5,17 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Globe, Shield, Activity, FileText, MapPin, ExternalLink } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import dynamic from 'next/dynamic';
-
-// Dynamic import for Leaflet map component (client-side only)
-const BasecampMap = dynamic(() => import('@/components/coe/BasecampMap'), {
-  ssr: false,
-  loading: () => (
-    <div className="border-2 border-black bg-gray-100 h-[400px] flex items-center justify-center">
-      <div className="text-gray-500 font-bold">Loading map...</div>
-    </div>
-  )
-});
 
 // Basecamp location type
 interface BasecampLocation {
@@ -183,9 +172,37 @@ export default function CentreOfExcellencePage() {
               </Link>
             </div>
 
-            {/* Basecamp Map */}
-            <div className="mb-8">
-              <BasecampMap locations={basecamps} height="400px" />
+            {/* Basecamp Map Summary (stable fallback for local/dev) */}
+            <div className="mb-8 border-2 border-black bg-white p-6">
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                  <h3 className="text-xl font-black mb-2">Basecamp Footprint Snapshot</h3>
+                  <p className="text-gray-600">
+                    Explore the live interactive map from the dedicated map page.
+                  </p>
+                </div>
+                <Link
+                  href="/centre-of-excellence/map?category=basecamp"
+                  className="cta-secondary flex items-center gap-2"
+                >
+                  <MapPin className="w-5 h-5" />
+                  OPEN INTERACTIVE MAP
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
+                {basecamps.map((basecamp) => (
+                  <div
+                    key={`map-summary-${basecamp.slug}`}
+                    className="border border-black bg-gray-50 px-4 py-3"
+                  >
+                    <div className="font-bold text-black">{basecamp.name}</div>
+                    <div className="text-sm text-gray-600">{basecamp.region}</div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {basecamp.coordinates.lat.toFixed(3)}, {basecamp.coordinates.lng.toFixed(3)}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Basecamp Grid with Images */}

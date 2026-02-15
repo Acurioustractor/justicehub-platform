@@ -4,6 +4,25 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+function buildProvenance() {
+    return {
+        mode: 'computed' as const,
+        summary:
+            'Entity counts and distributions are authoritative reads; coverageRatio is heuristic from relationship-table cardinality.',
+        sources: [
+            { table: 'alma_interventions', role: 'primary', classification: 'canonical' },
+            { table: 'alma_evidence', role: 'primary', classification: 'canonical' },
+            { table: 'alma_outcomes', role: 'supporting', classification: 'canonical' },
+            { table: 'alma_community_contexts', role: 'supporting', classification: 'canonical' },
+            { table: 'alma_source_registry', role: 'supporting', classification: 'canonical' },
+            { table: 'alma_discovered_links', role: 'supporting', classification: 'canonical' },
+            { table: 'alma_intervention_evidence', role: 'supporting', classification: 'canonical' },
+        ],
+        computed_fields: ['health.coverageRatio'],
+        generated_at: new Date().toISOString(),
+    };
+}
+
 export async function GET() {
     try {
         const supabase = await createClient();
@@ -86,7 +105,8 @@ export async function GET() {
             },
             health: {
                 coverageRatio: coverageRatio // % of avg evidence linkages per intervention (heuristic)
-            }
+            },
+            provenance: buildProvenance(),
         });
 
     } catch (error) {

@@ -32,6 +32,8 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           EMPATHY_LEDGER_SUPABASE_URL: ${{ secrets.EMPATHY_LEDGER_SUPABASE_URL }}
           EMPATHY_LEDGER_SUPABASE_ANON_KEY: ${{ secrets.EMPATHY_LEDGER_SUPABASE_ANON_KEY }}
+          EMPATHY_LEDGER_URL: ${{ secrets.EMPATHY_LEDGER_SUPABASE_URL }}
+          EMPATHY_LEDGER_API_KEY: ${{ secrets.EMPATHY_LEDGER_SUPABASE_ANON_KEY }}
         run: node scripts/sync-empathy-ledger.mjs
 
       - name: Create sync log

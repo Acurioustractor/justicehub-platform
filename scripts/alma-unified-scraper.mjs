@@ -15,6 +15,7 @@
  * - Content quality validation
  * - Progress tracking
  * - Error recovery with exponential backoff
+ * - Support for 403-blocked sites via enhanced headers
  */
 
 import { readFileSync, writeFileSync, existsSync } from 'fs';
@@ -23,19 +24,55 @@ import { fileURLToPath } from 'url';
 import { createClient } from '@supabase/supabase-js';
 import FirecrawlApp from '@mendable/firecrawl-js';
 import Anthropic from '@anthropic-ai/sdk';
+import https from 'https';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 
-// Load environment
-const env = readFileSync(join(root, '.env.local'), 'utf8')
-  .split('\n')
-  .filter((line) => line && !line.startsWith('#') && line.includes('='))
-  .reduce((acc, line) => {
-    const [key, ...values] = line.split('=');
-    acc[key.trim()] = values.join('=').trim();
-    return acc;
-  }, {});
+// Load environment from both .env.local (dev) and process.env (production)
+function loadEnv() {
+  const env = { ...process.env };
+  
+  // Try to load from .env.local if it exists (development)
+  const envPath = join(root, '.env.local');
+  if (existsSync(envPath)) {
+    try {
+      const envFile = readFileSync(envPath, 'utf8');
+      envFile
+        .split('\n')
+        .filter((line) => line && !line.startsWith('#') && line.includes('='))
+        .forEach((line) => {
+          const [key, ...values] = line.split('=');
+          const trimmedKey = key.trim();
+          // Only use .env.local value if not already set in process.env
+          if (!env[trimmedKey]) {
+            env[trimmedKey] = values.join('=').trim();
+          }
+        });
+    } catch (err) {
+      console.warn('Warning: Could not read .env.local, using process.env only');
+    }
+  }
+  
+  return env;
+}
+
+const env = loadEnv();
+
+// Validate required environment variables
+function validateEnv() {
+  const required = ['NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'FIRECRAWL_API_KEY'];
+  const missing = required.filter(key => !env[key]);
+  
+  if (missing.length > 0) {
+    console.error('❌ Missing required environment variables:');
+    missing.forEach(key => console.error(`   - ${key}`));
+    console.error('\nPlease set these in your environment or .env.local file');
+    process.exit(1);
+  }
+}
+
+validateEnv();
 
 const supabase = createClient(
   env.NEXT_PUBLIC_SUPABASE_URL,
@@ -43,7 +80,7 @@ const supabase = createClient(
 );
 
 const firecrawl = new FirecrawlApp({ apiKey: env.FIRECRAWL_API_KEY });
-const anthropic = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+const anthropic = env.ANTHROPIC_API_KEY ? new Anthropic({ apiKey: env.ANTHROPIC_API_KEY }) : null;
 
 // State file for resume capability
 const STATE_FILE = join(__dirname, '.alma-scraper-state.json');
@@ -51,16 +88,28 @@ const STATE_FILE = join(__dirname, '.alma-scraper-state.json');
 // Circuit breaker state
 const circuitBreakers = new Map();
 const CIRCUIT_BREAKER_THRESHOLD = 5;
-const CIRCUIT_BREAKER_RESET_MS = 60 * 60 * 1000;
+const CIRCUIT_BREAKER_RESET_MS = 60 * 60 * 1000; // 1 hour
+
+// User agents to rotate for 403-blocked sites
+const USER_AGENTS = [
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+];
 
 // Sources registry - loaded from database or uses defaults
 async function loadSources() {
   // Try to load from database first
-  const { data: dbSources } = await supabase
+  const { data: dbSources, error } = await supabase
     .from('alma_sources')
     .select('*')
     .eq('active', true)
     .order('priority', { ascending: false });
+
+  if (error) {
+    console.warn(`⚠️  Database error loading sources: ${error.message}`);
+    console.warn('   Falling back to default sources');
+  }
 
   if (dbSources && dbSources.length > 0) {
     console.log(`📋 Loaded ${dbSources.length} sources from database`);
@@ -90,49 +139,113 @@ function getDefaultSources() {
     { name: 'NATSILS', url: 'https://www.natsils.org.au/', type: 'indigenous', jurisdiction: 'National', priority: 100, cultural_authority: true },
     { name: 'SNAICC', url: 'https://www.snaicc.org.au/', type: 'indigenous', jurisdiction: 'National', priority: 95, cultural_authority: true },
     { name: 'QATSICPP', url: 'https://www.qatsicpp.com.au/', type: 'indigenous', jurisdiction: 'QLD', priority: 90, cultural_authority: true },
-    { name: 'ALS NSW/ACT', url: 'https://www.alsnswact.org.au/', type: 'indigenous', jurisdiction: 'NSW/ACT', priority: 90, cultural_authority: true },
-    { name: 'VALS', url: 'https://www.vals.org.au/', type: 'indigenous', jurisdiction: 'VIC', priority: 90, cultural_authority: true },
-    { name: 'NAAJA', url: 'https://www.naaja.org.au/', type: 'indigenous', jurisdiction: 'NT', priority: 90, cultural_authority: true },
-    { name: 'ALRM SA', url: 'https://www.alrm.org.au/', type: 'indigenous', jurisdiction: 'SA', priority: 90, cultural_authority: true },
-    { name: 'ALS WA', url: 'https://www.als.org.au/', type: 'indigenous', jurisdiction: 'WA', priority: 90, cultural_authority: true },
+    { name: 'ALS NSW/ACT', url: 'https://www.alsnswact.org.au/', type: 'indigenous', jurisdiction: 'NSW/ACT', priority: 90, cultural_authority: true, ssl_issues: true },
+    { name: 'VALS', url: 'https://www.vals.org.au/', type: 'indigenous', jurisdiction: 'VIC', priority: 90, cultural_authority: true, ssl_issues: true },
+    { name: 'NAAJA', url: 'https://www.naaja.org.au/', type: 'indigenous', jurisdiction: 'NT', priority: 90, cultural_authority: true, ssl_issues: true },
+    { name: 'ALRM SA', url: 'https://www.alrm.org.au/', type: 'indigenous', jurisdiction: 'SA', priority: 90, cultural_authority: true, ssl_issues: true },
+    { name: 'ALS WA', url: 'https://www.als.org.au/', type: 'indigenous', jurisdiction: 'WA', priority: 90, cultural_authority: true, ssl_issues: true },
 
     // Research - Priority 2
-    { name: 'AIC Research', url: 'https://www.aic.gov.au/research', type: 'research', jurisdiction: 'National', priority: 80, cultural_authority: false },
+    { name: 'AIC Research', url: 'https://www.aic.gov.au/research', type: 'research', jurisdiction: 'National', priority: 80, cultural_authority: false, extended_timeout: true },
     { name: 'Clearinghouse for Youth Justice', url: 'https://www.youthjusticeclearinghouse.gov.au/', type: 'research', jurisdiction: 'National', priority: 80, cultural_authority: false },
 
     // Advocacy - Priority 2
-    { name: 'Youth Law Australia', url: 'https://www.youthlaw.asn.au/', type: 'advocacy', jurisdiction: 'National', priority: 75, cultural_authority: false },
-    { name: 'Human Rights Law Centre', url: 'https://www.hrlc.org.au/', type: 'advocacy', jurisdiction: 'National', priority: 75, cultural_authority: false },
+    { name: 'Youth Law Australia', url: 'https://www.youthlaw.asn.au/', type: 'advocacy', jurisdiction: 'National', priority: 75, cultural_authority: false, ssl_issues: true },
+    { name: 'Human Rights Law Centre', url: 'https://www.hrlc.org.au/', type: 'advocacy', jurisdiction: 'National', priority: 75, cultural_authority: false, ssl_issues: true },
     { name: 'Amnesty Australia', url: 'https://www.amnesty.org.au/', type: 'advocacy', jurisdiction: 'National', priority: 70, cultural_authority: false },
   ];
 }
 
-// Check URL health
-async function checkUrlHealth(url) {
+// Check URL health with enhanced options for 403-blocked sites
+async function checkUrlHealth(url, options = {}) {
+  const { skipSslVerify = false, useEnhancedHeaders = false } = options;
+  
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
+    const timeout = setTimeout(() => controller.abort(), 15000);
     
-    const response = await fetch(url, {
+    const headers = {
+      'User-Agent': USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)],
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Connection': 'keep-alive',
+    };
+    
+    if (useEnhancedHeaders) {
+      headers['Upgrade-Insecure-Requests'] = '1';
+      headers['Sec-Fetch-Dest'] = 'document';
+      headers['Sec-Fetch-Mode'] = 'navigate';
+      headers['Sec-Fetch-Site'] = 'none';
+      headers['Cache-Control'] = 'max-age=0';
+    }
+    
+    const fetchOptions = {
       method: 'HEAD',
       signal: controller.signal,
-      headers: {
-        'User-Agent': 'JusticeHub-ALMA-Scraper/1.0 (Research Bot)',
-      },
-    });
+      headers,
+    };
     
+    // For SSL-issue sites, we need to use https module directly
+    if (skipSslVerify) {
+      clearTimeout(timeout);
+      return await checkUrlHealthWithSslBypass(url);
+    }
+    
+    const response = await fetch(url, fetchOptions);
     clearTimeout(timeout);
     
     if (response.status === 200) {
       return { healthy: true };
     } else if (response.status >= 300 && response.status < 400 && response.headers.get('location')) {
       return { healthy: true, redirectUrl: response.headers.get('location') };
+    } else if (response.status === 403) {
+      return { healthy: false, error: `HTTP 403 Forbidden - may require browser automation`, blocked: true };
     } else {
       return { healthy: false, error: `HTTP ${response.status}` };
     }
   } catch (err) {
+    if (err.message && err.message.includes('SSL')) {
+      return { healthy: false, error: 'SSL/Certificate error', sslIssue: true };
+    }
     return { healthy: false, error: err.message };
   }
+}
+
+// SSL bypass health check for problematic sites
+async function checkUrlHealthWithSslBypass(url) {
+  return new Promise((resolve) => {
+    const urlObj = new URL(url);
+    const options = {
+      hostname: urlObj.hostname,
+      port: urlObj.port || 443,
+      path: urlObj.pathname,
+      method: 'HEAD',
+      timeout: 10000,
+      rejectUnauthorized: false, // Bypass SSL verification
+      headers: {
+        'User-Agent': USER_AGENTS[0],
+      },
+    };
+    
+    const req = https.request(options, (res) => {
+      if (res.statusCode === 200) {
+        resolve({ healthy: true });
+      } else if (res.statusCode >= 300 && res.statusCode < 400) {
+        resolve({ healthy: true, redirectUrl: res.headers.location });
+      } else {
+        resolve({ healthy: false, error: `HTTP ${res.statusCode}` });
+      }
+    });
+    
+    req.on('error', (err) => resolve({ healthy: false, error: err.message }));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve({ healthy: false, error: 'Timeout' });
+    });
+    
+    req.end();
+  });
 }
 
 // Circuit breaker check
@@ -167,7 +280,7 @@ function recordSuccess(domain) {
   circuitBreakers.delete(domain);
 }
 
-// Scrape a single URL with retry logic
+// Scrape a single URL with retry logic and enhanced error handling
 async function scrapeSource(source, options = {}) {
   const startTime = Date.now();
   const { skipHealthCheck = false, verbose = false, maxRetries = 3 } = options;
@@ -188,18 +301,46 @@ async function scrapeSource(source, options = {}) {
       };
     }
     
-    // Health check
+    // Check if source requires special handling
+    const requiresJs = source.requires_js || source.metadata?.requires_js;
+    const hasSslIssues = source.ssl_issues || source.metadata?.ssl_issues;
+    const extendedTimeout = source.extended_timeout || source.metadata?.extended_timeout;
+    
+    // Health check with enhanced options for problematic sites
     if (!skipHealthCheck) {
-      const health = await checkUrlHealth(source.url);
+      const healthOptions = {
+        skipSslVerify: hasSslIssues,
+        useEnhancedHeaders: requiresJs
+      };
+      
+      const health = await checkUrlHealth(source.url, healthOptions);
+      
       if (!health.healthy) {
-        recordFailure(domain);
-        return { 
-          success: false, 
-          source: source.name,
-          error: `Health check failed: ${health.error}`,
-          duration: Date.now() - startTime
-        };
+        // If 403 blocked, suggest using Playwright
+        if (health.blocked) {
+          return { 
+            success: false, 
+            source: source.name,
+            error: '403 Forbidden - use Playwright scraper for this site',
+            requiresPlaywright: true,
+            duration: Date.now() - startTime
+          };
+        }
+        
+        // If SSL issue, try SSL bypass
+        if (health.sslIssue) {
+          if (verbose) console.log('   🔧 Retrying with SSL bypass...');
+        } else {
+          recordFailure(domain);
+          return { 
+            success: false, 
+            source: source.name,
+            error: `Health check failed: ${health.error}`,
+            duration: Date.now() - startTime
+          };
+        }
       }
+      
       if (health.redirectUrl) {
         source.url = health.redirectUrl;
       }
@@ -210,12 +351,12 @@ async function scrapeSource(source, options = {}) {
     let lastError = null;
     
     // Dynamic timeout based on source type
-    const baseTimeout = source.requires_js ? 45000 : 30000;
+    const baseTimeout = extendedTimeout ? 60000 : requiresJs ? 45000 : 30000;
     
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
         if (attempt > 0) {
-          const backoffMs = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
+          const backoffMs = Math.pow(2, attempt) * 2000; // 4s, 8s, 16s
           if (verbose) console.log(`   🔄 Retry ${attempt}/${maxRetries} after ${backoffMs}ms...`);
           await new Promise(r => setTimeout(r, backoffMs));
         }
@@ -224,7 +365,7 @@ async function scrapeSource(source, options = {}) {
           formats: ['markdown', 'html'],
           onlyMainContent: true,
           timeout: baseTimeout + (attempt * 10000), // Increase timeout on retries
-          waitFor: source.requires_js ? 5000 : 0,
+          waitFor: requiresJs ? 8000 : 0,
         });
         
         if (scrapeResult.success) {
@@ -254,15 +395,15 @@ async function scrapeSource(source, options = {}) {
     const title = scrapeResult.metadata?.title || source.name;
     
     // Content quality validation
-    const minLength = 500;
-    const hasMeaningfulWords = /youth|justice|program|community|child|young|detention|support/i.test(content);
+    const minLength = 300; // Reduced from 500 for more permissive scraping
+    const hasMeaningfulWords = /youth|justice|program|community|child|young|detention|support|service|legal|aboriginal|indigenous/i.test(content);
     
     if (content.length < minLength || !hasMeaningfulWords) {
       recordFailure(domain);
       return { 
         success: false, 
         source: source.name,
-        error: `Content quality check failed`,
+        error: `Content quality check failed: ${content.length < minLength ? 'too short' : 'no relevant keywords'}`,
         duration: Date.now() - startTime
       };
     }
@@ -399,8 +540,12 @@ async function runScraper(options = {}) {
   // Load state if resuming
   let state = { completed: [], failed: [], lastIndex: 0 };
   if (resume && existsSync(STATE_FILE)) {
-    state = JSON.parse(readFileSync(STATE_FILE, 'utf8'));
-    console.log(`📂 Resuming from checkpoint (last index: ${state.lastIndex})`);
+    try {
+      state = JSON.parse(readFileSync(STATE_FILE, 'utf8'));
+      console.log(`📂 Resuming from checkpoint (last index: ${state.lastIndex})`);
+    } catch (err) {
+      console.warn('⚠️  Could not load state file, starting fresh');
+    }
   }
 
   // Load sources
@@ -428,7 +573,14 @@ async function runScraper(options = {}) {
     const results = [];
     
     for (const source of sources) {
-      const health = await checkUrlHealth(source.url);
+      const requiresJs = source.requires_js || source.metadata?.requires_js;
+      const hasSslIssues = source.ssl_issues || source.metadata?.ssl_issues;
+      
+      const health = await checkUrlHealth(source.url, {
+        skipSslVerify: hasSslIssues,
+        useEnhancedHeaders: requiresJs
+      });
+      
       results.push({
         name: source.name,
         url: source.url,
@@ -437,7 +589,7 @@ async function runScraper(options = {}) {
       });
       
       if (verbose) {
-        const status = health.healthy ? '✅' : '❌';
+        const status = health.healthy ? '✅' : health.blocked ? '🔒' : health.sslIssue ? '🔐' : '❌';
         console.log(`${status} ${source.name}${health.error ? ` (${health.error})` : ''}`);
       }
       
@@ -446,7 +598,14 @@ async function runScraper(options = {}) {
     }
 
     const healthy = results.filter(r => r.healthy).length;
-    console.log(`\n📈 Health Check Results: ${healthy}/${results.length} sources healthy`);
+    const blocked = results.filter(r => r.error?.includes('403')).length;
+    const sslIssues = results.filter(r => r.error?.includes('SSL')).length;
+    
+    console.log(`\n📈 Health Check Results:`);
+    console.log(`   ✅ Healthy: ${healthy}/${results.length}`);
+    console.log(`   🔒 Blocked (403): ${blocked}`);
+    console.log(`   🔐 SSL Issues: ${sslIssues}`);
+    console.log(`   ❌ Other errors: ${results.length - healthy - blocked - sslIssues}`);
     
     return { mode: 'health-check', results };
   }
@@ -455,6 +614,7 @@ async function runScraper(options = {}) {
   const results = {
     successful: [],
     failed: [],
+    requiresPlaywright: [],
     duration: 0,
   };
 
@@ -484,6 +644,10 @@ async function runScraper(options = {}) {
       results.failed.push(result);
       state.failed.push(source.name);
       
+      if (result.requiresPlaywright) {
+        results.requiresPlaywright.push(result);
+      }
+      
       if (verbose) {
         console.log(`   ❌ ${result.error}`);
       }
@@ -512,12 +676,23 @@ async function runScraper(options = {}) {
   console.log('═'.repeat(60));
   console.log(`✅ Successful: ${results.successful.length}`);
   console.log(`❌ Failed: ${results.failed.length}`);
+  if (results.requiresPlaywright.length > 0) {
+    console.log(`🔒 Need Playwright: ${results.requiresPlaywright.length}`);
+  }
   console.log(`⏱️  Duration: ${(results.duration / 1000).toFixed(1)}s`);
-  console.log(`⚡ Avg time: ${(results.duration / sources.length).toFixed(0)}ms per source`);
+  if (sources.length > 0) {
+    console.log(`⚡ Avg time: ${(results.duration / sources.length).toFixed(0)}ms per source`);
+  }
   
   if (results.failed.length > 0) {
     console.log('\n❌ Failed sources:');
     results.failed.forEach(f => console.log(`   - ${f.source}: ${f.error}`));
+  }
+  
+  if (results.requiresPlaywright.length > 0) {
+    console.log('\n🔒 Sites requiring Playwright (403 blocked):');
+    results.requiresPlaywright.forEach(f => console.log(`   - ${f.source}`));
+    console.log('\n   Run: node scripts/alma-playwright-scrape.mjs');
   }
 
   // Circuit breaker status

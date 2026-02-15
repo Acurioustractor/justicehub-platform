@@ -72,8 +72,197 @@ interface ServiceDetail {
   extractionTimestamp?: string;
 }
 
+type ServiceApiRecord = {
+  id?: string | null;
+  name?: string | null;
+  description?: string | null;
+  category?: string | null;
+  subcategory?: string | null;
+  location?: string | null;
+  contact?: string | null;
+  cost?: string | null;
+  rating?: number | null;
+  verified?: boolean | null;
+  lastUpdated?: string | null;
+  source?: string | null;
+  aiDiscovered?: boolean | null;
+  eligibility?: string[] | null;
+  referralInfo?: {
+    selfReferral?: boolean | null;
+    professionalReferral?: boolean | null;
+    referralProcess?: string | null;
+    waitTime?: string | null;
+  } | null;
+  contactInfo?: {
+    phone?: string | null;
+    email?: string | null;
+    website?: string | null;
+    address?: string | null;
+  } | null;
+  confidenceScore?: number | null;
+  extractionTimestamp?: string | null;
+};
+
+function asNullableString(value: unknown): string | null {
+  return typeof value === 'string' ? value : null;
+}
+
+function asNullableBoolean(value: unknown): boolean | null {
+  return typeof value === 'boolean' ? value : null;
+}
+
+function asNullableNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function asStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.filter((item): item is string => typeof item === 'string');
+}
+
+function normalizeContactInfo(input: unknown): ServiceDetail['contactInfo'] | undefined {
+  if (!input || typeof input !== 'object') {
+    return undefined;
+  }
+
+  const record = input as Record<string, unknown>;
+  const normalized: NonNullable<ServiceDetail['contactInfo']> = {};
+  const phone = asNullableString(record.phone);
+  const email = asNullableString(record.email);
+  const website = asNullableString(record.website);
+  const address = asNullableString(record.address);
+
+  if (phone) normalized.phone = phone;
+  if (email) normalized.email = email;
+  if (website) normalized.website = website;
+  if (address) normalized.address = address;
+
+  return Object.keys(normalized).length > 0 ? normalized : undefined;
+}
+
+function normalizeReferralInfo(input: unknown): ServiceDetail['referralInfo'] | undefined {
+  if (!input || typeof input !== 'object') {
+    return undefined;
+  }
+
+  const record = input as Record<string, unknown>;
+  const selfReferral = asNullableBoolean(record.selfReferral);
+  const professionalReferral = asNullableBoolean(record.professionalReferral);
+  const referralProcess = asNullableString(record.referralProcess);
+  const waitTime = asNullableString(record.waitTime);
+
+  if (
+    selfReferral === null &&
+    professionalReferral === null &&
+    !referralProcess &&
+    !waitTime
+  ) {
+    return undefined;
+  }
+
+  return {
+    selfReferral: selfReferral ?? true,
+    professionalReferral: professionalReferral ?? true,
+    referralProcess: referralProcess ?? undefined,
+    waitTime: waitTime ?? undefined,
+  };
+}
+
+function normalizeServiceDetail(input: unknown): ServiceDetail | null {
+  if (!input || typeof input !== 'object') {
+    return null;
+  }
+
+  const record = input as ServiceApiRecord;
+  const id = asNullableString(record.id);
+  if (!id) {
+    return null;
+  }
+
+  const costRaw = asNullableString(record.cost)?.toLowerCase();
+  const cost: ServiceDetail['cost'] =
+    costRaw === 'free' || costRaw === 'low' || costRaw === 'moderate' ? costRaw : 'free';
+
+  const rating = asNullableNumber(record.rating) ?? 0;
+  const confidenceScore = asNullableNumber(record.confidenceScore);
+  const contactInfo = normalizeContactInfo(record.contactInfo);
+
+  return {
+    id,
+    name: asNullableString(record.name) || 'Unknown service',
+    description: asNullableString(record.description) || 'No description available.',
+    category: asNullableString(record.category) || 'family',
+    subcategory: asNullableString(record.subcategory) || undefined,
+    location: asNullableString(record.location) || 'Australia',
+    contact: asNullableString(record.contact) || contactInfo?.phone || contactInfo?.email || 'Contact via service website',
+    cost,
+    rating,
+    verified: asNullableBoolean(record.verified) ?? false,
+    lastUpdated: asNullableString(record.lastUpdated) || 'Recently',
+    source: asNullableString(record.source) || undefined,
+    aiDiscovered: asNullableBoolean(record.aiDiscovered) ?? false,
+    eligibility: asStringArray(record.eligibility),
+    referralInfo: normalizeReferralInfo(record.referralInfo),
+    contactInfo,
+    confidenceScore: confidenceScore ?? undefined,
+    extractionTimestamp: asNullableString(record.extractionTimestamp) || undefined,
+  };
+}
+
+function normalizeProfileData(input: unknown): ProfileData | null {
+  if (!input || typeof input !== 'object') {
+    return null;
+  }
+
+  const row = input as Record<string, unknown>;
+  const rawProfile = row.profile;
+  if (!rawProfile || typeof rawProfile !== 'object') {
+    return null;
+  }
+
+  const profileRecord = rawProfile as Record<string, unknown>;
+  const profileId = asNullableString(profileRecord.id);
+  if (!profileId) {
+    return null;
+  }
+
+  const organizationValue = profileRecord.organization;
+  let organization: { name: string } | undefined;
+  if (organizationValue && typeof organizationValue === 'object') {
+    const organizationName = asNullableString((organizationValue as Record<string, unknown>).name);
+    if (organizationName) {
+      organization = { name: organizationName };
+    }
+  }
+
+  return {
+    profile: {
+      id: profileId,
+      name: asNullableString(profileRecord.name) ?? undefined,
+      preferred_name: asNullableString(profileRecord.preferred_name) ?? undefined,
+      bio: asNullableString(profileRecord.bio) ?? undefined,
+      profile_picture_url: asNullableString(profileRecord.profile_picture_url) ?? undefined,
+      organization,
+    },
+    appearanceRole: asNullableString(row.appearanceRole) ?? undefined,
+    appearanceExcerpt: asNullableString(row.appearanceExcerpt) ?? undefined,
+    isFeatured: asNullableBoolean(row.isFeatured) ?? undefined,
+  };
+}
+
+function parseApiError(payload: unknown, fallback: string): string {
+  if (!payload || typeof payload !== 'object') {
+    return fallback;
+  }
+  const error = asNullableString((payload as Record<string, unknown>).error);
+  return error || fallback;
+}
+
 export default function ServiceDetailPage() {
-  const params = useParams();
+  const params = useParams<{ id: string }>();
+  const serviceId = params?.id;
   const [service, setService] = useState<ServiceDetail | null>(null);
   const [profiles, setProfiles] = useState<ProfileData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -81,11 +270,11 @@ export default function ServiceDetailPage() {
   const [profilesLoading, setProfilesLoading] = useState(false);
 
   useEffect(() => {
-    if (params.id) {
-      loadServiceDetail(params.id as string);
-      loadProfiles(params.id as string);
+    if (typeof serviceId === 'string' && serviceId.length > 0) {
+      loadServiceDetail(serviceId);
+      loadProfiles(serviceId);
     }
-  }, [params.id]);
+  }, [serviceId]);
 
   const loadServiceDetail = async (serviceId: string) => {
     try {
@@ -93,13 +282,20 @@ export default function ServiceDetailPage() {
       setError(null);
 
       // Get specific service details
-      const response = await fetch(`/api/scraped-services/${serviceId}`);
-      const data = await response.json();
+      const response = await fetch(`/api/services/${encodeURIComponent(serviceId)}`);
+      const data: unknown = await response.json();
 
       if (response.ok) {
-        setService(data.service);
+        const payload = data && typeof data === 'object' ? (data as Record<string, unknown>) : null;
+        const normalizedService = normalizeServiceDetail(payload?.service);
+        if (!normalizedService) {
+          setService(null);
+          setError('Service record is invalid');
+          return;
+        }
+        setService(normalizedService);
       } else {
-        setError(data.error || 'Service not found');
+        setError(parseApiError(data, 'Service not found'));
       }
     } catch (error) {
       console.error('Error loading service:', error);
@@ -113,10 +309,15 @@ export default function ServiceDetailPage() {
     try {
       setProfilesLoading(true);
 
-      const response = await fetch(`/api/services/${serviceId}/profiles`);
+      const response = await fetch(`/api/services/${encodeURIComponent(serviceId)}/profiles`);
       if (response.ok) {
-        const data = await response.json();
-        setProfiles(data.profiles || []);
+        const data: unknown = await response.json();
+        const payload = data && typeof data === 'object' ? (data as Record<string, unknown>) : null;
+        const profileRows = Array.isArray(payload?.profiles) ? payload.profiles : [];
+        const normalizedProfiles = profileRows
+          .map(normalizeProfileData)
+          .filter((row): row is ProfileData => row !== null);
+        setProfiles(normalizedProfiles);
       }
     } catch (error) {
       console.error('Error loading profiles:', error);

@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getServiceClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !key) {
+    throw new Error('Missing required env: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
+  }
+
+  return createClient(url, key);
+}
 
 interface Alert {
   id: string;
@@ -19,6 +25,7 @@ interface Alert {
 
 export async function GET() {
   try {
+    const supabase = getServiceClient();
     const alerts: Alert[] = [];
     const now = new Date();
 
@@ -26,11 +33,9 @@ export async function GET() {
     const [
       profilesCount,
       storiesCount,
-      evidenceCount,
     ] = await Promise.all([
       supabase.from('profiles').select('*', { count: 'exact', head: true }),
       supabase.from('stories').select('*', { count: 'exact', head: true }),
-      supabase.from('alma_evidence').select('*', { count: 'exact', head: true }),
     ]);
 
     if ((profilesCount.count || 0) < 10) {
@@ -60,26 +65,26 @@ export async function GET() {
     }
 
     // Check for stale link queue
-    const { data: pendingLinks } = await supabase
+    const { count: pendingLinksCount } = await supabase
       .from('alma_discovered_links')
-      .select('status')
+      .select('*', { count: 'exact', head: true })
       .eq('status', 'pending');
 
-    if (pendingLinks && pendingLinks.length > 1000) {
+    if (pendingLinksCount && pendingLinksCount > 1000) {
       alerts.push({
         id: 'large-queue',
         type: 'info',
         category: 'Queue',
         message: 'Large link queue',
-        detail: `${pendingLinks.length} links pending processing. Consider running a batch scrape.`,
-        count: pendingLinks.length,
+        detail: `${pendingLinksCount} links pending processing. Consider running a batch scrape.`,
+        count: pendingLinksCount,
         table: 'alma_discovered_links',
         createdAt: now.toISOString(),
       });
     }
 
     // Check for failed ingestion jobs
-    const { data: failedJobs, count: failedCount } = await supabase
+    const { count: failedCount } = await supabase
       .from('alma_ingestion_jobs')
       .select('*', { count: 'exact' })
       .eq('status', 'failed')
@@ -102,7 +107,7 @@ export async function GET() {
     const { count: noLocationServices } = await supabase
       .from('services')
       .select('*', { count: 'exact', head: true })
-      .is('state', null);
+      .is('location_state', null);
 
     if (noLocationServices && noLocationServices > 50) {
       alerts.push({
@@ -121,7 +126,7 @@ export async function GET() {
     const { count: noTypeOrgs } = await supabase
       .from('organizations')
       .select('*', { count: 'exact', head: true })
-      .is('organization_type', null);
+      .is('type', null);
 
     if (noTypeOrgs && noTypeOrgs > 100) {
       alerts.push({

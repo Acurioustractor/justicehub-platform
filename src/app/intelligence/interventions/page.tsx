@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import {
   LayoutGrid,
@@ -13,7 +12,6 @@ import {
   ChevronLeft,
   ChevronRight,
   MapPin,
-  Tag,
   Shield,
   ExternalLink,
   Loader2,
@@ -30,6 +28,12 @@ interface Intervention {
   evidence_level: string | null;
   consent_level: string | null;
   created_at: string;
+}
+
+interface Provenance {
+  mode: 'authoritative' | 'computed';
+  summary: string;
+  generated_at: string;
 }
 
 const EVIDENCE_COLORS: Record<string, string> = {
@@ -54,6 +58,7 @@ const TYPE_COLORS: Record<string, string> = {
 
 export default function InterventionsPage() {
   const [interventions, setInterventions] = useState<Intervention[]>([]);
+  const [provenance, setProvenance] = useState<Provenance | null>(null);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
@@ -62,73 +67,85 @@ export default function InterventionsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [selectedEvidence, setSelectedEvidence] = useState('');
+  const [selectedOutcome, setSelectedOutcome] = useState('');
+  const [selectedContext, setSelectedContext] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 24;
 
   // Filter options
   const [types, setTypes] = useState<string[]>([]);
   const [evidenceLevels, setEvidenceLevels] = useState<string[]>([]);
+  const [outcomeTypes, setOutcomeTypes] = useState<string[]>([]);
+  const [contextTypes, setContextTypes] = useState<string[]>([]);
 
-  // Fetch interventions
+  // Fetch interventions via intelligence API
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchData() {
-      setLoading(true);
-      const supabase = createClient();
+      try {
+        setLoading(true);
 
-      // Build query
-      let query = supabase
-        .from('alma_interventions')
-        .select('id, name, description, type, geography, evidence_level, consent_level, created_at', { count: 'exact' });
+        const params = new URLSearchParams({
+          page: String(currentPage),
+          pageSize: String(pageSize),
+        });
 
-      if (searchQuery) {
-        query = query.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
-      }
-      if (selectedType) {
-        query = query.eq('type', selectedType);
-      }
-      if (selectedEvidence) {
-        query = query.eq('evidence_level', selectedEvidence);
-      }
+        if (searchQuery.trim()) {
+          params.set('search', searchQuery.trim());
+        }
+        if (selectedType) {
+          params.set('type', selectedType);
+        }
+        if (selectedEvidence) {
+          params.set('evidence_level', selectedEvidence);
+        }
+        if (selectedOutcome) {
+          params.set('outcome_type', selectedOutcome);
+        }
+        if (selectedContext) {
+          params.set('context_type', selectedContext);
+        }
 
-      const offset = (currentPage - 1) * pageSize;
-      query = query.order('name').range(offset, offset + pageSize - 1);
+        const response = await fetch(`/api/intelligence/interventions?${params.toString()}`, {
+          cache: 'no-store',
+        });
+        const payload = await response.json();
 
-      const { data, count, error } = await query;
+        if (!response.ok || !payload?.success) {
+          throw new Error(payload?.error || 'Failed to fetch interventions');
+        }
 
-      if (error) {
+        if (cancelled) {
+          return;
+        }
+
+        setInterventions(payload.data || []);
+        setTotal(payload.count || payload.total || 0);
+        setTypes(payload.filters?.types || []);
+        setEvidenceLevels(payload.filters?.evidenceLevels || []);
+        setOutcomeTypes(payload.filters?.outcomeTypes || []);
+        setContextTypes(payload.filters?.contextTypes || []);
+        setProvenance(payload.provenance || null);
+      } catch (error) {
         console.error('Error fetching interventions:', error);
-      } else {
-        setInterventions(data || []);
-        setTotal(count || 0);
+        if (!cancelled) {
+          setInterventions([]);
+          setTotal(0);
+          setProvenance(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
     }
 
     fetchData();
-  }, [searchQuery, selectedType, selectedEvidence, currentPage]);
-
-  // Fetch filter options once
-  useEffect(() => {
-    async function fetchFilterOptions() {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from('alma_interventions')
-        .select('type, evidence_level');
-
-      const typeSet = new Set<string>();
-      const evidenceSet = new Set<string>();
-
-      data?.forEach((item) => {
-        if (item.type) typeSet.add(item.type);
-        if (item.evidence_level) evidenceSet.add(item.evidence_level);
-      });
-
-      setTypes(Array.from(typeSet).sort());
-      setEvidenceLevels(Array.from(evidenceSet).sort());
-    }
-
-    fetchFilterOptions();
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [searchQuery, selectedType, selectedEvidence, selectedOutcome, selectedContext, currentPage]);
 
   const totalPages = Math.ceil(total / pageSize);
 
@@ -136,10 +153,12 @@ export default function InterventionsPage() {
     setSearchQuery('');
     setSelectedType('');
     setSelectedEvidence('');
+    setSelectedOutcome('');
+    setSelectedContext('');
     setCurrentPage(1);
   };
 
-  const hasFilters = searchQuery || selectedType || selectedEvidence;
+  const hasFilters = searchQuery || selectedType || selectedEvidence || selectedOutcome || selectedContext;
 
   return (
     <div className="min-h-screen bg-white text-black font-sans">
@@ -160,6 +179,14 @@ export default function InterventionsPage() {
                 <p className="text-lg text-gray-700 mt-2">
                   <strong className="font-mono">{total.toLocaleString()}</strong> programs documented across Australia
                 </p>
+                {provenance && (
+                  <div className="mt-3 inline-flex items-center gap-2 border border-black bg-white px-3 py-1 text-xs">
+                    <span className={`font-bold uppercase ${provenance.mode === 'authoritative' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                      {provenance.mode}
+                    </span>
+                    <span className="text-gray-700">{provenance.summary}</span>
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-gray-500 mr-2">View:</span>
@@ -231,6 +258,34 @@ export default function InterventionsPage() {
                   <option key={level} value={level}>{level.split(' (')[0]}</option>
                 ))}
               </select>
+
+              {/* Outcome Type Filter */}
+              {outcomeTypes.length > 0 && (
+                <select
+                  value={selectedOutcome}
+                  onChange={(e) => { setSelectedOutcome(e.target.value); setCurrentPage(1); }}
+                  className="border-2 border-black px-3 py-2 bg-white font-mono text-sm focus:outline-none"
+                >
+                  <option value="">All Outcomes</option>
+                  {outcomeTypes.map((type) => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              )}
+
+              {/* Community Context Filter */}
+              {contextTypes.length > 0 && (
+                <select
+                  value={selectedContext}
+                  onChange={(e) => { setSelectedContext(e.target.value); setCurrentPage(1); }}
+                  className="border-2 border-black px-3 py-2 bg-white font-mono text-sm focus:outline-none"
+                >
+                  <option value="">All Contexts</option>
+                  {contextTypes.map((type) => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              )}
 
               {/* Clear Filters */}
               {hasFilters && (

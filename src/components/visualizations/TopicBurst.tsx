@@ -9,6 +9,10 @@ interface TopicData {
   avgSentiment: number;
 }
 
+interface TopicNode extends d3.SimulationNodeDatum, TopicData {
+  radius: number;
+}
+
 interface TopicBurstProps {
   data: TopicData[];
   width?: number;
@@ -51,7 +55,7 @@ export default function TopicBurst({
       .domain([-1, 0, 1])
       .range(['#e74c3c', '#95a5a6', '#27ae60']);
 
-    const nodes = data.map(d => ({
+    const nodes: TopicNode[] = data.map((d) => ({
       ...d,
       radius: sizeScale(d.count),
       x: Math.random() * width,
@@ -60,19 +64,19 @@ export default function TopicBurst({
 
     // Create force simulation
     const simulation = d3
-      .forceSimulation(nodes as any)
+      .forceSimulation<TopicNode>(nodes)
       .force('charge', d3.forceManyBody().strength(-50))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force(
         'collision',
-        d3.forceCollide().radius((d: any) => d.radius + 4)
+        d3.forceCollide<TopicNode>().radius((d) => d.radius + 4)
       )
       .force('x', d3.forceX(width / 2).strength(0.05))
       .force('y', d3.forceY(height / 2).strength(0.05));
 
     // Create groups for each bubble
     const bubbleGroups = svg
-      .selectAll('g.bubble')
+      .selectAll<SVGGElement, TopicNode>('g.bubble')
       .data(nodes)
       .join('g')
       .attr('class', 'bubble')
@@ -81,8 +85,8 @@ export default function TopicBurst({
     // Add glow circles (behind main circles)
     bubbleGroups
       .append('circle')
-      .attr('r', d => d.radius)
-      .attr('fill', d => colorScale(d.avgSentiment))
+      .attr('r', (d) => d.radius)
+      .attr('fill', (d) => colorScale(d.avgSentiment))
       .attr('opacity', 0.2)
       .attr('filter', 'blur(8px)');
 
@@ -90,7 +94,7 @@ export default function TopicBurst({
     const circles = bubbleGroups
       .append('circle')
       .attr('r', 0)
-      .attr('fill', d => colorScale(d.avgSentiment))
+      .attr('fill', (d) => colorScale(d.avgSentiment))
       .attr('stroke', '#0a0f16')
       .attr('stroke-width', 2)
       .attr('opacity', 0.9);
@@ -98,10 +102,10 @@ export default function TopicBurst({
     // Animate bubble entrance
     circles
       .transition()
-      .delay((d, i) => i * 50)
+      .delay((_, i) => i * 50)
       .duration(800)
       .ease(d3.easeElasticOut)
-      .attr('r', d => d.radius);
+      .attr('r', (d) => d.radius);
 
     // Add text labels
     const labels = bubbleGroups
@@ -110,9 +114,9 @@ export default function TopicBurst({
       .attr('dy', '-0.2em')
       .attr('fill', 'white')
       .attr('font-weight', '600')
-      .attr('font-size', d => Math.min(d.radius / 3, 16))
+      .attr('font-size', (d) => Math.min(d.radius / 3, 16))
       .attr('opacity', 0)
-      .text(d => {
+      .text((d) => {
         // Truncate long topic names
         const maxLen = Math.floor(d.radius / 5);
         return d.topic.length > maxLen ? d.topic.substring(0, maxLen) + '...' : d.topic;
@@ -125,30 +129,30 @@ export default function TopicBurst({
       .attr('dy', '1em')
       .attr('fill', 'white')
       .attr('opacity', 0)
-      .attr('font-size', d => Math.min(d.radius / 4, 14))
-      .text(d => `${d.count} mentions`);
+      .attr('font-size', (d) => Math.min(d.radius / 4, 14))
+      .text((d) => `${d.count} mentions`);
 
     // Fade in labels after bubbles appear
     labels
       .transition()
-      .delay((d, i) => i * 50 + 800)
+      .delay((_, i) => i * 50 + 800)
       .duration(400)
       .attr('opacity', 1);
 
     countLabels
       .transition()
-      .delay((d, i) => i * 50 + 800)
+      .delay((_, i) => i * 50 + 800)
       .duration(400)
       .attr('opacity', 0.8);
 
     // Update positions on simulation tick
     simulation.on('tick', () => {
-      bubbleGroups.attr('transform', (d: any) => `translate(${d.x},${d.y})`);
+      bubbleGroups.attr('transform', (d) => `translate(${d.x ?? 0},${d.y ?? 0})`);
     });
 
     // Add hover interactions
     bubbleGroups
-      .on('mouseenter', function(event, d) {
+      .on('mouseenter', function (this: SVGGElement, event: MouseEvent, d: TopicNode) {
         const bubble = d3.select(this);
 
         // Grow bubble
@@ -170,7 +174,7 @@ export default function TopicBurst({
         setHoveredTopic(d);
         setMousePos({ x: event.pageX, y: event.pageY });
       })
-      .on('mouseleave', function(event, d) {
+      .on('mouseleave', function (this: SVGGElement, _event: MouseEvent, d: TopicNode) {
         const bubble = d3.select(this);
 
         // Shrink bubble back

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Empathy Ledger Supabase Client
@@ -36,10 +36,30 @@ import { createClient } from '@supabase/supabase-js';
  * - requires_elder_approval: If true, must have elder_approved_at set
  * - cultural_sensitivity_level: Indicates level of cultural sensitivity
  */
-export const empathyLedgerClient = createClient(
-  process.env.EMPATHY_LEDGER_URL || 'https://yvnuayzslukamizrlhwb.supabase.co',
-  process.env.EMPATHY_LEDGER_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2bnVheXpzbHVrYW1penJsaHdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNDQ4NTAsImV4cCI6MjA3MTgyMDg1MH0.UV8JOXSwANMl72lRjw-9d4CKniHSlDk9hHZpKHYN6Bs'
-);
+const empathyLedgerUrl = process.env.EMPATHY_LEDGER_URL;
+const empathyLedgerApiKey = process.env.EMPATHY_LEDGER_API_KEY;
+export const EMPATHY_LEDGER_ENV_ERROR =
+  'Missing required env: EMPATHY_LEDGER_URL and EMPATHY_LEDGER_API_KEY';
+
+type EmpathyLedgerClient = SupabaseClient<any, 'public', any>;
+
+const configuredEmpathyLedgerClient: EmpathyLedgerClient | null =
+  empathyLedgerUrl && empathyLedgerApiKey
+    ? createClient<any>(empathyLedgerUrl, empathyLedgerApiKey)
+    : null;
+
+export const isEmpathyLedgerConfigured = Boolean(configuredEmpathyLedgerClient);
+
+// Defer config errors to request-time so local dev can run without Empathy Ledger env.
+export const empathyLedgerClient = (configuredEmpathyLedgerClient ??
+  new Proxy(
+    {},
+    {
+      get() {
+        throw new Error(EMPATHY_LEDGER_ENV_ERROR);
+      },
+    }
+  )) as EmpathyLedgerClient;
 
 /**
  * Consent levels for privacy control

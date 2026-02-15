@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown, Search } from 'lucide-react';
-import { navigationItems } from '@/config/navigation';
+import { Menu, X, ChevronDown, Search, LayoutGrid } from 'lucide-react';
+import { navigationItems, footerSections } from '@/config/navigation';
 import { useNavigationAuth } from '@/hooks/useNavigationAuth';
 import { UserMenu } from './UserMenu';
 import { MobileMenu } from './MobileMenu';
@@ -23,6 +23,7 @@ interface NavigationProps {
 export function MainNavigation({ variant = 'default' }: NavigationProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
     const pathname = usePathname();
@@ -83,6 +84,13 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
     const headerClasses = variant === 'transparent'
         ? "fixed top-0 left-0 right-0 w-full bg-white/95 backdrop-blur-sm z-50 border-b border-gray-200"
         : "fixed top-0 left-0 right-0 w-full bg-white z-50 border-b-2 border-black";
+
+    const megaMenuMainSections = navigationItems.map((item) => ({
+        title: item.label,
+        links: item.type === 'dropdown'
+            ? (item.items || [])
+            : [{ label: item.label, href: item.href, description: item.description }],
+    }));
 
     return (
         <header className={headerClasses} suppressHydrationWarning>
@@ -206,19 +214,6 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
                             </div>
                         ))}
 
-                        {/* About Link */}
-                        <Link
-                            href="/about"
-                            className={`px-4 py-2 font-bold text-sm uppercase tracking-wider transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${isActivePath('/about')
-                                ? 'text-black underline decoration-2 underline-offset-4'
-                                : 'text-gray-700 hover:text-black hover:underline hover:decoration-2 hover:underline-offset-4'
-                                }`}
-                            aria-current={isActivePath('/about') ? 'page' : undefined}
-                            title="Learn about JusticeHub"
-                        >
-                            About
-                        </Link>
-
                         {/* Search Button */}
                         <button
                             onClick={() => setIsSearchOpen(true)}
@@ -230,47 +225,44 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
                             <span className="hidden xl:inline text-xs text-gray-400">⌘K</span>
                         </button>
 
-                        {/* Youth Scout CTA - Special Floating Button */}
-                        <div className="ml-4 flex items-center gap-3">
-                            <Link
-                                href="/youth-scout"
-                                className="relative youth-scout-button text-white px-5 py-2.5 font-bold text-xs uppercase tracking-wider hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 group rounded-sm no-underline"
-                                aria-label="Youth Scout - Your personalized journey"
-                            >
-                                <span className="relative z-10">
-                                    YOUTH SCOUT
-                                </span>
-                                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            </Link>
+                        {/* Full Screen Mega Menu */}
+                        <button
+                            onClick={() => setIsMegaMenuOpen(true)}
+                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 rounded-md border border-gray-200 hover:border-gray-300"
+                            aria-label="Open full menu"
+                            title="Open full menu"
+                        >
+                            <LayoutGrid className="h-4 w-4" />
+                            <span className="hidden xl:inline">All Pages</span>
+                        </button>
 
-                            {/* Show SIGN UP or Profile Dropdown based on auth state */}
-                            {/* Use suppressHydrationWarning to prevent hydration mismatch due to client-only auth state */}
-                            <div suppressHydrationWarning>
-                                {mounted && user && userProfile ? (
-                                    <UserMenu
-                                        user={user}
-                                        userProfile={userProfile}
-                                        onSignOut={signOut}
-                                    />
-                                ) : (
-                                    <div className="flex items-center gap-3">
-                                        <Link
-                                            href="/login"
-                                            className="px-5 py-2.5 bg-white text-black font-bold text-xs uppercase tracking-wider hover:bg-gray-100 transition-colors border-2 border-black shadow-lg rounded-sm"
-                                            aria-label="Log in to your account"
-                                        >
-                                            LOG IN
-                                        </Link>
-                                        <Link
-                                            href="/signup"
-                                            className="px-5 py-2.5 bg-black text-white font-bold text-xs uppercase tracking-wider hover:bg-gray-800 transition-colors border-2 border-black shadow-lg rounded-sm"
-                                            aria-label="Create your profile"
-                                        >
-                                            SIGN UP
-                                        </Link>
-                                    </div>
-                                )}
-                            </div>
+                        {/* Show SIGN UP or Profile Dropdown based on auth state */}
+                        {/* Use suppressHydrationWarning to prevent hydration mismatch due to client-only auth state */}
+                        <div suppressHydrationWarning className="ml-4">
+                            {mounted && user && userProfile ? (
+                                <UserMenu
+                                    user={user}
+                                    userProfile={userProfile}
+                                    onSignOut={signOut}
+                                />
+                            ) : (
+                                <div className="flex items-center gap-3">
+                                    <Link
+                                        href="/login"
+                                        className="px-5 py-2.5 bg-white text-black font-bold text-xs uppercase tracking-wider hover:bg-gray-100 transition-colors border-2 border-black shadow-lg rounded-sm"
+                                        aria-label="Log in to your account"
+                                    >
+                                        LOG IN
+                                    </Link>
+                                    <Link
+                                        href="/signup"
+                                        className="px-5 py-2.5 bg-black text-white font-bold text-xs uppercase tracking-wider hover:bg-gray-800 transition-colors border-2 border-black shadow-lg rounded-sm"
+                                        aria-label="Create your profile"
+                                    >
+                                        SIGN UP
+                                    </Link>
+                                </div>
+                            )}
                         </div>
                     </nav>
                 </div>
@@ -283,6 +275,7 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
                     userProfile={userProfile}
                     onSignOut={signOut}
                     onSearchOpen={() => setIsSearchOpen(true)}
+                    onMegaMenuOpen={() => setIsMegaMenuOpen(true)}
                 />
             </div>
 
@@ -298,6 +291,63 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
                             onClose={() => setIsSearchOpen(false)}
                             isModal={true}
                         />
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Mega Menu Modal */}
+            <Dialog open={isMegaMenuOpen} onOpenChange={setIsMegaMenuOpen}>
+                <DialogContent className="max-w-none w-screen h-screen p-0 m-0 rounded-none border-0">
+                    <DialogHeader className="border-b-2 border-black px-6 py-4">
+                        <DialogTitle className="text-2xl font-black">All Pages</DialogTitle>
+                    </DialogHeader>
+                    <div className="overflow-y-auto px-6 py-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                            {megaMenuMainSections.map((section) => (
+                                <section key={section.title} className="border-2 border-black bg-white">
+                                    <div className="px-4 py-3 border-b-2 border-black bg-gray-50">
+                                        <h3 className="text-sm font-black uppercase tracking-wider">{section.title}</h3>
+                                    </div>
+                                    <div className="p-3 space-y-2">
+                                        {section.links
+                                            .filter((link): link is { label: string; href: string; description?: string } => Boolean(link.href))
+                                            .map((link) => (
+                                                <Link
+                                                    key={link.href}
+                                                    href={link.href}
+                                                    onClick={() => setIsMegaMenuOpen(false)}
+                                                    className="block p-2 hover:bg-gray-50 border border-transparent hover:border-gray-200 transition-colors no-underline"
+                                                >
+                                                    <div className="font-bold text-sm text-black">{link.label}</div>
+                                                    {link.description && (
+                                                        <div className="text-xs text-gray-600 mt-1">{link.description}</div>
+                                                    )}
+                                                </Link>
+                                            ))}
+                                    </div>
+                                </section>
+                            ))}
+
+                            {footerSections.map((section) => (
+                                <section key={`footer-${section.title}`} className="border border-gray-300 bg-white">
+                                    <div className="px-4 py-3 border-b border-gray-300 bg-gray-50">
+                                        <h3 className="text-xs font-black uppercase tracking-wider text-gray-700">{section.title}</h3>
+                                    </div>
+                                    <div className="p-3 space-y-1">
+                                        {section.links.map((link) => (
+                                            <Link
+                                                key={`${section.title}-${link.href}`}
+                                                href={link.href}
+                                                onClick={() => setIsMegaMenuOpen(false)}
+                                                className="block px-2 py-1 text-sm font-medium text-gray-800 hover:text-black hover:bg-gray-50 no-underline"
+                                            >
+                                                {link.label}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </section>
+                            ))}
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
