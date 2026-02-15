@@ -1,0 +1,48 @@
+# All 37 articles discovered from justicehub.com.au
+# ✅ = Already scraped (8)
+# ⏳ = Pending scraping (29)
+
+# Page 1
+✅ where-fire-meets-country-a-journey-through-mount-isas-naidoc-week
+✅ achieving-gold-standard-youth-crime-prevention-designing-programs-that-transform-lives
+✅ beyond-shadows-platos-cave-and-the-reimagining-of-youth-justice-in-australia
+✅ creating-spaces-for-growth-the-physical-and-emotional-environment-of-transformation
+✅ from-control-to-care-reimagining-staff-roles-in-youth-justice
+✅ the-courage-to-connect-how-authentic-relationships-transform-youth-in-detention
+✅ beyond-walls-what-spanish-youth-detention-centers-taught-me-about-seeing-humanity-first
+✅ from-trouble-to-transformation-the-campfire-journey
+⏳ rethinking-youth-justice-funding-in-queensland-prioritising-grassroots-solutions-over-bureaucracy
+
+# Page 2+
+⏳ beyond-systems-a-day-with-jackqwann-in-the-heart-of-australia
+⏳ beyond-cases-and-problems-relationship-based-justice-in-central-australia
+⏳ navigating-two-worlds-cultural-authority-and-youth-empowerment-in-mparntwe
+⏳ richard-cassidy---our-story
+⏳ the-necessity-of-state-government-in-australia-a-queensland-perspective
+⏳ queensland-government-spending-on-youth-justice-and-community-safety
+⏳ the-diagrama-model-a-transformative-approach-to-youth-justice
+⏳ a-comparative-analysis-of-youth-justice-systems-in-spain-and-australia
+⏳ diagrama-foundations-impact-on-spains-youth-detention-system
+⏳ youth-detention-and-youth-justice-models-in-europe-a-comparative-overview
+⏳ walking-new-paths-reflections-from-bimberi
+⏳ resoleution-at-bimberi-youth-justice-centre
+⏳ inquiry-into-the-making-queensland-safer-bill-2024---submission
+⏳ breaking-bread-breaking-chains-when-two-worlds-collide
+⏳ spotlight-on-changemaker-brodie-germaine
+⏳ resoleution
+⏳ connecting-communities-a-network-for-justice-reinvestment
+⏳ community-at-the-core-empowering-local-solutions-in-youth-justice
+⏳ the-nature-of-power-how-control-shapes-youth-justice
+⏳ from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama
+⏳ the-road-to-hell-when-youth-justice-efforts-backfire
+⏳ diagrama-youth-justice-spain
+⏳ the-paradox-of-youth-justice-and-entropy-navigating-the-chaos-towards-hope
+⏳ kickin-it-with-deadlylabs-igniting-stem-passions-in-youth-detention
+⏳ from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit
+⏳ confit-pathways
+⏳ hamiltons-odyssey-igniting-transformation-through-confit-pathways
+⏳ a-heros-journey-from-addiction-to-inspiration-the-life-of-vic
+
+# Total: 37 articles
+# Scraped: 8 (22%)
+# Remaining: 29 (78%)

@@ -1,22 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getSession } from '@auth0/nextjs-auth0/edge';
+import { createServerClient } from '@supabase/ssr';
 
-// Add a mock session for development
-const mockSession = {
-  user: {
-    sub: 'auth0|dev-user',
-    name: 'Dev User',
-    email: 'dev@example.com',
-    picture: 'https://placehold.co/100x100',
-    'https://justicehub.org/role': 'admin',
-    'https://justicehub.org/organization_id': 'org_123_dev',
-  },
-  accessToken: 'mock_access_token',
-  idToken: 'mock_id_token',
-  token_type: 'Bearer',
-  expires_at: Math.floor(Date.now() / 1000) + 3600,
-};
+// NOTE: Mock session removed for security - use proper auth flow in development
 
 // Security headers
 const securityHeaders = {
@@ -34,12 +20,28 @@ const securityHeaders = {
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
     "media-src 'self' blob:",
-    "connect-src 'self' https://api.openai.com https://*.auth0.com https://*.amazonaws.com",
+    [
+      "connect-src 'self'",
+      'https://api.openai.com',
+      'https://*.auth0.com',
+      'https://*.amazonaws.com',
+      'https://*.supabase.co',
+      'https://basemaps.cartocdn.com',
+      'https://tiles.basemaps.cartocdn.com',
+      'https://*.basemaps.cartocdn.com',
+      'https://demotiles.maplibre.org',
+      'https://tile.openstreetmap.org',
+      'https://*.tile.openstreetmap.org',
+      'blob:',
+      'data:'
+    ].join(' '),
     "frame-src 'self' https://*.auth0.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
+    "worker-src 'self' blob:",
+    "child-src 'self' blob:",
     "upgrade-insecure-requests"
   ].join('; ')
 };
@@ -70,7 +72,7 @@ function getClientIdentifier(req: NextRequest): string {
   return `${ip}:${userAgent.slice(0, 50)}`;
 }
 
-function detectSuspiciousActivity(req: NextRequest): boolean {
+function detectSuspiciousActivity(req: NextRequest, isAdminUser: boolean = false): boolean {
   const userAgent = req.headers.get('user-agent') || '';
   const path = req.nextUrl.pathname;
 
@@ -88,9 +90,14 @@ function detectSuspiciousActivity(req: NextRequest): boolean {
     return true;
   }
 
-  // Block common admin/config paths
-  const blockedPaths = ['/admin', '/wp-admin', '/phpmyadmin', '/.env', '/.git'];
+  // Block common admin/config paths (but allow /admin for authenticated admins)
+  const blockedPaths = ['/wp-admin', '/phpmyadmin', '/.env', '/.git'];
   if (blockedPaths.some(blockedPath => path.startsWith(blockedPath))) {
+    return true;
+  }
+
+  // Block /admin paths only for non-admin users
+  if (path.startsWith('/admin') && !isAdminUser) {
     return true;
   }
 
@@ -98,21 +105,86 @@ function detectSuspiciousActivity(req: NextRequest): boolean {
 }
 
 export async function middleware(request: NextRequest) {
-  const response = NextResponse.next();
+  let response = NextResponse.next();
   const path = request.nextUrl.pathname;
+
+  // Skip middleware for static files and internal Next.js routes early
+  if (path.startsWith('/_next') || path.startsWith('/static') || path.includes('.') || path === '/favicon.ico') {
+    return response;
+  }
 
   // Apply security headers to all responses
   Object.entries(securityHeaders).forEach(([key, value]) => {
     response.headers.set(key, value);
   });
 
-  // Skip middleware for static files and internal Next.js routes
-  if (path.startsWith('/_next') || path.startsWith('/static') || path.includes('.') || path === '/favicon.ico') {
-    return response;
+  // Redirect old blog routes to stories routes (consolidate to one system)
+  if (path.startsWith('/admin/blog')) {
+    const newPath = path.replace('/admin/blog', '/admin/stories');
+    return NextResponse.redirect(new URL(newPath, request.url));
+  }
+
+  // Public routes that don't need Supabase auth
+  const publicRoutes = ['/wiki', '/preplanning', '/', '/stories', '/community-programs', '/organizations', '/intelligence', '/gallery'];
+  const isPublicRoute = publicRoutes.some(route => path === route || path.startsWith(`${route}/`));
+
+  // Only create Supabase client if we have environment variables and not on a fully public route
+  let user = null;
+  let isAdminUser = false;
+
+  if (!isPublicRoute) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (supabaseUrl && supabaseKey) {
+      try {
+        // Create Supabase client for middleware (handles auth cookie refresh)
+        const supabase = createServerClient(
+          supabaseUrl,
+          supabaseKey,
+          {
+            cookies: {
+              getAll() {
+                return request.cookies.getAll()
+              },
+              setAll(cookiesToSet) {
+                cookiesToSet.forEach(({ name, value, options }) => {
+                  request.cookies.set(name, value)
+                })
+                response = NextResponse.next({
+                  request,
+                })
+                cookiesToSet.forEach(({ name, value, options }) => {
+                  response.cookies.set(name, value, options)
+                })
+              },
+            },
+          }
+        );
+
+        // Refresh session if expired - this is crucial!
+        const { data: { user: authUser }, error } = await supabase.auth.getUser();
+        user = authUser;
+
+        // Check if user is admin (for /admin path protection)
+        if (user && path.startsWith('/admin')) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('is_super_admin')
+            .eq('id', user.id)
+            .single();
+
+          isAdminUser = profileData?.is_super_admin === true;
+        }
+      } catch (error) {
+        console.error('Middleware Supabase error:', error);
+        // Continue without auth - don't crash the middleware
+      }
+    }
   }
 
   // Detect suspicious activity
-  if (detectSuspiciousActivity(request)) {
+  if (detectSuspiciousActivity(request, isAdminUser)) {
     console.warn('Suspicious activity detected:', {
       ip: request.headers.get('x-forwarded-for') || request.ip,
       userAgent: request.headers.get('user-agent'),
@@ -126,68 +198,21 @@ export async function middleware(request: NextRequest) {
   if (path.startsWith('/api/')) {
     const clientId = getClientIdentifier(request);
     const rateLimitKey = `${clientId}:${path}`;
-    
+
     // Different limits for different endpoints
     const limit = path.includes('/upload') ? 10 : path.includes('/auth') ? 5 : 100;
-    
+
     if (!checkRateLimit(rateLimitKey, limit, 60000)) {
-      return new NextResponse(JSON.stringify({ error: 'Rate limit exceeded' }), { 
+      return new NextResponse(JSON.stringify({ error: 'Rate limit exceeded' }), {
         status: 429,
         headers: { 'Content-Type': 'application/json', 'Retry-After': '60' }
       });
     }
   }
-  
-  // Skip authentication for public routes
-  const publicPaths = ['/', '/api/health', '/_next/', '/favicon.ico', '/stories/browse', '/public/'];
-  if (publicPaths.some(publicPath => path.startsWith(publicPath))) {
-    return response;
-  }
 
-  try {
-    let session: any;
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log('DEV MODE: Bypassing authentication with mock user.');
-      session = mockSession;
-    } else {
-      session = await getSession(request, response);
-    }
-    
-    if (!session?.user) {
-      // Redirect to login for protected routes if not in dev and no session
-      if (process.env.NODE_ENV !== 'development') {
-        return NextResponse.redirect(new URL('/api/auth/login', request.url));
-      }
-    }
-
-    // Role-based access control for both real and mock sessions
-    if (session?.user) {
-      const userRole = session.user['https://justicehub.org/role'] || 'youth';
-      
-      // Admin routes
-      if (request.nextUrl.pathname.startsWith('/admin') && userRole !== 'admin') {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
-      
-      // Organization admin routes
-      if (request.nextUrl.pathname.startsWith('/organization') && 
-          !['org_admin', 'admin'].includes(userRole)) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
-      
-      // Mentor routes
-      if (request.nextUrl.pathname.startsWith('/mentor') && 
-          !['mentor', 'org_admin', 'admin'].includes(userRole)) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
-    }
-
-    return response;
-  } catch (error) {
-    console.error('Middleware error:', error);
-    return response;
-  }
+  // Most routes are public - no auth required
+  // Protected routes can handle auth in their own page components
+  return response;
 }
 
 export const config = {

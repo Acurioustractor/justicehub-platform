@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/app/api/admin/data-health/route.ts",
+    "src/app/api/community-programs/route.ts",
+    "src/app/api/programs/route.ts",
+    "src/app/api/programs/[id]/route.ts",
+    "src/app/api/programs/[id]/profiles/route.ts",
+    "src/app/api/services/[id]/profiles/route.ts",
+    "src/app/community-programs/page.tsx",
+    "src/app/community-programs/[id]/page.tsx",
+    "src/app/services/[id]/page.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "artifacts"
+  ]
+}

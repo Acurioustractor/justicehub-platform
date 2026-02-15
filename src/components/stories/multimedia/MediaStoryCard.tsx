@@ -29,6 +29,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Story, BlogStory, InterviewStory, VideoStory, PhotoStory } from '@/types/stories';
+import { scoreToSignal } from '@/lib/alma/impact-signals';
 
 interface MediaStoryCardProps {
   story: Story;
@@ -347,20 +348,21 @@ export function MediaStoryCard({ story, featured = false, onLike, onShare, onBoo
           </div>
         </div>
 
-        {/* Impact Score */}
-        {story.metadata.impact_score && (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-medium text-gray-700">
-                Impact Score: {story.metadata.impact_score}/10
-              </span>
+        {/* Impact Signal - ALMA uses signals not scores */}
+        {story.metadata.impact_score && (() => {
+          const signal = scoreToSignal(story.metadata.impact_score);
+          return (
+            <div className="flex items-center justify-between">
+              <div className={`flex items-center gap-2 px-2 py-1 rounded text-xs border ${signal.color}`}>
+                <div className="w-2 h-2 rounded-full bg-current"></div>
+                <span className="font-medium">{signal.label}</span>
+              </div>
+              <div className="text-xs text-gray-500">
+                {new Date(story.created_at).toLocaleDateString()}
+              </div>
             </div>
-            <div className="text-xs text-gray-500">
-              {new Date(story.created_at).toLocaleDateString()}
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Action Buttons */}
         <div className="flex gap-2 pt-2">

@@ -1,0 +1,319 @@
+{
+  "metadata": {
+    "source": "Paul Ramsay Foundation Justice Reinvestment Portfolio Review 2024",
+    "total_sites": 37,
+    "last_updated": "2024",
+    "description": "Community-level justice reinvestment sites across Australia funded by PRF and other sources"
+  },
+  "prf_funded": [
+    {
+      "name": "Aboriginal Legal Services NSW/ACT",
+      "type": "Site-Level / Enabling",
+      "state": "NSW",
+      "locations": ["Bourke", "Kempsey", "Moree", "Mount Druitt", "Nowra"],
+      "categories": ["legal_aid", "advocacy", "cultural_support"],
+      "description": "Justice reinvestment services across NSW providing legal support and community programs"
+    },
+    {
+      "name": "Anindilyakwa Royalties Aboriginal Corporation",
+      "type": "Site-Level",
+      "state": "NT",
+      "locations": ["Groote Eylandt"],
+      "categories": ["cultural_support", "court_support", "advocacy"],
+      "description": "Justice reinvestment initiative on Groote Eylandt"
+    },
+    {
+      "name": "Change the Record",
+      "type": "Site-Level",
+      "state": "National",
+      "locations": ["National"],
+      "categories": ["advocacy", "cultural_support", "legal_aid"],
+      "description": "National coalition of Aboriginal and Torres Strait Islander and non-Indigenous organizations working to end the over-representation of Indigenous people in the justice system"
+    },
+    {
+      "name": "Human Rights Law Centre",
+      "type": "Site-Level",
+      "state": "National",
+      "locations": ["National"],
+      "categories": ["legal_aid", "advocacy"],
+      "description": "National legal advocacy organization working on justice reform and human rights"
+    },
+    {
+      "name": "Justice and Equity Centre",
+      "type": "Site-Level",
+      "state": "NSW",
+      "locations": ["NSW"],
+      "categories": ["legal_aid", "advocacy"],
+      "description": "Independent legal service advocating for systemic change and access to justice in NSW"
+    },
+    {
+      "name": "Justice Reform Initiative",
+      "type": "Site-Level",
+      "state": "National",
+      "locations": ["National"],
+      "categories": ["advocacy", "legal_aid"],
+      "description": "National organization advocating for criminal justice reform"
+    },
+    {
+      "name": "Justice Reinvestment Network Australia",
+      "type": "Advocacy",
+      "state": "National",
+      "locations": ["National"],
+      "categories": ["advocacy", "education_training"],
+      "description": "National network promoting justice reinvestment across Australia"
+    },
+    {
+      "name": "Just Reinvest NSW",
+      "type": "Site-Level / Enabling",
+      "state": "NSW",
+      "locations": ["Kempsey", "Moree", "Mount Druitt", "Nowra"],
+      "categories": ["advocacy", "court_support", "cultural_support"],
+      "description": "Justice reinvestment organization working in multiple NSW communities"
+    },
+    {
+      "name": "Maranguka Justice Reinvestment Project",
+      "type": "Site-Level",
+      "state": "NSW",
+      "locations": ["Bourke"],
+      "categories": ["court_support", "cultural_support", "family_support", "education_training"],
+      "description": "Community-led justice reinvestment project in Bourke addressing root causes of crime"
+    },
+    {
+      "name": "NTCOSS",
+      "type": "Enabling",
+      "state": "NT",
+      "locations": ["NT"],
+      "categories": ["advocacy", "education_training"],
+      "description": "Northern Territory Council of Social Service supporting justice reinvestment initiatives"
+    },
+    {
+      "name": "Olabud Doogethu",
+      "type": "Site-Level",
+      "state": "WA",
+      "locations": ["Kimberley"],
+      "categories": ["cultural_support", "court_support", "family_support"],
+      "description": "Justice reinvestment initiative in the Kimberley region"
+    },
+    {
+      "name": "Social Reinvestment WA",
+      "type": "Site-Level / Enabling",
+      "state": "WA",
+      "locations": ["Multiple sites across WA"],
+      "categories": ["advocacy", "court_support", "cultural_support"],
+      "description": "Peak body supporting justice reinvestment sites across Western Australia"
+    },
+    {
+      "name": "Tiraapendi Wodli - Australian Red Cross",
+      "type": "Site-Level",
+      "state": "SA",
+      "locations": ["Port Adelaide"],
+      "categories": ["court_support", "family_support", "cultural_support"],
+      "description": "Justice reinvestment project in Port Adelaide"
+    },
+    {
+      "name": "Target Zero - WEstJustice & Centre for Multicultural Youth",
+      "type": "Site-Level",
+      "state": "VIC",
+      "locations": ["West Melbourne"],
+      "categories": ["legal_aid", "cultural_support", "advocacy"],
+      "description": "Justice reinvestment initiative targeting zero youth imprisonment in West Melbourne"
+    },
+    {
+      "name": "Yuwaya Ngarra-li - UNSW",
+      "type": "Site-Level",
+      "state": "NSW",
+      "locations": ["Walgett"],
+      "categories": ["education_training", "cultural_support", "family_support"],
+      "description": "UNSW-supported justice reinvestment project in Walgett"
+    }
+  ],
+  "all_sites": {
+    "NSW": [
+      {
+        "name": "Cowra Information & Neighbourhood Centre",
+        "location": "Cowra",
+        "categories": ["family_support", "court_support", "advocacy"]
+      },
+      {
+        "name": "Kinchela Boys Home Aboriginal Corporation",
+        "location": "Sydney",
+        "categories": ["cultural_support", "mental_health", "advocacy"]
+      },
+      {
+        "name": "Just Reinvest NSW",
+        "location": "Moree, Mount Druitt",
+        "categories": ["advocacy", "court_support", "cultural_support"]
+      },
+      {
+        "name": "Dhina Durriti Aboriginal Corporation - Learning the Macleay",
+        "location": "Kempsey",
+        "categories": ["education_training", "cultural_support", "court_support"]
+      },
+      {
+        "name": "Jana Ngalee Local Aboriginal Land Council",
+        "location": "Malabugilmah & Jubullum",
+        "categories": ["cultural_support", "family_support", "advocacy"]
+      },
+      {
+        "name": "Maranguka Justice Reinvestment Project",
+        "location": "Bourke",
+        "categories": ["court_support", "cultural_support", "family_support", "education_training"]
+      },
+      {
+        "name": "Waminda - South Coast Women's Health & Wellbeing Aboriginal Corporation",
+        "location": "Nowra",
+        "categories": ["health", "mental_health", "family_support", "cultural_support"]
+      },
+      {
+        "name": "Toomelah Local Aboriginal Land Council",
+        "location": "Toomelah",
+        "categories": ["cultural_support", "court_support", "family_support"]
+      },
+      {
+        "name": "Wahluu Health Aboriginal Corporation",
+        "location": "Bathurst",
+        "categories": ["health", "cultural_support", "family_support"]
+      }
+    ],
+    "NT": [
+      {
+        "name": "Alice Springs Community Justice Centre Consortium",
+        "location": "Alice Springs",
+        "categories": ["court_support", "cultural_support", "legal_aid"]
+      },
+      {
+        "name": "Anindilyakwa Royalties Aboriginal Corporation",
+        "location": "Groote Eylandt",
+        "categories": ["cultural_support", "court_support", "advocacy"]
+      },
+      {
+        "name": "Kurdiji Aboriginal Corporation",
+        "location": "Lajamanu",
+        "categories": ["cultural_support", "court_support", "family_support"]
+      },
+      {
+        "name": "Ngurratjuta / Pmara Ntjarra Aboriginal Corporation",
+        "location": "Central Australia",
+        "categories": ["cultural_support", "court_support", "health"]
+      },
+      {
+        "name": "Nja-marleya Cultural Leaders and Justice Group",
+        "location": "Maningrida",
+        "categories": ["cultural_support", "court_support", "advocacy"]
+      },
+      {
+        "name": "Savanna Solutions Business Services",
+        "location": "Katherine",
+        "categories": ["employment", "education_training", "court_support"]
+      }
+    ],
+    "QLD": [
+      {
+        "name": "Balkanu Cape York Development Corporation",
+        "location": "Mossman",
+        "categories": ["cultural_support", "court_support", "employment"]
+      },
+      {
+        "name": "Cape York Institute",
+        "location": "Hope Vale",
+        "categories": ["education_training", "cultural_support", "court_support"]
+      },
+      {
+        "name": "Cherbourg Wellbeing Indigenous Corporation",
+        "location": "Cherbourg",
+        "categories": ["mental_health", "cultural_support", "court_support"]
+      },
+      {
+        "name": "Gindaja Treatment and Healing Indigenous Corporation",
+        "location": "Yarrabah",
+        "categories": ["substance_abuse", "mental_health", "cultural_support"]
+      },
+      {
+        "name": "Gunawuna Jungai Limited",
+        "location": "Doomadgee",
+        "categories": ["cultural_support", "court_support", "family_support"]
+      },
+      {
+        "name": "Jika Kangka Gununamanda Limited",
+        "location": "Mornington Island",
+        "categories": ["cultural_support", "court_support", "education_training"]
+      },
+      {
+        "name": "Minjerribah Moorgumpin Aboriginal Corporation",
+        "location": "North Stradbroke Island",
+        "categories": ["cultural_support", "court_support", "family_support"]
+      },
+      {
+        "name": "Napranum Aboriginal Shire Council",
+        "location": "Napranum, Cape York",
+        "categories": ["cultural_support", "court_support", "advocacy"]
+      },
+      {
+        "name": "Townsville Community Justice Group Aboriginal & Torres Strait Islander Corporation",
+        "location": "Townsville",
+        "categories": ["court_support", "cultural_support", "advocacy"]
+      }
+    ],
+    "SA": [
+      {
+        "name": "Healthy Dreaming",
+        "location": "Port Augusta",
+        "categories": ["health", "mental_health", "cultural_support"]
+      },
+      {
+        "name": "Ngarrindjeri Regional Authority",
+        "location": "Meningie, Mid Murray, Murray Bridge, Murray Mallee, Raukkan",
+        "categories": ["cultural_support", "court_support", "advocacy"]
+      },
+      {
+        "name": "Tiraapendi Wodli - Australian Red Cross",
+        "location": "Port Adelaide",
+        "categories": ["court_support", "family_support", "cultural_support"]
+      }
+    ],
+    "VIC": [
+      {
+        "name": "Aboriginal and Torres Strait Islander Corporation FVPLS - Djirra",
+        "location": "Melton, West Melbourne",
+        "categories": ["legal_aid", "family_support", "advocacy", "cultural_support"]
+      },
+      {
+        "name": "Target Zero - WEstJustice & Centre for Multicultural Youth",
+        "location": "West Melbourne",
+        "categories": ["legal_aid", "cultural_support", "advocacy"]
+      }
+    ],
+    "WA": [
+      {
+        "name": "Aboriginal Legal Service of Western Australia",
+        "location": "Perth",
+        "categories": ["legal_aid", "cultural_support", "advocacy"]
+      },
+      {
+        "name": "Aboriginal Male's Healing Centre Strong Spirit Strong Families",
+        "location": "Newman, Port Hedland, Pilbara",
+        "categories": ["mental_health", "substance_abuse", "cultural_support", "family_support"]
+      },
+      {
+        "name": "Ebenezer Aboriginal Corporation",
+        "location": "Balga",
+        "categories": ["cultural_support", "court_support", "family_support"]
+      },
+      {
+        "name": "Emama Nguda Aboriginal Corporation",
+        "location": "Derby",
+        "categories": ["cultural_support", "court_support", "family_support"]
+      },
+      {
+        "name": "Gascoyne Development Commission",
+        "location": "Carnarvon",
+        "categories": ["employment", "education_training", "court_support"]
+      },
+      {
+        "name": "Shire of Halls Creek",
+        "location": "Halls Creek, Mulan, Kundat Djaru, Mindibungu",
+        "categories": ["court_support", "cultural_support", "advocacy"]
+      }
+    ]
+  }
+}

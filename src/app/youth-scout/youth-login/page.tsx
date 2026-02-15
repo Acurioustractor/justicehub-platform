@@ -2,223 +2,376 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import {
+  ArrowLeft,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  Rocket,
+  Shield,
+  UserPlus
+} from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 
 export default function YouthLoginPage() {
-  const [isLogin, setIsLogin] = useState(true);
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLogin, setIsLogin] = useState(true); // true = login, false = signup
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     firstName: '',
-    lastName: '',
     age: '',
-    location: ''
+    agreeToTerms: false
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+    setError(null);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In real app, would handle authentication here
-    // For now, redirect to dashboard
-    window.location.href = '/youth-scout/dashboard';
+    setError(null);
+
+    // Basic validation
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
+    if (!isLogin) {
+      // Signup validation
+      if (formData.password !== formData.confirmPassword) {
+        setError('Passwords do not match');
+        return;
+      }
+      if (!formData.agreeToTerms) {
+        setError('Please agree to the terms and conditions');
+        return;
+      }
+      if (!formData.firstName || !formData.age) {
+        setError('Please provide your name and age');
+        return;
+      }
+      const ageNum = parseInt(formData.age);
+      if (isNaN(ageNum) || ageNum < 13 || ageNum > 25) {
+        setError('Youth Scout is for ages 13-25');
+        return;
+      }
+    }
+
+    setLoading(true);
+
+    try {
+      // TODO: Implement actual authentication
+      // For now, simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Mock successful login/signup
+      if (isLogin) {
+        // Redirect to youth dashboard
+        router.push('/youth-scout/dashboard');
+      } else {
+        // Redirect to onboarding
+        router.push('/youth-scout/onboarding');
+      }
+    } catch (err) {
+      setError(isLogin ? 'Invalid email or password' : 'Failed to create account');
+      console.error('Auth error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-blue-50 to-orange-50">
+    <div className="min-h-screen page-content bg-gradient-to-br from-blue-50 via-purple-50 to-orange-50">
       <Navigation />
 
-      <main className="pt-32 pb-16">
-        <div className="container-justice">
+      <main className="header-offset">
+        <div className="container-justice py-12">
           {/* Back Link */}
-          <div className="mb-8">
-            <Link 
-              href="/youth-scout"
-              className="inline-flex items-center gap-2 font-medium text-gray-700 hover:text-black transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Youth Scout
-            </Link>
-          </div>
+          <Link
+            href="/youth-scout"
+            className="inline-flex items-center gap-2 text-black hover:underline font-medium mb-8"
+          >
+            <ArrowLeft className="h-5 w-5" />
+            Back to Youth Scout
+          </Link>
 
           <div className="max-w-md mx-auto">
-            <div className="bg-white border-4 border-blue-800 p-8 shadow-xl">
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-blue-800 text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                  <User className="h-8 w-8" />
-                </div>
-                <h1 className="text-2xl font-black text-blue-800 mb-2">
-                  {isLogin ? 'WELCOME BACK!' : 'JOIN YOUTH SCOUT'}
-                </h1>
-                <p className="text-gray-600">
-                  {isLogin 
-                    ? 'Ready to continue your journey?' 
-                    : 'Start your personalized growth journey today'
-                  }
-                </p>
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-800 text-white font-bold text-sm uppercase tracking-wider mb-4">
+                <Rocket className="h-4 w-4" />
+                Youth Scout
               </div>
 
+              <h1 className="text-3xl font-black mb-3 text-blue-800">
+                {isLogin ? 'Welcome Back!' : 'Start Your Journey'}
+              </h1>
+
+              <p className="text-gray-700">
+                {isLogin
+                  ? 'Log in to continue tracking your growth and connecting with opportunities'
+                  : 'Create your account to begin your personalized path to success'}
+              </p>
+            </div>
+
+            {/* Login/Signup Form */}
+            <div className="bg-white border-2 border-black p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              {error && (
+                <div className="mb-6 bg-red-50 border-2 border-red-600 p-4 flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-red-800 font-medium text-sm">{error}</p>
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Sign Up Only Fields */}
                 {!isLogin && (
                   <>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-bold mb-2">First Name</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.firstName}
-                          onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                          className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
-                          placeholder="Your first name"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold mb-2">Last Name</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.lastName}
-                          onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                          className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
-                          placeholder="Your last name"
-                        />
-                      </div>
+                    <div>
+                      <label htmlFor="firstName" className="block font-bold mb-2 text-sm">
+                        First Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="firstName"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        required={!isLogin}
+                        placeholder="What should we call you?"
+                        className="w-full px-4 py-3 border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
+                      />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-bold mb-2">Age</label>
-                        <select
-                          required
-                          value={formData.age}
-                          onChange={(e) => setFormData({...formData, age: e.target.value})}
-                          className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
-                        >
-                          <option value="">Select age</option>
-                          {Array.from({length: 13}, (_, i) => i + 12).map(age => (
-                            <option key={age} value={age}>{age}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold mb-2">Location</label>
-                        <select
-                          required
-                          value={formData.location}
-                          onChange={(e) => setFormData({...formData, location: e.target.value})}
-                          className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
-                        >
-                          <option value="">Select state</option>
-                          <option value="NSW">NSW</option>
-                          <option value="VIC">VIC</option>
-                          <option value="QLD">QLD</option>
-                          <option value="SA">SA</option>
-                          <option value="WA">WA</option>
-                          <option value="TAS">TAS</option>
-                          <option value="NT">NT</option>
-                          <option value="ACT">ACT</option>
-                        </select>
-                      </div>
+                    <div>
+                      <label htmlFor="age" className="block font-bold mb-2 text-sm">
+                        Your Age *
+                      </label>
+                      <input
+                        type="number"
+                        id="age"
+                        name="age"
+                        value={formData.age}
+                        onChange={handleInputChange}
+                        required={!isLogin}
+                        min="13"
+                        max="25"
+                        placeholder="Ages 13-25"
+                        className="w-full px-4 py-3 border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
+                      />
+                      <p className="text-xs text-gray-600 mt-1">
+                        Youth Scout is designed for ages 13-25
+                      </p>
                     </div>
                   </>
                 )}
 
+                {/* Email */}
                 <div>
-                  <label className="block text-sm font-bold mb-2">Email</label>
+                  <label htmlFor="email" className="block font-bold mb-2 text-sm">
+                    Email Address *
+                  </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <input
                       type="email"
-                      required
+                      id="email"
+                      name="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className="w-full pl-12 pr-4 py-3 border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
+                      onChange={handleInputChange}
+                      required
                       placeholder="your.email@example.com"
+                      className="w-full pl-11 pr-4 py-3 border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
                     />
                   </div>
                 </div>
 
+                {/* Password */}
                 <div>
-                  <label className="block text-sm font-bold mb-2">Password</label>
+                  <label htmlFor="password" className="block font-bold mb-2 text-sm">
+                    Password *
+                  </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      required
+                      id="password"
+                      name="password"
                       value={formData.password}
-                      onChange={(e) => setFormData({...formData, password: e.target.value})}
-                      className="w-full pl-12 pr-12 py-3 border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
-                      placeholder="Create a strong password"
-                      minLength={6}
+                      onChange={handleInputChange}
+                      required
+                      placeholder={isLogin ? 'Enter your password' : 'Create a strong password'}
+                      className="w-full pl-11 pr-11 py-3 border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
                     >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
                     </button>
                   </div>
+                  {!isLogin && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      At least 8 characters with a mix of letters and numbers
+                    </p>
+                  )}
                 </div>
 
-                {isLogin && (
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
-                      <span className="text-sm">Remember me</span>
+                {/* Confirm Password (Sign Up Only) */}
+                {!isLogin && (
+                  <div>
+                    <label htmlFor="confirmPassword" className="block font-bold mb-2 text-sm">
+                      Confirm Password *
                     </label>
-                    <Link href="#" className="text-sm text-blue-800 hover:underline">
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        required={!isLogin}
+                        placeholder="Re-enter your password"
+                        className="w-full pl-11 pr-4 py-3 border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Remember Me / Forgot Password (Login Only) */}
+                {isLogin && (
+                  <div className="flex items-center justify-between text-sm">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" className="rounded" />
+                      <span>Remember me</span>
+                    </label>
+                    <Link href="/youth-scout/forgot-password" className="text-blue-800 hover:underline font-medium">
                       Forgot password?
                     </Link>
                   </div>
                 )}
 
+                {/* Terms & Conditions (Sign Up Only) */}
+                {!isLogin && (
+                  <div className="bg-blue-50 border-2 border-blue-800 p-4">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="agreeToTerms"
+                        checked={formData.agreeToTerms}
+                        onChange={handleInputChange}
+                        required={!isLogin}
+                        className="mt-1"
+                      />
+                      <div className="text-sm">
+                        <span>I agree to the </span>
+                        <Link href="/terms" className="text-blue-800 hover:underline font-bold">
+                          Terms of Service
+                        </Link>
+                        <span> and </span>
+                        <Link href="/privacy" className="text-blue-800 hover:underline font-bold">
+                          Privacy Policy
+                        </Link>
+                      </div>
+                    </label>
+                  </div>
+                )}
+
+                {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full bg-blue-800 hover:bg-blue-700 text-white py-4 font-bold text-lg transition-all transform hover:scale-105"
+                  disabled={loading}
+                  className="w-full bg-blue-800 hover:bg-blue-700 text-white font-bold py-4 px-6 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {isLogin ? 'LOG IN' : 'START MY JOURNEY'}
+                  {loading ? (
+                    <>
+                      <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                      {isLogin ? 'Logging in...' : 'Creating account...'}
+                    </>
+                  ) : (
+                    <>
+                      {isLogin ? (
+                        <>
+                          <Lock className="h-5 w-5" />
+                          Log In
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="h-5 w-5" />
+                          Create Account
+                        </>
+                      )}
+                    </>
+                  )}
                 </button>
-
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">
-                    {isLogin ? "Don't have an account? " : 'Already have an account? '}
-                    <button
-                      type="button"
-                      onClick={() => setIsLogin(!isLogin)}
-                      className="text-blue-800 hover:underline font-bold"
-                    >
-                      {isLogin ? 'Sign Up' : 'Log In'}
-                    </button>
-                  </p>
-                </div>
               </form>
 
-              {!isLogin && (
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <p className="text-xs text-gray-600 text-center">
-                    By signing up, you agree to our Terms of Service and Privacy Policy. 
-                    We're committed to keeping your information safe and only using it to help you grow.
-                  </p>
-                </div>
-              )}
+              {/* Toggle Between Login/Signup */}
+              <div className="mt-6 text-center border-t-2 border-gray-200 pt-6">
+                <p className="text-sm text-gray-700">
+                  {isLogin ? "Don't have an account?" : 'Already have an account?'}
+                  {' '}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsLogin(!isLogin);
+                      setError(null);
+                      setFormData({
+                        email: '',
+                        password: '',
+                        confirmPassword: '',
+                        firstName: '',
+                        age: '',
+                        agreeToTerms: false
+                      });
+                    }}
+                    className="text-blue-800 hover:underline font-bold"
+                  >
+                    {isLogin ? 'Sign up here' : 'Log in here'}
+                  </button>
+                </p>
+              </div>
             </div>
 
-            {/* Demo Access */}
+            {/* Privacy Notice */}
+            <div className="mt-6 bg-white border-2 border-black p-6 text-center">
+              <Shield className="h-8 w-8 text-blue-800 mx-auto mb-3" />
+              <h3 className="font-bold mb-2">Your Privacy is Protected</h3>
+              <p className="text-sm text-gray-700">
+                We use industry-standard encryption to protect your data. We'll never share your information
+                without your explicit consent.
+              </p>
+            </div>
+
+            {/* Quick Preview Link */}
             <div className="mt-6 text-center">
-              <div className="bg-green-100 border-2 border-green-600 p-4">
-                <h3 className="font-bold text-green-800 mb-2">Demo Access</h3>
-                <p className="text-sm text-green-700 mb-3">
-                  Want to explore without signing up? Try our demo version.
-                </p>
-                <Link 
-                  href="/youth-scout/dashboard"
-                  className="inline-block bg-green-600 text-white px-6 py-2 font-bold hover:bg-green-700 transition-all"
-                >
-                  Enter Demo Dashboard
-                </Link>
-              </div>
+              <Link
+                href="/youth-scout/youth-preview"
+                className="text-blue-800 hover:underline font-medium text-sm"
+              >
+                Want to see what Youth Scout offers? Take a quick tour →
+              </Link>
             </div>
           </div>
         </div>

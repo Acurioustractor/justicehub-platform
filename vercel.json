@@ -1,0 +1,6 @@
+{
+  "name": "justicehub",
+  "buildCommand": "next build",
+  "devCommand": "next dev --port $PORT",
+  "installCommand": "npm install"
+}

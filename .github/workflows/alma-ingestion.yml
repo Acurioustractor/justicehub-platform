@@ -1,0 +1,118 @@
+name: ALMA Continuous Ingestion
+
+on:
+  # Schedule - runs daily at 2am UTC
+  schedule:
+    - cron: '0 2 * * *'
+
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Ingestion mode'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - daily
+          - weekly
+          - monthly
+          - quarterly
+          - government
+          - indigenous
+          - research
+          - media
+          - legal
+          - inquiries
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  ingest:
+    name: ALMA Ingestion
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Create .env.local
+        run: |
+          cat << EOF > .env.local
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          FIRECRAWL_API_KEY=${{ secrets.FIRECRAWL_API_KEY }}
+          ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
+          EOF
+
+      - name: Run ALMA Ingestion
+        run: |
+          chmod +x scripts/alma-scheduler.mjs
+          node scripts/alma-scheduler.mjs ${{ github.event.inputs.mode || 'auto' }}
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alma-ingestion-logs
+          path: alma-ingestion.log
+          retention-days: 30
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::ALMA ingestion failed"
+          # Add Slack/Discord notification here if desired
+
+  pattern-detection:
+    name: Pattern Detection
+    needs: ingest
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .env.local
+        run: |
+          cat << EOF > .env.local
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          EOF
+
+      - name: Run pattern detection
+        run: |
+          chmod +x scripts/alma-agent-bridge.mjs
+          node scripts/alma-agent-bridge.mjs patterns
+
+      - name: Generate report
+        run: |
+          node scripts/alma-agent-bridge.mjs all > alma-report.txt
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: alma-intelligence-report
+          path: alma-report.txt
+          retention-days: 90

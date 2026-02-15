@@ -1,0 +1,216 @@
+{
+  "id": "brief-first-nations-partnerships",
+  "type": "brief",
+  "category": "roots",
+  "title": "Walking Together: First Nations Partnerships",
+  "created_at": "2025-01-08",
+  "status": "requires_community_review",
+
+  "critical_note": {
+    "message": "This brief MUST be reviewed by First Nations partners before any article is written. Non-Indigenous people should not write about First Nations partnerships without community guidance and approval.",
+    "review_requirements": [
+      "First Nations team member review",
+      "Community partner approval",
+      "Cultural authority verification",
+      "Language and framing check"
+    ]
+  },
+
+  "purpose": {
+    "why_this_story_matters": [
+      "First Nations young people are 17x more likely to be in detention - this is the central injustice JusticeHub addresses",
+      "Partnership approach must be transparent and accountable",
+      "Demonstrates commitment to community-led design",
+      "Models ethical practice for other organisations",
+      "Builds trust with First Nations communities considering partnership"
+    ],
+    "who_should_write_this": "Ideally co-authored with First Nations partners, or written by First Nations team members. If written by non-Indigenous staff, requires thorough community review."
+  },
+
+  "key_themes_to_explore": {
+    "acknowledgment": {
+      "theme": "Truth-telling About the Problem",
+      "content_areas": [
+        "17x overrepresentation is a result of systemic racism and colonisation",
+        "Youth justice system has historically failed First Nations young people",
+        "Many 'solutions' have been imposed without community input",
+        "ACT acknowledges its position as a non-Indigenous-led organisation"
+      ],
+      "tone": "Honest, not performative. Name the problem clearly."
+    },
+
+    "partnership_principles": {
+      "theme": "How JusticeHub Approaches Partnership",
+      "from_brand_docs": {
+        "radical_humility": "We don't have all the answers, but we're cultivating solutions together",
+        "decentralised_power": "Communities lead; we support. Every tool has a sunset clause and 'forkable' IP",
+        "obsolescence_design": "We design for our own obsolescence. 40% of profits flow to community ownership"
+      },
+      "practical_application": [
+        "Community-led design: First Nations communities shape features and priorities",
+        "Data sovereignty: Indigenous data stays in Indigenous control",
+        "Forkable IP: Communities can take and adapt the technology",
+        "Sunset clauses: JusticeHub plans for community ownership, not dependency"
+      ]
+    },
+
+    "data_sovereignty": {
+      "theme": "Indigenous Data Sovereignty in Practice",
+      "principles": [
+        "Indigenous data is collected, owned, and controlled by Indigenous peoples",
+        "Data about Indigenous peoples should benefit Indigenous peoples",
+        "Indigenous communities decide how their data is used",
+        "Cultural protocols are built into technology, not added as an afterthought"
+      ],
+      "implementation_in_justicehub": [
+        "Three-tier consent model (Private → Community → Public)",
+        "Elder approval workflows for culturally sensitive content",
+        "Cultural warnings system",
+        "Indigenous-controlled organisation flag",
+        "Traditional Country documentation"
+      ],
+      "sources_to_reference": [
+        "Maiam nayri Wingara Indigenous Data Sovereignty Collective",
+        "Indigenous Data Network",
+        "CARE Principles for Indigenous Data Governance"
+      ]
+    },
+
+    "cultural_safety": {
+      "theme": "Cultural Safety Framework",
+      "definition": "Cultural safety goes beyond cultural awareness or sensitivity. It requires recognising and addressing power imbalances, creating environments where First Nations people feel safe to express their identity.",
+      "in_practice": [
+        "Empathy Ledger integration: Stories shared on storyteller's terms",
+        "Cultural warnings before sensitive content",
+        "Elder approval for community-controlled content",
+        "Indigenous-controlled organisation designation",
+        "Cultural sensitivity levels for content classification"
+      ]
+    },
+
+    "specific_partnerships": {
+      "theme": "Current Partnership Work",
+      "note": "This section needs input from partnerships team - what can be shared publicly?",
+      "questions_for_team": [
+        "Which partnerships can be named publicly?",
+        "What outcomes can be shared?",
+        "Are there quotes or stories from partners that can be included?",
+        "What upcoming partnership work is in development?"
+      ]
+    },
+
+    "truth_telling": {
+      "theme": "Ongoing Commitment to Truth-telling",
+      "content_areas": [
+        "Acknowledging colonisation's ongoing impact on youth justice",
+        "Naming systemic racism when we see it",
+        "Supporting community-led truth-telling processes",
+        "Platform commitment to amplifying First Nations voices"
+      ]
+    }
+  },
+
+  "article_structure_suggestion": {
+    "word_count_target": "800-1200 words",
+    "structure": [
+      {
+        "section": "Acknowledgment",
+        "approach": "Traditional Owner acknowledgment specific to where JusticeHub operates. Not generic - meaningful."
+      },
+      {
+        "section": "The Central Injustice",
+        "approach": "Name the 17x overrepresentation and its causes clearly. Truth-telling, not euphemism."
+      },
+      {
+        "section": "Our Position",
+        "approach": "Honest about ACT's position as non-Indigenous-led. What we're learning."
+      },
+      {
+        "section": "Partnership Principles",
+        "approach": "How we approach partnership - community-led, data sovereignty, obsolescence design."
+      },
+      {
+        "section": "Data Sovereignty in Practice",
+        "approach": "Specific examples of how Indigenous data sovereignty is implemented in JusticeHub."
+      },
+      {
+        "section": "Cultural Safety",
+        "approach": "What cultural safety means in the platform - Empathy Ledger, consent, elder approval."
+      },
+      {
+        "section": "Current Work",
+        "approach": "Specific partnership work (with community approval to share)."
+      },
+      {
+        "section": "Invitation",
+        "approach": "How First Nations communities and organisations can engage - on their terms."
+      }
+    ]
+  },
+
+  "tone_guidance": {
+    "voice": "Humble, honest, accountable. Not performative or self-congratulatory.",
+    "do": [
+      "Use specific language, not generalities",
+      "Name Traditional Owners specifically when possible",
+      "Acknowledge ongoing learning and mistakes",
+      "Centre First Nations voices (quotes, co-authorship)",
+      "Reference established principles (CARE, Maiam nayri Wingara)",
+      "Be concrete about what we actually do, not just what we aspire to"
+    ],
+    "avoid": [
+      "Performative acknowledgments that don't lead to action",
+      "Speaking for First Nations communities",
+      "Savior narratives or self-congratulation",
+      "Vague commitments without specifics",
+      "Using First Nations partnership as marketing",
+      "Claiming expertise we don't have"
+    ]
+  },
+
+  "technical_implementation_details": {
+    "source": "src/lib/supabase/empathy-ledger.ts",
+    "features_to_reference": [
+      {
+        "feature": "Three-tier consent model",
+        "implementation": "privacy_level: 'private' | 'community' | 'public'"
+      },
+      {
+        "feature": "Elder approval",
+        "implementation": "requires_elder_approval, elder_approved_at fields"
+      },
+      {
+        "feature": "Cultural warnings",
+        "implementation": "cultural_warnings array, cultural_sensitivity_level field"
+      },
+      {
+        "feature": "Indigenous organisation flag",
+        "implementation": "indigenous_controlled boolean on organisations"
+      },
+      {
+        "feature": "Traditional Country",
+        "implementation": "traditional_country, language_groups fields on organisations"
+      }
+    ]
+  },
+
+  "review_process": {
+    "step_1": "Share this brief with First Nations team members for initial feedback",
+    "step_2": "Determine who should write/co-author the article",
+    "step_3": "Gather input from current partnerships on what can be shared",
+    "step_4": "Draft article with appropriate authorship",
+    "step_5": "Community partner review before publication",
+    "step_6": "Final approval from First Nations team",
+    "estimated_timeline": "This should not be rushed. Allow time for proper consultation."
+  },
+
+  "external_resources": {
+    "recommended_reading": [
+      "Maiam nayri Wingara Indigenous Data Sovereignty Collective",
+      "CARE Principles for Indigenous Data Governance",
+      "Indigenous Data Network Australia",
+      "Close the Gap Campaign"
+    ],
+    "note": "These resources can help inform the article but don't replace community consultation."
+  }
+}

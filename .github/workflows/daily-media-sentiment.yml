@@ -1,0 +1,67 @@
+name: ALMA Daily Media Sentiment Tracking
+
+on:
+  # Schedule - runs daily at 6am UTC (4pm AEST)
+  schedule:
+    - cron: '0 6 * * *'
+
+  # Manual trigger
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  media-sentiment:
+    name: Media Sentiment Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .env.local
+        run: |
+          cat << EOF > .env.local
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          FIRECRAWL_API_KEY=${{ secrets.FIRECRAWL_API_KEY }}
+          ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
+          EOF
+
+      - name: Run Media Ingestion with Sentiment
+        run: |
+          chmod +x scripts/alma-continuous-ingestion.mjs
+          node scripts/alma-continuous-ingestion.mjs media
+
+      - name: Refresh Sentiment Analytics
+        run: |
+          node scripts/refresh-sentiment-views.mjs
+
+      - name: Generate Sentiment Report
+        run: |
+          node scripts/generate-sentiment-report.mjs > sentiment-report.md
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-sentiment-report
+          path: sentiment-report.md
+          retention-days: 30
+
+      - name: Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sentiment-tracking-logs
+          path: alma-ingestion.log
+          retention-days: 7

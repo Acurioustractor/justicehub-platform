@@ -1,0 +1,340 @@
+# Ralph Storyteller Progress Log
+# Project: JusticeHub Content Q1 2025
+# Initialized: 2025-01-07T23:50:00Z
+
+## Content Pipeline
+- Briefs → Drafts → Social
+- Human review required before publishing
+- All content commits to git
+
+## Categories
+- Seeds 🌱 (announcements, new initiatives)
+- Growth 🌿 (progress, developing programs)
+- Harvest 🌾 (outcomes, impact stories)
+- Roots 🌳 (history, foundational work)
+
+---
+
+## 2025-01-07T23:50:00Z
+**Event**: Project Initialized
+**PRD**: 8 tasks created
+- 3 briefs (platform vision, empathy ledger, impact metrics, first nations)
+- 3 articles (launch, community programs, ACT origins)
+- 1 social campaign (launch)
+
+**Next Priority**: brief-platform-vision (Priority 1)
+
+---
+
+## 2025-01-07T23:56:00Z
+**Task Completed**: brief-platform-vision
+**Type**: brief
+**Category**: seeds 🌱
+**Output**: ralph/briefs/brief-platform-vision.json
+
+**Summary**: Created comprehensive story brief for JusticeHub platform vision. Includes:
+- Problem statement with key statistics
+- Vision and core principles
+- Feature breakdown by audience (youth, orgs, community)
+- Call to action for different stakeholders
+- Tone guidance and suggested article structure
+- Review notes for cultural sensitivity
+
+**Learnings**:
+- Story briefs are more useful when they include specific structural suggestions
+- Including "do/avoid" tone guidance helps maintain brand consistency
+- Flagging cultural sensitivity requirements upfront saves revision time
+
+**Next Priority**: article-platform-launch (Priority 2)
+
+---
+
+## 2025-01-08T00:00:00Z
+**Task Completed**: article-platform-launch
+**Type**: article
+**Category**: seeds 🌱
+**Output**: ralph/drafts/article-platform-launch.md
+**Word Count**: ~1,050 words
+
+**Summary**: Wrote the JusticeHub launch article following the brief structure:
+- Hook: 2am mother story navigating fragmented system
+- Problem: Statistics on youth detention, highlighting systemic issues
+- Vision: One platform, whole-person support
+- Features: Breakdown for youth, providers, community
+- Principles: Community-centered, holistic, strength-based, culturally safe
+- Call to action: Service providers, families, funders
+- Acknowledgment: Traditional Owners
+
+**Quality Notes**:
+- ✓ Empowering tone throughout
+- ✓ Community-centered (leads with family, not organisation)
+- ✓ Specific features mentioned
+- ✓ Clear calls to action
+- ✓ Traditional Owner acknowledgment included
+- ⚠ Statistics need verification from AIHW before publishing
+- ⚠ URLs are placeholders - need real links
+
+**Learnings**:
+- Opening with human story more compelling than statistics
+- Breaking features into audience segments improves clarity
+- Including "built different" section helps differentiate from existing solutions
+
+**Next Priority**: brief-empathy-ledger-integration (Priority 3)
+
+---
+
+## 2025-01-08T00:15:00Z
+**Task Completed**: brief-empathy-ledger-integration
+**Type**: brief
+**Category**: growth 🌿
+**Output**: ralph/briefs/brief-empathy-ledger-integration.json
+**Cultural Sensitivity**: ⚠️ FLAGGED - Requires community review before article
+
+**Summary**: Created comprehensive brief on Empathy Ledger integration covering:
+- Three-tier consent model (Private → Community → Public)
+- Cultural safety features (Elder approval, warnings, sensitivity levels)
+- Indigenous data sovereignty principles in practice
+- How it works for storytellers, organizations, and readers
+- Story types that may appear through integration
+- Extensive tone guidance for sensitive topic
+
+**Technical Research**:
+- Reviewed actual Empathy Ledger integration code (src/lib/supabase/empathy-ledger.ts)
+- Documented real consent fields: privacy_level, is_public, requires_elder_approval
+- Captured cultural safety features: cultural_warnings, cultural_sensitivity_level
+- Noted Indigenous-controlled organization handling
+
+**Review Requirements**:
+- ⚠️ First Nations team review REQUIRED
+- ⚠️ Community partner approval recommended
+- ⚠️ Technical accuracy check against current implementation
+
+**Learnings**:
+- For culturally sensitive content, explain WHY review is needed, not just that it is
+- Technical documentation helps ensure accuracy when translating to plain language
+- Flagging content as requiring community review upfront prevents awkward corrections later
+
+**Next Priority**: article-community-programs (Priority 4)
+
+---
+
+## 2025-01-08T00:30:00Z
+**Task Completed**: article-community-programs
+**Type**: article
+**Category**: growth 🌿
+**Output**: ralph/drafts/article-community-programs.md
+**Word Count**: ~1,300 words
+
+**Summary**: Wrote comprehensive article on community programs available through JusticeHub:
+- Hook: Marcus's transformation through BackTrack welding program
+- Four program approaches: Indigenous-led, Community-based, Grassroots, Culturally-responsive
+- What makes programs work: Trust, strengths-based, holistic, accountability, long-term
+- How to find programs on JusticeHub
+- Call to action for service providers to register
+
+**Quality Notes**:
+- ✓ ~1,300 words (meets 800-1500 target)
+- ✓ Features 4 program types as required
+- ✓ Includes how community members can access programs
+- ✓ Success-focused, solution-oriented
+- ✓ Traditional Owner acknowledgment included
+- ⚠ URLs are placeholders - need real links
+- ⚠ Marcus story is illustrative (noted in disclaimer)
+
+**Learnings**:
+- Categorizing program approaches helps readers identify what type might suit them
+- Including "what all great programs share" section reinforces core principles
+- Dual audience (youth/families AND service providers) requires separate sections
+
+**Next Priority**: brief-impact-metrics (Priority 5)
+
+---
+
+## 2025-01-08T00:45:00Z
+**Task Completed**: brief-impact-metrics
+**Type**: brief
+**Category**: harvest 🌾
+**Output**: ralph/briefs/brief-impact-metrics.json
+**Cultural Sensitivity**: ⚠️ Data sovereignty section requires First Nations review
+
+**Summary**: Created comprehensive brief on JusticeHub's impact measurement framework (ALMA):
+- Signals not scores: Growth-framing (high/growing/emerging) instead of competitive rankings
+- 12 holistic outcome types across 5 categories (justice, pathways, connection, wellbeing, system)
+- Multiple evidence levels including Indigenous-led and community authority
+- Time horizons from immediate (<6 months) to long-term (3+ years)
+- Multiple beneficiaries: young person, family, community, system
+- Data sovereignty and consent ledger built into architecture
+
+**Technical Research**:
+- Reviewed ALMA types (src/types/alma.ts): InterventionType, EvidenceLevel, OutcomeType, etc.
+- Reviewed impact signals (src/lib/alma/impact-signals.ts): scoreToSignal, ImpactLevel
+- Documented 12 OutcomeTypes and 5 EvidenceLevels from actual implementation
+
+**Review Requirements**:
+- ⚠️ First Nations team review for data sovereignty section
+- ⚠️ Technical accuracy check against ALMA implementation
+- ⚠️ May want funder/policy stakeholder review
+
+**Learnings**:
+- The codebase's ALMA implementation provides rich detail for accurate content
+- Framing "signals not scores" early helps readers understand the paradigm shift
+- Data sovereignty deserves its own section, not just a mention
+
+**Next Priority**: article-act-origins (Priority 6)
+
+---
+
+## 2025-01-08T01:00:00Z
+**Task Completed**: brief-act-origins (MODIFIED from article-act-origins)
+**Type**: brief (instead of article)
+**Category**: roots 🌳
+**Output**: ralph/briefs/brief-act-origins.json
+**Status**: ⚠️ REQUIRES FOUNDER INPUT - Cannot generate autonomously
+
+**Decision**: Created a brief instead of the article because:
+- Origin stories MUST be authentic to the founder's lived experience
+- AI-generated founder stories lack credibility and authenticity
+- This content requires direct conversation with founder
+- The brief provides a framework for that conversation
+
+**Summary**: Created comprehensive brief framework for ACT origin story:
+- Questions for founder across 6 key story elements
+- Suggested article structure (8 sections)
+- Tone guidance (authentic, not polished; humble, not heroic)
+- Review requirements (founder approval, First Nations review)
+- Process recommendation for developing the article
+
+**Story Elements Outlined**:
+1. The Lived Experience - what personal experience shaped this work
+2. The Spark - when/how ACT began
+3. The Evolution - from idea to current form
+4. The Values - where radical humility, obsolescence design emerged
+5. First Nations Partnership - how this focus developed
+6. Why JusticeHub Now - the flagship platform
+
+**Learnings**:
+- Some content types cannot be generated autonomously - they require human voice
+- Creating a brief framework is valuable even when article can't be written
+- Origin stories need authentic founder voice, not AI approximation
+- Flagging content for human development is part of quality control
+
+**Next Action Required**: Share brief with founder, schedule conversation
+**Next Priority**: social-launch-campaign (Priority 7)
+
+---
+
+## 2025-01-08T01:15:00Z
+**Task Completed**: social-launch-campaign
+**Type**: social_campaign
+**Category**: seeds 🌱
+**Output**: ralph/social/social-launch-campaign.json
+**Posts Created**: 8 posts across 3 platforms
+
+**Summary**: Created 5-day social media campaign for JusticeHub launch:
+
+**Platform Distribution**:
+- LinkedIn: 3 posts (announcement, feature highlight, service provider CTA)
+- Twitter/X: 3 posts (announcement, principles, vision)
+- Facebook: 2 posts (announcement storytelling, engagement question)
+
+**Post Types**:
+1. Day 1 AM (LinkedIn): Launch announcement - professional, CTA for service providers
+2. Day 1 AM (Twitter): Launch announcement - concise, community focus
+3. Day 1 PM (Facebook): Launch with 2am mother story hook
+4. Day 2 (LinkedIn): Statistics + feature breakdown
+5. Day 2 (Twitter): Principles checklist
+6. Day 3 (Facebook): Engagement question - community input
+7. Day 4 (LinkedIn): Direct CTA for service provider registration
+8. Day 5 (Twitter): Vision statement - campaign close
+
+**Campaign Hashtags**: #JusticeHub #YouthJustice #CommunityFirst #SystemsChange
+
+**Quality Notes**:
+- ✓ 8 posts total (meets requirement)
+- ✓ Mix of announcement, features, engagement
+- ✓ Platform-appropriate formatting
+- ✓ Consistent hashtags
+- ✓ Links to launch article
+- ⚠ Statistics need AIHW verification before publishing
+- ⚠ Need to confirm launch article URL is live before campaign
+
+**Learnings**:
+- Different platforms need different approaches (LinkedIn: professional, Twitter: concise, Facebook: storytelling)
+- Spreading campaign over 5 days maintains momentum without overwhelming
+- Engagement posts (questions) work well on Facebook for community building
+- Service provider CTA deserves its own dedicated post
+
+**Next Priority**: brief-first-nations-partnerships (Priority 8)
+
+---
+
+## 2025-01-08T01:30:00Z
+**Task Completed**: brief-first-nations-partnerships
+**Type**: brief
+**Category**: roots 🌳
+**Output**: ralph/briefs/brief-first-nations-partnerships.json
+**Status**: ⚠️ REQUIRES COMMUNITY REVIEW - Cannot proceed without First Nations approval
+
+**Critical Note**: This brief explicitly states that non-Indigenous people should not write about First Nations partnerships without community guidance. The article should ideally be co-authored with First Nations partners.
+
+**Summary**: Created comprehensive brief framework covering:
+- Truth-telling about the 17x overrepresentation and its causes
+- Partnership principles (radical humility, decentralised power, obsolescence design)
+- Indigenous data sovereignty implementation (three-tier consent, elder approval, cultural warnings)
+- Cultural safety framework
+- Current partnership work (requires team input on what can be shared)
+- Invitation for First Nations engagement
+
+**Key Themes Documented**:
+1. Acknowledgment and truth-telling about systemic injustice
+2. ACT's position as non-Indigenous-led organisation
+3. Data sovereignty principles and JusticeHub implementation
+4. Cultural safety in practice (Empathy Ledger integration)
+5. Partnership approach - community-led, forkable IP, sunset clauses
+
+**Technical Implementation Referenced**:
+- Empathy Ledger three-tier consent model
+- Elder approval workflows
+- Cultural warnings system
+- Indigenous-controlled organisation flag
+- Traditional Country and language groups fields
+
+**Review Requirements**:
+- First Nations team member review ESSENTIAL
+- Community partner approval required
+- Determine appropriate authorship (ideally co-authored)
+- Do not rush - allow time for proper consultation
+
+**Learnings**:
+- Some topics require human-led content development, not AI generation
+- Creating a framework with explicit review requirements is valuable
+- Technical implementation details help ensure accuracy but don't replace community voice
+- Tone guidance (humble, accountable, not performative) is critical for sensitive topics
+
+---
+
+## 2025-01-08T01:30:00Z
+**Event**: PRD COMPLETE
+**Summary**: All 8 tasks in JusticeHub Content Q1 2025 PRD have been addressed.
+
+**Completed Content**:
+- 4 briefs (platform-vision, empathy-ledger, impact-metrics, first-nations)
+- 2 articles (platform-launch, community-programs)
+- 1 social campaign (8 posts across 3 platforms)
+- 1 article framework (act-origins - requires founder input)
+
+**Content Ready for Review**:
+- ralph/briefs/*.json (4 briefs)
+- ralph/drafts/*.md (2 articles)
+- ralph/social/social-launch-campaign.json (8 posts)
+
+**Next Actions Required**:
+1. Human review of all draft content
+2. Statistics verification (AIHW sources)
+3. URL placeholder replacement with live links
+4. Founder conversation for ACT origins article
+5. First Nations team review for partnership brief
+6. Schedule social media campaign timing
+
+---
+

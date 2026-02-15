@@ -1,0 +1,242 @@
+{
+  "id": "brief-impact-metrics",
+  "type": "brief",
+  "category": "harvest",
+  "title": "Measuring What Matters: Impact Framework",
+  "created_at": "2025-01-08",
+  "status": "ready_for_article",
+
+  "problem_statement": {
+    "headline": "Traditional youth justice metrics fail young people",
+    "key_points": [
+      "Recidivism rates (reoffending within X years) remain the dominant measure of 'success'",
+      "This narrow focus misses the holistic reality of transformation",
+      "Programs are defunded when they don't reduce recidivism fast enough—even if they're improving lives",
+      "Young people become statistics, not people on journeys",
+      "Indigenous communities have long known that healing can't be reduced to a single number"
+    ],
+    "system_critique": "When we measure only what's convenient rather than what matters, we optimise for the wrong outcomes. A young person who stays out of detention but remains isolated, unemployed, and disconnected from culture isn't thriving. A program that builds genuine connection and cultural identity but takes time to show 'official' results may be doing the deepest work."
+  },
+
+  "solution_overview": {
+    "headline": "JusticeHub measures what actually matters",
+    "approach": "ALMA (Adaptive Learning & Measurement Architecture) - a holistic impact framework that uses SIGNALS (direction indicators) not SCORES (rankings)",
+    "core_philosophy": [
+      "Transformation is a journey, not a destination to be ranked",
+      "Community authority is weighted highest - those closest to the work define success",
+      "Impact emerges at different time horizons - some changes take years to manifest",
+      "Multiple beneficiaries matter - young person, family, community, system"
+    ]
+  },
+
+  "key_concepts": {
+    "signals_not_scores": {
+      "title": "Signals, Not Scores",
+      "explanation": "Instead of ranking programs 1-10 or comparing them competitively, ALMA uses directional signals:",
+      "levels": [
+        {
+          "name": "High Impact",
+          "meaning": "This story/program is creating meaningful change",
+          "visual": "Green indicator"
+        },
+        {
+          "name": "Growing Impact",
+          "meaning": "This story/program is building momentum",
+          "visual": "Blue indicator"
+        },
+        {
+          "name": "Emerging Impact",
+          "meaning": "This story/program is beginning its journey",
+          "visual": "Amber indicator"
+        }
+      ],
+      "why_it_matters": "Scores create competition. Signals create learning. Every program at every stage is valued."
+    },
+
+    "holistic_outcomes": {
+      "title": "12 Outcome Types",
+      "explanation": "Success looks different for every young person. ALMA tracks outcomes across multiple dimensions:",
+      "categories": [
+        {
+          "name": "Justice System",
+          "outcomes": ["Reduced detention/incarceration", "Reduced recidivism", "Diversion from justice system"]
+        },
+        {
+          "name": "Life Pathways",
+          "outcomes": ["Educational engagement", "Employment/training"]
+        },
+        {
+          "name": "Connection",
+          "outcomes": ["Family connection", "Cultural connection", "Community safety"]
+        },
+        {
+          "name": "Wellbeing",
+          "outcomes": ["Mental health/wellbeing", "Reduced substance use", "Healing/restoration"]
+        },
+        {
+          "name": "System",
+          "outcomes": ["System cost reduction"]
+        }
+      ],
+      "why_it_matters": "A young person might not 'reduce recidivism' for years—but they might reconnect with family, engage with school, and begin cultural healing tomorrow. All of this matters."
+    },
+
+    "evidence_with_cultural_authority": {
+      "title": "Evidence That Respects Community Knowledge",
+      "explanation": "ALMA recognises multiple forms of evidence, not just academic research:",
+      "evidence_levels": [
+        {
+          "name": "Proven",
+          "meaning": "RCT/quasi-experimental, replicated across settings"
+        },
+        {
+          "name": "Effective",
+          "meaning": "Strong evaluation, positive outcomes demonstrated"
+        },
+        {
+          "name": "Promising",
+          "meaning": "Community-endorsed, emerging evidence"
+        },
+        {
+          "name": "Indigenous-led",
+          "meaning": "Culturally grounded, community authority"
+        },
+        {
+          "name": "Untested",
+          "meaning": "Theory/pilot stage - still valuable for learning"
+        }
+      ],
+      "why_it_matters": "An Indigenous-led program with community authority and cultural grounding may have more real-world validity than a program 'proven' in a completely different context. Both forms of evidence deserve recognition."
+    },
+
+    "time_horizons": {
+      "title": "Time Horizons",
+      "explanation": "Different outcomes manifest at different speeds:",
+      "horizons": [
+        {"name": "Immediate", "timeframe": "<6 months", "example": "Engagement with program, safe housing"},
+        {"name": "Short-term", "timeframe": "6-12 months", "example": "School re-enrollment, reduced substance use"},
+        {"name": "Medium-term", "timeframe": "1-3 years", "example": "Employment, family reconnection"},
+        {"name": "Long-term", "timeframe": "3+ years", "example": "Sustained community participation, mentoring others"}
+      ],
+      "why_it_matters": "Funding cycles often demand results within 12 months. Real transformation often takes 3+ years. ALMA makes visible the early indicators that predict long-term success."
+    },
+
+    "multiple_beneficiaries": {
+      "title": "Multiple Beneficiaries",
+      "explanation": "Impact ripples outward:",
+      "beneficiaries": [
+        {"name": "Young Person", "example": "Improved wellbeing, new skills"},
+        {"name": "Family", "example": "Reduced stress, stronger relationships"},
+        {"name": "Community", "example": "Increased safety, role models for others"},
+        {"name": "System/Government", "example": "Cost savings, better outcomes at scale"}
+      ],
+      "why_it_matters": "Traditional metrics only count what happens to the young person. But when a young person transforms, their family heals, their community strengthens, and the system becomes more effective. All of this is impact."
+    }
+  },
+
+  "data_sovereignty": {
+    "headline": "Communities Control Their Data",
+    "key_principles": [
+      "Consent ledger: Every piece of data has clear consent level and permitted uses",
+      "Community-controlled data stays within community control",
+      "Cultural authority is documented and respected",
+      "Indigenous communities retain sovereignty over their stories and outcomes",
+      "Revenue sharing for commercial use of community data"
+    ],
+    "why_it_matters": "Impact data about Indigenous young people has historically been extracted, analysed, and published without community consent or benefit. ALMA ensures data sovereignty is built into the architecture."
+  },
+
+  "for_different_audiences": {
+    "young_people_families": {
+      "what_you_see": "Your journey shown through signals, not scores. Progress celebrated at every stage.",
+      "key_benefit": "You're more than a statistic. Your healing, your growth, your path—all of it counts."
+    },
+    "service_providers": {
+      "what_you_see": "Dashboard showing holistic outcomes across all 12 types, with time horizons and beneficiary impact.",
+      "key_benefit": "Tell the full story of your impact, not just the parts that fit traditional metrics."
+    },
+    "funders": {
+      "what_you_see": "Portfolio analysis showing evidence strength, community authority, and implementation capability.",
+      "key_benefit": "Invest with confidence in programs that show real-world effectiveness, not just academic proof."
+    },
+    "policymakers": {
+      "what_you_see": "System-level insights showing which approaches work, where, and for whom.",
+      "key_benefit": "Evidence-informed policy that respects community authority and local context."
+    }
+  },
+
+  "article_structure": {
+    "suggested_title": "Measuring What Matters: Why JusticeHub Tracks More Than Recidivism",
+    "word_count_target": "1000-1500 words",
+    "structure": [
+      {
+        "section": "Hook",
+        "approach": "Open with story of a program defunded despite life-changing impact - because it didn't reduce recidivism 'fast enough'"
+      },
+      {
+        "section": "The Problem with Traditional Metrics",
+        "approach": "Explain why recidivism is a flawed measure - too narrow, too slow, ignores context"
+      },
+      {
+        "section": "What Actually Matters",
+        "approach": "Introduce the 12 outcome types and multiple beneficiaries"
+      },
+      {
+        "section": "Signals, Not Scores",
+        "approach": "Explain the ALMA approach - growth framing, not competitive ranking"
+      },
+      {
+        "section": "Time Horizons",
+        "approach": "Show how different changes happen at different speeds"
+      },
+      {
+        "section": "Evidence That Respects Community",
+        "approach": "Explain multiple evidence types including Indigenous-led and community authority"
+      },
+      {
+        "section": "Data Sovereignty",
+        "approach": "Communities control their stories and their data"
+      },
+      {
+        "section": "What You'll See on JusticeHub",
+        "approach": "Preview the impact dashboard for different audiences"
+      },
+      {
+        "section": "Call to Action",
+        "approach": "Invite programs to register, funders to partner, communities to share"
+      }
+    ]
+  },
+
+  "tone_guidance": {
+    "voice": "Confident but humble. Challenging the status quo without being preachy.",
+    "approach": "Position JusticeHub as part of a movement, not as having all the answers.",
+    "do": [
+      "Use concrete examples of what different outcome types look like",
+      "Acknowledge the complexity of measuring human transformation",
+      "Credit the community knowledge this framework builds on",
+      "Show, don't tell - let the framework speak for itself"
+    ],
+    "avoid": [
+      "Don't disparage traditional research or evidence-based approaches",
+      "Don't claim ALMA is perfect or complete - it's evolving",
+      "Don't oversimplify - transformation is genuinely complex",
+      "Don't make promises about outcomes we can't deliver"
+    ]
+  },
+
+  "review_notes": {
+    "technical_accuracy": "Verify framework details against ALMA implementation in codebase",
+    "cultural_sensitivity": "Have First Nations partners review data sovereignty section",
+    "stakeholder_review": "May want funder/policy audience to review to ensure usefulness",
+    "statistics": "Any statistics used should be sourced from AIHW or peer-reviewed research"
+  },
+
+  "sources_for_research": [
+    "ALMA types and implementation: src/types/alma.ts",
+    "Impact signals: src/lib/alma/impact-signals.ts",
+    "Portfolio service: src/lib/alma/portfolio-service.ts",
+    "Indigenous Data Sovereignty Network (IDSN) principles",
+    "Maiam nayri Wingara Indigenous Data Sovereignty collective"
+  ]
+}

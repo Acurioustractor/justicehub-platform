@@ -98,7 +98,7 @@ export default function YouthScoutLandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white page-content">
       <Navigation />
 
       {/* Admin Mode Toggle (hidden in production) */}
@@ -129,6 +129,9 @@ export default function YouthScoutLandingPage() {
               
               <h1 className="text-4xl md:text-6xl font-black mb-6 bg-gradient-to-r from-blue-800 via-purple-800 to-orange-600 bg-clip-text text-transparent">
                 YOUTH SCOUT
+                <span className="ml-3 inline-flex items-center px-3 py-1 bg-purple-600 text-white text-sm font-bold uppercase tracking-wider align-middle rounded-sm">
+                  Beta
+                </span>
               </h1>
               
               <p className="text-xl md:text-2xl max-w-4xl mx-auto mb-8 leading-relaxed text-gray-800">
@@ -269,7 +272,7 @@ export default function YouthScoutLandingPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {successStories.map((story, index) => (
-                <div key={index} className="bg-white border-2 border-black p-6 hover:shadow-lg transition-all">
+                <div key={index} className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
                       {story.name[0]}

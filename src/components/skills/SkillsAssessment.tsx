@@ -26,10 +26,7 @@ import {
 import { 
   SKILL_CATEGORIES, 
   INTEREST_CATEGORIES, 
-  searchSkills, 
-  searchInterests,
-  type Skill,
-  type Interest 
+  type Skill
 } from '@/lib/skills-taxonomy';
 
 interface SkillsAssessmentProps {
@@ -65,6 +62,16 @@ export interface AssessmentData {
   };
 }
 
+interface SkillOption extends Skill {
+  description: string;
+}
+
+interface InterestOption {
+  id: string;
+  name: string;
+  description: string;
+}
+
 export function SkillsAssessment({ onComplete, initialData }: SkillsAssessmentProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<AssessmentData>({
@@ -87,13 +94,26 @@ export function SkillsAssessment({ onComplete, initialData }: SkillsAssessmentPr
 
   const totalSteps = 5;
 
-  const filteredSkills = skillSearch 
-    ? searchSkills(skillSearch) 
-    : SKILL_CATEGORIES.flatMap(cat => cat.skills);
+  const skillCategories = SKILL_CATEGORIES.map(category => ({
+    ...category,
+    skills: category.skills.map((skillName, index): SkillOption => ({
+      id: `${category.id}-${index}`,
+      name: skillName,
+      description: category.description,
+      category: category.name
+    }))
+  }));
 
-  const filteredInterests = interestSearch 
-    ? searchInterests(interestSearch) 
-    : INTEREST_CATEGORIES.flatMap(cat => cat.interests);
+  const interestCategories = INTEREST_CATEGORIES.map(category => ({
+    ...category,
+    interests: category.interests.map((interestName, index): InterestOption => ({
+      id: `${category.id}-${index}`,
+      name: interestName,
+      description: category.description
+    }))
+  }));
+
+  const interestOptions = interestCategories.flatMap(category => category.interests);
 
   const addSkill = (skill: Skill, level: 'beginner' | 'intermediate' | 'advanced' | 'expert') => {
     if (!data.skills.find(s => s.id === skill.id)) {
@@ -111,7 +131,7 @@ export function SkillsAssessment({ onComplete, initialData }: SkillsAssessmentPr
     }));
   };
 
-  const toggleInterest = (interestId: string, interestName: string) => {
+  const toggleInterest = (interestId: string) => {
     setData(prev => ({
       ...prev,
       interests: prev.interests.includes(interestId)
@@ -183,7 +203,7 @@ export function SkillsAssessment({ onComplete, initialData }: SkillsAssessmentPr
             </div>
 
             <div className="grid gap-4 max-h-96 overflow-y-auto">
-              {SKILL_CATEGORIES.map(category => (
+              {skillCategories.map(category => (
                 <Card key={category.id}>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg">{category.name}</CardTitle>
@@ -289,7 +309,7 @@ export function SkillsAssessment({ onComplete, initialData }: SkillsAssessmentPr
             </div>
 
             <div className="grid gap-4 max-h-96 overflow-y-auto">
-              {INTEREST_CATEGORIES.map(category => (
+              {interestCategories.map(category => (
                 <Card key={category.id}>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg">{category.name}</CardTitle>
@@ -308,7 +328,7 @@ export function SkillsAssessment({ onComplete, initialData }: SkillsAssessmentPr
                             <Checkbox
                               id={interest.id}
                               checked={data.interests.includes(interest.id)}
-                              onCheckedChange={() => toggleInterest(interest.id, interest.name)}
+                              onCheckedChange={() => toggleInterest(interest.id)}
                             />
                             <div className="flex-1">
                               <Label htmlFor={interest.id} className="font-medium cursor-pointer">
@@ -332,12 +352,12 @@ export function SkillsAssessment({ onComplete, initialData }: SkillsAssessmentPr
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {data.interests.map(interestId => {
-                      const interest = filteredInterests.find(i => i.id === interestId);
+                      const interest = interestOptions.find(i => i.id === interestId);
                       return interest ? (
                         <Badge key={interestId} variant="secondary" className="px-3 py-1">
                           {interest.name}
                           <button
-                            onClick={() => toggleInterest(interestId, interest.name)}
+                            onClick={() => toggleInterest(interestId)}
                             className="ml-2 hover:text-red-500"
                           >
                             <X className="h-3 w-3" />

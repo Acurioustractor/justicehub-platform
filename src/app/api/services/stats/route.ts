@@ -1,89 +1,114 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+import { NextResponse } from 'next/server'
 
-const supabaseUrl = process.env.YJSF_SUPABASE_URL || process.env.SUPABASE_URL;
-const supabaseKey = process.env.YJSF_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
-
-const supabase = createClient(supabaseUrl!, supabaseKey!, {
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false
-  }
-});
-
-export async function GET(request: NextRequest) {
-  try {
-    // Return mock stats if Supabase is not configured
-    if (!supabaseUrl || !supabaseKey) {
-      console.log('Returning mock stats - Supabase not configured');
-      return NextResponse.json({
-        success: true,
-        stats: {
-          total_services: 0,
-          total_organizations: 0,
-          total_locations: 0,
-          total_contacts: 0,
-          by_region: {},
-          by_category: {}
+export async function GET() {
+  const cookieStore = cookies()
+  const supabase = createServerClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
         },
-        generated_at: new Date().toISOString()
-      });
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
+        },
+      },
     }
+  )
 
-    const [servicesCount, orgsCount, locationsCount, contactsCount] = await Promise.all([
-      supabase.from('services').select('id', { count: 'exact', head: true }).eq('project', 'youth-justice-service-finder'),
-      supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('project', 'youth-justice-service-finder'),
-      supabase.from('locations').select('id', { count: 'exact', head: true }).eq('project', 'youth-justice-service-finder'),
-      supabase.from('contacts').select('id', { count: 'exact', head: true }).eq('project', 'youth-justice-service-finder')
-    ]);
+  try {
+    // Get total services
+    const { count: totalServices } = await supabase
+      .from('services')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
 
-    // Get region breakdown
+    // Get total organizations
+    const { count: totalOrganizations } = await supabase
+      .from('organizations')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
+
+    // Get total locations
+    const { count: totalLocations } = await supabase
+      .from('service_locations')
+      .select('*', { count: 'exact', head: true })
+
+    // Get total contacts
+    const { count: totalContacts } = await supabase
+      .from('service_contacts')
+      .select('*', { count: 'exact', head: true })
+
+    // Get services by region
     const { data: regionData } = await supabase
       .from('services')
-      .select('locations(region)')
-      .eq('project', 'youth-justice-service-finder');
+      .select('location_city')
+      .eq('is_active', true)
 
-    const regionStats: Record<string, number> = {};
-    regionData?.forEach((service: any) => {
-      if (service.locations?.region) {
-        regionStats[service.locations.region] = (regionStats[service.locations.region] || 0) + 1;
+    const byRegion: Record<string, number> = {}
+    regionData?.forEach((service) => {
+      if (service.location_city) {
+        byRegion[service.location_city] = (byRegion[service.location_city] || 0) + 1
       }
-    });
+    })
 
-    // Get service type breakdown
-    const { data: typeData } = await supabase
+    // Get services by category
+    const { data: categoryData } = await supabase
       .from('services')
       .select('categories')
-      .eq('project', 'youth-justice-service-finder');
+      .eq('is_active', true)
 
-    const categoryStats: Record<string, number> = {};
-    typeData?.forEach((service: any) => {
+    const byCategory: Record<string, number> = {}
+    categoryData?.forEach((service) => {
       if (service.categories && Array.isArray(service.categories)) {
         service.categories.forEach((category: string) => {
-          categoryStats[category] = (categoryStats[category] || 0) + 1;
-        });
+          byCategory[category] = (byCategory[category] || 0) + 1
+        })
       }
-    });
+    })
+
+    // Get youth-specific and indigenous-specific counts
+    const { count: youthSpecificCount } = await supabase
+      .from('services')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .eq('youth_specific', true)
+
+    const { count: indigenousSpecificCount } = await supabase
+      .from('services')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .eq('indigenous_specific', true)
 
     return NextResponse.json({
       success: true,
       stats: {
-        total_services: servicesCount.count || 0,
-        total_organizations: orgsCount.count || 0,
-        total_locations: locationsCount.count || 0,
-        total_contacts: contactsCount.count || 0,
-        by_region: regionStats,
-        by_category: categoryStats
-      },
-      generated_at: new Date().toISOString()
-    });
-    
-  } catch (error: any) {
-    console.error('Stats API error:', error);
+        total_services: totalServices || 0,
+        total_organizations: totalOrganizations || 0,
+        total_locations: totalLocations || 0,
+        total_contacts: totalContacts || 0,
+        youth_specific_services: youthSpecificCount || 0,
+        indigenous_specific_services: indigenousSpecificCount || 0,
+        by_region: byRegion,
+        by_category: byCategory,
+      }
+    })
+  } catch (error) {
+    console.error('Stats API error:', error)
     return NextResponse.json({
       success: false,
-      error: 'Failed to fetch statistics',
-      message: error.message
-    }, { status: 500 });
+      error: 'Failed to fetch statistics'
+    }, { status: 500 })
   }
 }

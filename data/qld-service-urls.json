@@ -1,0 +1,287 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-10-09",
+  "description": "Comprehensive list of Queensland youth justice and support service directories for automated scraping",
+  "sources": [
+    {
+      "id": "qld-gov-youth-services",
+      "name": "QLD Government Youth Justice Services",
+      "url": "https://www.qld.gov.au/youth",
+      "priority": "high",
+      "category": "government",
+      "expected_services": 10,
+      "timeout": 30000,
+      "enabled": false,
+      "note": "Landing page only - disabled until specific services URL found"
+    },
+    {
+      "id": "headspace-qld",
+      "name": "headspace Queensland Centres",
+      "url": "https://headspace.org.au/headspace-centres/",
+      "priority": "high",
+      "category": "mental_health",
+      "expected_services": 15,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "legal-aid-qld",
+      "name": "Legal Aid Queensland",
+      "url": "https://www.legalaid.qld.gov.au/About-us/Contact-us",
+      "priority": "high",
+      "category": "legal_aid",
+      "expected_services": 8,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "yac-services",
+      "name": "Youth Advocacy Centre Services",
+      "url": "https://yac.net.au/services/",
+      "priority": "high",
+      "category": "advocacy",
+      "expected_services": 5,
+      "timeout": 45000,
+      "enabled": true
+    },
+    {
+      "id": "bris-youth",
+      "name": "Brisbane Youth Service",
+      "url": "https://www.brisyouth.org/our-services",
+      "priority": "medium",
+      "category": "support",
+      "expected_services": 8,
+      "timeout": 60000,
+      "enabled": true
+    },
+    {
+      "id": "ymca-qld",
+      "name": "YMCA Queensland Youth Services",
+      "url": "https://www.ymcabrisbane.org/community-services/youth-services",
+      "priority": "medium",
+      "category": "recreation",
+      "expected_services": 6,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "youth-support-coordinator",
+      "name": "Youth Support Coordinator Program QLD",
+      "url": "https://education.qld.gov.au/about-us/engagement/youth-support-coordinators",
+      "priority": "high",
+      "category": "case_management",
+      "expected_services": 12,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "qld-aboriginal-torres-strait",
+      "name": "Queensland Aboriginal and Torres Strait Islander Child Protection Peak",
+      "url": "https://qatsicpp.com.au/",
+      "priority": "high",
+      "category": "cultural_support",
+      "expected_services": 10,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "relationships-australia-qld",
+      "name": "Relationships Australia Queensland",
+      "url": "https://www.raq.org.au/services/children-young-people",
+      "priority": "medium",
+      "category": "family_support",
+      "expected_services": 8,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "yourtown",
+      "name": "yourtown (Kids Helpline)",
+      "url": "https://www.yourtown.com.au/services",
+      "priority": "high",
+      "category": "crisis_support",
+      "expected_services": 5,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "communify-qld",
+      "name": "Communify Queensland Youth Services",
+      "url": "https://www.communify.org.au/services/young-people",
+      "priority": "medium",
+      "category": "support",
+      "expected_services": 7,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "youth-housing-qld",
+      "name": "Youth Housing Project Queensland",
+      "url": "https://yhp.org.au/",
+      "priority": "high",
+      "category": "housing",
+      "expected_services": 4,
+      "timeout": 30000,
+      "enabled": false,
+      "note": "DNS error - domain may have changed"
+    },
+    {
+      "id": "qld-mental-health",
+      "name": "Queensland Mental Health Commission - Youth Services",
+      "url": "https://www.qmhc.qld.gov.au/service-directory",
+      "priority": "medium",
+      "category": "mental_health",
+      "expected_services": 15,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "services-australia-youth",
+      "name": "Services Australia - Youth Services Queensland",
+      "url": "https://www.servicesaustralia.gov.au/youth-allowance",
+      "priority": "low",
+      "category": "financial_support",
+      "expected_services": 3,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "qld-police-youth",
+      "name": "Queensland Police Service - Youth Programs",
+      "url": "https://www.police.qld.gov.au/programs/youth",
+      "priority": "medium",
+      "category": "diversion",
+      "expected_services": 6,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "qld-courts-youth",
+      "name": "Queensland Courts - Youth Justice",
+      "url": "https://www.courts.qld.gov.au/courts/childrens-court",
+      "priority": "low",
+      "category": "court_support",
+      "expected_services": 3,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "qld-education-training",
+      "name": "Queensland Department of Education - Alternative Education",
+      "url": "https://education.qld.gov.au/about-us/budgets-funding-grants/grants/state-schools/core-funding/alternative-education",
+      "priority": "medium",
+      "category": "education_training",
+      "expected_services": 8,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "lifeline-qld",
+      "name": "Lifeline Queensland",
+      "url": "https://www.lifeline.org.au/services/crisis-support",
+      "priority": "medium",
+      "category": "crisis_support",
+      "expected_services": 4,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "qld-drug-alcohol",
+      "name": "Queensland Health - Alcohol and Drug Services",
+      "url": "https://www.health.qld.gov.au/clinical-practice/guidelines-procedures/diseases-infection/diseases/alcohol-drug",
+      "priority": "medium",
+      "category": "substance_abuse",
+      "expected_services": 10,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "mission-australia-qld",
+      "name": "Mission Australia Queensland Youth Programs",
+      "url": "https://www.missionaustralia.com.au/what-we-do/children-youth-families/youth-services",
+      "priority": "medium",
+      "category": "support",
+      "expected_services": 8,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "qfcc-services",
+      "name": "Queensland Family and Child Commission - Services",
+      "url": "https://www.qfcc.qld.gov.au/",
+      "priority": "high",
+      "category": "child_protection",
+      "expected_services": 10,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "create-foundation",
+      "name": "CREATE Foundation - Young People in Care",
+      "url": "https://create.org.au/what-we-do/",
+      "priority": "high",
+      "category": "care_support",
+      "expected_services": 8,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "peak-care-qld",
+      "name": "PeakCare Queensland",
+      "url": "https://www.peakcare.org.au/",
+      "priority": "high",
+      "category": "child_protection",
+      "expected_services": 12,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "youth-law-australia",
+      "name": "Youth Law Australia",
+      "url": "https://yla.org.au/qld/",
+      "priority": "high",
+      "category": "legal_aid",
+      "expected_services": 6,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "sisters-inside",
+      "name": "Sisters Inside - Women and Girls Justice",
+      "url": "https://sistersinside.com.au/our-programs/",
+      "priority": "high",
+      "category": "gender_specific",
+      "expected_services": 8,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "multicultural-australia",
+      "name": "Multicultural Australia - Youth Settlement Services",
+      "url": "https://www.multiculturalaustralia.org.au/programs/children-youth/",
+      "priority": "medium",
+      "category": "multicultural_support",
+      "expected_services": 7,
+      "timeout": 30000,
+      "enabled": true
+    },
+    {
+      "id": "access-community-services",
+      "name": "Access Community Services - Youth Programs",
+      "url": "https://accesscommunity.org.au/our-services/young-people/",
+      "priority": "medium",
+      "category": "support",
+      "expected_services": 10,
+      "timeout": 30000,
+      "enabled": true
+    }
+  ],
+  "statistics": {
+    "total_sources": 27,
+    "high_priority": 12,
+    "medium_priority": 13,
+    "low_priority": 2,
+    "estimated_total_services": 216,
+    "enabled_sources": 27
+  }
+}

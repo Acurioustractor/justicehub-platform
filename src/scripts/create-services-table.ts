@@ -1,0 +1,79 @@
+import { createClient } from '@supabase/supabase-js'
+
+// Use the service role key for admin access
+const supabase = createClient(
+  'https://tednluwflfhxyucgwigh.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlZG5sdXdmbGZoeHl1Y2d3aWdoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjM0NjIyOSwiZXhwIjoyMDY3OTIyMjI5fQ.wyizbOWRxMULUp6WBojJPfey1ta8-Al1OlZqDDIPIHo'
+)
+
+async function createServicesTable() {
+  console.log('Creating services table...')
+  
+  // Enable UUID extension if not already enabled
+  const { error: extError } = await supabase.rpc('exec_sql', {
+    sql: 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
+  })
+  
+  if (extError) {
+    console.log('Extension creation warning (may already exist):', extError.message)
+  }
+  
+  // Create services table
+  const { error: tableError } = await supabase.rpc('exec_sql', {
+    sql: `
+      CREATE TABLE IF NOT EXISTS services (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        category VARCHAR(100),
+        subcategory VARCHAR(100),
+        eligibility_criteria TEXT[],
+        cost_structure VARCHAR(50),
+        availability_schedule JSONB,
+        contact_info JSONB,
+        outcomes_evidence TEXT[],
+        geographical_coverage JSONB,
+        target_demographics JSONB,
+        capacity_indicators JSONB,
+        active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `
+  })
+  
+  if (tableError) {
+    console.error('Error creating services table:', tableError.message)
+    return false
+  }
+  
+  console.log('Services table created successfully!')
+  
+  // Create indexes
+  console.log('Creating indexes...')
+  const { error: indexError } = await supabase.rpc('exec_sql', {
+    sql: `
+      CREATE INDEX IF NOT EXISTS idx_services_category ON services(category);
+      CREATE INDEX IF NOT EXISTS idx_services_active ON services(active);
+      CREATE INDEX IF NOT EXISTS idx_services_organization ON services(organization_id);
+      CREATE INDEX IF NOT EXISTS idx_services_geographical ON services USING GIN(geographical_coverage);
+    `
+  })
+  
+  if (indexError) {
+    console.error('Error creating indexes:', indexError.message)
+    return false
+  }
+  
+  console.log('Indexes created successfully!')
+  return true
+}
+
+createServicesTable().then(success => {
+  if (success) {
+    console.log('✅ Services table setup completed')
+  } else {
+    console.log('❌ Services table setup failed')
+  }
+})

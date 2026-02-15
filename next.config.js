@@ -1,14 +1,56 @@
+const createMDX = require('@next/mdx');
+const remarkGfm = require('remark-gfm');
+const rehypeHighlight = require('rehype-highlight');
+const rehypeSlug = require('rehype-slug');
+const rehypeAutolinkHeadings = require('rehype-autolink-headings');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  reactStrictMode: false,
+  env: {
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  },
   experimental: {
     // serverActions are now enabled by default in Next.js 14
     optimizeServerReact: true,
+    mdxRs: true, // Use faster Rust-based MDX compiler
   },
   images: {
-    domains: [
-      'localhost',
-      's3.amazonaws.com',
-      'justicehub-media.s3.amazonaws.com',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: 's3.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'justicehub-media.s3.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'your-project-id.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'tednluwflfhxyucgwigh.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.youtube.com',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -70,7 +112,7 @@ const nextConfig = {
         tls: false,
       };
     }
-    
+
     return config;
   },
   compiler: {
@@ -88,4 +130,16 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+const withMDX = createMDX({
+  extension: /\.mdx?$/,
+  options: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [
+      rehypeHighlight,
+      rehypeSlug,
+      [rehypeAutolinkHeadings, { behavior: 'wrap' }],
+    ],
+  },
+});
+
+module.exports = withMDX(nextConfig);

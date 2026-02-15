@@ -1,0 +1,49 @@
+name: Sync Empathy Ledger Profiles
+
+on:
+  schedule:
+    # Run daily at 4am UTC (2pm AEST)
+    - cron: '0 4 * * *'
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  sync-profiles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync Empathy Ledger Profiles
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          EMPATHY_LEDGER_SUPABASE_URL: ${{ secrets.EMPATHY_LEDGER_SUPABASE_URL }}
+          EMPATHY_LEDGER_SUPABASE_ANON_KEY: ${{ secrets.EMPATHY_LEDGER_SUPABASE_ANON_KEY }}
+          EMPATHY_LEDGER_URL: ${{ secrets.EMPATHY_LEDGER_SUPABASE_URL }}
+          EMPATHY_LEDGER_API_KEY: ${{ secrets.EMPATHY_LEDGER_SUPABASE_ANON_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node scripts/sync-empathy-ledger-profiles.mjs
+
+      - name: Upload sync logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: empathy-ledger-sync-log-${{ github.run_number }}
+          path: |
+            *.log
+            *.json
+          retention-days: 30

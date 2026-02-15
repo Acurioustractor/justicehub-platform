@@ -1,0 +1,2024 @@
+{
+  "pages": [
+    {
+      "name": "wiki-index",
+      "url": "http://localhost:3000/wiki",
+      "status": "success",
+      "loadTime": 2230,
+      "consoleErrors": [
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738304514' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738304514' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738305781' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738305781' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738307140' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738307140' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738308332' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738308332' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738309875' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738309875' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738311244' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738311244' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738312375' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738312375' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738313726' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738313726' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738315045' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738315045' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321006' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321006' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321679' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321679' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+      ],
+      "content": {
+        "title": "JusticeHub Wiki - Strategic Planning & Documentation",
+        "h1": "JusticeHub Wiki",
+        "hasWikiNav": true,
+        "hasTableOfContents": false,
+        "hasSidebar": true,
+        "links": [
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "JusticeHub WikiStrategic Planning & Docs"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Pitch Package Hub ⭐Overview"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "One-Page Executive Pitch3K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "Strategic Pitch (Complete)21K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "Sovereignty Flywheel Visual6K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "Budget Breakdown (3 Years)8K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+            "text": "Research & Evidence Paper12K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/screenshots",
+            "text": "Platform Screenshots Gallery19 images"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "View Complete Pitch Package"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "📄One-Page Pitch5-minute executive summary"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "💰Budget BreakdownLEAN/BASE/UPPER scenarios"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "🎯Sovereignty FlywheelCore visual + prompts"
+          },
+          {
+            "href": "http://localhost:3000/wiki/strategic-overview",
+            "text": "Strategic Overview"
+          },
+          {
+            "href": "http://localhost:3000/wiki/executive-summary",
+            "text": "Executive Summary"
+          },
+          {
+            "href": "http://localhost:3000/wiki/justicehub-planning",
+            "text": "JusticeHub Planning (25K words)"
+          },
+          {
+            "href": "http://localhost:3000/wiki/one-page-overview",
+            "text": "One-Page Overview"
+          },
+          {
+            "href": "http://localhost:3000/wiki/three-scenarios-budget",
+            "text": "Three Budget Scenarios: LEAN/BASE/UPPER"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-strategic-pitch",
+            "text": "Mindaroo Strategic Pitch"
+          },
+          {
+            "href": "http://localhost:3000/wiki/budget-summary",
+            "text": "Budget Summary"
+          },
+          {
+            "href": "http://localhost:3000/wiki/admin-user-guide",
+            "text": "User Guide"
+          },
+          {
+            "href": "http://localhost:3000/wiki/admin-quick-start",
+            "text": "Quick Start"
+          },
+          {
+            "href": "http://localhost:3000/wiki/admin-routes-complete",
+            "text": "Routes Complete"
+          },
+          {
+            "href": "http://localhost:3000/wiki/centre-of-excellence-complete",
+            "text": "Centre of Excellence"
+          },
+          {
+            "href": "http://localhost:3000/wiki/empathy-ledger-full-integration",
+            "text": "Empathy Ledger"
+          },
+          {
+            "href": "http://localhost:3000/wiki/auto-linking-complete",
+            "text": "Auto-Linking"
+          },
+          {
+            "href": "http://localhost:3000/wiki/one-page-overview",
+            "text": "1. One-Page OverviewQuick introduction (5 min)"
+          },
+          {
+            "href": "http://localhost:3000/wiki/executive-summary",
+            "text": "2. Executive SummaryStrategic overview (15 min)"
+          },
+          {
+            "href": "http://localhost:3000/wiki/justicehub-planning",
+            "text": "3. Full Planning DocComplete framework (60 min)"
+          }
+        ],
+        "sections": [
+          {
+            "level": "H2",
+            "text": "Mindaroo Foundation Pitch"
+          },
+          {
+            "level": "H2",
+            "text": "Strategic Planning"
+          },
+          {
+            "level": "H2",
+            "text": "Budget & Funding"
+          },
+          {
+            "level": "H2",
+            "text": "Platform Documentation"
+          },
+          {
+            "level": "H2",
+            "text": "Technical Documentation"
+          },
+          {
+            "level": "H3",
+            "text": "Getting Started"
+          }
+        ],
+        "articleCount": 0,
+        "categories": []
+      },
+      "screenshots": [
+        "/Users/benknight/Code/JusticeHub/.playwright-mcp/audit/wiki/wiki-index.png"
+      ]
+    },
+    {
+      "name": "mindaroo-pitch",
+      "url": "http://localhost:3000/wiki/mindaroo-pitch",
+      "status": "success",
+      "loadTime": 1308,
+      "consoleErrors": [
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738307140' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738307140' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738308332' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738308332' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738309875' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738309875' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738311244' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738311244' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738312375' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738312375' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738313726' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738313726' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738315045' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738315045' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321006' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321006' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321679' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321679' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+      ],
+      "content": {
+        "title": "JusticeHub Wiki - Strategic Planning & Documentation",
+        "h1": "JusticeHub Wiki",
+        "hasWikiNav": true,
+        "hasTableOfContents": false,
+        "hasSidebar": true,
+        "links": [
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "JusticeHub WikiStrategic Planning & Docs"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Pitch Package Hub ⭐Overview"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "One-Page Executive Pitch3K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "Strategic Pitch (Complete)21K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "Sovereignty Flywheel Visual6K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "Budget Breakdown (3 Years)8K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+            "text": "Research & Evidence Paper12K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/screenshots",
+            "text": "Platform Screenshots Gallery19 images"
+          },
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "Wiki"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Mindaroo Pitch"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "📄\nOne-Page Executive Pitch5-minute read - Scannable executive summary with all key points, stats, and the ask.Start here →"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "📚\nCombined Strategic Pitch21,000 words - Comprehensive document with full context, evidence, and platform links.Read full detail →"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "🎯\nSovereignty Flywheel VisualCore visual - THE master visual explaining the entire JusticeHub model with Napkin.ai prompts.View visual specs →"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "💰\nDetailed Budget BreakdownLine-by-line transparency - All three scenarios (LEAN/BASE/UPPER) with complete justification.See budget details →"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+            "text": "📊\nResearch Discussion Paper30,000+ words - Evidence base, international case studies, Australian examples, and ROI data.Explore research →"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/screenshots",
+            "text": "📸\nPlatform Screenshots GalleryVisual proof - 51 screenshots of all existing platform pages in 6-column grid with live links.View gallery →"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "One-Page Executive Pitch"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "Combined Strategic Pitch"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "Detailed Budget Breakdown"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+            "text": "Research Discussion Paper"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "Sovereignty Flywheel Visual"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "← Back to Pitch Package"
+          }
+        ],
+        "sections": [
+          {
+            "level": "H2",
+            "text": "Quick Navigation"
+          },
+          {
+            "level": "H2",
+            "text": "At a Glance"
+          },
+          {
+            "level": "H2",
+            "text": "The Problem"
+          },
+          {
+            "level": "H2",
+            "text": "Beta Platform Already Operational"
+          },
+          {
+            "level": "H2",
+            "text": "Three Investment Scenarios"
+          },
+          {
+            "level": "H3",
+            "text": "BASE Scenario - $10.5M ⭐ RECOMMENDED"
+          },
+          {
+            "level": "H2",
+            "text": "What Makes This Different"
+          },
+          {
+            "level": "H2",
+            "text": "Potential Warm Community Partners"
+          },
+          {
+            "level": "H2",
+            "text": "How to Use This Package"
+          },
+          {
+            "level": "H3",
+            "text": "For a 5-Minute Overview"
+          },
+          {
+            "level": "H3",
+            "text": "For Decision-Making"
+          },
+          {
+            "level": "H3",
+            "text": "For Budget Questions"
+          },
+          {
+            "level": "H3",
+            "text": "For Evidence & ROI"
+          },
+          {
+            "level": "H3",
+            "text": "For Presentations"
+          },
+          {
+            "level": "H2",
+            "text": "Download & Share"
+          },
+          {
+            "level": "H2",
+            "text": "Next Steps"
+          }
+        ],
+        "articleCount": 1,
+        "categories": []
+      },
+      "screenshots": [
+        "/Users/benknight/Code/JusticeHub/.playwright-mcp/audit/wiki/mindaroo-pitch.png"
+      ]
+    },
+    {
+      "name": "mindaroo-pitch-one-pager",
+      "url": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+      "status": "success",
+      "loadTime": 916,
+      "consoleErrors": [
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738308332' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738308332' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738309875' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738309875' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738311244' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738311244' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738312375' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738312375' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738313726' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738313726' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738315045' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738315045' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321006' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321006' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321679' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321679' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+      ],
+      "content": {
+        "title": "JusticeHub Wiki - Strategic Planning & Documentation",
+        "h1": "JusticeHub Wiki",
+        "hasWikiNav": true,
+        "hasTableOfContents": false,
+        "hasSidebar": true,
+        "links": [
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "JusticeHub WikiStrategic Planning & Docs"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Pitch Package Hub ⭐Overview"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "One-Page Executive Pitch3K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "Strategic Pitch (Complete)21K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "Sovereignty Flywheel Visual6K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "Budget Breakdown (3 Years)8K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+            "text": "Research & Evidence Paper12K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/screenshots",
+            "text": "Platform Screenshots Gallery19 images"
+          },
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "Wiki"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Mindaroo Pitch"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "← Back to Pitch Package"
+          }
+        ],
+        "sections": [
+          {
+            "level": "H2",
+            "text": "WHY"
+          },
+          {
+            "level": "H3",
+            "text": "The Problem"
+          },
+          {
+            "level": "H3",
+            "text": "The Opportunity"
+          },
+          {
+            "level": "H2",
+            "text": "WHAT - The Platform"
+          },
+          {
+            "level": "H3",
+            "text": "Current Build Status ($303K Value Already Created)"
+          },
+          {
+            "level": "H3",
+            "text": "What's Built & Working"
+          },
+          {
+            "level": "H3",
+            "text": "What Gets Built with This Investment"
+          },
+          {
+            "level": "H2",
+            "text": "HOW - The Budget & Approach"
+          },
+          {
+            "level": "H3",
+            "text": "Where Every Dollar Goes (CORE/NETWORK Model)"
+          },
+          {
+            "level": "H3",
+            "text": "Key Budget Facts"
+          },
+          {
+            "level": "H3",
+            "text": "How Communities Get Supported (CORE/NETWORK Model)"
+          },
+          {
+            "level": "H3",
+            "text": "The Transformation Path (CORE/NETWORK Growth)"
+          },
+          {
+            "level": "H2",
+            "text": "The Bottom Line"
+          }
+        ],
+        "articleCount": 1,
+        "categories": []
+      },
+      "screenshots": [
+        "/Users/benknight/Code/JusticeHub/.playwright-mcp/audit/wiki/mindaroo-pitch-one-pager.png"
+      ]
+    },
+    {
+      "name": "mindaroo-pitch-strategic-pitch",
+      "url": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+      "status": "success",
+      "loadTime": 857,
+      "consoleErrors": [
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738309875' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738309875' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738311244' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738311244' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738312375' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738312375' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738313726' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738313726' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738315045' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738315045' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321006' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321006' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321679' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321679' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+      ],
+      "content": {
+        "title": "JusticeHub Wiki - Strategic Planning & Documentation",
+        "h1": "JusticeHub Wiki",
+        "hasWikiNav": true,
+        "hasTableOfContents": false,
+        "hasSidebar": true,
+        "links": [
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "JusticeHub WikiStrategic Planning & Docs"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Pitch Package Hub ⭐Overview"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "One-Page Executive Pitch3K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "Strategic Pitch (Complete)21K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "Sovereignty Flywheel Visual6K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "Budget Breakdown (3 Years)8K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+            "text": "Research & Evidence Paper12K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/screenshots",
+            "text": "Platform Screenshots Gallery19 images"
+          },
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "Wiki"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Mindaroo Pitch"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch#why",
+            "text": "WHY\nThe Problem"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch#what",
+            "text": "WHAT\nThe Solution"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch#how",
+            "text": "HOW\nThe Approach"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch#evidence",
+            "text": "EVIDENCE\nThe Proof"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "See detailed budget breakdown →"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+            "text": "See comprehensive research paper →"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "📄 One-Page Pitch\n5-minute executive summary"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "🎯 Sovereignty Flywheel\nCore visual + Napkin.ai prompts"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "💰 Budget Breakdown\nLine-by-line transparency"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+            "text": "📊 Research Paper\nEvidence, case studies, ROI data"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "🏠 Back to Pitch Hub\nAll pitch materials"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "← Back to Pitch Package"
+          }
+        ],
+        "sections": [
+          {
+            "level": "H2",
+            "text": "Complete Proposal for Mindaroo Foundation"
+          },
+          {
+            "level": "H2",
+            "text": "Quick Navigation"
+          },
+          {
+            "level": "H2",
+            "text": "WHY - The Problem & Opportunity"
+          },
+          {
+            "level": "H3",
+            "text": "The Crisis"
+          },
+          {
+            "level": "H3",
+            "text": "The Opportunity"
+          },
+          {
+            "level": "H2",
+            "text": "WHAT - The Solution"
+          },
+          {
+            "level": "H3",
+            "text": "JusticeHub Beta Platform (Already Operational)"
+          },
+          {
+            "level": "H3",
+            "text": "What This Investment Does"
+          },
+          {
+            "level": "H3",
+            "text": "Platform Visual Proof"
+          },
+          {
+            "level": "H2",
+            "text": "HOW - The Approach"
+          },
+          {
+            "level": "H3",
+            "text": "The Sovereignty Flywheel"
+          },
+          {
+            "level": "H3",
+            "text": "Three Investment Scenarios"
+          },
+          {
+            "level": "H3",
+            "text": "BASE - $10.5M over 3 years ⭐ RECOMMENDED"
+          },
+          {
+            "level": "H3",
+            "text": "What Makes This Different"
+          },
+          {
+            "level": "H2",
+            "text": "EVIDENCE - The Proof"
+          },
+          {
+            "level": "H3",
+            "text": "International Best Practices"
+          },
+          {
+            "level": "H3",
+            "text": "Potential Warm Community Partners"
+          },
+          {
+            "level": "H2",
+            "text": "What Success Looks Like"
+          },
+          {
+            "level": "H3",
+            "text": "For Communities"
+          },
+          {
+            "level": "H3",
+            "text": "For Sector"
+          },
+          {
+            "level": "H3",
+            "text": "For Mindaroo"
+          },
+          {
+            "level": "H3",
+            "text": "For Young People"
+          },
+          {
+            "level": "H2",
+            "text": "Next Steps"
+          },
+          {
+            "level": "H2",
+            "text": "The Ask"
+          },
+          {
+            "level": "H2",
+            "text": "All Related Documents"
+          }
+        ],
+        "articleCount": 1,
+        "categories": []
+      },
+      "screenshots": [
+        "/Users/benknight/Code/JusticeHub/.playwright-mcp/audit/wiki/mindaroo-pitch-strategic-pitch.png"
+      ]
+    },
+    {
+      "name": "mindaroo-pitch-sovereignty-flywheel",
+      "url": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+      "status": "success",
+      "loadTime": 789,
+      "consoleErrors": [
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738311244' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738311244' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738312375' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738312375' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738313726' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738313726' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738315045' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738315045' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321006' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321006' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321679' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321679' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+      ],
+      "content": {
+        "title": "JusticeHub Wiki - Strategic Planning & Documentation",
+        "h1": "JusticeHub Wiki",
+        "hasWikiNav": true,
+        "hasTableOfContents": false,
+        "hasSidebar": true,
+        "links": [
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "JusticeHub WikiStrategic Planning & Docs"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Pitch Package Hub ⭐Overview"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "One-Page Executive Pitch3K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "Strategic Pitch (Complete)21K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "Sovereignty Flywheel Visual6K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "Budget Breakdown (3 Years)8K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+            "text": "Research & Evidence Paper12K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/screenshots",
+            "text": "Platform Screenshots Gallery19 images"
+          },
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "Wiki"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Mindaroo Pitch"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "📄 One-Page Pitch\nExecutive summary with all key points"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "💰 Budget Breakdown\nDetailed line-by-line transparency"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "🏠 Back to Pitch Hub\nAll Mindaroo pitch materials"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "← Back to Pitch Package"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "← Back to Pitch Package"
+          }
+        ],
+        "sections": [
+          {
+            "level": "H3",
+            "text": "Why This Visual Matters"
+          },
+          {
+            "level": "H2",
+            "text": "The Master Visual"
+          },
+          {
+            "level": "H2",
+            "text": "The Crisis"
+          },
+          {
+            "level": "H3",
+            "text": "The Problem We're Solving"
+          },
+          {
+            "level": "H2",
+            "text": "The Flywheel (The Heart of It All)"
+          },
+          {
+            "level": "H3",
+            "text": "The 6-Step Self-Reinforcing Cycle"
+          },
+          {
+            "level": "H2",
+            "text": "The 3-Year Journey"
+          },
+          {
+            "level": "H3",
+            "text": "Year 1"
+          },
+          {
+            "level": "H3",
+            "text": "Year 2"
+          },
+          {
+            "level": "H3",
+            "text": "Year 3"
+          },
+          {
+            "level": "H2",
+            "text": "The Investment"
+          },
+          {
+            "level": "H2",
+            "text": "The Impact"
+          },
+          {
+            "level": "H3",
+            "text": "For Communities"
+          },
+          {
+            "level": "H3",
+            "text": "For Sector"
+          },
+          {
+            "level": "H3",
+            "text": "For Funders"
+          },
+          {
+            "level": "H2",
+            "text": "The Ask"
+          },
+          {
+            "level": "H3",
+            "text": "$10.5M over 3 years"
+          },
+          {
+            "level": "H2",
+            "text": "Understanding the Visual"
+          },
+          {
+            "level": "H3",
+            "text": "The Six Core Sections"
+          },
+          {
+            "level": "H3",
+            "text": "Key Insights"
+          },
+          {
+            "level": "H2",
+            "text": "Related Documentation"
+          }
+        ],
+        "articleCount": 1,
+        "categories": []
+      },
+      "screenshots": [
+        "/Users/benknight/Code/JusticeHub/.playwright-mcp/audit/wiki/mindaroo-pitch-sovereignty-flywheel.png"
+      ]
+    },
+    {
+      "name": "mindaroo-pitch-budget-breakdown",
+      "url": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+      "status": "success",
+      "loadTime": 825,
+      "consoleErrors": [
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738312375' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738312375' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738313726' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738313726' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738315045' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738315045' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321006' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321006' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321679' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321679' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+      ],
+      "content": {
+        "title": "JusticeHub Wiki - Strategic Planning & Documentation",
+        "h1": "JusticeHub Wiki",
+        "hasWikiNav": true,
+        "hasTableOfContents": false,
+        "hasSidebar": true,
+        "links": [
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "JusticeHub WikiStrategic Planning & Docs"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Pitch Package Hub ⭐Overview"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "One-Page Executive Pitch3K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "Strategic Pitch (Complete)21K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "Sovereignty Flywheel Visual6K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "Budget Breakdown (3 Years)8K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+            "text": "Research & Evidence Paper12K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/screenshots",
+            "text": "Platform Screenshots Gallery19 images"
+          },
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "Wiki"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Mindaroo Pitch"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "🎯 Sovereignty Flywheel\nVisual of the CORE/NETWORK model in action"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "📄 One-Page Pitch\nExecutive summary with investment ask"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "📚 Strategic Pitch\nComprehensive document with full context"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "🏠 Back to Pitch Hub\nAll Mindaroo pitch materials"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "← Back to Pitch Package"
+          }
+        ],
+        "sections": [
+          {
+            "level": "H2",
+            "text": "Exponential Community Growth Within Sustainable Budget"
+          },
+          {
+            "level": "H2",
+            "text": "The CORE/NETWORK Model Explained"
+          },
+          {
+            "level": "H3",
+            "text": "What Makes This Different"
+          },
+          {
+            "level": "H3",
+            "text": "Growth Trajectory: Network Effect at Scale"
+          },
+          {
+            "level": "H2",
+            "text": "Community Connectors: The Scaling Mechanism"
+          },
+          {
+            "level": "H3",
+            "text": "🔗 What is a Community Connector?"
+          },
+          {
+            "level": "H3",
+            "text": "Connector Scaling Across 3 Years"
+          },
+          {
+            "level": "H2",
+            "text": "3-Year Budget Summary: $10.5M"
+          },
+          {
+            "level": "H3",
+            "text": "Year 1: Foundation"
+          },
+          {
+            "level": "H3",
+            "text": "Year 2: Expansion"
+          },
+          {
+            "level": "H3",
+            "text": "Year 3: Network Effect"
+          },
+          {
+            "level": "H2",
+            "text": "YEAR 1: FOUNDATION ($1.88M)"
+          },
+          {
+            "level": "H3",
+            "text": "Year 1 Budget Breakdown"
+          },
+          {
+            "level": "H2",
+            "text": "YEAR 2: EXPANSION ($3.96M)"
+          },
+          {
+            "level": "H3",
+            "text": "Year 2 Budget Breakdown"
+          },
+          {
+            "level": "H2",
+            "text": "YEAR 3: NETWORK EFFECT AT SCALE ($4.66M)"
+          },
+          {
+            "level": "H3",
+            "text": "Year 3 Budget Breakdown"
+          },
+          {
+            "level": "H2",
+            "text": "3-YEAR TOTALS: $10.5M"
+          },
+          {
+            "level": "H2",
+            "text": "What Makes the CORE/NETWORK Model Revolutionary"
+          },
+          {
+            "level": "H2",
+            "text": "Revenue Projections with 29 Communities"
+          },
+          {
+            "level": "H2",
+            "text": "Key Differences from Traditional Models"
+          },
+          {
+            "level": "H2",
+            "text": "Budget Transparency & Accountability"
+          },
+          {
+            "level": "H2",
+            "text": "Related Documentation"
+          },
+          {
+            "level": "H3",
+            "text": "The CORE/NETWORK Model in One Sentence"
+          }
+        ],
+        "articleCount": 1,
+        "categories": []
+      },
+      "screenshots": [
+        "/Users/benknight/Code/JusticeHub/.playwright-mcp/audit/wiki/mindaroo-pitch-budget-breakdown.png"
+      ]
+    },
+    {
+      "name": "mindaroo-pitch-research-paper",
+      "url": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+      "status": "success",
+      "loadTime": 794,
+      "consoleErrors": [
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738313726' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738313726' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738315045' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738315045' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321006' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321006' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321679' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321679' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+      ],
+      "content": {
+        "title": "JusticeHub Wiki - Strategic Planning & Documentation",
+        "h1": "JusticeHub Wiki",
+        "hasWikiNav": true,
+        "hasTableOfContents": false,
+        "hasSidebar": true,
+        "links": [
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "JusticeHub WikiStrategic Planning & Docs"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Pitch Package Hub ⭐Overview"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "One-Page Executive Pitch3K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "Strategic Pitch (Complete)21K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "Sovereignty Flywheel Visual6K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "Budget Breakdown (3 Years)8K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+            "text": "Research & Evidence Paper12K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/screenshots",
+            "text": "Platform Screenshots Gallery19 images"
+          },
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "Wiki"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Mindaroo Pitch"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "📄 One-Page Pitch\nExecutive summary with key evidence"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "💰 Budget Breakdown\nInvestment justification with ROI data"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "📚 Strategic Pitch\n21,000-word comprehensive document"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "🏠 Back to Pitch Hub\nAll Mindaroo pitch materials"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "← Back to Pitch Package"
+          }
+        ],
+        "sections": [
+          {
+            "level": "H2",
+            "text": "Evidence Base, Case Studies, and Impact Data"
+          },
+          {
+            "level": "H2",
+            "text": "Executive Summary"
+          },
+          {
+            "level": "H2",
+            "text": "Key Evidence Highlights"
+          },
+          {
+            "level": "H3",
+            "text": "The Crisis"
+          },
+          {
+            "level": "H3",
+            "text": "What Works"
+          },
+          {
+            "level": "H2",
+            "text": "International Best Practices"
+          },
+          {
+            "level": "H3",
+            "text": "1. New Zealand - Oranga Tamariki"
+          },
+          {
+            "level": "H3",
+            "text": "2. Canada - Gladue Principles"
+          },
+          {
+            "level": "H3",
+            "text": "3. USA - Tribal Youth Program"
+          },
+          {
+            "level": "H3",
+            "text": "4. Colombia - Indigenous Justice Systems"
+          },
+          {
+            "level": "H3",
+            "text": "5. Norway - Youth Care Homes"
+          },
+          {
+            "level": "H2",
+            "text": "Australian Success Stories"
+          },
+          {
+            "level": "H3",
+            "text": "Bourke Justice Reinvestment (NSW)"
+          },
+          {
+            "level": "H3",
+            "text": "Oonchiumpa Consultancy (Alice Springs, NT)"
+          },
+          {
+            "level": "H3",
+            "text": "MMEIC - Minjerribah Moorgumpin Elders-in-Council (North Stradbroke Island, QLD)"
+          },
+          {
+            "level": "H3",
+            "text": "Palm Island Community Company (QLD)"
+          },
+          {
+            "level": "H3",
+            "text": "Mounty Yarns (Mount Druitt, NSW)"
+          },
+          {
+            "level": "H2",
+            "text": "Evidence on Grant Writing Burden"
+          },
+          {
+            "level": "H2",
+            "text": "Data Sovereignty Framework"
+          },
+          {
+            "level": "H2",
+            "text": "Revenue Models for Sustainability"
+          },
+          {
+            "level": "H2",
+            "text": "Future Sections (In Development)"
+          },
+          {
+            "level": "H2",
+            "text": "Methodology Note"
+          },
+          {
+            "level": "H2",
+            "text": "Related Documentation"
+          }
+        ],
+        "articleCount": 1,
+        "categories": []
+      },
+      "screenshots": [
+        "/Users/benknight/Code/JusticeHub/.playwright-mcp/audit/wiki/mindaroo-pitch-research-paper.png"
+      ]
+    },
+    {
+      "name": "mindaroo-pitch-screenshots",
+      "url": "http://localhost:3000/wiki/mindaroo-pitch/screenshots",
+      "status": "success",
+      "loadTime": 1003,
+      "consoleErrors": [
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738315045' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738315045' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321006' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321006' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321679' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321679' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+      ],
+      "content": {
+        "title": "JusticeHub Wiki - Strategic Planning & Documentation",
+        "h1": "JusticeHub Wiki",
+        "hasWikiNav": true,
+        "hasTableOfContents": false,
+        "hasSidebar": true,
+        "links": [
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "JusticeHub WikiStrategic Planning & Docs"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Pitch Package Hub ⭐Overview"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "One-Page Executive Pitch3K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "Strategic Pitch (Complete)21K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/sovereignty-flywheel",
+            "text": "Sovereignty Flywheel Visual6K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/budget-breakdown",
+            "text": "Budget Breakdown (3 Years)8K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/research-paper",
+            "text": "Research & Evidence Paper12K words"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/screenshots",
+            "text": "Platform Screenshots Gallery19 images"
+          },
+          {
+            "href": "http://localhost:3000/wiki",
+            "text": "Wiki"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "Mindaroo Pitch"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/one-pager",
+            "text": "View One-Pager →"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch/strategic-pitch",
+            "text": "View Strategic Pitch →"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "← Back to Mindaroo Pitch Hub"
+          },
+          {
+            "href": "http://localhost:3000/wiki/mindaroo-pitch",
+            "text": "← Back to Pitch Package"
+          }
+        ],
+        "sections": [
+          {
+            "level": "H2",
+            "text": "Why Screenshots Matter"
+          },
+          {
+            "level": "H2",
+            "text": "🎯 Priority 1: Essential Platform Features"
+          },
+          {
+            "level": "H2",
+            "text": "📝 Public Platform Pages (Priority 2)"
+          },
+          {
+            "level": "H2",
+            "text": "🔐 Admin & Content Management (Priority 3)"
+          },
+          {
+            "level": "H2",
+            "text": "📚 Centre of Excellence Pages"
+          },
+          {
+            "level": "H2",
+            "text": "📊 Data Visualizations"
+          },
+          {
+            "level": "H2",
+            "text": "What These Screenshots Prove"
+          },
+          {
+            "level": "H2",
+            "text": "Technical Details"
+          },
+          {
+            "level": "H3",
+            "text": "Screenshot Specifications"
+          }
+        ],
+        "articleCount": 1,
+        "categories": []
+      },
+      "screenshots": [
+        "/Users/benknight/Code/JusticeHub/.playwright-mcp/audit/wiki/mindaroo-pitch-screenshots.png"
+      ]
+    },
+    {
+      "name": "strategic-overview",
+      "url": "http://localhost:3000/wiki/strategic-overview",
+      "status": "success",
+      "loadTime": 2443,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Loading plugin data from 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0ic3ZnIj48dGV4dCB4PSIxMCIgeT0iMjAiIGlkPSJzdmctbGluay10ZXh0Ij50ZXh0PC90ZXh0Pjwvc3ZnPg==' violates the following Content Security Policy directive: \"object-src 'none'\". The action has been blocked.",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321006' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321006' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321679' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321679' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+      ],
+      "content": {
+        "title": "",
+        "h1": "Server Error",
+        "hasWikiNav": false,
+        "hasTableOfContents": false,
+        "hasSidebar": false,
+        "links": [],
+        "sections": [
+          {
+            "level": "H2",
+            "text": "Call Stack"
+          },
+          {
+            "level": "H3",
+            "text": "<unknown>"
+          },
+          {
+            "level": "H3",
+            "text": "mod.require"
+          },
+          {
+            "level": "H3",
+            "text": "__webpack_require__.f.require"
+          },
+          {
+            "level": "H3",
+            "text": "<unknown>"
+          },
+          {
+            "level": "H3",
+            "text": "Array.reduce"
+          },
+          {
+            "level": "H3",
+            "text": "__webpack_require__.e"
+          }
+        ],
+        "articleCount": 0,
+        "categories": []
+      },
+      "screenshots": [
+        "/Users/benknight/Code/JusticeHub/.playwright-mcp/audit/wiki/strategic-overview.png"
+      ]
+    },
+    {
+      "name": "executive-summary",
+      "url": "http://localhost:3000/wiki/executive-summary",
+      "status": "success",
+      "loadTime": 744,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321006' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321006' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321679' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321679' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+      ],
+      "content": {
+        "title": "",
+        "h1": "Server Error",
+        "hasWikiNav": false,
+        "hasTableOfContents": false,
+        "hasSidebar": false,
+        "links": [],
+        "sections": [
+          {
+            "level": "H2",
+            "text": "Call Stack"
+          },
+          {
+            "level": "H3",
+            "text": "<unknown>"
+          },
+          {
+            "level": "H3",
+            "text": "mod.require"
+          },
+          {
+            "level": "H3",
+            "text": "__webpack_require__.f.require"
+          },
+          {
+            "level": "H3",
+            "text": "<unknown>"
+          },
+          {
+            "level": "H3",
+            "text": "Array.reduce"
+          },
+          {
+            "level": "H3",
+            "text": "__webpack_require__.e"
+          }
+        ],
+        "articleCount": 0,
+        "categories": []
+      },
+      "screenshots": [
+        "/Users/benknight/Code/JusticeHub/.playwright-mcp/audit/wiki/executive-summary.png"
+      ]
+    },
+    {
+      "name": "justicehub-planning",
+      "url": "http://localhost:3000/wiki/justicehub-planning",
+      "status": "success",
+      "loadTime": 740,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321006' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321006' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Refused to apply style from 'http://localhost:3000/_next/static/css/app/layout.css?v=1767738321679' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/main-app.js?v=1767738321679' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app/layout.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled.",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "Refused to execute script from 'http://localhost:3000/_next/static/chunks/app-pages-internals.js' because its MIME type ('text/html') is not executable, and strict MIME type checking is enabled."
+      ],
+      "content": {
+        "title": "",
+        "h1": "Server Error",
+        "hasWikiNav": false,
+        "hasTableOfContents": false,
+        "hasSidebar": false,
+        "links": [],
+        "sections": [
+          {
+            "level": "H2",
+            "text": "Call Stack"
+          },
+          {
+            "level": "H3",
+            "text": "<unknown>"
+          },
+          {
+            "level": "H3",
+            "text": "mod.require"
+          },
+          {
+            "level": "H3",
+            "text": "__webpack_require__.f.require"
+          },
+          {
+            "level": "H3",
+            "text": "<unknown>"
+          },
+          {
+            "level": "H3",
+            "text": "Array.reduce"
+          },
+          {
+            "level": "H3",
+            "text": "__webpack_require__.e"
+          }
+        ],
+        "articleCount": 0,
+        "categories": []
+      },
+      "screenshots": [
+        "/Users/benknight/Code/JusticeHub/.playwright-mcp/audit/wiki/justicehub-planning.png"
+      ]
+    }
+  ],
+  "navigation": [
+    {
+      "test": "Sidebar exists",
+      "passed": true
+    },
+    {
+      "test": "Wiki link navigation works",
+      "passed": true,
+      "details": "Navigated to http://localhost:3000/wiki/mindaroo-pitch"
+    },
+    {
+      "test": "Breadcrumb navigation exists",
+      "passed": false
+    },
+    {
+      "test": "Search functionality exists",
+      "passed": false
+    }
+  ],
+  "contentGaps": [
+    {
+      "type": "missing-content",
+      "description": "Glossary of terms",
+      "recommendation": "Consider adding Glossary of terms to the wiki"
+    },
+    {
+      "type": "missing-content",
+      "description": "Getting started guide",
+      "recommendation": "Consider adding Getting started guide to the wiki"
+    },
+    {
+      "type": "missing-content",
+      "description": "FAQ section",
+      "recommendation": "Consider adding FAQ section to the wiki"
+    },
+    {
+      "type": "missing-content",
+      "description": "Methodology documentation",
+      "recommendation": "Consider adding Methodology documentation to the wiki"
+    },
+    {
+      "type": "missing-content",
+      "description": "Research references",
+      "recommendation": "Consider adding Research references to the wiki"
+    },
+    {
+      "type": "missing-content",
+      "description": "Policy resources",
+      "recommendation": "Consider adding Policy resources to the wiki"
+    },
+    {
+      "type": "missing-content",
+      "description": "Data sources",
+      "recommendation": "Consider adding Data sources to the wiki"
+    },
+    {
+      "type": "missing-content",
+      "description": "Partner information",
+      "recommendation": "Consider adding Partner information to the wiki"
+    },
+    {
+      "type": "navigation",
+      "description": "No search functionality found",
+      "recommendation": "Add search functionality for wiki content discovery"
+    }
+  ],
+  "strategicOpportunities": [
+    {
+      "category": "Evidence Repository",
+      "opportunity": "Transform wiki into comprehensive evidence repository",
+      "funderValue": "Demonstrates research depth and evidence-based approach",
+      "implementation": "Create structured sections for academic research, policy analysis, and case studies"
+    },
+    {
+      "category": "Knowledge Management",
+      "opportunity": "Develop youth justice knowledge base",
+      "funderValue": "Shows sector leadership and thought leadership position",
+      "implementation": "Add comprehensive glossary, methodology documentation, and best practice guides"
+    },
+    {
+      "category": "Stakeholder Resources",
+      "opportunity": "Create funder-specific resource sections",
+      "funderValue": "Direct value demonstration to funding bodies",
+      "implementation": "Add dedicated sections for different stakeholder types with relevant resources"
+    },
+    {
+      "category": "Impact Documentation",
+      "opportunity": "Document intervention outcomes and learnings",
+      "funderValue": "Evidence of impact and continuous learning",
+      "implementation": "Create intervention case studies with measured outcomes"
+    },
+    {
+      "category": "Training Materials",
+      "opportunity": "Develop professional development resources",
+      "funderValue": "Capacity building and sector development",
+      "implementation": "Add training guides, webinar archives, and certification pathways"
+    }
+  ]
+}
