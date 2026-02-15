@@ -1,0 +1,693 @@
+{
+  "basecamps": [
+    {
+      "id": "oonchiumpa",
+      "name": "Oonchiumpa",
+      "location": "Alice Springs, NT",
+      "state": "NT",
+      "lat": -23.6980,
+      "lng": 133.8807,
+      "status": "founding",
+      "keyImpact": "95% reduced anti-social behavior",
+      "description": "Aboriginal community-controlled organisation working across 7 language groups within a 150km radius of Alice Springs, partnering with 32+ organisations.",
+      "programs": [
+        "Youth Mentorship & Cultural Healing",
+        "True Justice: Deep Listening on Country",
+        "Atnarpa Homestead On-Country Experiences",
+        "Cultural Brokerage & Service Navigation"
+      ],
+      "metrics": {
+        "primaryStat": "95%",
+        "primaryLabel": "Reduced anti-social behavior",
+        "secondaryStat": "72%",
+        "secondaryLabel": "School re-engagement",
+        "languageGroups": 7,
+        "partnerOrganizations": 32
+      },
+      "storytellers": [
+        {
+          "name": "Kristy Bloomfield",
+          "role": "Co-Founder & Director",
+          "bio": "Kristy Bloomfield is a visionary leader and passionate advocate for Indigenous empowerment and community. She leads Oonchiumpa with deep cultural authority and has built partnerships with over 32 organizations across Central Australia.",
+          "quote": "Connection to culture, country, and elders is the foundation of healing.",
+          "featured": true
+        },
+        {
+          "name": "Tanya Turner",
+          "role": "Co-Founder & Director",
+          "bio": "Tanya Turner is a proud Aboriginal woman from Central Australia, whose journey reflects resilience and determination. She brings expertise in Indigenous justice, legal practice, and community development.",
+          "quote": "Our young people need to know they are valued - not by the system, but by their own mob.",
+          "featured": true
+        },
+        {
+          "name": "Aunty Bev and Uncle Terry",
+          "role": "Cultural Advisors",
+          "bio": "Aunty Bev and Uncle Terry are cherished custodians of Alice Springs' vibrant history, deeply rooted in community resilience and cultural heritage.",
+          "quote": "Strong young people come from strong families connected to country.",
+          "featured": true
+        },
+        {
+          "name": "Professor Helen Milroy",
+          "role": "True Justice Partner - ANU",
+          "bio": "Professor Helen Milroy leads the True Justice Initiative partnership with Oonchiumpa, focusing on deep listening and restorative justice approaches since 2022.",
+          "featured": false
+        }
+      ],
+      "videos": [
+        {
+          "title": "True Justice: Deep Listening on Country",
+          "description": "Documentary exploring Oonchiumpa's partnership with ANU's True Justice Initiative, showing how deep listening and cultural healing transforms young people's lives.",
+          "url": "https://www.youtube.com/watch?v=oonchiumpa-true-justice",
+          "type": "documentary",
+          "duration": 1440,
+          "featured": true
+        },
+        {
+          "title": "Atnarpa Homestead - On Country Experience",
+          "description": "Young people share their experiences at Atnarpa Station, connecting with country, elders, and traditional knowledge.",
+          "url": "https://www.youtube.com/watch?v=atnarpa-on-country",
+          "type": "documentary",
+          "duration": 720,
+          "featured": true
+        }
+      ],
+      "externalLinks": [
+        {
+          "title": "Oonchiumpa Website",
+          "url": "https://oonchiumpa.com",
+          "type": "website"
+        },
+        {
+          "title": "ANU True Justice Initiative",
+          "url": "https://law.anu.edu.au/research/true-justice",
+          "type": "research"
+        }
+      ]
+    },
+    {
+      "id": "bg-fit",
+      "name": "BG Fit",
+      "location": "Mount Isa, QLD",
+      "state": "QLD",
+      "lat": -20.7256,
+      "lng": 139.4927,
+      "status": "founding",
+      "keyImpact": "85% diversion rate",
+      "description": "Transforms youth empowerment through the CAMPFIRE framework (Culture, Ancestral Wisdom, Mentoring, Personal Growth, Fitness, Identity, Resilience, Empowerment) and BAIL (Be An Indigenous Leader) program.",
+      "programs": [
+        "CAMPFIRE Project",
+        "BAIL (Be An Indigenous Leader)",
+        "Boxing & Fitness Mentorship",
+        "Cultural Connection Camps"
+      ],
+      "metrics": {
+        "primaryStat": "85%",
+        "primaryLabel": "Diversion success rate",
+        "secondaryStat": "400+",
+        "secondaryLabel": "Young people engaged annually",
+        "mentor": "Brodie Germaine",
+        "heritage": "Pita Pita Wayaka"
+      },
+      "storytellers": [
+        {
+          "name": "Brodie Germaine",
+          "role": "Founder & Director",
+          "bio": "Brodie Germaine, a proud Pita Pita Wayaka man from Mount Isa, founded BG Fit to transform youth empowerment through fitness. His CAMPFIRE Project and BAIL program blend fitness, cultural connection, and mentorship to create pathways for Indigenous youth.",
+          "quote": "Every young person deserves someone who believes in them. We show up, every day, no matter what.",
+          "featured": true
+        },
+        {
+          "name": "Aunty Corrine",
+          "role": "Community Elder & Advocate",
+          "bio": "Aunty Corrine has supported 25 young people through the justice system over 20 years - unpaid, 24/7, with unwavering dedication. She represents the community expertise that funded services often replicate but never match.",
+          "quote": "I got the voice. But I need voices behind me to make things work in this community.",
+          "featured": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "CAMPFIRE Project: Changing Lives in Mount Isa",
+          "description": "Documentary following the CAMPFIRE framework in action with young people in Mount Isa.",
+          "url": "https://www.youtube.com/watch?v=campfire-mount-isa",
+          "type": "documentary",
+          "duration": 1080,
+          "featured": true
+        },
+        {
+          "title": "BAIL Program: Be An Indigenous Leader",
+          "description": "Young people and mentors explain how the BAIL program combines fitness training with cultural connection to build leaders.",
+          "url": "https://www.youtube.com/watch?v=bail-program",
+          "type": "training",
+          "duration": 600,
+          "featured": true
+        }
+      ],
+      "externalLinks": [
+        {
+          "title": "BAIL Program Wiki",
+          "url": "https://bailprogram.org",
+          "type": "website"
+        }
+      ]
+    },
+    {
+      "id": "mounty-yarns",
+      "name": "Mounty Yarns",
+      "location": "Western Sydney, NSW",
+      "state": "NSW",
+      "lat": -33.7460,
+      "lng": 150.8350,
+      "status": "founding",
+      "keyImpact": "150+ stories, 30% media careers",
+      "description": "Youth-led storytelling organization that grew from 1 person to a 20-person team, producing documentaries, podcasts, and community journalism that challenge deficit narratives about Western Sydney.",
+      "programs": [
+        "Documentary Filmmaking",
+        "Podcast Production",
+        "Community Journalism",
+        "Media Skills Training"
+      ],
+      "metrics": {
+        "primaryStat": "150+",
+        "primaryLabel": "Youth stories published",
+        "secondaryStat": "100K+",
+        "secondaryLabel": "Viewers reached",
+        "storytellersTrained": 50,
+        "teamSize": 20
+      },
+      "storytellers": [
+        {
+          "name": "Mounty Yarns Youth Collective",
+          "role": "Youth-Led Leadership",
+          "bio": "Mounty Yarns is led by young people from Mount Druitt who grew the organization from 1 person to a 20-person team. They produce documentaries, podcasts, and community journalism that challenge deficit narratives about Western Sydney.",
+          "quote": "We need more people who give a fuck and actually ask what we want.",
+          "featured": true
+        },
+        {
+          "name": "Young Storytellers Network",
+          "role": "Media Production Team",
+          "bio": "Over 50 young people have been trained in media production through Mounty Yarns, creating content that reaches over 100,000 people and challenging mainstream narratives about their community.",
+          "quote": "Imagine reconnecting with your blood brothers after being in care for so long, and it's in jail.",
+          "featured": true
+        }
+      ],
+      "stories": [
+        {
+          "title": "Just the usual",
+          "quote": "For us, there are no good interactions with police.",
+          "summary": "A semi-final OzTag match turns into another police chase, showing how constant surveillance blocks young people from feeling safe in their own neighbourhood.",
+          "tags": ["Policing", "Safety"]
+        },
+        {
+          "title": "I can't even walk down the street",
+          "quote": "Anytime we're anywhere we have our escape routes planned in case we need to run.",
+          "summary": "From childhood, police harassment engrains fear and trauma, pushing kids into fight-or-flight on everyday walks through Mount Druitt.",
+          "tags": ["Policing", "Trauma"]
+        },
+        {
+          "title": "Another overnighter",
+          "quote": "The police say things to me to get me to bite back at them. Real racist things.",
+          "summary": "Bail refusals, racist taunts and impossible conditions keep young people trapped in cycles of overnight custody.",
+          "tags": ["Justice", "Bail"]
+        },
+        {
+          "title": "Koori Court is probably the best thing I know",
+          "quote": "In Youth Koori Court they actually see the effort you're making.",
+          "summary": "Youth Koori Court centres Elders, culture, and relationships, giving young people a real shot at change.",
+          "tags": ["Justice", "Culture"]
+        },
+        {
+          "title": "Can't hold us down",
+          "quote": "Imagine reconnecting with your blood brothers after being in care for so long, and it's in jail.",
+          "summary": "Mounty Yarns grows from lived experience—building community-run solutions that keep families together.",
+          "tags": ["Community", "Care"]
+        }
+      ],
+      "videos": [
+        {
+          "title": "Mounty Yarns Documentary",
+          "description": "The full 24-minute documentary produced by young people from Mount Druitt, sharing their experiences with policing, education, custody, and community.",
+          "url": "https://www.youtube.com/watch?v=mounty-yarns-documentary",
+          "type": "documentary",
+          "duration": 1440,
+          "featured": true
+        }
+      ],
+      "externalLinks": [
+        {
+          "title": "Mounty Yarns Documentary",
+          "url": "https://www.youtube.com/watch?v=mounty-yarns",
+          "type": "documentary"
+        },
+        {
+          "title": "Backyard Campus Project",
+          "url": "https://mountyyarns.org.au/backyard-campus",
+          "type": "website"
+        }
+      ]
+    },
+    {
+      "id": "picc-townsville",
+      "name": "PICC Townsville",
+      "location": "Townsville, QLD",
+      "state": "QLD",
+      "lat": -19.2590,
+      "lng": 146.8169,
+      "status": "founding",
+      "keyImpact": "78% diversion success",
+      "description": "Palm Island Community Company supports Bwgcolman (Palm Island) and broader North Queensland Pasifika families through cultural connection, family strengthening, and diversion programs.",
+      "programs": [
+        "Cultural Connection Programs",
+        "Family Strengthening Services",
+        "Youth Diversion Programs",
+        "PICC Station Precinct Hub"
+      ],
+      "metrics": {
+        "primaryStat": "78%",
+        "primaryLabel": "Youth diversion success",
+        "secondaryStat": "300+",
+        "secondaryLabel": "Families served annually",
+        "staff": 197,
+        "connection": "Bwgcolman (Palm Island)"
+      },
+      "storytellers": [
+        {
+          "name": "PICC Leadership Team",
+          "role": "Community Directors",
+          "bio": "PICC (Palm Island Community Company) is led by community members who understand that culture is protection. With 197 staff, they deliver services across North Queensland while maintaining connection to cultural identity.",
+          "quote": "Strong cultural identity protects young people from harm.",
+          "featured": true
+        }
+      ],
+      "videos": [
+        {
+          "title": "PICC Station Precinct Vision",
+          "description": "The transformation of PICC Station Precinct into a regional hub for cultural programs, family services, and community gathering.",
+          "url": "https://www.youtube.com/watch?v=picc-station-vision",
+          "type": "promotional",
+          "duration": 900,
+          "featured": true
+        }
+      ],
+      "externalLinks": [
+        {
+          "title": "Palm Island History",
+          "url": "https://en.wikipedia.org/wiki/Palm_Island,_Queensland",
+          "type": "research"
+        },
+        {
+          "title": "Bwgcolman Indigenous Knowledge Centre",
+          "url": "https://www.slq.qld.gov.au/blog/bwgcolman-indigenous-knowledge-centre",
+          "type": "research"
+        }
+      ]
+    }
+  ],
+  "futureCommunities": {
+    "core": [
+      { "name": "Witta Harvest", "location": "Townsville, QLD", "lat": -19.26, "lng": 146.82, "status": "core" },
+      { "name": "Barranbinya", "location": "Bourke, NSW", "lat": -30.09, "lng": 145.94, "status": "core" },
+      { "name": "QATSICPP", "location": "Brisbane, QLD", "lat": -27.47, "lng": 153.03, "status": "core" },
+      { "name": "NATSILS", "location": "Canberra, ACT", "lat": -35.28, "lng": 149.13, "status": "core" },
+      { "name": "SNAICC", "location": "Melbourne, VIC", "lat": -37.81, "lng": 144.96, "status": "core" }
+    ],
+    "network": [
+      { "name": "Youth Off The Streets", "location": "Sydney, NSW", "lat": -33.87, "lng": 151.21, "status": "network" },
+      { "name": "Barkly Regional Council", "location": "Tennant Creek, NT", "lat": -19.65, "lng": 134.19, "status": "network" },
+      { "name": "Warlpiri Youth Development", "location": "Yuendumu, NT", "lat": -22.26, "lng": 131.80, "status": "network" }
+    ]
+  },
+  "sharedServices": [
+    {
+      "id": "storytelling-content",
+      "name": "Storytelling & Content",
+      "icon": "Film",
+      "category": "Communications",
+      "description": "Professional video production, photography, case study documentation, and impact story writing. Your stories, professionally captured.",
+      "coreBenefit": "Quarterly video shoots + ongoing content support",
+      "networkBenefit": "Annual story capture session",
+      "trainingOption": "Media skills workshops for youth"
+    },
+    {
+      "id": "communications-marketing",
+      "name": "Communications & Marketing",
+      "icon": "Megaphone",
+      "category": "Communications",
+      "description": "Social media management, newsletters, media relations, and crisis communications support.",
+      "coreBenefit": "Monthly comms calendar + content creation",
+      "networkBenefit": "Quarterly newsletter templates",
+      "trainingOption": "Social media training for staff/youth"
+    },
+    {
+      "id": "bookkeeping-accounting",
+      "name": "Bookkeeping & Accounting",
+      "icon": "Calculator",
+      "category": "Finance",
+      "description": "Day-to-day bookkeeping, monthly reconciliations, BAS preparation, and financial reporting.",
+      "coreBenefit": "Full bookkeeping service + monthly reports",
+      "networkBenefit": "Quarterly reconciliation support",
+      "trainingOption": "MYOB/Xero training for local staff"
+    },
+    {
+      "id": "grant-acquittals",
+      "name": "Grant Acquittals & Reporting",
+      "icon": "FileCheck",
+      "category": "Finance",
+      "description": "Financial acquittal preparation, grant reporting, and compliance documentation for funders.",
+      "coreBenefit": "Full acquittal management for all grants",
+      "networkBenefit": "Template library + review service",
+      "trainingOption": "Acquittal process training"
+    },
+    {
+      "id": "payroll-hr",
+      "name": "Payroll & HR Admin",
+      "icon": "UserCheck",
+      "category": "People",
+      "description": "Payroll processing, superannuation, leave management, and HR administration.",
+      "coreBenefit": "Full payroll service + HR support",
+      "networkBenefit": "Payroll software + templates",
+      "trainingOption": "Payroll certification for local staff"
+    },
+    {
+      "id": "recruitment-onboarding",
+      "name": "Recruitment & Onboarding",
+      "icon": "UserPlus",
+      "category": "People",
+      "description": "Job ads, candidate screening, interview support, and onboarding documentation.",
+      "coreBenefit": "End-to-end recruitment support",
+      "networkBenefit": "Job ad templates + screening tools",
+      "trainingOption": "Recruitment skills for managers"
+    },
+    {
+      "id": "grant-writing",
+      "name": "Grant Writing & Fundraising",
+      "icon": "PenTool",
+      "category": "Development",
+      "description": "Grant application writing, funding research, and submission management.",
+      "coreBenefit": "Full grant writing service ($10K+ applications)",
+      "networkBenefit": "Grant opportunity alerts + templates",
+      "trainingOption": "Grant writing workshops"
+    },
+    {
+      "id": "philanthropy-matching",
+      "name": "Philanthropy Matching",
+      "icon": "Heart",
+      "category": "Development",
+      "description": "Direct introductions to verified philanthropists and corporate sponsors aligned with your work.",
+      "coreBenefit": "Curated funder introductions + pitch support",
+      "networkBenefit": "Listed in funder discovery portal",
+      "trainingOption": "Pitch and presentation coaching"
+    },
+    {
+      "id": "governance-compliance",
+      "name": "Governance & Compliance",
+      "icon": "Shield",
+      "category": "Operations",
+      "description": "Board training, ACNC compliance, policy templates, and governance capacity building.",
+      "coreBenefit": "Quarterly governance workshops + dedicated advisor",
+      "networkBenefit": "Annual governance check-in + templates",
+      "trainingOption": "Board member training program"
+    },
+    {
+      "id": "legal-triage",
+      "name": "Legal Triage",
+      "icon": "Scale",
+      "category": "Operations",
+      "description": "Contract review, legal advice triage, IP protection, and advocacy support.",
+      "coreBenefit": "Dedicated legal partnerships with NATSILS, ALS NSW",
+      "networkBenefit": "Referral network access",
+      "trainingOption": "Legal literacy workshops"
+    },
+    {
+      "id": "tech-infrastructure",
+      "name": "Technical Infrastructure",
+      "icon": "Server",
+      "category": "Technology",
+      "description": "Website hosting, email systems, CRM, data management, and cybersecurity.",
+      "coreBenefit": "Full website + subdomain + IT support",
+      "networkBenefit": "Profile page on JusticeHub",
+      "trainingOption": "Digital skills training for youth"
+    },
+    {
+      "id": "data-evaluation",
+      "name": "Data & Evaluation",
+      "icon": "BarChart3",
+      "category": "Technology",
+      "description": "Program evaluation, data collection tools, impact measurement, and evidence documentation.",
+      "coreBenefit": "Custom evaluation framework + quarterly reports",
+      "networkBenefit": "Standard data collection templates",
+      "trainingOption": "Evaluation skills for program staff"
+    },
+    {
+      "id": "admin-coordination",
+      "name": "Admin & Coordination",
+      "icon": "ClipboardList",
+      "category": "Operations",
+      "description": "Virtual admin support, event coordination, procurement, and logistics management.",
+      "coreBenefit": "8-16 hours/week dedicated admin support",
+      "networkBenefit": "Shared admin resources + templates",
+      "trainingOption": "Admin skills for emerging leaders"
+    },
+    {
+      "id": "community-connectors",
+      "name": "Community Connectors",
+      "icon": "Users",
+      "category": "Support",
+      "description": "Dedicated relationship managers who understand your community and coordinate all services.",
+      "coreBenefit": "Named connector (8-16 hrs/week)",
+      "networkBenefit": "Shared connector (2-4 hrs/week)",
+      "trainingOption": "N/A - always provided by JusticeHub"
+    },
+    {
+      "id": "incident-reporting",
+      "name": "Incident & Issue Tracking",
+      "icon": "AlertTriangle",
+      "category": "Support",
+      "description": "Secure, culturally-safe reporting system for documenting incidents and systemic issues.",
+      "coreBenefit": "Full platform access with analytics dashboard",
+      "networkBenefit": "Basic reporting tools",
+      "trainingOption": "Reporting and documentation training"
+    }
+  ],
+  "serviceCategories": [
+    { "id": "communications", "name": "Communications & Storytelling", "icon": "Megaphone", "color": "purple" },
+    { "id": "finance", "name": "Finance & Accounting", "icon": "Calculator", "color": "green" },
+    { "id": "people", "name": "People & HR", "icon": "Users", "color": "blue" },
+    { "id": "development", "name": "Fundraising & Development", "icon": "Heart", "color": "pink" },
+    { "id": "operations", "name": "Operations & Compliance", "icon": "Shield", "color": "amber" },
+    { "id": "technology", "name": "Technology & Data", "icon": "Server", "color": "teal" },
+    { "id": "support", "name": "Dedicated Support", "icon": "Headphones", "color": "emerald" }
+  ],
+  "tierComparison": {
+    "core": {
+      "name": "CORE",
+      "count": 9,
+      "annualValue": "$180K",
+      "features": [
+        "Full JusticeHub platform access",
+        "Dedicated community connector (8-16 hrs/week)",
+        "Website subdomain (community.justicehub.org)",
+        "ALMA intelligence dashboard with real-time data",
+        "Direct philanthropist introductions",
+        "Grant writing support ($10K+ applications)",
+        "Quarterly governance workshops",
+        "Priority legal triage partnerships",
+        "Story licensing revenue share (50%)",
+        "Empathy Ledger integration"
+      ]
+    },
+    "network": {
+      "name": "NETWORK",
+      "count": 20,
+      "annualValue": "$40-50K",
+      "features": [
+        "JusticeHub profile page",
+        "Basic connector support (2-4 hrs/week)",
+        "ALMA intelligence access (read-only)",
+        "Evidence library for grant applications",
+        "Listed in funder discovery portal",
+        "Annual governance check-in",
+        "Referral network access",
+        "Community storytelling platform access",
+        "Path to CORE tier partnership"
+      ]
+    }
+  },
+  "timelinePhases": [
+    {
+      "year": 1,
+      "phase": "Foundation",
+      "dateRange": "2026",
+      "funding": "$250K revenue",
+      "milestones": [
+        "Launch 4 founding Basecamps",
+        "Establish 9 CORE community partnerships",
+        "Secure 2 state government licenses (QLD, NSW)",
+        "Sign first corporate sponsorship (Atlassian)",
+        "Launch ALMA intelligence platform",
+        "Establish Indigenous Advisory Board"
+      ],
+      "metrics": {
+        "communities": "9 CORE",
+        "revenue": "$250K",
+        "communityBenefit": "$75K (30%)"
+      }
+    },
+    {
+      "year": 3,
+      "phase": "Self-Sustaining",
+      "dateRange": "2028",
+      "funding": "$1.2M revenue",
+      "milestones": [
+        "Expand to 20 NETWORK tier communities",
+        "All 8 state/territory government licenses",
+        "5 corporate sponsors active",
+        "4 university research partnerships",
+        "Story licensing marketplace operational",
+        "International expansion exploration (NZ)"
+      ],
+      "metrics": {
+        "communities": "9 CORE + 20 NETWORK",
+        "revenue": "$1.2M",
+        "communityBenefit": "$360K (30%)"
+      }
+    },
+    {
+      "year": 5,
+      "phase": "Community Ownership Transition",
+      "dateRange": "2031",
+      "funding": "$1.5M+ revenue",
+      "milestones": [
+        "Transfer majority control to Indigenous Advisory Board",
+        "Legal structure for community trust established",
+        "Platform independence validated",
+        "75% of youth encounters resolved in community",
+        "Revenue diversification complete",
+        "CORE partnerships transition to mixed funding"
+      ],
+      "metrics": {
+        "communities": "15 CORE + 30 NETWORK",
+        "revenue": "$1.5M+",
+        "communityBenefit": "$450K+ (30%)"
+      }
+    },
+    {
+      "year": 10,
+      "phase": "Full Community Control",
+      "dateRange": "2036",
+      "funding": "$2M+ revenue",
+      "milestones": [
+        "Fully community-owned infrastructure",
+        "Indigenous parity progress (within 10% of non-Indigenous rates)",
+        "50% of youth justice interventions are Community Controlled",
+        "International expansion (NZ, Canada)",
+        "Zero detention for youth under 14 nationally",
+        "$10M+ total flowed to communities"
+      ],
+      "metrics": {
+        "communities": "25 CORE + 50 NETWORK",
+        "revenue": "$2M+",
+        "communityBenefit": "$600K+ (30%)"
+      }
+    }
+  ],
+  "revenueStreams": [
+    {
+      "id": "state-gov",
+      "name": "State Government Licenses",
+      "icon": "Building2",
+      "year3Amount": "$400K",
+      "communityShare": "30%",
+      "communityAmount": "$120K",
+      "description": "Annual subscription to ALMA intelligence for policy development, outcome tracking, and national benchmarking.",
+      "examples": [
+        { "name": "Queensland Government", "amount": "$75K/year", "tier": "Tier 1" },
+        { "name": "NSW Government", "amount": "$50K/year", "tier": "Tier 1" },
+        { "name": "Victoria Government", "amount": "$75K/year", "tier": "Tier 1" }
+      ],
+      "flow": [
+        { "to": "Community Controlled Sources", "percent": 30, "amount": "$22.5K" },
+        { "to": "Platform Operations", "percent": 50, "amount": "$37.5K" },
+        { "to": "National Knowledge Commons", "percent": 20, "amount": "$15K" }
+      ]
+    },
+    {
+      "id": "corporate",
+      "name": "Corporate Sponsorships",
+      "icon": "Briefcase",
+      "year3Amount": "$500K",
+      "communityShare": "60%",
+      "communityAmount": "$300K",
+      "description": "Companies sponsor intervention types aligned with CSR goals, with 60% flowing directly to community programs.",
+      "examples": [
+        { "name": "Atlassian Foundation", "amount": "$100K/year", "focus": "Education/Employment" },
+        { "name": "Canva Foundation", "amount": "$100K/year", "focus": "Creative Expression" },
+        { "name": "Telstra Foundation", "amount": "$100K/year", "focus": "Digital Inclusion" }
+      ],
+      "flow": [
+        { "to": "Community Programs (Direct Grants)", "percent": 60, "amount": "$60K" },
+        { "to": "Platform Operations", "percent": 30, "amount": "$30K" },
+        { "to": "Impact Reporting", "percent": 10, "amount": "$10K" }
+      ]
+    },
+    {
+      "id": "research",
+      "name": "Research Partnerships",
+      "icon": "GraduationCap",
+      "year3Amount": "$200K",
+      "communityShare": "50%",
+      "communityAmount": "$100K",
+      "description": "Universities license ALMA data with Indigenous governance oversight and community co-authorship.",
+      "examples": [
+        { "name": "Griffith University", "amount": "$50K/year", "focus": "QLD Youth Justice Research" },
+        { "name": "University of Melbourne", "amount": "$50K/year", "focus": "Indigenous Parity" },
+        { "name": "UNSW", "amount": "$50K/year", "focus": "Diversion Outcomes" }
+      ],
+      "flow": [
+        { "to": "Indigenous Advisory Board", "percent": 50, "amount": "$25K" },
+        { "to": "Community Knowledge Holders", "percent": 30, "amount": "$15K" },
+        { "to": "Platform Operations", "percent": 20, "amount": "$10K" }
+      ]
+    },
+    {
+      "id": "story-licensing",
+      "name": "Story Licensing",
+      "icon": "Film",
+      "year3Amount": "$100K",
+      "communityShare": "50%",
+      "communityAmount": "$50K",
+      "description": "Media licensing of community stories with revenue shared directly with storytellers who own copyright.",
+      "examples": [
+        { "name": "ABC Documentary License", "amount": "$10K", "share": "50% to storyteller" },
+        { "name": "Book Publisher Anthology", "amount": "$20K", "share": "100% to storytellers" },
+        { "name": "Conference Speaking Fees", "amount": "$5K", "share": "100% to speaker" }
+      ],
+      "flow": [
+        { "to": "Storyteller (Copyright Owner)", "percent": 50, "amount": "$5K" },
+        { "to": "Platform Operations", "percent": 30, "amount": "$3K" },
+        { "to": "Community Organization", "percent": 20, "amount": "$2K" }
+      ]
+    }
+  ],
+  "fundingCases": [
+    {
+      "name": "Mindaroo Foundation",
+      "amount": "$10.5M over 3 years",
+      "status": "Ready to pitch",
+      "impact": "Platform becomes self-sustaining, 29 communities supported, $360K/year to communities by Year 3"
+    },
+    {
+      "name": "Atlassian Foundation",
+      "amount": "$100K/year",
+      "status": "In conversation",
+      "impact": "$60K direct grants to 12 Education/Employment programs"
+    }
+  ],
+  "keyMetrics": {
+    "basecamps": 4,
+    "corePartners": 9,
+    "networkPartners": 20,
+    "year3Revenue": "$1.2M",
+    "communityBenefitPercent": "30-60%",
+    "year3CommunityBenefit": "$360K"
+  }
+}

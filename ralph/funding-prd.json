@@ -1,0 +1,477 @@
+{
+  "name": "ALMA Funding Intelligence",
+  "description": "Scrape government grants, philanthropy portals, and corporate funding programs for youth justice basecamps",
+  "target_table": "alma_funding_opportunities",
+  "scrape_schedule": "weekly",
+  "relevance_keywords": [
+    "youth",
+    "young people",
+    "juvenile",
+    "justice",
+    "rehabilitation",
+    "indigenous",
+    "first nations",
+    "aboriginal",
+    "torres strait",
+    "community",
+    "diversion",
+    "early intervention",
+    "crime prevention",
+    "recidivism",
+    "mental health",
+    "family services",
+    "child protection",
+    "education",
+    "employment",
+    "housing",
+    "disadvantaged"
+  ],
+  "features": [
+    {
+      "id": "federal-grants",
+      "title": "Federal Government Grants",
+      "description": "Scrape GrantConnect and Business.gov.au for federal funding opportunities",
+      "priority": 1,
+      "passes": false,
+      "sources": [
+        {
+          "name": "GrantConnect",
+          "url": "https://www.grants.gov.au/",
+          "type": "government",
+          "jurisdictions": ["National"],
+          "schedule": "daily",
+          "selectors": {
+            "search_url": "https://www.grants.gov.au/Go/Show?GoUuid=Search",
+            "keywords": ["youth", "indigenous", "community", "justice", "diversion", "rehabilitation"]
+          }
+        },
+        {
+          "name": "Business.gov.au Grants Finder",
+          "url": "https://business.gov.au/grants-and-programs",
+          "type": "government",
+          "jurisdictions": ["National"],
+          "schedule": "daily"
+        },
+        {
+          "name": "Indigenous Advancement Strategy",
+          "url": "https://www.niaa.gov.au/indigenous-affairs/grants-and-funding",
+          "type": "government",
+          "jurisdictions": ["National"],
+          "focus_areas": ["indigenous", "first_nations"]
+        },
+        {
+          "name": "Department of Social Services Grants",
+          "url": "https://www.dss.gov.au/grants/grant-programmes",
+          "type": "government",
+          "jurisdictions": ["National"],
+          "focus_areas": ["community", "family_services"]
+        }
+      ]
+    },
+    {
+      "id": "state-grants-nsw",
+      "title": "NSW Government Grants",
+      "description": "Scrape NSW state government grant portals",
+      "priority": 2,
+      "passes": false,
+      "sources": [
+        {
+          "name": "NSW Government Grants",
+          "url": "https://www.nsw.gov.au/grants-and-funding",
+          "type": "government",
+          "jurisdictions": ["NSW"]
+        },
+        {
+          "name": "NSW Communities & Justice Grants",
+          "url": "https://www.dcj.nsw.gov.au/service-providers/grants-funding.html",
+          "type": "government",
+          "jurisdictions": ["NSW"],
+          "focus_areas": ["youth_justice", "community"]
+        },
+        {
+          "name": "Aboriginal Affairs NSW Grants",
+          "url": "https://www.aboriginalaffairs.nsw.gov.au/working-together/grants/",
+          "type": "government",
+          "jurisdictions": ["NSW"],
+          "focus_areas": ["indigenous"]
+        }
+      ]
+    },
+    {
+      "id": "state-grants-qld",
+      "title": "Queensland Government Grants",
+      "description": "Scrape QLD state government grant portals",
+      "priority": 2,
+      "passes": false,
+      "sources": [
+        {
+          "name": "Queensland Government Grants Portal",
+          "url": "https://www.qld.gov.au/community/getting-support-health-social-issue/funding-grants",
+          "type": "government",
+          "jurisdictions": ["QLD"]
+        },
+        {
+          "name": "DCYJMA Funding Programs",
+          "url": "https://www.cyjma.qld.gov.au/about-us/funding-programs",
+          "type": "government",
+          "jurisdictions": ["QLD"],
+          "focus_areas": ["youth_justice"]
+        },
+        {
+          "name": "Local Thriving Communities",
+          "url": "https://www.qld.gov.au/firstnations/policy-leadership/local-thriving-communities",
+          "type": "government",
+          "jurisdictions": ["QLD"],
+          "focus_areas": ["indigenous", "community"]
+        }
+      ]
+    },
+    {
+      "id": "state-grants-vic",
+      "title": "Victoria Government Grants",
+      "description": "Scrape VIC state government grant portals",
+      "priority": 2,
+      "passes": false,
+      "sources": [
+        {
+          "name": "Victorian Government Grants Portal",
+          "url": "https://www.vic.gov.au/grants",
+          "type": "government",
+          "jurisdictions": ["VIC"]
+        },
+        {
+          "name": "DFFH Community Services Grants",
+          "url": "https://www.dffh.vic.gov.au/grants-and-programs",
+          "type": "government",
+          "jurisdictions": ["VIC"]
+        }
+      ]
+    },
+    {
+      "id": "state-grants-nt",
+      "title": "Northern Territory Government Grants",
+      "description": "Scrape NT government grant portals - critical for Oonchiumpa basecamp",
+      "priority": 1,
+      "passes": false,
+      "sources": [
+        {
+          "name": "NT Grants Portal",
+          "url": "https://nt.gov.au/industry/start-run-and-grow-a-business/grants-and-funding",
+          "type": "government",
+          "jurisdictions": ["NT"]
+        },
+        {
+          "name": "Aboriginal Organisations Support",
+          "url": "https://tfhc.nt.gov.au/grants-and-funding",
+          "type": "government",
+          "jurisdictions": ["NT"],
+          "focus_areas": ["indigenous", "community"]
+        }
+      ]
+    },
+    {
+      "id": "state-grants-wa",
+      "title": "Western Australia Government Grants",
+      "description": "Scrape WA state government grant portals",
+      "priority": 2,
+      "passes": false,
+      "sources": [
+        {
+          "name": "WA Grants Portal",
+          "url": "https://www.wa.gov.au/organisation/department-of-communities/community-grants",
+          "type": "government",
+          "jurisdictions": ["WA"]
+        },
+        {
+          "name": "Aboriginal Community Controlled Organisations",
+          "url": "https://www.wa.gov.au/organisation/department-of-justice/aboriginal-justice-services",
+          "type": "government",
+          "jurisdictions": ["WA"],
+          "focus_areas": ["indigenous", "justice"]
+        }
+      ]
+    },
+    {
+      "id": "state-grants-sa-tas-act",
+      "title": "SA, TAS, ACT Government Grants",
+      "description": "Scrape smaller jurisdiction grant portals",
+      "priority": 3,
+      "passes": false,
+      "sources": [
+        {
+          "name": "SA Grants SA",
+          "url": "https://www.grantssa.sa.gov.au/",
+          "type": "government",
+          "jurisdictions": ["SA"]
+        },
+        {
+          "name": "Tasmania Community Fund",
+          "url": "https://www.tascommunityfund.org.au/",
+          "type": "community",
+          "jurisdictions": ["TAS"]
+        },
+        {
+          "name": "ACT Government Grants",
+          "url": "https://www.act.gov.au/assistance/grants",
+          "type": "government",
+          "jurisdictions": ["ACT"]
+        }
+      ]
+    },
+    {
+      "id": "major-philanthropy",
+      "title": "Major Philanthropic Foundations",
+      "description": "Track funding opportunities from Australia's top philanthropic foundations",
+      "priority": 1,
+      "passes": false,
+      "sources": [
+        {
+          "name": "Paul Ramsay Foundation",
+          "url": "https://paulramsayfoundation.org.au/",
+          "type": "philanthropy",
+          "jurisdictions": ["National"],
+          "focus_areas": ["disadvantaged", "youth", "indigenous"],
+          "typical_amounts": {
+            "min": 100000,
+            "max": 5000000
+          }
+        },
+        {
+          "name": "Minderoo Foundation",
+          "url": "https://www.minderoo.org/",
+          "type": "philanthropy",
+          "jurisdictions": ["National", "WA"],
+          "focus_areas": ["indigenous", "community"],
+          "typical_amounts": {
+            "min": 50000,
+            "max": 2000000
+          }
+        },
+        {
+          "name": "Ian Potter Foundation",
+          "url": "https://www.ianpotter.org.au/",
+          "type": "philanthropy",
+          "jurisdictions": ["National"],
+          "focus_areas": ["community", "education"],
+          "typical_amounts": {
+            "min": 20000,
+            "max": 500000
+          }
+        },
+        {
+          "name": "Sidney Myer Fund",
+          "url": "https://myerfoundation.org.au/",
+          "type": "philanthropy",
+          "jurisdictions": ["National"],
+          "focus_areas": ["community", "arts", "indigenous"]
+        },
+        {
+          "name": "Reichstein Foundation",
+          "url": "https://www.reichstein.org.au/",
+          "type": "philanthropy",
+          "jurisdictions": ["National"],
+          "focus_areas": ["indigenous", "justice", "policy"]
+        },
+        {
+          "name": "Vincent Fairfax Family Foundation",
+          "url": "https://vfrugby.com.au/foundation/",
+          "type": "philanthropy",
+          "jurisdictions": ["National"],
+          "focus_areas": ["youth", "community"]
+        }
+      ]
+    },
+    {
+      "id": "community-foundations",
+      "title": "Community Foundations",
+      "description": "Track regional and community foundation grants",
+      "priority": 3,
+      "passes": false,
+      "sources": [
+        {
+          "name": "Community Foundation for South Australia",
+          "url": "https://communityfoundationsa.org.au/",
+          "type": "community",
+          "jurisdictions": ["SA"]
+        },
+        {
+          "name": "Lord Mayor's Charitable Foundation",
+          "url": "https://lmcf.org.au/",
+          "type": "community",
+          "jurisdictions": ["VIC"]
+        },
+        {
+          "name": "Sydney Community Foundation",
+          "url": "https://sydneycommunityfoundation.org.au/",
+          "type": "community",
+          "jurisdictions": ["NSW"]
+        },
+        {
+          "name": "Give2Asia Pacific",
+          "url": "https://give2asia.org/",
+          "type": "philanthropy",
+          "jurisdictions": ["National"]
+        }
+      ]
+    },
+    {
+      "id": "corporate-community",
+      "title": "Corporate Community Programs",
+      "description": "Track corporate social responsibility and community programs from major corporations",
+      "priority": 4,
+      "passes": false,
+      "sources": [
+        {
+          "name": "Commonwealth Bank Community Grants",
+          "url": "https://www.commbank.com.au/about-us/opportunity-initiatives/community-grants.html",
+          "type": "corporate",
+          "jurisdictions": ["National"]
+        },
+        {
+          "name": "NAB Foundation",
+          "url": "https://www.nab.com.au/about-us/social-impact/nab-foundation",
+          "type": "corporate",
+          "jurisdictions": ["National"]
+        },
+        {
+          "name": "Westpac Foundation",
+          "url": "https://www.westpac.com.au/about-westpac/sustainability/community/westpac-foundation/",
+          "type": "corporate",
+          "jurisdictions": ["National"]
+        },
+        {
+          "name": "Telstra Foundation",
+          "url": "https://www.telstra.com.au/aboutus/community-environment/community-programs/telstra-foundation",
+          "type": "corporate",
+          "jurisdictions": ["National"]
+        },
+        {
+          "name": "BHP Foundation",
+          "url": "https://www.bhp.com/community/bhp-foundation",
+          "type": "corporate",
+          "jurisdictions": ["National", "WA", "QLD"],
+          "focus_areas": ["indigenous", "education"]
+        },
+        {
+          "name": "Rio Tinto Communities Fund",
+          "url": "https://www.riotinto.com/sustainability/communities",
+          "type": "corporate",
+          "jurisdictions": ["National", "WA", "QLD", "NT"],
+          "focus_areas": ["indigenous", "community"]
+        }
+      ]
+    },
+    {
+      "id": "impact-investment",
+      "title": "Impact Investment & Social Enterprise",
+      "description": "Track impact investment opportunities and social enterprise funding",
+      "priority": 5,
+      "passes": false,
+      "sources": [
+        {
+          "name": "Social Enterprise Finance Australia",
+          "url": "https://sefa.com.au/",
+          "type": "philanthropy",
+          "jurisdictions": ["National"],
+          "focus_areas": ["social_enterprise"]
+        },
+        {
+          "name": "Social Ventures Australia",
+          "url": "https://www.socialventures.com.au/",
+          "type": "philanthropy",
+          "jurisdictions": ["National"]
+        },
+        {
+          "name": "Impact Investment Group",
+          "url": "https://www.impact-group.com.au/",
+          "type": "philanthropy",
+          "jurisdictions": ["National"]
+        }
+      ]
+    },
+    {
+      "id": "philanthropy-australia-network",
+      "title": "Philanthropy Australia Network",
+      "description": "Access the broader philanthropy network for opportunities",
+      "priority": 4,
+      "passes": false,
+      "sources": [
+        {
+          "name": "Philanthropy Australia Member Directory",
+          "url": "https://www.philanthropy.org.au/",
+          "type": "philanthropy",
+          "jurisdictions": ["National"],
+          "note": "Use to discover additional funders"
+        },
+        {
+          "name": "Australian Grantmakers Forum",
+          "url": "https://www.philanthropy.org.au/tools-and-resources/grantmakers-forum/",
+          "type": "philanthropy",
+          "jurisdictions": ["National"]
+        }
+      ]
+    }
+  ],
+  "data_extraction": {
+    "required_fields": [
+      "name",
+      "funder_name",
+      "source_type",
+      "deadline",
+      "source_url"
+    ],
+    "optional_fields": [
+      "description",
+      "total_pool_amount",
+      "min_grant_amount",
+      "max_grant_amount",
+      "eligibility_criteria",
+      "focus_areas",
+      "jurisdictions",
+      "application_url",
+      "guidelines_url"
+    ],
+    "auto_categorize": {
+      "youth_justice": ["youth", "juvenile", "young people", "justice", "diversion"],
+      "indigenous_programs": ["indigenous", "aboriginal", "first nations", "torres strait"],
+      "mental_health": ["mental health", "wellbeing", "psychological"],
+      "education": ["education", "training", "skills", "learning"],
+      "employment": ["employment", "jobs", "workforce", "career"],
+      "housing": ["housing", "accommodation", "homelessness"],
+      "family_services": ["family", "parent", "carer", "kinship"],
+      "community_development": ["community", "place-based", "local"]
+    }
+  },
+  "matching": {
+    "enabled": true,
+    "algorithm": "relevance_score",
+    "factors": [
+      {
+        "name": "category_match",
+        "weight": 0.4,
+        "description": "How well the funding category matches youth justice focus"
+      },
+      {
+        "name": "jurisdiction_match",
+        "weight": 0.3,
+        "description": "Whether the funder supports the basecamp's region"
+      },
+      {
+        "name": "amount_fit",
+        "weight": 0.2,
+        "description": "Is the grant size appropriate for the program"
+      },
+      {
+        "name": "historical_success",
+        "weight": 0.1,
+        "description": "Past success rate with this funder"
+      }
+    ]
+  },
+  "notifications": {
+    "closing_soon_days": 14,
+    "new_opportunity_alert": true,
+    "weekly_digest": true,
+    "digest_day": "monday"
+  }
+}

@@ -205,6 +205,15 @@ export interface UserActivity {
   mentorshipHours: number;
   opportunitiesApplied: number;
   achievementsEarned: number;
+  /**
+   * INTERNAL ANALYTICS ONLY - Never display to users
+   *
+   * ALMA SACRED BOUNDARIES:
+   * - This is for aggregate analytics, NOT individual ranking
+   * - Never use to sort/prioritize user content visibility
+   * - Never surface to users as a competitive metric
+   * - Consider migrating to engagement_level (high/moderate/emerging)
+   */
   engagementScore: number;
 }
 

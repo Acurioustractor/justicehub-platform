@@ -25,13 +25,19 @@ out/
 # Environment backups
 .env.local.backup*
 .env.*.backup*
+.env.backup*
 
-# API Keys and Secrets
+# API Keys and Secrets - CRITICAL
 *api-keys*
 *secrets*
 *.pem
 *.key
 *.cert
+*-secret.json
+*-credentials.json
+
+# Vercel environment files (downloaded locally)
+.vercel/.env*
 
 # Editor directories and files
 .idea
@@ -44,6 +50,7 @@ out/
 
 # OS specific
 .DS_Store
+Thumbs.db
 
 # Task files
 # tasks.json
@@ -51,4 +58,23 @@ out/
 
 # Large data files
 *.json.large
-**/archive/data-extracts/*.json 
+**/archive/data-extracts/*.json .env.bak*
+.vercel
+
+# Beads (development tool)
+.beads/
+
+# Backup files
+*.backup
+
+# Archive content
+docs/archive/
+
+# Sample/test data
+*.csv
+public/*.csv
+
+# Development content
+content/
+projects/
+screen*.png

@@ -2,277 +2,443 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Building2, Mail, Lock, Eye, EyeOff, Users } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import {
+  ArrowLeft,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  Building2,
+  Shield,
+  Briefcase,
+  Users,
+  UserPlus
+} from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 
-export default function TalentScoutLoginPage() {
-  const [isLogin, setIsLogin] = useState(true);
+export default function TalentLoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLogin, setIsLogin] = useState(true); // true = login, false = signup
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    organizationName: '',
-    contactName: '',
+    confirmPassword: '',
+    fullName: '',
+    organization: '',
     role: '',
-    organizationType: '',
-    location: '',
-    website: ''
+    agreeToTerms: false
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // In real app, would handle authentication here
-    // For now, redirect to talent dashboard
-    window.location.href = '/youth-scout/talent-dashboard';
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+    setError(null);
   };
 
-  const organizationTypes = [
-    'Community Program',
-    'Non-profit Organization',
-    'Government Agency',
-    'Educational Institution',
-    'Corporate Social Responsibility',
-    'Social Enterprise',
-    'Youth Service Provider',
-    'Training Provider',
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    // Basic validation
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
+    if (!isLogin) {
+      // Signup validation
+      if (formData.password !== formData.confirmPassword) {
+        setError('Passwords do not match');
+        return;
+      }
+      if (!formData.agreeToTerms) {
+        setError('Please agree to the terms and conditions');
+        return;
+      }
+      if (!formData.fullName || !formData.organization || !formData.role) {
+        setError('Please provide all required information');
+        return;
+      }
+    }
+
+    setLoading(true);
+
+    try {
+      // TODO: Implement actual authentication
+      // For now, simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Mock successful login/signup
+      if (isLogin) {
+        // Redirect to talent scout dashboard
+        router.push('/youth-scout/talent-dashboard');
+      } else {
+        // Redirect to onboarding
+        router.push('/youth-scout/talent-onboarding');
+      }
+    } catch (err) {
+      setError(isLogin ? 'Invalid email or password' : 'Failed to create account');
+      console.error('Auth error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const roleOptions = [
+    'Mentor',
+    'Recruiter',
+    'Program Manager',
+    'Social Worker',
+    'Teacher/Educator',
+    'Business Owner',
+    'HR Professional',
+    'Community Leader',
     'Other'
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-100 via-yellow-50 to-blue-50">
+    <div className="min-h-screen page-content bg-gradient-to-br from-orange-50 via-yellow-50 to-pink-50">
       <Navigation />
 
-      <main className="pt-32 pb-16">
-        <div className="container-justice">
+      <main className="header-offset">
+        <div className="container-justice py-12">
           {/* Back Link */}
-          <div className="mb-8">
-            <Link 
-              href="/youth-scout"
-              className="inline-flex items-center gap-2 font-medium text-gray-700 hover:text-black transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Youth Scout
-            </Link>
-          </div>
+          <Link
+            href="/youth-scout"
+            className="inline-flex items-center gap-2 text-black hover:underline font-medium mb-8"
+          >
+            <ArrowLeft className="h-5 w-5" />
+            Back to Youth Scout
+          </Link>
 
-          <div className="max-w-lg mx-auto">
-            <div className="bg-white border-4 border-orange-600 p-8 shadow-xl">
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-orange-600 text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Building2 className="h-8 w-8" />
-                </div>
-                <h1 className="text-2xl font-black text-orange-600 mb-2">
-                  {isLogin ? 'WELCOME BACK!' : 'JOIN AS TALENT SCOUT'}
-                </h1>
-                <p className="text-gray-600">
-                  {isLogin 
-                    ? 'Continue making impact in young lives' 
-                    : 'Connect with emerging talent and make real difference'
-                  }
-                </p>
+          <div className="max-w-md mx-auto">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white font-bold text-sm uppercase tracking-wider mb-4">
+                <Building2 className="h-4 w-4" />
+                Talent Scout
               </div>
 
+              <h1 className="text-3xl font-black mb-3 text-orange-600">
+                {isLogin ? 'Welcome Back, Scout!' : 'Join as Talent Scout'}
+              </h1>
+
+              <p className="text-gray-700">
+                {isLogin
+                  ? 'Log in to discover emerging talent and make meaningful connections'
+                  : 'Create your account to start connecting with exceptional young people'}
+              </p>
+            </div>
+
+            {/* Login/Signup Form */}
+            <div className="bg-white border-2 border-black p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              {error && (
+                <div className="mb-6 bg-red-50 border-2 border-red-600 p-4 flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-red-800 font-medium text-sm">{error}</p>
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Sign Up Only Fields */}
                 {!isLogin && (
                   <>
                     <div>
-                      <label className="block text-sm font-bold mb-2">Organization Name *</label>
+                      <label htmlFor="fullName" className="block font-bold mb-2 text-sm">
+                        Full Name *
+                      </label>
                       <input
                         type="text"
-                        required
-                        value={formData.organizationName}
-                        onChange={(e) => setFormData({...formData, organizationName: e.target.value})}
-                        className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
-                        placeholder="e.g., BackTrack Youth Works"
+                        id="fullName"
+                        name="fullName"
+                        value={formData.fullName}
+                        onChange={handleInputChange}
+                        required={!isLogin}
+                        placeholder="Your full name"
+                        className="w-full px-4 py-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-bold mb-2">Your Name *</label>
+                    <div>
+                      <label htmlFor="organization" className="block font-bold mb-2 text-sm">
+                        Organization *
+                      </label>
+                      <div className="relative">
+                        <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <input
                           type="text"
-                          required
-                          value={formData.contactName}
-                          onChange={(e) => setFormData({...formData, contactName: e.target.value})}
-                          className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
-                          placeholder="Full name"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold mb-2">Your Role *</label>
-                        <input
-                          type="text"
-                          required
-                          value={formData.role}
-                          onChange={(e) => setFormData({...formData, role: e.target.value})}
-                          className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
-                          placeholder="e.g., Program Manager"
+                          id="organization"
+                          name="organization"
+                          value={formData.organization}
+                          onChange={handleInputChange}
+                          required={!isLogin}
+                          placeholder="Company, non-profit, or program name"
+                          className="w-full pl-11 pr-4 py-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-bold mb-2">Organization Type *</label>
-                      <select
-                        required
-                        value={formData.organizationType}
-                        onChange={(e) => setFormData({...formData, organizationType: e.target.value})}
-                        className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
-                      >
-                        <option value="">Select organization type</option>
-                        {organizationTypes.map(type => (
-                          <option key={type} value={type}>{type}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-bold mb-2">Location *</label>
+                      <label htmlFor="role" className="block font-bold mb-2 text-sm">
+                        Your Role *
+                      </label>
+                      <div className="relative">
+                        <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <select
-                          required
-                          value={formData.location}
-                          onChange={(e) => setFormData({...formData, location: e.target.value})}
-                          className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
+                          id="role"
+                          name="role"
+                          value={formData.role}
+                          onChange={handleInputChange}
+                          required={!isLogin}
+                          className="w-full pl-11 pr-4 py-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600 appearance-none bg-white"
                         >
-                          <option value="">Select state</option>
-                          <option value="NSW">NSW</option>
-                          <option value="VIC">VIC</option>
-                          <option value="QLD">QLD</option>
-                          <option value="SA">SA</option>
-                          <option value="WA">WA</option>
-                          <option value="TAS">TAS</option>
-                          <option value="NT">NT</option>
-                          <option value="ACT">ACT</option>
-                          <option value="National">National</option>
+                          <option value="">Select your role...</option>
+                          {roleOptions.map(role => (
+                            <option key={role} value={role}>{role}</option>
+                          ))}
                         </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-bold mb-2">Website</label>
-                        <input
-                          type="url"
-                          value={formData.website}
-                          onChange={(e) => setFormData({...formData, website: e.target.value})}
-                          className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
-                          placeholder="https://yourorg.org.au"
-                        />
                       </div>
                     </div>
                   </>
                 )}
 
+                {/* Email */}
                 <div>
-                  <label className="block text-sm font-bold mb-2">Work Email *</label>
+                  <label htmlFor="email" className="block font-bold mb-2 text-sm">
+                    Work Email Address *
+                  </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <input
                       type="email"
-                      required
+                      id="email"
+                      name="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className="w-full pl-12 pr-4 py-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
-                      placeholder="your.name@organization.org"
+                      onChange={handleInputChange}
+                      required
+                      placeholder="your.email@organization.com"
+                      className="w-full pl-11 pr-4 py-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
                     />
                   </div>
-                  {!isLogin && (
-                    <p className="text-xs text-gray-600 mt-1">
-                      Please use your work email for verification
-                    </p>
-                  )}
+                  <p className="text-xs text-gray-600 mt-1">
+                    Use your professional email address
+                  </p>
                 </div>
 
+                {/* Password */}
                 <div>
-                  <label className="block text-sm font-bold mb-2">Password *</label>
+                  <label htmlFor="password" className="block font-bold mb-2 text-sm">
+                    Password *
+                  </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      required
+                      id="password"
+                      name="password"
                       value={formData.password}
-                      onChange={(e) => setFormData({...formData, password: e.target.value})}
-                      className="w-full pl-12 pr-12 py-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
-                      placeholder="Create a secure password"
-                      minLength={8}
+                      onChange={handleInputChange}
+                      required
+                      placeholder={isLogin ? 'Enter your password' : 'Create a strong password'}
+                      className="w-full pl-11 pr-11 py-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
                     >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
                     </button>
                   </div>
+                  {!isLogin && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      At least 8 characters with a mix of letters and numbers
+                    </p>
+                  )}
                 </div>
 
-                {isLogin && (
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center">
-                      <input type="checkbox" className="mr-2" />
-                      <span className="text-sm">Remember me</span>
+                {/* Confirm Password (Sign Up Only) */}
+                {!isLogin && (
+                  <div>
+                    <label htmlFor="confirmPassword" className="block font-bold mb-2 text-sm">
+                      Confirm Password *
                     </label>
-                    <Link href="#" className="text-sm text-orange-600 hover:underline">
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        required={!isLogin}
+                        placeholder="Re-enter your password"
+                        className="w-full pl-11 pr-4 py-3 border-2 border-black focus:ring-2 focus:ring-orange-600 focus:border-orange-600"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Remember Me / Forgot Password (Login Only) */}
+                {isLogin && (
+                  <div className="flex items-center justify-between text-sm">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" className="rounded" />
+                      <span>Remember me</span>
+                    </label>
+                    <Link href="/youth-scout/forgot-password" className="text-orange-600 hover:underline font-medium">
                       Forgot password?
                     </Link>
                   </div>
                 )}
 
+                {/* Terms & Conditions (Sign Up Only) */}
+                {!isLogin && (
+                  <div className="bg-orange-50 border-2 border-orange-600 p-4">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="agreeToTerms"
+                        checked={formData.agreeToTerms}
+                        onChange={handleInputChange}
+                        required={!isLogin}
+                        className="mt-1"
+                      />
+                      <div className="text-sm">
+                        <span>I agree to the </span>
+                        <Link href="/terms" className="text-orange-600 hover:underline font-bold">
+                          Terms of Service
+                        </Link>
+                        <span> and </span>
+                        <Link href="/privacy" className="text-orange-600 hover:underline font-bold">
+                          Privacy Policy
+                        </Link>
+                        <p className="mt-2 text-xs text-gray-700">
+                          By signing up, I commit to using this platform ethically to support
+                          and empower young people.
+                        </p>
+                      </div>
+                    </label>
+                  </div>
+                )}
+
+                {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full bg-orange-600 hover:bg-orange-700 text-white py-4 font-bold text-lg transition-all transform hover:scale-105"
+                  disabled={loading}
+                  className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-6 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {isLogin ? 'ACCESS DASHBOARD' : 'JOIN TALENT SCOUT NETWORK'}
+                  {loading ? (
+                    <>
+                      <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                      {isLogin ? 'Logging in...' : 'Creating account...'}
+                    </>
+                  ) : (
+                    <>
+                      {isLogin ? (
+                        <>
+                          <Lock className="h-5 w-5" />
+                          Log In
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="h-5 w-5" />
+                          Create Account
+                        </>
+                      )}
+                    </>
+                  )}
                 </button>
-
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">
-                    {isLogin ? "Don't have an account? " : 'Already registered? '}
-                    <button
-                      type="button"
-                      onClick={() => setIsLogin(!isLogin)}
-                      className="text-orange-600 hover:underline font-bold"
-                    >
-                      {isLogin ? 'Register Organization' : 'Log In'}
-                    </button>
-                  </p>
-                </div>
               </form>
 
-              {!isLogin && (
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <div className="bg-orange-50 border border-orange-200 p-4 mb-4">
-                    <h4 className="font-bold text-orange-800 mb-2 flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      Verification Process
-                    </h4>
-                    <p className="text-sm text-orange-700">
-                      All organizations go through our verification process to ensure the safety and quality of connections. 
-                      You'll receive an email within 1-2 business days with next steps.
-                    </p>
-                  </div>
-                  
-                  <p className="text-xs text-gray-600 text-center">
-                    By registering, you agree to our Terms of Service and Privacy Policy. 
-                    We're committed to connecting genuine organizations with talented youth.
-                  </p>
-                </div>
-              )}
+              {/* Toggle Between Login/Signup */}
+              <div className="mt-6 text-center border-t-2 border-gray-200 pt-6">
+                <p className="text-sm text-gray-700">
+                  {isLogin ? "Don't have an account?" : 'Already have an account?'}
+                  {' '}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsLogin(!isLogin);
+                      setError(null);
+                      setFormData({
+                        email: '',
+                        password: '',
+                        confirmPassword: '',
+                        fullName: '',
+                        organization: '',
+                        role: '',
+                        agreeToTerms: false
+                      });
+                    }}
+                    className="text-orange-600 hover:underline font-bold"
+                  >
+                    {isLogin ? 'Sign up here' : 'Log in here'}
+                  </button>
+                </p>
+              </div>
             </div>
 
-            {/* Demo Access */}
-            <div className="mt-6 text-center">
-              <div className="bg-green-100 border-2 border-green-600 p-4">
-                <h3 className="font-bold text-green-800 mb-2">Demo Access</h3>
-                <p className="text-sm text-green-700 mb-3">
-                  Explore the Talent Scout dashboard without registration.
-                </p>
-                <Link 
-                  href="/youth-scout/talent-dashboard"
-                  className="inline-block bg-green-600 text-white px-6 py-2 font-bold hover:bg-green-700 transition-all"
-                >
-                  Enter Demo Dashboard
-                </Link>
+            {/* What You Get */}
+            {!isLogin && (
+              <div className="mt-6 bg-white border-2 border-black p-6">
+                <h3 className="font-bold mb-4 flex items-center gap-2">
+                  <Users className="h-5 w-5 text-orange-600" />
+                  What You Get as a Talent Scout
+                </h3>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-600 font-bold">•</span>
+                    <span>Access to profiles of emerging young talent with verified skills</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-600 font-bold">•</span>
+                    <span>Tools to track mentorship outcomes and measure impact</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-600 font-bold">•</span>
+                    <span>Connection with grassroots programs and community leaders</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-600 font-bold">•</span>
+                    <span>Insights from youth voices to transform your organization</span>
+                  </li>
+                </ul>
               </div>
+            )}
+
+            {/* Privacy Notice */}
+            <div className="mt-6 bg-white border-2 border-black p-6 text-center">
+              <Shield className="h-8 w-8 text-orange-600 mx-auto mb-3" />
+              <h3 className="font-bold mb-2">Verified & Secure Platform</h3>
+              <p className="text-sm text-gray-700">
+                All talent scouts are verified to ensure the safety and privacy of young people
+                in our network. Your data is encrypted and protected.
+              </p>
+            </div>
+
+            {/* Quick Preview Link */}
+            <div className="mt-6 text-center">
+              <Link
+                href="/youth-scout/talent-preview"
+                className="text-orange-600 hover:underline font-medium text-sm"
+              >
+                Want to learn more about Talent Scout? Take a quick tour →
+              </Link>
             </div>
           </div>
         </div>

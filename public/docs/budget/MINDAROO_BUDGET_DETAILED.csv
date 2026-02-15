@@ -1,0 +1,378 @@
+Level,Year,Category,Line Item,Quantity,Unit Cost,Subtotal,Notes
+,,,,,,,"JusticeHub Budget - Detailed Breakdown - All Amounts in AUD"
+,,,,,,,"All staff costs include 30% on-costs (superannuation, payroll tax, workers compensation, leave loading)"
+,,,,,,,"Prepared for Mindaroo Foundation | October 2025"
+,,,,,,,
+LEVEL 1,Year 1,Platform Development,Initial build (Webflow/WordPress customisation),1,$140000,$140000,"Platform foundation using existing tools"
+LEVEL 1,Year 1,Platform Development,UX/UI design,1,$40000,$40000,"User experience and interface design"
+LEVEL 1,Year 1,Platform Development,Security & hosting setup,1,$25000,$25000,"Security protocols and cloud hosting"
+LEVEL 1,Year 1,Platform Development,Documentation & training materials,1,$20000,$20000,"User guides and training resources"
+LEVEL 1,Year 1,Platform Development,Young Indigenous developer training (2 trainees),2,$20000,$40000,"Training stipends for trainees"
+LEVEL 1,Year 1,Platform Development,Technical mentorship,1,$15000,$15000,"Mentorship for trainees"
+LEVEL 1,Year 1,Platform Development Subtotal,,,,,$280000,
+LEVEL 1,Year 1,Staff Costs,Platform Manager (1.0 FTE × 0.5 year),0.5,$120000,$60000,"Base salary"
+LEVEL 1,Year 1,Staff Costs,Content Developer (1.0 FTE × 0.5 year),0.5,$105000,$52500,"Indigenous storyteller"
+LEVEL 1,Year 1,Staff Costs,Community Liaison (2.0 FTE × 0.5 year),1,$95000,$95000,"Regional connectors (2 people)"
+LEVEL 1,Year 1,Staff Costs,Technical Developer (1.0 FTE × 0.5 year),0.5,$115000,$57500,"Platform maintenance"
+LEVEL 1,Year 1,Staff Costs,Project Director (1.0 FTE × 0.5 year),0.5,$145000,$72500,"Overall coordination"
+LEVEL 1,Year 1,Staff Costs,Base salaries subtotal,,,,$337500,
+LEVEL 1,Year 1,Staff Costs,On-costs (30% of base),,,,$101250,"Super, payroll tax, insurance, leave"
+LEVEL 1,Year 1,Staff Costs,Training stipends (2 trainees × 0.5 year),2,$10000,$20000,"Trainee payments"
+LEVEL 1,Year 1,Staff Costs Subtotal,,,,,$458750,
+LEVEL 1,Year 1,Community Engagement,Flights (4 visits × 3 communities × $1200),12,$1200,$14400,"Quarterly visits to 3 communities"
+LEVEL 1,Year 1,Community Engagement,Accommodation (4 visits × 3 nights × 3 communities × $200),36,$200,$7200,"3 nights per visit"
+LEVEL 1,Year 1,Community Engagement,Vehicle hire,1,$1000,$1000,"Ground transport"
+LEVEL 1,Year 1,Community Engagement,Community payments for time/knowledge,3,$11667,$35000,"Compensating communities"
+LEVEL 1,Year 1,Community Engagement,Annual gathering (50 people 2 days),1,$35000,$35000,"Venue catering travel"
+LEVEL 1,Year 1,Community Engagement,Advisory panel compensation (8 × $2K × 3 meetings),24,$1000,$24000,"Panel member payments"
+LEVEL 1,Year 1,Community Engagement Subtotal,,,,,$116600,
+LEVEL 1,Year 1,Content Creation,Video production (8 community stories),8,$6250,$50000,"Professional video work"
+LEVEL 1,Year 1,Content Creation,Audio/podcast setup,1,$15000,$15000,"Podcast infrastructure"
+LEVEL 1,Year 1,Content Creation,Photography,1,$8000,$8000,"Visual content"
+LEVEL 1,Year 1,Content Creation,Story gathering fees to communities,1,$15000,$15000,"Payment to communities"
+LEVEL 1,Year 1,Content Creation,Training community members in content creation,1,$7000,$7000,"Capacity building"
+LEVEL 1,Year 1,Content Creation Subtotal,,,,,$95000,
+LEVEL 1,Year 1,Operations & Admin,Office/co-working space,1,$35000,$35000,"Workspace for team"
+LEVEL 1,Year 1,Operations & Admin,IT infrastructure (laptops software cloud),1,$30000,$30000,"Technology needs"
+LEVEL 1,Year 1,Operations & Admin,Insurance,1,$22000,$22000,"Public liability professional indemnity"
+LEVEL 1,Year 1,Operations & Admin,Accounting/legal,1,$28000,$28000,"Professional services"
+LEVEL 1,Year 1,Operations & Admin,Phone/internet,1,$12000,$12000,"Communications"
+LEVEL 1,Year 1,Operations & Admin,HR/payroll,1,$12000,$12000,"HR administration"
+LEVEL 1,Year 1,Operations & Admin,Professional development,1,$18000,$18000,"Staff training"
+LEVEL 1,Year 1,Operations & Admin,Contingency,1,$28000,$28000,"Unexpected costs"
+LEVEL 1,Year 1,Operations & Admin Subtotal,,,,,$185000,
+LEVEL 1,Year 1,TOTAL YEAR 1,,,,,$1135350,"$1.1M - $1.5M range"
+,,,,,,,
+LEVEL 1,Year 2,Platform Enhancements,Feature additions based on learning,1,$60000,$60000,"User feedback improvements"
+LEVEL 1,Year 2,Platform Enhancements,Young Indigenous developers work,1,$40000,$40000,"Trainees taking on more"
+LEVEL 1,Year 2,Platform Enhancements,Mobile app development,1,$20000,$20000,"Mobile functionality"
+LEVEL 1,Year 2,Platform Enhancements Subtotal,,,,,$120000,
+LEVEL 1,Year 2,Staff Costs,Base salaries (6 FTE full year),6,$112500,$675000,"Full team"
+LEVEL 1,Year 2,Staff Costs,On-costs (30%),,,,$202500,
+LEVEL 1,Year 2,Staff Costs,Training stipends (2 trainees full year),2,$15000,$30000,
+LEVEL 1,Year 2,Staff Costs Subtotal,,,,,$907500,"Note: Starting to reduce external developer reliance"
+LEVEL 1,Year 2,Community Engagement,Expanded travel (5 communities now),1,$95000,$95000,"More community visits"
+LEVEL 1,Year 2,Community Engagement,Community payments,5,$10000,$50000,
+LEVEL 1,Year 2,Community Engagement,Bi-annual gatherings,2,$22500,$45000,
+LEVEL 1,Year 2,Community Engagement,Advisory panel,1,$30000,$30000,
+LEVEL 1,Year 2,Community Engagement Subtotal,,,,,$220000,
+LEVEL 1,Year 2,Training & Capacity Building,Online module development,1,$60000,$60000,"5 modules"
+LEVEL 1,Year 2,Training & Capacity Building,In-person workshops,1,$35000,$35000,
+LEVEL 1,Year 2,Training & Capacity Building,Community trainer stipends,1,$25000,$25000,"Communities training each other"
+LEVEL 1,Year 2,Training & Capacity Building,Technical training continuation,1,$20000,$20000,
+LEVEL 1,Year 2,Training & Capacity Building,International learning exchange (3 people),3,$5000,$15000,"NZ/Canada visits"
+LEVEL 1,Year 2,Training & Capacity Building Subtotal,,,,,$155000,
+LEVEL 1,Year 2,Content Creation,Community-led video production,1,$35000,$35000,"Reduced external costs"
+LEVEL 1,Year 2,Content Creation,Community storyteller stipends,1,$30000,$30000,
+LEVEL 1,Year 2,Content Creation,Production equipment for communities,1,$15000,$15000,
+LEVEL 1,Year 2,Content Creation,Training support,1,$5000,$5000,
+LEVEL 1,Year 2,Content Creation Subtotal,,,,,$85000,"Reducing as community takes over"
+LEVEL 1,Year 2,Operations & Admin,Similar to Year 1 with efficiencies,1,$165000,$165000,
+LEVEL 1,Year 2,TOTAL YEAR 2,,,,,$1652500,"$1.4M - $1.9M range"
+,,,,,,,
+LEVEL 1,Year 3,Platform Maintenance,Community-led development,1,$40000,$40000,"Indigenous developers leading"
+LEVEL 1,Year 3,Platform Maintenance,External technical support,1,$40000,$40000,"Reduced from $115K"
+LEVEL 1,Year 3,Platform Maintenance,Young Indigenous developers paid roles,2,$20000,$40000,"Now paid not stipends"
+LEVEL 1,Year 3,Platform Maintenance Subtotal,,,,,$120000,"Shows cost reduction"
+LEVEL 1,Year 3,Staff Costs,Base salaries (4.5 FTE),4.5,$133333,$600000,"Technical developer 0.5 FTE"
+LEVEL 1,Year 3,Staff Costs,On-costs (30%),,,,$180000,
+LEVEL 1,Year 3,Staff Costs,2 Indigenous developers paid roles,2,$15000,$30000,
+LEVEL 1,Year 3,Staff Costs Subtotal,,,,,$810000,"Shows 15-20% cost reduction"
+LEVEL 1,Year 3,Community Engagement,Scaling to 5-6 communities,1,$120000,$120000,
+LEVEL 1,Year 3,Community Engagement,Community payments,1,$65000,$65000,
+LEVEL 1,Year 3,Community Engagement,National gathering,1,$55000,$55000,
+LEVEL 1,Year 3,Community Engagement,Advisory panel → Governance Board,1,$40000,$40000,
+LEVEL 1,Year 3,Community Engagement Subtotal,,,,,$280000,
+LEVEL 1,Year 3,Training Delivery,Community-led training programmes,1,$80000,$80000,"Communities earning income"
+LEVEL 1,Year 3,Training Delivery,Online platform hosting training,1,$40000,$40000,
+LEVEL 1,Year 3,Training Delivery,International exchange (5 people),5,$9000,$45000,
+LEVEL 1,Year 3,Training Delivery,Peer mentorship programme,1,$15000,$15000,
+LEVEL 1,Year 3,Training Delivery Subtotal,,,,,$180000,
+LEVEL 1,Year 3,Evaluation,Independent evaluation (3 year),1,$60000,$60000,
+LEVEL 1,Year 3,Evaluation,Community-led data collection,1,$20000,$20000,
+LEVEL 1,Year 3,Evaluation,Impact reporting,1,$15000,$15000,
+LEVEL 1,Year 3,Evaluation Subtotal,,,,,$95000,
+LEVEL 1,Year 3,Operations & Admin,Reduced through efficiencies,1,$145000,$145000,
+LEVEL 1,Year 3,TOTAL YEAR 3,,,,,$1630000,"$1.5M - $2.2M range"
+LEVEL 1,TOTAL,ALL YEARS,,,,,$4417850,"$4.0M - $5.6M Total"
+,,,,,,,
+,,,,,,,
+LEVEL 2,Year 1,Platform Development,Advanced build (AI matching dashboards integrations),1,$280000,$280000,"Enhanced features"
+LEVEL 2,Year 1,Platform Development,UX/UI design & user testing,1,$60000,$60000,
+LEVEL 2,Year 1,Platform Development,Mobile app development,1,$80000,$80000,
+LEVEL 2,Year 1,Platform Development,Security & compliance,1,$35000,$35000,
+LEVEL 2,Year 1,Platform Development,Documentation & training materials,1,$25000,$25000,
+LEVEL 2,Year 1,Platform Development,Young Indigenous developer training (4 trainees),4,$15000,$60000,
+LEVEL 2,Year 1,Platform Development,Technical mentorship,1,$20000,$20000,
+LEVEL 2,Year 1,Platform Development Subtotal,,,,,$560000,
+LEVEL 2,Year 1,Staff Costs,Base salaries (12 FTE × 0.5 year),12,$60667,$728000,"12 person team"
+LEVEL 2,Year 1,Staff Costs,On-costs (30%),,,,$218400,
+LEVEL 2,Year 1,Staff Costs,Training stipends (4 trainees × 0.5 year),4,$7500,$30000,
+LEVEL 2,Year 1,Staff Costs Subtotal,,,,,$976400,
+LEVEL 2,Year 1,Community Engagement,Travel (monthly visits × 6 communities),72,$2017,$145200,"More intensive engagement"
+LEVEL 2,Year 1,Community Engagement,Community payments for time/knowledge,6,$12500,$75000,
+LEVEL 2,Year 1,Community Engagement,Community content grants (6 × $20K),6,$20000,$120000,"Grants to communities"
+LEVEL 2,Year 1,Community Engagement,Annual gathering (100 people 3 days),1,$40000,$40000,
+LEVEL 2,Year 1,Community Engagement Subtotal,,,,,$380200,
+LEVEL 2,Year 1,First Nations Advisory Council,12 members × $5K × 3 meetings,36,$2500,$90000,"Starting mid-year"
+LEVEL 2,Year 1,First Nations Advisory Council Subtotal,,,,,$90000,
+LEVEL 2,Year 1,International Best-Practice,NZ delegation (5 people 1 week),1,$45000,$45000,"Flights accommodation programme"
+LEVEL 2,Year 1,International Best-Practice Subtotal,,,,,$45000,
+LEVEL 2,Year 1,Content Creation,Professional video production (15 stories),15,$5333,$80000,
+LEVEL 2,Year 1,Content Creation,Community-produced content support,1,$35000,$35000,
+LEVEL 2,Year 1,Content Creation,Audio/podcast series,1,$20000,$20000,
+LEVEL 2,Year 1,Content Creation,Photography,1,$12000,$12000,
+LEVEL 2,Year 1,Content Creation,Story gathering fees,1,$20000,$20000,
+LEVEL 2,Year 1,Content Creation Subtotal,,,,,$167000,
+LEVEL 2,Year 1,Training Development,Online module development (5 modules),5,$12000,$60000,
+LEVEL 2,Year 1,Training Development,Training materials & resources,1,$30000,$30000,
+LEVEL 2,Year 1,Training Development,Community trainer development,1,$25000,$25000,
+LEVEL 2,Year 1,Training Development,Technical training curriculum,1,$20000,$20000,
+LEVEL 2,Year 1,Training Development Subtotal,,,,,$135000,
+LEVEL 2,Year 1,Operations & Admin,Office space (12 people),1,$50000,$50000,
+LEVEL 2,Year 1,Operations & Admin,IT infrastructure,1,$45000,$45000,
+LEVEL 2,Year 1,Operations & Admin,Insurance,1,$30000,$30000,
+LEVEL 2,Year 1,Operations & Admin,Accounting/legal,1,$35000,$35000,
+LEVEL 2,Year 1,Operations & Admin,Phone/internet,1,$18000,$18000,
+LEVEL 2,Year 1,Operations & Admin,HR/payroll,1,$15000,$15000,
+LEVEL 2,Year 1,Operations & Admin,Professional development,1,$20000,$20000,
+LEVEL 2,Year 1,Operations & Admin,Contingency,1,$30000,$30000,
+LEVEL 2,Year 1,Operations & Admin Subtotal,,,,,$243000,
+LEVEL 2,Year 1,TOTAL YEAR 1,,,,,$2596600,"$2.0M - $2.8M range"
+,,,,,,,
+LEVEL 2,Year 2,Platform Enhancements,Feature additions,1,$100000,$100000,
+LEVEL 2,Year 2,Platform Enhancements,Indigenous developers leading,1,$80000,$80000,"Reduced external"
+LEVEL 2,Year 2,Platform Enhancements,Security & optimisation,1,$40000,$40000,
+LEVEL 2,Year 2,Platform Enhancements Subtotal,,,,,$220000,
+LEVEL 2,Year 2,Staff Costs,Base salaries (12 FTE),12,$121333,$1456000,
+LEVEL 2,Year 2,Staff Costs,On-costs (30%),,,,$436800,
+LEVEL 2,Year 2,Staff Costs,Training stipends (4 trainees),4,$15000,$60000,
+LEVEL 2,Year 2,Staff Costs Subtotal,,,,,$1952800,
+LEVEL 2,Year 2,Community Engagement,Expanded travel,1,$180000,$180000,
+LEVEL 2,Year 2,Community Engagement,Community payments,1,$95000,$95000,
+LEVEL 2,Year 2,Community Engagement,Content grants (6 × $20K),6,$20000,$120000,
+LEVEL 2,Year 2,Community Engagement,Bi-annual gatherings,2,$42500,$85000,
+LEVEL 2,Year 2,Community Engagement Subtotal,,,,,$480000,
+LEVEL 2,Year 2,First Nations Advisory Council,12 members × $5K × 6 meetings,72,$2500,$180000,"Full year"
+LEVEL 2,Year 2,International Best-Practice,Canada delegation (6 people 10 days),1,$55000,$55000,
+LEVEL 2,Year 2,Training & Capacity Building,Online module expansion,10,$10000,$100000,"10 more modules"
+LEVEL 2,Year 2,Training & Capacity Building,In-person workshops (24/year),24,$5000,$120000,
+LEVEL 2,Year 2,Training & Capacity Building,Community-led training,1,$80000,$80000,
+LEVEL 2,Year 2,Training & Capacity Building,Technical training,1,$50000,$50000,
+LEVEL 2,Year 2,Training & Capacity Building,Leadership programme (20 practitioners),20,$1750,$35000,
+LEVEL 2,Year 2,Training & Capacity Building Subtotal,,,,,$385000,
+LEVEL 2,Year 2,Forums & Events,National Forum (200 people 2 days),1,$180000,$180000,"Venue catering travel"
+LEVEL 2,Year 2,Forums & Events,4 regional workshops (50 people each),4,$26250,$105000,
+LEVEL 2,Year 2,Forums & Events Subtotal,,,,,$285000,
+LEVEL 2,Year 2,Research & Evaluation,Mid-term evaluation (6 sites),6,$13333,$80000,
+LEVEL 2,Year 2,Research & Evaluation,Community-led data collection,1,$40000,$40000,
+LEVEL 2,Year 2,Research & Evaluation,Impact documentation,1,$25000,$25000,
+LEVEL 2,Year 2,Research & Evaluation,Academic partnerships,1,$20000,$20000,
+LEVEL 2,Year 2,Research & Evaluation Subtotal,,,,,$165000,
+LEVEL 2,Year 2,Operations & Admin,Scale with efficiencies,1,$235000,$235000,
+LEVEL 2,Year 2,TOTAL YEAR 2,,,,,$3957800,"$2.5M - $3.5M range (subject to Year 1 evidence)"
+,,,,,,,
+LEVEL 2,Year 3,Platform Maintenance,Community-led development,1,$100000,$100000,"Indigenous developers leading"
+LEVEL 2,Year 3,Platform Maintenance,External support (reduced),1,$40000,$40000,
+LEVEL 2,Year 3,Platform Maintenance,Optimisation,1,$20000,$20000,
+LEVEL 2,Year 3,Platform Maintenance Subtotal,,,,,$160000,"30% cost reduction"
+LEVEL 2,Year 3,Staff Costs,Base salaries (9 FTE),9,$133333,$1200000,"Reduced from 12 FTE"
+LEVEL 2,Year 3,Staff Costs,On-costs (30%),,,,$360000,
+LEVEL 2,Year 3,Staff Costs,4 Indigenous developers/producers paid roles,4,$20000,$80000,
+LEVEL 2,Year 3,Staff Costs,New cohort (3 trainees),3,$13333,$40000,
+LEVEL 2,Year 3,Staff Costs Subtotal,,,,,$1680000,"Shows 20% cost reduction"
+LEVEL 2,Year 3,Community Engagement,6 communities deep engagement,1,$190000,$190000,
+LEVEL 2,Year 3,Community Engagement,Community payments,1,$110000,$110000,
+LEVEL 2,Year 3,Community Engagement,Content grants,6,$20000,$120000,
+LEVEL 2,Year 3,Community Engagement,National gathering,1,$100000,$100000,
+LEVEL 2,Year 3,Community Engagement Subtotal,,,,,$520000,
+LEVEL 2,Year 3,Governance Board,Board compensation,12,$15000,$180000,"Transitioning from Advisory"
+LEVEL 2,Year 3,Governance Board,Transition costs (legal structural),1,$30000,$30000,
+LEVEL 2,Year 3,Governance Board Subtotal,,,,,$210000,
+LEVEL 2,Year 3,International Best-Practice,Host 8 practitioners (2 weeks),8,$10625,$85000,
+LEVEL 2,Year 3,Training Delivery,Community-led programmes,1,$200000,$200000,"Communities earning"
+LEVEL 2,Year 3,Training Delivery,Online platform,1,$80000,$80000,
+LEVEL 2,Year 3,Training Delivery,Regional workshops,1,$90000,$90000,
+LEVEL 2,Year 3,Training Delivery,International exchange,1,$50000,$50000,
+LEVEL 2,Year 3,Training Delivery Subtotal,,,,,$420000,
+LEVEL 2,Year 3,Forums & Thought Leadership,National Forum (300 people),1,$220000,$220000,"Expanded"
+LEVEL 2,Year 3,Forums & Thought Leadership,Regional workshops,1,$110000,$110000,
+LEVEL 2,Year 3,Forums & Thought Leadership Subtotal,,,,,$330000,
+LEVEL 2,Year 3,Sustainability & Revenue,Business planning,1,$60000,$60000,
+LEVEL 2,Year 3,Sustainability & Revenue,Marketing & sales infrastructure,1,$50000,$50000,
+LEVEL 2,Year 3,Sustainability & Revenue,Premium content development,1,$45000,$45000,
+LEVEL 2,Year 3,Sustainability & Revenue,Membership system setup,1,$30000,$30000,
+LEVEL 2,Year 3,Sustainability & Revenue,Revenue offsetting costs,1,-$50000,-$50000,"Conservative estimate"
+LEVEL 2,Year 3,Sustainability & Revenue Subtotal,,,,,$135000,
+LEVEL 2,Year 3,Evaluation,Independent evaluation,1,$120000,$120000,"Comprehensive 3 year"
+LEVEL 2,Year 3,Evaluation,Community-led assessment,1,$50000,$50000,
+LEVEL 2,Year 3,Evaluation,ROI & cost-benefit study,1,$45000,$45000,
+LEVEL 2,Year 3,Evaluation Subtotal,,,,,$215000,
+LEVEL 2,Year 3,Operations & Admin,Scale with efficiencies,1,$250000,$250000,
+LEVEL 2,Year 3,TOTAL YEAR 3,,,,,$4005000,"$2.8M - $4.0M range (subject to sustainability)"
+LEVEL 2,TOTAL,ALL YEARS,,,,,$10559400,"$7.5M - $10.5M Total ⭐ RECOMMENDED"
+,,,,,,,
+,,,,,,,
+LEVEL 3,Year 1,Platform Development,Premium build (AI VR multilingual),1,$400000,$400000,"Advanced features"
+LEVEL 3,Year 1,Platform Development,Mobile app with offline,1,$120000,$120000,
+LEVEL 3,Year 1,Platform Development,International platform instance,1,$80000,$80000,
+LEVEL 3,Year 1,Platform Development,Security & enterprise compliance,1,$50000,$50000,
+LEVEL 3,Year 1,Platform Development,Documentation (5 languages),1,$40000,$40000,
+LEVEL 3,Year 1,Platform Development,Young Indigenous developer training (6),6,$15000,$90000,
+LEVEL 3,Year 1,Platform Development,Technical mentorship,1,$30000,$30000,
+LEVEL 3,Year 1,Platform Development Subtotal,,,,,$810000,
+LEVEL 3,Year 1,Staff Costs,Base salaries (18 FTE × 0.5 year),18,$62944,$1133000,
+LEVEL 3,Year 1,Staff Costs,On-costs (30%),,,,$339900,
+LEVEL 3,Year 1,Staff Costs,Training stipends (6 × 0.5 year),6,$7500,$45000,
+LEVEL 3,Year 1,Staff Costs Subtotal,,,,,$1517900,
+LEVEL 3,Year 1,Community Engagement,Travel (10 communities),1,$240000,$240000,
+LEVEL 3,Year 1,Community Engagement,Community payments,10,$12000,$120000,
+LEVEL 3,Year 1,Community Engagement,Infrastructure grants (10 × $50K),10,$50000,$500000,"Major investment"
+LEVEL 3,Year 1,Community Engagement,Content grants (10 × $20K),10,$20000,$200000,
+LEVEL 3,Year 1,Community Engagement,Annual gathering,1,$50000,$50000,
+LEVEL 3,Year 1,Community Engagement Subtotal,,,,,$1110000,
+LEVEL 3,Year 1,First Nations Advisory Council,12 members × $5K × 3 meetings,36,$2500,$90000,
+LEVEL 3,Year 1,International (Year 1),NZ delegation (8 people),1,$60000,$60000,
+LEVEL 3,Year 1,International (Year 1),Canada delegation (8 people),1,$80000,$80000,
+LEVEL 3,Year 1,International (Year 1),Virtual & planning,1,$10000,$10000,
+LEVEL 3,Year 1,International (Year 1),Documentation,1,$10000,$10000,
+LEVEL 3,Year 1,International Subtotal,,,,,$160000,
+LEVEL 3,Year 1,Media & Arts,Theatre production #1,1,$100000,$100000,
+LEVEL 3,Year 1,Media & Arts,Documentary (3 episodes),3,$40000,$120000,
+LEVEL 3,Year 1,Media & Arts,Podcast launch (12 episodes),12,$4167,$50000,
+LEVEL 3,Year 1,Media & Arts,Community arts grants (10 × $3K),10,$3000,$30000,
+LEVEL 3,Year 1,Media & Arts,Media training,1,$20000,$20000,
+LEVEL 3,Year 1,Media & Arts Subtotal,,,,,$320000,
+LEVEL 3,Year 1,Content Creation,Video production (20 stories),20,$5000,$100000,
+LEVEL 3,Year 1,Content Creation,Community-produced,1,$40000,$40000,
+LEVEL 3,Year 1,Content Creation,Photography,1,$20000,$20000,
+LEVEL 3,Year 1,Content Creation,Story fees,1,$20000,$20000,
+LEVEL 3,Year 1,Content Creation Subtotal,,,,,$180000,
+LEVEL 3,Year 1,Training Development,Module development (10),10,$10000,$100000,
+LEVEL 3,Year 1,Training Development,Materials,1,$40000,$40000,
+LEVEL 3,Year 1,Training Development,Community trainer dev,1,$35000,$35000,
+LEVEL 3,Year 1,Training Development,Technical curriculum,1,$35000,$35000,
+LEVEL 3,Year 1,Training Development Subtotal,,,,,$210000,
+LEVEL 3,Year 1,Research & Evaluation,Baseline (10 sites),10,$8000,$80000,
+LEVEL 3,Year 1,Research & Evaluation,Partnerships,1,$40000,$40000,
+LEVEL 3,Year 1,Research & Evaluation,Framework design,1,$30000,$30000,
+LEVEL 3,Year 1,Research & Evaluation,Ethics,1,$15000,$15000,
+LEVEL 3,Year 1,Research & Evaluation Subtotal,,,,,$165000,
+LEVEL 3,Year 1,Operations & Admin,Office (18 people),1,$65000,$65000,
+LEVEL 3,Year 1,Operations & Admin,IT infrastructure,1,$60000,$60000,
+LEVEL 3,Year 1,Operations & Admin,Insurance,1,$40000,$40000,
+LEVEL 3,Year 1,Operations & Admin,Accounting/legal,1,$45000,$45000,
+LEVEL 3,Year 1,Operations & Admin,Phone/internet,1,$22000,$22000,
+LEVEL 3,Year 1,Operations & Admin,HR/payroll,1,$20000,$20000,
+LEVEL 3,Year 1,Operations & Admin,Professional development,1,$30000,$30000,
+LEVEL 3,Year 1,Operations & Admin,Contingency,1,$40000,$40000,
+LEVEL 3,Year 1,Operations & Admin Subtotal,,,,,$322000,
+LEVEL 3,Year 1,TOTAL YEAR 1,,,,,$4884900,"$3.8M - $4.8M range"
+,,,,,,,
+LEVEL 3,Year 2,Platform Enhancements,Feature additions,1,$150000,$150000,
+LEVEL 3,Year 2,Platform Enhancements,Indigenous developers leading,1,$120000,$120000,
+LEVEL 3,Year 2,Platform Enhancements,Mobile expansion,1,$50000,$50000,
+LEVEL 3,Year 2,Platform Enhancements,Security,1,$30000,$30000,
+LEVEL 3,Year 2,Platform Enhancements Subtotal,,,,,$350000,
+LEVEL 3,Year 2,Staff Costs,Base salaries (18 FTE),18,$125889,$2266000,
+LEVEL 3,Year 2,Staff Costs,On-costs (30%),,,,$679800,
+LEVEL 3,Year 2,Staff Costs,Training stipends (6),6,$15000,$90000,
+LEVEL 3,Year 2,Staff Costs,External contractors,1,$120000,$120000,
+LEVEL 3,Year 2,Staff Costs Subtotal,,,,,$3155800,
+LEVEL 3,Year 2,Community Engagement,Travel intensive,1,$280000,$280000,
+LEVEL 3,Year 2,Community Engagement,Community payments,10,$18000,$180000,
+LEVEL 3,Year 2,Community Engagement,Content grants,10,$20000,$200000,
+LEVEL 3,Year 2,Community Engagement,Infrastructure maintenance,1,$200000,$200000,
+LEVEL 3,Year 2,Community Engagement,Bi-annual gatherings,2,$60000,$120000,
+LEVEL 3,Year 2,Community Engagement Subtotal,,,,,$980000,
+LEVEL 3,Year 2,First Nations Advisory Council,Full year,1,$180000,$180000,
+LEVEL 3,Year 2,International (Year 2 - MAJOR),Global Forum (150 delegates),1,$750000,$750000,"Major international event"
+LEVEL 3,Year 2,International (Year 2 - MAJOR),Norway delegation,1,$55000,$55000,
+LEVEL 3,Year 2,International (Year 2 - MAJOR),Colombia delegation,1,$65000,$65000,
+LEVEL 3,Year 2,International (Year 2 - MAJOR),Virtual & coordination,1,$25000,$25000,
+LEVEL 3,Year 2,International (Year 2 - MAJOR),Documentation & translation,1,$25000,$25000,
+LEVEL 3,Year 2,International Subtotal,,,,,$920000,
+LEVEL 3,Year 2,Media & Arts,Theatre (3 productions),3,$100000,$300000,
+LEVEL 3,Year 2,Media & Arts,Documentary (3 episodes),3,$66667,$200000,
+LEVEL 3,Year 2,Media & Arts,Podcast (24 episodes),24,$3333,$80000,
+LEVEL 3,Year 2,Media & Arts,Arts grants,10,$10000,$100000,
+LEVEL 3,Year 2,Media & Arts,Exhibitions,1,$30000,$30000,
+LEVEL 3,Year 2,Media & Arts,Media campaign,1,$20000,$20000,
+LEVEL 3,Year 2,Media & Arts Subtotal,,,,,$730000,
+LEVEL 3,Year 2,Training & Capacity,Modules (20 more),20,$7500,$150000,
+LEVEL 3,Year 2,Training & Capacity,Workshops (48),48,$3750,$180000,
+LEVEL 3,Year 2,Training & Capacity,Community-led,1,$100000,$100000,
+LEVEL 3,Year 2,Training & Capacity,Leadership Academy (50),50,$1800,$90000,
+LEVEL 3,Year 2,Training & Capacity Subtotal,,,,,$520000,
+LEVEL 3,Year 2,Summit,National Summit (500 people),1,$380000,$380000,"Major event"
+LEVEL 3,Year 2,Regional Workshops,4 workshops,4,$30000,$120000,
+LEVEL 3,Year 2,Research & Evaluation,Mid-term (10 sites),10,$14000,$140000,
+LEVEL 3,Year 2,Research & Evaluation,Community data,1,$60000,$60000,
+LEVEL 3,Year 2,Research & Evaluation,Documentation,1,$40000,$40000,
+LEVEL 3,Year 2,Research & Evaluation,Partnerships,1,$40000,$40000,
+LEVEL 3,Year 2,Research & Evaluation Subtotal,,,,,$280000,
+LEVEL 3,Year 2,Social Enterprise,Business planning,1,$70000,$70000,
+LEVEL 3,Year 2,Social Enterprise,Marketing,1,$60000,$60000,
+LEVEL 3,Year 2,Social Enterprise,Sales setup,1,$40000,$40000,
+LEVEL 3,Year 2,Social Enterprise,Legal structure,1,$30000,$30000,
+LEVEL 3,Year 2,Social Enterprise Subtotal,,,,,$200000,
+LEVEL 3,Year 2,Operations & Admin,Scale with growth,1,$400000,$400000,
+LEVEL 3,Year 2,TOTAL YEAR 2,,,,,$8195800,"$4.9M - $6.5M range (includes Global Forum)"
+,,,,,,,
+LEVEL 3,Year 3,Platform,Community-led,1,$180000,$180000,
+LEVEL 3,Year 3,Platform,External minimal,1,$60000,$60000,
+LEVEL 3,Year 3,Platform,International support,1,$40000,$40000,
+LEVEL 3,Year 3,Platform,Security,1,$20000,$20000,
+LEVEL 3,Year 3,Platform Subtotal,,,,,$300000,"35% cost reduction"
+LEVEL 3,Year 3,Staff Costs,Base (13 FTE),13,$130769,$1700000,"Reduced from 18"
+LEVEL 3,Year 3,Staff Costs,On-costs,,,,$510000,
+LEVEL 3,Year 3,Staff Costs,6 Indigenous paid roles,6,$15000,$90000,
+LEVEL 3,Year 3,Staff Costs,New cohort (4),4,$10000,$40000,
+LEVEL 3,Year 3,Staff Costs Subtotal,,,,,$2340000,"26% cost reduction"
+LEVEL 3,Year 3,Community Engagement,10 communities,1,$280000,$280000,
+LEVEL 3,Year 3,Community Engagement,Payments,1,$180000,$180000,
+LEVEL 3,Year 3,Community Engagement,Grants,10,$20000,$200000,
+LEVEL 3,Year 3,Community Engagement,Infrastructure,1,$150000,$150000,
+LEVEL 3,Year 3,Community Engagement,Gathering,1,$140000,$140000,
+LEVEL 3,Year 3,Community Engagement Subtotal,,,,,$950000,
+LEVEL 3,Year 3,Governance Board,Compensation,1,$180000,$180000,
+LEVEL 3,Year 3,Governance Board,Transition costs,1,$60000,$60000,
+LEVEL 3,Year 3,Governance Board Subtotal,,,,,$240000,
+LEVEL 3,Year 3,International,Host 15 practitioners,15,$16667,$250000,
+LEVEL 3,Year 3,International,Community-led training,1,$80000,$80000,"Revenue generating"
+LEVEL 3,Year 3,International,Platform partnerships,1,$30000,$30000,
+LEVEL 3,Year 3,International,Licensing setup,1,$20000,$20000,
+LEVEL 3,Year 3,International Subtotal,,,,,$380000,
+LEVEL 3,Year 3,Media & Arts,Theatre (3),3,$100000,$300000,
+LEVEL 3,Year 3,Media & Arts,Documentary distribution,1,$80000,$80000,
+LEVEL 3,Year 3,Media & Arts,Podcast (24),24,$3333,$80000,
+LEVEL 3,Year 3,Media & Arts,Arts grants,10,$15000,$150000,
+LEVEL 3,Year 3,Media & Arts,Campaign,1,$50000,$50000,
+LEVEL 3,Year 3,Media & Arts,Training,1,$40000,$40000,
+LEVEL 3,Year 3,Media & Arts Subtotal,,,,,$700000,
+LEVEL 3,Year 3,Training,Community-led,1,$280000,$280000,"Communities earning"
+LEVEL 3,Year 3,Training,Online,1,$100000,$100000,
+LEVEL 3,Year 3,Training,Leadership,1,$120000,$120000,
+LEVEL 3,Year 3,Training,International,1,$80000,$80000,
+LEVEL 3,Year 3,Training Subtotal,,,,,$580000,
+LEVEL 3,Year 3,Summit,600 people,1,$420000,$420000,"Expanded"
+LEVEL 3,Year 3,Forums,Regional,1,$140000,$140000,
+LEVEL 3,Year 3,Sustainability,Implementation,1,$120000,$120000,
+LEVEL 3,Year 3,Sustainability,Marketing,1,$80000,$80000,
+LEVEL 3,Year 3,Sustainability,Content,1,$60000,$60000,
+LEVEL 3,Year 3,Sustainability,Licensing,1,$40000,$40000,
+LEVEL 3,Year 3,Sustainability,Revenue offset,1,-$150000,-$150000,"Conservative"
+LEVEL 3,Year 3,Sustainability Subtotal,,,,,$150000,
+LEVEL 3,Year 3,Evaluation,Independent,1,$150000,$150000,
+LEVEL 3,Year 3,Evaluation,Community-led,1,$70000,$70000,
+LEVEL 3,Year 3,Evaluation,ROI,1,$60000,$60000,
+LEVEL 3,Year 3,Evaluation Subtotal,,,,,$280000,
+LEVEL 3,Year 3,Operations & Admin,Efficient,1,$420000,$420000,
+LEVEL 3,Year 3,TOTAL YEAR 3,,,,,$6900000,"$4.4M - $5.7M range (costs reducing, revenue offsetting)"
+LEVEL 3,TOTAL,ALL YEARS,,,,,$19980700,"$13M - $17M Total"
+,,,,,,,
+,,,,,,,
+SUMMARY,,,,,,,"Three Level Comparison"
+LEVEL 1,TOTAL,3 YEARS,,,,$4417850,"$4.0M - $5.6M"
+LEVEL 2,TOTAL,3 YEARS,,,,$10559400,"$7.5M - $10.5M ⭐ RECOMMENDED"
+LEVEL 3,TOTAL,3 YEARS,,,,$19980700,"$13M - $17M"

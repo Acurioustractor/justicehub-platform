@@ -1,482 +1,558 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { useDebounce } from '@/hooks/useDebounce';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+/**
+ * Unified Search Page
+ *
+ * Full-featured search interface with:
+ * - Intent-aware search
+ * - Faceted filtering
+ * - Results from multiple sources (JusticeHub DB + Empathy Ledger)
+ * - Related search suggestions
+ */
+
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Search as SearchIcon,
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Search,
+  Loader2,
   Filter,
   X,
-  Clock,
-  TrendingUp,
-  Calendar,
-  Tag,
-  User,
-  FileText,
-  ChevronRight,
   Sparkles,
-  Database,
-  Cloud
+  MapPin,
+  Clock,
+  ExternalLink,
+  ChevronRight,
+  AlertCircle,
+  Building2,
+  Users,
+  FileText,
+  Video,
+  BookOpen,
+  Newspaper,
+  Target,
+  Briefcase,
 } from 'lucide-react';
-import Link from 'next/link';
-import { format } from 'date-fns';
+import {
+  useJusticeSearch,
+  RESULT_TYPE_LABELS,
+  AUSTRALIAN_STATES,
+} from '@/hooks/useJusticeSearch';
+import type { SearchResultType, SearchResult } from '@/lib/search/types';
 
-interface SearchResult {
-  id: string;
-  title: string;
-  excerpt: string;
-  highlights: {
-    title?: string;
-    content?: string[];
-    tags?: string[];
-  };
-  matchScore: number;
-  source: 'local' | 'airtable';
-  storyType: string;
-  visibility: string;
-  author?: {
-    name?: string;
-  };
-  tags: string[];
-  createdAt: string;
-}
+// Icon mapping for result types
+const TYPE_ICONS: Record<SearchResultType, React.ReactNode> = {
+  intervention: <Target className="h-4 w-4" />,
+  service: <Briefcase className="h-4 w-4" />,
+  person: <Users className="h-4 w-4" />,
+  organization: <Building2 className="h-4 w-4" />,
+  media: <Video className="h-4 w-4" />,
+  story: <BookOpen className="h-4 w-4" />,
+  research: <FileText className="h-4 w-4" />,
+  news: <Newspaper className="h-4 w-4" />,
+};
 
 function SearchPageContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
-  
-  const [query, setQuery] = useState(initialQuery);
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [trendingSearches, setTrendingSearches] = useState<string[]>([]);
-  const [facets, setFacets] = useState<any>(null);
-  const [filters, setFilters] = useState<any>({});
-  const [total, setTotal] = useState(0);
-  const [executionTime, setExecutionTime] = useState(0);
-  const [activeTab, setActiveTab] = useState('all');
+  const initialType = searchParams.get('type') as SearchResultType | null;
+  const initialState = searchParams.get('state') || undefined;
 
-  const debouncedQuery = useDebounce(query, 300);
+  const [inputValue, setInputValue] = useState(initialQuery);
+  const [showFilters, setShowFilters] = useState(false);
 
-  // Fetch trending searches on mount
+  const {
+    results,
+    facets,
+    intent,
+    suggestions,
+    warnings,
+    isLoading,
+    error,
+    query,
+    total,
+    hasMore,
+    timing,
+    search,
+    loadMore,
+    filters,
+    setFilters,
+  } = useJusticeSearch();
+
+  // Run initial search from URL params
   useEffect(() => {
-    fetchTrendingSearches();
-  }, []);
-
-  // Perform search when query changes
-  useEffect(() => {
-    if (debouncedQuery.length >= 2) {
-      performSearch();
-    } else {
-      setResults([]);
-      setSuggestions([]);
+    if (initialQuery) {
+      search(initialQuery, {
+        type: initialType || undefined,
+        state: initialState,
+      });
     }
-  }, [debouncedQuery, filters, activeTab]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const fetchTrendingSearches = async () => {
-    try {
-      const response = await fetch('/api/search?limit=10');
-      if (response.ok) {
-        const data = await response.json();
-        setTrendingSearches(data.trending);
-      }
-    } catch (error) {
-      console.error('Error fetching trending searches:', error);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (inputValue.trim().length >= 2) {
+      // Update URL
+      const params = new URLSearchParams({ q: inputValue });
+      if (filters.type) params.set('type', filters.type);
+      if (filters.state) params.set('state', filters.state);
+      router.push(`/search?${params.toString()}`);
+
+      search(inputValue, filters);
     }
   };
 
-  const performSearch = async () => {
-    setIsSearching(true);
-    try {
-      const searchFilters = { ...filters };
-      
-      // Apply tab filter
-      if (activeTab !== 'all') {
-        searchFilters.source = activeTab;
-      }
+  const handleTypeFilter = (type: string) => {
+    const newType = type === 'all' ? undefined : (type as SearchResultType);
+    setFilters({ ...filters, type: newType });
+  };
 
-      const response = await fetch('/api/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: debouncedQuery,
-          filters: searchFilters,
-          limit: 20,
-          offset: 0
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setResults(data.results);
-        setSuggestions(data.suggestions);
-        setFacets(data.facets);
-        setTotal(data.total);
-        setExecutionTime(data.executionTime);
-      }
-    } catch (error) {
-      console.error('Search error:', error);
-    } finally {
-      setIsSearching(false);
-    }
+  const handleStateFilter = (state: string) => {
+    const newState = state === 'all' ? undefined : state;
+    setFilters({ ...filters, state: newState });
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setQuery(suggestion);
-  };
-
-  const toggleFilter = (type: string, value: string) => {
-    setFilters((prev: any) => {
-      const current = prev[type] || [];
-      const updated = current.includes(value)
-        ? current.filter((v: string) => v !== value)
-        : [...current, value];
-      
-      return {
-        ...prev,
-        [type]: updated.length > 0 ? updated : undefined
-      };
-    });
-  };
-
-  const clearFilters = () => {
-    setFilters({});
-  };
-
-  const highlightText = (text: string, highlight?: string) => {
-    if (!highlight) return text;
-    return <span dangerouslySetInnerHTML={{ __html: highlight }} />;
+    setInputValue(suggestion);
+    search(suggestion, filters);
+    router.push(`/search?q=${encodeURIComponent(suggestion)}`);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-4">Search Stories</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Find inspiration across thousands of youth stories
-          </p>
-        </div>
-
-        {/* Search Bar */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="relative">
-              <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <Input
-                type="search"
-                placeholder="Search stories, tags, or topics..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="pl-12 pr-4 py-3 text-lg"
-                autoFocus
-              />
-              {query && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setQuery('')}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
+      {/* Search Header */}
+      <div className="bg-white dark:bg-gray-800 border-b shadow-sm">
+        <div className="container mx-auto px-4 py-6">
+          <form onSubmit={handleSearch} className="max-w-3xl mx-auto">
+            <div className="relative flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Input
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="Search programs, services, organizations, people, media..."
+                  className="pl-12 pr-4 h-12 text-lg"
+                  autoFocus
+                />
+                {inputValue && (
+                  <button
+                    type="button"
+                    onClick={() => setInputValue('')}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+              <Button type="submit" size="lg" disabled={isLoading || inputValue.length < 2}>
+                {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Search'}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                <Filter className="h-5 w-5" />
+              </Button>
             </div>
 
-            {/* Search Suggestions */}
-            {suggestions.length > 0 && (
-              <div className="mt-4">
-                <p className="text-sm text-gray-600 mb-2">Try searching for:</p>
-                <div className="flex flex-wrap gap-2">
-                  {suggestions.map((suggestion) => (
-                    <Badge
-                      key={suggestion}
-                      variant="outline"
-                      className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
-                      onClick={() => handleSuggestionClick(suggestion)}
+            {/* Intent Badge */}
+            {intent && intent !== 'general' && (
+              <div className="mt-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-purple-500" />
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Detected intent:{' '}
+                  <Badge variant="secondary" className="ml-1">
+                    {intent.replace('find_', '').replace('_', ' ')}
+                  </Badge>
+                </span>
+              </div>
+            )}
+
+            {/* Filters Panel */}
+            {showFilters && (
+              <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 border-2 border-black">
+                <div className="flex flex-wrap gap-4">
+                  <div className="flex-1 min-w-[200px]">
+                    <label className="text-sm font-medium mb-2 block">Type</label>
+                    <Select
+                      value={filters.type || 'all'}
+                      onValueChange={handleTypeFilter}
                     >
-                      <Sparkles className="h-3 w-3 mr-1" />
-                      {suggestion}
-                    </Badge>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All types" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All types</SelectItem>
+                        {Object.entries(RESULT_TYPE_LABELS).map(([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex-1 min-w-[200px]">
+                    <label className="text-sm font-medium mb-2 block">State</label>
+                    <Select
+                      value={filters.state || 'all'}
+                      onValueChange={handleStateFilter}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="All states" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All states</SelectItem>
+                        {AUSTRALIAN_STATES.map(({ value, label }) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex items-end">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => setFilters({})}
+                    >
+                      Clear filters
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </form>
+        </div>
+      </div>
+
+      {/* Results Section */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex gap-8">
+          {/* Main Results */}
+          <div className="flex-1">
+            {/* Warnings */}
+            {warnings.length > 0 && (
+              <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-black flex items-start gap-2">
+                <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  {warnings.map((warning, i) => (
+                    <p key={i} className="text-sm text-yellow-800 dark:text-yellow-200">
+                      {warning}
+                    </p>
                   ))}
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
 
-        {/* No query state - show trending */}
-        {!query && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
-                Trending Searches
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {trendingSearches.map((term) => (
-                  <Badge
-                    key={term}
-                    variant="secondary"
-                    className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
-                    onClick={() => setQuery(term)}
-                  >
-                    {term}
-                  </Badge>
-                ))}
+            {/* Error */}
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border-2 border-black">
+                <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            )}
 
-        {/* Search Results */}
-        {query && (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Filters Sidebar */}
-            <div className="lg:col-span-1">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">Filters</CardTitle>
-                    {Object.keys(filters).length > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={clearFilters}
-                      >
-                        Clear all
-                      </Button>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Story Types */}
-                  {facets?.storyTypes?.length > 0 && (
-                    <div>
-                      <h4 className="font-medium mb-2">Story Type</h4>
-                      <div className="space-y-1">
-                        {facets.storyTypes.map((type: any) => (
-                          <label
-                            key={type.value}
-                            className="flex items-center gap-2 cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={filters.storyType?.includes(type.value)}
-                              onChange={() => toggleFilter('storyType', type.value)}
-                              className="rounded"
-                            />
-                            <span className="text-sm capitalize">
-                              {type.value} ({type.count})
-                            </span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Tags */}
-                  {facets?.tags?.length > 0 && (
-                    <div>
-                      <h4 className="font-medium mb-2">Tags</h4>
-                      <div className="space-y-1">
-                        {facets.tags.slice(0, 5).map((tag: any) => (
-                          <label
-                            key={tag.value}
-                            className="flex items-center gap-2 cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={filters.tags?.includes(tag.value)}
-                              onChange={() => toggleFilter('tags', tag.value)}
-                              className="rounded"
-                            />
-                            <span className="text-sm">
-                              {tag.value} ({tag.count})
-                            </span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Results */}
-            <div className="lg:col-span-3">
-              {/* Results Header */}
-              <div className="flex items-center justify-between mb-4">
+            {/* Results Header */}
+            {query && !isLoading && (
+              <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">
-                    {isSearching ? (
-                      'Searching...'
-                    ) : (
-                      <>
-                        Found {total} results for "{query}"
-                        {executionTime > 0 && (
-                          <span className="ml-2">
-                            ({(executionTime / 1000).toFixed(2)}s)
-                          </span>
-                        )}
-                      </>
-                    )}
-                  </p>
-                </div>
-                <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList>
-                    <TabsTrigger value="all">All</TabsTrigger>
-                    <TabsTrigger value="local">
-                      <Database className="h-3 w-3 mr-1" />
-                      Local
-                    </TabsTrigger>
-                    <TabsTrigger value="airtable">
-                      <Cloud className="h-3 w-3 mr-1" />
-                      Airtable
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </div>
-
-              {/* Loading State */}
-              {isSearching && (
-                <div className="space-y-4">
-                  {[1, 2, 3].map((i) => (
-                    <Card key={i}>
-                      <CardContent className="p-6">
-                        <Skeleton className="h-6 w-3/4 mb-2" />
-                        <Skeleton className="h-4 w-full mb-2" />
-                        <Skeleton className="h-4 w-2/3" />
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-
-              {/* Results List */}
-              {!isSearching && results.length > 0 && (
-                <div className="space-y-4">
-                  {results.map((result) => (
-                    <Card key={result.id} className="hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
-                        <div className="flex items-start justify-between mb-2">
-                          <Link href={`/stories/${result.id}`}>
-                            <h3 className="text-xl font-semibold hover:text-primary">
-                              {highlightText(result.title, result.highlights?.title)}
-                            </h3>
-                          </Link>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-xs">
-                              {result.source === 'airtable' ? (
-                                <Cloud className="h-3 w-3 mr-1" />
-                              ) : (
-                                <Database className="h-3 w-3 mr-1" />
-                              )}
-                              {result.source}
-                            </Badge>
-                            <Badge variant="secondary" className="text-xs">
-                              Score: {result.matchScore}
-                            </Badge>
-                          </div>
-                        </div>
-
-                        {/* Excerpt with highlights */}
-                        <p className="text-gray-700 dark:text-gray-300 mb-3">
-                          {result.excerpt}
-                        </p>
-
-                        {/* Content highlights */}
-                        {result.highlights?.content && result.highlights.content.length > 0 && (
-                          <div className="mb-3 space-y-1">
-                            {result.highlights.content.map((highlight, idx) => (
-                              <p
-                                key={idx}
-                                className="text-sm text-gray-600 italic"
-                                dangerouslySetInnerHTML={{ __html: `"...${highlight}..."` }}
-                              />
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Metadata */}
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
-                          <span className="flex items-center gap-1">
-                            <FileText className="h-3 w-3" />
-                            {result.storyType}
-                          </span>
-                          {result.author?.name && (
-                            <span className="flex items-center gap-1">
-                              <User className="h-3 w-3" />
-                              {result.author.name}
-                            </span>
-                          )}
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            {format(new Date(result.createdAt), 'MMM d, yyyy')}
-                          </span>
-                        </div>
-
-                        {/* Tags */}
-                        {result.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-3">
-                            {result.tags.map((tag) => (
-                              <Badge
-                                key={tag}
-                                variant={result.highlights?.tags?.includes(tag) ? 'default' : 'outline'}
-                                className="text-xs"
-                              >
-                                <Tag className="h-3 w-3 mr-1" />
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-
-                        <Link
-                          href={`/stories/${result.id}`}
-                          className="inline-flex items-center text-primary hover:underline mt-3"
-                        >
-                          Read full story
-                          <ChevronRight className="h-4 w-4 ml-1" />
-                        </Link>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-
-              {/* No Results */}
-              {!isSearching && results.length === 0 && query.length >= 2 && (
-                <Card>
-                  <CardContent className="text-center py-12">
-                    <SearchIcon className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                    <h3 className="text-lg font-semibold mb-2">No results found</h3>
-                    <p className="text-gray-600">
-                      Try adjusting your search terms or filters
+                  <h2 className="text-lg font-semibold">
+                    {total} result{total !== 1 ? 's' : ''} for "{query}"
+                  </h2>
+                  {timing && (
+                    <p className="text-sm text-gray-500 flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {timing.total_ms}ms
                     </p>
+                  )}
+                </div>
+
+                {/* Type tabs for quick filtering */}
+                {facets && facets.total > 0 && (
+                  <Tabs value={filters.type || 'all'} onValueChange={handleTypeFilter}>
+                    <TabsList>
+                      <TabsTrigger value="all">
+                        All ({facets.total})
+                      </TabsTrigger>
+                      {Object.entries(facets.byType)
+                        .filter(([, count]) => count > 0)
+                        .map(([type, count]) => (
+                          <TabsTrigger key={type} value={type}>
+                            {RESULT_TYPE_LABELS[type as SearchResultType]} ({count})
+                          </TabsTrigger>
+                        ))}
+                    </TabsList>
+                  </Tabs>
+                )}
+              </div>
+            )}
+
+            {/* Loading */}
+            {isLoading && (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+              </div>
+            )}
+
+            {/* Results List */}
+            {!isLoading && results.length > 0 && (
+              <div className="space-y-4">
+                {results.map((result) => (
+                  <SearchResultCard key={`${result.type}-${result.id}`} result={result} />
+                ))}
+
+                {/* Load More */}
+                {hasMore && (
+                  <div className="pt-4 text-center">
+                    <Button variant="outline" onClick={loadMore} disabled={isLoading}>
+                      Load more results
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* No Results */}
+            {!isLoading && query && results.length === 0 && (
+              <div className="text-center py-16">
+                <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">No results found</h3>
+                <p className="text-gray-500 mb-6">
+                  Try adjusting your search terms or filters
+                </p>
+                {suggestions.length > 0 && (
+                  <div>
+                    <p className="text-sm text-gray-500 mb-2">Try searching for:</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {suggestions.map((suggestion) => (
+                        <Button
+                          key={suggestion}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleSuggestionClick(suggestion)}
+                        >
+                          {suggestion}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Empty State */}
+            {!query && !isLoading && (
+              <div className="text-center py-16">
+                <Search className="h-16 w-16 text-gray-200 mx-auto mb-6" />
+                <h2 className="text-2xl font-semibold mb-2">Search JusticeHub</h2>
+                <p className="text-gray-500 mb-8 max-w-md mx-auto">
+                  Find programs, services, organizations, people, and stories across
+                  the youth justice ecosystem.
+                </p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {[
+                    'healing programs',
+                    'diversion services NSW',
+                    'mentoring youth',
+                    'Indigenous organizations',
+                  ].map((example) => (
+                    <Button
+                      key={example}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleSuggestionClick(example)}
+                    >
+                      {example}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar - Suggestions & Facets */}
+          {query && !isLoading && (results.length > 0 || suggestions.length > 0) && (
+            <div className="w-64 flex-shrink-0 hidden lg:block">
+              {/* Related Searches */}
+              {suggestions.length > 0 && (
+                <Card className="mb-6">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium">Related searches</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-2">
+                      {suggestions.map((suggestion) => (
+                        <button
+                          key={suggestion}
+                          onClick={() => handleSuggestionClick(suggestion)}
+                          className="w-full text-left text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 hover:underline flex items-center gap-1"
+                        >
+                          <ChevronRight className="h-3 w-3" />
+                          {suggestion}
+                        </button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* State Facets */}
+              {facets && Object.keys(facets.byState).length > 0 && (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium">By state</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-1">
+                      {Object.entries(facets.byState)
+                        .sort(([, a], [, b]) => b - a)
+                        .map(([state, count]) => (
+                          <button
+                            key={state}
+                            onClick={() => setFilters({ ...filters, state })}
+                            className={`w-full text-left text-sm px-2 py-1 rounded flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                              filters.state === state ? 'bg-gray-100 dark:bg-gray-800' : ''
+                            }`}
+                          >
+                            <span className="flex items-center gap-1">
+                              <MapPin className="h-3 w-3" />
+                              {state}
+                            </span>
+                            <Badge variant="secondary" className="text-xs">
+                              {count}
+                            </Badge>
+                          </button>
+                        ))}
+                    </div>
                   </CardContent>
                 </Card>
               )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
+function SearchResultCard({ result }: { result: SearchResult }) {
+  return (
+    <Card className="hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow border-2 border-black">
+      <CardContent className="p-4">
+        <div className="flex gap-4">
+          {/* Thumbnail */}
+          {result.metadata.imageUrl && (
+            <div className="w-20 h-20 flex-shrink-0 overflow-hidden bg-gray-100 border border-black">
+              <Image
+                src={result.metadata.imageUrl}
+                alt=""
+                width={80}
+                height={80}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
+          <div className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <Link
+                  href={result.url}
+                  className="text-lg font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 hover:underline line-clamp-1"
+                >
+                  {result.title}
+                </Link>
+                <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
+                  <span className="flex items-center gap-1">
+                    {TYPE_ICONS[result.type]}
+                    {RESULT_TYPE_LABELS[result.type]}
+                  </span>
+                  {result.metadata.state && (
+                    <span className="flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {result.metadata.state}
+                    </span>
+                  )}
+                  {result.source.name !== 'justicehub' && (
+                    <Badge variant="outline" className="text-xs">
+                      {result.source.name}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+
+              {/* Score indicator (subtle) */}
+              <div className="flex-shrink-0">
+                <div
+                  className="w-2 h-8 rounded-full bg-gradient-to-t from-green-500 to-green-200"
+                  style={{
+                    opacity: 0.3 + result.score * 0.7,
+                  }}
+                  title={`Relevance: ${Math.round(result.score * 100)}%`}
+                />
+              </div>
+            </div>
+
+            {/* Description */}
+            {result.description && (
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
+                {result.description}
+              </p>
+            )}
+
+            {/* Tags */}
+            {result.metadata.tags && result.metadata.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {result.metadata.tags.slice(0, 3).map((tag) => (
+                  <Badge key={tag} variant="secondary" className="text-xs">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            {/* External link indicator */}
+            {result.url.startsWith('http') && (
+              <div className="mt-2 text-xs text-gray-400 flex items-center gap-1">
+                <ExternalLink className="h-3 w-3" />
+                External link
+              </div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div>Loading search...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      }
+    >
       <SearchPageContent />
     </Suspense>
   );

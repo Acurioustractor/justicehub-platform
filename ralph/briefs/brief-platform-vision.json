@@ -1,0 +1,114 @@
+{
+  "id": "brief-platform-vision",
+  "title": "JusticeHub Platform Vision",
+  "category": "seeds",
+  "status": "draft",
+  "created_at": "2025-01-07T23:55:00Z",
+
+  "the_problem": {
+    "headline": "A Fragmented System Failing Our Young People",
+    "description": "Justice-involved youth in Australia face a fragmented support system. Services exist in silos - legal support here, mental health there, employment programs elsewhere. Young people and their families must navigate this maze alone, often falling through the gaps. The result: high recidivism, broken futures, and communities bearing the weight of systemic failure.",
+    "key_statistics": [
+      "Over 5,000 young Australians are in youth detention on any given day",
+      "Indigenous youth are 17x more likely to be in detention than non-Indigenous peers",
+      "Up to 80% of young people in detention have a cognitive disability or mental health condition",
+      "Most 'services' operate in isolation with no coordinated pathway"
+    ]
+  },
+
+  "the_vision": {
+    "headline": "One Platform, Whole-Person Support",
+    "description": "JusticeHub is building the connective tissue between services, stories, and support. A unified platform where justice-involved youth can discover programs, access resources, and find their pathway forward - all in one place. Where community organizations can coordinate, share insights, and amplify impact. Where lived experience drives design, and data sovereignty is respected.",
+    "core_principles": [
+      "Community-centered: Built with and for the communities we serve",
+      "Holistic: Addressing the whole person, not just the 'offense'",
+      "Strength-based: Focusing on potential, not pathology",
+      "Culturally safe: Indigenous data sovereignty and cultural protocols at the core"
+    ]
+  },
+
+  "key_features": {
+    "for_young_people": [
+      "Program Finder: Discover mentorship, education, employment, and cultural programs",
+      "My Pathway: Track progress and connect with support coordinators",
+      "Community Voices: Read stories from others who've walked similar paths (via Empathy Ledger)"
+    ],
+    "for_organizations": [
+      "Service Directory: Showcase programs and connect with referral networks",
+      "Impact Dashboard: Track outcomes using holistic wellbeing indicators",
+      "Collaborative Tools: Share insights while respecting privacy and data sovereignty"
+    ],
+    "for_community": [
+      "Story Platform: Share experiences with full consent control",
+      "Community Map: Visualize the network of support services",
+      "Excellence Hub: Celebrate achievements and innovations"
+    ]
+  },
+
+  "call_to_action": {
+    "primary": "Join the early adopter community",
+    "audiences": {
+      "service_providers": "Register your organization and be part of the connected network",
+      "young_people_families": "Explore the platform and help us build what you need",
+      "funders_stakeholders": "Partner with us to scale impact across Australia"
+    },
+    "urgency": "We're launching in early 2025 - be part of the founding community"
+  },
+
+  "suggested_article_structure": [
+    "Hook: A young person's experience navigating the fragmented system",
+    "The Problem: Statistics and systemic issues (brief)",
+    "The Vision: What JusticeHub is building",
+    "Key Features: What users can expect (with visuals)",
+    "The Difference: How this is different from existing approaches",
+    "Call to Action: How to get involved",
+    "Acknowledgment: Traditional Owners and community partners"
+  ],
+
+  "tone_guidance": {
+    "do": [
+      "Center community voices and agency",
+      "Use empowering, strength-based language",
+      "Be specific about features and benefits",
+      "Acknowledge the work of community partners"
+    ],
+    "avoid": [
+      "Deficit-based framing of young people",
+      "Savior narratives",
+      "Jargon and bureaucratic language",
+      "Overpromising - be honest about where we are"
+    ]
+  },
+
+  "sources_and_references": [
+    {
+      "type": "internal",
+      "source": "JusticeHub platform features (src/app/)",
+      "use": "Accurate feature descriptions"
+    },
+    {
+      "type": "internal",
+      "source": "Empathy Ledger integration",
+      "use": "Storytelling and consent model"
+    },
+    {
+      "type": "external",
+      "source": "AIHW Youth Justice reports",
+      "use": "Statistics and context"
+    },
+    {
+      "type": "internal",
+      "source": "ACT brand guidelines",
+      "use": "Voice and tone alignment"
+    }
+  ],
+
+  "target_length": "800-1200 words for launch article",
+  "target_platforms": ["JusticeHub /stories", "LinkedIn", "Partner newsletters"],
+
+  "review_notes": {
+    "cultural_sensitivity": "Include Traditional Owner acknowledgment. Have First Nations team member review before publication.",
+    "data_accuracy": "Verify statistics from AIHW before publishing",
+    "brand_alignment": "Run through justicehub-brand-alignment check"
+  }
+}

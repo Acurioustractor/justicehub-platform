@@ -1,0 +1,125 @@
+{
+  "description": "Additional Queensland youth justice organizations to scrape - commonly known providers",
+  "sources": [
+    {
+      "name": "Youth Advocacy Centre",
+      "url": "https://yac.net.au/",
+      "category": "legal_aid",
+      "priority": "high"
+    },
+    {
+      "name": "Aboriginal and Torres Strait Islander Legal Service (ATSILS)",
+      "url": "https://atsils.org.au/",
+      "category": "legal_aid",
+      "priority": "high"
+    },
+    {
+      "name": "Brisbane Youth Service",
+      "url": "https://www.brisyouth.org/",
+      "category": "housing",
+      "priority": "high"
+    },
+    {
+      "name": "Youth Housing and Reintegration Service (YHARS)",
+      "url": "https://yhars.org.au/",
+      "category": "housing",
+      "priority": "high"
+    },
+    {
+      "name": "Micah Projects",
+      "url": "https://micahprojects.org.au/",
+      "category": "housing",
+      "priority": "medium"
+    },
+    {
+      "name": "YFS (Youth and Family Service)",
+      "url": "https://yfs.org.au/",
+      "category": "family_support",
+      "priority": "high"
+    },
+    {
+      "name": "Youth Empowered Towards Independence (YETI)",
+      "url": "https://yetiservices.org.au/",
+      "category": "housing",
+      "priority": "medium"
+    },
+    {
+      "name": "Rosies Youth Mission",
+      "url": "https://rosies.org.au/",
+      "category": "outreach",
+      "priority": "medium"
+    },
+    {
+      "name": "Drug ARM Australasia",
+      "url": "https://www.drugarm.com.au/",
+      "category": "substance_abuse",
+      "priority": "high"
+    },
+    {
+      "name": "Lives Lived Well",
+      "url": "https://www.liveslivedwell.org.au/",
+      "category": "substance_abuse",
+      "priority": "high"
+    },
+    {
+      "name": "Queensland Program of Assistance to Survivors of Torture and Trauma (QPASTT)",
+      "url": "https://www.qpastt.org.au/",
+      "category": "mental_health",
+      "priority": "medium"
+    },
+    {
+      "name": "Anglicare Queensland",
+      "url": "https://www.anglicaresq.org.au/services/children-young-people/",
+      "category": "family_support",
+      "priority": "high"
+    },
+    {
+      "name": "UnitingCare Queensland",
+      "url": "https://uccommunity.org.au/service-type/children-young-people/",
+      "category": "family_support",
+      "priority": "high"
+    },
+    {
+      "name": "Youth Insearch Foundation",
+      "url": "https://www.youthinsearch.org.au/",
+      "category": "personal_development",
+      "priority": "medium"
+    },
+    {
+      "name": "ATSICHS Brisbane",
+      "url": "https://www.atsichs.com.au/",
+      "category": "health",
+      "priority": "high"
+    },
+    {
+      "name": "Institute for Urban Indigenous Health (IUIH)",
+      "url": "https://www.iuih.org.au/",
+      "category": "health",
+      "priority": "high"
+    },
+    {
+      "name": "Churches of Christ",
+      "url": "https://www.cofc.com.au/what-we-do/children-youth-families/",
+      "category": "family_support",
+      "priority": "medium"
+    },
+    {
+      "name": "Evolve Housing + Support",
+      "url": "https://evolvehousing.com.au/support/",
+      "category": "housing",
+      "priority": "medium"
+    },
+    {
+      "name": "ARIA (Adolescent & Young Adult Refugee Integrated Assistance)",
+      "url": "https://www.mccqld.org.au/services/aria",
+      "category": "multicultural_support",
+      "priority": "medium"
+    },
+    {
+      "name": "Youth and Family Focus",
+      "url": "https://www.youthandfamilyfocus.org.au/",
+      "category": "family_support",
+      "priority": "medium"
+    }
+  ]
+}

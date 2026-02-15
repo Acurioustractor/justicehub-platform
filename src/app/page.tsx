@@ -1,13 +1,50 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowRight, ArrowDown, Target, Award, DollarSign, TrendingUp, Users } from 'lucide-react';
+import { ArrowRight, ArrowDown, Target, Award, DollarSign, TrendingUp, Users, Sparkles, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
+
+import HomepageNetworkMap from '@/components/HomepageNetworkMap';
+import EmpathyLedgerStories from '@/components/EmpathyLedgerStories';
+import { ThematicSection } from '@/components/thematic-section';
+import { basecampLocations } from '@/content/excellence-map-locations';
+import { MapPin, Building2 } from 'lucide-react';
+
+interface HomepageStats {
+  programs_documented: number;
+  programs_with_outcomes: number;
+  outcomes_rate: number;
+  total_services: number;
+  youth_services: number;
+  total_people: number;
+  total_organizations: number;
+  states_covered: number;
+  estimated_cost_savings_millions: number;
+}
 
 export default function HomePage() {
   const [currentStatIndex, setCurrentStatIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [stats, setStats] = useState<HomepageStats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [isStatsFallback, setIsStatsFallback] = useState(false);
+
+  // Fetch live stats from database
+  useEffect(() => {
+    fetch('/api/homepage-stats')
+      .then(res => res.json())
+      .then(data => {
+        if (data.stats) {
+          setStats(data.stats);
+        }
+        if (data.is_fallback) {
+          setIsStatsFallback(true);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setStatsLoading(false));
+  }, []);
 
   // Only start rotation after mounting to prevent hydration issues
   useEffect(() => {
@@ -17,7 +54,7 @@ export default function HomePage() {
   // Rotate through impact stats
   useEffect(() => {
     if (!mounted) return;
-    
+
     const interval = setInterval(() => {
       setCurrentStatIndex((prev) => (prev + 1) % 3);
     }, 4000);
@@ -140,28 +177,54 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Platform Impact Metrics */}
+          {/* Platform Impact Metrics - Live from Database */}
           <div className="mb-16">
-            <h3 className="text-2xl font-bold mb-8 text-center">JUSTICEHUB IMPACT</h3>
+            <h3 className="text-2xl font-bold mb-2 text-center">JUSTICEHUB IMPACT</h3>
+            {isStatsFallback && (
+              <p className="text-sm text-gray-500 text-center mb-6">
+                (using cached data)
+              </p>
+            )}
+            {!isStatsFallback && <div className="mb-8" />}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="data-card text-center">
                 <div className="flex justify-center mb-4">
                   <Target className="h-8 w-8 text-black" />
                 </div>
-                <div className="font-mono text-4xl font-bold mb-2">150</div>
+                {statsLoading ? (
+                  <div className="font-mono text-4xl font-bold mb-2 flex justify-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+                  </div>
+                ) : (
+                  <div className="font-mono text-4xl font-bold mb-2">
+                    {stats?.programs_documented.toLocaleString() || '624'}
+                  </div>
+                )}
                 <p className="text-lg font-bold mb-1">Programs Documented</p>
-                <p className="text-sm text-blue-800 font-medium">+23% this year</p>
+                <p className="text-sm text-blue-800 font-medium">
+                  {stats?.outcomes_rate || 67}% with outcomes data
+                </p>
               </div>
-              
+
               <div className="data-card text-center">
                 <div className="flex justify-center mb-4">
                   <Users className="h-8 w-8 text-black" />
                 </div>
-                <div className="font-mono text-4xl font-bold mb-2">2,400</div>
-                <p className="text-lg font-bold mb-1">Youth Connected</p>
-                <p className="text-sm text-blue-800 font-medium">+45% this year</p>
+                {statsLoading ? (
+                  <div className="font-mono text-4xl font-bold mb-2 flex justify-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+                  </div>
+                ) : (
+                  <div className="font-mono text-4xl font-bold mb-2">
+                    {stats?.total_services.toLocaleString() || '150'}
+                  </div>
+                )}
+                <p className="text-lg font-bold mb-1">Active Services</p>
+                <p className="text-sm text-blue-800 font-medium">
+                  {stats?.states_covered || 7} states & territories
+                </p>
               </div>
-              
+
               <div className="data-card text-center">
                 <div className="flex justify-center mb-4">
                   <Award className="h-8 w-8 text-black" />
@@ -170,12 +233,20 @@ export default function HomePage() {
                 <p className="text-lg font-bold mb-1">Average Success Rate</p>
                 <p className="text-sm text-gray-600">vs 15.5% in detention</p>
               </div>
-              
+
               <div className="data-card text-center">
                 <div className="flex justify-center mb-4">
                   <DollarSign className="h-8 w-8 text-black" />
                 </div>
-                <div className="font-mono text-4xl font-bold mb-2">$45M</div>
+                {statsLoading ? (
+                  <div className="font-mono text-4xl font-bold mb-2 flex justify-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+                  </div>
+                ) : (
+                  <div className="font-mono text-4xl font-bold mb-2">
+                    ${stats?.estimated_cost_savings_millions || 45}M
+                  </div>
+                )}
                 <p className="text-lg font-bold mb-1">Cost Savings</p>
                 <p className="text-sm text-gray-600">Identified annually</p>
               </div>
@@ -192,6 +263,75 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Founding Network - Basecamps */}
+      <section className="section-padding bg-gradient-to-br from-ochre-50 to-orange-50 border-t-2 border-b-2 border-black">
+        <div className="container-justice">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-ochre-600 text-white font-bold text-sm uppercase tracking-wider mb-4">
+              <MapPin className="h-4 w-4" />
+              Founding Network
+            </div>
+            <h2 className="headline-truth mb-4">
+              4 basecamps. 4 regions. One mission.
+            </h2>
+            <p className="text-xl max-w-3xl mx-auto">
+              These founding organizations anchor the JusticeHub network—proving that
+              community-led solutions work from the red centre to urban Sydney.
+            </p>
+          </div>
+
+          {/* Basecamp Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {basecampLocations.map((basecamp) => (
+              <Link
+                key={basecamp.id}
+                href={basecamp.detailUrl}
+                className="bg-white border-2 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-3 h-3 bg-ochre-600 rounded-full"></div>
+                  <span className="text-sm font-bold text-gray-600 uppercase tracking-wider">
+                    {basecamp.city}, {basecamp.state}
+                  </span>
+                </div>
+                <h3 className="text-xl font-black mb-2">{basecamp.name}</h3>
+                <p className="text-sm text-gray-700 mb-4 line-clamp-2">
+                  {basecamp.description}
+                </p>
+                <div className="space-y-1">
+                  {basecamp.keyStats.slice(0, 2).map((stat, i) => (
+                    <div key={i} className="text-sm font-bold text-ochre-700 flex items-center gap-1">
+                      <span className="text-green-600">✓</span> {stat}
+                    </div>
+                  ))}
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* CTA to see full network */}
+          <div className="text-center flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/centre-of-excellence/map?category=basecamp"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-black text-white font-bold uppercase tracking-wider hover:bg-gray-800 transition-colors"
+            >
+              <MapPin className="h-5 w-5" />
+              VIEW NETWORK MAP
+            </Link>
+            <Link
+              href="/people"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-black font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
+            >
+              <Users className="h-5 w-5" />
+              MEET THE MOVEMENT
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* National Network Map */}
+      <HomepageNetworkMap />
 
       {/* What We Build */}
       <section className="section-padding bg-black">
@@ -244,6 +384,9 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Thematic Areas - Cross-cutting issues */}
+      <ThematicSection variant="full" featuredTheme="disability" />
+
       {/* Programs That Work - Grid Layout */}
       <section className="section-padding">
         <div className="container-justice">
@@ -294,7 +437,7 @@ export default function HomePage() {
             {/* More programs */}
             <div className="p-8 bg-black md:col-span-2 lg:col-span-3">
               <p className="text-2xl font-bold mb-4 text-white">
-                150+ programs across Australia. Working. Right now.
+                {stats?.programs_documented || 624}+ programs across Australia. Working. Right now.
               </p>
               <p className="text-xl mb-6 text-white">
                 The solutions exist. They're just invisible, underfunded, and 
@@ -315,14 +458,46 @@ export default function HomePage() {
             JusticeHub: Infrastructure for revolution
           </h2>
 
+          {/* ALMA Chat Feature - Full Width */}
+          <div className="mb-12 border-2 border-black bg-gradient-to-r from-green-50 to-blue-50 p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="flex-shrink-0">
+                <div className="w-20 h-20 bg-black flex items-center justify-center">
+                  <Sparkles className="w-10 h-10 text-green-400" />
+                </div>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-2xl font-black mb-2">ASK ALMA</h3>
+                <p className="text-lg mb-4">
+                  AI-powered guide to 624+ youth justice programs across Australia.
+                  Find services, explore evidence, connect with communities.
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                  <span className="px-3 py-1 bg-green-100 border border-green-600 text-green-800 text-sm font-bold">624 Programs</span>
+                  <span className="px-3 py-1 bg-blue-100 border border-blue-600 text-blue-800 text-sm font-bold">7 States</span>
+                  <span className="px-3 py-1 bg-purple-100 border border-purple-600 text-purple-800 text-sm font-bold">Real-time Data</span>
+                </div>
+              </div>
+              <div className="flex-shrink-0">
+                <Link
+                  href="/intelligence/chat"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-black text-white font-bold border-2 border-black hover:bg-green-700 transition-colors"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  ASK NOW
+                </Link>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="data-card">
               <h3 className="text-xl font-bold mb-4">GRASSROOTS DATABASE</h3>
               <p className="mb-4">
-                Every community program. Searchable. Shareable. 
+                Every community program. Searchable. Shareable.
                 No more reinventing wheels.
               </p>
-              <Link href="/grassroots" className="font-bold underline">
+              <Link href="/intelligence/interventions" className="font-bold underline">
                 Search programs →
               </Link>
             </div>
@@ -330,7 +505,7 @@ export default function HomePage() {
             <div className="data-card">
               <h3 className="text-xl font-bold mb-4">TALENT SCOUT</h3>
               <p className="mb-4">
-                Match young people with mentors based on dreams, 
+                Match young people with mentors based on dreams,
                 not risk factors. Human connection that works.
               </p>
               <Link href="/talent-scout" className="font-bold underline">
@@ -341,7 +516,7 @@ export default function HomePage() {
             <div className="data-card">
               <h3 className="text-xl font-bold mb-4">MONEY TRAIL</h3>
               <p className="mb-4">
-                Every dollar. Every decision. Every outcome. 
+                Every dollar. Every decision. Every outcome.
                 Transparency as a weapon for change.
               </p>
               <Link href="/transparency" className="font-bold underline">
@@ -350,79 +525,19 @@ export default function HomePage() {
             </div>
 
             <div className="data-card">
-              <h3 className="text-xl font-bold mb-4">STORIES PLATFORM</h3>
+              <h3 className="text-xl font-bold mb-4">STEWARDS</h3>
               <p className="mb-4">
-                Young voices. Unfiltered. Their words, their power 
-                to change the narrative.
+                Protect what works. Join the community nurturing
+                evidence-based youth justice reform.
               </p>
-              <Link href="/stories" className="font-bold underline">
-                Read stories →
+              <Link href="/stewards" className="font-bold underline">
+                Become a steward →
               </Link>
             </div>
           </div>
           
-          {/* Stories Grid */}
-          <div className="mt-16">
-            <h3 className="text-2xl font-bold mb-8 text-center">VOICES OF CHANGE</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="data-card">
-                <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm">
-                    IMAGE PLACEHOLDER
-                  </div>
-                </div>
-                <h4 className="text-lg font-bold mb-3">"I found my purpose"</h4>
-                <p className="text-gray-700 mb-4">
-                  "BackTrack didn't just teach me welding. They taught me I was worth something. 
-                  Now I'm mentoring other kids who've been where I was."
-                </p>
-                <p className="text-sm font-bold text-gray-600">— Marcus, 19, BackTrack Graduate</p>
-                <Link href="/stories" className="text-sm font-bold underline mt-2 inline-block">
-                  Read full story →
-                </Link>
-              </div>
-              
-              <div className="data-card">
-                <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm">
-                    IMAGE PLACEHOLDER
-                  </div>
-                </div>
-                <h4 className="text-lg font-bold mb-3">"They saw something in me"</h4>
-                <p className="text-gray-700 mb-4">
-                  "Everyone else saw a problem kid. The Youth Collective saw someone with potential. 
-                  Three years later, I'm studying social work to give back."
-                </p>
-                <p className="text-sm font-bold text-gray-600">— Aisha, 21, Logan Youth Collective</p>
-                <Link href="/stories" className="text-sm font-bold underline mt-2 inline-block">
-                  Read full story →
-                </Link>
-              </div>
-              
-              <div className="data-card">
-                <div className="aspect-video bg-gray-200 mb-4 border-2 border-black overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-gray-500 font-mono text-sm">
-                    IMAGE PLACEHOLDER
-                  </div>
-                </div>
-                <h4 className="text-lg font-bold mb-3">"Culture saved my life"</h4>
-                <p className="text-gray-700 mb-4">
-                  "Connecting with elders and learning traditional ways helped me understand who I am. 
-                  Now I help other young Aboriginal kids find their way too."
-                </p>
-                <p className="text-sm font-bold text-gray-600">— Jayden, 18, Healing Circles Program</p>
-                <Link href="/stories" className="text-sm font-bold underline mt-2 inline-block">
-                  Read full story →
-                </Link>
-              </div>
-            </div>
-            
-            <div className="text-center mt-8">
-              <Link href="/stories" className="cta-primary">
-                READ MORE STORIES
-              </Link>
-            </div>
-          </div>
+          {/* Empathy Ledger Stories - Real stories from the community */}
+          <EmpathyLedgerStories />
         </div>
       </section>
 

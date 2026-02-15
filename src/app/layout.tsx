@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { Providers } from '@/components/providers';
+import { ALMAChat } from '@/components/ui/alma-chat';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -27,13 +28,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
       <body className={`${inter.className} h-full antialiased`}>
-        <UserProvider>
-          <Providers>
-            <div className="min-h-full">
-              {children}
-            </div>
-          </Providers>
-        </UserProvider>
+        <Providers>
+          <div className="min-h-full">
+            {children}
+          </div>
+          <ALMAChat />
+        </Providers>
       </body>
     </html>
   );

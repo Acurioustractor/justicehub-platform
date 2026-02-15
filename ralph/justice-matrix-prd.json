@@ -1,0 +1,320 @@
+{
+  "name": "Justice Matrix Global Research",
+  "description": "Discover and extract global youth justice cases and advocacy campaigns for the Justice Matrix database",
+  "target_table": "justice_matrix_cases",
+  "secondary_tables": ["justice_matrix_campaigns", "justice_matrix_resources"],
+  "features": [
+    {
+      "id": "echr-cases",
+      "title": "European Court of Human Rights",
+      "description": "Youth justice and child rights cases from ECHR HUDOC database",
+      "priority": 1,
+      "passes": false,
+      "region": "europe",
+      "item_type": "case",
+      "sources": [
+        {
+          "name": "HUDOC Child Rights",
+          "url": "https://hudoc.echr.coe.int/eng#{\"kpthesaurus\":[\"122\"]}",
+          "type": "court_database",
+          "keywords": ["juvenile", "minor", "child detention", "youth justice"]
+        },
+        {
+          "name": "HUDOC Immigration Detention",
+          "url": "https://hudoc.echr.coe.int/eng#{\"kpthesaurus\":[\"194\"]}",
+          "type": "court_database",
+          "keywords": ["immigration detention", "refugee", "asylum", "deportation"]
+        }
+      ]
+    },
+    {
+      "id": "inter-american-cases",
+      "title": "Inter-American Court of Human Rights",
+      "description": "Youth justice cases from the Inter-American human rights system",
+      "priority": 2,
+      "passes": false,
+      "region": "americas",
+      "item_type": "case",
+      "sources": [
+        {
+          "name": "IACtHR Cases in Progress",
+          "url": "https://www.corteidh.or.cr/casos_en_tramite.cfm",
+          "type": "court_database"
+        },
+        {
+          "name": "IACtHR Resolved Cases",
+          "url": "https://www.corteidh.or.cr/casos_sentencias.cfm",
+          "type": "court_database"
+        }
+      ]
+    },
+    {
+      "id": "un-treaty-bodies",
+      "title": "UN Treaty Body Decisions",
+      "description": "CRC Committee and other UN treaty body decisions on youth justice",
+      "priority": 1,
+      "passes": false,
+      "region": "global",
+      "item_type": "case",
+      "sources": [
+        {
+          "name": "OHCHR Jurisprudence Database",
+          "url": "https://juris.ohchr.org",
+          "type": "court_database",
+          "keywords": ["CRC", "child", "juvenile", "detention"]
+        },
+        {
+          "name": "CRC General Comments",
+          "url": "https://www.ohchr.org/en/treaty-bodies/crc/general-comments",
+          "type": "guidance"
+        }
+      ]
+    },
+    {
+      "id": "us-federal-courts",
+      "title": "US Federal Court Cases",
+      "description": "Landmark US federal court decisions on youth justice and juvenile detention",
+      "priority": 3,
+      "passes": false,
+      "region": "americas",
+      "item_type": "case",
+      "sources": [
+        {
+          "name": "CourtListener Youth Justice",
+          "url": "https://www.courtlistener.com/?q=juvenile+justice&type=o",
+          "type": "legal_database"
+        },
+        {
+          "name": "Justia Immigration",
+          "url": "https://law.justia.com/cases/federal/appellate-courts/?topic=Immigration",
+          "type": "legal_database"
+        }
+      ]
+    },
+    {
+      "id": "african-court",
+      "title": "African Court on Human Rights",
+      "description": "Child rights cases from the African human rights system",
+      "priority": 4,
+      "passes": false,
+      "region": "africa",
+      "item_type": "case",
+      "sources": [
+        {
+          "name": "AfCHPR Judgments",
+          "url": "https://www.african-court.org/cpmt/finalised",
+          "type": "court_database"
+        },
+        {
+          "name": "African Committee of Experts",
+          "url": "https://www.acerwc.africa/decisions",
+          "type": "court_database"
+        }
+      ]
+    },
+    {
+      "id": "defence-for-children",
+      "title": "Defence for Children International",
+      "description": "Global child rights advocacy campaigns and resources",
+      "priority": 2,
+      "passes": false,
+      "region": "global",
+      "item_type": "campaign",
+      "sources": [
+        {
+          "name": "DCI Campaigns",
+          "url": "https://defenceforchildren.org/campaigns/",
+          "type": "advocacy_org"
+        },
+        {
+          "name": "DCI Resources",
+          "url": "https://defenceforchildren.org/resources/",
+          "type": "advocacy_org"
+        }
+      ]
+    },
+    {
+      "id": "crin-database",
+      "title": "Child Rights International Network",
+      "description": "CRIN legal database and campaign tracking",
+      "priority": 2,
+      "passes": false,
+      "region": "global",
+      "item_type": "mixed",
+      "sources": [
+        {
+          "name": "CRIN Legal",
+          "url": "https://home.crin.org/legal",
+          "type": "legal_database"
+        },
+        {
+          "name": "CRIN Campaigns",
+          "url": "https://home.crin.org/campaigns",
+          "type": "advocacy_org"
+        }
+      ]
+    },
+    {
+      "id": "raise-the-age",
+      "title": "Raise the Age Campaigns",
+      "description": "Global campaigns to raise the minimum age of criminal responsibility",
+      "priority": 3,
+      "passes": false,
+      "region": "global",
+      "item_type": "campaign",
+      "sources": [
+        {
+          "name": "Raise the Age Australia",
+          "url": "https://raisetheage.org.au",
+          "type": "advocacy_org"
+        },
+        {
+          "name": "Raise the Age Scotland",
+          "url": "https://www.cycj.org.uk/what-we-do/raise-the-age/",
+          "type": "advocacy_org"
+        }
+      ]
+    },
+    {
+      "id": "human-rights-watch",
+      "title": "Human Rights Watch Youth Reports",
+      "description": "HRW research and advocacy on children's rights and youth justice",
+      "priority": 3,
+      "passes": false,
+      "region": "global",
+      "item_type": "mixed",
+      "sources": [
+        {
+          "name": "HRW Children's Rights",
+          "url": "https://www.hrw.org/topic/childrens-rights",
+          "type": "advocacy_org"
+        },
+        {
+          "name": "HRW Juvenile Justice",
+          "url": "https://www.hrw.org/topic/childrens-rights/juvenile-justice",
+          "type": "advocacy_org"
+        }
+      ]
+    },
+    {
+      "id": "detention-campaigns",
+      "title": "Immigration Detention Campaigns",
+      "description": "Campaigns against child immigration detention worldwide",
+      "priority": 3,
+      "passes": false,
+      "region": "global",
+      "item_type": "campaign",
+      "sources": [
+        {
+          "name": "International Detention Coalition",
+          "url": "https://idcoalition.org/",
+          "type": "advocacy_org"
+        },
+        {
+          "name": "Global Detention Project",
+          "url": "https://www.globaldetentionproject.org/",
+          "type": "advocacy_org"
+        },
+        {
+          "name": "Together With Refugees UK",
+          "url": "https://togetherwithrefugees.org.uk/",
+          "type": "advocacy_org"
+        }
+      ]
+    },
+    {
+      "id": "asean-mechanisms",
+      "title": "ASEAN Human Rights Mechanisms",
+      "description": "Southeast Asian regional human rights developments",
+      "priority": 5,
+      "passes": false,
+      "region": "asia_pacific",
+      "item_type": "mixed",
+      "sources": [
+        {
+          "name": "AICHR",
+          "url": "https://aichr.org/",
+          "type": "regional_body"
+        },
+        {
+          "name": "ACWC",
+          "url": "https://acwc.asean.org/",
+          "type": "regional_body"
+        }
+      ]
+    },
+    {
+      "id": "oxford-ildc",
+      "title": "Oxford International Law Reports",
+      "description": "Academic international law case reports",
+      "priority": 5,
+      "passes": false,
+      "region": "global",
+      "item_type": "case",
+      "sources": [
+        {
+          "name": "Oxford Reports ILDC",
+          "url": "https://opil.ouplaw.com/home/oril",
+          "type": "legal_database",
+          "requires_subscription": true
+        }
+      ]
+    }
+  ],
+  "extraction_patterns": {
+    "case": {
+      "required_fields": ["jurisdiction", "case_citation", "year", "court", "strategic_issue", "key_holding"],
+      "optional_fields": ["authoritative_link", "categories", "outcome", "precedent_strength", "lat", "lng", "country_code"],
+      "ai_extraction": {
+        "prompt": "Extract the following from this legal case: citation, year, court name, jurisdiction, main legal issue, key holding/decision, and outcome (favorable/adverse/pending for child rights). Also identify categories from: non-refoulement, detention-conditions, due-process, pushbacks, third-country-transfers, asylum-access, family-separation, hearing-rights."
+      }
+    },
+    "campaign": {
+      "required_fields": ["country_region", "campaign_name", "lead_organizations", "goals"],
+      "optional_fields": ["notable_tactics", "outcome_status", "campaign_link", "is_ongoing", "start_year", "end_year", "categories", "lat", "lng", "country_code"],
+      "ai_extraction": {
+        "prompt": "Extract the following from this advocacy campaign: name, lead organizations, geographic focus, main goals, tactics used, current status (ongoing/completed), and start/end years if known."
+      }
+    }
+  },
+  "quality_signals": {
+    "relevance": {
+      "weight": 30,
+      "description": "Is this about youth justice, child rights, or juvenile detention?"
+    },
+    "precedent_value": {
+      "weight": 25,
+      "description": "How significant is this for future cases/campaigns?"
+    },
+    "geographic_coverage": {
+      "weight": 20,
+      "description": "Does it fill a gap in regional coverage?"
+    },
+    "recency": {
+      "weight": 15,
+      "description": "How recent and current is this?"
+    },
+    "actionability": {
+      "weight": 10,
+      "description": "How useful is this for practitioners?"
+    }
+  },
+  "sacred_boundaries": {
+    "never_scrape": [
+      "Individual case files with identifying info",
+      "Sealed juvenile court records",
+      "Private communications",
+      "Paywalled content without permission"
+    ],
+    "always_mark": [
+      "Indigenous rights cases",
+      "First Nations advocacy",
+      "Community-controlled campaigns"
+    ],
+    "always_check": [
+      "Publication permissions",
+      "Sensitive case details",
+      "Child privacy protections"
+    ]
+  }
+}

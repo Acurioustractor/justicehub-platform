@@ -1,18 +1,24 @@
 {
   "mcpServers": {
-    "airtable-stories": {
-      "command": "node",
-      "args": ["airtable-mcp-server/dist/index.js"],
-      "cwd": "/Users/benknight/Code/JusticeHub",
-      "env": {
-        "AIRTABLE_API_KEY": "your_airtable_api_key_here",
-        "AIRTABLE_BASE_ID": "your_airtable_base_id_here",
-        "AIRTABLE_STORIES_TABLE": "Stories",
-        "REDIS_HOST": "localhost",
-        "REDIS_PORT": "6379",
-        "CACHE_TTL": "3600",
-        "NODE_ENV": "development"
-      }
+    "playwright": {
+      "command": "echo",
+      "args": ["disabled - use agent-browser CLI instead"],
+      "disabled": true
+    },
+    "notion": {
+      "command": "echo",
+      "args": ["disabled"],
+      "disabled": true
+    },
+    "mcp-config-b-fzyb": {
+      "command": "echo",
+      "args": ["disabled"],
+      "disabled": true
+    },
+    "xero-expert": {
+      "command": "echo",
+      "args": ["disabled"],
+      "disabled": true
     }
   }
 }

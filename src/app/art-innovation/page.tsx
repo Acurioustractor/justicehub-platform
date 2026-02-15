@@ -1,573 +1,357 @@
 'use client';
 
-import { useState } from 'react';
-import { 
-  Palette,
-  Music,
-  Camera,
-  Film,
-  Mic,
-  Brush,
-  Image,
-  Headphones,
-  Award,
-  Upload,
-  Eye,
-  Download,
-  Share,
-  Star,
-  Users,
-  Calendar,
-  Trophy,
-  Play,
-  Heart,
-  Sparkles,
-  ArrowRight
-} from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
+import {
+  Palette, Camera, Film, Lightbulb, Sparkles,
+  ArrowRight, Play, ExternalLink, MapPin, Users
+} from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 
+interface ArtProject {
+  id: string;
+  title: string;
+  slug: string;
+  type: string;
+  tagline: string | null;
+  description: string;
+  featured_image_url: string | null;
+  video_url: string | null;
+  creators: Array<{name: string; role: string}>;
+  year: number | null;
+  location: string | null;
+  tags: string[];
+  is_featured: boolean;
+}
+
 export default function ArtAndInnovationPage() {
-  const [activeTab, setActiveTab] = useState('featured');
+  const [projects, setProjects] = useState<ArtProject[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState('all');
 
-  const featuredArt = [
-    {
-      id: 1,
-      title: "Voices from the Inside",
-      artist: "Marcus Thompson",
-      age: 17,
-      type: "Digital Art",
-      medium: "Procreate on iPad",
-      story: "Created during his time in a youth facility, Marcus uses digital art to express the journey from isolation to hope.",
-      image: "/art/marcus-voices.jpg",
-      program: "BackTrack Youth Works",
-      tags: ["Hope", "Transformation", "Digital"],
-      views: 1247,
-      likes: 89
-    },
-    {
-      id: 2,
-      title: "Country Strong",
-      artist: "Sarah Williams",
-      age: 19,
-      type: "Photography",
-      medium: "35mm Film",
-      story: "A series documenting cultural healing practices on Groote Eylandt, showing the power of connection to country.",
-      image: "/art/sarah-country.jpg",
-      program: "Groote Eylandt Cultural Healing",
-      tags: ["Culture", "Healing", "Photography"],
-      views: 2156,
-      likes: 143
-    },
-    {
-      id: 3,
-      title: "Future Me",
-      artist: "Jordan Chen",
-      age: 16,
-      type: "Music",
-      medium: "Original Hip-Hop Track",
-      story: "A rap song about seeing beyond current circumstances and building toward goals, created in youth mentorship program.",
-      audio: "/audio/jordan-future-me.mp3",
-      program: "Transition 2 Success",
-      tags: ["Music", "Goals", "Hip-Hop"],
-      views: 3421,
-      likes: 287
+  useEffect(() => {
+    async function fetchProjects() {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+
+      const { data, error } = await supabase
+        .from('art_innovation')
+        .select('*')
+        .eq('status', 'published')
+        .order('is_featured', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        setProjects(data);
+      }
+      setLoading(false);
     }
-  ];
 
-  const communityGallery = [
-    {
-      id: 4,
-      title: "Breaking Cycles",
-      artist: "Alex Rodriguez",
-      age: 18,
-      type: "Poetry",
-      medium: "Spoken Word Performance",
-      story: "A powerful piece about breaking generational patterns.",
-      program: "Youth Voice Collective",
-      tags: ["Poetry", "Change"]
-    },
-    {
-      id: 5,
-      title: "New Dawn",
-      artist: "Lily Aboriginal Name",
-      age: 15,
-      type: "Painting",
-      medium: "Acrylic on Canvas",
-      story: "Traditional dot painting with contemporary themes.",
-      program: "Cultural Arts Program",
-      tags: ["Traditional", "Contemporary"]
-    },
-    {
-      id: 6,
-      title: "Street Symphony",
-      artist: "Devon Smith",
-      age: 20,
-      type: "Music",
-      medium: "Electronic Beats",
-      story: "Mixing urban sounds with orchestral elements.",
-      program: "Music Production Workshop",
-      tags: ["Electronic", "Urban"]
+    fetchProjects();
+  }, []);
+
+  const filteredProjects = projects.filter(project => {
+    if (activeFilter === 'all') return true;
+    return project.type === activeFilter;
+  });
+
+  const featuredProjects = projects.filter(p => p.is_featured);
+  const projectTypes = ['all', ...new Set(projects.map(p => p.type))];
+
+  const getTypeIcon = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'art':
+        return <Palette className="h-5 w-5" />;
+      case 'campaign':
+        return <Sparkles className="h-5 w-5" />;
+      case 'innovation':
+      case 'technology':
+        return <Lightbulb className="h-5 w-5" />;
+      case 'multimedia':
+      case 'design':
+        return <Film className="h-5 w-5" />;
+      default:
+        return <Camera className="h-5 w-5" />;
     }
-  ];
-
-  const currentChallenge = {
-    title: "New Beginnings",
-    theme: "Create art that represents hope, change, or new opportunities",
-    deadline: "January 31, 2025",
-    submissions: 47,
-    prize: "Art supplies + featured gallery spot",
-    type: "All mediums welcome"
-  };
-
-  const upcomingChallenge = {
-    title: "Rhythm & Rhyme",
-    theme: "Create music, rap, or spoken word about your journey",
-    startDate: "February 1, 2025",
-    duration: "4 weeks",
-    prize: "Studio time + mentorship session",
-    type: "Audio submissions"
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Skip to main content link for accessibility */}
-      <a href="#main-content" className="skip-link">
-        Skip to main content
-      </a>
-      
-      {/* Unified Navigation */}
+    <div className="min-h-screen bg-white page-content">
       <Navigation />
 
-      <main id="main-content">
+      <main>
         {/* Hero Section */}
-        <section className="header-offset pb-16 border-b-2 border-black">
+        <section className="bg-gradient-to-br from-ochre-50 via-sand-50 to-eucalyptus-50 py-20 border-b-2 border-black">
           <div className="container-justice">
-            <div className="text-center max-w-4xl mx-auto">
-              <div className="mb-4">
-                <span className="inline-block bg-black text-white px-4 py-2 text-sm font-bold uppercase tracking-wider">
-                  Art & Innovation Hub
-                </span>
+            <div className="max-w-4xl">
+              <div className="inline-block bg-black text-white px-4 py-2 text-sm font-bold uppercase tracking-wider mb-6">
+                Art & Innovation
               </div>
-              <h1 className="headline-truth mb-6">
-                Where Creativity Meets Change
+              <h1 className="text-5xl md:text-6xl font-black mb-6">
+                Creative Works Driving Change
               </h1>
-              <p className="text-xl text-black font-medium max-w-3xl mx-auto leading-relaxed mb-8">
-                Showcasing the artistic talents and innovative solutions created by young people in justice programs. 
-                Real art, real innovation, real impact.
+              <p className="text-xl text-earth-700 font-medium mb-8 max-w-3xl">
+                Showcasing artistic expression, campaigns, and innovative solutions from the youth justice sector.
+                Real creativity, real impact, real change.
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-2xl mx-auto">
-                <div className="text-center">
-                  <div className="font-mono text-3xl font-bold">47</div>
-                  <p className="text-sm font-medium">Art pieces</p>
-                </div>
-                <div className="text-center">
-                  <div className="font-mono text-3xl font-bold">23</div>
-                  <p className="text-sm font-medium">Young artists</p>
-                </div>
-                <div className="text-center">
-                  <div className="font-mono text-3xl font-bold">8</div>
-                  <p className="text-sm font-medium">Programs</p>
-                </div>
-                <div className="text-center">
-                  <div className="font-mono text-3xl font-bold">12K</div>
-                  <p className="text-sm font-medium">Views</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
-        {/* Navigation Tabs */}
-        <section className="border-b-2 border-black">
-          <div className="container-justice py-6">
-            <div className="flex gap-4 justify-center">
-              <button
-                onClick={() => setActiveTab('featured')}
-                className={`px-6 py-3 font-bold tracking-wider transition-all ${
-                  activeTab === 'featured' 
-                    ? 'bg-black text-white' 
-                    : 'border-2 border-black hover:bg-black hover:text-white'
-                }`}
-              >
-                FEATURED ART
-              </button>
-              <button
-                onClick={() => setActiveTab('gallery')}
-                className={`px-6 py-3 font-bold tracking-wider transition-all ${
-                  activeTab === 'gallery' 
-                    ? 'bg-black text-white' 
-                    : 'border-2 border-black hover:bg-black hover:text-white'
-                }`}
-              >
-                COMMUNITY GALLERY
-              </button>
-              <button
-                onClick={() => setActiveTab('challenges')}
-                className={`px-6 py-3 font-bold tracking-wider transition-all ${
-                  activeTab === 'challenges' 
-                    ? 'bg-black text-white' 
-                    : 'border-2 border-black hover:bg-black hover:text-white'
-                }`}
-              >
-                CREATIVE CHALLENGES
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* Content Sections */}
-        <div className="container-justice py-12">
-          {/* Featured Art Tab */}
-          {activeTab === 'featured' && (
-            <div>
-              <div className="mb-12">
-                <h2 className="text-3xl font-bold mb-4 flex items-center gap-2">
-                  <Star className="h-8 w-8" />
-                  Featured Artists
-                </h2>
-                <p className="text-xl text-black font-medium mb-8">
-                  Spotlight on exceptional creative work from young people in our community.
-                </p>
-
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {featuredArt.map((art) => (
-                    <div key={art.id} className="group">
-                      <div className="aspect-[4/3] bg-gray-200 mb-4 relative overflow-hidden border-2 border-black">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          {art.type === 'Music' ? (
-                            <div className="text-center">
-                              <Music className="h-16 w-16 mb-4 text-black mx-auto" />
-                              <span className="font-mono text-black text-lg font-bold">{art.type.toUpperCase()}</span>
-                            </div>
-                          ) : art.type === 'Photography' ? (
-                            <div className="text-center">
-                              <Camera className="h-16 w-16 mb-4 text-black mx-auto" />
-                              <span className="font-mono text-black text-lg font-bold">{art.type.toUpperCase()}</span>
-                            </div>
-                          ) : (
-                            <div className="text-center">
-                              <Palette className="h-16 w-16 mb-4 text-black mx-auto" />
-                              <span className="font-mono text-black text-lg font-bold">{art.type.toUpperCase()}</span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="absolute top-4 right-4">
-                          <div className="bg-black text-white px-2 py-1 text-xs font-bold">
-                            {art.type}
-                          </div>
-                        </div>
-                        {art.type === 'Music' && (
-                          <div className="absolute bottom-4 left-4">
-                            <button className="bg-white text-black p-2 hover:bg-gray-100 transition-colors">
-                              <Play className="h-4 w-4" />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="border-2 border-black p-6">
-                        <h3 className="text-xl font-bold mb-2">{art.title}</h3>
-                        <p className="text-sm font-medium mb-1">by {art.artist}, age {art.age}</p>
-                        <p className="text-sm text-black mb-3">{art.medium}</p>
-                        <p className="text-black font-medium mb-4">{art.story}</p>
-                        
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex gap-2">
-                            <span className="flex items-center gap-1 text-xs">
-                              <Eye className="h-3 w-3" />
-                              {art.views}
-                            </span>
-                            <span className="flex items-center gap-1 text-xs">
-                              <Heart className="h-3 w-3" />
-                              {art.likes}
-                            </span>
-                          </div>
-                          <p className="text-xs font-bold">{art.program}</p>
-                        </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className="flex flex-wrap gap-1">
-                            {art.tags.map((tag) => (
-                              <span key={tag} className="border border-black px-2 py-1 text-xs font-bold">
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                          <div className="flex gap-2">
-                            <button className="cta-primary text-xs">
-                              <Eye className="h-3 w-3 mr-1" />
-                              View
-                            </button>
-                            <button className="border border-black px-2 py-1 text-xs font-bold hover:bg-black hover:text-white transition-all">
-                              <Share className="h-3 w-3" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Artist Spotlight */}
-              <div className="bg-gray-50 border-2 border-black p-8 mb-12">
-                <h3 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                  <Sparkles className="h-6 w-6" />
-                  Artist Spotlight: Marcus Thompson
-                </h3>
-                <div className="grid md:grid-cols-2 gap-8">
+              {!loading && projects.length > 0 && (
+                <div className="grid grid-cols-3 gap-8 max-w-2xl">
                   <div>
-                    <p className="text-black font-medium mb-4">
-                      Marcus discovered digital art during his time in a youth facility. What started as a way to pass time 
-                      became a powerful form of expression and healing. His work now inspires other young people to find 
-                      their creative voice.
-                    </p>
-                    <p className="text-black font-medium mb-6">
-                      "Art helped me see that my story doesn't end with my mistakes. It's just the beginning of something better."
-                    </p>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="font-bold">Pieces created:</span>
-                        <span>12</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-bold">Total views:</span>
-                        <span>4,892</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-bold">Awards:</span>
-                        <span>Youth Artist of the Month</span>
-                      </div>
-                    </div>
+                    <div className="text-4xl font-black text-earth-900 mb-1">{projects.length}</div>
+                    <p className="text-sm font-medium text-earth-700">Projects</p>
                   </div>
-                  <div className="space-y-4">
-                    <h4 className="font-bold">Recent Works</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gray-200 flex items-center justify-center">
-                          <Palette className="h-6 w-6" />
-                        </div>
-                        <div>
-                          <p className="font-bold text-sm">Hope Rising</p>
-                          <p className="text-xs text-black">Digital painting - 234 views</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gray-200 flex items-center justify-center">
-                          <Palette className="h-6 w-6" />
-                        </div>
-                        <div>
-                          <p className="font-bold text-sm">Tomorrow's Promise</p>
-                          <p className="text-xs text-black">Mixed media - 156 views</p>
-                        </div>
-                      </div>
-                    </div>
+                  <div>
+                    <div className="text-4xl font-black text-earth-900 mb-1">{featuredProjects.length}</div>
+                    <p className="text-sm font-medium text-earth-700">Featured</p>
+                  </div>
+                  <div>
+                    <div className="text-4xl font-black text-earth-900 mb-1">{projectTypes.length - 1}</div>
+                    <p className="text-sm font-medium text-earth-700">Categories</p>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
-          )}
+          </div>
+        </section>
 
-          {/* Community Gallery Tab */}
-          {activeTab === 'gallery' && (
-            <div>
-              <h2 className="text-3xl font-bold mb-8 flex items-center gap-2">
-                <Users className="h-8 w-8" />
-                Community Gallery
-              </h2>
-              
-              <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-                {communityGallery.map((art) => (
-                  <div key={art.id} className="group">
-                    <div className="aspect-square bg-gray-200 mb-3 relative overflow-hidden border border-black">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        {art.type === 'Music' ? (
-                          <Music className="h-8 w-8 text-black" />
-                        ) : art.type === 'Poetry' ? (
-                          <Mic className="h-8 w-8 text-black" />
-                        ) : art.type === 'Photography' ? (
-                          <Camera className="h-8 w-8 text-black" />
-                        ) : (
-                          <Palette className="h-8 w-8 text-black" />
-                        )}
-                      </div>
-                    </div>
-                    <h3 className="font-bold text-sm mb-1">{art.title}</h3>
-                    <p className="text-xs font-medium">{art.artist}, {art.age}</p>
-                    <p className="text-xs text-black">{art.program}</p>
-                    <div className="flex gap-1 mt-2">
-                      {art.tags.slice(0, 2).map((tag) => (
-                        <span key={tag} className="border border-black px-1 py-0.5 text-xs font-bold">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+        {/* Filters */}
+        {!loading && projects.length > 0 && (
+          <section className="border-b border-gray-200 bg-white sticky top-32 z-10">
+            <div className="container-justice py-6">
+              <div className="flex flex-wrap gap-3">
+                {projectTypes.map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setActiveFilter(type)}
+                    className={`px-4 py-2 font-bold uppercase tracking-wider text-sm transition-all border-2 border-black ${
+                      activeFilter === type
+                        ? 'bg-black text-white'
+                        : 'bg-white text-black hover:bg-earth-50'
+                    }`}
+                  >
+                    {type}
+                  </button>
                 ))}
               </div>
-
-              {/* Submit Art CTA */}
-              <div className="bg-black text-white p-8 text-center">
-                <h2 className="text-2xl font-bold mb-4">Share Your Creative Work</h2>
-                <p className="mb-6 font-medium max-w-2xl mx-auto">
-                  Are you creating art, music, poetry, photography, or other creative work? 
-                  We want to showcase your talents and share your voice with the community.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button className="bg-white text-black px-6 py-3 font-bold uppercase tracking-wider hover:bg-gray-100 transition-all">
-                    <Upload className="h-4 w-4 mr-2 inline" />
-                    Submit Your Art
-                  </button>
-                  <button className="border-2 border-white px-6 py-3 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-all">
-                    <Eye className="h-4 w-4 mr-2 inline" />
-                    View Guidelines
-                  </button>
-                </div>
-              </div>
             </div>
-          )}
+          </section>
+        )}
 
-          {/* Creative Challenges Tab */}
-          {activeTab === 'challenges' && (
-            <div>
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold mb-4">Monthly Creative Challenges</h2>
-                <p className="text-xl text-black font-medium max-w-2xl mx-auto">
-                  Join our community challenges to explore new creative skills and share your perspective.
-                </p>
-              </div>
+        {/* Loading State */}
+        {loading && (
+          <div className="container-justice py-20 text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ochre-600 mx-auto mb-4"></div>
+            <p className="text-earth-600">Loading projects...</p>
+          </div>
+        )}
 
-              <div className="grid md:grid-cols-2 gap-8 mb-12">
-                {/* Current Challenge */}
-                <div className="border-2 border-black p-8">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Camera className="h-8 w-8" />
-                    <h3 className="text-2xl font-bold">January 2025: "{currentChallenge.title}"</h3>
-                  </div>
-                  <p className="text-black font-medium mb-6">
-                    {currentChallenge.theme}
-                  </p>
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between">
-                      <span className="font-bold">Submissions:</span>
-                      <span>{currentChallenge.submissions} entries</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-bold">Deadline:</span>
-                      <span>{currentChallenge.deadline}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-bold">Prize:</span>
-                      <span>{currentChallenge.prize}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-bold">Medium:</span>
-                      <span>{currentChallenge.type}</span>
-                    </div>
-                  </div>
-                  <button className="cta-primary w-full">
-                    Submit Entry
-                  </button>
-                </div>
+        {/* Empty State */}
+        {!loading && projects.length === 0 && (
+          <div className="container-justice py-20 text-center">
+            <Sparkles className="h-16 w-16 text-earth-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-4">No Projects Yet</h2>
+            <p className="text-earth-600 mb-8">
+              Be the first to showcase your creative work or innovative solution!
+            </p>
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-bold hover:bg-earth-800 transition-colors"
+            >
+              Get in Touch
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        )}
 
-                {/* Upcoming Challenge */}
-                <div className="border-2 border-black p-8 bg-gray-50">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Music className="h-8 w-8" />
-                    <h3 className="text-2xl font-bold">February 2025: "{upcomingChallenge.title}"</h3>
-                  </div>
-                  <p className="text-black font-medium mb-6">
-                    {upcomingChallenge.theme}
-                  </p>
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between">
-                      <span className="font-bold">Opens:</span>
-                      <span>{upcomingChallenge.startDate}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-bold">Duration:</span>
-                      <span>{upcomingChallenge.duration}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-bold">Prize:</span>
-                      <span>{upcomingChallenge.prize}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-bold">Medium:</span>
-                      <span>{upcomingChallenge.type}</span>
-                    </div>
-                  </div>
-                  <button className="border-2 border-black w-full py-3 font-bold hover:bg-black hover:text-white transition-all">
-                    Get Notified
-                  </button>
-                </div>
-              </div>
-
-              {/* Past Challenge Winners */}
-              <div className="mb-12">
-                <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                  <Trophy className="h-6 w-6" />
-                  Recent Winners
-                </h3>
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div className="border border-black p-4">
-                    <div className="aspect-square bg-gray-200 mb-3 flex items-center justify-center">
-                      <Award className="h-8 w-8 text-black" />
-                    </div>
-                    <h4 className="font-bold">December: "Reflection"</h4>
-                    <p className="text-sm font-medium">Winner: Maya K., 18</p>
-                    <p className="text-xs text-black">"Mirror of Growth" - Photography series</p>
-                  </div>
-                  <div className="border border-black p-4">
-                    <div className="aspect-square bg-gray-200 mb-3 flex items-center justify-center">
-                      <Award className="h-8 w-8 text-black" />
-                    </div>
-                    <h4 className="font-bold">November: "Community"</h4>
-                    <p className="text-sm font-medium">Winner: Tyler R., 16</p>
-                    <p className="text-xs text-black">"Together We Rise" - Digital mural</p>
-                  </div>
-                  <div className="border border-black p-4">
-                    <div className="aspect-square bg-gray-200 mb-3 flex items-center justify-center">
-                      <Award className="h-8 w-8 text-black" />
-                    </div>
-                    <h4 className="font-bold">October: "Change"</h4>
-                    <p className="text-sm font-medium">Winner: Sam P., 19</p>
-                    <p className="text-xs text-black">"Phoenix Rising" - Rap song</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Bottom CTA */}
-        <section className="section-padding bg-black text-white">
-          <div className="container-justice text-center">
-            <h2 className="headline-truth mb-8 text-white">
-              Every piece of art tells a story.<br />
-              Every story changes lives.<br />
-              Every life has value.
+        {/* Featured Projects */}
+        {!loading && featuredProjects.length > 0 && activeFilter === 'all' && (
+          <section className="container-justice py-16">
+            <h2 className="text-3xl font-black mb-8 flex items-center gap-3">
+              <Sparkles className="h-8 w-8" />
+              Featured Projects
             </h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto font-medium">
-              Join our creative community. Share your art. Inspire others. 
-              Be part of a movement that values your voice and your vision.
+            <div className="grid md:grid-cols-2 gap-8">
+              {featuredProjects.map((project) => (
+                <Link
+                  key={project.id}
+                  href={`/art-innovation/${project.slug}`}
+                  className="group block border-2 border-black overflow-hidden hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all"
+                >
+                  {project.featured_image_url ? (
+                    <div className="w-full h-64 relative overflow-hidden bg-gray-900">
+                      <img
+                        src={project.featured_image_url}
+                        alt={project.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      {project.video_url && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                          <div className="bg-white rounded-full p-4">
+                            <Play className="h-8 w-8 text-black" />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="w-full h-64 bg-gradient-to-br from-ochre-100 to-sand-100 flex items-center justify-center">
+                      {getTypeIcon(project.type)}
+                    </div>
+                  )}
+
+                  <div className="p-6 bg-white">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="inline-flex items-center gap-2 px-3 py-1 bg-ochre-100 border border-earth-300 text-xs font-bold uppercase">
+                        {getTypeIcon(project.type)}
+                        {project.type}
+                      </span>
+                      {project.year && (
+                        <span className="text-sm text-earth-600 font-medium">{project.year}</span>
+                      )}
+                    </div>
+
+                    <h3 className="text-2xl font-bold mb-2 group-hover:text-ochre-600 transition-colors">
+                      {project.title}
+                    </h3>
+
+                    {project.tagline && (
+                      <p className="text-lg font-medium text-earth-700 mb-3">
+                        {project.tagline}
+                      </p>
+                    )}
+
+                    <p className="text-earth-700 mb-4 line-clamp-2">
+                      {project.description}
+                    </p>
+
+                    <div className="flex items-center gap-4 text-sm text-earth-600">
+                      {project.creators && project.creators.length > 0 && (
+                        <div className="flex items-center gap-1">
+                          <Users className="h-4 w-4" />
+                          <span className="font-medium">
+                            {project.creators.map(c => c.name).join(', ')}
+                          </span>
+                        </div>
+                      )}
+                      {project.location && (
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-4 w-4" />
+                          <span className="font-medium">{project.location}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {project.tags && project.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        {project.tags.slice(0, 3).map((tag, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 bg-sand-100 text-earth-800 text-xs font-medium border border-earth-200"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* All Projects Grid */}
+        {!loading && filteredProjects.length > 0 && (
+          <section className="container-justice py-16">
+            {activeFilter !== 'all' && (
+              <h2 className="text-3xl font-black mb-8">
+                {activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1)} Projects
+              </h2>
+            )}
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {filteredProjects.map((project) => (
+                <Link
+                  key={project.id}
+                  href={`/art-innovation/${project.slug}`}
+                  className="group block border-2 border-black overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+                >
+                  {project.featured_image_url ? (
+                    <div className="w-full h-48 relative overflow-hidden bg-gray-900">
+                      <img
+                        src={project.featured_image_url}
+                        alt={project.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full h-48 bg-gradient-to-br from-ochre-100 to-sand-100 flex items-center justify-center">
+                      <div className="text-center">
+                        {getTypeIcon(project.type)}
+                        <p className="mt-2 text-xs font-bold uppercase tracking-wider text-earth-600">
+                          {project.type}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="p-4 bg-white">
+                    <h3 className="text-lg font-bold mb-2 line-clamp-2 group-hover:text-ochre-600 transition-colors">
+                      {project.title}
+                    </h3>
+
+                    {project.tagline && (
+                      <p className="text-sm text-earth-700 font-medium mb-2 line-clamp-1">
+                        {project.tagline}
+                      </p>
+                    )}
+
+                    {project.creators && project.creators.length > 0 && (
+                      <p className="text-xs text-earth-600 font-medium">
+                        by {project.creators[0].name}
+                        {project.creators.length > 1 && ` +${project.creators.length - 1} more`}
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* CTA Section */}
+        <section className="bg-black text-white py-20">
+          <div className="container-justice text-center">
+            <h2 className="text-4xl md:text-5xl font-black mb-6">
+              Share Your Creative Work
+            </h2>
+            <p className="text-xl mb-8 max-w-2xl mx-auto">
+              Have an art project, campaign, or innovative solution making a difference in youth justice?
+              We'd love to showcase your work.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/innovation" className="inline-block bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-100 transition-all">
-                <ArrowRight className="inline mr-2 h-5 w-5" />
-                INNOVATION LAB
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-100 transition-all"
+              >
+                Submit Your Project
+                <ArrowRight className="h-5 w-5" />
               </Link>
-              <Link href="/stories/new" className="inline-block border-2 border-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-all">
-                <Mic className="inline mr-2 h-5 w-5" />
-                SHARE YOUR STORY
+              <Link
+                href="/stories"
+                className="inline-flex items-center justify-center gap-2 border-2 border-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-all"
+              >
+                View Stories
+                <ExternalLink className="h-5 w-5" />
               </Link>
             </div>
           </div>
         </section>
       </main>
 
-      {/* Unified Footer */}
       <Footer />
     </div>
   );

@@ -1,289 +1,306 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { 
-  ArrowLeft,
-  MapPin, 
-  Users, 
-  Target,
+import { useParams } from 'next/navigation';
+import {
+  MapPin,
+  Users,
   Phone,
   Mail,
   Globe,
-  Calendar,
   Award,
-  ChevronLeft,
-  ChevronRight,
-  ExternalLink,
+  Calendar,
+  TrendingUp,
   Heart,
-  Zap,
-  Star
+  ChevronRight,
+  ArrowLeft,
+  ExternalLink,
+  Mountain
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import ProfileCard from '@/components/ProfileCard';
 
-interface CommunityProgramDetail {
+interface ProfileData {
+  profile: {
+    id: string;
+    name?: string;
+    preferred_name?: string;
+    bio?: string;
+    profile_picture_url?: string;
+    organization?: {
+      name: string;
+    };
+  };
+  appearanceRole?: string;
+  appearanceExcerpt?: string;
+  isFeatured?: boolean;
+}
+
+// Founding Basecamps - Centre of Excellence network
+const FOUNDING_BASECAMP_SLUGS = ['oonchiumpa', 'bg-fit', 'bg fit', 'mounty-yarns', 'mounty yarns', 'picc'];
+
+interface CommunityProgram {
   id: string;
   name: string;
   organization: string;
+  organization_id?: string | null;
+  organization_slug?: string | null;
   location: string;
   state: string;
-  approach: 'Indigenous-led' | 'Community-based' | 'Grassroots' | 'Culturally-responsive';
+  approach: string;
   description: string;
-  full_description: string;
-  founded_year: number;
-  founder_story: string;
+  impact_summary: string;
   success_rate: number;
-  cost_per_participant?: number;
   participants_served: number;
-  contact_phone?: string;
-  contact_email?: string;
-  website?: string;
-  photos: Array<{
-    id: string;
-    url: string;
-    caption: string;
-  }>;
-  tags: string[];
+  years_operating: number;
+  contact_phone?: string | null;
+  contact_email?: string | null;
+  website?: string | null;
   is_featured: boolean;
   indigenous_knowledge: boolean;
   community_connection_score: number;
-  impact_stories: Array<{
-    quote: string;
-    author: string;
-    age?: number;
-    outcome: string;
-  }>;
-  outcomes: string[];
-  eligibility: string[];
-  community_partnerships: string[];
-  cultural_practices?: string[];
-  innovation_aspects: string[];
+  tags: string[];
+  founded_year: number;
+  alma_intervention_id?: string | null;
 }
 
-export default function CommunityProgramDetailPage() {
-  const params = useParams();
-  const [program, setProgram] = useState<CommunityProgramDetail | null>(null);
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+type ProgramApiRecord = {
+  id?: string | null;
+  name?: string | null;
+  organization_name?: string | null;
+  organization?: string | null;
+  organization_id?: string | null;
+  organization_slug?: string | null;
+  location?: string | null;
+  state?: string | null;
+  approach?: string | null;
+  description?: string | null;
+  impact_summary?: string | null;
+  success_rate?: number | null;
+  participants_served?: number | null;
+  years_operating?: number | null;
+  founded_year?: number | null;
+  contact_phone?: string | null;
+  contact_email?: string | null;
+  website?: string | null;
+  is_featured?: boolean | null;
+  indigenous_knowledge?: boolean | null;
+  community_connection_score?: number | null;
+  tags?: string[] | null;
+  alma_intervention_id?: string | null;
+};
+
+function toNumber(value: number | null | undefined, fallback = 0): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+}
+
+function asNullableString(value: unknown): string | null {
+  return typeof value === 'string' ? value : null;
+}
+
+function asNullableBoolean(value: unknown): boolean | null {
+  return typeof value === 'boolean' ? value : null;
+}
+
+function asStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.filter((item): item is string => typeof item === 'string');
+}
+
+function normalizeProgram(record: unknown): CommunityProgram | null {
+  if (!record || typeof record !== 'object') {
+    return null;
+  }
+
+  const raw = record as ProgramApiRecord;
+  const id = asNullableString(raw.id);
+  if (!id) {
+    return null;
+  }
+
+  const currentYear = new Date().getFullYear();
+  const yearsOperating = toNumber(raw.years_operating, 0);
+  const foundedYear = toNumber(
+    raw.founded_year,
+    yearsOperating > 0 ? Math.max(1900, currentYear - yearsOperating) : currentYear
+  );
+
+  return {
+    id,
+    name: asNullableString(raw.name) || 'Unnamed Program',
+    organization: asNullableString(raw.organization_name) || asNullableString(raw.organization) || 'Community Program',
+    organization_id: asNullableString(raw.organization_id),
+    organization_slug: asNullableString(raw.organization_slug),
+    location: asNullableString(raw.location) || 'Australia',
+    state: asNullableString(raw.state) || 'National',
+    approach: asNullableString(raw.approach) || 'Community-based',
+    description: asNullableString(raw.description) || 'No description available yet.',
+    impact_summary: asNullableString(raw.impact_summary) || 'No impact summary available yet.',
+    success_rate: toNumber(raw.success_rate, 0),
+    participants_served: toNumber(raw.participants_served, 0),
+    years_operating: yearsOperating,
+    contact_phone: asNullableString(raw.contact_phone),
+    contact_email: asNullableString(raw.contact_email),
+    website: asNullableString(raw.website),
+    is_featured: asNullableBoolean(raw.is_featured) ?? false,
+    indigenous_knowledge: asNullableBoolean(raw.indigenous_knowledge) ?? false,
+    community_connection_score: toNumber(raw.community_connection_score, 0),
+    tags: asStringArray(raw.tags),
+    founded_year: foundedYear,
+    alma_intervention_id: asNullableString(raw.alma_intervention_id),
+  };
+}
+
+function normalizeProfileData(input: unknown): ProfileData | null {
+  if (!input || typeof input !== 'object') {
+    return null;
+  }
+  const row = input as Record<string, unknown>;
+  const rawProfile = row.profile;
+  if (!rawProfile || typeof rawProfile !== 'object') {
+    return null;
+  }
+
+  const profileRecord = rawProfile as Record<string, unknown>;
+  const profileId = asNullableString(profileRecord.id);
+  if (!profileId) {
+    return null;
+  }
+
+  const organizationValue = profileRecord.organization;
+  let organization: { name: string } | undefined;
+  if (organizationValue && typeof organizationValue === 'object') {
+    const orgName = asNullableString((organizationValue as Record<string, unknown>).name);
+    if (orgName) {
+      organization = { name: orgName };
+    }
+  }
+
+  return {
+    profile: {
+      id: profileId,
+      name: asNullableString(profileRecord.name) ?? undefined,
+      preferred_name: asNullableString(profileRecord.preferred_name) ?? undefined,
+      bio: asNullableString(profileRecord.bio) ?? undefined,
+      profile_picture_url: asNullableString(profileRecord.profile_picture_url) ?? undefined,
+      organization,
+    },
+    appearanceRole: asNullableString(row.appearanceRole) ?? undefined,
+    appearanceExcerpt: asNullableString(row.appearanceExcerpt) ?? undefined,
+    isFeatured: asNullableBoolean(row.isFeatured) ?? undefined,
+  };
+}
+
+export default function ProgramDetailPage() {
+  const params = useParams<{ id: string }>();
+  const programId = params?.id;
+  const [program, setProgram] = useState<CommunityProgram | null>(null);
+  const [profiles, setProfiles] = useState<ProfileData[]>([]);
+  const [relatedPrograms, setRelatedPrograms] = useState<CommunityProgram[]>([]);
   const [loading, setLoading] = useState(true);
+  const [profilesLoading, setProfilesLoading] = useState(false);
+  const [isBasecampAffiliated, setIsBasecampAffiliated] = useState(false);
 
   useEffect(() => {
-    // Mock data - will be replaced with Supabase query
-    const mockPrograms: { [key: string]: CommunityProgramDetail } = {
-      '1': {
-        id: '1',
-        name: 'BackTrack Youth Works',
-        organization: 'BackTrack',
-        location: 'Armidale',
-        state: 'NSW',
-        approach: 'Community-based',
-        description: 'Innovative program combining vocational training, animal therapy, and intensive mentoring for disengaged youth.',
-        full_description: `BackTrack Youth Works was born from a simple observation: traditional youth services weren't working for the most disconnected young people. Founded in 2009 by Bernie Shakeshaft, BackTrack takes a radically different approach by combining hands-on vocational training with animal therapy and intensive mentoring.
+    async function fetchProgram() {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/programs/${encodeURIComponent(programId)}`, { cache: 'no-store' });
+        if (!response.ok) {
+          console.error('Error fetching program:', response.status, response.statusText);
+          setProgram(null);
+          return;
+        }
 
-        The program operates on the principle that every young person has potential, regardless of their past. Through working with rescue dogs, learning trades like welding and construction, and building genuine relationships with mentors, participants develop practical skills, emotional resilience, and most importantly, hope for the future.
+        const payload = await response.json();
+        if (!payload || typeof payload !== 'object') {
+          setProgram(null);
+          return;
+        }
+        const payloadRecord = payload as Record<string, unknown>;
+        if (!payloadRecord.success || !payloadRecord.program) {
+          setProgram(null);
+          return;
+        }
 
-        What makes BackTrack unique is its community-embedded approach. Rather than operating as an isolated service, BackTrack is woven into the fabric of Armidale's community. Local businesses provide work placements, community members volunteer as mentors, and the dogs that participants train often go on to serve the community as working dogs.
+        const normalizedProgram = normalizeProgram(payloadRecord.program);
+        if (!normalizedProgram) {
+          setProgram(null);
+          return;
+        }
+        setProgram(normalizedProgram);
 
-        The program's success lies in its understanding that healing happens through connection - to animals, to meaningful work, to caring adults, and to community. This isn't just a training program; it's a complete reimagining of how we support young people to build their futures.`,
-        founded_year: 2009,
-        founder_story: 'Bernie Shakeshaft founded BackTrack after working in mainstream youth services and recognizing that traditional approaches weren\'t reaching the most disconnected young people. His vision was to create a program that met young people where they were, not where the system thought they should be.',
-        success_rate: 87,
-        cost_per_participant: 58000,
-        participants_served: 300,
-        contact_phone: '02 6772 1234',
-        contact_email: 'info@backtrack.org.au',
-        website: 'https://backtrack.org.au',
-        photos: [
-          { id: '1', url: '/api/placeholder/800/600', caption: 'Youth working with rescue dogs in training session' },
-          { id: '2', url: '/api/placeholder/800/600', caption: 'Welding workshop with mentor guidance' },
-          { id: '3', url: '/api/placeholder/800/600', caption: 'Community project completion ceremony' },
-          { id: '4', url: '/api/placeholder/800/600', caption: 'Graduates with their trained dogs' }
-        ],
-        tags: ['Vocational Training', 'Animal Therapy', 'Mentorship', 'Rural NSW', 'Community Integration'],
-        is_featured: true,
-        indigenous_knowledge: false,
-        community_connection_score: 95,
-        impact_stories: [
-          {
-            quote: "BackTrack saved my life. I went from sleeping rough and getting arrested every week to having a trade, a home, and a future. The dogs taught me how to care for something other than myself.",
-            author: "Marcus Thompson",
-            age: 19,
-            outcome: "Now employed as a qualified welder and mentoring other youth"
-          },
-          {
-            quote: "My son was written off by everyone - schools, services, even family. BackTrack saw potential where others saw problems. He's now training to be a mentor himself.",
-            author: "Sarah Williams",
-            outcome: "Son completed welding certification and gained stable employment"
-          },
-          {
-            quote: "Working with the dogs taught me patience and responsibility. If I can train a traumatized rescue dog, I can handle anything life throws at me.",
-            author: "Jamie Chen",
-            age: 17,
-            outcome: "Completed program and started apprenticeship in animal training"
-          }
-        ],
-        outcomes: [
-          '87% of participants do not reoffend within 24 months',
-          '92% gain employment or return to education within 12 months',
-          '100% report improved self-confidence and life skills',
-          '85% maintain stable housing after program completion',
-          '78% of participants maintain employment for 2+ years',
-          '95% report improved mental health and wellbeing'
-        ],
-        eligibility: [
-          'Ages 12-18 years',
-          'Disengaged from mainstream education or employment',
-          'May have justice system involvement',
-          'Willing to participate in hands-on activities',
-          'Committed to animal welfare and training'
-        ],
-        community_partnerships: [
-          'Local businesses providing work placements',
-          'RSPCA and animal rescue organizations',
-          'Armidale community volunteers as mentors',
-          'Regional employers offering apprenticeships',
-          'Local schools for educational pathways'
-        ],
-        innovation_aspects: [
-          'First program in Australia to combine animal therapy with vocational training',
-          'Community-embedded approach rather than institutional model',
-          'Long-term mentoring relationships extending beyond program completion',
-          'Dual benefit model - helping youth while training rescue dogs',
-          'Evidence-based practice influencing national youth policy'
-        ]
-      },
-      '2': {
-        id: '2',
-        name: 'Healing Circles Program',
-        organization: 'Antakirinja Matu-Yankunytjatjara',
-        location: 'Alice Springs',
-        state: 'NT',
-        approach: 'Indigenous-led',
-        description: 'Traditional Aboriginal healing practices combined with elder mentorship for young Aboriginal people experiencing trauma.',
-        full_description: `The Healing Circles Program represents the profound wisdom of Aboriginal healing practices, adapted for contemporary challenges facing young Aboriginal people. Established in 2016 by the Antakirinja Matu-Yankunytjatjara Aboriginal Corporation, this program recognizes that healing from trauma requires connection to culture, country, and community.
+        // Check if affiliated with a founding basecamp
+        const orgSlug = normalizedProgram.organization_slug?.toLowerCase() || '';
+        const orgName = normalizedProgram.organization.toLowerCase();
+        const isBasecamp = FOUNDING_BASECAMP_SLUGS.some(
+          (basecamp) => orgSlug.includes(basecamp) || orgName.includes(basecamp)
+        );
+        setIsBasecampAffiliated(isBasecamp);
 
-        The program operates through traditional healing circles where young people sit with elders, sharing stories, learning traditional practices, and connecting with their cultural identity. This isn't therapy in the Western sense, but a return to ancient ways of healing that have sustained Aboriginal peoples for tens of thousands of years.
+        // Fetch related programs from canonical API, then filter by approach/state.
+        const relatedResponse = await fetch('/api/programs?limit=200', { cache: 'no-store' });
+        if (!relatedResponse.ok) {
+          return;
+        }
 
-        Central to the program is the understanding that many issues facing young Aboriginal people - substance abuse, depression, disconnection, anger - stem from cultural disconnection and intergenerational trauma. By reconnecting young people with their traditional knowledge, language, and cultural practices, healing happens at a deep, spiritual level.
+        const relatedPayload = await relatedResponse.json();
+        const relatedPayloadRecord = relatedPayload && typeof relatedPayload === 'object'
+          ? (relatedPayload as Record<string, unknown>)
+          : null;
+        const relatedRecords = Array.isArray(relatedPayloadRecord?.programs)
+          ? (relatedPayloadRecord.programs as unknown[])
+          : [];
+        const related = relatedRecords
+          .map(normalizeProgram)
+          .filter((item): item is CommunityProgram => item !== null)
+          .filter((item) => {
+            if (item.id === normalizedProgram.id) return false;
+            return item.approach === normalizedProgram.approach || item.state === normalizedProgram.state;
+          })
+          .slice(0, 3);
 
-        The program includes traditional ceremonies, bush medicine preparation, storytelling, art creation, and connection to country through cultural visits. Elders serve not just as teachers but as living links to unbroken cultural knowledge that spans millennia.
-
-        What makes this program extraordinary is its success in areas where mainstream services have failed. By working within Aboriginal cultural frameworks and honoring traditional knowledge systems, the program achieves healing outcomes that Western approaches alone cannot match.`,
-        founded_year: 2016,
-        founder_story: 'The program was developed by Aboriginal elders who recognized that young people were struggling with trauma and disconnection from culture. They understood that healing needed to happen through traditional ways, not just Western therapeutic approaches.',
-        success_rate: 78,
-        cost_per_participant: 25000,
-        participants_served: 120,
-        contact_phone: '08 8951 4251',
-        contact_email: 'healing@amyac.org.au',
-        website: 'https://amyac.org.au',
-        photos: [
-          { id: '1', url: '/api/placeholder/800/600', caption: 'Traditional healing circle with elders and youth' },
-          { id: '2', url: '/api/placeholder/800/600', caption: 'Bush medicine preparation with traditional knowledge holders' },
-          { id: '3', url: '/api/placeholder/800/600', caption: 'Cultural art creation session' },
-          { id: '4', url: '/api/placeholder/800/600', caption: 'Connection to country ceremony' }
-        ],
-        tags: ['Cultural Healing', 'Elder Mentorship', 'Traditional Knowledge', 'Trauma Recovery', 'Indigenous Wisdom'],
-        is_featured: true,
-        indigenous_knowledge: true,
-        community_connection_score: 98,
-        impact_stories: [
-          {
-            quote: "Connecting with elders and learning traditional ways helped me understand who I am. The healing circles gave me back my identity and showed me my place in the world.",
-            author: "Jayden Williams",
-            age: 18,
-            outcome: "Completed program and now helps facilitate healing circles for other youth"
-          },
-          {
-            quote: "My grandson was lost to drugs and anger. Through the healing circles, he found his way back to culture and family. The elders saw what we couldn't see.",
-            author: "Elder Mary Nganyinpa",
-            outcome: "Grandson completed program and studying to become a cultural liaison worker"
-          },
-          {
-            quote: "Learning about bush medicine and traditional healing showed me there are other ways to deal with pain. Ways that connect you to something bigger than yourself.",
-            author: "Lisa Namatjira",
-            age: 16,
-            outcome: "Overcame substance abuse and pursuing traditional medicine training"
-          }
-        ],
-        outcomes: [
-          '78% report significant reduction in trauma symptoms',
-          '85% maintain connection to cultural practices after program',
-          '92% improve family and community relationships',
-          '67% reduce or eliminate substance use',
-          '88% report improved mental health and spiritual wellbeing',
-          '75% become cultural mentors for other young people'
-        ],
-        eligibility: [
-          'Aboriginal and Torres Strait Islander youth aged 12-25',
-          'Experiencing trauma, substance abuse, or cultural disconnection',
-          'Willing to participate in traditional healing practices',
-          'Commitment to respectful engagement with elders and culture',
-          'Family and community support preferred but not required'
-        ],
-        community_partnerships: [
-          'Local Aboriginal community organizations',
-          'Traditional knowledge holders and elders',
-          'Regional health services providing wraparound support',
-          'Cultural centers and keeping places',
-          'Land councils for country access'
-        ],
-        cultural_practices: [
-          'Traditional healing circles and storytelling',
-          'Bush medicine preparation and application',
-          'Cultural art and craft creation',
-          'Connection to country ceremonies',
-          'Traditional language learning',
-          'Dreamtime story sharing'
-        ],
-        innovation_aspects: [
-          'Integration of traditional Aboriginal healing with contemporary trauma treatment',
-          'Elder-led program design respecting traditional knowledge systems',
-          'Holistic approach addressing spiritual, cultural, and emotional wellbeing',
-          'Model being adapted by other Aboriginal communities nationally',
-          'Evidence documenting effectiveness of traditional healing approaches'
-        ]
+        setRelatedPrograms(related);
+      } catch (error) {
+        console.error('Error fetching program:', error);
+        setProgram(null);
+      } finally {
+        setLoading(false);
       }
-    };
+    }
 
-    const selectedProgram = mockPrograms[params.id as string];
-    setProgram(selectedProgram || null);
-    setLoading(false);
-  }, [params.id]);
+    async function fetchProfiles() {
+      setProfilesLoading(true);
+      try {
+        const response = await fetch(`/api/programs/${encodeURIComponent(programId)}/profiles`);
+        if (response.ok) {
+          const data = await response.json();
+          const dataRecord = data && typeof data === 'object'
+            ? (data as Record<string, unknown>)
+            : null;
+          const profileRows = Array.isArray(dataRecord?.profiles)
+            ? (dataRecord.profiles as unknown[])
+            : [];
+          const normalizedProfiles = profileRows
+            .map(normalizeProfileData)
+            .filter((row): row is ProfileData => row !== null);
+          setProfiles(normalizedProfiles);
+        }
+      } catch (error) {
+        console.error('Error fetching profiles:', error);
+      } finally {
+        setProfilesLoading(false);
+      }
+    }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="font-mono">Loading program details...</div>
-      </div>
-    );
-  }
-
-  if (!program) {
-    return (
-      <div className="min-h-screen bg-white">
-        <Navigation />
-        <main className="pt-24 pb-16">
-          <div className="container-justice text-center">
-            <h1 className="text-3xl font-bold mb-4">Program not found</h1>
-            <p className="text-lg text-gray-600 mb-8">The community program you're looking for doesn't exist.</p>
-            <Link href="/community-programs" className="cta-primary">
-              Back to Community Programs
-            </Link>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  const nextPhoto = () => {
-    setCurrentPhotoIndex((prev) => (prev + 1) % program.photos.length);
-  };
-
-  const prevPhoto = () => {
-    setCurrentPhotoIndex((prev) => (prev - 1 + program.photos.length) % program.photos.length);
-  };
+    if (typeof programId === 'string' && programId.length > 0) {
+      fetchProgram();
+      fetchProfiles();
+    }
+  }, [programId]);
 
   const getApproachColor = (approach: string) => {
     switch (approach) {
@@ -295,339 +312,464 @@ export default function CommunityProgramDetailPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-pulse">
+            <div className="h-12 w-64 bg-gray-200 rounded mx-auto mb-4"></div>
+            <div className="h-6 w-48 bg-gray-200 rounded mx-auto"></div>
+          </div>
+          <p className="text-gray-600 mt-6">Loading program details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!program) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">Program Not Found</h1>
+          <p className="text-gray-600 mb-8">The program you're looking for doesn't exist.</p>
+          <Link href="/community-programs" className="cta-primary">
+            ← Back to Programs
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white page-content">
       <Navigation />
 
-      <main className="pt-24">
-        {/* Back Navigation */}
-        <section className="border-b border-gray-200 pb-4">
+      <main>
+        {/* Breadcrumb */}
+        <section className="header-offset pb-6 border-b">
           <div className="container-justice">
-            <Link 
-              href="/community-programs" 
-              className="inline-flex items-center gap-2 font-medium text-gray-700 hover:text-black transition-colors"
+            <Link
+              href="/community-programs"
+              className="inline-flex items-center gap-2 text-blue-800 hover:text-blue-600 font-medium"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to Community Programs
+              Back to All Programs
             </Link>
           </div>
         </section>
 
-        {/* Program Header */}
+        {/* Hero Section */}
         <section className="py-12 border-b-2 border-black">
           <div className="container-justice">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-              <div className="lg:col-span-2">
-                <div className="flex items-center gap-4 mb-6">
-                  <span className={`px-3 py-1 text-sm font-bold uppercase tracking-wider ${getApproachColor(program.approach)}`}>
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className={`px-4 py-2 text-sm font-bold uppercase tracking-wider ${getApproachColor(program.approach)}`}>
                     {program.approach}
                   </span>
                   {program.indigenous_knowledge && (
-                    <span className="px-3 py-1 text-sm font-bold uppercase tracking-wider bg-orange-600 text-white">
+                    <span className="px-4 py-2 bg-orange-100 text-orange-800 text-sm font-bold uppercase tracking-wider">
                       ✦ Indigenous Knowledge
                     </span>
                   )}
                   {program.is_featured && (
-                    <span className="px-3 py-1 text-sm font-bold uppercase tracking-wider bg-black text-white">
-                      Featured Program
+                    <span className="px-4 py-2 bg-yellow-100 text-yellow-800 text-sm font-bold uppercase tracking-wider">
+                      ★ Featured
                     </span>
+                  )}
+                  {isBasecampAffiliated && (
+                    <Link
+                      href="/centre-of-excellence"
+                      className="px-4 py-2 bg-ochre-600 text-white text-sm font-bold uppercase tracking-wider inline-flex items-center gap-2 hover:bg-ochre-700 transition-colors"
+                    >
+                      <Mountain className="w-4 h-4" />
+                      Centre of Excellence
+                    </Link>
+                  )}
+                  {program.alma_intervention_id && (
+                    <Link
+                      href={`/intelligence/interventions/${program.alma_intervention_id}`}
+                      className="px-4 py-2 bg-emerald-600 text-white text-sm font-bold uppercase tracking-wider inline-flex items-center gap-2 hover:bg-emerald-700 transition-colors"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Evidence Context
+                    </Link>
                   )}
                 </div>
 
-                <h1 className="headline-truth mb-4">{program.name}</h1>
-                <p className="text-xl font-medium text-gray-700 mb-2">{program.organization}</p>
-                <p className="text-lg flex items-center gap-2 mb-6 text-gray-600">
+                <h1 className="text-5xl font-bold mb-4">{program.name}</h1>
+                {program.organization_slug ? (
+                  <Link
+                    href={`/organizations/${program.organization_slug}`}
+                    className="text-2xl text-blue-700 hover:text-blue-600 mb-4 inline-flex items-center gap-2 font-medium"
+                  >
+                    {program.organization}
+                    <ExternalLink className="h-5 w-5" />
+                  </Link>
+                ) : (
+                  <p className="text-2xl text-gray-700 mb-4">{program.organization}</p>
+                )}
+                <p className="text-xl text-gray-600 flex items-center gap-2 mt-4">
                   <MapPin className="h-5 w-5" />
                   {program.location}, {program.state}
                 </p>
-                <p className="text-xl leading-relaxed text-gray-800">{program.description}</p>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 border-2 border-blue-800 p-6 mb-8">
+              <p className="text-xl leading-relaxed text-gray-800">
+                {program.impact_summary}
+              </p>
+            </div>
+
+            {/* Key Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="data-card text-center">
+                <div className="font-mono text-4xl font-bold text-blue-800 mb-2">
+                  {program.success_rate}%
+                </div>
+                <p className="font-medium text-gray-700">Success Rate</p>
+                <p className="text-sm text-gray-600 mt-1">Community-driven results</p>
               </div>
 
-              <div className="space-y-6">
-                <div className="data-card text-center bg-blue-50 border-l-4 border-blue-800">
-                  <div className="font-mono text-6xl font-bold mb-2 text-blue-800">{program.success_rate}%</div>
-                  <p className="text-lg font-bold">Success Rate</p>
-                  <p className="text-sm text-gray-600">Community-measured outcomes</p>
+              <div className="data-card text-center">
+                <div className="font-mono text-4xl font-bold text-orange-600 mb-2">
+                  {program.participants_served}+
                 </div>
+                <p className="font-medium text-gray-700">Lives Transformed</p>
+                <p className="text-sm text-gray-600 mt-1">Young people served</p>
+              </div>
 
-                <div className="space-y-4">
-                  <div className="data-card">
-                    <div className="grid grid-cols-2 gap-4 text-center">
-                      <div>
-                        <div className="font-mono text-3xl font-bold text-orange-600">{program.participants_served}+</div>
-                        <p className="text-sm font-medium">Lives Transformed</p>
-                      </div>
-                      <div>
-                        <div className="font-mono text-3xl font-bold text-blue-600">{new Date().getFullYear() - program.founded_year}</div>
-                        <p className="text-sm font-medium">Years Impact</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="data-card">
-                    <h3 className="font-bold mb-3">Community Connection</h3>
-                    <div className="flex items-center mb-2">
-                      <div className="flex-1 bg-gray-200 rounded-full h-3">
-                        <div 
-                          className="bg-blue-800 h-3 rounded-full transition-all duration-1000"
-                          style={{width: `${program.community_connection_score}%`}}
-                        />
-                      </div>
-                      <span className="ml-3 font-mono font-bold text-blue-800">{program.community_connection_score}%</span>
-                    </div>
-                    <p className="text-xs text-gray-600">Based on community partnerships and local integration</p>
-                  </div>
-
-                  {program.cost_per_participant && (
-                    <div className="data-card">
-                      <h3 className="font-bold mb-2">Annual Investment</h3>
-                      <p className="font-mono text-xl font-bold">${program.cost_per_participant.toLocaleString()}</p>
-                      <p className="text-sm text-gray-600">per participant</p>
-                    </div>
-                  )}
+              <div className="data-card text-center">
+                <div className="font-mono text-4xl font-bold text-blue-600 mb-2">
+                  {program.years_operating}
                 </div>
+                <p className="font-medium text-gray-700">Years Operating</p>
+                <p className="text-sm text-gray-600 mt-1">Since {program.founded_year}</p>
+              </div>
+
+              <div className="data-card text-center">
+                <div className="font-mono text-4xl font-bold text-green-600 mb-2">
+                  {program.community_connection_score}
+                </div>
+                <p className="font-medium text-gray-700">Community Score</p>
+                <p className="text-sm text-gray-600 mt-1">Out of 100</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Photo Gallery */}
-        {program.photos.length > 0 && (
-          <section className="py-16 border-b-2 border-black">
-            <div className="container-justice">
-              <h2 className="text-3xl font-bold mb-8">PROGRAM IN ACTION</h2>
-              
-              <div className="relative">
-                <div className="aspect-video bg-gray-200 relative overflow-hidden border-2 border-black">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="font-mono text-2xl text-gray-500">PROGRAM PHOTO</span>
-                  </div>
-                  
-                  {/* Navigation */}
-                  {program.photos.length > 1 && (
-                    <>
-                      <button
-                        onClick={prevPhoto}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-70 hover:bg-opacity-90 text-white p-3"
-                      >
-                        <ChevronLeft className="h-6 w-6" />
-                      </button>
-                      <button
-                        onClick={nextPhoto}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-70 hover:bg-opacity-90 text-white p-3"
-                      >
-                        <ChevronRight className="h-6 w-6" />
-                      </button>
-                    </>
-                  )}
-                </div>
-                
-                <p className="mt-4 text-center">
-                  <span className="font-bold">{currentPhotoIndex + 1} / {program.photos.length}:</span> {program.photos[currentPhotoIndex].caption}
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Program Story and Details */}
-        <section className="py-16">
+        {/* Program Details */}
+        <section className="py-16 border-b-2 border-black">
           <div className="container-justice">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-              <div className="lg:col-span-2 space-y-12">
-                {/* About the Program */}
-                <div>
-                  <h2 className="text-3xl font-bold mb-6">ABOUT THE PROGRAM</h2>
-                  <div className="prose prose-lg max-w-none">
-                    {program.full_description.split('\n\n').map((paragraph, index) => (
-                      <p key={index} className="mb-6 leading-relaxed text-gray-700">
-                        {paragraph.trim()}
-                      </p>
-                    ))}
-                  </div>
-                </div>
+              {/* Main Content */}
+              <div className="lg:col-span-2">
+                <h2 className="text-3xl font-bold mb-6">About This Program</h2>
+                <div className="prose prose-lg max-w-none">
+                  <p className="text-lg leading-relaxed text-gray-800 mb-6">
+                    {program.description}
+                  </p>
 
-                {/* Founder Story */}
-                <div>
-                  <h3 className="text-2xl font-bold mb-4">FOUNDED ON VISION</h3>
-                  <div className="data-card bg-orange-50 border-l-4 border-orange-600">
-                    <p className="text-lg leading-relaxed text-gray-700">{program.founder_story}</p>
-                    <p className="mt-4 text-sm text-gray-600 font-medium">Established {program.founded_year}</p>
-                  </div>
-                </div>
-
-                {/* Innovation Aspects */}
-                <div>
-                  <h3 className="text-2xl font-bold mb-6">WHAT MAKES IT INNOVATIVE</h3>
-                  <div className="space-y-4">
-                    {program.innovation_aspects.map((aspect, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <Zap className="h-5 w-5 mt-1 text-orange-600 flex-shrink-0" />
-                        <p className="text-lg leading-relaxed">{aspect}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Cultural Practices (for Indigenous programs) */}
-                {program.cultural_practices && (
-                  <div>
-                    <h3 className="text-2xl font-bold mb-6">CULTURAL PRACTICES</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {program.cultural_practices.map((practice, index) => (
-                        <div key={index} className="data-card bg-orange-50">
-                          <p className="font-medium">{practice}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Impact Stories */}
-                <div>
-                  <h3 className="text-2xl font-bold mb-6">VOICES OF TRANSFORMATION</h3>
-                  <div className="space-y-8">
-                    {program.impact_stories.map((story, index) => (
-                      <div key={index} className="data-card bg-blue-50">
-                        <blockquote className="text-xl leading-relaxed mb-4 text-gray-800">
-                          "{story.quote}"
-                        </blockquote>
-                        <div className="flex items-center justify-between">
-                          <cite className="text-lg font-bold not-italic">
-                            — {story.author}
-                            {story.age && <span className="text-gray-600 font-normal">, {story.age}</span>}
-                          </cite>
-                        </div>
-                        <p className="mt-2 text-sm text-blue-800 font-medium">{story.outcome}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-8">
-                {/* Contact Information */}
-                <div className="data-card">
-                  <h3 className="font-bold text-xl mb-4">GET CONNECTED</h3>
-                  <div className="space-y-4">
-                    {program.contact_phone && (
-                      <a href={`tel:${program.contact_phone}`} className="flex items-center gap-3 hover:text-blue-800 transition-colors">
-                        <Phone className="h-5 w-5" />
-                        <span className="font-medium">{program.contact_phone}</span>
-                      </a>
+                  <h3 className="text-2xl font-bold mt-8 mb-4">Our Approach</h3>
+                  <p className="text-lg leading-relaxed text-gray-800 mb-6">
+                    {program.approach === 'Indigenous-led' && (
+                      <>
+                        This program is led by Indigenous community members and grounded in traditional knowledge and cultural practices.
+                        We prioritize connection to country, elder wisdom, and cultural healing as pathways to transformation.
+                      </>
                     )}
-                    {program.contact_email && (
-                      <a href={`mailto:${program.contact_email}`} className="flex items-center gap-3 hover:text-blue-800 transition-colors">
-                        <Mail className="h-5 w-5" />
-                        <span className="font-medium">{program.contact_email}</span>
-                      </a>
+                    {program.approach === 'Community-based' && (
+                      <>
+                        Rooted in local community strengths and relationships, this program connects young people with
+                        trusted mentors, practical skills, and meaningful opportunities. We believe change happens through
+                        authentic community connection and tailored support.
+                      </>
                     )}
-                    {program.website && (
-                      <a href={program.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-blue-800 transition-colors">
-                        <Globe className="h-5 w-5" />
-                        <span className="font-medium">Visit website</span>
-                        <ExternalLink className="h-4 w-4" />
-                      </a>
+                    {program.approach === 'Grassroots' && (
+                      <>
+                        Built from the ground up by community members who understand the challenges firsthand, this program
+                        empowers young people to become agents of change in their own communities. We prioritize youth voice,
+                        leadership, and collective action.
+                      </>
                     )}
-                  </div>
-                  
-                  <div className="mt-6 pt-6 border-t">
-                    {program.contact_phone && (
-                      <a 
-                        href={`tel:${program.contact_phone}`}
-                        className="cta-primary w-full text-center block"
-                      >
-                        CONTACT PROGRAM
-                      </a>
+                    {program.approach === 'Culturally-responsive' && (
+                      <>
+                        Designed to honor and respond to the cultural backgrounds and experiences of participants, this program
+                        integrates cultural knowledge, family connections, and community values into every aspect of support.
+                      </>
                     )}
-                  </div>
-                </div>
+                  </p>
 
-                {/* Eligibility */}
-                <div className="data-card">
-                  <h3 className="font-bold text-xl mb-4">WHO CAN PARTICIPATE</h3>
-                  <ul className="space-y-3">
-                    {program.eligibility.map((item, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <span className="text-blue-800 font-bold mt-1">•</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
+                  <h3 className="text-2xl font-bold mt-8 mb-4">What Makes Us Effective</h3>
+                  <ul className="space-y-3 mb-6">
+                    <li className="flex items-start gap-3">
+                      <Heart className="h-6 w-6 text-blue-800 flex-shrink-0 mt-1" />
+                      <span className="text-lg">Relationship-centered approach with intensive mentoring and wraparound support</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Users className="h-6 w-6 text-blue-800 flex-shrink-0 mt-1" />
+                      <span className="text-lg">Deep community connections and locally-driven solutions</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <TrendingUp className="h-6 w-6 text-blue-800 flex-shrink-0 mt-1" />
+                      <span className="text-lg">Evidence-based practices combined with cultural wisdom</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <Award className="h-6 w-6 text-blue-800 flex-shrink-0 mt-1" />
+                      <span className="text-lg">Proven track record of {program.success_rate}% success rate over {program.years_operating} years</span>
+                    </li>
                   </ul>
-                </div>
 
-                {/* Proven Outcomes */}
-                <div className="data-card">
-                  <h3 className="font-bold text-xl mb-4">PROVEN OUTCOMES</h3>
-                  <div className="space-y-3">
-                    {program.outcomes.map((outcome, index) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <Award className="h-5 w-5 mt-0.5 text-blue-800 flex-shrink-0" />
-                        <p>{outcome}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Community Partnerships */}
-                <div className="data-card">
-                  <h3 className="font-bold text-xl mb-4">COMMUNITY PARTNERSHIPS</h3>
-                  <div className="space-y-2">
-                    {program.community_partnerships.map((partnership, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <Heart className="h-4 w-4 mt-1 text-orange-600 flex-shrink-0" />
-                        <span className="text-sm">{partnership}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Program Features */}
-                <div>
-                  <h4 className="font-bold mb-3">PROGRAM FEATURES</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {program.tags.map(tag => (
-                      <span key={tag} className="px-3 py-1 border-2 border-black text-sm font-medium hover:bg-black hover:text-white transition-all">
+                  <h3 className="text-2xl font-bold mt-8 mb-4">Focus Areas</h3>
+                  <div className="flex flex-wrap gap-2 mb-8">
+                    {program.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-4 py-2 bg-gray-100 border-2 border-black text-sm font-medium"
+                      >
                         {tag}
                       </span>
                     ))}
                   </div>
                 </div>
               </div>
+
+              {/* Sidebar */}
+              <div className="lg:col-span-1">
+                <div className="data-card sticky top-24">
+                  <h3 className="text-xl font-bold mb-6">Get In Touch</h3>
+
+                  <div className="space-y-4">
+                    {program.contact_phone && (
+                      <div className="flex items-start gap-3">
+                        <Phone className="h-5 w-5 text-blue-800 flex-shrink-0 mt-1" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-600 mb-1">Phone</p>
+                          <a
+                            href={`tel:${program.contact_phone}`}
+                            className="text-blue-800 hover:text-blue-600 font-medium"
+                          >
+                            {program.contact_phone}
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    {program.contact_email && (
+                      <div className="flex items-start gap-3">
+                        <Mail className="h-5 w-5 text-blue-800 flex-shrink-0 mt-1" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-600 mb-1">Email</p>
+                          <a
+                            href={`mailto:${program.contact_email}`}
+                            className="text-blue-800 hover:text-blue-600 font-medium break-all"
+                          >
+                            {program.contact_email}
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    {program.website && (
+                      <div className="flex items-start gap-3">
+                        <Globe className="h-5 w-5 text-blue-800 flex-shrink-0 mt-1" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-600 mb-1">Website</p>
+                          <a
+                            href={program.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-800 hover:text-blue-600 font-medium inline-flex items-center gap-1"
+                          >
+                            Visit website
+                            <ExternalLink className="h-4 w-4" />
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex items-start gap-3 pt-4 border-t">
+                      <MapPin className="h-5 w-5 text-blue-800 flex-shrink-0 mt-1" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-600 mb-1">Location</p>
+                        <p className="font-medium">{program.location}, {program.state}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <Calendar className="h-5 w-5 text-blue-800 flex-shrink-0 mt-1" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-600 mb-1">Established</p>
+                        <p className="font-medium">{program.founded_year}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 pt-8 border-t">
+                    <Link
+                      href="/services"
+                      className="block w-full text-center cta-secondary mb-3"
+                    >
+                      Find Immediate Help
+                    </Link>
+                    <Link
+                      href="/community-programs"
+                      className="block w-full text-center text-blue-800 hover:text-blue-600 font-bold text-sm"
+                    >
+                      ← Explore More Programs
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Call to Action */}
-        <section className="py-16 bg-black text-white">
-          <div className="container-justice text-center">
-            <h2 className="text-3xl font-bold mb-6">
-              Ready to be part of this transformation?
-            </h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto">
-              This program has transformed {program.participants_served}+ lives through community connection and 
-              {program.indigenous_knowledge ? ' traditional wisdom' : ' innovative approaches'}. 
-              Your journey could start here.
+        {/* Participant Stories */}
+        {profiles.length > 0 && (
+          <section className="py-16 bg-gradient-to-br from-blue-50 to-purple-50 border-t-2 border-b-2 border-black">
+            <div className="container-justice">
+              <h2 className="text-4xl font-bold mb-6 flex items-center gap-3">
+                <Users className="h-10 w-10" />
+                Hear from Participants
+              </h2>
+              <p className="text-xl text-gray-700 mb-10">
+                Real stories from young people who have been part of this transformative program.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {profiles.map((profileData, index) => (
+                  <ProfileCard
+                    key={profileData.profile.id + index}
+                    profile={profileData.profile}
+                    role={profileData.appearanceRole}
+                    storyExcerpt={profileData.appearanceExcerpt}
+                    isFeatured={profileData.isFeatured}
+                  />
+                ))}
+              </div>
+
+              <div className="mt-8 text-sm text-gray-700 p-6 bg-white/80 border-2 border-black">
+                <p>
+                  <strong>About these stories:</strong> Shared through <strong>Empathy Ledger</strong>,
+                  an Indigenous-led storytelling platform. All stories honor cultural protocols,
+                  maintain data sovereignty, and are shared with explicit consent from storytellers.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Related Evidence & Research */}
+        <section className="py-16 border-b-2 border-black bg-sand-50">
+          <div className="container-justice">
+            <h2 className="text-3xl font-bold mb-4">Related Evidence & Research</h2>
+            <p className="text-lg text-gray-700 mb-8">
+              Explore the evidence base supporting programs like this one.
             </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {program.contact_phone && (
-                <a 
-                  href={`tel:${program.contact_phone}`}
-                  className="bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-100 transition-all"
-                >
-                  CONTACT PROGRAM
-                </a>
-              )}
-              <Link 
-                href="/community-programs"
-                className="border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-all"
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Link
+                href={`/youth-justice-report/interventions?approach=${encodeURIComponent(program.approach)}`}
+                className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
               >
-                EXPLORE MORE PROGRAMS
+                <div className="text-ochre-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  ALMA Interventions
+                </div>
+                <h3 className="text-xl font-bold mb-2">Evidence-Based Approaches</h3>
+                <p className="text-gray-600 mb-4">
+                  View interventions rated by our ALMA system that align with {program.approach} programs.
+                </p>
+                <span className="text-ochre-600 font-bold inline-flex items-center gap-1">
+                  Explore <ChevronRight className="h-4 w-4" />
+                </span>
+              </Link>
+
+              <Link
+                href={`/centre-of-excellence/best-practice?state=${program.state}`}
+                className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+              >
+                <div className="text-eucalyptus-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  Best Practice
+                </div>
+                <h3 className="text-xl font-bold mb-2">State-Based Research</h3>
+                <p className="text-gray-600 mb-4">
+                  Best practice frameworks and case studies from {program.state}.
+                </p>
+                <span className="text-eucalyptus-600 font-bold inline-flex items-center gap-1">
+                  Learn More <ChevronRight className="h-4 w-4" />
+                </span>
+              </Link>
+
+              <Link
+                href="/centre-of-excellence/global-insights"
+                className="border-2 border-black p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+              >
+                <div className="text-blue-600 font-bold text-sm uppercase tracking-wider mb-2">
+                  Global Insights
+                </div>
+                <h3 className="text-xl font-bold mb-2">International Models</h3>
+                <p className="text-gray-600 mb-4">
+                  See how similar programs work in other countries around the world.
+                </p>
+                <span className="text-blue-600 font-bold inline-flex items-center gap-1">
+                  Discover <ChevronRight className="h-4 w-4" />
+                </span>
               </Link>
             </div>
           </div>
         </section>
+
+        {/* Related Programs */}
+        {relatedPrograms.length > 0 && (
+          <section className="py-16 bg-gray-50">
+            <div className="container-justice">
+              <h2 className="text-3xl font-bold mb-8 text-center">More Programs Like This</h2>
+              <p className="text-center text-gray-600 mb-8">
+                Similar programs by approach or location
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {relatedPrograms.map((relatedProgram) => (
+                  <div key={relatedProgram.id} className="data-card bg-white">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className={`px-2 py-1 text-xs font-bold uppercase tracking-wider ${getApproachColor(relatedProgram.approach)}`}>
+                        {relatedProgram.approach}
+                      </span>
+                      {relatedProgram.indigenous_knowledge && (
+                        <span className="text-orange-600 text-xs font-bold">✦ Indigenous</span>
+                      )}
+                    </div>
+
+                    <h3 className="font-bold text-lg mb-2">{relatedProgram.name}</h3>
+                    <p className="text-sm text-gray-600 mb-2">{relatedProgram.organization}</p>
+                    <p className="text-sm text-gray-600 mb-4 flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {relatedProgram.location}, {relatedProgram.state}
+                    </p>
+
+                    <p className="text-sm text-gray-700 mb-4 line-clamp-2">{relatedProgram.description}</p>
+
+                    <Link
+                      href={`/community-programs/${relatedProgram.id}`}
+                      className="text-sm font-bold underline text-blue-800 hover:text-blue-600 inline-flex items-center gap-1"
+                    >
+                      Learn more
+                      <ChevronRight className="h-4 w-4" />
+                    </Link>
+                  </div>
+                ))}
+              </div>
+
+              <div className="text-center mt-8">
+                <Link href="/community-programs" className="cta-secondary">
+                  VIEW ALL PROGRAMS
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
       </main>
 
       <Footer />

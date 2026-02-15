@@ -1,0 +1,299 @@
+{
+  "version": "1.0.0",
+  "state": "NSW",
+  "last_updated": "2025-10-11",
+  "description": "NSW youth justice and support service directories for automated scraping",
+  "sources": [
+    {
+      "id": "legal-aid-nsw",
+      "name": "Legal Aid NSW Offices",
+      "url": "https://www.legalaid.nsw.gov.au/contact-us/our-offices",
+      "priority": "high",
+      "category": "legal_aid",
+      "expected_services": 30,
+      "enabled": true,
+      "note": "Multiple office locations across NSW"
+    },
+    {
+      "id": "shopfront-youth-legal",
+      "name": "The Shopfront Youth Legal Centre",
+      "url": "https://www.theshopfront.org",
+      "priority": "high",
+      "category": "legal_aid",
+      "expected_services": 1,
+      "enabled": true,
+      "note": "Kings Cross youth legal service"
+    },
+    {
+      "id": "youth-law-australia-nsw",
+      "name": "Youth Law Australia NSW",
+      "url": "https://yla.org.au/nsw/",
+      "priority": "high",
+      "category": "legal_aid",
+      "expected_services": 5,
+      "enabled": true
+    },
+    {
+      "id": "community-restorative-centre",
+      "name": "Community Restorative Centre",
+      "url": "https://www.crcnsw.org.au",
+      "priority": "high",
+      "category": "case_management",
+      "expected_services": 3,
+      "enabled": true,
+      "note": "Reintegration support for people leaving prison"
+    },
+    {
+      "id": "aboriginal-legal-service-nsw",
+      "name": "Aboriginal Legal Service NSW/ACT",
+      "url": "https://www.alsnswact.org.au/contact_us",
+      "priority": "high",
+      "category": "legal_aid",
+      "expected_services": 15,
+      "enabled": true,
+      "note": "Multiple offices across NSW"
+    },
+    {
+      "id": "youth-off-streets",
+      "name": "Youth Off The Streets",
+      "url": "https://youthoffthestreets.com.au/what-we-do/",
+      "priority": "high",
+      "category": "housing",
+      "expected_services": 8,
+      "enabled": true,
+      "note": "Crisis accommodation and support"
+    },
+    {
+      "id": "mission-australia-nsw",
+      "name": "Mission Australia NSW Youth Services",
+      "url": "https://www.missionaustralia.com.au/what-we-do/children-youth-families/youth-services",
+      "priority": "high",
+      "category": "support",
+      "expected_services": 12,
+      "enabled": true
+    },
+    {
+      "id": "headspace-nsw",
+      "name": "headspace NSW Centres",
+      "url": "https://headspace.org.au/headspace-centres/?state=nsw",
+      "priority": "high",
+      "category": "mental_health",
+      "expected_services": 20,
+      "enabled": true,
+      "note": "20+ centres across NSW"
+    },
+    {
+      "id": "lifeline-nsw",
+      "name": "Lifeline NSW",
+      "url": "https://www.lifeline.org.au/resources/data/service-finder/",
+      "priority": "medium",
+      "category": "crisis_support",
+      "expected_services": 5,
+      "enabled": true
+    },
+    {
+      "id": "salvos-nsw",
+      "name": "The Salvation Army NSW Youth Services",
+      "url": "https://www.salvationarmy.org.au/need-help/youth-services/",
+      "priority": "high",
+      "category": "support",
+      "expected_services": 10,
+      "enabled": true
+    },
+    {
+      "id": "anglicare-nsw",
+      "name": "Anglicare NSW South & West",
+      "url": "https://www.anglicare.org.au/services/children-young-people/",
+      "priority": "high",
+      "category": "family_support",
+      "expected_services": 8,
+      "enabled": true
+    },
+    {
+      "id": "barnardos-australia",
+      "name": "Barnardos Australia",
+      "url": "https://www.barnardos.org.au/what-we-do/service-finder/",
+      "priority": "high",
+      "category": "family_support",
+      "expected_services": 15,
+      "enabled": true,
+      "note": "Major NSW presence"
+    },
+    {
+      "id": "wesley-mission",
+      "name": "Wesley Mission NSW",
+      "url": "https://www.wesleymission.org.au/find-a-service/",
+      "priority": "medium",
+      "category": "support",
+      "expected_services": 10,
+      "enabled": true
+    },
+    {
+      "id": "relationships-australia-nsw",
+      "name": "Relationships Australia NSW",
+      "url": "https://www.ransw.org.au/services/children-young-people/",
+      "priority": "medium",
+      "category": "family_support",
+      "expected_services": 6,
+      "enabled": true
+    },
+    {
+      "id": "link-up-nsw",
+      "name": "Link-Up NSW Aboriginal Corporation",
+      "url": "https://www.linkupnsw.org.au",
+      "priority": "high",
+      "category": "cultural_support",
+      "expected_services": 3,
+      "enabled": true
+    },
+    {
+      "id": "reachout-australia",
+      "name": "ReachOut Australia",
+      "url": "https://au.reachout.com/get-help",
+      "priority": "medium",
+      "category": "mental_health",
+      "expected_services": 1,
+      "enabled": true,
+      "note": "Online mental health service"
+    },
+    {
+      "id": "junction-works",
+      "name": "Junction Works (formerly Junction Support Services)",
+      "url": "https://www.junctionworks.org.au/services/",
+      "priority": "medium",
+      "category": "housing",
+      "expected_services": 4,
+      "enabled": true
+    },
+    {
+      "id": "youth-connections",
+      "name": "Youth Connections NSW",
+      "url": "https://www.education.gov.au/youth-support",
+      "priority": "medium",
+      "category": "education_training",
+      "expected_services": 8,
+      "enabled": true
+    },
+    {
+      "id": "st-vincent-de-paul-nsw",
+      "name": "St Vincent de Paul Society NSW",
+      "url": "https://www.vinnies.org.au/page/Find_Help/NSW/",
+      "priority": "medium",
+      "category": "support",
+      "expected_services": 12,
+      "enabled": true
+    },
+    {
+      "id": "uniting-nsw",
+      "name": "Uniting NSW Youth Services",
+      "url": "https://www.uniting.org/community-services",
+      "priority": "medium",
+      "category": "support",
+      "expected_services": 8,
+      "enabled": true
+    },
+    {
+      "id": "ted-noffs-foundation",
+      "name": "Ted Noffs Foundation",
+      "url": "https://www.noffs.org.au/service/",
+      "priority": "high",
+      "category": "substance_abuse",
+      "expected_services": 6,
+      "enabled": true,
+      "note": "Youth AOD services"
+    },
+    {
+      "id": "family-youth-services",
+      "name": "Family & Youth Services (FAYS)",
+      "url": "https://www.fays.com.au/our-services/",
+      "priority": "medium",
+      "category": "family_support",
+      "expected_services": 5,
+      "enabled": true
+    },
+    {
+      "id": "youth-solutions-australia",
+      "name": "Youth Solutions Australia",
+      "url": "https://www.youthsolutions.com.au/our-programs/",
+      "priority": "medium",
+      "category": "support",
+      "expected_services": 4,
+      "enabled": true
+    },
+    {
+      "id": "awabakal-aboriginal-coop",
+      "name": "Awabakal Newcastle Aboriginal Co-operative",
+      "url": "https://www.awabakal.org.au/services",
+      "priority": "high",
+      "category": "cultural_support",
+      "expected_services": 5,
+      "enabled": true,
+      "note": "Newcastle region"
+    },
+    {
+      "id": "catholic-care-sydney",
+      "name": "CatholicCare Sydney",
+      "url": "https://www.catholiccare.org/services/",
+      "priority": "medium",
+      "category": "family_support",
+      "expected_services": 8,
+      "enabled": true
+    },
+    {
+      "id": "flourish-australia",
+      "name": "Flourish Australia (formerly Richmond Fellowship)",
+      "url": "https://www.flourishaustralia.org.au/services/",
+      "priority": "medium",
+      "category": "mental_health",
+      "expected_services": 10,
+      "enabled": true,
+      "note": "Mental health support"
+    },
+    {
+      "id": "youth-block-redfern",
+      "name": "The Youth Block Redfern",
+      "url": "https://www.theyouthblock.org.au",
+      "priority": "high",
+      "category": "cultural_support",
+      "expected_services": 3,
+      "enabled": true,
+      "note": "Aboriginal youth service"
+    },
+    {
+      "id": "macarthur-youth-services",
+      "name": "Macarthur Youth Services",
+      "url": "https://www.macyouth.org.au/programs-services",
+      "priority": "medium",
+      "category": "youth_development",
+      "expected_services": 4,
+      "enabled": true
+    },
+    {
+      "id": "pcyc-nsw",
+      "name": "PCYC NSW (Police Citizens Youth Clubs)",
+      "url": "https://www.pcycnsw.org.au/find-a-club/",
+      "priority": "medium",
+      "category": "recreation",
+      "expected_services": 15,
+      "enabled": true,
+      "note": "Multiple clubs across NSW"
+    },
+    {
+      "id": "uncle-project",
+      "name": "The Uncle Project",
+      "url": "https://www.theuncleproject.org.au",
+      "priority": "high",
+      "category": "advocacy",
+      "expected_services": 1,
+      "enabled": true,
+      "note": "Indigenous mentoring program"
+    }
+  ],
+  "statistics": {
+    "total_sources": 30,
+    "high_priority": 15,
+    "medium_priority": 15,
+    "estimated_total_services": 250,
+    "enabled_sources": 30
+  }
+}

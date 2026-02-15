@@ -1,136 +1,73 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createServiceClient } from '@/lib/supabase/service'
+import { NextResponse } from 'next/server'
 
-// Use module-specific Supabase credentials
-const supabaseUrl = process.env.YJSF_SUPABASE_URL || process.env.SUPABASE_URL;
-const supabaseKey = process.env.YJSF_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+export const dynamic = 'force-dynamic';
 
-if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase environment variables for Service Finder');
-  console.error('YJSF_SUPABASE_URL:', !!process.env.YJSF_SUPABASE_URL);
-  console.error('SUPABASE_URL:', !!process.env.SUPABASE_URL);
-  console.error('YJSF_SUPABASE_ANON_KEY:', !!process.env.YJSF_SUPABASE_ANON_KEY);
-  console.error('SUPABASE_ANON_KEY:', !!process.env.SUPABASE_ANON_KEY);
-}
-
-const supabase = createClient(supabaseUrl!, supabaseKey!, {
-  auth: {
-    persistSession: false,
-    autoRefreshToken: false
-  }
-});
-
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
   try {
-    // Return mock data if Supabase is not configured
-    if (!supabaseUrl || !supabaseKey) {
-      console.log('Returning mock data - Supabase not configured');
-      return NextResponse.json({
-        success: true,
-        data: [],
-        pagination: {
-          page: 1,
-          limit: 20,
-          total: 0,
-          totalPages: 0
-        }
-      });
-    }
+    const supabase = createServiceClient()
 
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const search = searchParams.get('search') || '';
-    const location = searchParams.get('location') || '';
+    const { searchParams } = new URL(request.url)
+  const limit = parseInt(searchParams.get('limit') || '12')
+  const page = parseInt(searchParams.get('page') || '1')
+  const category = searchParams.get('category')
+  const state = searchParams.get('state')
+  const youthSpecific = searchParams.get('youth_specific')
+  const indigenousSpecific = searchParams.get('indigenous_specific')
 
-    let query = supabase
-      .from('services')
-      .select(`
-        *,
-        organizations(*),
-        locations(*),
-        contacts(*)
-      `)
-      .eq('project', 'youth-justice-service-finder'); // Filter for youth justice services
+  const from = (page - 1) * limit
+  const to = from + limit - 1
 
-    // Apply filters
-    if (search) {
-      query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%,keywords.ilike.%${search}%`);
-    }
-    
-    if (location) {
-      query = query.or(`locations.locality.ilike.%${location}%,locations.region.ilike.%${location}%,locations.state.ilike.%${location}%`);
-    }
+  // Use the services_complete view for frontend compatibility
+  let query = supabase
+    .from('services_complete')
+    .select('*', { count: 'exact' })
+    .eq('active', true)
+    .range(from, to)
+    .order('created_at', { ascending: false })
 
-    // Apply pagination
-    const from = (page - 1) * limit;
-    const to = from + limit - 1;
-    
-    query = query.range(from, to);
+  // Apply filters
+  if (category) {
+    query = query.contains('categories', [category])
+  }
 
-    const { data, error, count } = await query;
-    
-    if (error) {
-      console.error('Supabase query error:', error);
-      return NextResponse.json({
-        success: false,
-        error: 'Failed to fetch services',
-        message: error.message
-      }, { status: 500 });
-    }
+  if (state) {
+    query = query.eq('location.state', state)
+  }
 
-    return NextResponse.json({
-      success: true,
-      data: data || [],
-      pagination: {
-        page,
-        limit,
-        total: count || 0,
-        totalPages: Math.ceil((count || 0) / limit)
-      }
-    });
-    
-  } catch (error: any) {
-    console.error('API error:', error);
+  if (youthSpecific === 'true') {
+    query = query.eq('youth_specific', true)
+  }
+
+  if (indigenousSpecific === 'true') {
+    query = query.eq('indigenous_specific', true)
+  }
+
+  const { data, error, count } = await query
+
+  if (error) {
+    console.error('Services API error:', error)
     return NextResponse.json({
       success: false,
-      error: 'Failed to fetch services',
-      message: error.message
-    }, { status: 500 });
+      error: error.message
+    }, { status: 500 })
   }
-}
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    
-    const { data, error } = await supabase
-      .from('services')
-      .insert([{
-        ...body,
-        project: 'youth-justice-service-finder'
-      }])
-      .select()
-      .single();
-
-    if (error) {
-      return NextResponse.json({
-        success: false,
-        error: 'Failed to create service',
-        message: error.message
-      }, { status: 500 });
+  return NextResponse.json({
+    success: true,
+    data,
+    pagination: {
+      total: count || 0,
+      page,
+      limit,
+      totalPages: Math.ceil((count || 0) / limit)
     }
-
-    return NextResponse.json({
-      success: true,
-      data
-    }, { status: 201 });
-
-  } catch (error: any) {
+  })
+  } catch (error) {
+    console.error('Services API error:', error);
     return NextResponse.json({
       success: false,
-      error: 'Failed to create service',
-      message: error.message
+      error: 'Internal server error'
     }, { status: 500 });
   }
 }

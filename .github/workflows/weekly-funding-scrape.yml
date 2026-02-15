@@ -1,0 +1,126 @@
+name: ALMA Weekly Funding Intelligence
+
+on:
+  # Schedule - runs every Monday at 6am AEST (8pm UTC Sunday)
+  schedule:
+    - cron: '0 20 * * 0'
+
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      source:
+        description: 'Specific source to scrape (optional)'
+        required: false
+        default: ''
+        type: string
+      generate_report:
+        description: 'Generate weekly report after scraping'
+        required: true
+        default: true
+        type: boolean
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  scrape-funding:
+    name: Scrape Funding Opportunities
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install cheerio for HTML parsing
+        run: npm install cheerio
+
+      - name: Create .env.local
+        run: |
+          cat << EOF > .env.local
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          FIRECRAWL_API_KEY=${{ secrets.FIRECRAWL_API_KEY }}
+          EOF
+
+      - name: Run funding scraper
+        run: |
+          chmod +x scripts/alma-funding-scrape.mjs
+          node scripts/alma-funding-scrape.mjs ${{ github.event.inputs.source && format('--source {0}', github.event.inputs.source) || '' }} --verbose 2>&1 | tee funding-scrape.log
+
+      - name: Upload scrape logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: funding-scrape-logs
+          path: funding-scrape.log
+          retention-days: 30
+
+  generate-report:
+    name: Generate Weekly Report
+    needs: scrape-funding
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.generate_report != 'false' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Create .env.local
+        run: |
+          cat << EOF > .env.local
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          EOF
+
+      - name: Generate weekly intelligence report
+        run: |
+          chmod +x scripts/alma-weekly-report.ts
+          npx tsx scripts/alma-weekly-report.ts 2>&1 | tee weekly-report.log
+
+      - name: Upload report logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-report-logs
+          path: weekly-report.log
+          retention-days: 30
+
+  notify:
+    name: Send Notifications
+    needs: [scrape-funding, generate-report]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Summary
+        run: |
+          echo "## Weekly Funding Intelligence Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Scrape Job: ${{ needs.scrape-funding.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Report Job: ${{ needs.generate-report.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "View the funding pipeline at: https://justicehub.org.au/admin/funding" >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Weekly funding intelligence workflow failed"
+          # Add Slack/Discord notification here if desired

@@ -1,0 +1,30 @@
+{
+  "completed": [
+    "AIHW Youth Justice",
+    "AIHW Youth Detention",
+    "QLD Youth Justice",
+    "NSW Youth Justice",
+    "WA Youth Justice",
+    "NT Youth Justice",
+    "TAS Youth Justice",
+    "ACT Community Services",
+    "NATSILS",
+    "SNAICC",
+    "QATSICPP",
+    "Amnesty Australia"
+  ],
+  "failed": [
+    "VIC Youth Justice",
+    "SA Youth Justice",
+    "ALS NSW/ACT",
+    "VALS",
+    "NAAJA",
+    "ALRM SA",
+    "ALS WA",
+    "AIC Research",
+    "Clearinghouse for Youth Justice",
+    "Youth Law Australia",
+    "Human Rights Law Centre"
+  ],
+  "lastIndex": 22
+}

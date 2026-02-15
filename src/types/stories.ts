@@ -43,7 +43,10 @@ export interface StoryEngagement {
 
 export interface StoryMetadata {
   reading_time?: string;
+  /** @deprecated Use impact_level instead - ALMA uses signals not scores */
   impact_score?: number;
+  /** Impact indicator using categorical signals (High/Growing/Emerging) instead of numeric scores */
+  impact_level?: 'high' | 'growing' | 'emerging';
   featured: boolean;
   editor_pick: boolean;
   community_choice: boolean;

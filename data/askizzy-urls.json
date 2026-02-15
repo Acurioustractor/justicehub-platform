@@ -1,0 +1,1376 @@
+{
+  "generated": "2025-10-11T01:15:12.045Z",
+  "total_urls": 228,
+  "categories": 6,
+  "locations": 38,
+  "urls": [
+    {
+      "category": "housing",
+      "location": "Brisbane-QLD",
+      "url": "https://askizzy.org.au/housing/Brisbane-QLD",
+      "priority": "high"
+    },
+    {
+      "category": "housing",
+      "location": "Gold-Coast-QLD",
+      "url": "https://askizzy.org.au/housing/Gold-Coast-QLD",
+      "priority": "medium"
+    },
+    {
+      "category": "housing",
+      "location": "Sunshine-Coast-QLD",
+      "url": "https://askizzy.org.au/housing/Sunshine-Coast-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Townsville-QLD",
+      "url": "https://askizzy.org.au/housing/Townsville-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Cairns-QLD",
+      "url": "https://askizzy.org.au/housing/Cairns-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Toowoomba-QLD",
+      "url": "https://askizzy.org.au/housing/Toowoomba-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Ipswich-QLD",
+      "url": "https://askizzy.org.au/housing/Ipswich-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Logan-City-QLD",
+      "url": "https://askizzy.org.au/housing/Logan-City-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Queensland",
+      "url": "https://askizzy.org.au/housing/Queensland",
+      "priority": "high"
+    },
+    {
+      "category": "housing",
+      "location": "Sydney-NSW",
+      "url": "https://askizzy.org.au/housing/Sydney-NSW",
+      "priority": "high"
+    },
+    {
+      "category": "housing",
+      "location": "Newcastle-NSW",
+      "url": "https://askizzy.org.au/housing/Newcastle-NSW",
+      "priority": "medium"
+    },
+    {
+      "category": "housing",
+      "location": "Wollongong-NSW",
+      "url": "https://askizzy.org.au/housing/Wollongong-NSW",
+      "priority": "medium"
+    },
+    {
+      "category": "housing",
+      "location": "Parramatta-NSW",
+      "url": "https://askizzy.org.au/housing/Parramatta-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Liverpool-NSW",
+      "url": "https://askizzy.org.au/housing/Liverpool-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Penrith-NSW",
+      "url": "https://askizzy.org.au/housing/Penrith-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Blacktown-NSW",
+      "url": "https://askizzy.org.au/housing/Blacktown-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "New-South-Wales",
+      "url": "https://askizzy.org.au/housing/New-South-Wales",
+      "priority": "high"
+    },
+    {
+      "category": "housing",
+      "location": "Melbourne-VIC",
+      "url": "https://askizzy.org.au/housing/Melbourne-VIC",
+      "priority": "high"
+    },
+    {
+      "category": "housing",
+      "location": "Geelong-VIC",
+      "url": "https://askizzy.org.au/housing/Geelong-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Ballarat-VIC",
+      "url": "https://askizzy.org.au/housing/Ballarat-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Bendigo-VIC",
+      "url": "https://askizzy.org.au/housing/Bendigo-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Shepparton-VIC",
+      "url": "https://askizzy.org.au/housing/Shepparton-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Victoria",
+      "url": "https://askizzy.org.au/housing/Victoria",
+      "priority": "high"
+    },
+    {
+      "category": "housing",
+      "location": "Adelaide-SA",
+      "url": "https://askizzy.org.au/housing/Adelaide-SA",
+      "priority": "high"
+    },
+    {
+      "category": "housing",
+      "location": "Mount-Gambier-SA",
+      "url": "https://askizzy.org.au/housing/Mount-Gambier-SA",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "South-Australia",
+      "url": "https://askizzy.org.au/housing/South-Australia",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Perth-WA",
+      "url": "https://askizzy.org.au/housing/Perth-WA",
+      "priority": "high"
+    },
+    {
+      "category": "housing",
+      "location": "Mandurah-WA",
+      "url": "https://askizzy.org.au/housing/Mandurah-WA",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Bunbury-WA",
+      "url": "https://askizzy.org.au/housing/Bunbury-WA",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Western-Australia",
+      "url": "https://askizzy.org.au/housing/Western-Australia",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Hobart-TAS",
+      "url": "https://askizzy.org.au/housing/Hobart-TAS",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Launceston-TAS",
+      "url": "https://askizzy.org.au/housing/Launceston-TAS",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Tasmania",
+      "url": "https://askizzy.org.au/housing/Tasmania",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Darwin-NT",
+      "url": "https://askizzy.org.au/housing/Darwin-NT",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Alice-Springs-NT",
+      "url": "https://askizzy.org.au/housing/Alice-Springs-NT",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Northern-Territory",
+      "url": "https://askizzy.org.au/housing/Northern-Territory",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Canberra-ACT",
+      "url": "https://askizzy.org.au/housing/Canberra-ACT",
+      "priority": "low"
+    },
+    {
+      "category": "housing",
+      "location": "Australian-Capital-Territory",
+      "url": "https://askizzy.org.au/housing/Australian-Capital-Territory",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Brisbane-QLD",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Brisbane-QLD",
+      "priority": "high"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Gold-Coast-QLD",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Gold-Coast-QLD",
+      "priority": "medium"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Sunshine-Coast-QLD",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Sunshine-Coast-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Townsville-QLD",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Townsville-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Cairns-QLD",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Cairns-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Toowoomba-QLD",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Toowoomba-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Ipswich-QLD",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Ipswich-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Logan-City-QLD",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Logan-City-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Queensland",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Queensland",
+      "priority": "high"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Sydney-NSW",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Sydney-NSW",
+      "priority": "high"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Newcastle-NSW",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Newcastle-NSW",
+      "priority": "medium"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Wollongong-NSW",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Wollongong-NSW",
+      "priority": "medium"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Parramatta-NSW",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Parramatta-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Liverpool-NSW",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Liverpool-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Penrith-NSW",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Penrith-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Blacktown-NSW",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Blacktown-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "New-South-Wales",
+      "url": "https://askizzy.org.au/advice-and-advocacy/New-South-Wales",
+      "priority": "high"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Melbourne-VIC",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Melbourne-VIC",
+      "priority": "high"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Geelong-VIC",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Geelong-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Ballarat-VIC",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Ballarat-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Bendigo-VIC",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Bendigo-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Shepparton-VIC",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Shepparton-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Victoria",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Victoria",
+      "priority": "high"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Adelaide-SA",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Adelaide-SA",
+      "priority": "high"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Mount-Gambier-SA",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Mount-Gambier-SA",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "South-Australia",
+      "url": "https://askizzy.org.au/advice-and-advocacy/South-Australia",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Perth-WA",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Perth-WA",
+      "priority": "high"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Mandurah-WA",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Mandurah-WA",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Bunbury-WA",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Bunbury-WA",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Western-Australia",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Western-Australia",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Hobart-TAS",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Hobart-TAS",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Launceston-TAS",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Launceston-TAS",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Tasmania",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Tasmania",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Darwin-NT",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Darwin-NT",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Alice-Springs-NT",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Alice-Springs-NT",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Northern-Territory",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Northern-Territory",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Canberra-ACT",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Canberra-ACT",
+      "priority": "low"
+    },
+    {
+      "category": "advice-and-advocacy",
+      "location": "Australian-Capital-Territory",
+      "url": "https://askizzy.org.au/advice-and-advocacy/Australian-Capital-Territory",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Brisbane-QLD",
+      "url": "https://askizzy.org.au/support-and-counselling/Brisbane-QLD",
+      "priority": "high"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Gold-Coast-QLD",
+      "url": "https://askizzy.org.au/support-and-counselling/Gold-Coast-QLD",
+      "priority": "medium"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Sunshine-Coast-QLD",
+      "url": "https://askizzy.org.au/support-and-counselling/Sunshine-Coast-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Townsville-QLD",
+      "url": "https://askizzy.org.au/support-and-counselling/Townsville-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Cairns-QLD",
+      "url": "https://askizzy.org.au/support-and-counselling/Cairns-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Toowoomba-QLD",
+      "url": "https://askizzy.org.au/support-and-counselling/Toowoomba-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Ipswich-QLD",
+      "url": "https://askizzy.org.au/support-and-counselling/Ipswich-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Logan-City-QLD",
+      "url": "https://askizzy.org.au/support-and-counselling/Logan-City-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Queensland",
+      "url": "https://askizzy.org.au/support-and-counselling/Queensland",
+      "priority": "high"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Sydney-NSW",
+      "url": "https://askizzy.org.au/support-and-counselling/Sydney-NSW",
+      "priority": "high"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Newcastle-NSW",
+      "url": "https://askizzy.org.au/support-and-counselling/Newcastle-NSW",
+      "priority": "medium"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Wollongong-NSW",
+      "url": "https://askizzy.org.au/support-and-counselling/Wollongong-NSW",
+      "priority": "medium"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Parramatta-NSW",
+      "url": "https://askizzy.org.au/support-and-counselling/Parramatta-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Liverpool-NSW",
+      "url": "https://askizzy.org.au/support-and-counselling/Liverpool-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Penrith-NSW",
+      "url": "https://askizzy.org.au/support-and-counselling/Penrith-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Blacktown-NSW",
+      "url": "https://askizzy.org.au/support-and-counselling/Blacktown-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "New-South-Wales",
+      "url": "https://askizzy.org.au/support-and-counselling/New-South-Wales",
+      "priority": "high"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Melbourne-VIC",
+      "url": "https://askizzy.org.au/support-and-counselling/Melbourne-VIC",
+      "priority": "high"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Geelong-VIC",
+      "url": "https://askizzy.org.au/support-and-counselling/Geelong-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Ballarat-VIC",
+      "url": "https://askizzy.org.au/support-and-counselling/Ballarat-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Bendigo-VIC",
+      "url": "https://askizzy.org.au/support-and-counselling/Bendigo-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Shepparton-VIC",
+      "url": "https://askizzy.org.au/support-and-counselling/Shepparton-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Victoria",
+      "url": "https://askizzy.org.au/support-and-counselling/Victoria",
+      "priority": "high"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Adelaide-SA",
+      "url": "https://askizzy.org.au/support-and-counselling/Adelaide-SA",
+      "priority": "high"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Mount-Gambier-SA",
+      "url": "https://askizzy.org.au/support-and-counselling/Mount-Gambier-SA",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "South-Australia",
+      "url": "https://askizzy.org.au/support-and-counselling/South-Australia",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Perth-WA",
+      "url": "https://askizzy.org.au/support-and-counselling/Perth-WA",
+      "priority": "high"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Mandurah-WA",
+      "url": "https://askizzy.org.au/support-and-counselling/Mandurah-WA",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Bunbury-WA",
+      "url": "https://askizzy.org.au/support-and-counselling/Bunbury-WA",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Western-Australia",
+      "url": "https://askizzy.org.au/support-and-counselling/Western-Australia",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Hobart-TAS",
+      "url": "https://askizzy.org.au/support-and-counselling/Hobart-TAS",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Launceston-TAS",
+      "url": "https://askizzy.org.au/support-and-counselling/Launceston-TAS",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Tasmania",
+      "url": "https://askizzy.org.au/support-and-counselling/Tasmania",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Darwin-NT",
+      "url": "https://askizzy.org.au/support-and-counselling/Darwin-NT",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Alice-Springs-NT",
+      "url": "https://askizzy.org.au/support-and-counselling/Alice-Springs-NT",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Northern-Territory",
+      "url": "https://askizzy.org.au/support-and-counselling/Northern-Territory",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Canberra-ACT",
+      "url": "https://askizzy.org.au/support-and-counselling/Canberra-ACT",
+      "priority": "low"
+    },
+    {
+      "category": "support-and-counselling",
+      "location": "Australian-Capital-Territory",
+      "url": "https://askizzy.org.au/support-and-counselling/Australian-Capital-Territory",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Brisbane-QLD",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Brisbane-QLD",
+      "priority": "high"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Gold-Coast-QLD",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Gold-Coast-QLD",
+      "priority": "medium"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Sunshine-Coast-QLD",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Sunshine-Coast-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Townsville-QLD",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Townsville-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Cairns-QLD",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Cairns-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Toowoomba-QLD",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Toowoomba-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Ipswich-QLD",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Ipswich-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Logan-City-QLD",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Logan-City-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Queensland",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Queensland",
+      "priority": "high"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Sydney-NSW",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Sydney-NSW",
+      "priority": "high"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Newcastle-NSW",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Newcastle-NSW",
+      "priority": "medium"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Wollongong-NSW",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Wollongong-NSW",
+      "priority": "medium"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Parramatta-NSW",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Parramatta-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Liverpool-NSW",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Liverpool-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Penrith-NSW",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Penrith-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Blacktown-NSW",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Blacktown-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "New-South-Wales",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/New-South-Wales",
+      "priority": "high"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Melbourne-VIC",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Melbourne-VIC",
+      "priority": "high"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Geelong-VIC",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Geelong-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Ballarat-VIC",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Ballarat-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Bendigo-VIC",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Bendigo-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Shepparton-VIC",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Shepparton-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Victoria",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Victoria",
+      "priority": "high"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Adelaide-SA",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Adelaide-SA",
+      "priority": "high"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Mount-Gambier-SA",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Mount-Gambier-SA",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "South-Australia",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/South-Australia",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Perth-WA",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Perth-WA",
+      "priority": "high"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Mandurah-WA",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Mandurah-WA",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Bunbury-WA",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Bunbury-WA",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Western-Australia",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Western-Australia",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Hobart-TAS",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Hobart-TAS",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Launceston-TAS",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Launceston-TAS",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Tasmania",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Tasmania",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Darwin-NT",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Darwin-NT",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Alice-Springs-NT",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Alice-Springs-NT",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Northern-Territory",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Northern-Territory",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Canberra-ACT",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Canberra-ACT",
+      "priority": "low"
+    },
+    {
+      "category": "domestic-and-family-violence-help",
+      "location": "Australian-Capital-Territory",
+      "url": "https://askizzy.org.au/domestic-and-family-violence-help/Australian-Capital-Territory",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Brisbane-QLD",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Brisbane-QLD",
+      "priority": "high"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Gold-Coast-QLD",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Gold-Coast-QLD",
+      "priority": "medium"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Sunshine-Coast-QLD",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Sunshine-Coast-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Townsville-QLD",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Townsville-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Cairns-QLD",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Cairns-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Toowoomba-QLD",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Toowoomba-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Ipswich-QLD",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Ipswich-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Logan-City-QLD",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Logan-City-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Queensland",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Queensland",
+      "priority": "high"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Sydney-NSW",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Sydney-NSW",
+      "priority": "high"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Newcastle-NSW",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Newcastle-NSW",
+      "priority": "medium"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Wollongong-NSW",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Wollongong-NSW",
+      "priority": "medium"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Parramatta-NSW",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Parramatta-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Liverpool-NSW",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Liverpool-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Penrith-NSW",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Penrith-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Blacktown-NSW",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Blacktown-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "New-South-Wales",
+      "url": "https://askizzy.org.au/health-and-wellbeing/New-South-Wales",
+      "priority": "high"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Melbourne-VIC",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Melbourne-VIC",
+      "priority": "high"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Geelong-VIC",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Geelong-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Ballarat-VIC",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Ballarat-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Bendigo-VIC",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Bendigo-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Shepparton-VIC",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Shepparton-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Victoria",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Victoria",
+      "priority": "high"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Adelaide-SA",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Adelaide-SA",
+      "priority": "high"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Mount-Gambier-SA",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Mount-Gambier-SA",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "South-Australia",
+      "url": "https://askizzy.org.au/health-and-wellbeing/South-Australia",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Perth-WA",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Perth-WA",
+      "priority": "high"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Mandurah-WA",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Mandurah-WA",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Bunbury-WA",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Bunbury-WA",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Western-Australia",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Western-Australia",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Hobart-TAS",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Hobart-TAS",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Launceston-TAS",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Launceston-TAS",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Tasmania",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Tasmania",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Darwin-NT",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Darwin-NT",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Alice-Springs-NT",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Alice-Springs-NT",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Northern-Territory",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Northern-Territory",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Canberra-ACT",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Canberra-ACT",
+      "priority": "low"
+    },
+    {
+      "category": "health-and-wellbeing",
+      "location": "Australian-Capital-Territory",
+      "url": "https://askizzy.org.au/health-and-wellbeing/Australian-Capital-Territory",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Brisbane-QLD",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Brisbane-QLD",
+      "priority": "high"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Gold-Coast-QLD",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Gold-Coast-QLD",
+      "priority": "medium"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Sunshine-Coast-QLD",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Sunshine-Coast-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Townsville-QLD",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Townsville-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Cairns-QLD",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Cairns-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Toowoomba-QLD",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Toowoomba-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Ipswich-QLD",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Ipswich-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Logan-City-QLD",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Logan-City-QLD",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Queensland",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Queensland",
+      "priority": "high"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Sydney-NSW",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Sydney-NSW",
+      "priority": "high"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Newcastle-NSW",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Newcastle-NSW",
+      "priority": "medium"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Wollongong-NSW",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Wollongong-NSW",
+      "priority": "medium"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Parramatta-NSW",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Parramatta-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Liverpool-NSW",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Liverpool-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Penrith-NSW",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Penrith-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Blacktown-NSW",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Blacktown-NSW",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "New-South-Wales",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/New-South-Wales",
+      "priority": "high"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Melbourne-VIC",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Melbourne-VIC",
+      "priority": "high"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Geelong-VIC",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Geelong-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Ballarat-VIC",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Ballarat-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Bendigo-VIC",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Bendigo-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Shepparton-VIC",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Shepparton-VIC",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Victoria",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Victoria",
+      "priority": "high"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Adelaide-SA",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Adelaide-SA",
+      "priority": "high"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Mount-Gambier-SA",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Mount-Gambier-SA",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "South-Australia",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/South-Australia",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Perth-WA",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Perth-WA",
+      "priority": "high"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Mandurah-WA",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Mandurah-WA",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Bunbury-WA",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Bunbury-WA",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Western-Australia",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Western-Australia",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Hobart-TAS",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Hobart-TAS",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Launceston-TAS",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Launceston-TAS",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Tasmania",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Tasmania",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Darwin-NT",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Darwin-NT",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Alice-Springs-NT",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Alice-Springs-NT",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Northern-Territory",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Northern-Territory",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Canberra-ACT",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Canberra-ACT",
+      "priority": "low"
+    },
+    {
+      "category": "work-learning-and-things-to-do",
+      "location": "Australian-Capital-Territory",
+      "url": "https://askizzy.org.au/work-learning-and-things-to-do/Australian-Capital-Territory",
+      "priority": "low"
+    }
+  ]
+}

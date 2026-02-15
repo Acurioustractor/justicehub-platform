@@ -2,31 +2,29 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { 
-  DollarSign, 
-  TrendingUp, 
-  AlertTriangle, 
+import {
+  DollarSign,
+  TrendingUp,
+  AlertTriangle,
   BarChart3,
-  PieChart,
   FileText,
   Search,
   Download,
   Calendar,
-  MapPin,
   Users,
   Building2,
   Eye,
   ArrowRight,
-  ExternalLink,
   Bell,
-  Filter,
   Zap,
   Target,
   Clock,
   CheckCircle,
-  XCircle
+  XCircle,
+  Map as MapIcon
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import { SimpleEcosystemMap } from '@/components/SimpleEcosystemMap';
 
 interface BudgetItem {
   id: string;
@@ -49,118 +47,66 @@ interface Alert {
   severity: 'high' | 'medium' | 'low';
 }
 
+interface TransparencyData {
+  budget: BudgetItem[];
+  alerts: Alert[];
+  metrics: Array<{
+    label: string;
+    value: string;
+    change: string;
+    positive: boolean;
+    type: string;
+  }>;
+  summary: {
+    totalAllocated: number;
+    totalSpent: number;
+    utilizationRate: number;
+    activeAlerts: number;
+    state: string;
+    financialYear: string;
+    lastUpdated: string;
+    isLiveData: boolean;
+  };
+}
+
+const metricIcons: Record<string, React.ReactNode> = {
+  total_budget: <DollarSign className="h-6 w-6" />,
+  detention_cost: <Users className="h-6 w-6" />,
+  community_investment: <Building2 className="h-6 w-6" />,
+  transparency_score: <Eye className="h-6 w-6" />
+};
+
 export default function MoneyTrailPage() {
   const [selectedTimeframe, setSelectedTimeframe] = useState('2023-24');
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [mounted, setMounted] = useState(false);
-
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<TransparencyData | null>(null);
   useEffect(() => {
     setMounted(true);
-  }, []);
+    fetchTransparencyData();
+  }, [selectedTimeframe]);
 
-  // Mock data - would come from your comprehensive scraping system
-  const budgetData: BudgetItem[] = [
-    {
-      id: '1',
-      department: 'Youth Justice',
-      category: 'Detention Centers',
-      allocated: 125000000,
-      spent: 118500000,
-      percentage: 94.8,
-      lastUpdated: '2024-01-15',
-      trend: 'up'
-    },
-    {
-      id: '2',
-      department: 'Youth Justice',
-      category: 'Community Programs',
-      allocated: 45000000,
-      spent: 41200000,
-      percentage: 91.5,
-      lastUpdated: '2024-01-15',
-      trend: 'stable'
-    },
-    {
-      id: '3',
-      department: 'Courts',
-      category: 'Youth Court Operations',
-      allocated: 28000000,
-      spent: 26800000,
-      percentage: 95.7,
-      lastUpdated: '2024-01-12',
-      trend: 'down'
-    },
-    {
-      id: '4',
-      department: 'Legal Aid',
-      category: 'Youth Legal Representation',
-      allocated: 15000000,
-      spent: 12300000,
-      percentage: 82.0,
-      lastUpdated: '2024-01-10',
-      trend: 'down'
+  const fetchTransparencyData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/transparency?year=${selectedTimeframe}`);
+      const result = await response.json();
+      setData(result);
+    } catch (error) {
+      console.error('Failed to fetch transparency data:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const alerts: Alert[] = [
-    {
-      id: '1',
-      type: 'budget_exceeded',
-      title: 'Detention Center Overtime Costs',
-      description: 'Staff overtime costs have exceeded budget by 12% this quarter',
-      amount: 1500000,
-      date: '2024-01-15',
-      severity: 'high'
-    },
-    {
-      id: '2',
-      type: 'underspend',
-      title: 'Community Programs Underspend',
-      description: 'Community-based programs showing significant underspend',
-      amount: 3800000,
-      date: '2024-01-12',
-      severity: 'medium'
-    },
-    {
-      id: '3',
-      type: 'transparency_issue',
-      title: 'Missing Financial Reports',
-      description: 'Q2 detention facility reports not yet published',
-      date: '2024-01-10',
-      severity: 'high'
-    }
-  ];
-
-  const keyMetrics = [
-    {
-      label: 'Total Youth Justice Budget',
-      value: '$213M',
-      change: '+8.5%',
-      positive: false,
-      icon: <DollarSign className="h-6 w-6" />
-    },
-    {
-      label: 'Cost Per Youth in Detention',
-      value: '$847K',
-      change: '+12.3%',
-      positive: false,
-      icon: <Users className="h-6 w-6" />
-    },
-    {
-      label: 'Community Program Investment',
-      value: '$45M',
-      change: '-2.1%',
-      positive: false,
-      icon: <Building2 className="h-6 w-6" />
-    },
-    {
-      label: 'Budget Transparency Score',
-      value: '67%',
-      change: '+5.2%',
-      positive: true,
-      icon: <Eye className="h-6 w-6" />
-    }
-  ];
+  // Derive values from API data or use defaults
+  const budgetData = data?.budget || [];
+  const alerts = data?.alerts || [];
+  const keyMetrics = (data?.metrics || []).map(m => ({
+    ...m,
+    icon: metricIcons[m.type] || <DollarSign className="h-6 w-6" />
+  }));
+  const isLiveData = data?.summary?.isLiveData || false;
 
   const formatCurrency = (amount: number) => {
     if (amount >= 1000000) {
@@ -189,7 +135,7 @@ export default function MoneyTrailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white page-content">
       <Navigation />
 
       <main className="header-offset">
@@ -215,7 +161,7 @@ export default function MoneyTrailPage() {
               {/* Key Stats */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
                 {keyMetrics.map((metric, index) => (
-                  <div key={index} className="bg-white border-2 border-black p-6 hover:shadow-lg transition-all">
+                  <div key={index} className="bg-white border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
                     <div className="flex items-center justify-center mb-3 text-red-600">
                       {metric.icon}
                     </div>
@@ -231,16 +177,31 @@ export default function MoneyTrailPage() {
           </div>
         </section>
 
-        {/* Coming Soon Banner */}
-        <section className="py-8 bg-orange-600 text-white border-b-2 border-black">
+        {/* Data Status Banner */}
+        <section className={`py-8 ${isLiveData ? 'bg-green-600' : 'bg-orange-600'} text-white border-b-2 border-black`}>
           <div className="container-justice">
             <div className="flex items-center justify-center gap-4 text-center">
               <Zap className="h-8 w-8" />
               <div>
-                <h2 className="text-xl font-black mb-1">COMPREHENSIVE SYSTEM IN DEVELOPMENT</h2>
-                <p className="text-orange-100">
-                  Full automation, real-time scraping, and advanced analytics launching soon. 
-                  Current preview shows the vision and sample data.
+                {isLiveData ? (
+                  <>
+                    <h2 className="text-xl font-black mb-1">LIVE DATA FROM GOVERNMENT SOURCES</h2>
+                    <p className="text-green-100">
+                      Real-time budget tracking connected to official government publications.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h2 className="text-xl font-black mb-1">COMPREHENSIVE SYSTEM IN DEVELOPMENT</h2>
+                    <p className="text-orange-100">
+                      Full automation, real-time scraping, and advanced analytics launching soon.
+                      Current preview shows the vision and sample data.
+                    </p>
+                  </>
+                )}
+                <p className={`${isLiveData ? 'text-green-200' : 'text-orange-200'} text-sm mt-2`}>
+                  <Clock className="h-3 w-3 inline mr-1" />
+                  {loading ? 'Loading...' : `Data last updated: ${data?.summary?.lastUpdated ? new Date(data.summary.lastUpdated).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) : 'January 2024'}`}
                 </p>
               </div>
               <Zap className="h-8 w-8" />
@@ -452,6 +413,39 @@ export default function MoneyTrailPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Ecosystem Map Section */}
+        <section className="py-16 border-b-2 border-black bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
+          <div className="container-justice">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold flex items-center gap-3">
+                <MapIcon className="h-8 w-8 text-green-600" />
+                YOUTH JUSTICE ECOSYSTEM MAP
+              </h2>
+              <p className="text-gray-600 mt-2">
+                Explore detention facilities, community programs, and support services across Australia.
+                Click markers to view details and navigate to individual pages.
+              </p>
+            </div>
+
+            {/* Map with integrated controls */}
+            <SimpleEcosystemMap height="600px" />
+
+            {/* Call to Action */}
+            <div className="mt-8 text-center">
+              <p className="text-gray-600 mb-4">
+                Know of a program or service that should be on this map?
+              </p>
+              <Link
+                href="/signup"
+                className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 font-bold hover:bg-gray-800 transition-all"
+              >
+                Submit a Program
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
         </section>
