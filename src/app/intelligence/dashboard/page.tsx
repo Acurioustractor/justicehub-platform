@@ -25,9 +25,17 @@ type DashboardData = {
     };
 };
 
+type Provenance = {
+    mode: 'authoritative' | 'computed';
+    summary: string;
+    generated_at: string;
+};
+
 export default function MasterDashboard() {
     const [data, setData] = useState<DashboardData | null>(null);
     const [alpha, setAlpha] = useState<any[]>([]); // New Alpha State
+    const [statsProvenance, setStatsProvenance] = useState<Provenance | null>(null);
+    const [alphaProvenance, setAlphaProvenance] = useState<Provenance | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -38,6 +46,7 @@ export default function MasterDashboard() {
                 if (resStats.ok) {
                     const jsonStats = await resStats.json();
                     setData(jsonStats);
+                    setStatsProvenance(jsonStats.provenance || null);
                 }
 
                 // Fetch Alpha Signals
@@ -45,6 +54,7 @@ export default function MasterDashboard() {
                 if (resAlpha.ok) {
                     const jsonAlpha = await resAlpha.json();
                     setAlpha(jsonAlpha.opportunities || []);
+                    setAlphaProvenance(jsonAlpha.provenance || null);
                 }
 
             } catch (err) {
@@ -89,6 +99,20 @@ export default function MasterDashboard() {
                             <p className="text-xl max-w-2xl mt-4 text-gray-700">
                                 Real-time monitoring of intelligence acquisition, evidentiary strength, and market opportunities.
                             </p>
+                            <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                                {statsProvenance && (
+                                    <div className="inline-flex items-center gap-2 border border-black bg-white px-3 py-1">
+                                        <span className="font-bold uppercase text-amber-700">stats: {statsProvenance.mode}</span>
+                                        <span className="text-gray-700">{statsProvenance.summary}</span>
+                                    </div>
+                                )}
+                                {alphaProvenance && (
+                                    <div className="inline-flex items-center gap-2 border border-black bg-white px-3 py-1">
+                                        <span className="font-bold uppercase text-amber-700">alpha: {alphaProvenance.mode}</span>
+                                        <span className="text-gray-700">{alphaProvenance.summary}</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <div className="text-right">
                             <Link href="/centre-of-excellence" className="font-bold underline text-sm uppercase tracking-widest hover:bg-black hover:text-white px-2 py-1 transition-colors">

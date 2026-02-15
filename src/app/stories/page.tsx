@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import { StoriesPageContent } from './page-content';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
-import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
 
 export const metadata = {
   title: 'Stories from the Movement - JusticeHub',
@@ -29,85 +28,22 @@ async function getStoriesData() {
       .eq('status', 'published')
       .order('published_at', { ascending: false });
 
-    // Fetch Empathy Ledger stories (only those tagged for JusticeHub display)
-    // Note: We don't join storytellers table due to RLS restrictions
-    const empathyLedgerQuery = empathyLedgerClient
-      .from('stories')
-      .select(`
-        id,
-        title,
-        summary,
-        content,
-        story_image_url,
-        story_type,
-        themes,
-        is_featured,
-        justicehub_featured,
-        cultural_sensitivity_level,
-        published_at,
-        created_at
-      `)
-      .eq('is_public', true)
-      .eq('privacy_level', 'public')
-      .eq('justicehub_featured', true)  // Only stories tagged for JusticeHub
-      .order('published_at', { ascending: false });
-
-    const [articlesResult, empathyLedgerResult] = await Promise.all([
-      articlesQuery,
-      empathyLedgerQuery,
-    ]);
-
-    // Log Empathy Ledger result for debugging
-    if (empathyLedgerResult.error) {
-      console.error('Empathy Ledger query error:', empathyLedgerResult.error);
-    } else {
-      console.log(`Empathy Ledger: Found ${empathyLedgerResult.data?.length || 0} stories with justicehub_featured=true`);
+    const { data: articlesData, error: articlesError } = await articlesQuery;
+    if (articlesError) {
+      throw articlesError;
     }
 
     // Transform and merge data
-    const articles = (articlesResult.data || []).map((article: any) => ({
+    const articles = (articlesData || []).map((article: any) => ({
       ...article,
       content_type: 'article' as const,
       author: article.public_profiles,
       primary_tag: article.category,
     }));
 
-    // Map story_type to human-readable category
-    const storyTypeLabels: Record<string, string> = {
-      'personal_narrative': 'Personal Story',
-      'traditional_knowledge': 'Traditional Knowledge',
-      'impact_story': 'Impact Story',
-      'community_story': 'Community Story',
-      'healing_journey': 'Healing Journey',
-      'advocacy': 'Advocacy',
-      'cultural_practice': 'Cultural Practice',
-    };
-
-    // Transform Empathy Ledger stories to match unified format
-    const empathyLedgerStories = (empathyLedgerResult.data || []).map((story: any) => {
-      return {
-        id: story.id,
-        title: story.title,
-        slug: story.id, // Use ID as slug for EL stories
-        excerpt: story.summary || (story.content ? story.content.substring(0, 200) + '...' : ''),
-        category: 'voices', // New category for Empathy Ledger stories
-        tags: story.themes || [],
-        featured_image_url: story.story_image_url || null,
-        reading_time_minutes: story.content ? Math.ceil(story.content.split(/\s+/).length / 200) : null,
-        location_tags: [],
-        author: null, // Storyteller data not available due to RLS
-        published_at: story.published_at || story.created_at,
-        status: 'published',
-        content_type: 'empathy-ledger' as const,
-        primary_tag: story.story_type ? storyTypeLabels[story.story_type] || story.story_type : 'Community Voice',
-        // Extra fields for EL stories
-        cultural_sensitivity_level: story.cultural_sensitivity_level,
-        is_el_featured: story.is_featured || story.justicehub_featured,
-      };
-    });
-
-    // Merge and sort by published date (articles + Empathy Ledger voices)
-    const allContent = [...articles, ...empathyLedgerStories].sort(
+    // Temporarily local-first: keep stories list available even when Empathy Ledger env is absent.
+    // Voices are still available via dedicated Empathy Ledger routes once env is configured.
+    const allContent = [...articles].sort(
       (a, b) =>
         new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
     );
@@ -125,7 +61,6 @@ async function getStoriesData() {
       if (item.category === 'growth') growthCount++;
       if (item.category === 'harvest') harvestCount++;
       if (item.category === 'roots') rootsCount++;
-      if (item.category === 'voices') voicesCount++;
 
       if (item.location_tags) {
         item.location_tags.forEach((loc: string) => uniqueLocations.add(loc));

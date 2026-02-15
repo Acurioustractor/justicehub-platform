@@ -1,0 +1,498 @@
+{
+  "generated_at": "2026-02-14T23:32:52.456Z",
+  "mode": "strict_manual_review_shortlist",
+  "rule": "approve only if score >= 0.75, margin >= 0.15, and org signal >= 0.5",
+  "totals": {
+    "unresolved_count": 9,
+    "approve_count": 0,
+    "reject_count": 9
+  },
+  "rows": [
+    {
+      "program_id": "4773a5ba-229f-49d9-8e0e-b95a34353178",
+      "program_name": "Atnarpa Homestead On-Country Experiences",
+      "organization": "Oonchiumpa Consultancy & Services",
+      "recommendation": "reject",
+      "rationale": "Top candidate score too weak/ambiguous (score 0.21, margin 0).",
+      "top_candidate": {
+        "alma_id": "d894e59c-c0b0-4101-86f5-69e02af6d9d9",
+        "alma_name": "Youth Camps and On-Country Programs",
+        "alma_org": null,
+        "weighted": 0.21,
+        "name": 0.333,
+        "org": 0.167,
+        "linked_to": null
+      },
+      "runner_up": {
+        "alma_id": "3a890273-6cd6-4f36-92fc-80e119c78e43",
+        "alma_name": "Jabalbina On-Country Extension Youth Services",
+        "alma_org": "Jabalbina On-Country Extension Youth Services",
+        "weighted": 0.21,
+        "name": 0.333,
+        "org": 0.167,
+        "linked_to": null
+      },
+      "candidates_top3": [
+        {
+          "alma_id": "d894e59c-c0b0-4101-86f5-69e02af6d9d9",
+          "alma_name": "Youth Camps and On-Country Programs",
+          "alma_org": null,
+          "weighted": 0.21,
+          "name": 0.333,
+          "org": 0.167,
+          "linked_to": null
+        },
+        {
+          "alma_id": "3a890273-6cd6-4f36-92fc-80e119c78e43",
+          "alma_name": "Jabalbina On-Country Extension Youth Services",
+          "alma_org": "Jabalbina On-Country Extension Youth Services",
+          "weighted": 0.21,
+          "name": 0.333,
+          "org": 0.167,
+          "linked_to": null
+        },
+        {
+          "alma_id": "38ce176f-3a9c-4e84-8228-90f4e7e60e5c",
+          "alma_name": "Intensive on country program",
+          "alma_org": null,
+          "weighted": 0.2,
+          "name": 0.4,
+          "org": 0,
+          "linked_to": null
+        }
+      ]
+    },
+    {
+      "program_id": "332a545f-c30e-4822-9128-122810a46503",
+      "program_name": "Creative Futures Collective",
+      "organization": "Creative Futures",
+      "recommendation": "reject",
+      "rationale": "Top candidate score too weak/ambiguous (score 0.3, margin 0.075).",
+      "top_candidate": {
+        "alma_id": "c133718f-72e7-498a-8656-73704a7b019f",
+        "alma_name": "Youth Futures WA",
+        "alma_org": "Youth Futures WA",
+        "weighted": 0.3,
+        "name": 0.333,
+        "org": 0.333,
+        "linked_to": null
+      },
+      "runner_up": {
+        "alma_id": "b598642e-4df3-4e4d-9e1e-06d38fcf18b9",
+        "alma_name": "Picabeen Bright Futures Project",
+        "alma_org": "Picabeen Bright Futures Project",
+        "weighted": 0.225,
+        "name": 0.25,
+        "org": 0.25,
+        "linked_to": null
+      },
+      "candidates_top3": [
+        {
+          "alma_id": "c133718f-72e7-498a-8656-73704a7b019f",
+          "alma_name": "Youth Futures WA",
+          "alma_org": "Youth Futures WA",
+          "weighted": 0.3,
+          "name": 0.333,
+          "org": 0.333,
+          "linked_to": null
+        },
+        {
+          "alma_id": "b598642e-4df3-4e4d-9e1e-06d38fcf18b9",
+          "alma_name": "Picabeen Bright Futures Project",
+          "alma_org": "Picabeen Bright Futures Project",
+          "weighted": 0.225,
+          "name": 0.25,
+          "org": 0.25,
+          "linked_to": null
+        },
+        {
+          "alma_id": "42502157-71b6-490a-b9f1-dbd92be8e7c3",
+          "alma_name": "Report issues with document usability | Australian Government Department of Health, Disability and Ageing",
+          "alma_org": null,
+          "weighted": 0,
+          "name": 0,
+          "org": 0,
+          "linked_to": null
+        }
+      ]
+    },
+    {
+      "program_id": "2a20ee55-1172-4948-9a50-e60189062c57",
+      "program_name": "Cultural Brokerage & Service Navigation",
+      "organization": "Oonchiumpa Consultancy & Services",
+      "recommendation": "reject",
+      "rationale": "Top candidate score too weak/ambiguous (score 0.18, margin 0).",
+      "top_candidate": {
+        "alma_id": "5d2d6923-5de8-4c51-b2bf-95396084c289",
+        "alma_name": "Self-determination and cultural safety approach",
+        "alma_org": null,
+        "weighted": 0.18,
+        "name": 0.333,
+        "org": 0.167,
+        "linked_to": null
+      },
+      "runner_up": {
+        "alma_id": "ead306ef-a8e5-441f-90c5-ebdc28284995",
+        "alma_name": "Youth and family support service",
+        "alma_org": null,
+        "weighted": 0.18,
+        "name": 0.4,
+        "org": 0.2,
+        "linked_to": null
+      },
+      "candidates_top3": [
+        {
+          "alma_id": "5d2d6923-5de8-4c51-b2bf-95396084c289",
+          "alma_name": "Self-determination and cultural safety approach",
+          "alma_org": null,
+          "weighted": 0.18,
+          "name": 0.333,
+          "org": 0.167,
+          "linked_to": null
+        },
+        {
+          "alma_id": "ead306ef-a8e5-441f-90c5-ebdc28284995",
+          "alma_name": "Youth and family support service",
+          "alma_org": null,
+          "weighted": 0.18,
+          "name": 0.4,
+          "org": 0.2,
+          "linked_to": null
+        },
+        {
+          "alma_id": "e8e6b440-6f51-460d-954f-29e82996ac5c",
+          "alma_name": "Youth Access and Support Service",
+          "alma_org": "Youth Access and Support Service",
+          "weighted": 0.18,
+          "name": 0.4,
+          "org": 0.2,
+          "linked_to": null
+        }
+      ]
+    },
+    {
+      "program_id": "eb56a3a3-f6c8-4486-b7ce-0ede99761ddb",
+      "program_name": "Healing Circles Program",
+      "organization": "Antakirinja Matu-Yankunytjatjara",
+      "recommendation": "reject",
+      "rationale": "Top candidate score too weak/ambiguous (score 0.177, margin 0.04).",
+      "top_candidate": {
+        "alma_id": "a9edf5a3-9936-4e2a-bf8d-c3d0c0d30d47",
+        "alma_name": "Healing Our Families Wellbeing Program",
+        "alma_org": "Healing Our Families Wellbeing Program",
+        "weighted": 0.177,
+        "name": 0.4,
+        "org": 0,
+        "linked_to": null
+      },
+      "runner_up": {
+        "alma_id": "8ff9cf64-bacb-4ba6-a26c-6759349acd97",
+        "alma_name": "Baroona Youth Healing Service",
+        "alma_org": "Baroona",
+        "weighted": 0.137,
+        "name": 0.25,
+        "org": 0,
+        "linked_to": null
+      },
+      "candidates_top3": [
+        {
+          "alma_id": "a9edf5a3-9936-4e2a-bf8d-c3d0c0d30d47",
+          "alma_name": "Healing Our Families Wellbeing Program",
+          "alma_org": "Healing Our Families Wellbeing Program",
+          "weighted": 0.177,
+          "name": 0.4,
+          "org": 0,
+          "linked_to": null
+        },
+        {
+          "alma_id": "8ff9cf64-bacb-4ba6-a26c-6759349acd97",
+          "alma_name": "Baroona Youth Healing Service",
+          "alma_org": "Baroona",
+          "weighted": 0.137,
+          "name": 0.25,
+          "org": 0,
+          "linked_to": null
+        },
+        {
+          "alma_id": "4ee18302-7130-4252-81e3-69022aeeea5f",
+          "alma_name": "Speak Up Program",
+          "alma_org": "CREATE Foundation",
+          "weighted": 0.117,
+          "name": 0.333,
+          "org": 0,
+          "linked_to": null
+        }
+      ]
+    },
+    {
+      "program_id": "3be985c3-565e-463b-8d3a-fd3a074fe5c2",
+      "program_name": "Logan Youth Collective",
+      "organization": "Logan Youth Collective",
+      "recommendation": "reject",
+      "rationale": "Top candidate score too weak/ambiguous (score 0.6, margin 0.205).",
+      "top_candidate": {
+        "alma_id": "f69c4c58-ac61-4884-91ac-dee6da625cc7",
+        "alma_name": "Logan Youth Foyer",
+        "alma_org": "Logan Youth Foyer",
+        "weighted": 0.6,
+        "name": 0.667,
+        "org": 0.667,
+        "linked_to": null
+      },
+      "runner_up": {
+        "alma_id": "09d7ef11-41c4-4606-a444-02498cc90d7b",
+        "alma_name": "WMB Logan Youth Support Services",
+        "alma_org": "WMB Logan Youth Support Services",
+        "weighted": 0.395,
+        "name": 0.4,
+        "org": 0.4,
+        "linked_to": null
+      },
+      "candidates_top3": [
+        {
+          "alma_id": "f69c4c58-ac61-4884-91ac-dee6da625cc7",
+          "alma_name": "Logan Youth Foyer",
+          "alma_org": "Logan Youth Foyer",
+          "weighted": 0.6,
+          "name": 0.667,
+          "org": 0.667,
+          "linked_to": null
+        },
+        {
+          "alma_id": "09d7ef11-41c4-4606-a444-02498cc90d7b",
+          "alma_name": "WMB Logan Youth Support Services",
+          "alma_org": "WMB Logan Youth Support Services",
+          "weighted": 0.395,
+          "name": 0.4,
+          "org": 0.4,
+          "linked_to": null
+        },
+        {
+          "alma_id": "2f0cc80d-4560-4694-b84c-c3255a9b3874",
+          "alma_name": "Youth justice",
+          "alma_org": null,
+          "weighted": 0.358,
+          "name": 0.333,
+          "org": 0.333,
+          "linked_to": null
+        }
+      ]
+    },
+    {
+      "program_id": "a305bd43-1ef0-46da-9d86-5ded08112b1a",
+      "program_name": "Mounty Yarns Youth Justice Initiative",
+      "organization": "Mounty Yarns",
+      "recommendation": "reject",
+      "rationale": "Top candidate score too weak/ambiguous (score 0.215, margin 0).",
+      "top_candidate": {
+        "alma_id": "2f0cc80d-4560-4694-b84c-c3255a9b3874",
+        "alma_name": "Youth justice",
+        "alma_org": null,
+        "weighted": 0.215,
+        "name": 0.4,
+        "org": 0,
+        "linked_to": null
+      },
+      "runner_up": {
+        "alma_id": "d17b5d1a-5728-4709-bd23-574b401764c8",
+        "alma_name": "Tasmania Community Youth Justice Services",
+        "alma_org": null,
+        "weighted": 0.215,
+        "name": 0.4,
+        "org": 0,
+        "linked_to": null
+      },
+      "candidates_top3": [
+        {
+          "alma_id": "2f0cc80d-4560-4694-b84c-c3255a9b3874",
+          "alma_name": "Youth justice",
+          "alma_org": null,
+          "weighted": 0.215,
+          "name": 0.4,
+          "org": 0,
+          "linked_to": null
+        },
+        {
+          "alma_id": "d17b5d1a-5728-4709-bd23-574b401764c8",
+          "alma_name": "Tasmania Community Youth Justice Services",
+          "alma_org": null,
+          "weighted": 0.215,
+          "name": 0.4,
+          "org": 0,
+          "linked_to": null
+        },
+        {
+          "alma_id": "68f8fdb5-b05e-4adf-8138-0b95679fc5e2",
+          "alma_name": "Youth Justice Community Support Service",
+          "alma_org": null,
+          "weighted": 0.215,
+          "name": 0.4,
+          "org": 0,
+          "linked_to": null
+        }
+      ]
+    },
+    {
+      "program_id": "398c51c0-a69c-49d2-89f5-07d040bde311",
+      "program_name": "Mounty Yarns Youth Justice Initiative",
+      "organization": "Mounty Yarns",
+      "recommendation": "reject",
+      "rationale": "Top candidate score too weak/ambiguous (score 0.215, margin 0).",
+      "top_candidate": {
+        "alma_id": "2f0cc80d-4560-4694-b84c-c3255a9b3874",
+        "alma_name": "Youth justice",
+        "alma_org": null,
+        "weighted": 0.215,
+        "name": 0.4,
+        "org": 0,
+        "linked_to": null
+      },
+      "runner_up": {
+        "alma_id": "d17b5d1a-5728-4709-bd23-574b401764c8",
+        "alma_name": "Tasmania Community Youth Justice Services",
+        "alma_org": null,
+        "weighted": 0.215,
+        "name": 0.4,
+        "org": 0,
+        "linked_to": null
+      },
+      "candidates_top3": [
+        {
+          "alma_id": "2f0cc80d-4560-4694-b84c-c3255a9b3874",
+          "alma_name": "Youth justice",
+          "alma_org": null,
+          "weighted": 0.215,
+          "name": 0.4,
+          "org": 0,
+          "linked_to": null
+        },
+        {
+          "alma_id": "d17b5d1a-5728-4709-bd23-574b401764c8",
+          "alma_name": "Tasmania Community Youth Justice Services",
+          "alma_org": null,
+          "weighted": 0.215,
+          "name": 0.4,
+          "org": 0,
+          "linked_to": null
+        },
+        {
+          "alma_id": "68f8fdb5-b05e-4adf-8138-0b95679fc5e2",
+          "alma_name": "Youth Justice Community Support Service",
+          "alma_org": null,
+          "weighted": 0.215,
+          "name": 0.4,
+          "org": 0,
+          "linked_to": null
+        }
+      ]
+    },
+    {
+      "program_id": "2f8f1abf-6a6a-4d09-8587-8058c42c0591",
+      "program_name": "TechStart Youth",
+      "organization": "TechStart Youth",
+      "recommendation": "reject",
+      "rationale": "Top candidate score too weak/ambiguous (score 0.45, margin 0).",
+      "top_candidate": {
+        "alma_id": "2f0cc80d-4560-4694-b84c-c3255a9b3874",
+        "alma_name": "Youth justice",
+        "alma_org": null,
+        "weighted": 0.45,
+        "name": 0.5,
+        "org": 0.5,
+        "linked_to": null
+      },
+      "runner_up": {
+        "alma_id": "9044ba76-d730-4014-91fc-55da2d533f4a",
+        "alma_name": "Youth Diversion",
+        "alma_org": null,
+        "weighted": 0.45,
+        "name": 0.5,
+        "org": 0.5,
+        "linked_to": null
+      },
+      "candidates_top3": [
+        {
+          "alma_id": "2f0cc80d-4560-4694-b84c-c3255a9b3874",
+          "alma_name": "Youth justice",
+          "alma_org": null,
+          "weighted": 0.45,
+          "name": 0.5,
+          "org": 0.5,
+          "linked_to": null
+        },
+        {
+          "alma_id": "9044ba76-d730-4014-91fc-55da2d533f4a",
+          "alma_name": "Youth Diversion",
+          "alma_org": null,
+          "weighted": 0.45,
+          "name": 0.5,
+          "org": 0.5,
+          "linked_to": null
+        },
+        {
+          "alma_id": "7ead32e9-f6b0-4e0b-b1e7-dbcd4a758470",
+          "alma_name": "Youth Counseling",
+          "alma_org": "Ithaca Laundry",
+          "weighted": 0.45,
+          "name": 0.5,
+          "org": 0.5,
+          "linked_to": null
+        }
+      ]
+    },
+    {
+      "program_id": "3f9f1e85-17dc-4850-9a59-06e83c69a803",
+      "program_name": "True Justice: Deep Listening on Country",
+      "organization": "Oonchiumpa Consultancy & Services",
+      "recommendation": "reject",
+      "rationale": "Top candidate score too weak/ambiguous (score 0.2, margin 0).",
+      "top_candidate": {
+        "alma_id": "d894e59c-c0b0-4101-86f5-69e02af6d9d9",
+        "alma_name": "Youth Camps and On-Country Programs",
+        "alma_org": null,
+        "weighted": 0.2,
+        "name": 0.333,
+        "org": 0.167,
+        "linked_to": null
+      },
+      "runner_up": {
+        "alma_id": "3a890273-6cd6-4f36-92fc-80e119c78e43",
+        "alma_name": "Jabalbina On-Country Extension Youth Services",
+        "alma_org": "Jabalbina On-Country Extension Youth Services",
+        "weighted": 0.2,
+        "name": 0.333,
+        "org": 0.167,
+        "linked_to": null
+      },
+      "candidates_top3": [
+        {
+          "alma_id": "d894e59c-c0b0-4101-86f5-69e02af6d9d9",
+          "alma_name": "Youth Camps and On-Country Programs",
+          "alma_org": null,
+          "weighted": 0.2,
+          "name": 0.333,
+          "org": 0.167,
+          "linked_to": null
+        },
+        {
+          "alma_id": "3a890273-6cd6-4f36-92fc-80e119c78e43",
+          "alma_name": "Jabalbina On-Country Extension Youth Services",
+          "alma_org": "Jabalbina On-Country Extension Youth Services",
+          "weighted": 0.2,
+          "name": 0.333,
+          "org": 0.167,
+          "linked_to": null
+        },
+        {
+          "alma_id": "38ce176f-3a9c-4e84-8228-90f4e7e60e5c",
+          "alma_name": "Intensive on country program",
+          "alma_org": null,
+          "weighted": 0.167,
+          "name": 0.333,
+          "org": 0,
+          "linked_to": null
+        }
+      ]
+    }
+  ]
+}

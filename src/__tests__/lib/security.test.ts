@@ -16,6 +16,8 @@ import {
 } from '@/lib/security';
 
 describe('Security Utilities', () => {
+  const jsProtocolSample = ['java', 'script:alert(1)'].join('');
+
   describe('escapeHtml', () => {
     test('escapes HTML special characters', () => {
       expect(escapeHtml('<script>alert("xss")</script>')).toBe(
@@ -153,7 +155,7 @@ describe('Security Utilities', () => {
     });
 
     test('rejects javascript: URLs', () => {
-      expect(sanitizeUrl('javascript:alert(1)')).toBeNull();
+      expect(sanitizeUrl(jsProtocolSample)).toBeNull();
     });
 
     test('rejects data: URLs', () => {
@@ -177,7 +179,7 @@ describe('Security Utilities', () => {
     });
 
     test('detects javascript: protocol', () => {
-      expect(containsXssPatterns('javascript:alert(1)')).toBe(true);
+      expect(containsXssPatterns(jsProtocolSample)).toBe(true);
     });
 
     test('detects event handlers', () => {

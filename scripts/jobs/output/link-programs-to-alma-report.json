@@ -1,0 +1,103 @@
+{
+  "generated_at": "2026-02-14T23:31:39.310Z",
+  "summary": {
+    "programs_total": 12,
+    "organizations_matched": 0,
+    "organizations_needing_review": 6,
+    "links_created": 1,
+    "links_needing_review": 9,
+    "manual_overrides_applied": 1
+  },
+  "manual_overrides_applied": [
+    {
+      "program_id": "7d439016-1965-4757-90cf-0cd69257d856",
+      "alma_intervention_id": "757652ce-05e8-47f3-9d2d-e1fa58e98ea1",
+      "confidence": 0.99,
+      "reason": "Program description aligns directly with Oochiumpa Youth Services ALMA record (Operation Luna cohort + outcomes)."
+    }
+  ],
+  "organization_matches": [],
+  "organization_needs_review": [
+    {
+      "program_id": "eb56a3a3-f6c8-4486-b7ce-0ede99761ddb",
+      "organization": "Antakirinja Matu-Yankunytjatjara"
+    },
+    {
+      "program_id": "3be985c3-565e-463b-8d3a-fd3a074fe5c2",
+      "organization": "Logan Youth Collective"
+    },
+    {
+      "program_id": "2f8f1abf-6a6a-4d09-8587-8058c42c0591",
+      "organization": "TechStart Youth"
+    },
+    {
+      "program_id": "14602373-546b-4466-8867-8b44f16c649c",
+      "organization": "BackTrack"
+    },
+    {
+      "program_id": "d55d1918-c07f-4ddd-9457-992363fea3c9",
+      "organization": "Tangentyere Council"
+    },
+    {
+      "program_id": "332a545f-c30e-4822-9128-122810a46503",
+      "organization": "Creative Futures"
+    }
+  ],
+  "link_updates": [
+    {
+      "program_id": "7d439016-1965-4757-90cf-0cd69257d856",
+      "program_name": "Oonchiumpa Alternative Service Response",
+      "alma_intervention_id": "757652ce-05e8-47f3-9d2d-e1fa58e98ea1",
+      "alma_name": "Oochiumpa Youth Services",
+      "match_method": "organization_anchor_single",
+      "confidence": 0.99
+    }
+  ],
+  "link_needs_review": [
+    {
+      "program_id": "eb56a3a3-f6c8-4486-b7ce-0ede99761ddb",
+      "program_name": "Healing Circles Program",
+      "reason": "No deterministic match"
+    },
+    {
+      "program_id": "3be985c3-565e-463b-8d3a-fd3a074fe5c2",
+      "program_name": "Logan Youth Collective",
+      "reason": "No deterministic match"
+    },
+    {
+      "program_id": "2f8f1abf-6a6a-4d09-8587-8058c42c0591",
+      "program_name": "TechStart Youth",
+      "reason": "No deterministic match"
+    },
+    {
+      "program_id": "332a545f-c30e-4822-9128-122810a46503",
+      "program_name": "Creative Futures Collective",
+      "reason": "No deterministic match"
+    },
+    {
+      "program_id": "3f9f1e85-17dc-4850-9a59-06e83c69a803",
+      "program_name": "True Justice: Deep Listening on Country",
+      "reason": "No deterministic match"
+    },
+    {
+      "program_id": "a305bd43-1ef0-46da-9d86-5ded08112b1a",
+      "program_name": "Mounty Yarns Youth Justice Initiative",
+      "reason": "No deterministic match"
+    },
+    {
+      "program_id": "4773a5ba-229f-49d9-8e0e-b95a34353178",
+      "program_name": "Atnarpa Homestead On-Country Experiences",
+      "reason": "No deterministic match"
+    },
+    {
+      "program_id": "398c51c0-a69c-49d2-89f5-07d040bde311",
+      "program_name": "Mounty Yarns Youth Justice Initiative",
+      "reason": "No deterministic match"
+    },
+    {
+      "program_id": "2a20ee55-1172-4948-9a50-e60189062c57",
+      "program_name": "Cultural Brokerage & Service Navigation",
+      "reason": "No deterministic match"
+    }
+  ]
+}

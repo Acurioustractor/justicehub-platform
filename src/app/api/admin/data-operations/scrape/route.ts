@@ -330,11 +330,12 @@ export async function POST(request: NextRequest) {
           // Store extracted data based on type
           if (scrapeData.type === 'intervention' || scrapeData.type === 'program') {
             await serviceClient.from('alma_interventions').insert({
-              name: scrapeData.data.title,
-              description: scrapeData.data.summary,
-              source_url: link.url,
-              source_id: link.id,
+              name: scrapeData.data.title || link.title || link.url,
+              description: scrapeData.data.summary || scrapeData.data.content?.slice(0, 500) || 'Scraped intervention content',
+              type: link.predicted_type || scrapeData.type || 'program',
               metadata: { 
+                source_url: link.url,
+                discovered_link_id: link.id,
                 scraped_at: new Date().toISOString(),
                 scrape_time_ms: scrapeData.scrapeTimeMs,
                 content_length: scrapeData.data.content?.length,
@@ -344,15 +345,21 @@ export async function POST(request: NextRequest) {
 
           // Log to scrape history
           await serviceClient.from('alma_scrape_history').insert({
-            source_id: link.source_url || link.url,
-            url: link.url,
+            source_url: link.url,
             status: 'success',
-            items_found: scrapeData.entities || 1,
+            entities_found: scrapeData.entities || 1,
             relevance_score: link.predicted_relevance,
             novelty_score: 0.5,
+            started_at: new Date(Date.now() - (scrapeData.scrapeTimeMs || 0)).toISOString(),
+            completed_at: new Date().toISOString(),
+            content_length: scrapeData.data.content?.length || null,
+            extracted_data: {
+              title: scrapeData.data.title,
+              summary: scrapeData.data.summary,
+            },
             metadata: { 
               type: link.predicted_type,
-              title: scrapeData.data.title,
+              detected_type: scrapeData.type,
               scrape_time_ms: scrapeData.scrapeTimeMs,
             },
           });

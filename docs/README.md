@@ -10,6 +10,10 @@
 
 This single document contains everything needed to understand JusticeHub and ALMA.
 
+**Core alignment reference**: [strategic/CORE_GOAL_AND_ALIGNMENT_MAP.md](strategic/CORE_GOAL_AND_ALIGNMENT_MAP.md)
+
+Use this when deciding if a route/API/schema/scraper change is aligned with JusticeHub's core goal.
+
 ---
 
 ## Directory Structure

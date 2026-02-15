@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Navigation } from '@/components/ui/navigation';
-import dynamic from 'next/dynamic';
+import { CostEffectivenessChart } from '@/components/visualizations/CostEffectivenessChart';
+import { EvidenceMatrixHeatMap } from '@/components/visualizations/EvidenceMatrixHeatMap';
 import {
   BarChart3,
   TrendingUp,
@@ -13,39 +14,11 @@ import {
   ChevronDown,
   ChevronUp,
   ExternalLink,
-  RefreshCw,
   Layers,
   AlertTriangle,
   Target,
   Sparkles,
 } from 'lucide-react';
-
-// Dynamically import visualization components
-const AustraliaCoverageMap = dynamic(
-  () => import('@/components/visualizations/AustraliaCoverageMap'),
-  { ssr: false, loading: () => <LoadingPlaceholder height="400px" /> }
-);
-
-const CostEffectivenessChart = dynamic(
-  () => import('@/components/visualizations/CostEffectivenessChart'),
-  { ssr: false, loading: () => <LoadingPlaceholder height="500px" /> }
-);
-
-const EvidenceMatrixHeatMap = dynamic(
-  () => import('@/components/visualizations/EvidenceMatrixHeatMap'),
-  { ssr: false, loading: () => <LoadingPlaceholder height="400px" /> }
-);
-
-function LoadingPlaceholder({ height }: { height: string }) {
-  return (
-    <div
-      className="bg-gray-100 border-2 border-gray-200 flex items-center justify-center"
-      style={{ height }}
-    >
-      <RefreshCw className="w-6 h-6 animate-spin text-gray-400" />
-    </div>
-  );
-}
 
 interface DashboardStats {
   services: number;
@@ -56,13 +29,15 @@ interface DashboardStats {
   coverage_by_state: Record<string, number>;
 }
 
-interface ExpandableSection {
-  id: string;
-  expanded: boolean;
+interface Provenance {
+  mode: 'authoritative' | 'computed';
+  summary: string;
+  generated_at: string;
 }
 
 export default function IntelligenceOverview() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [provenance, setProvenance] = useState<Provenance | null>(null);
   const [loading, setLoading] = useState(true);
   const [sections, setSections] = useState<Record<string, boolean>>({
     coverage: true,
@@ -71,7 +46,6 @@ export default function IntelligenceOverview() {
     funding: false,
   });
 
-  // Mock data for visualizations - in production this would come from APIs
   const [coverageData, setCoverageData] = useState<Array<{
     state: string;
     services_count: number;
@@ -105,92 +79,32 @@ export default function IntelligenceOverview() {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      // Fetch stats
-      const statsRes = await fetch('/api/admin/data-operations/stats');
-      if (statsRes.ok) {
-        const data = await statsRes.json();
-        setStats({
-          services: data.totals?.services || 0,
-          interventions: data.totals?.interventions || 0,
-          evidence: data.totals?.evidence || 0,
-          funding_opportunities: 0, // Will be fetched separately
-          organizations: data.totals?.organizations || 0,
-          coverage_by_state: data.byState || {},
-        });
+      const response = await fetch('/api/intelligence/overview-summary', {
+        cache: 'no-store',
+      });
 
-        // Transform state data for coverage map
-        const coverage = Object.entries(data.byState || {}).map(
-          ([state, count]) => ({
-            state,
-            services_count: count as number,
-            interventions_count: Math.round((count as number) * 0.3),
-            funding_opportunities: Math.round((count as number) * 0.1),
-            coverage_score: Math.min(100, Math.round(((count as number) / 50) * 100)),
-          })
-        );
-        setCoverageData(coverage);
+      if (!response.ok) {
+        throw new Error(`Overview summary request failed with ${response.status}`);
       }
 
-      // Fetch funding stats
-      const fundingRes = await fetch('/api/admin/funding/scrape');
-      if (fundingRes.ok) {
-        const fundingData = await fundingRes.json();
-        setStats((prev) =>
-          prev
-            ? {
-                ...prev,
-                funding_opportunities: fundingData.stats?.active_opportunities || 0,
-              }
-            : prev
-        );
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to load overview summary');
       }
 
-      // Fetch interventions for cost-effectiveness chart
-      const interventionsRes = await fetch('/api/intelligence/interventions?limit=50');
-      if (interventionsRes.ok) {
-        const intData = await interventionsRes.json();
-        // Transform to chart format with mock cost/effectiveness data
-        const chartData = (intData.data || []).map((int: Record<string, unknown>, index: number) => ({
-          id: int.id as string,
-          name: int.name as string,
-          type: int.type as string || 'Community-Led',
-          cost_per_participant: (int.cost_per_young_person as number) || 5000 + Math.random() * 95000,
-          effectiveness_score: 30 + Math.random() * 60,
-          reach: 50 + Math.floor(Math.random() * 500),
-          evidence_level: int.evidence_level as string || 'Promising',
-          state: (int.geography as string[])?.[0] || 'National',
-          organization: int.operating_organization as string || '',
-        }));
-        setInterventionData(chartData);
-      }
+      setStats({
+        services: data.stats?.services || 0,
+        interventions: data.stats?.interventions || 0,
+        evidence: data.stats?.evidence || 0,
+        funding_opportunities: data.stats?.funding_opportunities || 0,
+        organizations: data.stats?.organizations || 0,
+        coverage_by_state: data.stats?.coverage_by_state || {},
+      });
 
-      // Generate evidence matrix from evidence data
-      const evidenceRes = await fetch('/api/admin/research/evidence?limit=500');
-      if (evidenceRes.ok) {
-        const evData = await evidenceRes.json();
-        const matrixCounts: Record<string, Record<string, number>> = {};
-
-        for (const item of evData.data || []) {
-          const topics = item.metadata?.topics || ['general'];
-          const jurisdictions = item.metadata?.jurisdictions || ['National'];
-
-          for (const topic of topics) {
-            for (const jurisdiction of jurisdictions) {
-              if (!matrixCounts[topic]) matrixCounts[topic] = {};
-              matrixCounts[topic][jurisdiction] =
-                (matrixCounts[topic][jurisdiction] || 0) + 1;
-            }
-          }
-        }
-
-        const matrixData: Array<{ topic: string; jurisdiction: string; count: number }> = [];
-        for (const [topic, jurisdictions] of Object.entries(matrixCounts)) {
-          for (const [jurisdiction, count] of Object.entries(jurisdictions)) {
-            matrixData.push({ topic, jurisdiction, count });
-          }
-        }
-        setEvidenceMatrix(matrixData);
-      }
+      setCoverageData(data.coverageData || []);
+      setInterventionData(data.interventionData || []);
+      setEvidenceMatrix(data.evidenceMatrix || []);
+      setProvenance(data.provenance || null);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
@@ -219,6 +133,14 @@ export default function IntelligenceOverview() {
             <p className="text-lg text-gray-600">
               Data-driven insights for youth justice decision making
             </p>
+            {provenance && (
+              <div className="mt-3 inline-flex items-center gap-2 border border-black bg-white px-3 py-1 text-xs">
+                <span className={`font-bold uppercase ${provenance.mode === 'authoritative' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                  {provenance.mode}
+                </span>
+                <span className="text-gray-700">{provenance.summary}</span>
+              </div>
+            )}
           </div>
 
           {/* Tier 1: Glance - Key Metrics */}
@@ -272,11 +194,27 @@ export default function IntelligenceOverview() {
               onToggle={() => toggleSection('coverage')}
             >
               <div className="p-6">
-                <AustraliaCoverageMap
-                  coverageData={coverageData}
-                  height="450px"
-                  showLegend
-                />
+                <div className="border-2 border-black bg-blue-50 p-6 mb-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h4 className="text-lg font-black text-black mb-2">
+                        Interactive map available in System Map
+                      </h4>
+                      <p className="text-sm text-gray-700 max-w-2xl">
+                        The live map module is available on the dedicated intelligence map route.
+                        This overview now surfaces state-level coverage snapshots for faster page
+                        load and more stable local development.
+                      </p>
+                    </div>
+                    <a
+                      href="/intelligence/map"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white border-2 border-black font-bold hover:bg-blue-700 transition-colors whitespace-nowrap"
+                    >
+                      Open System Map
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
+                </div>
 
                 {/* Quick Stats Row */}
                 <div className="grid grid-cols-4 gap-4 mt-6">

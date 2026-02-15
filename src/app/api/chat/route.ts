@@ -86,6 +86,10 @@ interface SearchResult {
   relevance: number;
 }
 
+function asOptionalString(value: unknown): string | undefined {
+  return typeof value === 'string' ? value : undefined;
+}
+
 /**
  * Escape special characters for LIKE/ILIKE queries
  */
@@ -120,7 +124,7 @@ async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
   // Search interventions/programs
   const { data: interventions } = await supabase
     .from('alma_interventions')
-    .select('id, name, description, intervention_type, metadata')
+    .select('id, name, description, type, metadata')
     .or(searchTerms.map(t => `name.ilike.%${t}%,description.ilike.%${t}%`).join(','))
     .limit(5);
 
@@ -130,9 +134,9 @@ async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
         type: 'intervention',
         id: item.id,
         name: item.name,
-        description: item.description?.substring(0, 200),
+        description: asOptionalString(item.description)?.substring(0, 200),
         url: `/intelligence/interventions/${item.id}`,
-        relevance: calculateRelevance(query, item.name, item.description)
+        relevance: calculateRelevance(query, item.name, asOptionalString(item.description))
       });
     });
   }
@@ -140,7 +144,7 @@ async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
   // Search services
   const { data: services } = await supabase
     .from('services')
-    .select('id, name, description, service_types')
+    .select('id, name, description, service_type')
     .or(searchTerms.map(t => `name.ilike.%${t}%,description.ilike.%${t}%`).join(','))
     .limit(5);
 
@@ -150,9 +154,9 @@ async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
         type: 'service',
         id: item.id,
         name: item.name,
-        description: item.description?.substring(0, 200),
+        description: asOptionalString(item.description)?.substring(0, 200),
         url: `/services/${item.id}`,
-        relevance: calculateRelevance(query, item.name, item.description)
+        relevance: calculateRelevance(query, item.name, asOptionalString(item.description))
       });
     });
   }
@@ -160,7 +164,7 @@ async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
   // Search people
   const { data: people } = await supabase
     .from('public_profiles')
-    .select('id, slug, full_name, bio, expertise')
+    .select('id, slug, full_name, bio, role_tags')
     .or(searchTerms.map(t => `full_name.ilike.%${t}%,bio.ilike.%${t}%`).join(','))
     .limit(5);
 
@@ -170,9 +174,9 @@ async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
         type: 'person',
         id: item.id,
         name: item.full_name,
-        description: item.bio?.substring(0, 200),
+        description: asOptionalString(item.bio)?.substring(0, 200),
         url: `/people/${item.slug}`,
-        relevance: calculateRelevance(query, item.full_name, item.bio)
+        relevance: calculateRelevance(query, item.full_name, asOptionalString(item.bio))
       });
     });
   }
@@ -190,9 +194,9 @@ async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
         type: 'organization',
         id: item.id,
         name: item.name,
-        description: item.description?.substring(0, 200),
+        description: asOptionalString(item.description)?.substring(0, 200),
         url: `/organizations/${item.slug}`,
-        relevance: calculateRelevance(query, item.name, item.description)
+        relevance: calculateRelevance(query, item.name, asOptionalString(item.description))
       });
     });
   }
@@ -210,9 +214,9 @@ async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
         type: 'evidence',
         id: item.id,
         name: item.title,
-        description: item.findings?.substring(0, 200),
+        description: asOptionalString(item.findings)?.substring(0, 200),
         url: `/intelligence/evidence/${item.id}`,
-        relevance: calculateRelevance(query, item.title, item.findings)
+        relevance: calculateRelevance(query, item.title, asOptionalString(item.findings))
       });
     });
   }
@@ -230,9 +234,9 @@ async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
         type: 'inquiry',
         id: item.id,
         name: `${item.title} (${item.jurisdiction}, ${item.year_published})`,
-        description: item.summary?.substring(0, 200),
+        description: asOptionalString(item.summary)?.substring(0, 200),
         url: `/youth-justice-report/inquiries`,
-        relevance: calculateRelevance(query, item.title, item.summary)
+        relevance: calculateRelevance(query, item.title, asOptionalString(item.summary))
       });
     });
   }
@@ -250,9 +254,9 @@ async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
         type: 'international',
         id: item.id,
         name: `${item.name} (${item.country})`,
-        description: item.approach_summary?.substring(0, 200),
+        description: asOptionalString(item.approach_summary)?.substring(0, 200),
         url: `/youth-justice-report/international`,
-        relevance: calculateRelevance(query, item.name, item.approach_summary)
+        relevance: calculateRelevance(query, item.name, asOptionalString(item.approach_summary))
       });
     });
   }
@@ -264,7 +268,7 @@ async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
 /**
  * Calculate relevance score for search results
  */
-function calculateRelevance(query: string, name: string, description?: string): number {
+function calculateRelevance(query: string, name: string, description?: string | null): number {
   const q = query.toLowerCase();
   const n = name?.toLowerCase() || '';
   const d = description?.toLowerCase() || '';

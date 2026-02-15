@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { createServiceClient } from '@/lib/supabase/service';
+import { headers } from 'next/headers';
 import Link from 'next/link';
 import { PortfolioScoreCard, ConsentIndicator } from '@/components/alma';
 
@@ -36,6 +36,12 @@ type Context = {
   metadata: any;
 };
 
+type Provenance = {
+  mode: 'authoritative' | 'computed';
+  summary: string;
+  generated_at: string;
+};
+
 interface InterventionDetailProps {
   params: {
     id: string;
@@ -44,107 +50,57 @@ interface InterventionDetailProps {
 
 export const dynamic = 'force-dynamic';
 
-async function getIntervention(id: string) {
-  const supabase = createServiceClient();
+function getRequestBaseUrl(): string {
+  const requestHeaders = headers();
+  const host = requestHeaders.get('x-forwarded-host') || requestHeaders.get('host');
+  const protocol = requestHeaders.get('x-forwarded-proto') || 'http';
+  if (host) {
+    return `${protocol}://${host}`;
+  }
+  return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+}
 
-  const { data: intervention, error } = await supabase
-    .from('alma_interventions')
-    .select('*')
-    .eq('id', id)
-    .single();
+async function getInterventionDetail(id: string): Promise<{
+  intervention: Intervention;
+  evidence: Evidence[];
+  outcomes: Outcome[];
+  contexts: Context[];
+  similarInterventions: Intervention[];
+  portfolioScore: Record<string, unknown>;
+  provenance: Provenance | null;
+} | null> {
+  const response = await fetch(
+    `${getRequestBaseUrl()}/api/intelligence/interventions/${encodeURIComponent(id)}`,
+    { cache: 'no-store' }
+  );
 
-  if (error || !intervention) {
+  if (!response.ok) {
     return null;
   }
 
-  return intervention as Intervention;
-}
+  const payload = await response.json();
+  if (!payload?.success || !payload?.intervention) {
+    return null;
+  }
 
-async function getInterventionEvidence(interventionId: string) {
-  const supabase = createServiceClient();
-
-  const { data } = await supabase
-    .from('alma_evidence')
-    .select('*')
-    .eq('intervention_id', interventionId)
-    .order('created_at', { ascending: false });
-
-  return (data || []) as Evidence[];
-}
-
-async function getInterventionOutcomes(interventionId: string) {
-  const supabase = createServiceClient();
-
-  const { data } = await supabase
-    .from('alma_outcomes')
-    .select('*')
-    .eq('intervention_id', interventionId)
-    .order('created_at', { ascending: false });
-
-  return (data || []) as Outcome[];
-}
-
-async function getInterventionContexts(interventionId: string) {
-  const supabase = createServiceClient();
-
-  const { data } = await supabase
-    .from('alma_community_contexts')
-    .select('*')
-    .eq('intervention_id', interventionId)
-    .order('created_at', { ascending: false });
-
-  return (data || []) as Context[];
-}
-
-async function getSimilarInterventions(intervention: Intervention) {
-  const supabase = createServiceClient();
-
-  const metadata = intervention.metadata as any;
-
-  // Find similar by type only (simpler query)
-  const { data } = await supabase
-    .from('alma_interventions')
-    .select('*')
-    .neq('id', intervention.id)
-    .eq('type', intervention.type || '')
-    .limit(3);
-
-  return (data || []) as Intervention[];
-}
-
-async function getPortfolioScore(interventionId: string) {
-  // Mock portfolio score for now
-  // In production, this would call the portfolio-service.ts
   return {
-    composite: 0.75,
-    evidence_strength: 0.8,
-    community_authority: 0.85,
-    harm_risk: 0.2,
-    implementation_capability: 0.7,
-    option_value: 0.65,
-    tier: 'High Impact',
-    recommendations: [
-      'Strong community authority indicates deep local engagement',
-      'Evidence base is solid but could benefit from RCT validation',
-      'Ready for scaling with additional funding',
-    ],
+    intervention: payload.intervention as Intervention,
+    evidence: (payload.evidence || []) as Evidence[],
+    outcomes: (payload.outcomes || []) as Outcome[],
+    contexts: (payload.contexts || []) as Context[],
+    similarInterventions: (payload.similarInterventions || []) as Intervention[],
+    portfolioScore: (payload.portfolioScore || {}) as Record<string, unknown>,
+    provenance: (payload.provenance || null) as Provenance | null,
   };
 }
 
 export default async function InterventionDetailPage({ params }: InterventionDetailProps) {
-  const intervention = await getIntervention(params.id);
-
-  if (!intervention) {
+  const detail = await getInterventionDetail(params.id);
+  if (!detail) {
     notFound();
   }
 
-  const [evidence, outcomes, contexts, similarInterventions, portfolioScore] = await Promise.all([
-    getInterventionEvidence(intervention.id),
-    getInterventionOutcomes(intervention.id),
-    getInterventionContexts(intervention.id),
-    getSimilarInterventions(intervention),
-    getPortfolioScore(intervention.id),
-  ]);
+  const { intervention, evidence, outcomes, contexts, similarInterventions, portfolioScore, provenance } = detail;
 
   const metadata = intervention.metadata as any;
   const isCommunityControlled = intervention.consent_level === 'Community Controlled';
@@ -189,6 +145,14 @@ export default async function InterventionDetailPage({ params }: InterventionDet
                 showAuthority
               />
             </div>
+            {provenance && (
+              <div className="mb-6 inline-flex items-center gap-2 border border-black bg-white px-3 py-1 text-xs">
+                <span className={`font-bold uppercase ${provenance.mode === 'authoritative' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                  {provenance.mode}
+                </span>
+                <span className="text-gray-700">{provenance.summary}</span>
+              </div>
+            )}
 
             <div className="flex flex-wrap items-center gap-3">
               <span className="inline-flex items-center px-4 py-2 border-2 border-black bg-black text-white font-bold uppercase text-xs tracking-wider">

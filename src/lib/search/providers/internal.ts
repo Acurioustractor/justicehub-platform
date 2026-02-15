@@ -24,6 +24,10 @@ function sanitizeSearchTerm(term: string): string {
 
 const DESCRIPTION_PREVIEW_LENGTH = 200;
 
+function asOptionalString(value: unknown): string | undefined {
+  return typeof value === 'string' && value.length > 0 ? value : undefined;
+}
+
 export const internalSearchProvider: SearchProvider = {
   name: 'justicehub-internal',
 
@@ -88,7 +92,7 @@ async function searchInterventions(
 ): Promise<SearchResult[]> {
   let query = supabase
     .from('alma_interventions')
-    .select('id, name, description, intervention_type, metadata')
+    .select('id, name, description, type, metadata')
     .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
     .limit(limit);
 
@@ -100,17 +104,17 @@ async function searchInterventions(
 
   if (error || !data) return [];
 
-  return data.map((item) => ({
+  return data.map((item: any) => ({
     id: item.id,
     type: 'intervention' as const,
-    title: item.name,
-    description: item.description?.substring(0, DESCRIPTION_PREVIEW_LENGTH),
+    title: item.name || 'Intervention',
+    description: asOptionalString(item.description)?.substring(0, DESCRIPTION_PREVIEW_LENGTH),
     url: `/intelligence/interventions/${item.id}`,
     score: calculateScore(searchTerm, item.name, item.description),
     source: { name: 'justicehub', table: 'alma_interventions' },
     metadata: {
-      state: (item.metadata as Record<string, unknown>)?.state as string | undefined,
-      category: item.intervention_type,
+      state: asOptionalString((item.metadata as Record<string, unknown> | null)?.state),
+      category: asOptionalString(item.type),
     },
   }));
 }
@@ -123,7 +127,7 @@ async function searchServices(
 ): Promise<SearchResult[]> {
   let query = supabase
     .from('services')
-    .select('id, name, description, location_state, category')
+    .select('id, name, description, location_state, service_type')
     .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
     .limit(limit);
 
@@ -135,17 +139,17 @@ async function searchServices(
 
   if (error || !data) return [];
 
-  return data.map((item) => ({
+  return data.map((item: any) => ({
     id: item.id,
     type: 'service' as const,
-    title: item.name,
-    description: item.description?.substring(0, DESCRIPTION_PREVIEW_LENGTH),
+    title: item.name || 'Service',
+    description: asOptionalString(item.description)?.substring(0, DESCRIPTION_PREVIEW_LENGTH),
     url: `/services/${item.id}`,
     score: calculateScore(searchTerm, item.name, item.description),
     source: { name: 'justicehub', table: 'services' },
     metadata: {
-      state: item.location_state,
-      category: item.category,
+      state: asOptionalString(item.location_state),
+      category: asOptionalString(item.service_type),
     },
   }));
 }
@@ -158,12 +162,12 @@ async function searchOrganizations(
 ): Promise<SearchResult[]> {
   let query = supabase
     .from('organizations')
-    .select('id, name, slug, description, type, location_state, logo_url')
+    .select('id, name, slug, description, type, location, logo_url')
     .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
     .limit(limit);
 
   if (context?.state) {
-    query = query.eq('location_state', context.state);
+    query = query.ilike('location', `%${context.state}%`);
   }
 
   if (context?.organizationId) {
@@ -174,18 +178,18 @@ async function searchOrganizations(
 
   if (error || !data) return [];
 
-  return data.map((item) => ({
+  return data.map((item: any) => ({
     id: item.id,
     type: 'organization' as const,
-    title: item.name,
-    description: item.description?.substring(0, DESCRIPTION_PREVIEW_LENGTH),
+    title: item.name || 'Organization',
+    description: asOptionalString(item.description)?.substring(0, DESCRIPTION_PREVIEW_LENGTH),
     url: `/organizations/${item.slug || item.id}`,
     score: calculateScore(searchTerm, item.name, item.description),
     source: { name: 'justicehub', table: 'organizations' },
     metadata: {
-      state: item.location_state,
-      category: item.type,
-      imageUrl: item.logo_url,
+      state: asOptionalString(item.location),
+      category: asOptionalString(item.type),
+      imageUrl: asOptionalString(item.logo_url),
     },
   }));
 }
@@ -198,7 +202,7 @@ async function searchPeople(
 ): Promise<SearchResult[]> {
   const query = supabase
     .from('public_profiles')
-    .select('id, full_name, slug, bio, role, avatar_url')
+    .select('id, full_name, slug, bio, role_tags, photo_url')
     .eq('is_public', true)
     .or(`full_name.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%`)
     .limit(limit);
@@ -207,7 +211,7 @@ async function searchPeople(
 
   if (error || !data) return [];
 
-  return data.map((item) => ({
+  return data.map((item: any) => ({
     id: item.id,
     type: 'person' as const,
     title: item.full_name,
@@ -216,8 +220,8 @@ async function searchPeople(
     score: calculateScore(searchTerm, item.full_name, item.bio),
     source: { name: 'justicehub', table: 'public_profiles' },
     metadata: {
-      category: item.role,
-      imageUrl: item.avatar_url,
+      category: Array.isArray(item.role_tags) ? asOptionalString(item.role_tags[0]) : undefined,
+      imageUrl: asOptionalString(item.photo_url),
     },
   }));
 }

@@ -21,6 +21,9 @@ jobs:
       
       - name: Run linting
         run: npm run lint
+
+      - name: Check hardcoded Supabase keys
+        run: npm run check:no-hardcoded-supabase-keys
       
       - name: Build
         run: npm run build

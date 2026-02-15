@@ -4,6 +4,20 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+function buildProvenance() {
+    return {
+        mode: 'computed' as const,
+        summary:
+            'Alpha opportunities are computed heuristic scores derived from intervention attributes at request time.',
+        sources: [
+            { table: 'alma_interventions', role: 'primary', classification: 'canonical' },
+            { table: 'alma_intervention_evidence', role: 'supporting', classification: 'canonical' },
+        ],
+        computed_fields: ['signal_evidence', 'signal_authority', 'signal_narrative_score', 'alpha_score', 'market_status'],
+        generated_at: new Date().toISOString(),
+    };
+}
+
 export async function GET() {
     try {
         const supabase = await createClient();
@@ -75,7 +89,8 @@ export async function GET() {
         detailedSignals.sort((a, b) => b.alpha_score - a.alpha_score);
 
         return NextResponse.json({
-            opportunities: detailedSignals.slice(0, 20)
+            opportunities: detailedSignals.slice(0, 20),
+            provenance: buildProvenance(),
         });
 
     } catch (error) {

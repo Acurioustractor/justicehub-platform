@@ -20,9 +20,16 @@ type DataSource = {
     active: boolean;
 };
 
+type Provenance = {
+    mode: 'authoritative' | 'computed';
+    summary: string;
+    generated_at: string;
+};
+
 export default function StatusPage() {
     const [stats, setStats] = useState<SystemStats | null>(null);
     const [sources, setSources] = useState<DataSource[]>([]);
+    const [provenance, setProvenance] = useState<Provenance | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -33,6 +40,7 @@ export default function StatusPage() {
                 const data = await res.json();
                 setStats(data.stats);
                 setSources(data.sources);
+                setProvenance(data.provenance || null);
             } catch (err) {
                 console.error(err);
             } finally {
@@ -74,6 +82,14 @@ export default function StatusPage() {
                             <p className="text-xl max-w-2xl mt-4 text-gray-700">
                                 Real-time telemetry of ALMA intelligence acquisition and processing pipelines.
                             </p>
+                            {provenance && (
+                                <div className="mt-4 inline-flex items-center gap-2 border border-black bg-white px-3 py-1 text-xs">
+                                    <span className={`font-bold uppercase ${provenance.mode === 'authoritative' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                                        {provenance.mode}
+                                    </span>
+                                    <span className="text-gray-700">{provenance.summary}</span>
+                                </div>
+                            )}
                         </div>
                         <div className="text-right">
                             <div className="flex items-center gap-2 justify-end">

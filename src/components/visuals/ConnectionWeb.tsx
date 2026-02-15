@@ -7,6 +7,17 @@ interface ConnectionWebProps {
   height?: number;
 }
 
+interface StakeholderNode {
+  id: string;
+  label: string;
+  angle: number;
+  color: string;
+  distance: number;
+  connection: string;
+  x: number;
+  y: number;
+}
+
 export function ConnectionWeb({ width = 1200, height = 700 }: ConnectionWebProps) {
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -43,7 +54,7 @@ export function ConnectionWeb({ width = 1200, height = 700 }: ConnectionWebProps
     const hub = { x: 600, y: 350, r: 80 };
 
     // Stakeholder nodes arranged in circle around hub
-    const stakeholders = [
+    const stakeholderSeeds = [
       {
         id: 'youth',
         label: 'Young\nPeople',
@@ -95,10 +106,13 @@ export function ConnectionWeb({ width = 1200, height = 700 }: ConnectionWebProps
     ];
 
     // Calculate positions
-    stakeholders.forEach(s => {
+    const stakeholders: StakeholderNode[] = stakeholderSeeds.map((s) => {
       const radians = (s.angle - 90) * Math.PI / 180;
-      s.x = hub.x + s.distance * Math.cos(radians);
-      s.y = hub.y + s.distance * Math.sin(radians);
+      return {
+        ...s,
+        x: hub.x + s.distance * Math.cos(radians),
+        y: hub.y + s.distance * Math.sin(radians),
+      };
     });
 
     // Draw connections between hub and stakeholders

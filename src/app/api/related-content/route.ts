@@ -43,6 +43,15 @@ export async function GET(request: NextRequest) {
   }
 }
 
+function normalizeEvidenceItem(evidence: any) {
+  if (!evidence) return null;
+  return {
+    id: evidence.id,
+    title: evidence.title,
+    source_title: evidence.metadata?.source_title || evidence.source_url || 'Source unavailable',
+  };
+}
+
 async function getInterventionRelatedContent(supabase: any, interventionId: string) {
   // Fetch all related content for an intervention
   const [
@@ -95,9 +104,17 @@ async function getInterventionRelatedContent(supabase: any, interventionId: stri
 
     // Related evidence (through the intervention)
     supabase
-      .from('alma_evidence')
-      .select('id, title, source_title')
-      .contains('related_interventions', [interventionId]),
+      .from('alma_intervention_evidence')
+      .select(`
+        evidence_id,
+        alma_evidence:evidence_id (
+          id,
+          title,
+          source_url,
+          metadata
+        )
+      `)
+      .eq('intervention_id', interventionId),
 
     // Media mentions (from alma_media_articles that mention this intervention)
     supabase
@@ -121,7 +138,7 @@ async function getInterventionRelatedContent(supabase: any, interventionId: stri
       role: item.role,
       relevance_note: item.notes,
     })) || [],
-    evidence: evidence || [],
+    evidence: evidence?.map((item: any) => normalizeEvidenceItem(item.alma_evidence)).filter(Boolean) || [],
     mediaArticles: mediaArticles || [],
   });
 }
@@ -152,7 +169,8 @@ async function getArticleRelatedContent(supabase: any, articleId: string) {
         alma_evidence:evidence_id (
           id,
           title,
-          source_title
+          source_url,
+          metadata
         )
       `)
       .eq('article_id', articleId),
@@ -163,10 +181,14 @@ async function getArticleRelatedContent(supabase: any, articleId: string) {
       ...item.alma_interventions,
       relevance_note: item.relevance_note,
     })) || [],
-    evidence: evidence?.map((item: any) => ({
-      ...item.alma_evidence,
-      relevance_note: item.relevance_note,
-    })) || [],
+    evidence: evidence?.map((item: any) => {
+      const normalizedEvidence = normalizeEvidenceItem(item.alma_evidence);
+      if (!normalizedEvidence) return null;
+      return {
+        ...normalizedEvidence,
+        relevance_note: item.relevance_note,
+      };
+    }).filter(Boolean) || [],
   });
 }
 
@@ -175,7 +197,7 @@ async function getEvidenceRelatedContent(supabase: any, evidenceId: string) {
   const [
     { data: articles },
     { data: author },
-    { data: relatedEvidence },
+    { data: interventionLinks },
   ] = await Promise.all([
     // Related articles
     supabase
@@ -204,13 +226,43 @@ async function getEvidenceRelatedContent(supabase: any, evidenceId: string) {
       .eq('id', evidenceId)
       .single(),
 
-    // Related evidence (same intervention)
+    // Find linked interventions first, then resolve other evidence through the link table
     supabase
-      .from('alma_evidence')
-      .select('id, title, source_title, related_interventions')
-      .neq('id', evidenceId)
-      .limit(5),
+      .from('alma_intervention_evidence')
+      .select('intervention_id')
+      .eq('evidence_id', evidenceId),
   ]);
+
+  const interventionIds = Array.from(
+    new Set((interventionLinks || []).map((row: { intervention_id: string | null }) => row.intervention_id).filter(Boolean))
+  ) as string[];
+
+  let relatedEvidence: any[] = [];
+  if (interventionIds.length > 0) {
+    const { data: relatedEvidenceLinks } = await supabase
+      .from('alma_intervention_evidence')
+      .select(`
+        evidence_id,
+        alma_evidence:evidence_id (
+          id,
+          title,
+          source_url,
+          metadata
+        )
+      `)
+      .in('intervention_id', interventionIds)
+      .neq('evidence_id', evidenceId)
+      .limit(25);
+
+    const dedupedEvidence = new Map<string, any>();
+    for (const item of relatedEvidenceLinks || []) {
+      const normalizedEvidence = normalizeEvidenceItem(item.alma_evidence);
+      if (normalizedEvidence && !dedupedEvidence.has(normalizedEvidence.id)) {
+        dedupedEvidence.set(normalizedEvidence.id, normalizedEvidence);
+      }
+    }
+    relatedEvidence = Array.from(dedupedEvidence.values()).slice(0, 5);
+  }
 
   return NextResponse.json({
     articles: articles?.map((item: any) => ({
@@ -218,7 +270,7 @@ async function getEvidenceRelatedContent(supabase: any, evidenceId: string) {
       relevance_note: item.relevance_note,
     })) || [],
     author: author?.public_profiles ? [{ ...author.public_profiles, role: 'Author' }] : [],
-    evidence: relatedEvidence || [],
+    evidence: relatedEvidence,
   });
 }
 
@@ -265,7 +317,7 @@ async function getProfileRelatedContent(supabase: any, profileId: string) {
     // Evidence authored by this person
     supabase
       .from('alma_evidence')
-      .select('id, title, source_title')
+      .select('id, title, source_url, metadata')
       .eq('author_profile_id', profileId),
   ]);
 
@@ -275,6 +327,6 @@ async function getProfileRelatedContent(supabase: any, profileId: string) {
       role: item.role,
       relevance_note: item.notes,
     })) || [],
-    evidence: evidence || [],
+    evidence: evidence?.map((item: any) => normalizeEvidenceItem(item)).filter(Boolean) || [],
   });
 }

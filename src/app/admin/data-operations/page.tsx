@@ -21,7 +21,22 @@ interface Stats {
   lastUpdated: string;
 }
 
-interface Source { id: string; name: string; type: string; table: string; count: number; lastUpdated: string | null; status: 'healthy' | 'stale' | 'empty'; description: string; }
+interface Source {
+  id: string;
+  name: string;
+  type: string;
+  pipeline?: 'directory' | 'programs' | 'alma' | 'sync';
+  lifecycle?: 'canonical' | 'supporting' | 'legacy';
+  legacy?: boolean;
+  compatibilityOnly?: boolean;
+  canonicalPipeline?: 'directory' | 'programs' | 'alma' | 'sync';
+  canonicalTable?: string | null;
+  table: string;
+  count: number;
+  lastUpdated: string | null;
+  status: 'healthy' | 'stale' | 'empty';
+  description: string;
+}
 interface Alert { id: string; type: 'warning' | 'error' | 'info'; category: string; message: string; detail: string | null; count: number | null; table: string | null; }
 interface TimelineDay { date: string; services: number; organizations: number; evidence: number; interventions: number; links: number; total: number; }
 
@@ -73,9 +88,10 @@ export default function DataOperationsPage() {
 
   const getTypeIcon = (type: string) => {
     const icons: Record<string, JSX.Element> = {
-      directory: <MapPin className="w-5 h-5" />, curated: <CheckCircle className="w-5 h-5" />,
-      research: <Microscope className="w-5 h-5" />, people: <Users className="w-5 h-5" />,
-      content: <BookOpen className="w-5 h-5" />, scraper: <Link2 className="w-5 h-5" />,
+      directory: <MapPin className="w-5 h-5" />,
+      programs: <FileText className="w-5 h-5" />,
+      alma: <Microscope className="w-5 h-5" />,
+      sync: <RefreshCw className="w-5 h-5" />,
     };
     return icons[type] || <Database className="w-5 h-5" />;
   };
@@ -145,12 +161,24 @@ export default function DataOperationsPage() {
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><Database className="w-5 h-5" />Data Sources</h2>
             <div className="border-2 border-black bg-white overflow-hidden">
               <table className="w-full">
-                <thead className="bg-gray-100 border-b-2 border-black"><tr><th className="text-left px-4 py-3 font-bold">Source</th><th className="text-left px-4 py-3 font-bold">Type</th><th className="text-right px-4 py-3 font-bold">Records</th><th className="text-left px-4 py-3 font-bold">Last Updated</th><th className="text-left px-4 py-3 font-bold">Status</th></tr></thead>
+                <thead className="bg-gray-100 border-b-2 border-black"><tr><th className="text-left px-4 py-3 font-bold">Source</th><th className="text-left px-4 py-3 font-bold">Pipeline</th><th className="text-left px-4 py-3 font-bold">Lifecycle</th><th className="text-right px-4 py-3 font-bold">Records</th><th className="text-left px-4 py-3 font-bold">Last Updated</th><th className="text-left px-4 py-3 font-bold">Status</th></tr></thead>
                 <tbody>
                   {sources.map((source, i) => (
                     <tr key={source.id} className={`border-b ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
                       <td className="px-4 py-3"><div className="flex items-center gap-3"><div className="p-2 bg-gray-100 border border-gray-200">{getTypeIcon(source.type)}</div><div><div className="font-bold">{source.name}</div><div className="text-xs text-gray-500">{source.description}</div></div></div></td>
-                      <td className="px-4 py-3"><span className="px-2 py-1 bg-gray-100 text-xs font-medium uppercase">{source.type}</span></td>
+                      <td className="px-4 py-3"><span className="px-2 py-1 bg-gray-100 text-xs font-medium uppercase">{source.pipeline || source.type}</span></td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-col gap-1">
+                          <span className={`px-2 py-1 text-xs font-medium uppercase w-fit ${source.lifecycle === 'legacy' ? 'bg-yellow-100 text-yellow-800' : source.lifecycle === 'supporting' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
+                            {source.lifecycle || 'canonical'}
+                          </span>
+                          {source.compatibilityOnly && (
+                            <span className="text-[10px] text-gray-600">
+                              Compat only → {(source.canonicalPipeline || source.pipeline || source.type)}:{source.canonicalTable || source.table}
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td className="px-4 py-3 text-right font-mono font-bold">{source.count.toLocaleString()}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{source.lastUpdated ? new Date(source.lastUpdated).toLocaleDateString() : 'Never'}</td>
                       <td className="px-4 py-3"><div className="flex items-center gap-2">{getStatusIcon(source.status)}<span className="text-sm capitalize">{source.status}</span></div></td>

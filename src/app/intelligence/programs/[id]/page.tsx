@@ -72,9 +72,17 @@ export default async function InterventionDetailPage({ params }: PageProps) {
 
     // Related evidence
     supabase
-      .from('alma_evidence')
-      .select('id, title, source_title')
-      .contains('related_interventions', [id]),
+      .from('alma_intervention_evidence')
+      .select(`
+        evidence_id,
+        alma_evidence:evidence_id (
+          id,
+          title,
+          source_url,
+          metadata
+        )
+      `)
+      .eq('intervention_id', id),
 
     // Media mentions
     supabase
@@ -98,7 +106,15 @@ export default async function InterventionDetailPage({ params }: PageProps) {
       role: item.role,
       relevance_note: item.notes,
     })) || [],
-    evidence: evidenceData.data || [],
+    evidence: evidenceData.data?.map((item: any) => {
+      const evidence = item.alma_evidence;
+      if (!evidence) return null;
+      return {
+        id: evidence.id,
+        title: evidence.title,
+        source_title: evidence.metadata?.source_title || evidence.source_url || 'Source unavailable',
+      };
+    }).filter(Boolean) || [],
     mediaArticles: mediaData.data || [],
   };
 

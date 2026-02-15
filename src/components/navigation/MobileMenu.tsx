@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { User, LogOut, Search } from 'lucide-react';
+import { User, LogOut, Search, LayoutGrid } from 'lucide-react';
 import { navigationItems } from '@/config/navigation';
 import { UserProfile } from '@/hooks/useNavigationAuth';
 
@@ -14,6 +14,7 @@ interface MobileMenuProps {
     userProfile: UserProfile | null;
     onSignOut: () => void;
     onSearchOpen?: () => void;
+    onMegaMenuOpen?: () => void;
 }
 
 export function MobileMenu({
@@ -23,7 +24,8 @@ export function MobileMenu({
     user,
     userProfile,
     onSignOut,
-    onSearchOpen
+    onSearchOpen,
+    onMegaMenuOpen
 }: MobileMenuProps) {
     if (!isOpen) return null;
 
@@ -46,6 +48,20 @@ export function MobileMenu({
                     >
                         <Search className="h-5 w-5" />
                         <span>Search programs, services...</span>
+                    </button>
+                )}
+
+                {/* Mobile Full Menu Button */}
+                {onMegaMenuOpen && (
+                    <button
+                        onClick={() => {
+                            onClose();
+                            onMegaMenuOpen();
+                        }}
+                        className="flex items-center gap-3 px-3 py-3 mx-3 text-left font-medium text-gray-700 hover:text-black hover:bg-gray-50 transition-colors rounded-lg border border-gray-200"
+                    >
+                        <LayoutGrid className="h-5 w-5" />
+                        <span>View all pages</span>
                     </button>
                 )}
 
@@ -100,42 +116,6 @@ export function MobileMenu({
                         )}
                     </div>
                 ))}
-
-                {/* About Link - Mobile (Distinct Style) */}
-                <div className="border-t-2 border-gray-200 pt-4 mt-4">
-                    <div className="text-xs uppercase tracking-wider text-gray-500 font-bold px-3 mb-2">
-                        Learn More
-                    </div>
-                    <Link
-                        href="/about"
-                        onClick={onClose}
-                        className={`border-2 mx-3 px-4 py-3 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 block ${isActivePath('/about')
-                            ? 'border-blue-800 bg-blue-800 text-white'
-                            : 'border-gray-400 text-gray-700 hover:border-blue-800 hover:bg-blue-800 hover:text-white'
-                            }`}
-                        aria-current={isActivePath('/about') ? 'page' : undefined}
-                    >
-                        <div>
-                            <div className="flex items-center justify-between">
-                                <span className="font-bold">About JusticeHub</span>
-                                <span className="text-xs opacity-75">?</span>
-                            </div>
-                            <div className="text-sm mt-1 font-normal opacity-90">How our platform works</div>
-                        </div>
-                    </Link>
-                </div>
-
-                <Link
-                    href="/youth-scout"
-                    onClick={onClose}
-                    className="relative youth-scout-button text-white px-6 py-3 font-bold text-sm uppercase tracking-wider hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 group text-center rounded-sm no-underline"
-                    aria-label="Youth Scout - Your personalized journey"
-                >
-                    <span className="relative z-10">
-                        YOUTH SCOUT
-                    </span>
-                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </Link>
 
                 {/* Mobile: Show SIGN UP or Profile Links based on auth state */}
                 {user && userProfile ? (

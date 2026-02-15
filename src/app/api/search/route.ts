@@ -42,6 +42,16 @@ export interface SearchResponse {
   timing_ms: number;
 }
 
+function asOptionalString(value: unknown): string | undefined {
+  return typeof value === 'string' ? value : undefined;
+}
+
+function asMetadataState(value: unknown): string | undefined {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined;
+  const state = (value as { state?: unknown }).state;
+  return typeof state === 'string' ? state : undefined;
+}
+
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
 
@@ -76,7 +86,7 @@ export async function GET(request: NextRequest) {
   if (typeFilter === 'all' || typeFilter === 'intervention') {
     let interventionQuery = supabase
       .from('alma_interventions')
-      .select('id, name, description, intervention_type, metadata', { count: 'exact' })
+      .select('id, name, description, type, metadata', { count: 'exact' })
       .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
 
     if (stateFilter) {
@@ -93,11 +103,11 @@ export async function GET(request: NextRequest) {
           type: 'intervention',
           id: item.id,
           name: item.name,
-          description: item.description?.substring(0, 200),
+          description: asOptionalString(item.description)?.substring(0, 200),
           url: `/intelligence/interventions/${item.id}`,
-          state: item.metadata?.state as string | undefined,
+          state: asMetadataState(item.metadata),
           metadata: {
-            intervention_type: item.intervention_type,
+            type: item.type,
           },
         });
       });
@@ -108,7 +118,7 @@ export async function GET(request: NextRequest) {
   if (typeFilter === 'all' || typeFilter === 'service') {
     let serviceQuery = supabase
       .from('services')
-      .select('id, name, description, location_state, category', { count: 'exact' })
+      .select('id, name, description, location_state, service_type', { count: 'exact' })
       .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
 
     if (stateFilter) {
@@ -125,11 +135,11 @@ export async function GET(request: NextRequest) {
           type: 'service',
           id: item.id,
           name: item.name,
-          description: item.description?.substring(0, 200),
+          description: asOptionalString(item.description)?.substring(0, 200),
           url: `/services/${item.id}`,
-          state: item.location_state,
+          state: asOptionalString(item.location_state),
           metadata: {
-            category: item.category,
+            service_type: item.service_type,
           },
         });
       });
@@ -140,7 +150,7 @@ export async function GET(request: NextRequest) {
   if (typeFilter === 'all' || typeFilter === 'person') {
     let peopleQuery = supabase
       .from('public_profiles')
-      .select('id, full_name, slug, bio, role', { count: 'exact' })
+      .select('id, full_name, slug, bio, role_tags', { count: 'exact' })
       .eq('is_public', true)
       .or(`full_name.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%`);
 
@@ -154,10 +164,10 @@ export async function GET(request: NextRequest) {
           type: 'person',
           id: item.id,
           name: item.full_name,
-          description: item.bio?.substring(0, 200),
+          description: asOptionalString(item.bio)?.substring(0, 200),
           url: `/people/${item.slug || item.id}`,
           metadata: {
-            role: item.role,
+            role_tags: item.role_tags,
           },
         });
       });
@@ -168,11 +178,11 @@ export async function GET(request: NextRequest) {
   if (typeFilter === 'all' || typeFilter === 'organization') {
     let orgQuery = supabase
       .from('organizations')
-      .select('id, name, slug, description, type, location_state', { count: 'exact' })
+      .select('id, name, slug, description, type, state', { count: 'exact' })
       .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
 
     if (stateFilter) {
-      orgQuery = orgQuery.eq('location_state', stateFilter);
+      orgQuery = orgQuery.eq('state', stateFilter);
     }
 
     const { data: organizations, count } = await orgQuery.limit(limit);
@@ -185,9 +195,9 @@ export async function GET(request: NextRequest) {
           type: 'organization',
           id: item.id,
           name: item.name,
-          description: item.description?.substring(0, 200),
+          description: asOptionalString(item.description)?.substring(0, 200),
           url: `/organizations/${item.slug || item.id}`,
-          state: item.location_state,
+          state: asOptionalString(item.state),
           metadata: {
             type: item.type,
           },

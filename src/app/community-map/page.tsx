@@ -216,14 +216,14 @@ export default function CommunityMapPage() {
   const markersRef = useRef<maplibregl.Marker[]>([]);
   const markerMapRef = useRef<Map<string, maplibregl.Marker>>(new Map());
 
-  // Fetch services and programs from database on mount
+  // Fetch services and programs from canonical APIs on mount
   useEffect(() => {
     async function fetchAllServices() {
       try {
-        // Fetch from both services API (505 geocoded) and community-programs API
+        // Fetch from services API and canonical programs API.
         const [servicesResponse, programsResponse] = await Promise.all([
           fetch('/api/services?limit=600'),
-          fetch('/api/community-programs?limit=100')
+          fetch('/api/programs?limit=100')
         ]);
 
         const servicesResult = await servicesResponse.json();
@@ -246,8 +246,8 @@ export default function CommunityMapPage() {
           });
         }
 
-        // Process community programs (secondary source)
-        if (programsResult.programs && programsResult.programs.length > 0) {
+        // Process canonical programs (secondary source)
+        if (programsResult.success && programsResult.programs && programsResult.programs.length > 0) {
           const transformedPrograms = programsResult.programs
             .map(transformDbService)
             .filter((s: CommunityMapService | null): s is CommunityMapService => s !== null);

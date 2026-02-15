@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getFeaturedJusticeStories } from '@/lib/supabase/empathy-ledger';
+import {
+  getFeaturedJusticeStories,
+  isEmpathyLedgerConfigured,
+} from '@/lib/supabase/empathy-ledger';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +13,14 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET() {
   try {
+    if (!isEmpathyLedgerConfigured) {
+      return NextResponse.json({
+        stories: [],
+        count: 0,
+        unavailable_reason: 'EMPATHY_LEDGER_NOT_CONFIGURED',
+      });
+    }
+
     const stories = await getFeaturedJusticeStories(6);
 
     return NextResponse.json({

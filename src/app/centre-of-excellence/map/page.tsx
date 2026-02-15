@@ -11,11 +11,8 @@ import {
   Globe2,
   Layers,
   MapPin,
-  Scale,
   Search,
-  Compass,
   BookOpen,
-  Target,
   Filter,
   Home,
   Mountain
@@ -25,11 +22,7 @@ import {
   ExcellenceCategory,
   allExcellenceLocations,
   ExcellenceLocation,
-  excellenceCategoryColors,
-  internationalModels,
-  australianFrameworks,
-  researchSources,
-  basecampLocations
+  excellenceCategoryColors
 } from '@/content/excellence-map-locations';
 
 type CategoryOption = {
@@ -37,6 +30,11 @@ type CategoryOption = {
   label: string;
   description: string;
   icon: ComponentType<{ className?: string }>;
+};
+
+type CoeMapLocationsResponse = {
+  success: boolean;
+  locations?: ExcellenceLocation[];
 };
 
 const categoryOptions: CategoryOption[] = [
@@ -150,6 +148,9 @@ function ExcellenceMapContent() {
   const [selectedCategory, setSelectedCategory] = useState<'all' | ExcellenceCategory>(initialCategory);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [locations, setLocations] = useState<ExcellenceLocation[]>(allExcellenceLocations);
+  const [locationsSource, setLocationsSource] = useState<'api' | 'fallback'>('fallback');
+  const [locationsLoading, setLocationsLoading] = useState(true);
   const [mapReady, setMapReady] = useState(false);
 
   // Sync category from URL params
@@ -159,6 +160,45 @@ function ExcellenceMapContent() {
     }
   }, [categoryParam]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadLocations = async () => {
+      try {
+        const response = await fetch('/api/coe/map-locations', { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`Failed to fetch CoE locations: ${response.status}`);
+        }
+
+        const payload = (await response.json()) as CoeMapLocationsResponse;
+        if (!payload.success || !Array.isArray(payload.locations) || payload.locations.length === 0) {
+          throw new Error('Invalid CoE locations response');
+        }
+
+        if (!cancelled) {
+          setLocations(payload.locations);
+          setLocationsSource('api');
+        }
+      } catch (error) {
+        console.error('Failed to load CoE map locations API, using static fallback:', error);
+        if (!cancelled) {
+          setLocations(allExcellenceLocations);
+          setLocationsSource('fallback');
+        }
+      } finally {
+        if (!cancelled) {
+          setLocationsLoading(false);
+        }
+      }
+    };
+
+    loadLocations();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
@@ -166,7 +206,7 @@ function ExcellenceMapContent() {
 
   const filteredLocations = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    return allExcellenceLocations.filter((location) => {
+    return locations.filter((location) => {
       if (selectedCategory !== 'all' && location.category !== selectedCategory) {
         return false;
       }
@@ -188,7 +228,27 @@ function ExcellenceMapContent() {
       }
       return true;
     });
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, locations]);
+
+  const locationCounts = useMemo(() => {
+    return locations.reduce(
+      (acc, location) => {
+        acc.total += 1;
+        if (location.category === 'basecamp') acc.basecamp += 1;
+        if (location.category === 'international-model') acc.internationalModel += 1;
+        if (location.category === 'australian-framework') acc.australianFramework += 1;
+        if (location.category === 'research-source') acc.researchSource += 1;
+        return acc;
+      },
+      {
+        total: 0,
+        basecamp: 0,
+        internationalModel: 0,
+        australianFramework: 0,
+        researchSource: 0,
+      }
+    );
+  }, [locations]);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) {
@@ -363,28 +423,28 @@ function ExcellenceMapContent() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="border-2 border-black bg-white p-6">
                 <div className="text-3xl font-bold mb-2" style={{ color: excellenceCategoryColors['basecamp'] }}>
-                  {basecampLocations.length}
+                  {locationCounts.basecamp}
                 </div>
                 <div className="text-sm font-semibold uppercase tracking-wide mb-2">Founding Basecamps</div>
                 <p className="text-xs text-gray-600">JusticeHub network hubs across Australia</p>
               </div>
               <div className="border-2 border-black bg-white p-6">
                 <div className="text-3xl font-bold mb-2" style={{ color: excellenceCategoryColors['international-model'] }}>
-                  {internationalModels.length}
+                  {locationCounts.internationalModel}
                 </div>
                 <div className="text-sm font-semibold uppercase tracking-wide mb-2">International Models</div>
                 <p className="text-xs text-gray-600">Spain, NZ, Scotland, Nordic countries, USA</p>
               </div>
               <div className="border-2 border-black bg-white p-6">
                 <div className="text-3xl font-bold mb-2" style={{ color: excellenceCategoryColors['australian-framework'] }}>
-                  {australianFrameworks.length}
+                  {locationCounts.australianFramework}
                 </div>
                 <div className="text-sm font-semibold uppercase tracking-wide mb-2">Australian Frameworks</div>
                 <p className="text-xs text-gray-600">NSW, Victoria, Queensland, WA innovations</p>
               </div>
               <div className="border-2 border-black bg-white p-6">
                 <div className="text-3xl font-bold mb-2" style={{ color: excellenceCategoryColors['research-source'] }}>
-                  {researchSources.length}
+                  {locationCounts.researchSource}
                 </div>
                 <div className="text-sm font-semibold uppercase tracking-wide mb-2">Research Sources</div>
                 <p className="text-xs text-gray-600">AIFS, BOCSAR, Lowitja, Annie E. Casey</p>
@@ -415,6 +475,13 @@ function ExcellenceMapContent() {
                   <div className="flex items-center text-xs font-semibold uppercase tracking-wider text-gray-700">
                     <Filter className="h-4 w-4 mr-2" />
                     {filteredLocations.length} locations
+                  </div>
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                    {locationsLoading
+                      ? 'Loading data...'
+                      : locationsSource === 'api'
+                        ? 'Source: API'
+                        : 'Source: Static fallback'}
                   </div>
                   <button
                     onClick={() => {
@@ -522,7 +589,7 @@ function ExcellenceMapContent() {
             <div className="flex justify-between items-center">
               <h2 className="text-3xl font-bold">Excellence Resources</h2>
               <div className="text-sm font-semibold uppercase tracking-wide text-gray-700">
-                {filteredLocations.length} of {allExcellenceLocations.length} displayed
+                {filteredLocations.length} of {locationCounts.total} displayed
               </div>
             </div>
 

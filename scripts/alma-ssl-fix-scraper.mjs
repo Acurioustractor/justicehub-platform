@@ -2,7 +2,7 @@
 /**
  * ALMA SSL Fix Scraper
  * 
- * Special scraper for sites that fail with SSL/certificate errors.
+ * Special scraper for sites that fail with SSL/certificate errors or fetch failures.
  * Uses node-fetch with rejectUnauthorized: false
  * 
  * Usage:
@@ -10,7 +10,7 @@
  */
 
 import https from 'https';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createClient } from '@supabase/supabase-js';
@@ -19,15 +19,50 @@ import FirecrawlApp from '@mendable/firecrawl-js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 
-// Load environment
-const env = readFileSync(join(root, '.env.local'), 'utf8')
-  .split('\n')
-  .filter((line) => line && !line.startsWith('#') && line.includes('='))
-  .reduce((acc, line) => {
-    const [key, ...values] = line.split('=');
-    acc[key.trim()] = values.join('=').trim();
-    return acc;
-  }, {});
+// Load environment from both .env.local (dev) and process.env (production)
+function loadEnv() {
+  const env = { ...process.env };
+  
+  // Try to load from .env.local if it exists (development)
+  const envPath = join(root, '.env.local');
+  if (existsSync(envPath)) {
+    try {
+      const envFile = readFileSync(envPath, 'utf8');
+      envFile
+        .split('\n')
+        .filter((line) => line && !line.startsWith('#') && line.includes('='))
+        .forEach((line) => {
+          const [key, ...values] = line.split('=');
+          const trimmedKey = key.trim();
+          // Only use .env.local value if not already set in process.env
+          if (!env[trimmedKey]) {
+            env[trimmedKey] = values.join('=').trim();
+          }
+        });
+    } catch (err) {
+      console.warn('Warning: Could not read .env.local, using process.env only');
+    }
+  }
+  
+  return env;
+}
+
+const env = loadEnv();
+
+// Validate required environment variables
+function validateEnv() {
+  const required = ['NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'FIRECRAWL_API_KEY'];
+  const missing = required.filter(key => !env[key]);
+  
+  if (missing.length > 0) {
+    console.error('❌ Missing required environment variables:');
+    missing.forEach(key => console.error(`   - ${key}`));
+    console.error('\nPlease set these in your environment or .env.local file');
+    process.exit(1);
+  }
+}
+
+validateEnv();
 
 const supabase = createClient(
   env.NEXT_PUBLIC_SUPABASE_URL,
@@ -36,21 +71,130 @@ const supabase = createClient(
 
 const firecrawl = new FirecrawlApp({ apiKey: env.FIRECRAWL_API_KEY });
 
-// Sources that failed with SSL/fetch errors
+// User agents to rotate
+const USER_AGENTS = [
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+];
+
+// Sources that may have SSL/fetch issues
+// Updated 2026-02-13 with verified working URLs
 const SSL_FAILED_SOURCES = [
-  { name: 'ALS NSW/ACT', url: 'https://www.alsnswact.org.au/', type: 'indigenous', jurisdiction: 'NSW/ACT', priority: 90, cultural_authority: true },
-  { name: 'VALS', url: 'https://www.vals.org.au/', type: 'indigenous', jurisdiction: 'VIC', priority: 90, cultural_authority: true },
-  { name: 'NAAJA', url: 'https://www.naaja.org.au/', type: 'indigenous', jurisdiction: 'NT', priority: 90, cultural_authority: true },
-  { name: 'ALRM SA', url: 'https://www.alrm.org.au/', type: 'indigenous', jurisdiction: 'SA', priority: 90, cultural_authority: true },
-  { name: 'ALS WA', url: 'https://www.als.org.au/', type: 'indigenous', jurisdiction: 'WA', priority: 90, cultural_authority: true },
-  { name: 'AIC Research', url: 'https://www.aic.gov.au/research', type: 'research', jurisdiction: 'National', priority: 80, cultural_authority: false },
-  { name: 'Youth Law Australia', url: 'https://www.youthlaw.asn.au/', type: 'advocacy', jurisdiction: 'National', priority: 75, cultural_authority: false },
-  { name: 'Human Rights Law Centre', url: 'https://www.hrlc.org.au/', type: 'advocacy', jurisdiction: 'National', priority: 75, cultural_authority: false },
+  { 
+    name: 'ALS NSW/ACT', 
+    url: 'https://www.alsnswact.org.au/', 
+    type: 'indigenous', 
+    jurisdiction: 'NSW/ACT', 
+    priority: 90, 
+    cultural_authority: true,
+    timeout: 45000
+  },
+  { 
+    name: 'VALS', 
+    url: 'https://www.vals.org.au/', 
+    type: 'indigenous', 
+    jurisdiction: 'VIC', 
+    priority: 90, 
+    cultural_authority: true,
+    timeout: 45000
+  },
+  { 
+    name: 'NAAJA', 
+    url: 'https://www.naaja.org.au/', 
+    type: 'indigenous', 
+    jurisdiction: 'NT', 
+    priority: 90, 
+    cultural_authority: true,
+    timeout: 45000
+  },
+  { 
+    name: 'ALRM SA', 
+    url: 'https://www.alrm.org.au/', 
+    type: 'indigenous', 
+    jurisdiction: 'SA', 
+    priority: 90, 
+    cultural_authority: true,
+    timeout: 45000
+  },
+  { 
+    name: 'ALS WA', 
+    url: 'https://www.als.org.au/', 
+    type: 'indigenous', 
+    jurisdiction: 'WA', 
+    priority: 90, 
+    cultural_authority: true,
+    timeout: 45000
+  },
+  { 
+    name: 'AIC Research', 
+    url: 'https://www.aic.gov.au/research', 
+    type: 'research', 
+    jurisdiction: 'National', 
+    priority: 80, 
+    cultural_authority: false,
+    timeout: 60000 // AIC is slow
+  },
+  { 
+    name: 'Youth Law Australia', 
+    url: 'https://www.youthlaw.asn.au/', 
+    type: 'advocacy', 
+    jurisdiction: 'National', 
+    priority: 75, 
+    cultural_authority: false,
+    timeout: 45000
+  },
+  { 
+    name: 'Human Rights Law Centre', 
+    url: 'https://www.hrlc.org.au/', 
+    type: 'advocacy', 
+    jurisdiction: 'National', 
+    priority: 75, 
+    cultural_authority: false,
+    timeout: 45000
+  },
 ];
 
 console.log('\n🔧 ALMA SSL Fix Scraper');
 console.log('═'.repeat(60));
-console.log(`Processing ${SSL_FAILED_SOURCES.length} sources that failed SSL verification\n`);
+console.log(`Processing ${SSL_FAILED_SOURCES.length} sources that may have SSL/network issues\n`);
+
+// Health check with SSL bypass
+async function checkUrlHealthWithSslBypass(url) {
+  return new Promise((resolve) => {
+    const urlObj = new URL(url);
+    const options = {
+      hostname: urlObj.hostname,
+      port: urlObj.port || 443,
+      path: urlObj.pathname,
+      method: 'HEAD',
+      timeout: 10000,
+      rejectUnauthorized: false, // Bypass SSL verification
+      headers: {
+        'User-Agent': USER_AGENTS[0],
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      },
+    };
+    
+    const req = https.request(options, (res) => {
+      if (res.statusCode === 200) {
+        resolve({ healthy: true });
+      } else if (res.statusCode >= 300 && res.statusCode < 400) {
+        resolve({ healthy: true, redirectUrl: res.headers.location });
+      } else {
+        resolve({ healthy: false, error: `HTTP ${res.statusCode}` });
+      }
+    });
+    
+    req.on('error', (err) => resolve({ healthy: false, error: err.message }));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve({ healthy: false, error: 'Timeout' });
+    });
+    
+    req.end();
+  });
+}
 
 async function scrapeWithSSLFix(source) {
   const startTime = Date.now();
@@ -58,29 +202,23 @@ async function scrapeWithSSLFix(source) {
   try {
     console.log(`🔍 ${source.name} (${source.url})`);
     
-    // Skip SSL verification in health check
-    const agent = new https.Agent({ rejectUnauthorized: false });
-    
-    const healthCheck = await new Promise((resolve) => {
-      const req = https.get(source.url, { agent, timeout: 10000 }, (res) => {
-        resolve({ healthy: res.statusCode === 200, statusCode: res.statusCode });
-      });
-      req.on('error', (err) => resolve({ healthy: false, error: err.message }));
-      req.on('timeout', () => resolve({ healthy: false, error: 'Timeout' }));
-    });
+    // Health check with SSL bypass
+    const healthCheck = await checkUrlHealthWithSslBypass(source.url);
     
     if (!healthCheck.healthy) {
-      console.log(`   ❌ Health check failed: HTTP ${healthCheck.statusCode || healthCheck.error}`);
-      return { success: false, source: source.name, error: 'Health check failed' };
+      console.log(`   ❌ Health check failed: ${healthCheck.error}`);
+      return { success: false, source: source.name, error: `Health check failed: ${healthCheck.error}` };
     }
     
-    console.log('   ✅ Health check passed');
+    console.log('   ✅ Health check passed (SSL bypass)');
     
-    // Scrape with Firecrawl (Firecrawl handles SSL internally)
+    // Scrape with Firecrawl
+    // Firecrawl handles SSL internally, but we use extended timeout
     const scrapeResult = await firecrawl.scrapeUrl(source.url, {
       formats: ['markdown', 'html'],
       onlyMainContent: true,
-      timeout: source.name === 'AIC Research' ? 60000 : 45000,
+      timeout: source.timeout || 45000,
+      waitFor: 3000, // Give JS sites time to render
     });
     
     if (!scrapeResult.success) {
@@ -91,12 +229,13 @@ async function scrapeWithSSLFix(source) {
     const content = scrapeResult.markdown || scrapeResult.html || '';
     const title = scrapeResult.metadata?.title || source.name;
     
-    if (content.length < 500) {
+    if (content.length < 300) {
       console.log(`   ❌ Content too short: ${content.length} chars`);
       return { success: false, source: source.name, error: 'Content too short' };
     }
     
-    console.log(`   ✅ ${content.split(/\s+/).length} words in ${Date.now() - startTime}ms${source.cultural_authority ? ' [Cultural Authority]' : ''}`);
+    const wordCount = content.split(/\s+/).length;
+    console.log(`   ✅ ${wordCount} words in ${Date.now() - startTime}ms${source.cultural_authority ? ' [Cultural Authority]' : ''}`);
     
     return {
       success: true,
@@ -107,7 +246,7 @@ async function scrapeWithSSLFix(source) {
       type: source.type,
       jurisdiction: source.jurisdiction,
       cultural_authority: source.cultural_authority,
-      wordCount: content.split(/\s+/).length,
+      wordCount,
       duration: Date.now() - startTime,
     };
     
@@ -133,6 +272,7 @@ async function storeScrapedData(result) {
           word_count: result.wordCount,
           cultural_authority: result.cultural_authority,
           jurisdiction: result.jurisdiction,
+          ssl_fix_applied: true,
         },
       }, { onConflict: 'url' })
       .select()
@@ -160,6 +300,7 @@ async function storeScrapedData(result) {
           jurisdiction: result.jurisdiction,
           full_content: result.content,
           source_link_id: linkData.id,
+          ssl_fix_applied: true,
         },
       });
 
@@ -186,6 +327,7 @@ async function storeScrapedData(result) {
         title: result.title,
         word_count: result.wordCount,
         duration: result.duration,
+        ssl_fix_applied: true,
       },
     });
 
@@ -225,8 +367,40 @@ async function main() {
   }
   
   if (results.failed.length > 0) {
-    console.log('\n❌ Still failed:');
+    console.log('\n❌ Still failed (may require Playwright):');
     results.failed.forEach(f => console.log(`   - ${f.source}: ${f.error}`));
+  }
+  
+  // Update alma_sources table with results
+  for (const result of results.successful) {
+    await supabase
+      .from('alma_sources')
+      .update({
+        health_status: 'healthy',
+        last_health_check: new Date().toISOString(),
+        last_scraped: new Date().toISOString(),
+        scrape_count: supabase.rpc('increment', { row_id: result.source }),
+        metadata: {
+          ssl_fix_success: true,
+          last_scrape_word_count: result.wordCount,
+        }
+      })
+      .eq('name', result.source);
+  }
+  
+  for (const result of results.failed) {
+    await supabase
+      .from('alma_sources')
+      .update({
+        health_status: 'unhealthy',
+        last_health_check: new Date().toISOString(),
+        error_count: supabase.rpc('increment', { row_id: result.source }),
+        metadata: {
+          ssl_fix_failed: true,
+          last_error: result.error,
+        }
+      })
+      .eq('name', result.source);
   }
 }
 

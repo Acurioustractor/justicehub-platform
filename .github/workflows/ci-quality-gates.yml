@@ -1,0 +1,81 @@
+name: CI Quality Gates
+
+on:
+  pull_request:
+    branches: [main, staging]
+  push:
+    branches: [main, staging]
+
+permissions:
+  contents: read
+
+jobs:
+  quality-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DATABASE_URL: ${{ secrets.CI_DATABASE_URL || secrets.SUPABASE_DB_URL }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.CI_SUPABASE_URL || secrets.STAGING_SUPABASE_URL || secrets.PROD_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.CI_SUPABASE_ANON_KEY || secrets.STAGING_SUPABASE_ANON_KEY || secrets.PROD_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.CI_SUPABASE_SERVICE_ROLE_KEY || secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY || secrets.PROD_SUPABASE_SERVICE_ROLE_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate CI secrets
+        run: |
+          set -euo pipefail
+          missing=0
+          for key in DATABASE_URL NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_ANON_KEY SUPABASE_SERVICE_ROLE_KEY; do
+            if [ -z "${!key:-}" ]; then
+              echo "Missing required secret/env: $key"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Check hardcoded Supabase keys
+        run: npm run check:no-hardcoded-supabase-keys
+
+      - name: Runtime schema contract audit
+        run: npm run audit:runtime-schema
+
+      - name: Frontend smoke check
+        run: |
+          set -euo pipefail
+          npm run dev > /tmp/next-dev.log 2>&1 &
+          DEV_PID=$!
+          cleanup() {
+            kill $DEV_PID >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          for i in {1..90}; do
+            if curl -sf "http://127.0.0.1:3000/" >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+
+          FRONTEND_SMOKE_BASE_URL=http://127.0.0.1:3000 npm run check:frontend-smoke
+
+      - name: Upload frontend smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-smoke-${{ github.run_number }}
+          path: artifacts/frontend-smoke/**
+          if-no-files-found: ignore
+          retention-days: 14

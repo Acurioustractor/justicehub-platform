@@ -3,6 +3,20 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+function buildProvenance() {
+    return {
+        mode: 'computed' as const,
+        summary:
+            'Queue counts and scrape records are authoritative reads; avgConfidence and source reliability normalization are computed in API runtime.',
+        sources: [
+            { table: 'alma_interventions', role: 'primary', classification: 'canonical' },
+            { table: 'alma_discovered_links', role: 'primary', classification: 'canonical' },
+        ],
+        computed_fields: ['stats.avgConfidence', 'sources[].reliability_score'],
+        generated_at: new Date().toISOString(),
+    };
+}
+
 export async function GET() {
     try {
         const supabase = await createClient();
@@ -75,6 +89,7 @@ export async function GET() {
                 pendingJobs: pendingLinks || 0,
             },
             sources: uniqueSources.slice(0, 30), // Top 30 unique sources
+            provenance: buildProvenance(),
         });
     } catch (error) {
         console.error('Error fetching system status:', error);

@@ -37,6 +37,20 @@ function getSentimentIcon(sentiment: string | null) {
   }
 }
 
+function toStringList(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((item): item is string => typeof item === 'string' && item.length > 0);
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.entries(value as Record<string, unknown>)
+      .filter(([, item]) => Boolean(item))
+      .map(([key]) => key);
+  }
+
+  return [];
+}
+
 export default async function MediaArticleDetailPage({ params }: PageProps) {
   const { id } = await params;
   const supabase = createServiceClient();
@@ -54,6 +68,10 @@ export default async function MediaArticleDetailPage({ params }: PageProps) {
 
   const SentimentIcon = getSentimentIcon(article.sentiment);
   const sentimentEmoji = getSentimentEmoji(article.sentiment);
+  const interventionMentions = toStringList(article.intervention_mentions);
+  const communityMentions = toStringList(article.community_mentions);
+  const governmentMentions = toStringList(article.government_mentions);
+  const indexedAt = article.updated_at || article.created_at;
 
   return (
     <div className="min-h-screen bg-white">
@@ -92,9 +110,9 @@ export default async function MediaArticleDetailPage({ params }: PageProps) {
 
           <h1 className="text-4xl font-bold mb-4">{article.headline}</h1>
 
-          {article.article_url && (
+          {article.url && (
             <a
-              href={article.article_url}
+              href={article.url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 bg-white border-2 border-black text-black font-bold hover:bg-black hover:text-white transition-all mb-6"
@@ -118,16 +136,6 @@ export default async function MediaArticleDetailPage({ params }: PageProps) {
                       day: 'numeric'
                     })}
                   </div>
-                </div>
-              </div>
-            )}
-
-            {article.author && (
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 mt-1 flex-shrink-0" />
-                <div>
-                  <div className="font-bold mb-1">Author</div>
-                  <div className="text-sm">{article.author}</div>
                 </div>
               </div>
             )}
@@ -162,20 +170,23 @@ export default async function MediaArticleDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Sentiment Analysis */}
-            {article.sentiment_reasoning && (
+            {/* Full Text */}
+            {article.full_text && (
               <div className="border-2 border-black p-6 bg-white">
-                <h2 className="text-2xl font-bold mb-4">Sentiment Analysis</h2>
-                <p className="leading-relaxed">{article.sentiment_reasoning}</p>
+                <h2 className="text-2xl font-bold mb-4">Full Text Excerpt</h2>
+                <p className="leading-relaxed whitespace-pre-wrap">
+                  {article.full_text.slice(0, 1600)}
+                  {article.full_text.length > 1600 ? '…' : ''}
+                </p>
               </div>
             )}
 
             {/* Related Programs/Interventions */}
-            {article.related_programs && article.related_programs.length > 0 && (
+            {interventionMentions.length > 0 && (
               <div className="border-2 border-black p-6 bg-white">
                 <h2 className="text-2xl font-bold mb-4">Mentioned Programs</h2>
                 <div className="text-sm">
-                  This article mentions {article.related_programs.length} program(s) or intervention(s)
+                  This article mentions {interventionMentions.length} intervention(s)
                 </div>
               </div>
             )}
@@ -200,49 +211,34 @@ export default async function MediaArticleDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Geographic Focus */}
-            {article.geographic_focus && article.geographic_focus.length > 0 && (
+            {/* Community Mentions */}
+            {communityMentions.length > 0 && (
               <div className="border-2 border-black p-6 bg-white">
-                <h3 className="text-xl font-bold mb-4">Geographic Focus</h3>
+                <h3 className="text-xl font-bold mb-4">Community Mentions</h3>
                 <div className="flex flex-wrap gap-2">
-                  {article.geographic_focus.map((location: string, idx: number) => (
+                  {communityMentions.map((mention: string, idx: number) => (
                     <span
                       key={idx}
                       className="px-3 py-1 bg-gray-100 border-2 border-black text-xs font-bold"
                     >
-                      {location}
+                      {mention}
                     </span>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Stakeholders Mentioned */}
-            {article.stakeholders_mentioned && article.stakeholders_mentioned.length > 0 && (
+            {/* Government Mentions */}
+            {governmentMentions.length > 0 && (
               <div className="border-2 border-black p-6 bg-white">
-                <h3 className="text-xl font-bold mb-4">Stakeholders</h3>
+                <h3 className="text-xl font-bold mb-4">Government Mentions</h3>
                 <div className="space-y-2 text-sm">
-                  {article.stakeholders_mentioned.map((stakeholder: string, idx: number) => (
+                  {governmentMentions.map((mention: string, idx: number) => (
                     <div key={idx} className="p-2 bg-gray-50 border border-black">
-                      {stakeholder}
+                      {mention}
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
-
-            {/* Policy Implications */}
-            {article.policy_implications && article.policy_implications.length > 0 && (
-              <div className="border-2 border-black p-6 bg-white">
-                <h3 className="text-xl font-bold mb-4">Policy Implications</h3>
-                <ul className="space-y-2 text-sm">
-                  {article.policy_implications.map((implication: string, idx: number) => (
-                    <li key={idx} className="flex gap-2">
-                      <span className="flex-shrink-0">•</span>
-                      <span>{implication}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
             )}
 
@@ -252,13 +248,13 @@ export default async function MediaArticleDetailPage({ params }: PageProps) {
               <div className="space-y-2 text-sm">
                 <div>
                   <div className="font-bold">Source Type</div>
-                  <div>{article.source_type || 'News Media'}</div>
+                  <div>News Media</div>
                 </div>
-                {article.scraped_at && (
+                {indexedAt && (
                   <div>
                     <div className="font-bold">Indexed</div>
                     <div>
-                      {new Date(article.scraped_at).toLocaleDateString('en-AU')}
+                      {new Date(indexedAt).toLocaleDateString('en-AU')}
                     </div>
                   </div>
                 )}
