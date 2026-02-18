@@ -96,9 +96,9 @@ export default async function AdminDashboard() {
     {
       title: 'People',
       count: profilesCount || 0,
-      subtitle: `${peopleWithConnectionsCount || 0} with connections`,
+      subtitle: `${publicProfilesCount || 0} public, ${peopleWithConnectionsCount || 0} connected`,
       icon: Users,
-      href: '/admin/people',
+      href: '/admin/profiles',
       color: 'from-blue-500 to-blue-600',
       bgColor: 'bg-blue-50',
       textColor: 'text-blue-600',
