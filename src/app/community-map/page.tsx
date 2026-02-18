@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import maplibregl, { LngLatBounds } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import {
+  AlertTriangle,
   Brain,
   Compass,
   Filter,
@@ -24,6 +25,10 @@ import {
   communityMapServices as staticServices,
   CommunityMapService
 } from '@/content/community-map-services';
+import { RegionDetailPanel, type RegionSummary } from '@/components/RegionDetailPanel';
+import { usePreviewAuth } from '@/hooks/use-preview-auth';
+
+type ViewMode = 'services' | 'heatmap';
 
 type CategoryOption = {
   id: 'all' | CommunityMapCategory;
@@ -210,6 +215,15 @@ export default function CommunityMapPage() {
   const [services, setServices] = useState<CommunityMapService[]>(staticServices);
   const [isLoading, setIsLoading] = useState(true);
   const styleErrorTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // Preview auth for heatmap feature
+  const { isAuthenticated: previewUnlocked } = usePreviewAuth();
+
+  // Heatmap state
+  const [viewMode, setViewMode] = useState<ViewMode>('services');
+  const [selectedSA3, setSelectedSA3] = useState<RegionSummary | null>(null);
+  const [heatmapData, setHeatmapData] = useState<Map<string, { total: number; breakdown: { system_type: string; count: number }[] }>>(new Map());
+  const heatmapLoadedRef = useRef(false);
 
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -494,6 +508,216 @@ export default function CommunityMapPage() {
     }
   }, [filteredServices, mapReady]);
 
+  // Heatmap: fetch aggregation data + load GeoJSON layer
+  useEffect(() => {
+    if (!mapRef.current || !mapReady) return;
+    const map = mapRef.current;
+
+    if (viewMode === 'heatmap') {
+      // Hide service markers
+      markersRef.current.forEach((marker) => marker.getElement().style.display = 'none');
+
+      // Load heatmap data + GeoJSON source
+      const loadHeatmap = async () => {
+        try {
+          // Fetch both aggregation endpoints in parallel
+          const [totalsRes, detailedRes] = await Promise.all([
+            fetch('/api/reports/aggregation'),
+            fetch('/api/reports/aggregation?system_type=education,health,policing,housing,employment,anti-discrimination,other'),
+          ]);
+
+          const totalsJson = await totalsRes.json();
+          const detailedJson = await detailedRes.json();
+
+          // Build lookup map: sa3_code → { total, breakdown }
+          const dataMap = new Map<string, { total: number; breakdown: { system_type: string; count: number }[] }>();
+
+          if (totalsJson.success && totalsJson.data) {
+            for (const row of totalsJson.data) {
+              dataMap.set(row.sa3_code, { total: row.total_reports, breakdown: [] });
+            }
+          }
+
+          if (detailedJson.success && detailedJson.data) {
+            for (const row of detailedJson.data) {
+              const entry = dataMap.get(row.sa3_code);
+              if (entry) {
+                entry.breakdown.push({ system_type: row.system_type, count: row.report_count });
+              } else {
+                dataMap.set(row.sa3_code, {
+                  total: row.report_count,
+                  breakdown: [{ system_type: row.system_type, count: row.report_count }],
+                });
+              }
+            }
+          }
+
+          setHeatmapData(dataMap);
+
+          // Add GeoJSON source if not already added
+          if (!map.getSource('sa3-boundaries')) {
+            const geojsonRes = await fetch('/data/sa3_boundaries.geojson');
+            const geojson = await geojsonRes.json();
+
+            // Join aggregation data into GeoJSON properties
+            for (const feature of geojson.features) {
+              const code = feature.properties.SA3_CODE;
+              const entry = dataMap.get(code);
+              feature.properties.report_count = entry?.total || 0;
+            }
+
+            map.addSource('sa3-boundaries', {
+              type: 'geojson',
+              data: geojson,
+            });
+
+            // Choropleth fill layer
+            map.addLayer({
+              id: 'sa3-fill',
+              type: 'fill',
+              source: 'sa3-boundaries',
+              paint: {
+                'fill-color': [
+                  'interpolate',
+                  ['linear'],
+                  ['get', 'report_count'],
+                  0, 'rgba(220, 220, 220, 0.3)',
+                  1, 'rgba(254, 178, 76, 0.6)',
+                  5, 'rgba(253, 141, 60, 0.7)',
+                  10, 'rgba(240, 59, 32, 0.75)',
+                  25, 'rgba(189, 0, 38, 0.8)',
+                  50, 'rgba(128, 0, 38, 0.85)',
+                ],
+                'fill-opacity': 0.7,
+              },
+            });
+
+            // Border outline layer
+            map.addLayer({
+              id: 'sa3-outline',
+              type: 'line',
+              source: 'sa3-boundaries',
+              paint: {
+                'line-color': '#333',
+                'line-width': [
+                  'case',
+                  ['>', ['get', 'report_count'], 0],
+                  1.5,
+                  0.5,
+                ],
+                'line-opacity': 0.6,
+              },
+            });
+
+            // Hover highlight layer
+            map.addLayer({
+              id: 'sa3-highlight',
+              type: 'line',
+              source: 'sa3-boundaries',
+              paint: {
+                'line-color': '#000',
+                'line-width': 3,
+                'line-opacity': 0,
+              },
+            });
+
+            heatmapLoadedRef.current = true;
+          } else {
+            // Update existing source data with new counts
+            const source = map.getSource('sa3-boundaries');
+            if (source && 'setData' in source) {
+              const geojsonRes = await fetch('/data/sa3_boundaries.geojson');
+              const geojson = await geojsonRes.json();
+              for (const feature of geojson.features) {
+                const code = feature.properties.SA3_CODE;
+                const entry = dataMap.get(code);
+                feature.properties.report_count = entry?.total || 0;
+              }
+              (source as maplibregl.GeoJSONSource).setData(geojson);
+            }
+          }
+
+          // Show heatmap layers
+          if (map.getLayer('sa3-fill')) map.setLayoutProperty('sa3-fill', 'visibility', 'visible');
+          if (map.getLayer('sa3-outline')) map.setLayoutProperty('sa3-outline', 'visibility', 'visible');
+          if (map.getLayer('sa3-highlight')) map.setLayoutProperty('sa3-highlight', 'visibility', 'visible');
+        } catch (error) {
+          console.error('Failed to load heatmap data:', error);
+        }
+      };
+
+      loadHeatmap();
+    } else {
+      // Services mode: show markers, hide heatmap layers
+      markersRef.current.forEach((marker) => marker.getElement().style.display = '');
+
+      if (map.getLayer('sa3-fill')) map.setLayoutProperty('sa3-fill', 'visibility', 'none');
+      if (map.getLayer('sa3-outline')) map.setLayoutProperty('sa3-outline', 'visibility', 'none');
+      if (map.getLayer('sa3-highlight')) map.setLayoutProperty('sa3-highlight', 'visibility', 'none');
+
+      setSelectedSA3(null);
+    }
+  }, [viewMode, mapReady]);
+
+  // Heatmap: click handler for SA3 regions
+  useEffect(() => {
+    if (!mapRef.current || !mapReady) return;
+    const map = mapRef.current;
+
+    const handleClick = (e: maplibregl.MapMouseEvent) => {
+      if (viewMode !== 'heatmap') return;
+
+      const features = map.queryRenderedFeatures(e.point, { layers: ['sa3-fill'] });
+      if (features.length === 0) {
+        setSelectedSA3(null);
+        return;
+      }
+
+      const feature = features[0];
+      const props = feature.properties;
+      if (!props) return;
+
+      const sa3Code = props.SA3_CODE;
+      const entry = heatmapData.get(sa3Code);
+
+      setSelectedSA3({
+        sa3_code: sa3Code,
+        sa3_name: props.SA3_NAME || 'Unknown',
+        state: props.STATE || '',
+        total_reports: entry?.total || 0,
+        breakdown: entry?.breakdown || [],
+      });
+
+      // Highlight clicked region
+      map.setPaintProperty('sa3-highlight', 'line-opacity', [
+        'case',
+        ['==', ['get', 'SA3_CODE'], sa3Code],
+        1,
+        0,
+      ]);
+    };
+
+    const handleMouseMove = (e: maplibregl.MapMouseEvent) => {
+      if (viewMode !== 'heatmap') return;
+      const features = map.queryRenderedFeatures(e.point, { layers: ['sa3-fill'] });
+      map.getCanvas().style.cursor = features.length > 0 ? 'pointer' : '';
+    };
+
+    const handleMouseLeave = () => {
+      map.getCanvas().style.cursor = '';
+    };
+
+    map.on('click', handleClick);
+    map.on('mousemove', handleMouseMove);
+    map.on('mouseleave', 'sa3-fill', handleMouseLeave);
+
+    return () => {
+      map.off('click', handleClick);
+      map.off('mousemove', handleMouseMove);
+      map.off('mouseleave', 'sa3-fill', handleMouseLeave);
+    };
+  }, [viewMode, mapReady, heatmapData]);
+
   const totalServices = services.length;
   const firstNationsLed = useMemo(
     () => services.filter((service) => service.tags.includes('First Nations-led')).length,
@@ -703,8 +927,71 @@ export default function CommunityMapPage() {
               </div>
             </div>
 
-            <div className="border-2 border-black h-[520px] w-full bg-gray-100">
+            {/* View mode toggle — only visible with preview auth */}
+            {previewUnlocked && (
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-700">View:</span>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('services')}
+                  className={`px-4 py-2 border-2 border-black text-sm font-bold uppercase tracking-wide transition-colors ${
+                    viewMode === 'services' ? 'bg-black text-white' : 'bg-white hover:bg-gray-100'
+                  }`}
+                >
+                  <MapPin className="h-4 w-4 inline-block mr-1.5 -mt-0.5" />
+                  Services
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('heatmap')}
+                  className={`px-4 py-2 border-2 border-black text-sm font-bold uppercase tracking-wide transition-colors ${
+                    viewMode === 'heatmap' ? 'bg-red-700 text-white border-red-700' : 'bg-white hover:bg-red-50'
+                  }`}
+                >
+                  <AlertTriangle className="h-4 w-4 inline-block mr-1.5 -mt-0.5" />
+                  Racism Heatmap
+                </button>
+              </div>
+            )}
+
+            {/* Heatmap legend */}
+            {viewMode === 'heatmap' && (
+              <div className="border-2 border-black bg-gray-50 p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="text-sm font-bold uppercase tracking-wide text-black">
+                  Discrimination reports by SA3 region
+                </div>
+                <div className="flex items-center gap-1 text-xs text-gray-600">
+                  <span>0</span>
+                  <div className="flex h-3">
+                    <div className="w-8 bg-gray-300/50" />
+                    <div className="w-8" style={{ backgroundColor: 'rgba(254, 178, 76, 0.7)' }} />
+                    <div className="w-8" style={{ backgroundColor: 'rgba(253, 141, 60, 0.8)' }} />
+                    <div className="w-8" style={{ backgroundColor: 'rgba(240, 59, 32, 0.85)' }} />
+                    <div className="w-8" style={{ backgroundColor: 'rgba(189, 0, 38, 0.9)' }} />
+                    <div className="w-8" style={{ backgroundColor: 'rgba(128, 0, 38, 0.95)' }} />
+                  </div>
+                  <span>50+</span>
+                </div>
+                <div className="text-xs text-gray-500 ml-auto">
+                  Click a region for details
+                </div>
+              </div>
+            )}
+
+            <div className="relative border-2 border-black h-[520px] w-full bg-gray-100">
               <div ref={mapContainerRef} className="w-full h-full" />
+              {/* Region detail panel overlay */}
+              {viewMode === 'heatmap' && selectedSA3 && (
+                <RegionDetailPanel
+                  region={selectedSA3}
+                  onClose={() => {
+                    setSelectedSA3(null);
+                    if (mapRef.current && mapRef.current.getLayer('sa3-highlight')) {
+                      mapRef.current.setPaintProperty('sa3-highlight', 'line-opacity', 0);
+                    }
+                  }}
+                />
+              )}
             </div>
             {styleError && (
               <div className="border-2 border-yellow-500 bg-yellow-50 text-yellow-900 px-4 py-3 text-sm font-medium">

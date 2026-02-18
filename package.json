@@ -30,6 +30,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.65.0",
     "@auth0/nextjs-auth0": "^3.5.0",
+    "@hookform/resolvers": "^5.2.2",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
     "@mendable/firecrawl-js": "^1.21.1",
@@ -83,6 +84,7 @@
     "react": "^18",
     "react-dom": "^18.2.0",
     "react-force-graph-2d": "^1.29.0",
+    "react-hook-form": "^7.71.1",
     "react-leaflet": "^4.2.1",
     "react-markdown": "^10.1.0",
     "react-scrollama": "^2.4.2",

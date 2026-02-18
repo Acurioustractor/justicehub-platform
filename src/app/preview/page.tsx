@@ -14,7 +14,13 @@ import {
   Handshake,
   Building2,
   FileText,
-  Calendar
+  Calendar,
+  Flame,
+  Map,
+  Search,
+  Shield,
+  MessageSquare,
+  Zap
 } from 'lucide-react';
 
 interface Preview {
@@ -66,6 +72,102 @@ const previews: Preview[] = [
     bgGradient: 'from-emerald-600 to-teal-700',
     features: ['4 Founding Basecamps', 'Shared services model', 'Funder discovery', '10-year vision'],
     status: 'live'
+  },
+  {
+    id: 'racism-heatmap',
+    title: 'Racism Heatmap',
+    subtitle: 'Call It Out Data Overlay',
+    description: 'Call It Out data overlay on Community Map. Visualise discrimination reports by SA3 region with real-time service connections.',
+    href: '/preview/racism-heatmap',
+    icon: Flame,
+    color: 'orange',
+    bgGradient: 'from-orange-600 to-red-700',
+    features: ['Heatmap overlay', 'Filter by system', 'Nearby services', 'Incident density'],
+    status: 'live'
+  },
+  {
+    id: 'call-it-out',
+    title: 'Call It Out',
+    subtitle: 'Discrimination Reporting Form',
+    description: 'Report discrimination across education, health, policing, housing and employment. Reports are aggregated anonymously onto the Racism Heatmap.',
+    href: '/call-it-out',
+    icon: Flame,
+    color: 'red',
+    bgGradient: 'from-red-600 to-orange-700',
+    features: ['Incident form', 'SA3 region mapping', 'Privacy-first', 'Cultural safety'],
+    status: 'live'
+  },
+  {
+    id: 'community-map-heatmap',
+    title: 'Community Map + Heatmap',
+    subtitle: 'Live Heatmap Integration',
+    description: 'The Community Map with Racism Heatmap toggle. Switch between service markers and choropleth discrimination data by SA3 region.',
+    href: '/community-map',
+    icon: Map,
+    color: 'orange',
+    bgGradient: 'from-orange-600 to-red-700',
+    features: ['View mode toggle', 'Choropleth layer', 'Region detail panel', 'Report counts'],
+    status: 'live'
+  },
+  {
+    id: 'pledge-map',
+    title: 'Pledge Map',
+    subtitle: 'Alternative First Responders',
+    description: 'AFR pledge density by federal electorate. See how many people in each electorate support alternative first responders.',
+    href: '/preview/pledge-map',
+    icon: Map,
+    color: 'emerald',
+    bgGradient: 'from-emerald-600 to-teal-700',
+    features: ['Electorate grid', 'Pledge form', 'Share card', 'Density legend'],
+    status: 'live'
+  },
+  {
+    id: 'complaint-pathfinder',
+    title: 'Complaint Pathfinder',
+    subtitle: 'Smart Complaint Routing',
+    description: 'Smart complaint routing in Service Finder. Search an issue and get matched with the right oversight body, process details, and nearby legal support.',
+    href: '/preview/complaint-pathfinder',
+    icon: Search,
+    color: 'blue',
+    bgGradient: 'from-blue-600 to-indigo-700',
+    features: ['Complaint matching', 'Process details', 'Legal services', 'Hear Me Out integration'],
+    status: 'live'
+  },
+  {
+    id: 'watchguard-support-pack',
+    title: 'WatchGuard Support Pack',
+    subtitle: 'Emergency Rights Pack',
+    description: 'Emergency rights and legal services pack triggered by CopWatch alerts. Know your rights, find nearest legal help, and document what happened.',
+    href: '/preview/watchguard-support-pack',
+    icon: Shield,
+    color: 'red',
+    bgGradient: 'from-red-600 to-rose-700',
+    features: ['Know your rights', 'Nearest services', 'Action checklist', 'Complaint filing'],
+    status: 'live'
+  },
+  {
+    id: 'justice-navigator',
+    title: 'Justice Navigator',
+    subtitle: 'AI Legal Guidance',
+    description: 'AI-powered legal guidance chat. Describe your situation in plain language and get matched with appeal processes, advocacy services, and reporting options.',
+    href: '/preview/justice-navigator',
+    icon: MessageSquare,
+    color: 'purple',
+    bgGradient: 'from-purple-600 to-violet-700',
+    features: ['Plain language chat', 'Service matching', 'Support packs', 'Appeal guides'],
+    status: 'live'
+  },
+  {
+    id: 'signal-engine',
+    title: 'Signal Engine',
+    subtitle: 'Data-Driven Content',
+    description: 'Data-driven content and community widget. Auto-generates stories from data thresholds with an embeddable postcode lookup widget.',
+    href: '/preview/signal-engine',
+    icon: Zap,
+    color: 'amber',
+    bgGradient: 'from-amber-600 to-orange-700',
+    features: ['Content queue', 'Auto-generation', 'Embeddable widget', 'Multi-format output'],
+    status: 'live'
   }
 ];
 
@@ -73,6 +175,9 @@ const colorClasses: Record<string, { text: string; bg: string; border: string; h
   red: { text: 'text-red-600', bg: 'bg-red-100', border: 'border-red-200', hover: 'hover:border-red-400' },
   blue: { text: 'text-blue-600', bg: 'bg-blue-100', border: 'border-blue-200', hover: 'hover:border-blue-400' },
   emerald: { text: 'text-emerald-600', bg: 'bg-emerald-100', border: 'border-emerald-200', hover: 'hover:border-emerald-400' },
+  orange: { text: 'text-orange-600', bg: 'bg-orange-100', border: 'border-orange-200', hover: 'hover:border-orange-400' },
+  purple: { text: 'text-purple-600', bg: 'bg-purple-100', border: 'border-purple-200', hover: 'hover:border-purple-400' },
+  amber: { text: 'text-amber-600', bg: 'bg-amber-100', border: 'border-amber-200', hover: 'hover:border-amber-400' },
 };
 
 export default function PreviewIndexPage() {

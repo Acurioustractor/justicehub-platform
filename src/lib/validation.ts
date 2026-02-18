@@ -47,3 +47,59 @@ export const bookingSchema = z.object({
 
 export type BookingFormInput = z.input<typeof bookingSchema>;
 export type BookingFormValues = z.output<typeof bookingSchema>;
+
+// ── Call It Out (Discrimination Report) ──────────────────────
+
+const SYSTEM_TYPES = [
+  'education',
+  'health',
+  'policing',
+  'housing',
+  'employment',
+  'anti-discrimination',
+  'other',
+] as const;
+
+const AUSTRALIAN_STATES = ['NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'ACT'] as const;
+
+export const callItOutSchema = z.object({
+  systemType: z.enum(SYSTEM_TYPES, {
+    errorMap: () => ({ message: 'Select the system where the incident occurred' }),
+  }),
+  incidentDate: z
+    .string()
+    .optional()
+    .or(z.literal('')),
+  suburb: z
+    .string()
+    .max(200, 'Suburb name is too long')
+    .optional()
+    .or(z.literal('')),
+  postcode: z
+    .string()
+    .regex(/^\d{4}$/, 'Enter a valid 4-digit postcode')
+    .optional()
+    .or(z.literal('')),
+  state: z
+    .enum(AUSTRALIAN_STATES, {
+      errorMap: () => ({ message: 'Select a valid state or territory' }),
+    })
+    .optional()
+    .or(z.literal('')),
+  description: z
+    .string()
+    .max(2000, 'Keep the description under 2000 characters')
+    .optional()
+    .or(z.literal('')),
+  contactEmail: z
+    .string()
+    .email('Provide a valid email')
+    .optional()
+    .or(z.literal('')),
+  consentToAggregate: z.literal(true, {
+    errorMap: () => ({ message: 'Consent is required to include your report in aggregated data' }),
+  }),
+});
+
+export type CallItOutFormValues = z.input<typeof callItOutSchema>;
+export { SYSTEM_TYPES, AUSTRALIAN_STATES };
