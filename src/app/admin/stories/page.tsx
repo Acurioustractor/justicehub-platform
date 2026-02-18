@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
@@ -19,13 +20,15 @@ export default async function AdminStoriesPage() {
 
   if (!profileData?.is_super_admin) redirect('/');
 
-  // Fetch stories with author profiles from public_profiles via public_profile_id
-  // Falls back to legacy author_id -> profiles join for backwards compatibility
-  const { data: storiesData, error: storiesError } = await supabase
-    .from('stories')
+  // Use service client to bypass RLS for admin queries
+  const serviceClient = createServiceClient();
+
+  // Fetch articles (the primary content table) with author profiles
+  const { data: storiesData, error: storiesError } = await serviceClient
+    .from('articles')
     .select(`
       *,
-      public_profiles!stories_public_profile_id_fkey (
+      public_profiles!articles_author_id_fkey (
         id,
         full_name,
         slug

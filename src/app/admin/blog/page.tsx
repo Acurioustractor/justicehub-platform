@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
@@ -22,8 +23,11 @@ export default async function AdminBlogPage() {
     redirect('/');
   }
 
+  // Use service client to bypass RLS for admin queries
+  const sc = createServiceClient();
+
   // Fetch all blog posts
-  const { data: posts } = await supabase
+  const { data: posts } = await sc
     .from('blog_posts')
     .select(`
       *,

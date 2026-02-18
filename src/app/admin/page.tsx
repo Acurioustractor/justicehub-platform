@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
@@ -23,6 +24,9 @@ export default async function AdminDashboard() {
   if (!profileData?.is_super_admin) {
     redirect('/');
   }
+
+  // Use service client for data queries to bypass RLS
+  const sc = createServiceClient();
 
   // Fetch all content counts in parallel
   const [
@@ -53,32 +57,32 @@ export default async function AdminDashboard() {
     { count: videosCount },
     { count: intlProgramsCount },
   ] = await Promise.all([
-    supabase.from('public_profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('public_profiles').select('*', { count: 'exact', head: true }).eq('is_public', true),
-    supabase.from('organizations_profiles').select('public_profile_id', { count: 'exact', head: true }),
-    supabase.from('articles').select('*', { count: 'exact', head: true }),
-    supabase.from('art_innovation').select('*', { count: 'exact', head: true }),
-    supabase.from('registered_services').select('*', { count: 'exact', head: true }),
-    supabase.from('services').select('*', { count: 'exact', head: true }),
-    supabase.from('profile_appearances').select('*', { count: 'exact', head: true }),
-    supabase.from('art_innovation_profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('registered_services_profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('services_profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('organizations').select('*', { count: 'exact', head: true }),
-    supabase.from('organizations_profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('blog_posts_profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
-    supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
-    supabase.from('australian_frameworks').select('*', { count: 'exact', head: true }),
-    supabase.from('research_items').select('*', { count: 'exact', head: true }),
-    supabase.from('coe_key_people').select('*', { count: 'exact', head: true }),
-    supabase.from('events').select('*', { count: 'exact', head: true }),
-    supabase.from('events').select('*', { count: 'exact', head: true }).gte('start_time', new Date().toISOString()),
-    supabase.from('blog_posts').select('*', { count: 'exact', head: true }),
-    supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
-    supabase.from('partner_photos').select('*', { count: 'exact', head: true }),
-    supabase.from('partner_videos').select('*', { count: 'exact', head: true }),
-    supabase.from('international_programs').select('*', { count: 'exact', head: true }),
+    sc.from('public_profiles').select('*', { count: 'exact', head: true }),
+    sc.from('public_profiles').select('*', { count: 'exact', head: true }).eq('is_public', true),
+    sc.from('organizations_profiles').select('public_profile_id', { count: 'exact', head: true }),
+    sc.from('articles').select('*', { count: 'exact', head: true }),
+    sc.from('art_innovation').select('*', { count: 'exact', head: true }),
+    sc.from('registered_services').select('*', { count: 'exact', head: true }),
+    sc.from('services').select('*', { count: 'exact', head: true }),
+    sc.from('profile_appearances').select('*', { count: 'exact', head: true }),
+    sc.from('art_innovation_profiles').select('*', { count: 'exact', head: true }),
+    sc.from('registered_services_profiles').select('*', { count: 'exact', head: true }),
+    sc.from('services_profiles').select('*', { count: 'exact', head: true }),
+    sc.from('organizations').select('*', { count: 'exact', head: true }),
+    sc.from('organizations_profiles').select('*', { count: 'exact', head: true }),
+    sc.from('blog_posts_profiles').select('*', { count: 'exact', head: true }),
+    sc.from('profiles').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
+    sc.from('blog_posts').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
+    sc.from('australian_frameworks').select('*', { count: 'exact', head: true }),
+    sc.from('research_items').select('*', { count: 'exact', head: true }),
+    sc.from('coe_key_people').select('*', { count: 'exact', head: true }),
+    sc.from('events').select('*', { count: 'exact', head: true }),
+    sc.from('events').select('*', { count: 'exact', head: true }).gte('start_time', new Date().toISOString()),
+    sc.from('blog_posts').select('*', { count: 'exact', head: true }),
+    sc.from('blog_posts').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
+    sc.from('partner_photos').select('*', { count: 'exact', head: true }),
+    sc.from('partner_videos').select('*', { count: 'exact', head: true }),
+    sc.from('international_programs').select('*', { count: 'exact', head: true }),
   ]);
 
   // Calculate connection rates
