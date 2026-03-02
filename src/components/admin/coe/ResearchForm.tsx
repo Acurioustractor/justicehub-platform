@@ -97,14 +97,14 @@ export default function ResearchForm({ initialData, isNew = false }: ResearchFor
       if (isNew) {
         const { error } = await supabase
           .from('research_items')
-          .insert([formData]);
+          .insert([formData as any]);
 
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('research_items')
-          .update(formData)
-          .eq('slug', initialData?.slug);
+          .update(formData as any)
+          .eq('slug', initialData?.slug ?? '');
 
         if (error) throw error;
       }
@@ -129,7 +129,7 @@ export default function ResearchForm({ initialData, isNew = false }: ResearchFor
       const { error } = await supabase
         .from('research_items')
         .delete()
-        .eq('slug', initialData?.slug);
+        .eq('slug', initialData?.slug ?? '');
 
       if (error) throw error;
 

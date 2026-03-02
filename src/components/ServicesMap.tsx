@@ -79,7 +79,7 @@ export function ServicesMap({ services, selectedService, onServiceClick }: Servi
       },
       center: [133.7751, -25.2744], // Australia center
       zoom: 4,
-      attributionControl: true
+      attributionControl: {},
     });
 
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right');

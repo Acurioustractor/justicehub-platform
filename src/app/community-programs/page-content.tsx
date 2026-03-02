@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import { trackJourneyEvent } from '@/lib/analytics/journey';
 
 interface ProgramCatalogRecord {
   id: string;
@@ -203,249 +204,407 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
         {/* Search and Database */}
         <section className="py-16">
           <div className="container-justice">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold mb-4">DISCOVER PROGRAMS</h2>
-
-              {/* Search */}
-              <div className="mb-6">
-                <div className="relative max-w-2xl">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search programs by name or description..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 text-lg border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
-                  />
-                </div>
-              </div>
-
-              {/* Filters */}
-              <div className="flex flex-col md:flex-row gap-4 mb-6">
-                <div className="flex-1">
-                  <label className="block text-sm font-bold mb-2">TYPE</label>
-                  <select
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
-                    className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800"
-                  >
-                    <option value="all">All Types</option>
-                    {types.map(type => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex-1">
-                  <label className="block text-sm font-bold mb-2">STATE / TERRITORY</label>
-                  <select
-                    value={selectedState}
-                    onChange={(e) => setSelectedState(e.target.value)}
-                    className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800"
-                  >
-                    <option value="all">All States</option>
-                    {states.map(state => (
-                      <option key={state} value={state}>{state}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex-1">
-                  <label className="block text-sm font-bold mb-2">EVIDENCE LEVEL</label>
-                  <select
-                    value={selectedEvidence}
-                    onChange={(e) => setSelectedEvidence(e.target.value)}
-                    className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800"
-                  >
-                    <option value="all">All Evidence Levels</option>
-                    {evidenceLevels.map(level => (
-                      <option key={level} value={level}>{level}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex items-end gap-2">
-                  <div className="flex border-2 border-black">
+            <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8">
+              <aside className="mb-8 lg:mb-0">
+                <div className="border-2 border-black bg-emerald-50 p-5 lg:sticky lg:top-28">
+                  <h3 className="font-black text-lg mb-2 uppercase tracking-wider">Next Action</h3>
+                  <p className="text-sm text-gray-700 mb-4">
+                    Use quick paths to find fit and move forward.
+                  </p>
+                  <div className="space-y-2 mb-5">
                     <button
-                      onClick={() => setViewMode('cards')}
-                      className={`p-3 font-bold transition-all ${
-                        viewMode === 'cards' ? 'bg-black text-white' : 'hover:bg-gray-100'
-                      }`}
+                      onClick={() => {
+                        void trackJourneyEvent({
+                          eventName: 'program_action_clicked',
+                          properties: {
+                            source: 'community_programs_next_action',
+                            action: 'quick_filter_evidence_linked',
+                            evidence: 'linked',
+                          },
+                        });
+                        setSelectedEvidence('Linked Evidence');
+                        setSelectedType('all');
+                        setSearchQuery('');
+                      }}
+                      className="w-full text-left border-2 border-black bg-white px-3 py-2 font-bold text-xs uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
                     >
-                      <Grid3X3 className="h-5 w-5" />
+                      Evidence-linked only
                     </button>
                     <button
-                      onClick={() => setViewMode('table')}
-                      className={`p-3 font-bold transition-all border-l-2 border-black ${
-                        viewMode === 'table' ? 'bg-black text-white' : 'hover:bg-gray-100'
-                      }`}
+                      onClick={() => {
+                        void trackJourneyEvent({
+                          eventName: 'program_action_clicked',
+                          properties: {
+                            source: 'community_programs_next_action',
+                            action: 'quick_filter_diversion',
+                            type: 'Diversion',
+                          },
+                        });
+                        setSelectedEvidence('all');
+                        setSelectedType('Diversion');
+                        setSearchQuery('');
+                      }}
+                      className="w-full text-left border-2 border-black bg-white px-3 py-2 font-bold text-xs uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
                     >
-                      <List className="h-5 w-5" />
+                      Diversion programs
+                    </button>
+                    <button
+                      onClick={() => {
+                        void trackJourneyEvent({
+                          eventName: 'program_action_clicked',
+                          properties: {
+                            source: 'community_programs_next_action',
+                            action: 'quick_filter_indigenous_led',
+                            type: 'Indigenous-led',
+                          },
+                        });
+                        setSelectedEvidence('all');
+                        setSelectedType('Indigenous-led');
+                        setSearchQuery('');
+                      }}
+                      className="w-full text-left border-2 border-black bg-white px-3 py-2 font-bold text-xs uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
+                    >
+                      Indigenous-led programs
                     </button>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Results Count */}
-            <div className="flex justify-between items-center mb-6">
-              <p className="text-lg font-medium">
-                {filteredPrograms.length} programs found
-              </p>
-              {hasFilters && (
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedType('all');
-                    setSelectedState('all');
-                    setSelectedEvidence('all');
-                  }}
-                  className="px-4 py-2 border-2 border-black bg-white hover:bg-black hover:text-white transition-colors text-sm font-bold"
-                >
-                  Clear Filters
-                </button>
-              )}
-            </div>
-
-            {/* Results Display */}
-            {viewMode === 'cards' ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredPrograms.map((program) => (
-                  <div
-                    key={program.id}
-                    className="border-2 border-black bg-white p-5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all group"
-                  >
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                      <Link
-                        href={`/community-programs/${program.id}`}
-                        className="font-bold text-lg leading-tight group-hover:text-emerald-700 transition-colors"
-                      >
-                        {program.name}
-                      </Link>
-                    </div>
-
-                    {program.description && (
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                        {program.description}
-                      </p>
-                    )}
-
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {program.approach && (
-                        <span className={`px-2 py-1 text-[10px] font-bold uppercase ${TYPE_COLORS[program.approach] || 'bg-gray-600 text-white'}`}>
-                          {program.approach}
-                        </span>
-                      )}
-                      {program.state && (
-                        <span className="px-2 py-1 text-[10px] font-bold uppercase bg-gray-100 border border-gray-300 flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
-                          {program.state}
-                        </span>
-                      )}
-                    </div>
-
-                    {program.organization_name && (
-                      <div className="text-xs text-ochre-700 font-medium mb-2">
-                        Organization: {program.organization_name}
-                      </div>
-                    )}
-
-                    {program.alma_intervention_id ? (
-                      <Link
-                        href={`/intelligence/interventions/${program.alma_intervention_id}`}
-                        className="inline-flex items-center px-2 py-1 text-[10px] font-bold border bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200"
-                      >
-                        <Shield className="w-3 h-3 inline mr-1" />
-                        Evidence Linked
-                      </Link>
-                    ) : (
-                      <div className="inline-flex items-center px-2 py-1 text-[10px] font-bold border bg-gray-100 text-gray-600 border-gray-300">
-                        <Shield className="w-3 h-3 inline mr-1" />
-                        No Evidence Link
-                      </div>
-                    )}
+                  <div className="space-y-2">
+                    <Link
+                      href="/contact?source=community-programs&type=partnership&intent=partner&route=/community-programs"
+                      onClick={() => {
+                        void trackJourneyEvent({
+                          eventName: 'program_action_clicked',
+                          properties: {
+                            source: 'community_programs_next_action',
+                            action: 'start_partner_intake',
+                            intent: 'partner',
+                          },
+                        });
+                      }}
+                      className="block border-2 border-black bg-black text-white px-3 py-2 font-bold text-xs uppercase tracking-wider text-center hover:bg-gray-900 transition-colors"
+                    >
+                      Start partner intake
+                    </Link>
+                    <Link
+                      href="/services?source=community-programs&intent=support"
+                      onClick={() => {
+                        void trackJourneyEvent({
+                          eventName: 'program_action_clicked',
+                          properties: {
+                            source: 'community_programs_next_action',
+                            action: 'need_immediate_support',
+                            intent: 'support',
+                          },
+                        });
+                      }}
+                      className="block border-2 border-black bg-white px-3 py-2 font-bold text-xs uppercase tracking-wider text-center hover:bg-black hover:text-white transition-colors"
+                    >
+                      Need immediate support
+                    </Link>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="overflow-x-auto border-2 border-black">
-                <table className="w-full text-sm">
-                  <thead className="bg-black text-white">
-                    <tr>
-                      <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Program</th>
-                      <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Type</th>
-                      <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Location</th>
-                      <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Evidence</th>
-                      <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Organization</th>
-                      <th className="px-4 py-3 text-center font-bold uppercase tracking-wider w-20">View</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {filteredPrograms.map((program, idx) => (
-                      <tr key={program.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`}>
-                        <td className="px-4 py-3 font-medium">
-                          <Link href={`/community-programs/${program.id}`} className="hover:text-emerald-700 hover:underline">
+                </div>
+              </aside>
+
+              <div>
+                <div className="mb-8">
+                  <h2 className="text-3xl font-bold mb-4">DISCOVER PROGRAMS</h2>
+
+                  {/* Search */}
+                  <div className="mb-6">
+                    <div className="relative max-w-2xl">
+                      <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Search programs by name or description..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-12 pr-4 py-4 text-lg border-2 border-black focus:ring-2 focus:ring-blue-800 focus:border-blue-800"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Filters */}
+                  <div className="flex flex-col md:flex-row gap-4 mb-6">
+                    <div className="flex-1">
+                      <label className="block text-sm font-bold mb-2">TYPE</label>
+                      <select
+                        value={selectedType}
+                        onChange={(e) => setSelectedType(e.target.value)}
+                        className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800"
+                      >
+                        <option value="all">All Types</option>
+                        {types.map(type => (
+                          <option key={type} value={type}>{type}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="flex-1">
+                      <label className="block text-sm font-bold mb-2">STATE / TERRITORY</label>
+                      <select
+                        value={selectedState}
+                        onChange={(e) => setSelectedState(e.target.value)}
+                        className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800"
+                      >
+                        <option value="all">All States</option>
+                        {states.map(state => (
+                          <option key={state} value={state}>{state}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="flex-1">
+                      <label className="block text-sm font-bold mb-2">EVIDENCE LEVEL</label>
+                      <select
+                        value={selectedEvidence}
+                        onChange={(e) => setSelectedEvidence(e.target.value)}
+                        className="w-full p-3 border-2 border-black focus:ring-2 focus:ring-blue-800"
+                      >
+                        <option value="all">All Evidence Levels</option>
+                        {evidenceLevels.map(level => (
+                          <option key={level} value={level}>{level}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="flex items-end gap-2">
+                      <div className="flex border-2 border-black">
+                        <button
+                          onClick={() => setViewMode('cards')}
+                          className={`p-3 font-bold transition-all ${
+                            viewMode === 'cards' ? 'bg-black text-white' : 'hover:bg-gray-100'
+                          }`}
+                        >
+                          <Grid3X3 className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => setViewMode('table')}
+                          className={`p-3 font-bold transition-all border-l-2 border-black ${
+                            viewMode === 'table' ? 'bg-black text-white' : 'hover:bg-gray-100'
+                          }`}
+                        >
+                          <List className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Results Count */}
+                <div className="flex justify-between items-center mb-6">
+                  <p className="text-lg font-medium">
+                    {filteredPrograms.length} programs found
+                  </p>
+                  {hasFilters && (
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedType('all');
+                        setSelectedState('all');
+                        setSelectedEvidence('all');
+                      }}
+                      className="px-4 py-2 border-2 border-black bg-white hover:bg-black hover:text-white transition-colors text-sm font-bold"
+                    >
+                      Clear Filters
+                    </button>
+                  )}
+                </div>
+
+                {/* Results Display */}
+                {viewMode === 'cards' ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredPrograms.map((program) => (
+                      <div
+                        key={program.id}
+                        className="border-2 border-black bg-white p-5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all group"
+                      >
+                        <div className="flex items-start justify-between gap-3 mb-3">
+                          <Link
+                            href={`/community-programs/${program.id}`}
+                            onClick={() => {
+                              void trackJourneyEvent({
+                                eventName: 'program_action_clicked',
+                                properties: {
+                                  source: 'community_programs_cards',
+                                  action: 'view_program_details',
+                                  program_id: program.id,
+                                },
+                              });
+                            }}
+                            className="font-bold text-lg leading-tight group-hover:text-emerald-700 transition-colors"
+                          >
                             {program.name}
                           </Link>
-                        </td>
-                        <td className="px-4 py-3">
+                        </div>
+
+                        {program.description && (
+                          <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                            {program.description}
+                          </p>
+                        )}
+
+                        <div className="flex flex-wrap gap-2 mb-3">
                           {program.approach && (
-                            <span className={`px-2 py-0.5 text-[10px] font-bold uppercase ${TYPE_COLORS[program.approach] || 'bg-gray-600 text-white'}`}>
+                            <span className={`px-2 py-1 text-[10px] font-bold uppercase ${TYPE_COLORS[program.approach] || 'bg-gray-600 text-white'}`}>
                               {program.approach}
                             </span>
                           )}
-                        </td>
-                        <td className="px-4 py-3 text-gray-600">
-                          {program.state || '-'}
-                        </td>
-                        <td className="px-4 py-3">
-                          {program.alma_intervention_id ? (
-                            <Link
-                              href={`/intelligence/interventions/${program.alma_intervention_id}`}
-                              className="px-2 py-0.5 text-[10px] font-bold border bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200"
-                            >
-                              Linked
-                            </Link>
-                          ) : (
-                            <span className="px-2 py-0.5 text-[10px] font-bold border bg-gray-100 text-gray-600 border-gray-300">
-                              None
+                          {program.state && (
+                            <span className="px-2 py-1 text-[10px] font-bold uppercase bg-gray-100 border border-gray-300 flex items-center gap-1">
+                              <MapPin className="w-3 h-3" />
+                              {program.state}
                             </span>
                           )}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600">
-                          {program.organization_name || '-'}
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <Link
-                            href={`/community-programs/${program.id}`}
-                            className="text-blue-800 hover:text-blue-600 font-bold text-sm"
-                          >
-                            View
-                          </Link>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                        </div>
 
-            {filteredPrograms.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-xl text-gray-600 mb-4">No programs found matching your criteria</p>
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedType('all');
-                    setSelectedState('all');
-                    setSelectedEvidence('all');
-                  }}
-                  className="cta-secondary"
-                >
-                  Clear Filters
-                </button>
+                        {program.organization_name && (
+                          <div className="text-xs text-ochre-700 font-medium mb-2">
+                            Organization: {program.organization_name}
+                          </div>
+                        )}
+
+                        {program.alma_intervention_id ? (
+                          <Link
+                            href={`/intelligence/interventions/${program.alma_intervention_id}`}
+                            onClick={() => {
+                              void trackJourneyEvent({
+                                eventName: 'program_action_clicked',
+                                properties: {
+                                  source: 'community_programs_cards',
+                                  action: 'open_evidence_link',
+                                  program_id: program.id,
+                                  intervention_id: program.alma_intervention_id,
+                                },
+                              });
+                            }}
+                            className="inline-flex items-center px-2 py-1 text-[10px] font-bold border bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200"
+                          >
+                            <Shield className="w-3 h-3 inline mr-1" />
+                            Evidence Linked
+                          </Link>
+                        ) : (
+                          <div className="inline-flex items-center px-2 py-1 text-[10px] font-bold border bg-gray-100 text-gray-600 border-gray-300">
+                            <Shield className="w-3 h-3 inline mr-1" />
+                            No Evidence Link
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto border-2 border-black">
+                    <table className="w-full text-sm">
+                      <thead className="bg-black text-white">
+                        <tr>
+                          <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Program</th>
+                          <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Type</th>
+                          <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Location</th>
+                          <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Evidence</th>
+                          <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Organization</th>
+                          <th className="px-4 py-3 text-center font-bold uppercase tracking-wider w-20">View</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {filteredPrograms.map((program, idx) => (
+                          <tr key={program.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`}>
+                            <td className="px-4 py-3 font-medium">
+                              <Link
+                                href={`/community-programs/${program.id}`}
+                                onClick={() => {
+                                  void trackJourneyEvent({
+                                    eventName: 'program_action_clicked',
+                                    properties: {
+                                      source: 'community_programs_table',
+                                      action: 'view_program_details',
+                                      program_id: program.id,
+                                    },
+                                  });
+                                }}
+                                className="hover:text-emerald-700 hover:underline"
+                              >
+                                {program.name}
+                              </Link>
+                            </td>
+                            <td className="px-4 py-3">
+                              {program.approach && (
+                                <span className={`px-2 py-0.5 text-[10px] font-bold uppercase ${TYPE_COLORS[program.approach] || 'bg-gray-600 text-white'}`}>
+                                  {program.approach}
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 text-gray-600">
+                              {program.state || '-'}
+                            </td>
+                            <td className="px-4 py-3">
+                              {program.alma_intervention_id ? (
+                                <Link
+                                  href={`/intelligence/interventions/${program.alma_intervention_id}`}
+                                  onClick={() => {
+                                    void trackJourneyEvent({
+                                      eventName: 'program_action_clicked',
+                                      properties: {
+                                        source: 'community_programs_table',
+                                        action: 'open_evidence_link',
+                                        program_id: program.id,
+                                        intervention_id: program.alma_intervention_id,
+                                      },
+                                    });
+                                  }}
+                                  className="px-2 py-0.5 text-[10px] font-bold border bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-200"
+                                >
+                                  Linked
+                                </Link>
+                              ) : (
+                                <span className="px-2 py-0.5 text-[10px] font-bold border bg-gray-100 text-gray-600 border-gray-300">
+                                  None
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-600">
+                              {program.organization_name || '-'}
+                            </td>
+                            <td className="px-4 py-3 text-center">
+                              <Link
+                                href={`/community-programs/${program.id}`}
+                                onClick={() => {
+                                  void trackJourneyEvent({
+                                    eventName: 'program_action_clicked',
+                                    properties: {
+                                      source: 'community_programs_table',
+                                      action: 'view_program_details',
+                                      program_id: program.id,
+                                    },
+                                  });
+                                }}
+                                className="text-blue-800 hover:text-blue-600 font-bold text-sm"
+                              >
+                                View
+                              </Link>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {filteredPrograms.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-xl text-gray-600 mb-4">No programs found matching your criteria</p>
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedType('all');
+                        setSelectedState('all');
+                        setSelectedEvidence('all');
+                      }}
+                      className="cta-secondary"
+                    >
+                      Clear Filters
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </section>
 
@@ -501,7 +660,7 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
             ) : (
               <div className="text-center py-12 border-2 border-dashed border-gray-300 bg-white">
                 <p className="text-gray-600 mb-4">Stories coming soon...</p>
-                <Link href="/stories/submit" className="text-blue-800 font-bold hover:underline">
+                <Link href="/stories/new" className="text-blue-800 font-bold hover:underline">
                   Share your story
                 </Link>
               </div>
@@ -527,7 +686,7 @@ export function CommunityProgramsContent({ initialPrograms }: CommunityProgramsC
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/community-programs/nominate" className="bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-100 transition-all">
+              <Link href="/community-programs/add" className="bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-100 transition-all">
                 NOMINATE A PROGRAM
               </Link>
               <Link href="/services" className="border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-all">

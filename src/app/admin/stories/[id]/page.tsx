@@ -65,12 +65,12 @@ export default function EditStoryPage() {
           content: article.content || '',
           featured_image_url: article.featured_image_url || '',
           featured_image_caption: article.featured_image_caption || '',
-          status: article.status || 'draft',
+          status: (article.status || 'draft') as 'draft' | 'published',
           tags: article.tags || [],
           categories: article.categories || [],
           category: article.category || '',
-          seo_title: article.seo_title || '',
-          seo_description: article.seo_description || '',
+          seo_title: (article as any).seo_title || (article as any).meta_title || '',
+          seo_description: (article as any).seo_description || (article as any).meta_description || '',
         });
         setLoading(false);
         return;
@@ -92,12 +92,12 @@ export default function EditStoryPage() {
           content: blog.content || '',
           featured_image_url: blog.featured_image_url || '',
           featured_image_caption: blog.featured_image_caption || '',
-          status: blog.status || 'draft',
+          status: (blog.status || 'draft') as 'draft' | 'published',
           tags: blog.tags || [],
           categories: [],
           category: '',
-          seo_title: blog.seo_title || '',
-          seo_description: blog.seo_description || '',
+          seo_title: (blog as any).seo_title || (blog as any).meta_title || '',
+          seo_description: (blog as any).seo_description || (blog as any).meta_description || '',
         });
         setLoading(false);
         return;

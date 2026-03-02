@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase/service';
+import { createClient } from '@supabase/supabase-js';
+
+function getSupabaseClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    throw new Error('Missing Supabase configuration');
+  }
+  return createClient(url, key);
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,7 +16,7 @@ export async function GET(request: NextRequest) {
     const systemTypes = searchParams.get('system_type')?.split(',').filter(Boolean);
     const useDetailed = systemTypes && systemTypes.length > 0;
 
-    const supabase = createServiceClient();
+    const supabase = getSupabaseClient();
 
     if (useDetailed) {
       // Return per-system-type breakdown, filtered
@@ -52,10 +61,10 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error(
       'Aggregation API error:',
-      error instanceof Error ? error.message : 'Unknown'
+      error instanceof Error ? error.stack : error
     );
     return NextResponse.json(
-      { error: 'An unexpected error occurred' },
+      { error: 'An unexpected error occurred', detail: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

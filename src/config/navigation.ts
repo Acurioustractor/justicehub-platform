@@ -20,6 +20,11 @@ export interface NavigationItem {
  */
 export const navigationItems: NavigationItem[] = [
     {
+        label: 'Start Here',
+        href: '/#start-here',
+        description: 'Choose your pathway: support, partner, or fund'
+    },
+    {
         label: 'Stories',
         href: '/stories',
         description: 'Voices and insights from the movement'

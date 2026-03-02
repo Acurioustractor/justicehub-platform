@@ -1,20 +1,19 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-function getServiceClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!url || !key) {
-    throw new Error('Missing required env: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
-  }
-
-  return createClient(url, key);
-}
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET() {
   try {
-    const supabase = getServiceClient();
+    const supabase = await createClient();
+
+    // Verify admin access
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    if (profile?.role !== 'admin') {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    }
 
     // Fetch counts from all major tables in parallel
     const [
@@ -33,8 +32,8 @@ export async function GET() {
       supabase.from('services').select('*', { count: 'exact', head: true }),
       supabase.from('organizations').select('*', { count: 'exact', head: true }),
       supabase.from('registered_services').select('*', { count: 'exact', head: true }),
-      supabase.from('profiles').select('*', { count: 'exact', head: true }),
-      supabase.from('stories').select('*', { count: 'exact', head: true }),
+      supabase.from('public_profiles').select('*', { count: 'exact', head: true }),
+      supabase.from('articles').select('*', { count: 'exact', head: true }),
       supabase.from('alma_evidence').select('*', { count: 'exact', head: true }),
       supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
       supabase.from('alma_discovered_links').select('*', { count: 'exact', head: true }),

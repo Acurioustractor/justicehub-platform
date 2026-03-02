@@ -1,24 +1,11 @@
-import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/supabase/admin';
 import { createServiceClient } from '@/lib/supabase/service';
-import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { StoriesTable } from './stories-table';
 
 export default async function AdminStoriesPage() {
-  const supabase = await createClient();
-
-  // Check authentication and admin role
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/login?redirect=/admin/stories');
-
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('is_super_admin')
-    .eq('id', user.id)
-    .single();
-
-  if (!profileData?.is_super_admin) redirect('/');
+  await requireAdmin('/admin/stories');
 
   // Use service client to bypass RLS for admin queries
   const serviceClient = createServiceClient();

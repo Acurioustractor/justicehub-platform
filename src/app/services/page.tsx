@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { 
+import {
   Search, 
   MapPin, 
   Users, 
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { ThematicSection } from '@/components/thematic-section';
+import { trackJourneyEvent } from '@/lib/analytics/journey';
 
 interface Service {
   id: string;
@@ -297,111 +298,219 @@ export default function ServicesPage() {
         {/* Services Grid */}
         <section className="section-padding">
           <div className="container-justice">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-              <h2 className="text-2xl font-bold">
-                {sortedServices.length} Services Found
-              </h2>
-              <div className="flex items-center gap-4">
-                {/* Sort Dropdown */}
-                <div className="flex items-center gap-2">
-                  <label className="text-sm font-bold">SORT:</label>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="px-3 py-2 border-2 border-black font-medium text-sm"
-                  >
-                    <option value="name-asc">Name (A-Z)</option>
-                    <option value="name-desc">Name (Z-A)</option>
-                    <option value="location-asc">Location (A-Z)</option>
-                    <option value="location-desc">Location (Z-A)</option>
-                    <option value="updated-desc">Recently Updated</option>
-                    <option value="updated-asc">Oldest First</option>
-                  </select>
-                </div>
-                <p className="text-sm text-gray-600 hidden lg:block">
-                  AI-verified services • Real-time data
-                </p>
-              </div>
-            </div>
-
-            {/* Loading State */}
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="text-xl text-gray-600 mb-4">🤖 Loading AI-discovered services...</div>
-                <div className="text-sm text-gray-500">Fetching real-time data from government sources</div>
-              </div>
-            ) : (
-              <>
-            {/* Results Display */}
-            {viewMode === 'cards' ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {sortedServices.map((service) => (
-                  <div key={service.id} className="border-2 border-black bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow">
-                    <div className="p-6">
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <h3 className="font-bold text-lg leading-tight">{service.name}</h3>
-                            {service.aiDiscovered && (
-                              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                🤖 AI-Discovered
-                              </span>
-                            )}
-                            {service.verified && (
-                              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                                ✓ Verified
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Updated {service.lastUpdated}
-                            {service.source && service.aiDiscovered && (
-                              <span className="ml-2">• Scraped from government data</span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-current text-yellow-400" />
-                          <span className="text-sm font-medium">{service.rating}</span>
-                        </div>
-                      </div>
-                      
-                      <p className="text-gray-700 mb-4 leading-relaxed">
-                        {service.description}
-                      </p>
-                      
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-gray-500" />
-                          <span>{service.location}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Phone className="h-4 w-4 text-gray-500" />
-                          <span>{service.contact}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <DollarSign className="h-4 w-4 text-gray-500" />
-                          <span className={`font-medium ${getCostColor(service.cost)}`}>
-                            {service.cost.charAt(0).toUpperCase() + service.cost.slice(1)} Cost
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-6 pt-4 border-t border-gray-200">
-                        <Link 
-                          href={`/services/${service.id}`}
-                          className="inline-flex items-center gap-2 font-bold tracking-wider hover:underline"
-                        >
-                          VIEW DETAILS
-                          <ChevronRight className="h-4 w-4" />
-                        </Link>
-                      </div>
-                    </div>
+            <div className="lg:grid lg:grid-cols-[280px_1fr] lg:gap-8">
+              <aside className="mb-8 lg:mb-0">
+                <div className="border-2 border-black bg-amber-50 p-5 lg:sticky lg:top-28">
+                  <h3 className="font-black text-lg mb-2 uppercase tracking-wider">Next Action</h3>
+                  <p className="text-sm text-gray-700 mb-4">
+                    Need fast support? Start with one of these pathways.
+                  </p>
+                  <div className="space-y-2 mb-5">
+                    <button
+                      onClick={() => {
+                        void trackJourneyEvent({
+                          eventName: 'service_action_clicked',
+                          properties: {
+                            source: 'services_next_action',
+                            action: 'quick_filter_crisis',
+                            category: 'emergency',
+                          },
+                        });
+                        setSelectedCategory('emergency');
+                        setSearchQuery('crisis');
+                      }}
+                      className="w-full text-left border-2 border-black bg-white px-3 py-2 font-bold text-xs uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
+                    >
+                      Crisis & emergency
+                    </button>
+                    <button
+                      onClick={() => {
+                        void trackJourneyEvent({
+                          eventName: 'service_action_clicked',
+                          properties: {
+                            source: 'services_next_action',
+                            action: 'quick_filter_housing',
+                            category: 'housing',
+                          },
+                        });
+                        setSelectedCategory('housing');
+                        setSearchQuery('housing');
+                      }}
+                      className="w-full text-left border-2 border-black bg-white px-3 py-2 font-bold text-xs uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
+                    >
+                      Housing support
+                    </button>
+                    <button
+                      onClick={() => {
+                        void trackJourneyEvent({
+                          eventName: 'service_action_clicked',
+                          properties: {
+                            source: 'services_next_action',
+                            action: 'quick_filter_legal',
+                            category: 'legal',
+                          },
+                        });
+                        setSelectedCategory('legal');
+                        setSearchQuery('legal');
+                      }}
+                      className="w-full text-left border-2 border-black bg-white px-3 py-2 font-bold text-xs uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
+                    >
+                      Legal support
+                    </button>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <>
+                  <div className="space-y-2">
+                    <Link
+                      href="/contact?source=services&type=support&intent=support&route=/services"
+                      onClick={() => {
+                        void trackJourneyEvent({
+                          eventName: 'service_action_clicked',
+                          properties: {
+                            source: 'services_next_action',
+                            action: 'request_support_call',
+                            intent: 'support',
+                          },
+                        });
+                      }}
+                      className="block border-2 border-black bg-black text-white px-3 py-2 font-bold text-xs uppercase tracking-wider text-center hover:bg-gray-900 transition-colors"
+                    >
+                      Request support call
+                    </Link>
+                    <Link
+                      href="/community-programs?source=services&intent=support"
+                      onClick={() => {
+                        void trackJourneyEvent({
+                          eventName: 'service_action_clicked',
+                          properties: {
+                            source: 'services_next_action',
+                            action: 'open_community_programs',
+                            intent: 'support',
+                          },
+                        });
+                      }}
+                      className="block border-2 border-black bg-white px-3 py-2 font-bold text-xs uppercase tracking-wider text-center hover:bg-black hover:text-white transition-colors"
+                    >
+                      View community programs
+                    </Link>
+                  </div>
+                </div>
+              </aside>
+
+              <div>
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                  <h2 className="text-2xl font-bold">
+                    {sortedServices.length} Services Found
+                  </h2>
+                  <div className="flex items-center gap-4">
+                    {/* Sort Dropdown */}
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm font-bold">SORT:</label>
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="px-3 py-2 border-2 border-black font-medium text-sm"
+                      >
+                        <option value="name-asc">Name (A-Z)</option>
+                        <option value="name-desc">Name (Z-A)</option>
+                        <option value="location-asc">Location (A-Z)</option>
+                        <option value="location-desc">Location (Z-A)</option>
+                        <option value="updated-desc">Recently Updated</option>
+                        <option value="updated-asc">Oldest First</option>
+                      </select>
+                    </div>
+                    <p className="text-sm text-gray-600 hidden lg:block">
+                      AI-verified services • Real-time data
+                    </p>
+                  </div>
+                </div>
+
+                {/* Loading State */}
+                {loading ? (
+                  <div className="text-center py-12">
+                    <div className="text-xl text-gray-600 mb-4">🤖 Loading AI-discovered services...</div>
+                    <div className="text-sm text-gray-500">Fetching real-time data from government sources</div>
+                  </div>
+                ) : (
+                  <>
+                {/* Results Display */}
+                {viewMode === 'cards' ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {sortedServices.map((service) => (
+                      <div key={service.id} className="border-2 border-black bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow">
+                        <div className="p-6">
+                          <div className="flex justify-between items-start mb-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <h3 className="font-bold text-lg leading-tight">{service.name}</h3>
+                                {service.aiDiscovered && (
+                                  <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                    🤖 AI-Discovered
+                                  </span>
+                                )}
+                                {service.verified && (
+                                  <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                    ✓ Verified
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                Updated {service.lastUpdated}
+                                {service.source && service.aiDiscovered && (
+                                  <span className="ml-2">• Scraped from government data</span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Star className="h-4 w-4 fill-current text-yellow-400" />
+                              <span className="text-sm font-medium">{service.rating}</span>
+                            </div>
+                          </div>
+
+                          <p className="text-gray-700 mb-4 leading-relaxed">
+                            {service.description}
+                          </p>
+
+                          <div className="space-y-2 text-sm">
+                            <div className="flex items-center gap-2">
+                              <MapPin className="h-4 w-4 text-gray-500" />
+                              <span>{service.location}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Phone className="h-4 w-4 text-gray-500" />
+                              <span>{service.contact}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <DollarSign className="h-4 w-4 text-gray-500" />
+                              <span className={`font-medium ${getCostColor(service.cost)}`}>
+                                {service.cost.charAt(0).toUpperCase() + service.cost.slice(1)} Cost
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="mt-6 pt-4 border-t border-gray-200">
+                            <Link 
+                              href={`/services/${service.id}`}
+                              onClick={() => {
+                                void trackJourneyEvent({
+                                  eventName: 'service_action_clicked',
+                                  properties: {
+                                    source: 'services_cards',
+                                    action: 'view_service_details',
+                                    service_id: service.id,
+                                  },
+                                });
+                              }}
+                              className="inline-flex items-center gap-2 font-bold tracking-wider hover:underline"
+                            >
+                              VIEW DETAILS
+                              <ChevronRight className="h-4 w-4" />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <>
                 {/* Table Filters */}
                 <div className="mb-6 p-4 border-2 border-black bg-gray-50">
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -546,6 +655,16 @@ export default function ServicesPage() {
                         <td className="px-4 py-4 text-center">
                           <Link 
                             href={`/services/${service.id}`}
+                            onClick={() => {
+                              void trackJourneyEvent({
+                                eventName: 'service_action_clicked',
+                                properties: {
+                                  source: 'services_table',
+                                  action: 'view_service_details',
+                                  service_id: service.id,
+                                },
+                              });
+                            }}
                             className="text-blue-800 hover:text-blue-600 font-bold text-sm"
                           >
                             View →
@@ -556,29 +675,31 @@ export default function ServicesPage() {
                   </tbody>
                 </table>
               </div>
-              </>
-            )}
+                  </>
+                )}
 
-            {sortedServices.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-xl text-gray-600 mb-4">No services found matching your criteria</p>
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedCategory('all');
-                    setSelectedState('all');
-                    setSelectedLocation('all');
-                    setSelectedCost('all');
-                    setMinRating(0);
-                  }}
-                  className="px-6 py-3 border-2 border-black font-bold hover:bg-black hover:text-white transition-all"
-                >
-                  Clear All Filters
-                </button>
+                {sortedServices.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-xl text-gray-600 mb-4">No services found matching your criteria</p>
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSelectedCategory('all');
+                        setSelectedState('all');
+                        setSelectedLocation('all');
+                        setSelectedCost('all');
+                        setMinRating(0);
+                      }}
+                      className="px-6 py-3 border-2 border-black font-bold hover:bg-black hover:text-white transition-all"
+                    >
+                      Clear All Filters
+                    </button>
+                  </div>
+                )}
+                </>
+                )}
               </div>
-            )}
-            </>
-            )}
+            </div>
           </div>
         </section>
 

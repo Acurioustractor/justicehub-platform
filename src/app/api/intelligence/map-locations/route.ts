@@ -54,13 +54,13 @@ export async function GET() {
         locations.push({
           id: item.id,
           name: item.name,
-          description: item.description,
+          description: item.description ?? undefined,
           type: item.type || 'Unknown',
           category: isDetention ? 'detention' : 'program',
-          latitude: item.latitude,
-          longitude: item.longitude,
-          geography: Array.isArray(item.geography) ? item.geography : [item.geography].filter(Boolean),
-          evidenceLevel: item.evidence_level,
+          latitude: item.latitude!,
+          longitude: item.longitude!,
+          geography: (Array.isArray(item.geography) ? item.geography.filter(Boolean) : [item.geography].filter(Boolean)) as string[],
+          evidenceLevel: item.evidence_level ?? undefined,
           url: `/intelligence/interventions/${item.id}`,
         });
       });
@@ -80,11 +80,11 @@ export async function GET() {
         locations.push({
           id: item.id,
           name: item.name,
-          description: item.description,
+          description: item.description ?? undefined,
           type: item.category || 'Service',
           category: 'service',
-          latitude: item.latitude,
-          longitude: item.longitude,
+          latitude: item.latitude!,
+          longitude: item.longitude!,
           geography: item.location_state ? [item.location_state] : [],
           url: `/services/${item.id}`,
         });

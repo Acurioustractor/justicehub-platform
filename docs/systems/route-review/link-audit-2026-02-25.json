@@ -1,0 +1,644 @@
+{
+  "broken": [
+    {
+      "href": "/stories/share",
+      "file": "src/app/about/roadmap/page.tsx"
+    },
+    {
+      "href": "/admin/art-innovation/new",
+      "file": "src/app/admin/art-innovation/page.tsx"
+    },
+    {
+      "href": "/admin/art-innovation/new",
+      "file": "src/app/admin/art-innovation/page.tsx"
+    },
+    {
+      "href": "/admin/funding/new",
+      "file": "src/app/admin/funding/page.tsx"
+    },
+    {
+      "href": "/admin/funding/new",
+      "file": "src/app/admin/funding/page.tsx"
+    },
+    {
+      "href": "/admin/funding/scrape",
+      "file": "src/app/admin/funding/page.tsx"
+    },
+    {
+      "href": "/admin/funding/applications",
+      "file": "src/app/admin/funding/page.tsx"
+    },
+    {
+      "href": "/admin/funding/reports",
+      "file": "src/app/admin/funding/page.tsx"
+    },
+    {
+      "href": "/admin/programs/new",
+      "file": "src/app/admin/page.tsx"
+    },
+    {
+      "href": "/admin/services/import",
+      "file": "src/app/admin/page.tsx"
+    },
+    {
+      "href": "/admin/programs/new",
+      "file": "src/app/admin/programs/page.tsx"
+    },
+    {
+      "href": "/admin/programs/new",
+      "file": "src/app/admin/programs/page.tsx"
+    },
+    {
+      "href": "/admin/research/scrape",
+      "file": "src/app/admin/research/page.tsx"
+    },
+    {
+      "href": "/admin/research/scrape",
+      "file": "src/app/admin/research/page.tsx"
+    },
+    {
+      "href": "/admin/services/import",
+      "file": "src/app/admin/services/page.tsx"
+    },
+    {
+      "href": "/admin/services/import",
+      "file": "src/app/admin/services/page.tsx"
+    },
+    {
+      "href": "/stories/submit",
+      "file": "src/app/community-programs/page-content.tsx"
+    },
+    {
+      "href": "/community-programs/nominate",
+      "file": "src/app/community-programs/page-content.tsx"
+    },
+    {
+      "href": "/support",
+      "file": "src/app/contact/page.tsx"
+    },
+    {
+      "href": "/partners",
+      "file": "src/app/contact/page.tsx"
+    },
+    {
+      "href": "/media",
+      "file": "src/app/contact/page.tsx"
+    },
+    {
+      "href": "/wiki/sovereignty-flywheel-visual",
+      "file": "src/app/flywheel/page.tsx"
+    },
+    {
+      "href": "/wiki/three-scenarios-budget",
+      "file": "src/app/flywheel/page.tsx"
+    },
+    {
+      "href": "/wiki/mindaroo-strategic-pitch",
+      "file": "src/app/flywheel/page.tsx"
+    },
+    {
+      "href": "/wiki/design-tools-guide",
+      "file": "src/app/flywheel/page.tsx"
+    },
+    {
+      "href": "/resources/funder-prospectus.pdf",
+      "file": "src/app/for-funders/page.tsx"
+    },
+    {
+      "href": "/grassroots/apply",
+      "file": "src/app/grassroots/page-content.tsx"
+    },
+    {
+      "href": "/support",
+      "file": "src/app/how-it-works/page.tsx"
+    },
+    {
+      "href": "/docs/NT_BASELINE_COMPARISON_REPORT",
+      "file": "src/app/intelligence/nt-showcase/page.tsx"
+    },
+    {
+      "href": "/JUSTICEHUB_PLANNING.md",
+      "file": "src/app/preplanning/page.tsx"
+    },
+    {
+      "href": "/BUDGET_SUMMARY.md",
+      "file": "src/app/preplanning/page.tsx"
+    },
+    {
+      "href": "/FUNDING_PITCH_TEMPLATES.md",
+      "file": "src/app/preplanning/page.tsx"
+    },
+    {
+      "href": "/community",
+      "file": "src/app/roadmap/page.tsx"
+    },
+    {
+      "href": "/dashboard/youth",
+      "file": "src/app/talent-scout/page.tsx"
+    },
+    {
+      "href": "/dashboard/dreamtrack",
+      "file": "src/app/talent-scout/page.tsx"
+    },
+    {
+      "href": "/people/benjamin-knight",
+      "file": "src/app/test-auth/page.tsx"
+    },
+    {
+      "href": "/wiki/mindaroo-strategic-pitch",
+      "file": "src/app/visuals/page.tsx"
+    },
+    {
+      "href": "/wiki/three-scenarios-budget",
+      "file": "src/app/visuals/page.tsx"
+    },
+    {
+      "href": "/wiki/design-tools-guide",
+      "file": "src/app/visuals/page.tsx"
+    },
+    {
+      "href": "/stories/walking-toward-justice-a-personal-journey",
+      "file": "src/app/wiki/mindaroo-pitch/one-pager/page.mdx"
+    },
+    {
+      "href": "/wiki/strategic-overview",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/executive-summary",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/justicehub-planning",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/one-page-overview",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/three-scenarios-budget",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/mindaroo-strategic-pitch",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/budget-summary",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/admin-user-guide",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/admin-quick-start",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/admin-routes-complete",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/centre-of-excellence-complete",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/empathy-ledger-full-integration",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/auto-linking-complete",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/one-page-overview",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/executive-summary",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/wiki/justicehub-planning",
+      "file": "src/app/wiki/page.tsx"
+    },
+    {
+      "href": "/youth-scout/youth-preview",
+      "file": "src/app/youth-scout/page.tsx"
+    },
+    {
+      "href": "/youth-scout/talent-preview",
+      "file": "src/app/youth-scout/page.tsx"
+    },
+    {
+      "href": "/youth-scout/forgot-password",
+      "file": "src/app/youth-scout/talent-login/page.tsx"
+    },
+    {
+      "href": "/youth-scout/talent-preview",
+      "file": "src/app/youth-scout/talent-login/page.tsx"
+    },
+    {
+      "href": "/youth-scout/forgot-password",
+      "file": "src/app/youth-scout/youth-login/page.tsx"
+    },
+    {
+      "href": "/youth-scout/youth-preview",
+      "file": "src/app/youth-scout/youth-login/page.tsx"
+    },
+    {
+      "href": "/book-experience",
+      "file": "src/components/about/build-process-section.tsx"
+    },
+    {
+      "href": "/economics-report",
+      "file": "src/components/about/economics-section.tsx"
+    },
+    {
+      "href": "/vision-2030-report",
+      "file": "src/components/about/vision-section.tsx"
+    },
+    {
+      "href": "/dashboard",
+      "file": "src/components/navigation/OrgNavigation.tsx"
+    },
+    {
+      "href": "/dashboard",
+      "file": "src/components/navigation/OrgNavigation.tsx"
+    },
+    {
+      "href": "/dashboard",
+      "file": "src/components/navigation/OrgNavigation.tsx"
+    }
+  ],
+  "brokenGrouped": [
+    {
+      "href": "/admin/programs/new",
+      "count": 3,
+      "files": [
+        "src/app/admin/page.tsx",
+        "src/app/admin/programs/page.tsx"
+      ]
+    },
+    {
+      "href": "/admin/services/import",
+      "count": 3,
+      "files": [
+        "src/app/admin/page.tsx",
+        "src/app/admin/services/page.tsx"
+      ]
+    },
+    {
+      "href": "/dashboard",
+      "count": 3,
+      "files": [
+        "src/components/navigation/OrgNavigation.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/mindaroo-strategic-pitch",
+      "count": 3,
+      "files": [
+        "src/app/flywheel/page.tsx",
+        "src/app/visuals/page.tsx",
+        "src/app/wiki/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/three-scenarios-budget",
+      "count": 3,
+      "files": [
+        "src/app/flywheel/page.tsx",
+        "src/app/visuals/page.tsx",
+        "src/app/wiki/page.tsx"
+      ]
+    },
+    {
+      "href": "/admin/art-innovation/new",
+      "count": 2,
+      "files": [
+        "src/app/admin/art-innovation/page.tsx"
+      ]
+    },
+    {
+      "href": "/admin/funding/new",
+      "count": 2,
+      "files": [
+        "src/app/admin/funding/page.tsx"
+      ]
+    },
+    {
+      "href": "/admin/research/scrape",
+      "count": 2,
+      "files": [
+        "src/app/admin/research/page.tsx"
+      ]
+    },
+    {
+      "href": "/support",
+      "count": 2,
+      "files": [
+        "src/app/contact/page.tsx",
+        "src/app/how-it-works/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/design-tools-guide",
+      "count": 2,
+      "files": [
+        "src/app/flywheel/page.tsx",
+        "src/app/visuals/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/executive-summary",
+      "count": 2,
+      "files": [
+        "src/app/wiki/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/justicehub-planning",
+      "count": 2,
+      "files": [
+        "src/app/wiki/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/one-page-overview",
+      "count": 2,
+      "files": [
+        "src/app/wiki/page.tsx"
+      ]
+    },
+    {
+      "href": "/youth-scout/forgot-password",
+      "count": 2,
+      "files": [
+        "src/app/youth-scout/talent-login/page.tsx",
+        "src/app/youth-scout/youth-login/page.tsx"
+      ]
+    },
+    {
+      "href": "/youth-scout/talent-preview",
+      "count": 2,
+      "files": [
+        "src/app/youth-scout/page.tsx",
+        "src/app/youth-scout/talent-login/page.tsx"
+      ]
+    },
+    {
+      "href": "/youth-scout/youth-preview",
+      "count": 2,
+      "files": [
+        "src/app/youth-scout/page.tsx",
+        "src/app/youth-scout/youth-login/page.tsx"
+      ]
+    },
+    {
+      "href": "/admin/funding/applications",
+      "count": 1,
+      "files": [
+        "src/app/admin/funding/page.tsx"
+      ]
+    },
+    {
+      "href": "/admin/funding/reports",
+      "count": 1,
+      "files": [
+        "src/app/admin/funding/page.tsx"
+      ]
+    },
+    {
+      "href": "/admin/funding/scrape",
+      "count": 1,
+      "files": [
+        "src/app/admin/funding/page.tsx"
+      ]
+    },
+    {
+      "href": "/book-experience",
+      "count": 1,
+      "files": [
+        "src/components/about/build-process-section.tsx"
+      ]
+    },
+    {
+      "href": "/BUDGET_SUMMARY.md",
+      "count": 1,
+      "files": [
+        "src/app/preplanning/page.tsx"
+      ]
+    },
+    {
+      "href": "/community",
+      "count": 1,
+      "files": [
+        "src/app/roadmap/page.tsx"
+      ]
+    },
+    {
+      "href": "/community-programs/nominate",
+      "count": 1,
+      "files": [
+        "src/app/community-programs/page-content.tsx"
+      ]
+    },
+    {
+      "href": "/dashboard/dreamtrack",
+      "count": 1,
+      "files": [
+        "src/app/talent-scout/page.tsx"
+      ]
+    },
+    {
+      "href": "/dashboard/youth",
+      "count": 1,
+      "files": [
+        "src/app/talent-scout/page.tsx"
+      ]
+    },
+    {
+      "href": "/docs/NT_BASELINE_COMPARISON_REPORT",
+      "count": 1,
+      "files": [
+        "src/app/intelligence/nt-showcase/page.tsx"
+      ]
+    },
+    {
+      "href": "/economics-report",
+      "count": 1,
+      "files": [
+        "src/components/about/economics-section.tsx"
+      ]
+    },
+    {
+      "href": "/FUNDING_PITCH_TEMPLATES.md",
+      "count": 1,
+      "files": [
+        "src/app/preplanning/page.tsx"
+      ]
+    },
+    {
+      "href": "/grassroots/apply",
+      "count": 1,
+      "files": [
+        "src/app/grassroots/page-content.tsx"
+      ]
+    },
+    {
+      "href": "/JUSTICEHUB_PLANNING.md",
+      "count": 1,
+      "files": [
+        "src/app/preplanning/page.tsx"
+      ]
+    },
+    {
+      "href": "/media",
+      "count": 1,
+      "files": [
+        "src/app/contact/page.tsx"
+      ]
+    },
+    {
+      "href": "/partners",
+      "count": 1,
+      "files": [
+        "src/app/contact/page.tsx"
+      ]
+    },
+    {
+      "href": "/people/benjamin-knight",
+      "count": 1,
+      "files": [
+        "src/app/test-auth/page.tsx"
+      ]
+    },
+    {
+      "href": "/resources/funder-prospectus.pdf",
+      "count": 1,
+      "files": [
+        "src/app/for-funders/page.tsx"
+      ]
+    },
+    {
+      "href": "/stories/share",
+      "count": 1,
+      "files": [
+        "src/app/about/roadmap/page.tsx"
+      ]
+    },
+    {
+      "href": "/stories/submit",
+      "count": 1,
+      "files": [
+        "src/app/community-programs/page-content.tsx"
+      ]
+    },
+    {
+      "href": "/stories/walking-toward-justice-a-personal-journey",
+      "count": 1,
+      "files": [
+        "src/app/wiki/mindaroo-pitch/one-pager/page.mdx"
+      ]
+    },
+    {
+      "href": "/vision-2030-report",
+      "count": 1,
+      "files": [
+        "src/components/about/vision-section.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/admin-quick-start",
+      "count": 1,
+      "files": [
+        "src/app/wiki/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/admin-routes-complete",
+      "count": 1,
+      "files": [
+        "src/app/wiki/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/admin-user-guide",
+      "count": 1,
+      "files": [
+        "src/app/wiki/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/auto-linking-complete",
+      "count": 1,
+      "files": [
+        "src/app/wiki/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/budget-summary",
+      "count": 1,
+      "files": [
+        "src/app/wiki/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/centre-of-excellence-complete",
+      "count": 1,
+      "files": [
+        "src/app/wiki/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/empathy-ledger-full-integration",
+      "count": 1,
+      "files": [
+        "src/app/wiki/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/sovereignty-flywheel-visual",
+      "count": 1,
+      "files": [
+        "src/app/flywheel/page.tsx"
+      ]
+    },
+    {
+      "href": "/wiki/strategic-overview",
+      "count": 1,
+      "files": [
+        "src/app/wiki/page.tsx"
+      ]
+    }
+  ],
+  "literalTemplateLinks": [
+    {
+      "href": "/network/${node.id}",
+      "file": "src/components/SimpleNodesMap.tsx"
+    },
+    {
+      "href": "/organizations/${basecamp.slug}",
+      "file": "src/components/coe/BasecampMap.tsx"
+    }
+  ],
+  "literalTemplateGrouped": [
+    {
+      "href": "/network/${node.id}",
+      "count": 1,
+      "files": [
+        "src/components/SimpleNodesMap.tsx"
+      ]
+    },
+    {
+      "href": "/organizations/${basecamp.slug}",
+      "count": 1,
+      "files": [
+        "src/components/coe/BasecampMap.tsx"
+      ]
+    }
+  ]
+}

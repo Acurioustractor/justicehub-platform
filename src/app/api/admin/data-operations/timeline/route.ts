@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { createClient } from '@/lib/supabase/server';
 
 interface DailyActivity {
   date: string;
@@ -18,6 +13,18 @@ interface DailyActivity {
 
 export async function GET(request: NextRequest) {
   try {
+    const supabase = await createClient();
+
+    // Verify admin access
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    if (profile?.role !== 'admin') {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const days = parseInt(searchParams.get('days') || '30');
 
@@ -75,7 +82,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Count records per day
-    const countByDay = (data: { created_at: string }[] | null, field: keyof DailyActivity) => {
+    const countByDay = (data: { created_at: string | null }[] | null, field: keyof DailyActivity) => {
       data?.forEach((item) => {
         if (item.created_at) {
           const dateStr = item.created_at.split('T')[0];

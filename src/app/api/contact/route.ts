@@ -16,6 +16,7 @@ interface ContactFormData {
   category: string;
   message: string;
   organization?: string;
+  organization_id?: string;
 }
 
 // Allowed categories to prevent injection via category field
@@ -128,8 +129,13 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServiceClient();
 
+    // Validate organization_id format if provided
+    const organizationId = body.organization_id && /^[0-9a-f-]{36}$/i.test(body.organization_id)
+      ? body.organization_id
+      : null;
+
     // Store the sanitized contact submission in the database
-    const { data, error } = await supabase
+    const { data, error }: { data: any; error: any } = await (supabase as any)
       .from('contact_submissions')
       .insert({
         name: sanitizedName,
@@ -139,6 +145,7 @@ export async function POST(request: NextRequest) {
         category: category,
         message: sanitizedMessage,
         organization: sanitizedOrganization,
+        organization_id: organizationId,
         status: 'new',
         created_at: new Date().toISOString(),
       })
@@ -162,6 +169,30 @@ export async function POST(request: NextRequest) {
         { error: 'Failed to save message. Please try again.' },
         { status: 500 }
       );
+    }
+
+    // If org-scoped submission, create an action item in the org's inbox
+    if (organizationId && data?.id) {
+      const contactDetails = [
+        `From: ${sanitizedName} <${sanitizedEmail}>`,
+        sanitizedPhone ? `Phone: ${sanitizedPhone}` : null,
+        '',
+        sanitizedMessage,
+      ].filter(Boolean).join('\n');
+
+      await (supabase as any)
+        .from('org_action_items')
+        .insert({
+          organization_id: organizationId,
+          item_type: 'inquiry',
+          title: `Inquiry from ${sanitizedName}: ${sanitizedSubject || 'General inquiry'}`,
+          description: contactDetails,
+          priority: 'medium',
+          status: 'open',
+          source_agent: 'contact_form',
+          link_to_table: 'contact_submissions',
+          link_to_id: data.id,
+        });
     }
 
     // Sync contact to GoHighLevel

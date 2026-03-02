@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { usePreviewAuth } from '@/lib/hooks/use-preview-auth';
 import {
   Lock,
   Scale,
@@ -84,9 +85,7 @@ const JusticeMapClient = dynamic(
 );
 
 export default function JusticeMatrixPreviewPage() {
-  const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [error, setError] = useState('');
+  const { isAuthenticated, isLoading: isAuthLoading, password, setPassword, error, handleSubmit } = usePreviewAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'map' | 'cases' | 'campaigns' | 'insights'>('overview');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
@@ -98,13 +97,6 @@ export default function JusticeMatrixPreviewPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const auth = sessionStorage.getItem('justice-matrix-preview-auth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
-    }
-  }, []);
 
   // Fetch data from API
   useEffect(() => {
@@ -139,18 +131,6 @@ export default function JusticeMatrixPreviewPage() {
 
     fetchData();
   }, [isAuthenticated]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === 'justice2026') {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('justice-matrix-preview-auth', 'true');
-      setError('');
-    } else {
-      setError('Incorrect password');
-      setPassword('');
-    }
-  };
 
   // Filter cases
   const filteredCases = useMemo(() => {
@@ -222,6 +202,14 @@ export default function JusticeMatrixPreviewPage() {
       favorableRate: totalCases > 0 ? Math.round((casesByOutcome['favorable'] || 0) / totalCases * 100) : 0
     };
   }, [cases, campaigns]);
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+        <div className="text-gray-400">Loading...</div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return (

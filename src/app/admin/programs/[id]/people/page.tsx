@@ -60,11 +60,11 @@ export default function ManageProgramPeoplePage() {
       // Check admin role
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('is_super_admin')
+        .select('role')
         .eq('id', user.id)
         .single();
 
-      if (!profileData?.is_super_admin) {
+      if (profileData?.role !== 'admin') {
         router.push('/');
         return;
       }

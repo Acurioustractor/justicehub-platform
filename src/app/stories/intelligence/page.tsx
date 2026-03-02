@@ -219,10 +219,10 @@ export default function MediaIntelligenceStudio() {
           neutralCount: row.neutral_count || row.mixed_count || 0,
         }));
 
-        setDailySentiment(transformedSentiment);
-        setAllArticles(articlesData || []);
-        setRecentArticles(articlesData || []);
-        setPrograms(programsData || []);
+        setDailySentiment(transformedSentiment as any as DailySentiment[]);
+        setAllArticles((articlesData || []) as any as Article[]);
+        setRecentArticles((articlesData || []) as any as Article[]);
+        setPrograms((programsData || []) as any as Program[]);
         setTopicData(topicBurstData);
         setStats({
           totalArticles,
@@ -448,7 +448,7 @@ export default function MediaIntelligenceStudio() {
             <div className="border-2 border-black p-6 bg-white">
               <h2 className="text-2xl font-bold mb-6">Sentiment Over Time</h2>
               {dailySentiment.length > 0 ? (
-                <SentimentTimeline data={dailySentiment} width={1100} height={400} />
+                <SentimentTimeline data={dailySentiment as any} width={1100} height={400} />
               ) : (
                 <p className="text-gray-500 text-center py-12">No sentiment data available</p>
               )}

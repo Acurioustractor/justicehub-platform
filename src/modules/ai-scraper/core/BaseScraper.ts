@@ -7,6 +7,7 @@
 import { createFirecrawlClient, createOpenAIClient, createAnthropicClient } from '@/lib/api/config';
 import { env } from '@/lib/env';
 import { createSupabaseClient } from '@/lib/supabase/client';
+import { routeModel } from '@/lib/ai/model-router';
 import type {
   DataSource,
   ProcessingJob,
@@ -139,17 +140,33 @@ export abstract class BaseScraper {
       ai_model_preference: modelPreference
     };
 
-    // Choose AI model based on preference and availability
-    const useOpenAI = modelPreference === 'openai' || 
-      (modelPreference === 'auto' && env.OPENAI_API_KEY);
-    
-    if (useOpenAI && env.OPENAI_API_KEY) {
-      return await this.extractWithOpenAI(content, request);
-    } else if (env.ANTHROPIC_API_KEY) {
-      return await this.extractWithAnthropic(content, request);
-    } else {
+    if (!env.OPENAI_API_KEY && !env.ANTHROPIC_API_KEY) {
       throw new Error('No AI API keys configured');
     }
+
+    const modelPlan = routeModel('entity_extraction');
+    const orderedModels = modelPreference === 'auto'
+      ? [modelPlan.primary, ...modelPlan.fallbacks]
+      : [
+          ...[modelPlan.primary, ...modelPlan.fallbacks].filter((m) => m.provider === modelPreference),
+          ...[modelPlan.primary, ...modelPlan.fallbacks].filter((m) => m.provider !== modelPreference),
+        ];
+
+    let lastError: Error | null = null;
+    for (const candidate of orderedModels) {
+      try {
+        if (candidate.provider === 'openai' && env.OPENAI_API_KEY) {
+          return await this.extractWithOpenAI(content, request, candidate.model);
+        }
+        if (candidate.provider === 'anthropic' && env.ANTHROPIC_API_KEY) {
+          return await this.extractWithAnthropic(content, request, candidate.model);
+        }
+      } catch (error) {
+        lastError = error as Error;
+      }
+    }
+
+    throw lastError || new Error('Failed to extract with all model candidates');
   }
 
   /**
@@ -157,7 +174,8 @@ export abstract class BaseScraper {
    */
   private async extractWithOpenAI(
     content: string,
-    request: AIExtractionRequest
+    request: AIExtractionRequest,
+    model: string
   ): Promise<AIExtractionResult> {
     if (!this.openaiClient) {
       this.openaiClient = createOpenAIClient();
@@ -169,7 +187,7 @@ export abstract class BaseScraper {
     const response = await this.openaiClient.request('/chat/completions', {
       method: 'POST',
       body: JSON.stringify({
-        model: 'gpt-4-1106-preview',
+        model,
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: `Extract organization data from this content:\n\n${content}` }
@@ -187,10 +205,10 @@ export abstract class BaseScraper {
       request_id: crypto.randomUUID(),
       extracted_data: extractedData,
       confidence_scores: this.calculateConfidenceScores(extractedData),
-      processing_notes: ['Extracted using OpenAI GPT-4'],
+      processing_notes: [`Extracted using OpenAI ${model}`],
       flagged_issues: [],
       processing_time_ms: processingTime,
-      ai_model_used: 'gpt-4-1106-preview'
+      ai_model_used: model
     };
   }
 
@@ -199,7 +217,8 @@ export abstract class BaseScraper {
    */
   private async extractWithAnthropic(
     content: string,
-    request: AIExtractionRequest
+    request: AIExtractionRequest,
+    model: string
   ): Promise<AIExtractionResult> {
     if (!this.anthropicClient) {
       this.anthropicClient = createAnthropicClient();
@@ -211,7 +230,7 @@ export abstract class BaseScraper {
     const response = await this.anthropicClient.request('/messages', {
       method: 'POST',
       body: JSON.stringify({
-        model: 'claude-3-sonnet-20240229',
+        model,
         max_tokens: 4000,
         system: systemPrompt,
         messages: [
@@ -231,10 +250,10 @@ export abstract class BaseScraper {
       request_id: crypto.randomUUID(),
       extracted_data: extractedData,
       confidence_scores: this.calculateConfidenceScores(extractedData),
-      processing_notes: ['Extracted using Anthropic Claude'],
+      processing_notes: [`Extracted using Anthropic ${model}`],
       flagged_issues: [],
       processing_time_ms: processingTime,
-      ai_model_used: 'claude-3-sonnet-20240229'
+      ai_model_used: model
     };
   }
 

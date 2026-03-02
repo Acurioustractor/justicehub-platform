@@ -53,7 +53,7 @@ export default async function StoryPage({ params }: { params: { slug: string } }
       .eq('status', 'published')
       .single();
 
-    story = blogPost;
+    story = blogPost as any;
     contentType = 'blog';
   }
 
@@ -63,7 +63,7 @@ export default async function StoryPage({ params }: { params: { slug: string } }
   }
 
   const author = story.public_profiles;
-  const publishDate = new Date(story.published_at);
+  const publishDate = new Date(story.published_at as string);
 
   return (
     <>

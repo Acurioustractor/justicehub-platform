@@ -1,10 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient as createAuthClient } from '@/lib/supabase/server';
+import { createClient as createServiceClient } from '@supabase/supabase-js';
+import { chooseScrapeStrategy } from '@/lib/scraping/strategy-engine';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getServiceClient() {
+  return createServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
+
+async function isAdmin(supabase: any, userId: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', userId)
+    .single();
+  return data?.role === 'admin';
+}
 
 // Funding source configurations
 const FUNDING_SOURCES = {
@@ -112,6 +125,16 @@ const RELEVANCE_KEYWORDS = [
 // POST - Trigger a funding scrape
 export async function POST(request: NextRequest) {
   try {
+    const authClient = await createAuthClient();
+    const { data: { user } } = await authClient.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!await isAdmin(authClient, user.id)) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    }
+
+    const supabase = getServiceClient();
     const body = await request.json();
     const { sources, mode = 'incremental' } = body;
 
@@ -127,6 +150,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const strategyPlans = sourcesToScrape.map((sourceId: string) => {
+      const source = FUNDING_SOURCES[sourceId as keyof typeof FUNDING_SOURCES];
+      return chooseScrapeStrategy({
+        sourceId,
+        sourceType: source.type,
+        url: source.url,
+        hasDynamicSelectors: Boolean((source as any).selectors),
+      });
+    });
+
     // Create a job record for tracking
     const { data: job, error: jobError } = await supabase
       .from('alma_ingestion_jobs')
@@ -138,6 +171,7 @@ export async function POST(request: NextRequest) {
             sources: sourcesToScrape,
             mode,
             relevance_keywords: RELEVANCE_KEYWORDS,
+            scrape_strategy_plans: strategyPlans,
           },
         },
       ])
@@ -157,6 +191,7 @@ export async function POST(request: NextRequest) {
       message: 'Funding scrape job queued',
       job_id: job.id,
       sources: sourcesToScrape,
+      strategy_plans: strategyPlans,
       mode,
       estimated_time: `${sourcesToScrape.length * 2} minutes`,
     });
@@ -172,6 +207,16 @@ export async function POST(request: NextRequest) {
 // GET - Get scrape status and stats
 export async function GET(request: NextRequest) {
   try {
+    const authClient = await createAuthClient();
+    const { data: { user } } = await authClient.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!await isAdmin(authClient, user.id)) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    }
+
+    const supabase = getServiceClient();
     const { searchParams } = new URL(request.url);
     const job_id = searchParams.get('job_id');
 
@@ -227,6 +272,12 @@ export async function GET(request: NextRequest) {
         by_source: sourceCounts,
       },
       available_sources: Object.entries(FUNDING_SOURCES).map(([key, source]) => ({
+        ...chooseScrapeStrategy({
+          sourceId: key,
+          sourceType: source.type,
+          url: source.url,
+          hasDynamicSelectors: Boolean((source as any).selectors),
+        }),
         id: key,
         name: source.name,
         type: source.type,

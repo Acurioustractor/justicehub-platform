@@ -40,14 +40,11 @@ export function useNavigationAuth() {
                     // Fetch admin status from profiles table
                     const { data: authProfile } = await supabase
                         .from('profiles')
-                        .select('role, is_super_admin')
+                        .select('role')
                         .eq('id', user.id)
                         .single();
 
-                    // Check if super admin (role-based or is_super_admin flag)
-                    const isAdmin = authProfile?.is_super_admin === true ||
-                                    authProfile?.role === 'admin' ||
-                                    authProfile?.role === 'super_admin';
+                    const isAdmin = authProfile?.role === 'admin';
 
                     if (publicProfileError && publicProfileError.code !== 'PGRST116') {
                         // PGRST116 = no rows returned, which is OK for users without public profile

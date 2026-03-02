@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
           await supabase
             .from('event_registrations')
             .update({
-              metadata: supabase.sql`metadata || ${JSON.stringify({
+              metadata: (supabase as any).sql`metadata || ${JSON.stringify({
                 ghl_last_sync: new Date().toISOString(),
                 ghl_tags: contact.tags || [],
               })}::jsonb`,

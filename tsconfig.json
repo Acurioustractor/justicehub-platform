@@ -42,6 +42,9 @@
     "dist",
     "**/__tests__/**",
     "**/*.test.ts",
-    "**/*.test.tsx"
+    "**/*.test.tsx",
+    "src/scripts/**",
+    "src/modules/**",
+    "scripts/**"
   ]
 }

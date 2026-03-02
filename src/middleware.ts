@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { DEV_ADMIN_BYPASS_COOKIE, hasDevAdminBypass } from '@/lib/dev-admin-bypass';
 
 // NOTE: Mock session removed for security - use proper auth flow in development
 
@@ -130,7 +131,7 @@ export async function middleware(request: NextRequest) {
 
   // Only create Supabase client if we have environment variables and not on a fully public route
   let user = null;
-  let isAdminUser = false;
+  let isAdminUser = hasDevAdminBypass(request.cookies.get(DEV_ADMIN_BYPASS_COOKIE)?.value);
 
   if (!isPublicRoute) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -170,11 +171,11 @@ export async function middleware(request: NextRequest) {
         if (user && path.startsWith('/admin')) {
           const { data: profileData } = await supabase
             .from('profiles')
-            .select('is_super_admin')
+            .select('role')
             .eq('id', user.id)
             .single();
 
-          isAdminUser = profileData?.is_super_admin === true;
+          isAdminUser = profileData?.role === 'admin';
         }
       } catch (error) {
         console.error('Middleware Supabase error:', error);

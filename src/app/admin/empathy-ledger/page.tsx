@@ -1,27 +1,9 @@
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { requireAdmin } from '@/lib/supabase/admin';
 import Link from 'next/link';
 import { ArrowLeft, Database, Users, BookOpen, CheckCircle2, Clock, Sparkles } from 'lucide-react';
 
 export default async function EmpathyLedgerDashboard() {
-  const supabase = await createClient();
-
-  // Check authentication
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    redirect('/login?redirect=/admin/empathy-ledger');
-  }
-
-  // Check admin role
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('is_super_admin')
-    .eq('id', user.id)
-    .single();
-
-  if (!profileData?.is_super_admin) {
-    redirect('/');
-  }
+  const { supabase } = await requireAdmin('/admin/empathy-ledger');
 
   // Fetch synced profiles
   const { data: syncedProfiles } = await supabase

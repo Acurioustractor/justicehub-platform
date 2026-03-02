@@ -1,0 +1,353 @@
+{
+  "pageApi": [
+    {
+      "route": "/",
+      "file": "src/app/page.tsx",
+      "apiCalls": [
+        "/api/homepage-stats"
+      ]
+    },
+    {
+      "route": "/about",
+      "file": "src/app/about/page.tsx",
+      "apiCalls": [
+        "/api/homepage-stats"
+      ]
+    },
+    {
+      "route": "/admin/blog/new",
+      "file": "src/app/admin/blog/new/page.tsx",
+      "apiCalls": [
+        "/api/upload-image"
+      ]
+    },
+    {
+      "route": "/admin/data-health",
+      "file": "src/app/admin/data-health/page.tsx",
+      "apiCalls": [
+        "/api/admin/data-health"
+      ]
+    },
+    {
+      "route": "/admin/data-operations",
+      "file": "src/app/admin/data-operations/page.tsx",
+      "apiCalls": [
+        "/api/admin/data-operations/alerts",
+        "/api/admin/data-operations/sources",
+        "/api/admin/data-operations/stats",
+        "/api/admin/data-operations/timeline?days=30"
+      ]
+    },
+    {
+      "route": "/admin/empathy-ledger/sync",
+      "file": "src/app/admin/empathy-ledger/sync/page.tsx",
+      "apiCalls": [
+        "/api/admin/sync-empathy-ledger",
+        "/api/empathy-ledger/profiles?justicehub_enabled=true"
+      ]
+    },
+    {
+      "route": "/admin/funding",
+      "file": "src/app/admin/funding/page.tsx",
+      "apiCalls": [
+        "/api/admin/funding/opportunities?${params}",
+        "/api/admin/funding/scrape"
+      ]
+    },
+    {
+      "route": "/admin/justice-matrix",
+      "file": "src/app/admin/justice-matrix/page.tsx",
+      "apiCalls": [
+        "/api/justice-matrix/campaigns",
+        "/api/justice-matrix/cases"
+      ]
+    },
+    {
+      "route": "/admin/justice-matrix/discoveries",
+      "file": "src/app/admin/justice-matrix/discoveries/page.tsx",
+      "apiCalls": [
+        "/api/justice-matrix/discovered/${id}",
+        "/api/justice-matrix/discovered?${params}"
+      ]
+    },
+    {
+      "route": "/admin/media",
+      "file": "src/app/admin/media/page.tsx",
+      "apiCalls": [
+        "/api/media/${item.id}/featured",
+        "/api/media?${params}"
+      ]
+    },
+    {
+      "route": "/admin/organizations/[slug]/edit",
+      "file": "src/app/admin/organizations/[slug]/edit/page.tsx",
+      "apiCalls": [
+        "/api/admin/partner-content",
+        "/api/upload-image"
+      ]
+    },
+    {
+      "route": "/admin/research",
+      "file": "src/app/admin/research/page.tsx",
+      "apiCalls": [
+        "/api/admin/research/digest?days=30",
+        "/api/admin/research/evidence?${params}"
+      ]
+    },
+    {
+      "route": "/admin/signal-engine",
+      "file": "src/app/admin/signal-engine/page.tsx",
+      "apiCalls": [
+        "/api/signal-engine/compose",
+        "/api/signal-engine/events",
+        "/api/signal-engine/events${params}",
+        "/api/signal-engine/scan",
+        "/api/signal-engine/widget?postcode=${pc}"
+      ]
+    },
+    {
+      "route": "/admin/stories/[id]",
+      "file": "src/app/admin/stories/[id]/page.tsx",
+      "apiCalls": [
+        "/api/upload-image"
+      ]
+    },
+    {
+      "route": "/admin/stories/new",
+      "file": "src/app/admin/stories/new/page.tsx",
+      "apiCalls": [
+        "/api/upload-image"
+      ]
+    },
+    {
+      "route": "/admin/stories/transcript",
+      "file": "src/app/admin/stories/transcript/page.tsx",
+      "apiCalls": [
+        "/api/stories/extract-quotes"
+      ]
+    },
+    {
+      "route": "/centre-of-excellence",
+      "file": "src/app/centre-of-excellence/page.tsx",
+      "apiCalls": [
+        "/api/basecamps"
+      ]
+    },
+    {
+      "route": "/centre-of-excellence/global-insights",
+      "file": "src/app/centre-of-excellence/global-insights/page.tsx",
+      "apiCalls": [
+        "/api/international-programs?${params}"
+      ]
+    },
+    {
+      "route": "/centre-of-excellence/map",
+      "file": "src/app/centre-of-excellence/map/page.tsx",
+      "apiCalls": [
+        "/api/coe/map-locations"
+      ]
+    },
+    {
+      "route": "/claims/[id]",
+      "file": "src/app/claims/[id]/page.tsx",
+      "apiCalls": [
+        "/api/claims/submit"
+      ]
+    },
+    {
+      "route": "/community-map",
+      "file": "src/app/community-map/page.tsx",
+      "apiCalls": [
+        "/api/programs?limit=100",
+        "/api/reports/aggregation",
+        "/api/reports/aggregation?system_type=education,health,policing,housing,employment,anti-discrimination,other",
+        "/api/services?limit=600"
+      ]
+    },
+    {
+      "route": "/community-programs/[id]",
+      "file": "src/app/community-programs/[id]/page.tsx",
+      "apiCalls": [
+        "/api/programs/${encodeURIComponent(programId)}",
+        "/api/programs/${encodeURIComponent(programId)}/profiles",
+        "/api/programs?limit=200"
+      ]
+    },
+    {
+      "route": "/contact",
+      "file": "src/app/contact/page.tsx",
+      "apiCalls": [
+        "/api/contact"
+      ]
+    },
+    {
+      "route": "/contained/register",
+      "file": "src/app/contained/register/page.tsx",
+      "apiCalls": [
+        "/api/ghl/register"
+      ]
+    },
+    {
+      "route": "/events/[id]/register",
+      "file": "src/app/events/[id]/register/page.tsx",
+      "apiCalls": [
+        "/api/ghl/register"
+      ]
+    },
+    {
+      "route": "/for-community-leaders",
+      "file": "src/app/for-community-leaders/page.tsx",
+      "apiCalls": [
+        "/api/basecamps"
+      ]
+    },
+    {
+      "route": "/for-funders",
+      "file": "src/app/for-funders/page.tsx",
+      "apiCalls": [
+        "/api/basecamps"
+      ]
+    },
+    {
+      "route": "/gallery",
+      "file": "src/app/gallery/page.tsx",
+      "apiCalls": [
+        "/api/placeholder/400/300",
+        "/api/placeholder/800/600",
+        "/api/placeholder/video"
+      ]
+    },
+    {
+      "route": "/gallery/[id]",
+      "file": "src/app/gallery/[id]/page.tsx",
+      "apiCalls": [
+        "/api/placeholder/800/600",
+        "/api/placeholder/video"
+      ]
+    },
+    {
+      "route": "/intelligence/dashboard",
+      "file": "src/app/intelligence/dashboard/page.tsx",
+      "apiCalls": [
+        "/api/intelligence/alpha-signals",
+        "/api/intelligence/global-stats"
+      ]
+    },
+    {
+      "route": "/intelligence/evidence",
+      "file": "src/app/intelligence/evidence/page.tsx",
+      "apiCalls": [
+        "/api/intelligence/evidence?${params.toString()}"
+      ]
+    },
+    {
+      "route": "/intelligence/interventions",
+      "file": "src/app/intelligence/interventions/page.tsx",
+      "apiCalls": [
+        "/api/intelligence/interventions?${params.toString()}"
+      ]
+    },
+    {
+      "route": "/intelligence/map",
+      "file": "src/app/intelligence/map/page.tsx",
+      "apiCalls": [
+        "/api/intelligence/map-locations"
+      ]
+    },
+    {
+      "route": "/intelligence/overview",
+      "file": "src/app/intelligence/overview/page.tsx",
+      "apiCalls": [
+        "/api/intelligence/overview-summary"
+      ]
+    },
+    {
+      "route": "/intelligence/research",
+      "file": "src/app/intelligence/research/page.tsx",
+      "apiCalls": [
+        "/api/intelligence/research",
+        "/api/intelligence/research?limit=5"
+      ]
+    },
+    {
+      "route": "/intelligence/status",
+      "file": "src/app/intelligence/status/page.tsx",
+      "apiCalls": [
+        "/api/intelligence/system-status"
+      ]
+    },
+    {
+      "route": "/preview/justice-matrix",
+      "file": "src/app/preview/justice-matrix/page.tsx",
+      "apiCalls": [
+        "/api/justice-matrix/campaigns?limit=100",
+        "/api/justice-matrix/cases?limit=100"
+      ]
+    },
+    {
+      "route": "/preview/racism-heatmap",
+      "file": "src/app/preview/racism-heatmap/page.tsx",
+      "apiCalls": [
+        "/api/reports/aggregation",
+        "/api/reports/aggregation?system_type=education,health,policing,housing,employment,anti-discrimination,other"
+      ]
+    },
+    {
+      "route": "/services",
+      "file": "src/app/services/page.tsx",
+      "apiCalls": [
+        "/api/services?limit=1000"
+      ]
+    },
+    {
+      "route": "/services/[id]",
+      "file": "src/app/services/[id]/page.tsx",
+      "apiCalls": [
+        "/api/services/${encodeURIComponent(serviceId)}",
+        "/api/services/${encodeURIComponent(serviceId)}/profiles"
+      ]
+    },
+    {
+      "route": "/signup",
+      "file": "src/app/signup/page.tsx",
+      "apiCalls": [
+        "/api/ghl/signup"
+      ]
+    },
+    {
+      "route": "/stories/new",
+      "file": "src/app/stories/new/page.tsx",
+      "apiCalls": [
+        "/api/stories"
+      ]
+    },
+    {
+      "route": "/test-services",
+      "file": "src/app/test-services/page.tsx",
+      "apiCalls": [
+        "/api/services?limit=10"
+      ]
+    },
+    {
+      "route": "/transparency",
+      "file": "src/app/transparency/page.tsx",
+      "apiCalls": [
+        "/api/transparency?year=${selectedTimeframe}"
+      ]
+    },
+    {
+      "route": "/widget/embed",
+      "file": "src/app/widget/embed/page.tsx",
+      "apiCalls": [
+        "/api/signal-engine/widget?postcode=${pc}"
+      ]
+    },
+    {
+      "route": "/youth-justice-report/chat",
+      "file": "src/app/youth-justice-report/chat/page.tsx",
+      "apiCalls": [
+        "/api/chat"
+      ]
+    }
+  ]
+}

@@ -7,10 +7,10 @@ import FirecrawlApp from '@mendable/firecrawl-js';
 async function isAdmin(supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never, userId: string): Promise<boolean> {
   const { data } = await supabase
     .from('profiles')
-    .select('is_super_admin')
+    .select('role')
     .eq('id', userId)
     .single();
-  return data?.is_super_admin === true;
+  return data?.role === 'admin';
 }
 
 // Get service client for write operations

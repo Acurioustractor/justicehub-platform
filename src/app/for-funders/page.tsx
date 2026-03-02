@@ -446,7 +446,7 @@ export default function ForFundersPage() {
                 Schedule Briefing
               </Link>
               <Link
-                href="/resources/funder-prospectus.pdf"
+                href="/for-funders"
                 className="border-2 border-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
               >
                 Download Prospectus

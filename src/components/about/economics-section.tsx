@@ -316,7 +316,7 @@ export function EconomicsSection() {
               Investment Inquiry
             </a>
             <a
-              href="/economics-report"
+              href="/transparency"
               className="px-6 py-3 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors"
             >
               Full Economic Report

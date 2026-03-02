@@ -153,7 +153,7 @@ export async function GET() {
     }
 
     const basecampLocations: CoeMapLocation[] = (basecampsResult.data || [])
-      .map((org) => {
+      .map((org): CoeMapLocation | null => {
         const fallback = org.slug ? fallbackBasecampBySlug.get(org.slug) : undefined;
         const lat = org.latitude ?? fallback?.coordinates.lat;
         const lng = org.longitude ?? fallback?.coordinates.lng;
@@ -185,8 +185,8 @@ export async function GET() {
             'Community-led basecamp in the JusticeHub network.',
           coordinates: { lat, lng },
           country: 'Australia',
-          city: fallback?.city,
-          state: org.state || fallback?.state,
+          city: fallback?.city ?? undefined,
+          state: org.state ?? fallback?.state ?? undefined,
           keyStats: orgMetrics.length > 0 ? orgMetrics : fallback?.keyStats || [],
           tags: unique(['basecamp', org.type, org.state, ...(fallback?.tags || [])]),
           detailUrl: org.slug ? `/organizations/${org.slug}` : fallback?.detailUrl || '/centre-of-excellence',
@@ -194,10 +194,10 @@ export async function GET() {
           featured: fallback?.featured ?? true,
         };
       })
-      .filter((item): item is CoeMapLocation => !!item);
+      .filter((item): item is NonNullable<typeof item> => !!item);
 
     const frameworkLocations: CoeMapLocation[] = (frameworksResult.data || [])
-      .map((framework) => {
+      .map((framework): CoeMapLocation | null => {
         const fallback = fallbackFrameworkBySlug.get(framework.slug);
         const lat = framework.latitude ?? fallback?.coordinates.lat;
         const lng = framework.longitude ?? fallback?.coordinates.lng;
@@ -217,8 +217,8 @@ export async function GET() {
           description: framework.overview || fallback?.description || 'Australian youth justice framework.',
           coordinates: { lat, lng },
           country: 'Australia',
-          city: fallback?.city,
-          state: framework.state || fallback?.state,
+          city: fallback?.city ?? undefined,
+          state: framework.state ?? fallback?.state ?? undefined,
           keyStats: keyStats.length > 0 ? keyStats : fallback?.keyStats || [],
           tags: unique([...(framework.key_features || []).slice(0, 5), framework.state, ...(fallback?.tags || [])]),
           detailUrl: fallback?.detailUrl || '/centre-of-excellence/best-practice',
@@ -226,10 +226,10 @@ export async function GET() {
           featured: fallback?.featured ?? true,
         };
       })
-      .filter((item): item is CoeMapLocation => !!item);
+      .filter((item): item is NonNullable<typeof item> => !!item);
 
     const internationalLocations: CoeMapLocation[] = (internationalResult.data || [])
-      .map((program) => {
+      .map((program): CoeMapLocation | null => {
         const fallback = fallbackInternationalBySlug.get(program.slug);
         const lat = fallback?.coordinates.lat;
         const lng = fallback?.coordinates.lng;
@@ -257,8 +257,8 @@ export async function GET() {
           description: program.approach_summary || program.description || fallback?.description || '',
           coordinates: { lat, lng },
           country: program.country,
-          city: program.city_location || fallback?.city,
-          state: fallback?.state,
+          city: program.city_location ?? fallback?.city ?? undefined,
+          state: fallback?.state ?? undefined,
           keyStats,
           tags: unique([...programTags, ...(fallback?.tags || [])]),
           detailUrl: fallback?.detailUrl || '/centre-of-excellence/global-insights',
@@ -266,10 +266,10 @@ export async function GET() {
           featured: fallback?.featured ?? true,
         };
       })
-      .filter((item): item is CoeMapLocation => !!item);
+      .filter((item): item is NonNullable<typeof item> => !!item);
 
     const researchLocations: CoeMapLocation[] = (researchResult.data || [])
-      .map((item) => {
+      .map((item): CoeMapLocation | null => {
         const normalizedOrganization = normalize(item.organization);
         const fallback =
           fallbackResearchByNormalizedName.get(normalizedOrganization) ||
@@ -307,7 +307,7 @@ export async function GET() {
           featured: fallback.featured ?? true,
         };
       })
-      .filter((location): location is CoeMapLocation => !!location);
+      .filter((location): location is NonNullable<typeof location> => !!location);
 
     const locations = [
       ...basecampLocations,

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePreviewAuth } from '@/lib/hooks/use-preview-auth';
 import {
   Lock,
   Scale,
@@ -24,29 +24,15 @@ import {
 } from 'lucide-react';
 
 export default function JusticeProjectPreviewPage() {
-  const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [error, setError] = useState('');
+  const { isAuthenticated, isLoading, password, setPassword, error, handleSubmit } = usePreviewAuth();
 
-  useEffect(() => {
-    const auth = sessionStorage.getItem('justice-project-preview-auth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Password: justice2026
-    if (password === 'justice2026') {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('justice-project-preview-auth', 'true');
-      setError('');
-    } else {
-      setError('Incorrect password');
-      setPassword('');
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+        <div className="text-gray-400">Loading...</div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return (

@@ -140,7 +140,7 @@ export default async function InterventionDetailPage({ params }: InterventionDet
 
             <div className="flex items-center space-x-4 mb-6">
               <ConsentIndicator
-                consentLevel={intervention.consent_level}
+                consentLevel={intervention.consent_level as any}
                 culturalAuthority={intervention.cultural_authority}
                 showAuthority
               />

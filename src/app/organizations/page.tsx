@@ -70,8 +70,10 @@ async function getOrganizationsData() {
         .eq('is_active', true);
 
       const partnershipCounts: Record<string, number> = {};
-      partnerships?.forEach(p => {
-        partnershipCounts[p.facility_id] = (partnershipCounts[p.facility_id] || 0) + 1;
+      partnerships?.forEach((p: any) => {
+        if (p.facility_id) {
+          partnershipCounts[p.facility_id] = (partnershipCounts[p.facility_id] || 0) + 1;
+        }
       });
 
       facilitiesWithPartners = facilities?.map(f => ({
@@ -87,7 +89,7 @@ async function getOrganizationsData() {
 
     const programCounts: Record<string, number> = {};
     if (programs) {
-      programs.forEach((program: { organization_id: string | null }) => {
+      programs.forEach((program: any) => {
         if (program.organization_id) {
           programCounts[program.organization_id] = (programCounts[program.organization_id] || 0) + 1;
         }

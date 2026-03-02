@@ -226,7 +226,7 @@ export function BuildProcessSection() {
               Join the Build
             </a>
             <a
-              href="/book-experience"
+              href="/contained/vip-dinner"
               className="px-6 py-3 rounded-lg bg-color-warning-orange/20 text-color-warning-orange border border-color-warning-orange/30 hover:bg-color-warning-orange/30 transition-colors"
             >
               Book an Experience

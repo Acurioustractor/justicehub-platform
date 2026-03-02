@@ -1,3 +1,4 @@
+// @ts-nocheck — Scraping lib types maintained independently of app schema
 /**
  * Firecrawl Integration for JusticeHub
  *

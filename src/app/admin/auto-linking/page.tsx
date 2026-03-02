@@ -1,27 +1,9 @@
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { requireAdmin } from '@/lib/supabase/admin';
 import Link from 'next/link';
 import { ArrowLeft, Sparkles, Building2, BookOpen, ExternalLink } from 'lucide-react';
 
 export default async function AutoLinkingDashboard() {
-  const supabase = await createClient();
-
-  // Check authentication
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    redirect('/login?redirect=/admin/auto-linking');
-  }
-
-  // Check admin role
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('is_super_admin')
-    .eq('id', user.id)
-    .single();
-
-  if (!profileData?.is_super_admin) {
-    redirect('/');
-  }
+  const { supabase } = await requireAdmin('/admin/auto-linking');
 
   // Fetch auto-linked organizations
   const { data: orgLinks } = await supabase

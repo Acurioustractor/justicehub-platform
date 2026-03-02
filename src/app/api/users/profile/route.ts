@@ -59,7 +59,7 @@ export async function GET() {
       id: user.id,
       email: user.email,
       name: profile?.full_name || user.email?.split('@')[0] || 'User',
-      role: profile?.is_super_admin ? 'admin' : (profile?.role || 'youth'),
+      role: profile?.role || 'youth',
       auth0Id: user.id,
       profile: {
         firstName: profile?.full_name?.split(' ')[0] || '',

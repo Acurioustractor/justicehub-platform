@@ -15,26 +15,26 @@ type Tab = 'details' | 'photos' | 'videos' | 'metrics' | 'storytellers' | 'links
 interface Organization {
   id: string;
   name: string;
-  slug: string;
-  description: string;
-  type: string;
-  location: string;
-  website: string;
-  email: string;
-  phone: string;
-  logo_url: string;
-  latitude: number;
-  longitude: number;
+  slug: string | null;
+  description: string | null;
+  type: string | null;
+  location: string | null;
+  website: string | null;
+  email: string | null;
+  phone: string | null;
+  logo_url: string | null;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 interface PartnerPhoto {
   id: string;
-  title: string;
-  description: string;
-  photo_url: string;
-  photo_type: 'card_thumbnail' | 'hero_banner' | 'gallery' | 'team' | 'location' | 'program';
-  is_featured: boolean;
-  display_order: number;
+  title: string | null;
+  description: string | null;
+  photo_url: string | null;
+  photo_type: string | null;
+  is_featured: boolean | null;
+  display_order: number | null;
 }
 
 // Photo type definitions with descriptions
@@ -49,14 +49,14 @@ const PHOTO_TYPES = {
 
 interface PartnerVideo {
   id: string;
-  title: string;
-  description: string;
-  video_url: string;
-  platform: 'youtube' | 'vimeo' | 'wistia' | 'other';
-  video_type: 'documentary' | 'interview' | 'promotional' | 'training' | 'event' | 'music_video';
-  thumbnail_url: string;
-  is_featured: boolean;
-  video_placement?: 'featured' | 'gallery' | 'testimonial' | 'program';
+  title: string | null;
+  description: string | null;
+  video_url: string | null;
+  platform: string | null;
+  video_type: string | null;
+  thumbnail_url: string | null;
+  is_featured: boolean | null;
+  video_placement?: string | null;
 }
 
 // Video placement definitions
@@ -87,30 +87,30 @@ interface PartnerMetric {
   id: string;
   metric_name: string;
   metric_value: string;
-  metric_context: string;
-  icon: string;
-  display_order: number;
-  is_featured: boolean;
+  metric_context: string | null;
+  icon: string | null;
+  display_order: number | null;
+  is_featured: boolean | null;
 }
 
 interface PartnerStoryteller {
   id: string;
   display_name: string;
-  role_at_org: string;
-  bio_excerpt: string;
-  quote: string;
-  avatar_url: string;
-  is_featured: boolean;
-  display_order: number;
+  role_at_org: string | null;
+  bio_excerpt: string | null;
+  quote: string | null;
+  avatar_url: string | null;
+  is_featured: boolean | null;
+  display_order: number | null;
 }
 
 interface PartnerLink {
   id: string;
   title: string;
   url: string;
-  link_type: 'website' | 'social' | 'news' | 'research' | 'documentary' | 'podcast';
-  description: string;
-  display_order: number;
+  link_type: string;
+  description: string | null;
+  display_order: number | null;
 }
 
 export default function OrganizationEditPage({ params }: { params: { slug: string } }) {
@@ -846,7 +846,7 @@ export default function OrganizationEditPage({ params }: { params: { slug: strin
                     <p className="text-xs text-ochre-600 mb-3">Organization listings & search results</p>
                     {photos.find(p => p.photo_type === 'card_thumbnail') ? (
                       <img
-                        src={photos.find(p => p.photo_type === 'card_thumbnail')?.photo_url}
+                        src={photos.find(p => p.photo_type === 'card_thumbnail')?.photo_url || ''}
                         className="w-full h-32 object-cover border-2 border-black"
                         alt="Card thumbnail"
                       />
@@ -863,7 +863,7 @@ export default function OrganizationEditPage({ params }: { params: { slug: strin
                     <p className="text-xs text-blue-600 mb-3">Large banner on detail page</p>
                     {photos.find(p => p.photo_type === 'hero_banner') ? (
                       <img
-                        src={photos.find(p => p.photo_type === 'hero_banner')?.photo_url}
+                        src={photos.find(p => p.photo_type === 'hero_banner')?.photo_url || ''}
                         className="w-full h-32 object-cover border-2 border-black"
                         alt="Hero banner"
                       />
@@ -880,7 +880,7 @@ export default function OrganizationEditPage({ params }: { params: { slug: strin
                     <p className="text-xs text-green-600 mb-3">{photos.filter(p => p.photo_type === 'gallery').length} photos in gallery</p>
                     <div className="grid grid-cols-3 gap-1">
                       {photos.filter(p => p.photo_type === 'gallery').slice(0, 6).map(p => (
-                        <img key={p.id} src={p.photo_url} className="w-full h-10 object-cover" alt="" />
+                        <img key={p.id} src={p.photo_url || ''} className="w-full h-10 object-cover" alt="" />
                       ))}
                       {photos.filter(p => p.photo_type === 'gallery').length === 0 && (
                         <div className="col-span-3 h-20 bg-gray-200 border-2 border-dashed border-gray-400 flex items-center justify-center text-gray-500 text-xs">
@@ -903,8 +903,8 @@ export default function OrganizationEditPage({ params }: { params: { slug: strin
                     <div key={photo.id} className="bg-gray-50 border-2 border-black overflow-hidden">
                       <div className="relative h-40">
                         <img
-                          src={photo.photo_url}
-                          alt={photo.title}
+                          src={photo.photo_url || ''}
+                          alt={photo.title || ''}
                           className="w-full h-full object-cover"
                         />
                         {photo.is_featured && (
@@ -923,7 +923,7 @@ export default function OrganizationEditPage({ params }: { params: { slug: strin
                         <div className="mb-3">
                           <label className="block text-xs font-bold text-gray-600 mb-1">Assign to:</label>
                           <select
-                            value={photo.photo_type}
+                            value={photo.photo_type || 'gallery'}
                             onChange={(e) => updatePhotoType(photo.id, e.target.value)}
                             className="w-full border-2 border-black p-2 text-sm bg-white"
                           >
@@ -1038,7 +1038,7 @@ export default function OrganizationEditPage({ params }: { params: { slug: strin
                       <div>
                         {(() => {
                           const featuredVideo = videos.find(v => v.is_featured || v.video_placement === 'featured');
-                          const thumb = featuredVideo ? getVideoThumbnail(featuredVideo.video_url, featuredVideo.platform) : null;
+                          const thumb = featuredVideo?.video_url && featuredVideo?.platform ? getVideoThumbnail(featuredVideo.video_url, featuredVideo.platform) : null;
                           return (
                             <div className="relative">
                               {thumb ? (
@@ -1066,7 +1066,7 @@ export default function OrganizationEditPage({ params }: { params: { slug: strin
                     <p className="text-xs text-blue-600 mb-3">{videos.filter(v => !v.is_featured && v.video_placement !== 'featured').length} videos in gallery</p>
                     <div className="grid grid-cols-3 gap-1">
                       {videos.filter(v => !v.is_featured && v.video_placement !== 'featured').slice(0, 6).map(v => {
-                        const thumb = getVideoThumbnail(v.video_url, v.platform);
+                        const thumb = v.video_url && v.platform ? getVideoThumbnail(v.video_url, v.platform) : null;
                         return thumb ? (
                           <img key={v.id} src={thumb} className="w-full h-12 object-cover" alt="" />
                         ) : (
@@ -1091,14 +1091,14 @@ export default function OrganizationEditPage({ params }: { params: { slug: strin
               <h3 className="font-bold text-lg mb-4">All Videos ({videos.length})</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {videos.map((video) => {
-                  const thumbnail = getVideoThumbnail(video.video_url, video.platform) || video.thumbnail_url;
+                  const thumbnail = (video.video_url && video.platform ? getVideoThumbnail(video.video_url, video.platform) : null) || video.thumbnail_url;
                   const placementInfo = VIDEO_PLACEMENTS[(video.video_placement as keyof typeof VIDEO_PLACEMENTS) || 'gallery'] || VIDEO_PLACEMENTS.gallery;
                   return (
                     <div key={video.id} className="bg-gray-50 border-2 border-black overflow-hidden">
                       {/* Thumbnail */}
                       <div className="relative h-36">
                         {thumbnail ? (
-                          <img src={thumbnail} alt={video.title} className="w-full h-full object-cover" />
+                          <img src={thumbnail || ''} alt={video.title || ''} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full bg-gray-800 flex items-center justify-center">
                             <Video className="h-10 w-10 text-gray-400" />
@@ -1114,7 +1114,7 @@ export default function OrganizationEditPage({ params }: { params: { slug: strin
                         </div>
                         {/* Play button overlay */}
                         <a
-                          href={video.video_url}
+                          href={video.video_url || '#'}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 hover:opacity-100 transition-opacity"

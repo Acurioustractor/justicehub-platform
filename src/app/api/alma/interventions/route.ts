@@ -24,10 +24,10 @@ export async function GET(request: NextRequest) {
 
     // Get interventions
     const { data: interventions, error } = await interventionService.list({
-      filters,
+      ...filters,
       limit,
       offset,
-    });
+    } as any);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     if (includeScores) {
       const resultsWithScores = await Promise.all(
         results.map(async (intervention) => {
-          const score = await portfolioService.calculatePortfolioScore(
+          const score = await (portfolioService as any).calculatePortfolioScore(
             intervention.id
           );
           return {
@@ -91,11 +91,11 @@ export async function POST(request: NextRequest) {
     // Check admin access for creating interventions
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('is_super_admin')
+      .select('role')
       .eq('id', user.id)
       .single();
 
-    if (!profileData?.is_super_admin) {
+    if (profileData?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Admin access required to create interventions' },
         { status: 403 }
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Create intervention using service layer
-    const result = await interventionService.create(body);
+    const result = await interventionService.create(body, user.id);
 
     if (result.error) {
       return NextResponse.json({ error: result.error.message }, { status: 400 });

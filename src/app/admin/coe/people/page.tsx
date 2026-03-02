@@ -1,25 +1,9 @@
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { requireAdmin } from '@/lib/supabase/admin';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
 
 export default async function AdminCoePeoplePage() {
-  const supabase = await createClient();
-
-  // Check authentication and admin role
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/login?redirect=/admin/coe/people');
-
-  // Check admin role
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('is_super_admin')
-    .eq('id', user.id)
-    .single();
-
-  if (!profileData?.is_super_admin) {
-    redirect('/');
-  }
+  const { supabase } = await requireAdmin('/admin/coe/people');
 
   // Fetch all CoE key people with their profile details
   const { data: people } = await supabase

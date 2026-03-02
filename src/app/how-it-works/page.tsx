@@ -394,7 +394,7 @@ export default function HowItWorksPage() {
             </div>
 
             <div className="flex gap-4 justify-center">
-              <Link href="/support" className="cta-secondary">
+              <Link href="/contact" className="cta-secondary">
                 Visit Help Center
               </Link>
               <Link href="/contact" className="cta-secondary">

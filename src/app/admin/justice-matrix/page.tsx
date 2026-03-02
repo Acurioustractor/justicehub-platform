@@ -1,5 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { requireAdmin } from '@/lib/supabase/admin';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
 import {
@@ -47,27 +46,10 @@ interface RecentDiscovery {
 }
 
 export default async function JusticeMatrixAdminPage() {
-  const supabase = await createClient();
+  const { supabase } = await requireAdmin('/admin/justice-matrix');
   // Cast to any to bypass deep type instantiation issues with new tables
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any;
-
-  // Check authentication
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    redirect('/login?redirect=/admin/justice-matrix');
-  }
-
-  // Check admin role
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('is_super_admin')
-    .eq('id', user.id)
-    .single();
-
-  if (!profileData?.is_super_admin) {
-    redirect('/');
-  }
 
   // Fetch all stats in parallel (using db to bypass type issues with new tables)
   const [

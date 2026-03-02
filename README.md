@@ -73,6 +73,9 @@ Required environment variables (see `.env.local.example`):
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+CRON_SECRET=your_long_random_secret
+# Optional dedicated secret for System 0 scheduler endpoint
+SYSTEM0_CRON_SECRET=your_long_random_secret
 ```
 
 ## 🚢 Deployment
@@ -88,6 +91,24 @@ Manual deployment:
 npm run build
 npm start
 ```
+
+## 🤖 System 0 Autopilot
+
+System 0 funding orchestration now uses a shared policy store for scheduler + worker + admin controls.
+
+- Apply migrations:
+  - `supabase/migrations/20260227000001_funding_system0_policy.sql`
+  - `supabase/migrations/20260227000002_funding_system0_events.sql`
+  - `supabase/migrations/20260227000003_funding_system0_filter_presets.sql`
+  - `supabase/migrations/20260227000004_funding_system0_filter_presets_visibility.sql`
+  - `supabase/migrations/20260227000005_funding_system0_filter_presets_rls.sql`
+- Admin policy API: `GET/POST /api/admin/funding/system-0/policy`
+- Admin scheduler tick: `POST /api/admin/funding/system-0/scheduler`
+- Admin audit feed: `GET /api/admin/funding/system-0/events`
+- Admin shared presets API: `GET/POST/DELETE /api/admin/funding/system-0/presets`
+  - Presets can now be saved as team-shared or private-to-owner.
+  - RLS enforces admin access with private-presets owner scope.
+- Cron scheduler: `GET/POST /api/cron/funding/system-0` (requires `SYSTEM0_CRON_SECRET` or `CRON_SECRET`)
 
 ## 📝 Scripts
 

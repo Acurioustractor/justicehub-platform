@@ -111,7 +111,7 @@ export function useAirtableSearch(query: string, fields?: string[], limit?: numb
     },
     enabled: !!user && query.length >= 2,
     staleTime: 3 * 60 * 1000, // 3 minutes
-    cacheTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 

@@ -79,7 +79,7 @@ export default function InterventionsByStatePage() {
         }
 
         if (data) {
-          setInterventions(data);
+          setInterventions(data as Intervention[]);
         }
 
         // Get state counts from all interventions

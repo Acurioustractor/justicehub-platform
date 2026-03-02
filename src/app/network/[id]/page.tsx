@@ -20,11 +20,11 @@ export const dynamic = 'force-dynamic';
 interface JusticeHubNode {
   id: string;
   name: string;
-  node_type: 'state' | 'territory' | 'international';
+  node_type: 'state' | 'territory' | 'international' | string | null;
   state_code: string | null;
-  country: string;
+  country: string | null;
   description: string | null;
-  status: 'active' | 'forming' | 'planned';
+  status: 'active' | 'forming' | 'planned' | string | null;
   latitude: number | null;
   longitude: number | null;
   contact_email: string | null;
@@ -41,14 +41,14 @@ interface Event {
   end_date: string | null;
   location_name: string | null;
   event_type: string | null;
-  is_public: boolean;
+  is_public: boolean | null;
 }
 
 interface Organization {
   id: string;
   name: string;
-  slug: string;
-  type: string;
+  slug: string | null;
+  type: string | null;
   city: string | null;
   state: string | null;
 }
@@ -67,7 +67,7 @@ async function getNode(id: string): Promise<JusticeHubNode | null> {
     return null;
   }
 
-  return data;
+  return data as JusticeHubNode;
 }
 
 async function getNodeEvents(nodeId: string): Promise<Event[]> {
@@ -105,7 +105,7 @@ async function getInterventionCount(stateCode: string | null): Promise<number> {
     return 0;
   }
 
-  return data?.filter((row: { metadata?: { state?: string } }) =>
+  return data?.filter((row: any) =>
     row.metadata?.state === stateCode
   ).length || 0;
 }
@@ -222,8 +222,8 @@ export default async function NodeDetailPage({
             <div className="flex flex-col lg:flex-row gap-8">
               <div className="flex-1">
                 {/* Status Badge */}
-                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider mb-4 border ${getStatusBgColor(node.status)}`}>
-                  <div className={`w-3 h-3 rounded-full ${getStatusColor(node.status)}`} />
+                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider mb-4 border ${getStatusBgColor(node.status || '')}`}>
+                  <div className={`w-3 h-3 rounded-full ${getStatusColor(node.status || '')}`} />
                   {node.status}
                 </div>
 

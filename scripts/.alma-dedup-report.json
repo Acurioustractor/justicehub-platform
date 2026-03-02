@@ -1,0 +1,1331 @@
+{
+  "timestamp": "2026-02-14T20:16:43.212Z",
+  "counts": {
+    "url": 0,
+    "name": 109,
+    "content": 42,
+    "semantic": 47
+  },
+  "candidates": [
+    {
+      "keep": {
+        "id": "049552c5-4165-4170-a6de-bc68cbc56f88",
+        "name": "Day Rehabilitation | SA Health"
+      },
+      "remove": {
+        "id": "a9a29a9c-baf2-453c-8557-183fa03f839b",
+        "name": "Day Rehabilitation | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "9636daca-f3b4-4681-8ee9-27d843905573",
+        "name": "Kids and media: Aboriginal families "
+      },
+      "remove": {
+        "id": "1e4904e9-17b7-45da-a0a3-a36148d86378",
+        "name": "Kids and media: Aboriginal families "
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "ff787160-fdd0-4629-bdfe-307c07434289",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "remove": {
+        "id": "896d6520-3417-407a-9850-9f4108acad00",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "ff787160-fdd0-4629-bdfe-307c07434289",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "remove": {
+        "id": "934a585c-c5ee-4df4-85c0-e97fe23557ea",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "ff787160-fdd0-4629-bdfe-307c07434289",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "remove": {
+        "id": "2d5ec295-17cd-4421-af7b-2919f38df308",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "ff787160-fdd0-4629-bdfe-307c07434289",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "remove": {
+        "id": "f9af134f-5359-4ea8-9060-015e79497140",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "73555de9-8b74-4439-9e55-eb9591468042",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "f9ee9263-2760-4738-9c40-169be98a7807",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "73555de9-8b74-4439-9e55-eb9591468042",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "13d1ddf5-18c1-4abd-a339-b26b674af9ed",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "73555de9-8b74-4439-9e55-eb9591468042",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "eb118d84-ec89-4bf3-b615-58ef5ea61c41",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "73555de9-8b74-4439-9e55-eb9591468042",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "6698821b-051e-44a1-a3eb-b8eb82127dc4",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "73555de9-8b74-4439-9e55-eb9591468042",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "09149ccf-52b7-4edc-99b3-51529b4fe3c9",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "73555de9-8b74-4439-9e55-eb9591468042",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "014e6773-7888-4c21-8716-e32456cdefc3",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "73555de9-8b74-4439-9e55-eb9591468042",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "6a3b89e5-288b-4f92-9881-02e7da399915",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "73555de9-8b74-4439-9e55-eb9591468042",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "b155224e-e8ec-42a1-a606-424e5fcac580",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "73555de9-8b74-4439-9e55-eb9591468042",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "cf5863c8-1a37-423a-bbd9-e4fdd655fb90",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "73555de9-8b74-4439-9e55-eb9591468042",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "16ec7e00-fc24-455a-bb2d-bb47bb88be77",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "235954df-c02d-41b6-a67e-3a21c582ba22",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/rehabilitation+aged+and+palliative+care+building+map+-+fmc"
+      },
+      "remove": {
+        "id": "c5e7ab62-0b4d-4c99-ac99-11817f0921ae",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/rehabilitation+aged+and+palliative+care+building+map+-+fmc"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "e31ff8b9-7a00-45b6-9d7d-91c18420406e",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "0d65e5f9-7de7-4bbe-a6e2-c3782fe11641",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "e31ff8b9-7a00-45b6-9d7d-91c18420406e",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "53067a43-9fac-4d0b-b2ee-a9bfce691d0f",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "e31ff8b9-7a00-45b6-9d7d-91c18420406e",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "bdf16f99-7a1b-4cfb-83f8-088f6dbc6222",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "e31ff8b9-7a00-45b6-9d7d-91c18420406e",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "35ebd152-539e-4e13-842e-9d7d6d18ed66",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "e31ff8b9-7a00-45b6-9d7d-91c18420406e",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "fecd0052-11a4-433c-b25b-b076028e7c3f",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "a6c8da20-2365-49cb-b576-faa19f2fadf4",
+        "name": "Inpatient Rehabilitation | SA Health"
+      },
+      "remove": {
+        "id": "950b3bf5-f893-4c09-85c2-60b253612de9",
+        "name": "Inpatient Rehabilitation | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "896d6520-3417-407a-9850-9f4108acad00",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "remove": {
+        "id": "934a585c-c5ee-4df4-85c0-e97fe23557ea",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "896d6520-3417-407a-9850-9f4108acad00",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "remove": {
+        "id": "2d5ec295-17cd-4421-af7b-2919f38df308",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "896d6520-3417-407a-9850-9f4108acad00",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "remove": {
+        "id": "f9af134f-5359-4ea8-9060-015e79497140",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "0d65e5f9-7de7-4bbe-a6e2-c3782fe11641",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "53067a43-9fac-4d0b-b2ee-a9bfce691d0f",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "0d65e5f9-7de7-4bbe-a6e2-c3782fe11641",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "bdf16f99-7a1b-4cfb-83f8-088f6dbc6222",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "0d65e5f9-7de7-4bbe-a6e2-c3782fe11641",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "35ebd152-539e-4e13-842e-9d7d6d18ed66",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "0d65e5f9-7de7-4bbe-a6e2-c3782fe11641",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "fecd0052-11a4-433c-b25b-b076028e7c3f",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "0954a3c7-acfc-4a0a-9656-ded2ebf12841",
+        "name": "Microsoft Word - Kokoda P&F Rep Feedback Flyer - Final 7.3.22.docx"
+      },
+      "remove": {
+        "id": "ecfb13dd-8cc0-4d6c-88c0-e1f8f4ea7efc",
+        "name": "Microsoft Word - Bangka P&F Rep Feedback Flyer - Final 7.3.22.docx"
+      },
+      "reason": "Name similarity: 85.7%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "0954a3c7-acfc-4a0a-9656-ded2ebf12841",
+        "name": "Microsoft Word - Kokoda P&F Rep Feedback Flyer - Final 7.3.22.docx"
+      },
+      "remove": {
+        "id": "f54fcd49-e0d0-4686-9fd9-8445f1363569",
+        "name": "Microsoft Word - Bangka P&F Rep Feedback Flyer - Final 7.3.22.docx"
+      },
+      "reason": "Name similarity: 85.7%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "934a585c-c5ee-4df4-85c0-e97fe23557ea",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "remove": {
+        "id": "2d5ec295-17cd-4421-af7b-2919f38df308",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "934a585c-c5ee-4df4-85c0-e97fe23557ea",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "remove": {
+        "id": "f9af134f-5359-4ea8-9060-015e79497140",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "2f74a1d8-a8b4-487a-81ae-31495c3cfa77",
+        "name": "Blue and Green Illustration Clinical Friendly Safety and Direction General Health Poster"
+      },
+      "remove": {
+        "id": "1f56d80a-de13-443c-924a-6d37381117ce",
+        "name": "Blue and Green Illustration Clinical Friendly Safety and Direction General Health Poster"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "acce1f41-3eca-4077-904c-fb712441d8cd",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/salhn+telehealth+family+and+friends+user+guide+-+division+of+rehabilitation%2c+aged+care+palliative+care+salh"
+      },
+      "remove": {
+        "id": "6eecd40a-4abd-454f-bafc-cee445c4fff4",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/salhn+telehealth+family+and+friends+user+guide+-+division+of+rehabilitation%2c+aged+care+palliative+care+salh"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "f9ee9263-2760-4738-9c40-169be98a7807",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "13d1ddf5-18c1-4abd-a339-b26b674af9ed",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "f9ee9263-2760-4738-9c40-169be98a7807",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "eb118d84-ec89-4bf3-b615-58ef5ea61c41",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "f9ee9263-2760-4738-9c40-169be98a7807",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "6698821b-051e-44a1-a3eb-b8eb82127dc4",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "f9ee9263-2760-4738-9c40-169be98a7807",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "09149ccf-52b7-4edc-99b3-51529b4fe3c9",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "f9ee9263-2760-4738-9c40-169be98a7807",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "014e6773-7888-4c21-8716-e32456cdefc3",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "f9ee9263-2760-4738-9c40-169be98a7807",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "6a3b89e5-288b-4f92-9881-02e7da399915",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "f9ee9263-2760-4738-9c40-169be98a7807",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "b155224e-e8ec-42a1-a606-424e5fcac580",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "f9ee9263-2760-4738-9c40-169be98a7807",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "cf5863c8-1a37-423a-bbd9-e4fdd655fb90",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "f9ee9263-2760-4738-9c40-169be98a7807",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "16ec7e00-fc24-455a-bb2d-bb47bb88be77",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "2d5ec295-17cd-4421-af7b-2919f38df308",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "remove": {
+        "id": "f9af134f-5359-4ea8-9060-015e79497140",
+        "name": "South Australia Brain Injury Rehabilitation Service (BIRS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "586b285f-1d12-4c8c-9bd6-bcd020512966",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/laurel+hospice+patient+and+family+rep+feedback+flyer+-+division+of+rehabilitation%2c+aged+care+and+palliative"
+      },
+      "remove": {
+        "id": "8f1f484f-6a89-487f-896e-2194bf22f1eb",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/laurel+hospice+patient+and+family+rep+feedback+flyer+-+division+of+rehabilitation%2c+aged+care+and+palliative"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "caf438f7-1a22-4184-9351-86537f4cc4b4",
+        "name": "Transitional Care Services at SALHN | SA Health"
+      },
+      "remove": {
+        "id": "a4ed588b-2d32-4007-838c-86650a09b2ae",
+        "name": "Transitional Care Services at SALHN | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "94f65119-d051-4aad-af03-e99776e5742f",
+        "name": "Why many Aboriginal kids don't have birth certificates - ABC listen"
+      },
+      "remove": {
+        "id": "206b78ab-e7d1-4fee-9603-dc940d629928",
+        "name": "Why many Aboriginal kids don't have birth certificates - ABC listen"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "e4849959-8a29-4687-96e9-d5dfad8a361b",
+        "name": "Enabling Indigenous STEM students to shoot for the stars  - ABC listen"
+      },
+      "remove": {
+        "id": "32d432ee-c537-4f5d-983e-72b6961459dc",
+        "name": "Enabling Indigenous STEM students to shoot for the stars  - ABC listen"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "27ab42eb-2242-4923-ab6c-ae4a364fbba0",
+        "name": "Aboriginal and Torres Strait Islander health | Australian Government Department of Health, Disability and Ageing"
+      },
+      "remove": {
+        "id": "5916867e-f0bf-4595-89fb-e195d8d920e9",
+        "name": "Aboriginal and Torres Strait Islander health | Australian Government Department of Health, Disability and Ageing"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "53067a43-9fac-4d0b-b2ee-a9bfce691d0f",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "bdf16f99-7a1b-4cfb-83f8-088f6dbc6222",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "53067a43-9fac-4d0b-b2ee-a9bfce691d0f",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "35ebd152-539e-4e13-842e-9d7d6d18ed66",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "53067a43-9fac-4d0b-b2ee-a9bfce691d0f",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "fecd0052-11a4-433c-b25b-b076028e7c3f",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "bdf16f99-7a1b-4cfb-83f8-088f6dbc6222",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "35ebd152-539e-4e13-842e-9d7d6d18ed66",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "bdf16f99-7a1b-4cfb-83f8-088f6dbc6222",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "fecd0052-11a4-433c-b25b-b076028e7c3f",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "13d1ddf5-18c1-4abd-a339-b26b674af9ed",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "eb118d84-ec89-4bf3-b615-58ef5ea61c41",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "13d1ddf5-18c1-4abd-a339-b26b674af9ed",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "6698821b-051e-44a1-a3eb-b8eb82127dc4",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "13d1ddf5-18c1-4abd-a339-b26b674af9ed",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "09149ccf-52b7-4edc-99b3-51529b4fe3c9",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "13d1ddf5-18c1-4abd-a339-b26b674af9ed",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "014e6773-7888-4c21-8716-e32456cdefc3",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "13d1ddf5-18c1-4abd-a339-b26b674af9ed",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "6a3b89e5-288b-4f92-9881-02e7da399915",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "13d1ddf5-18c1-4abd-a339-b26b674af9ed",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "b155224e-e8ec-42a1-a606-424e5fcac580",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "13d1ddf5-18c1-4abd-a339-b26b674af9ed",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "cf5863c8-1a37-423a-bbd9-e4fdd655fb90",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "13d1ddf5-18c1-4abd-a339-b26b674af9ed",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "16ec7e00-fc24-455a-bb2d-bb47bb88be77",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "ecfb13dd-8cc0-4d6c-88c0-e1f8f4ea7efc",
+        "name": "Microsoft Word - Bangka P&F Rep Feedback Flyer - Final 7.3.22.docx"
+      },
+      "remove": {
+        "id": "f54fcd49-e0d0-4686-9fd9-8445f1363569",
+        "name": "Microsoft Word - Bangka P&F Rep Feedback Flyer - Final 7.3.22.docx"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "6d820771-7758-45c2-8b4f-31ed82ecf00e",
+        "name": "Document"
+      },
+      "remove": {
+        "id": "d2c36106-b5a7-4662-a785-f2500292bd4c",
+        "name": "Document"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "420ecc27-0229-4daf-80d4-df74cb9c97a8",
+        "name": "SA Health Urgent Care Hub - Repat | SA Health"
+      },
+      "remove": {
+        "id": "98d86d69-2a4a-444d-9c6b-806facd35b3b",
+        "name": "SA Health Urgent Care Hub - Repat | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "71c56048-f5fd-4e7c-b9ce-3f10b6f86752",
+        "name": "Geriatric Evaluation and Management (GEM) Units in SALHN | SA Health"
+      },
+      "remove": {
+        "id": "6bb35d55-76f8-40dd-88a5-a1323ba54734",
+        "name": "Geriatric Evaluation and Management (GEM) Units in SALHN | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "df2a3be4-811c-466e-9809-9e78f943c815",
+        "name": "Geriatric Medicine Clinics at SALHN | SA Health"
+      },
+      "remove": {
+        "id": "5f726a3d-cac5-402c-bf24-039504f39a40",
+        "name": "Geriatric Medicine Clinics at SALHN | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "af26bbb2-1c28-4f3e-9a98-14c34d986de8",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/bangka+strait+welcome+pack+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "remove": {
+        "id": "6c373b14-9962-47ff-a631-d27807583fbd",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/bangka+strait+welcome+pack+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "a42a5a2d-e44e-4ffc-bb7f-59372217e3d2",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/tobruk+and+kokoda+wards+brochure+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "remove": {
+        "id": "fb12498d-6f59-4deb-a8db-4e0ea3e5d6da",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/kokoda+welcome+brochure+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "reason": "Name similarity: 85.7%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "a42a5a2d-e44e-4ffc-bb7f-59372217e3d2",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/tobruk+and+kokoda+wards+brochure+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "remove": {
+        "id": "cba94b77-9141-40f3-ad62-b78d6b93530e",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/tobruk+and+kokoda+wards+brochure+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "a42a5a2d-e44e-4ffc-bb7f-59372217e3d2",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/tobruk+and+kokoda+wards+brochure+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "remove": {
+        "id": "1179f757-15ce-4414-a751-e5f8ce822590",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/kokoda+welcome+brochure+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "reason": "Name similarity: 85.7%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "35ebd152-539e-4e13-842e-9d7d6d18ed66",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "remove": {
+        "id": "fecd0052-11a4-433c-b25b-b076028e7c3f",
+        "name": "South Australian Spinal Cord Injury Service (SASCIS) | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "df26d2e2-1e81-4b1d-ace4-f302c3d679fe",
+        "name": "Outpatient Rehabilitation Services | SA Health"
+      },
+      "remove": {
+        "id": "1b1585f4-d41b-4c62-8e72-4cf209950b89",
+        "name": "Outpatient Rehabilitation Services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "fb12498d-6f59-4deb-a8db-4e0ea3e5d6da",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/kokoda+welcome+brochure+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "remove": {
+        "id": "cba94b77-9141-40f3-ad62-b78d6b93530e",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/tobruk+and+kokoda+wards+brochure+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "reason": "Name similarity: 85.7%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "fb12498d-6f59-4deb-a8db-4e0ea3e5d6da",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/kokoda+welcome+brochure+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "remove": {
+        "id": "1179f757-15ce-4414-a751-e5f8ce822590",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/kokoda+welcome+brochure+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "cba94b77-9141-40f3-ad62-b78d6b93530e",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/tobruk+and+kokoda+wards+brochure+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "remove": {
+        "id": "1179f757-15ce-4414-a751-e5f8ce822590",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/kokoda+welcome+brochure+-+division+of+rehabilitation%2c+aged+care+palliative+care+salhn"
+      },
+      "reason": "Name similarity: 85.7%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "eb118d84-ec89-4bf3-b615-58ef5ea61c41",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "6698821b-051e-44a1-a3eb-b8eb82127dc4",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "eb118d84-ec89-4bf3-b615-58ef5ea61c41",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "09149ccf-52b7-4edc-99b3-51529b4fe3c9",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "eb118d84-ec89-4bf3-b615-58ef5ea61c41",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "014e6773-7888-4c21-8716-e32456cdefc3",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "eb118d84-ec89-4bf3-b615-58ef5ea61c41",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "6a3b89e5-288b-4f92-9881-02e7da399915",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "eb118d84-ec89-4bf3-b615-58ef5ea61c41",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "b155224e-e8ec-42a1-a606-424e5fcac580",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "eb118d84-ec89-4bf3-b615-58ef5ea61c41",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "cf5863c8-1a37-423a-bbd9-e4fdd655fb90",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "eb118d84-ec89-4bf3-b615-58ef5ea61c41",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "16ec7e00-fc24-455a-bb2d-bb47bb88be77",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "cbd535b7-30e3-4708-9d4f-f11ae4bd5067",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/rehabilitation+patients+-+important+information+-+division+of+rehabilitation%2c+aged+care+palliative+care+sal"
+      },
+      "remove": {
+        "id": "b8ed693b-09f7-4f78-9a6b-59349907e5d7",
+        "name": "https://www.sahealth.sa.gov.au/wps/wcm/connect/public+content/sa+health+internet/resources/rehabilitation+patients+-+important+information+-+division+of+rehabilitation%2c+aged+care+palliative+care+sal"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "baefbceb-ae4d-40ac-8e3a-a9774a34a3d1",
+        "name": "Statewide Rehabilitation Services | SA Health"
+      },
+      "remove": {
+        "id": "70ae4cea-ba2b-4bf6-8d05-4c4252c2155d",
+        "name": "Statewide Rehabilitation Services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "6698821b-051e-44a1-a3eb-b8eb82127dc4",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "09149ccf-52b7-4edc-99b3-51529b4fe3c9",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "6698821b-051e-44a1-a3eb-b8eb82127dc4",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "014e6773-7888-4c21-8716-e32456cdefc3",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "6698821b-051e-44a1-a3eb-b8eb82127dc4",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "6a3b89e5-288b-4f92-9881-02e7da399915",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "6698821b-051e-44a1-a3eb-b8eb82127dc4",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "b155224e-e8ec-42a1-a606-424e5fcac580",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "6698821b-051e-44a1-a3eb-b8eb82127dc4",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "cf5863c8-1a37-423a-bbd9-e4fdd655fb90",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "6698821b-051e-44a1-a3eb-b8eb82127dc4",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "16ec7e00-fc24-455a-bb2d-bb47bb88be77",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "09149ccf-52b7-4edc-99b3-51529b4fe3c9",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "014e6773-7888-4c21-8716-e32456cdefc3",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "09149ccf-52b7-4edc-99b3-51529b4fe3c9",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "6a3b89e5-288b-4f92-9881-02e7da399915",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "09149ccf-52b7-4edc-99b3-51529b4fe3c9",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "b155224e-e8ec-42a1-a606-424e5fcac580",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "09149ccf-52b7-4edc-99b3-51529b4fe3c9",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "cf5863c8-1a37-423a-bbd9-e4fdd655fb90",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "09149ccf-52b7-4edc-99b3-51529b4fe3c9",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "16ec7e00-fc24-455a-bb2d-bb47bb88be77",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "8cab083b-207c-425f-b30f-d3418aff2059",
+        "name": "Rehabilitation clinics at SALHN | SA Health"
+      },
+      "remove": {
+        "id": "39f3891a-f9a7-45a0-b849-aa2249f33e3f",
+        "name": "Rehabilitation clinics at SALHN | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "014e6773-7888-4c21-8716-e32456cdefc3",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "6a3b89e5-288b-4f92-9881-02e7da399915",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "014e6773-7888-4c21-8716-e32456cdefc3",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "b155224e-e8ec-42a1-a606-424e5fcac580",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "014e6773-7888-4c21-8716-e32456cdefc3",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "cf5863c8-1a37-423a-bbd9-e4fdd655fb90",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "014e6773-7888-4c21-8716-e32456cdefc3",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "16ec7e00-fc24-455a-bb2d-bb47bb88be77",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "6a3b89e5-288b-4f92-9881-02e7da399915",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "b155224e-e8ec-42a1-a606-424e5fcac580",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "6a3b89e5-288b-4f92-9881-02e7da399915",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "cf5863c8-1a37-423a-bbd9-e4fdd655fb90",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "6a3b89e5-288b-4f92-9881-02e7da399915",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "16ec7e00-fc24-455a-bb2d-bb47bb88be77",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "b155224e-e8ec-42a1-a606-424e5fcac580",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "cf5863c8-1a37-423a-bbd9-e4fdd655fb90",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "b155224e-e8ec-42a1-a606-424e5fcac580",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "16ec7e00-fc24-455a-bb2d-bb47bb88be77",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "cf5863c8-1a37-423a-bbd9-e4fdd655fb90",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "remove": {
+        "id": "16ec7e00-fc24-455a-bb2d-bb47bb88be77",
+        "name": "Orthotics and prosthetics services | SA Health"
+      },
+      "reason": "Name similarity: 100.0%",
+      "type": "name"
+    },
+    {
+      "keep": {
+        "id": "5deb8d4c-e617-4b1d-ad8d-fd349a85867d",
+        "name": "Page not found | Communities and Justice "
+      },
+      "remove": {
+        "id": "b7c3c6ed-61dc-4893-a097-b570752a04f3",
+        "name": "Page not found | Communities and Justice "
+      },
+      "reason": "Same content hash: c47c2207c9f6549e",
+      "type": "content"
+    }
+  ]
+}

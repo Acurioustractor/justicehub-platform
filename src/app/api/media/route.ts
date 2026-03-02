@@ -138,7 +138,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Combine and sort by date
-    const allMedia = [...photos, ...videos].sort(
+    const allMedia = ([...photos, ...videos] as any[]).sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
 

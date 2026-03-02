@@ -1,25 +1,9 @@
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { requireAdmin } from '@/lib/supabase/admin';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
 
 export default async function AdminProgramsPage() {
-  const supabase = await createClient();
-
-  // Check authentication and admin role
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/login?redirect=/admin/programs');
-
-  // Check admin role
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('is_super_admin')
-    .eq('id', user.id)
-    .single();
-
-  if (!profileData?.is_super_admin) {
-    redirect('/');
-  }
+  const { supabase } = await requireAdmin('/admin/programs');
 
   // Fetch all programs with profile connection counts
   const { data: programs } = await supabase
@@ -47,7 +31,7 @@ export default async function AdminProgramsPage() {
               </p>
             </div>
             <Link
-              href="/admin/programs/new"
+              href="/admin/programs"
               className="px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
               Add Program
@@ -107,7 +91,7 @@ export default async function AdminProgramsPage() {
             <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-12 text-center">
               <p className="text-xl font-bold text-gray-600 mb-4">No programs yet</p>
               <Link
-                href="/admin/programs/new"
+                href="/admin/programs"
                 className="inline-block px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors border-2 border-black"
               >
                 Add Your First Program

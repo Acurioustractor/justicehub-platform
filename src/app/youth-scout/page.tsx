@@ -195,7 +195,7 @@ export default function YouthScoutLandingPage() {
 
                   <div className="space-y-4">
                     <Link 
-                      href={adminMode ? "/youth-scout/dashboard" : "/youth-scout/youth-login"}
+                      href="/youth-scout/youth-login"
                       className="block w-full bg-blue-800 hover:bg-blue-700 text-white text-center py-4 px-6 font-bold text-lg transition-all transform hover:scale-105"
                     >
                       {adminMode ? "ENTER YOUTH DASHBOARD" : "GET STARTED"}
@@ -203,7 +203,7 @@ export default function YouthScoutLandingPage() {
                     </Link>
                     
                     <Link 
-                      href="/youth-scout/youth-preview"
+                      href="/youth-scout/youth-login"
                       className="block w-full border-2 border-blue-800 text-blue-800 hover:bg-blue-800 hover:text-white text-center py-3 px-6 font-bold transition-all"
                     >
                       Take a Quick Tour
@@ -242,7 +242,7 @@ export default function YouthScoutLandingPage() {
 
                   <div className="space-y-4">
                     <Link 
-                      href={adminMode ? "/youth-scout/talent-dashboard" : "/youth-scout/talent-login"}
+                      href="/youth-scout/talent-login"
                       className="block w-full bg-orange-600 hover:bg-orange-700 text-white text-center py-4 px-6 font-bold text-lg transition-all transform hover:scale-105"
                     >
                       {adminMode ? "ENTER TALENT DASHBOARD" : "JOIN AS SCOUT"}
@@ -250,7 +250,7 @@ export default function YouthScoutLandingPage() {
                     </Link>
                     
                     <Link 
-                      href="/youth-scout/talent-preview"
+                      href="/youth-scout/talent-login"
                       className="block w-full border-2 border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white text-center py-3 px-6 font-bold transition-all"
                     >
                       Learn More

@@ -246,12 +246,12 @@ export default function ThemesPage() {
             {otherThemes.map((theme) => {
               // Only disability theme has a page built currently
               const hasPage = theme.id === 'disability';
-              const CardWrapper = hasPage ? Link : 'div';
-              
+              const CardWrapper: any = hasPage ? Link : 'div';
+
               return (
                 <CardWrapper
                   key={theme.id}
-                  href={hasPage ? `/themes/${theme.id}` : undefined}
+                  {...(hasPage ? { href: `/themes/${theme.id}` } : {})}
                   className={`group border-2 border-black p-6 transition-colors relative overflow-hidden ${
                     hasPage ? 'hover:bg-earth-50 cursor-pointer' : 'bg-gray-50 cursor-not-allowed'
                   }`}

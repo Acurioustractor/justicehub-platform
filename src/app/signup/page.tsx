@@ -144,31 +144,45 @@ function SignupContent() {
         slug = `${slug}-${randomSuffix}`;
       }
 
-      // Update the profile created by Auth trigger (or create if not exists)
-      const roleTags = isStewardSignup ? ['steward'] : [];
-
-      const { data: profile, error: profileError } = await supabase
+      // Update auth profile (profiles table — id matches auth user id)
+      const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
-          id: user.id, // Match auth user ID
+          id: user.id,
           full_name: fullName,
-          preferred_name: preferredName || null,
-          pronouns: pronouns || null,
-          slug: slug,
-          tagline: tagline || (isStewardSignup ? 'JusticeHub Steward' : null),
-          bio: bio || null,
-          is_public: false, // Start as private until user approves
-          is_featured: false,
-          role_tags: roleTags,
+          display_name: preferredName || fullName,
           email: user.email,
-          onboarding_completed: true
+          bio: bio || null,
         })
         .select()
         .single();
 
       if (profileError) throw profileError;
 
-      console.log('Profile created:', profile);
+      // Create public profile with extended fields
+      const roleTags = isStewardSignup ? ['steward'] : [];
+
+      const { data: publicProfile, error: publicProfileError } = await supabase
+        .from('public_profiles')
+        .upsert({
+          user_id: user.id,
+          full_name: fullName,
+          preferred_name: preferredName || null,
+          pronouns: pronouns || null,
+          slug: slug,
+          tagline: tagline || (isStewardSignup ? 'JusticeHub Steward' : null),
+          bio: bio || null,
+          email: user.email,
+          is_public: false,
+          is_featured: false,
+          role_tags: roleTags,
+        })
+        .select()
+        .single();
+
+      if (publicProfileError) throw publicProfileError;
+
+      console.log('Profiles created:', publicProfile);
 
       // If steward signup, go to steward info step (GHL sync happens after steward info)
       if (isStewardSignup) {

@@ -11,23 +11,22 @@ interface Program {
   id: string;
   name: string;
   organization: string;
-  organization_slug: string | null;
   location: string;
   state: string;
   approach: string;
   description: string;
   impact_summary: string;
-  success_rate: number;
-  participants_served: number;
-  years_operating: number;
+  success_rate: number | null;
+  participants_served: number | null;
+  years_operating: number | null;
   contact_phone: string | null;
   contact_email: string | null;
   website: string | null;
-  is_featured: boolean;
-  indigenous_knowledge: boolean;
-  community_connection_score: number;
-  tags: string[];
-  founded_year: number;
+  is_featured: boolean | null;
+  indigenous_knowledge: boolean | null;
+  community_connection_score: number | null;
+  tags: string[] | null;
+  founded_year: number | null;
 }
 
 export default function EditProgramPage() {
@@ -55,11 +54,11 @@ export default function EditProgramPage() {
       // Check admin role
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('is_super_admin')
+        .select('role')
         .eq('id', user.id)
         .single();
 
-      if (!profileData?.is_super_admin) {
+      if (profileData?.role !== 'admin') {
         router.push('/');
         return;
       }
@@ -277,7 +276,7 @@ export default function EditProgramPage() {
                   <label className="block text-sm font-bold mb-2">Success Rate (%)</label>
                   <input
                     type="number"
-                    value={program.success_rate}
+                    value={program.success_rate ?? ''}
                     onChange={(e) => setProgram({ ...program, success_rate: parseInt(e.target.value) || 0 })}
                     min="0"
                     max="100"
@@ -288,7 +287,7 @@ export default function EditProgramPage() {
                   <label className="block text-sm font-bold mb-2">Participants Served</label>
                   <input
                     type="number"
-                    value={program.participants_served}
+                    value={program.participants_served ?? ''}
                     onChange={(e) => setProgram({ ...program, participants_served: parseInt(e.target.value) || 0 })}
                     min="0"
                     className="w-full px-4 py-3 border-2 border-black focus:outline-none focus:ring-2 focus:ring-black"
@@ -298,7 +297,7 @@ export default function EditProgramPage() {
                   <label className="block text-sm font-bold mb-2">Years Operating</label>
                   <input
                     type="number"
-                    value={program.years_operating}
+                    value={program.years_operating ?? ''}
                     onChange={(e) => setProgram({ ...program, years_operating: parseInt(e.target.value) || 0 })}
                     min="0"
                     className="w-full px-4 py-3 border-2 border-black focus:outline-none focus:ring-2 focus:ring-black"
@@ -308,7 +307,7 @@ export default function EditProgramPage() {
                   <label className="block text-sm font-bold mb-2">Founded Year</label>
                   <input
                     type="number"
-                    value={program.founded_year}
+                    value={program.founded_year ?? ''}
                     onChange={(e) => setProgram({ ...program, founded_year: parseInt(e.target.value) || 2000 })}
                     min="1900"
                     max="2030"
@@ -353,7 +352,7 @@ export default function EditProgramPage() {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={program.is_featured}
+                    checked={program.is_featured ?? false}
                     onChange={(e) => setProgram({ ...program, is_featured: e.target.checked })}
                     className="w-5 h-5 border-2 border-black"
                   />
@@ -362,7 +361,7 @@ export default function EditProgramPage() {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={program.indigenous_knowledge}
+                    checked={program.indigenous_knowledge ?? false}
                     onChange={(e) => setProgram({ ...program, indigenous_knowledge: e.target.checked })}
                     className="w-5 h-5 border-2 border-black"
                   />

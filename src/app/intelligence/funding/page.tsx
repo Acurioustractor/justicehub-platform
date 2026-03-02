@@ -34,17 +34,18 @@ type FundingOpportunity = {
   focus_areas: string[] | null;
   application_url: string | null;
   relevance_score: number | null;
-  created_at: string;
+  created_at: string | null;
 };
 
 type FundingData = {
   id: string;
-  jurisdiction: string;
-  fiscal_year: string;
-  category: string;
-  amount: number;
-  source_url: string | null;
-  created_at: string;
+  jurisdiction?: string | null;
+  fiscal_year?: string | null;
+  category?: string | null;
+  amount?: number | null;
+  source_url?: string | null;
+  created_at?: string | null;
+  [key: string]: any;
 };
 
 type FilterState = {
@@ -110,7 +111,7 @@ export default function FundingPage() {
       const activeOpps = (oppsData || []).filter(
         (opp) => opp.status === 'active' || opp.status === 'open'
       );
-      const totalExp = (govData || []).reduce((sum, item) => sum + (item.amount || 0), 0);
+      const totalExp = (govData || []).reduce((sum: number, item: any) => sum + (item.amount || 0), 0);
 
       setStats({
         total: oppsData?.length || 0,

@@ -1,5 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { requireAdmin } from '@/lib/supabase/admin';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
 
@@ -8,22 +7,7 @@ export default async function AdminServicesPage({
 }: {
   searchParams: { page?: string; search?: string };
 }) {
-  const supabase = await createClient();
-
-  // Check authentication and admin role
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/login?redirect=/admin/services');
-
-  // Check admin role
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('is_super_admin')
-    .eq('id', user.id)
-    .single();
-
-  if (!profileData?.is_super_admin) {
-    redirect('/');
-  }
+  const { supabase } = await requireAdmin('/admin/services');
 
   const page = parseInt(searchParams.page || '1');
   const pageSize = 20;
@@ -64,7 +48,7 @@ export default async function AdminServicesPage({
               </p>
             </div>
             <Link
-              href="/admin/services/import"
+              href="/admin/services"
               className="px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             >
               Import Services
@@ -175,7 +159,7 @@ export default async function AdminServicesPage({
             <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-12 text-center">
               <p className="text-xl font-bold text-gray-600 mb-4">No services found</p>
               <Link
-                href="/admin/services/import"
+                href="/admin/services"
                 className="inline-block px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors border-2 border-black"
               >
                 Import Services

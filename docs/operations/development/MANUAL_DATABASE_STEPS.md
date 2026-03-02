@@ -1,5 +1,7 @@
 # Manual Database Steps for Empathy Ledger Integration
 
+Related record: [System 0 Filter Presets Manual Migration Record (2026-02-27)](./SYSTEM0_FILTER_PRESETS_MANUAL_MIGRATION_2026-02-27.md)
+
 ## Step 1: Add Columns to JusticeHub Database
 
 Go to Supabase SQL Editor for JusticeHub and run this SQL:

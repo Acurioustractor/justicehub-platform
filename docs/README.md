@@ -95,6 +95,7 @@ Each system has an `index.md` entry point:
 - [systems/scraper/](systems/scraper/) - Data ingestion
 - [systems/empathy-ledger/](systems/empathy-ledger/) - EL integration
 - [systems/JUSTICEHUB_SITE_MAP_AND_ROUTES.md](systems/JUSTICEHUB_SITE_MAP_AND_ROUTES.md) - Complete site architecture
+- [systems/route-review/ROUTE_REVIEW_SUMMARY_2026-02-25.md](systems/route-review/ROUTE_REVIEW_SUMMARY_2026-02-25.md) - Current route audit, process model, and visual artifacts
 
 ### Security
 - Security utilities: `src/lib/security.ts` - Input sanitization, XSS prevention

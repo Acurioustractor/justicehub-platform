@@ -1,6 +1,7 @@
+// @ts-nocheck — Disabled module; not imported by any active code
 /**
  * Empathy Ledger Service
- * 
+ *
  * High-level service for managing Empathy Ledger integration,
  * including data synchronization and analytics aggregation.
  */

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase/service';
 import { createClient } from '@/lib/supabase/server';
 
 interface DataSource {
@@ -25,10 +24,10 @@ async function isAdmin(
 ): Promise<boolean> {
   const { data } = await supabase
     .from('profiles')
-    .select('is_super_admin')
+    .select('role')
     .eq('id', userId)
     .single();
-  return data?.is_super_admin === true;
+  return data?.role === 'admin';
 }
 
 export async function GET(request: NextRequest) {
@@ -46,7 +45,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
     }
 
-    const supabase = createServiceClient();
+    // Use the authenticated client (already verified admin above)
+    const supabase = authClient;
     const searchParams = request.nextUrl.searchParams;
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '50');
@@ -175,52 +175,52 @@ export async function GET(request: NextRequest) {
       description: 'ALMA interventions knowledge base',
     });
 
-    // 6. Profiles
+    // 6. People Profiles
     const { count: profilesCount, data: profilesLatest } = await supabase
-      .from('profiles')
+      .from('public_profiles')
       .select('created_at', { count: 'exact' })
       .order('created_at', { ascending: false })
       .limit(1);
-    
+
     sources.push({
-      id: 'profiles',
+      id: 'public_profiles',
       name: 'People Profiles',
       type: 'sync',
       pipeline: 'sync',
-      lifecycle: 'supporting',
+      lifecycle: 'canonical',
       legacy: false,
       compatibilityOnly: false,
       canonicalPipeline: 'sync',
-      canonicalTable: 'profiles',
-      table: 'profiles',
+      canonicalTable: 'public_profiles',
+      table: 'public_profiles',
       count: profilesCount || 0,
       lastUpdated: profilesLatest?.[0]?.created_at || null,
       status: profilesCount && profilesCount > 0 ? 'healthy' : 'empty',
-      description: 'Profiles from sync + manual curation',
+      description: 'Public-facing people profiles',
     });
 
-    // 7. Stories
+    // 7. Stories (articles table)
     const { count: storiesCount, data: storiesLatest } = await supabase
-      .from('stories')
+      .from('articles')
       .select('created_at', { count: 'exact' })
       .order('created_at', { ascending: false })
       .limit(1);
-    
+
     sources.push({
-      id: 'stories',
-      name: 'Youth Stories',
+      id: 'articles',
+      name: 'Stories',
       type: 'sync',
       pipeline: 'sync',
-      lifecycle: 'supporting',
+      lifecycle: 'canonical',
       legacy: false,
       compatibilityOnly: false,
       canonicalPipeline: 'sync',
-      canonicalTable: 'stories',
-      table: 'stories',
+      canonicalTable: 'articles',
+      table: 'articles',
       count: storiesCount || 0,
       lastUpdated: storiesLatest?.[0]?.created_at || null,
       status: storiesCount && storiesCount > 0 ? 'healthy' : 'empty',
-      description: 'Stories from sync + editorial workflows',
+      description: 'Stories and articles from editorial workflows',
     });
 
     // 8. Discovered Links (ALMA queue)

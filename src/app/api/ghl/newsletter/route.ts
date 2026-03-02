@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     let ghlContactId: string | null = null;
 
     if (ghl.isConfigured()) {
-      const tags = [GHL_TAGS.NEWSLETTER];
+      const tags: string[] = [GHL_TAGS.NEWSLETTER];
 
       // Add subscription type tag
       if (validSubscriptionType === 'steward') tags.push(GHL_TAGS.STEWARD);

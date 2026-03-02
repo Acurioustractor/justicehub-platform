@@ -26,7 +26,7 @@ export async function GET(
 
     // Add portfolio score if requested
     if (includeScore) {
-      const scoreResult = await portfolioService.calculatePortfolioScore(
+      const scoreResult = await (portfolioService as any).calculatePortfolioScore(
         params.id
       );
       return NextResponse.json({

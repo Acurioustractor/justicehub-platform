@@ -303,7 +303,7 @@ function ExcellenceMapContent() {
 
       // Center on global view showing both Australia and international locations
       mapRef.current = new maplibregl.Map({
-        container: mapContainerRef.current,
+        container: mapContainerRef.current!,
         style: mapStyle,
         center: [25, 10], // Between Australia and Europe
         zoom: 1.8,

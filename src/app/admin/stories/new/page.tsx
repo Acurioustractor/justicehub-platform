@@ -271,10 +271,11 @@ export default function UnifiedStoriesEditor() {
           content: prev.content + imageHtml,
         }));
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('❌ Error uploading image:', error);
-      console.error('❌ Error details:', { name: error.name, message: error.message, stack: error.stack });
-      alert(`Failed to upload image: ${error.message}`);
+      const errMsg = error instanceof Error ? error.message : 'Unknown error';
+      console.error('❌ Error details:', error instanceof Error ? { name: error.name, message: error.message, stack: error.stack } : error);
+      alert(`Failed to upload image: ${errMsg}`);
     } finally {
       console.log('📤 Upload process complete, setUploading(false)');
       setUploading(false);

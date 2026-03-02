@@ -139,7 +139,7 @@ export default function ExcellenceMap({
       }
 
       mapRef.current = new maplibregl.Map({
-        container: mapContainerRef.current,
+        container: mapContainerRef.current!,
         style: mapStyle,
         center: initialCenter,
         zoom: initialZoom,

@@ -35,5 +35,5 @@ async function getGrassrootsData() {
 export default async function GrassrootsPage() {
   const { programs } = await getGrassrootsData();
 
-  return <GrassrootsContent initialPrograms={programs} />;
+  return <GrassrootsContent initialPrograms={programs as any} />;
 }

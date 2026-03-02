@@ -102,7 +102,7 @@ export function StoryEditor({ story, onSave, isSubmitting = false, mode }: Story
     onSave(storyData);
   };
 
-  const wordCount = content.trim().split(/\s+/).filter(word => word.length > 0).length;
+  const wordCount = content.trim().split(/\s+/).filter((word: string) => word.length > 0).length;
   const readingTime = Math.ceil(wordCount / 200); // Average reading speed
 
   return (

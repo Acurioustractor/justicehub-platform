@@ -72,8 +72,8 @@ export default function OpportunitiesPage() {
         return;
       }
 
-      setOpportunities(data || []);
-      setFilteredOpportunities(data || []);
+      setOpportunities((data || []) as Opportunity[]);
+      setFilteredOpportunities((data || []) as Opportunity[]);
       setLoading(false);
     }
 

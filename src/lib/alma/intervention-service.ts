@@ -516,7 +516,7 @@ export class InterventionService {
         consent_level: data.consent_level || 'Strictly Private',
         permitted_uses: data.permitted_uses || ['Query (internal)'],
         cultural_authority: data.cultural_authority,
-        contributors: data.contributors
+        contributors: (data as any).contributors
           ? [{ name: data.operating_organization || 'Unknown' }]
           : [],
         consent_given_by: userId,

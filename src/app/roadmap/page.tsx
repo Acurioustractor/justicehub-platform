@@ -733,7 +733,7 @@ export default function RoadmapPage() {
                     Share Your Story
                   </Button>
                 </Link>
-                <Link href="/community">
+                <Link href="/for-community-leaders">
                   <Button variant="outline" size="lg" className="border-2 border-black hover:bg-gray-50">
                     <Users className="h-5 w-5 mr-2" />
                     Join Community

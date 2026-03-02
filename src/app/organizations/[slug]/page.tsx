@@ -40,38 +40,39 @@ export const dynamic = 'force-dynamic';
 interface Organization {
   id: string;
   name: string;
-  slug: string;
-  type: string;
-  description: string;
-  verification_status: string;
-  is_active: boolean;
-  city: string;
-  state: string;
-  website: string;
+  slug: string | null;
+  type: string | null;
+  description: string | null;
+  verification_status: string | null;
+  is_active: boolean | null;
+  city: string | null;
+  state: string | null;
+  website: string | null;
   email: string | null;
   phone: string | null;
-  tags: string[];
-  created_at: string;
+  tags: string[] | null;
+  created_at: string | null;
 }
 
 interface Program {
   id: string;
   name: string;
-  description: string;
-  impact_summary: string;
-  success_rate: number;
-  participants_served: number;
+  description: string | null;
+  impact_summary: string | null;
+  success_rate: number | null;
+  participants_served: number | null;
   approach: string;
-  is_featured: boolean;
-  tags: string[];
+  is_featured: boolean | null;
+  tags: string[] | null;
+  [key: string]: unknown;
 }
 
 interface Service {
   id: string;
   name: string;
-  slug: string;
-  category: string;
-  description: string;
+  slug: string | null;
+  category: string | null;
+  description: string | null;
   location_city: string | null;
   location_state: string | null;
 }
@@ -99,20 +100,22 @@ interface Storyteller {
   bio_excerpt: string | null;
   quote: string | null;
   avatar_url: string | null;
-  is_featured: boolean;
-  display_order: number;
+  is_featured: boolean | null;
+  display_order: number | null;
+  [key: string]: unknown;
 }
 
 interface Video {
   id: string;
-  title: string;
+  title: string | null;
   description: string | null;
-  video_url: string;
-  platform: string;
-  video_type: string;
+  video_url: string | null;
+  platform: string | null;
+  video_type: string | null;
   thumbnail_url: string | null;
   duration_seconds: number | null;
-  is_featured: boolean;
+  is_featured: boolean | null;
+  [key: string]: unknown;
 }
 
 interface Story {
@@ -123,7 +126,8 @@ interface Story {
   excerpt: string | null;
   story_type: string | null;
   tags: string[] | null;
-  is_featured: boolean;
+  is_featured: boolean | null;
+  [key: string]: unknown;
 }
 
 interface PartnerGoal {
@@ -132,7 +136,9 @@ interface PartnerGoal {
   title: string;
   description: string | null;
   icon: string | null;
-  display_order: number;
+  display_order: number | null;
+  is_featured: boolean | null;
+  [key: string]: unknown;
 }
 
 interface ImpactMetric {
@@ -141,8 +147,9 @@ interface ImpactMetric {
   metric_value: string;
   metric_context: string | null;
   icon: string | null;
-  is_featured: boolean;
-  display_order: number;
+  is_featured: boolean | null;
+  display_order: number | null;
+  [key: string]: unknown;
 }
 
 interface ExternalLink {
@@ -151,7 +158,8 @@ interface ExternalLink {
   url: string;
   link_type: string;
   description: string | null;
-  display_order: number;
+  display_order: number | null;
+  [key: string]: unknown;
 }
 
 interface PartnerContact {
@@ -159,18 +167,23 @@ interface PartnerContact {
   contact_type: string;
   label: string;
   value: string;
-  is_primary: boolean;
+  is_primary: boolean | null;
+  display_order: number | null;
+  icon: string | null;
+  [key: string]: unknown;
 }
 
 interface Photo {
   id: string;
   title: string | null;
   description: string | null;
-  photo_url: string;
+  photo_url: string | null;
   thumbnail_url: string | null;
-  photo_type: string;
-  is_featured: boolean;
-  display_order: number;
+  photo_type: string | null;
+  is_featured: boolean | null;
+  is_public: boolean | null;
+  display_order: number | null;
+  [key: string]: unknown;
 }
 
 async function getOrganization(slugOrId: string): Promise<Organization | null> {
@@ -502,7 +515,7 @@ export default async function OrganizationPage({
           <div className="container-justice">
             <div className="max-w-4xl">
               {/* Founding Basecamp Badge */}
-              {isFoundingBasecamp(org.slug) && (
+              {org.slug && isFoundingBasecamp(org.slug) && (
                 <div className="mb-4">
                   <Link
                     href="/centre-of-excellence/map?category=basecamp"
@@ -574,6 +587,18 @@ export default async function OrganizationPage({
 
               {/* Contact Links */}
               <div className="flex flex-wrap gap-4">
+                {org.id && (
+                  <Link
+                    href={`/funding/workspace/${org.id}`}
+                    prefetch={false}
+                    className="inline-flex items-center gap-2 bg-eucalyptus-600 text-white px-6 py-3 font-bold border-2 border-black hover:bg-eucalyptus-700 transition-colors"
+                  >
+                    <Briefcase className="w-5 h-5" />
+                    {org.slug && isFoundingBasecamp(org.slug)
+                      ? 'Open Business & Funding Workspace'
+                      : 'Open Funding Workspace'}
+                  </Link>
+                )}
                 {org.website && (
                   <a
                     href={org.website}
@@ -604,6 +629,21 @@ export default async function OrganizationPage({
                     Call
                   </a>
                 )}
+              </div>
+
+              <div className="mt-6 text-sm text-gray-700 leading-relaxed max-w-3xl">
+                <p>
+                  This workspace now bridges BG Fit’s accounting, impact commitments, and
+                  grant-readiness work into the funding operating system: the same shared notes,
+                  draft reviews, and business-support signals you see here sync directly to the
+                  admin pipelines, application drafts, and community-review tasks that power the
+                  BG Fit funding flow.
+                </p>
+                <p className="mt-3">
+                  Use the workspace button above to keep your support letters, partner asks,
+                  and blockers in one live place that feeds the draft, review, and downstream
+                  relationship workflow.
+                </p>
               </div>
 
               {/* Tags */}
@@ -861,14 +901,14 @@ export default async function OrganizationPage({
                 {videos.map((video) => (
                   <a
                     key={video.id}
-                    href={video.video_url}
+                    href={video.video_url || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group border-2 border-black overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
                   >
                     <div className="aspect-video bg-gray-900 flex items-center justify-center relative">
                       {video.thumbnail_url ? (
-                        <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover" />
+                        <img src={video.thumbnail_url} alt={video.title || ''} className="w-full h-full object-cover" />
                       ) : (
                         <div className="text-white/50 text-6xl">▶</div>
                       )}
@@ -919,7 +959,7 @@ export default async function OrganizationPage({
                     }`}
                   >
                     <img
-                      src={photo.thumbnail_url || photo.photo_url}
+                      src={photo.thumbnail_url || photo.photo_url || ''}
                       alt={photo.title || 'Gallery image'}
                       className="w-full h-full object-cover aspect-square group-hover:scale-105 transition-transform duration-300"
                     />
@@ -1148,7 +1188,7 @@ export default async function OrganizationPage({
         )}
 
         {/* Other Basecamps Section - Only for Founding Basecamps */}
-        {isFoundingBasecamp(org.slug) && (
+        {org.slug && isFoundingBasecamp(org.slug) && (
           <section className="py-12 bg-ochre-50 border-b-2 border-black">
             <div className="container-justice">
               <div className="flex items-center gap-3 mb-6">
@@ -1160,7 +1200,7 @@ export default async function OrganizationPage({
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
-                {getOtherBasecamps(org.slug).map((basecamp) => (
+                {getOtherBasecamps(org.slug!).map((basecamp) => (
                   <Link
                     key={basecamp.slug}
                     href={`/organizations/${basecamp.slug}`}

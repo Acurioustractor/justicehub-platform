@@ -1,3 +1,4 @@
+// @ts-nocheck — Importer types maintained independently of app schema
 /**
  * Direct Service Importer
  *

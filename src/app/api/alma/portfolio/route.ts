@@ -6,55 +6,36 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const analysisType = searchParams.get('type') || 'all';
 
-    let result;
+    const analysis = await portfolioService.analyzePortfolio();
 
     switch (analysisType) {
       case 'underfunded':
-        result = await portfolioService.identifyUnderfundedPrograms();
-        break;
+        return NextResponse.json({ data: analysis.underfunded_high_evidence });
 
       case 'ready-to-scale':
-        result = await portfolioService.identifyReadyToScale();
-        break;
+        return NextResponse.json({ data: analysis.ready_to_scale });
 
       case 'high-risk':
-        result = await portfolioService.identifyHighRiskPrograms();
-        break;
+        return NextResponse.json({ data: analysis.high_risk_flagged });
 
       case 'learning-opportunities':
-        result = await portfolioService.identifyLearningOpportunities();
-        break;
+        return NextResponse.json({ data: analysis.learning_opportunities });
 
       case 'all':
       default:
-        // Return all analytics
-        const [underfunded, readyToScale, highRisk, learning] =
-          await Promise.all([
-            portfolioService.identifyUnderfundedPrograms(),
-            portfolioService.identifyReadyToScale(),
-            portfolioService.identifyHighRiskPrograms(),
-            portfolioService.identifyLearningOpportunities(),
-          ]);
-
         return NextResponse.json({
           data: {
-            underfunded: underfunded.data,
-            ready_to_scale: readyToScale.data,
-            high_risk: highRisk.data,
-            learning_opportunities: learning.data,
+            underfunded: analysis.underfunded_high_evidence,
+            ready_to_scale: analysis.ready_to_scale,
+            high_risk: analysis.high_risk_flagged,
+            learning_opportunities: analysis.learning_opportunities,
           },
         });
     }
-
-    if (result.error) {
-      return NextResponse.json({ error: result.error.message }, { status: 500 });
-    }
-
-    return NextResponse.json({ data: result.data });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching portfolio analytics:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to fetch portfolio analytics' },
+      { error: (error as Error).message || 'Failed to fetch portfolio analytics' },
       { status: 500 }
     );
   }

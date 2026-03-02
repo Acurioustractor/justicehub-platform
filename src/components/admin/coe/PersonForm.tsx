@@ -55,7 +55,7 @@ export default function PersonForm({ initialData, isNew = false }: PersonFormPro
         .order('full_name');
 
       if (data) {
-        setAvailableProfiles(data);
+        setAvailableProfiles(data as Profile[]);
       }
     }
 

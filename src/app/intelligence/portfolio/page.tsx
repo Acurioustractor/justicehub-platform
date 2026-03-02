@@ -32,7 +32,7 @@ async function getPortfolioAnalytics(): Promise<PortfolioAnalytics> {
       outcomes:alma_outcomes(count)
     `);
 
-  const interventions = allInterventions || [];
+  const interventions = (allInterventions || []) as any[];
 
   // UNDERFUNDED: High evidence (3+ evidence records), Community Controlled
   const underfunded = interventions.filter(
@@ -184,10 +184,10 @@ export default async function PortfolioPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {analytics.underfunded.map((intervention) => (
+              {analytics.underfunded.map((intervention: any) => (
                 <InterventionCard
                   key={intervention.id}
-                  intervention={intervention}
+                  intervention={intervention as any}
                   showEvidenceBadge
                 />
               ))}
@@ -233,10 +233,10 @@ export default async function PortfolioPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {analytics.readyToScale.map((intervention) => (
+              {analytics.readyToScale.map((intervention: any) => (
                 <InterventionCard
                   key={intervention.id}
-                  intervention={intervention}
+                  intervention={intervention as any}
                   showEvidenceBadge
                 />
               ))}

@@ -14,8 +14,8 @@ interface Event {
   id: string;
   title: string;
   start_date: string;
-  location_name: string;
-  node_id: string;
+  location_name: string | null;
+  node_id: string | null;
 }
 
 export default function NetworkPage() {

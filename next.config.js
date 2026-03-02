@@ -3,6 +3,7 @@ const remarkGfm = require('remark-gfm');
 const rehypeHighlight = require('rehype-highlight');
 const rehypeSlug = require('rehype-slug');
 const rehypeAutolinkHeadings = require('rehype-autolink-headings');
+const legacyRouteRedirects = require('./config/legacy-route-redirects.json');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -102,6 +103,9 @@ const nextConfig = {
         destination: 'http://localhost:3001/api/:path*',
       },
     ];
+  },
+  async redirects() {
+    return legacyRouteRedirects;
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {

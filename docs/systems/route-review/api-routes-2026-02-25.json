@@ -1,0 +1,1550 @@
+{
+  "apiRoutes": [
+    {
+      "file": "src/app/api/admin/data-health/route.ts",
+      "route": "/api/admin/data-health",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "alma_ingestion_jobs"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/data-operations/alerts/route.ts",
+      "route": "/api/admin/data-operations/alerts",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "profiles",
+        "public_profiles",
+        "articles",
+        "alma_discovered_links",
+        "alma_ingestion_jobs",
+        "services",
+        "organizations",
+        "registered_services"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/data-operations/feeds/route.ts",
+      "route": "/api/admin/data-operations/feeds",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "profiles",
+        "scraped_services",
+        "blog_posts",
+        "services",
+        "organizations",
+        "registered_services",
+        "events",
+        "articles",
+        "alma_discovered_links",
+        "alma_interventions",
+        "data_sources",
+        "partner_photos",
+        "partner_videos",
+        "australian_frameworks",
+        "research_items",
+        "international_programs"
+      ],
+      "hasAI": true
+    },
+    {
+      "file": "src/app/api/admin/data-operations/queue/route.ts",
+      "route": "/api/admin/data-operations/queue",
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH"
+      ],
+      "tables": [
+        "profiles",
+        "alma_discovered_links"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/data-operations/scrape/route.ts",
+      "route": "/api/admin/data-operations/scrape",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "tables": [
+        "profiles",
+        "alma_discovered_links",
+        "alma_interventions",
+        "alma_scrape_history"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/data-operations/sources/route.ts",
+      "route": "/api/admin/data-operations/sources",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "profiles",
+        "services",
+        "organizations",
+        "registered_services",
+        "alma_evidence",
+        "alma_interventions",
+        "public_profiles",
+        "articles",
+        "alma_discovered_links",
+        "alma_ingestion_jobs",
+        "data_sources",
+        "scraped_services"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/data-operations/sources/[id]/route.ts",
+      "route": "/api/admin/data-operations/sources/[id]",
+      "methods": [
+        "GET",
+        "PATCH",
+        "DELETE"
+      ],
+      "tables": [
+        "profiles",
+        "alma_source_registry",
+        "alma_scrape_history"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/data-operations/stats/route.ts",
+      "route": "/api/admin/data-operations/stats",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "profiles",
+        "services",
+        "organizations",
+        "registered_services",
+        "public_profiles",
+        "articles",
+        "alma_evidence",
+        "alma_interventions",
+        "alma_discovered_links",
+        "alma_ingestion_jobs",
+        "scraped_services",
+        "data_sources"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/data-operations/timeline/route.ts",
+      "route": "/api/admin/data-operations/timeline",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "profiles",
+        "services",
+        "organizations",
+        "alma_evidence",
+        "alma_interventions",
+        "alma_discovered_links"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/funding/applications/route.ts",
+      "route": "/api/admin/funding/applications",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "tables": [
+        "alma_funding_applications"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/funding/opportunities/route.ts",
+      "route": "/api/admin/funding/opportunities",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "tables": [
+        "alma_funding_opportunities"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/funding/reports/route.ts",
+      "route": "/api/admin/funding/reports",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT"
+      ],
+      "tables": [
+        "alma_weekly_reports",
+        "v_latest_reports"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/funding/scrape/route.ts",
+      "route": "/api/admin/funding/scrape",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "tables": [
+        "alma_ingestion_jobs",
+        "alma_funding_opportunities"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/notifications/route.ts",
+      "route": "/api/admin/notifications",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "tables": [
+        "organizations",
+        "alma_report_deliveries",
+        "alma_funding_opportunities",
+        "alma_evidence",
+        "alma_weekly_reports"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/partner-content/route.ts",
+      "route": "/api/admin/partner-content",
+      "methods": [
+        "POST",
+        "DELETE",
+        "PATCH"
+      ],
+      "tables": [
+        "profiles"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/research/digest/route.ts",
+      "route": "/api/admin/research/digest",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "tables": [
+        "alma_evidence"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/research/evidence/route.ts",
+      "route": "/api/admin/research/evidence",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "tables": [
+        "alma_evidence"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/admin/sync-empathy-ledger/route.ts",
+      "route": "/api/admin/sync-empathy-ledger",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "profiles",
+        "profile_sync_log",
+        "public_profiles"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/alma/interventions/route.ts",
+      "route": "/api/alma/interventions",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "tables": [
+        "profiles"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/alma/interventions/[id]/route.ts",
+      "route": "/api/alma/interventions/[id]",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/alma/portfolio/route.ts",
+      "route": "/api/alma/portfolio",
+      "methods": [
+        "GET"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/australian-frameworks/route.ts",
+      "route": "/api/australian-frameworks",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "australian_frameworks"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/auth/me/route.ts",
+      "route": "/api/auth/me",
+      "methods": [
+        "GET"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/basecamps/route.ts",
+      "route": "/api/basecamps",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "organizations"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/bot/chat/route.ts",
+      "route": "/api/bot/chat",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "tables": [
+        "alma_interventions",
+        "alma_evidence",
+        "alma_outcomes"
+      ],
+      "hasAI": true
+    },
+    {
+      "file": "src/app/api/chat/route.ts",
+      "route": "/api/chat",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "tables": [
+        "alma_interventions",
+        "services",
+        "public_profiles",
+        "organizations",
+        "alma_evidence",
+        "historical_inquiries",
+        "international_programs"
+      ],
+      "hasAI": true
+    },
+    {
+      "file": "src/app/api/claims/submit/route.ts",
+      "route": "/api/claims/submit",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "public_profiles",
+        "registered_services_profiles"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/coe-leaders/route.ts",
+      "route": "/api/coe-leaders",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "coe_key_people"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/coe/map-locations/route.ts",
+      "route": "/api/coe/map-locations",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "organizations",
+        "australian_frameworks",
+        "international_programs",
+        "research_items",
+        "partner_impact_metrics"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/community-programs/route.ts",
+      "route": "/api/community-programs",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "programs_catalog_v"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/contact/route.ts",
+      "route": "/api/contact",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "contact_submissions"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/empathy-ledger/profiles/route.ts",
+      "route": "/api/empathy-ledger/profiles",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "storytellers",
+        "public_profiles",
+        "stories"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/empathy-ledger/profiles/[id]/route.ts",
+      "route": "/api/empathy-ledger/profiles/[id]",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "profiles",
+        "organizations",
+        "stories"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/empathy-ledger/stories/route.ts",
+      "route": "/api/empathy-ledger/stories",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "stories"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/empathy-ledger/sync/route.ts",
+      "route": "/api/empathy-ledger/sync",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "tables": [
+        "profiles",
+        "sync_metadata",
+        "stories",
+        "synced_stories"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/enrich/contact/route.ts",
+      "route": "/api/enrich/contact",
+      "methods": [
+        "POST"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/featured-profiles/route.ts",
+      "route": "/api/featured-profiles",
+      "methods": [
+        "GET"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/featured-stories/route.ts",
+      "route": "/api/featured-stories",
+      "methods": [
+        "GET"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/ghl/newsletter/route.ts",
+      "route": "/api/ghl/newsletter",
+      "methods": [
+        "POST",
+        "DELETE"
+      ],
+      "tables": [
+        "newsletter_subscriptions"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/ghl/register/route.ts",
+      "route": "/api/ghl/register",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "event_registrations",
+        "newsletter_subscriptions"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/ghl/signup/route.ts",
+      "route": "/api/ghl/signup",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "public_profiles",
+        "newsletter_subscriptions"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/ghl/webhook/route.ts",
+      "route": "/api/ghl/webhook",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "tables": [
+        "event_registrations",
+        "newsletter_subscriptions"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/health/route.ts",
+      "route": "/api/health",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "services",
+        "alma_interventions",
+        "public_profiles",
+        "events",
+        "justicehub_nodes"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/health/empathy-ledger/route.ts",
+      "route": "/api/health/empathy-ledger",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "stories",
+        "profiles",
+        "services",
+        "profile_appearances"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/homepage-stats/route.ts",
+      "route": "/api/homepage-stats",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "alma_interventions",
+        "services",
+        "public_profiles",
+        "organizations"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/alpha-signals/route.ts",
+      "route": "/api/intelligence/alpha-signals",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "view_intervention_alpha",
+        "alma_interventions"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/evidence/route.ts",
+      "route": "/api/intelligence/evidence",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "alma_evidence"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/evidence/[id]/route.ts",
+      "route": "/api/intelligence/evidence/[id]",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "alma_evidence",
+        "article_related_evidence",
+        "alma_intervention_evidence"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/global-stats/route.ts",
+      "route": "/api/intelligence/global-stats",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "alma_interventions",
+        "alma_evidence",
+        "alma_outcomes",
+        "alma_community_contexts",
+        "alma_source_registry",
+        "alma_discovered_links",
+        "alma_intervention_evidence"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/interventions/route.ts",
+      "route": "/api/intelligence/interventions",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "alma_intervention_outcomes",
+        "alma_intervention_contexts",
+        "alma_interventions",
+        "alma_outcomes",
+        "alma_community_contexts"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/interventions/[id]/route.ts",
+      "route": "/api/intelligence/interventions/[id]",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "alma_interventions",
+        "alma_intervention_evidence",
+        "alma_intervention_outcomes",
+        "alma_intervention_contexts",
+        "alma_evidence",
+        "alma_outcomes",
+        "alma_community_contexts"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/knowledge-graph/route.ts",
+      "route": "/api/intelligence/knowledge-graph",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "alma_interventions",
+        "alma_evidence",
+        "alma_outcomes",
+        "alma_community_contexts",
+        "alma_intervention_evidence",
+        "alma_intervention_outcomes",
+        "alma_intervention_contexts"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/map-locations/route.ts",
+      "route": "/api/intelligence/map-locations",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "alma_interventions",
+        "services"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/overview-summary/route.ts",
+      "route": "/api/intelligence/overview-summary",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "services",
+        "alma_interventions",
+        "alma_evidence",
+        "organizations",
+        "alma_funding_opportunities"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/research/route.ts",
+      "route": "/api/intelligence/research",
+      "methods": [
+        "POST",
+        "GET"
+      ],
+      "tables": [
+        "alma_research_sessions"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/research/[sessionId]/route.ts",
+      "route": "/api/intelligence/research/[sessionId]",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "tables": [
+        "alma_research_sessions",
+        "alma_research_findings",
+        "alma_research_tool_logs"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/search/route.ts",
+      "route": "/api/intelligence/search",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/intelligence/system-status/route.ts",
+      "route": "/api/intelligence/system-status",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "alma_interventions",
+        "alma_discovered_links"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/international-programs/route.ts",
+      "route": "/api/international-programs",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "international_programs"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/justice-matrix/campaigns/route.ts",
+      "route": "/api/justice-matrix/campaigns",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "tables": [
+        "justice_matrix_campaigns"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/justice-matrix/campaigns/[id]/route.ts",
+      "route": "/api/justice-matrix/campaigns/[id]",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "tables": [
+        "justice_matrix_campaigns"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/justice-matrix/cases/route.ts",
+      "route": "/api/justice-matrix/cases",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "tables": [
+        "justice_matrix_cases"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/justice-matrix/cases/[id]/route.ts",
+      "route": "/api/justice-matrix/cases/[id]",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "tables": [
+        "justice_matrix_cases"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/justice-matrix/discovered/route.ts",
+      "route": "/api/justice-matrix/discovered",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "tables": [
+        "justice_matrix_discovered"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/justice-matrix/discovered/[id]/route.ts",
+      "route": "/api/justice-matrix/discovered/[id]",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "tables": [
+        "justice_matrix_discovered",
+        "justice_matrix_cases",
+        "justice_matrix_campaigns"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/media/route.ts",
+      "route": "/api/media",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "partner_photos",
+        "partner_videos"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/media/[id]/featured/route.ts",
+      "route": "/api/media/[id]/featured",
+      "methods": [
+        "PATCH"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/media/upload/route.ts",
+      "route": "/api/media/upload",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "story-images",
+        "media_library"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/network-nodes/route.ts",
+      "route": "/api/network-nodes",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "justicehub_nodes",
+        "organizations"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/org-hub/[orgId]/route.ts",
+      "route": "/api/org-hub/[orgId]",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/org-hub/[orgId]/compliance-check/route.ts",
+      "route": "/api/org-hub/[orgId]/compliance-check",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "org_compliance_docs",
+        "org_action_items"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/org-hub/[orgId]/grant-match/route.ts",
+      "route": "/api/org-hub/[orgId]/grant-match",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "organizations",
+        "alma_funding_opportunities",
+        "alma_funding_applications",
+        "org_action_items"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/org-hub/[orgId]/overview/route.ts",
+      "route": "/api/org-hub/[orgId]/overview",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "org_grants",
+        "org_compliance_docs",
+        "org_sessions",
+        "org_action_items",
+        "org_grant_budget_lines",
+        "org_grant_transactions"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/org-hub/[orgId]/pulse/route.ts",
+      "route": "/api/org-hub/[orgId]/pulse",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "org_compliance_docs",
+        "org_grants",
+        "org_sessions",
+        "org_grant_budget_lines",
+        "org_action_items"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/org-hub/[orgId]/report-draft/route.ts",
+      "route": "/api/org-hub/[orgId]/report-draft",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "org_grants",
+        "organizations",
+        "org_sessions",
+        "org_milestones",
+        "org_grant_budget_lines",
+        "org_grant_transactions"
+      ],
+      "hasAI": true
+    },
+    {
+      "file": "src/app/api/org-hub/[orgId]/social-draft/route.ts",
+      "route": "/api/org-hub/[orgId]/social-draft",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "organizations",
+        "org_sessions",
+        "org_milestones",
+        "articles"
+      ],
+      "hasAI": true
+    },
+    {
+      "file": "src/app/api/organizations/route.ts",
+      "route": "/api/organizations",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "organizations",
+        "registered_services"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/organizations/[id]/route.ts",
+      "route": "/api/organizations/[id]",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "organizations",
+        "partner_goals",
+        "partner_contacts",
+        "partner_videos",
+        "partner_photos",
+        "partner_stories",
+        "partner_storytellers",
+        "partner_impact_metrics"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/programs/route.ts",
+      "route": "/api/programs",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "programs_catalog_v"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/programs/[id]/route.ts",
+      "route": "/api/programs/[id]",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "programs_catalog_v"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/programs/[id]/profiles/route.ts",
+      "route": "/api/programs/[id]/profiles",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "profile_appearances",
+        "public_profiles"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/related-content/route.ts",
+      "route": "/api/related-content",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "article_related_interventions",
+        "story_related_interventions",
+        "alma_intervention_profiles",
+        "alma_intervention_evidence",
+        "alma_media_articles",
+        "article_related_evidence",
+        "alma_evidence"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/reports/route.ts",
+      "route": "/api/reports",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "discrimination_reports",
+        "discrimination_sa3_totals_v"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/reports/aggregation/route.ts",
+      "route": "/api/reports/aggregation",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "discrimination_aggregations_v",
+        "discrimination_sa3_totals_v"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/research-items/route.ts",
+      "route": "/api/research-items",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "research_items"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/scraped-services/route.ts",
+      "route": "/api/scraped-services",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "scraped_services"
+      ],
+      "hasAI": true
+    },
+    {
+      "file": "src/app/api/scraped-services/[id]/route.ts",
+      "route": "/api/scraped-services/[id]",
+      "methods": [
+        "GET"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/search/route.ts",
+      "route": "/api/search",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "alma_interventions",
+        "services",
+        "public_profiles",
+        "organizations"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/services/route.ts",
+      "route": "/api/services",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "services_complete"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/services/[id]/route.ts",
+      "route": "/api/services/[id]",
+      "methods": [
+        "GET"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/services/[id]/profiles/route.ts",
+      "route": "/api/services/[id]/profiles",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "profile_appearances",
+        "public_profiles"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/services/search/route.ts",
+      "route": "/api/services/search",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "services_complete"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/services/stats/route.ts",
+      "route": "/api/services/stats",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "services",
+        "organizations",
+        "service_locations",
+        "service_contacts"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/signal-engine/compose/route.ts",
+      "route": "/api/signal-engine/compose",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "signal_events",
+        "signal_content"
+      ],
+      "hasAI": true
+    },
+    {
+      "file": "src/app/api/signal-engine/events/route.ts",
+      "route": "/api/signal-engine/events",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "tables": [
+        "signal_events",
+        "signal_content"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/signal-engine/scan/route.ts",
+      "route": "/api/signal-engine/scan",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "discrimination_sa3_totals_v",
+        "discrimination_aggregations_v",
+        "services_complete",
+        "signal_events"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/signal-engine/widget/route.ts",
+      "route": "/api/signal-engine/widget",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "discrimination_sa3_totals_v",
+        "discrimination_aggregations_v",
+        "signal_widget_alerts",
+        "services_complete"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/stories/route.ts",
+      "route": "/api/stories",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "articles",
+        "blog_posts"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/stories/extract-quotes/route.ts",
+      "route": "/api/stories/extract-quotes",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "profiles"
+      ],
+      "hasAI": true
+    },
+    {
+      "file": "src/app/api/sync/empathy-ledger/route.ts",
+      "route": "/api/sync/empathy-ledger",
+      "methods": [
+        "GET"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/transparency/route.ts",
+      "route": "/api/transparency",
+      "methods": [
+        "GET"
+      ],
+      "tables": [],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/transparency/ecosystem/route.ts",
+      "route": "/api/transparency/ecosystem",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "youth_detention_facilities",
+        "facility_partnerships",
+        "registered_services",
+        "services",
+        "organizations"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/upload-image/route.ts",
+      "route": "/api/upload-image",
+      "methods": [
+        "POST"
+      ],
+      "tables": [
+        "story-images"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/api/users/profile/route.ts",
+      "route": "/api/users/profile",
+      "methods": [
+        "GET"
+      ],
+      "tables": [
+        "profiles"
+      ],
+      "hasAI": false
+    },
+    {
+      "file": "src/app/auth/callback/route.ts",
+      "route": "/auth/callback",
+      "methods": [
+        "GET"
+      ],
+      "tables": [],
+      "hasAI": false
+    }
+  ],
+  "apiTop": [
+    [
+      "/api/admin",
+      18
+    ],
+    [
+      "/api/intelligence",
+      13
+    ],
+    [
+      "/api/org-hub",
+      7
+    ],
+    [
+      "/api/justice-matrix",
+      6
+    ],
+    [
+      "/api/services",
+      5
+    ],
+    [
+      "/api/empathy-ledger",
+      4
+    ],
+    [
+      "/api/ghl",
+      4
+    ],
+    [
+      "/api/signal-engine",
+      4
+    ],
+    [
+      "/api/alma",
+      3
+    ],
+    [
+      "/api/media",
+      3
+    ],
+    [
+      "/api/programs",
+      3
+    ],
+    [
+      "/api/health",
+      2
+    ],
+    [
+      "/api/organizations",
+      2
+    ],
+    [
+      "/api/reports",
+      2
+    ],
+    [
+      "/api/scraped-services",
+      2
+    ],
+    [
+      "/api/stories",
+      2
+    ],
+    [
+      "/api/transparency",
+      2
+    ],
+    [
+      "/api/australian-frameworks",
+      1
+    ],
+    [
+      "/api/auth",
+      1
+    ],
+    [
+      "/api/basecamps",
+      1
+    ],
+    [
+      "/api/bot",
+      1
+    ],
+    [
+      "/api/chat",
+      1
+    ],
+    [
+      "/api/claims",
+      1
+    ],
+    [
+      "/api/coe-leaders",
+      1
+    ],
+    [
+      "/api/coe",
+      1
+    ],
+    [
+      "/api/community-programs",
+      1
+    ],
+    [
+      "/api/contact",
+      1
+    ],
+    [
+      "/api/enrich",
+      1
+    ],
+    [
+      "/api/featured-profiles",
+      1
+    ],
+    [
+      "/api/featured-stories",
+      1
+    ],
+    [
+      "/api/homepage-stats",
+      1
+    ],
+    [
+      "/api/international-programs",
+      1
+    ],
+    [
+      "/api/network-nodes",
+      1
+    ],
+    [
+      "/api/related-content",
+      1
+    ],
+    [
+      "/api/research-items",
+      1
+    ],
+    [
+      "/api/search",
+      1
+    ],
+    [
+      "/api/sync",
+      1
+    ],
+    [
+      "/api/upload-image",
+      1
+    ],
+    [
+      "/api/users",
+      1
+    ],
+    [
+      "auth",
+      1
+    ]
+  ],
+  "methodCounts": [
+    [
+      "GET",
+      85
+    ],
+    [
+      "POST",
+      40
+    ],
+    [
+      "DELETE",
+      10
+    ],
+    [
+      "PUT",
+      8
+    ],
+    [
+      "PATCH",
+      5
+    ]
+  ]
+}

@@ -82,14 +82,14 @@ export default function FrameworkForm({ initialData, isNew = false }: FrameworkF
       if (isNew) {
         const { error } = await supabase
           .from('australian_frameworks')
-          .insert([formData]);
+          .insert([formData as any]);
 
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('australian_frameworks')
-          .update(formData)
-          .eq('slug', initialData?.slug);
+          .update(formData as any)
+          .eq('slug', initialData?.slug ?? '');
 
         if (error) throw error;
       }
@@ -114,7 +114,7 @@ export default function FrameworkForm({ initialData, isNew = false }: FrameworkF
       const { error } = await supabase
         .from('australian_frameworks')
         .delete()
-        .eq('slug', initialData?.slug);
+        .eq('slug', initialData?.slug ?? '');
 
       if (error) throw error;
 

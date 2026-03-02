@@ -1,10 +1,20 @@
 import Link from 'next/link';
 import { EvidenceBadge } from './EvidenceBadge';
 import { ConsentIndicator } from './ConsentIndicator';
-import type { AlmaIntervention, PortfolioScore } from '@/types/alma';
+import type { ALMAIntervention } from '@/types/alma';
+
+interface PortfolioScore {
+  composite: number;
+  evidence_strength: number;
+  community_authority: number;
+  harm_risk: number;
+  implementation_capability: number;
+  option_value: number;
+  tier?: string;
+}
 
 interface InterventionCardProps {
-  intervention: AlmaIntervention & {
+  intervention: ALMAIntervention & {
     evidence?: Array<{ evidence_type: string }>;
     outcomes?: Array<any>;
   };
@@ -140,7 +150,7 @@ export function InterventionCard({
     </div>
   );
 
-  return href !== false ? (
+  return href !== undefined ? (
     <Link href={linkHref} className="block h-full">
       {CardContent}
     </Link>

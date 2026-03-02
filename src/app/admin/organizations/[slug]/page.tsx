@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { ArrowLeft, Edit, ExternalLink, Sparkles, Mail, Globe, MapPin, Pencil, Users } from 'lucide-react';
+import { ArrowLeft, Edit, ExternalLink, Sparkles, Mail, Globe, MapPin, Pencil, Users, LayoutDashboard } from 'lucide-react';
 
 export default async function AdminOrganizationDetailPage({ params }: { params: { slug: string } }) {
   const supabase = await createClient();
@@ -14,13 +14,13 @@ export default async function AdminOrganizationDetailPage({ params }: { params: 
     redirect('/login?redirect=/admin/organizations');
   }
 
-  const { data: userData } = await supabase
-    .from('users')
-    .select('user_role')
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
     .eq('id', user.id)
     .single();
 
-  if (userData?.user_role !== 'admin') {
+  if (profile?.role !== 'admin') {
     redirect('/');
   }
 
@@ -95,6 +95,13 @@ export default async function AdminOrganizationDetailPage({ params }: { params: 
               )}
             </div>
             <div className="flex gap-3">
+              <Link
+                href={`/admin/organizations/${params.slug}/hub`}
+                className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-bold hover:bg-green-700 transition-colors"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                Support Hub
+              </Link>
               <Link
                 href={`/admin/organizations/${params.slug}/storytellers`}
                 className="flex items-center gap-2 px-6 py-3 bg-cyan-600 text-white font-bold hover:bg-cyan-700 transition-colors"

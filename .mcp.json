@@ -1,24 +1,34 @@
 {
   "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref",
+        "tednluwflfhxyucgwigh"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "sbp_acba8d28fad5378deca019b25f506aa9fc7e45fa"
+      }
+    },
     "playwright": {
       "command": "echo",
-      "args": ["disabled - use agent-browser CLI instead"],
-      "disabled": true
-    },
-    "notion": {
-      "command": "echo",
-      "args": ["disabled"],
-      "disabled": true
+      "args": [
+        "disabled - use agent-browser CLI instead"
+      ]
     },
     "mcp-config-b-fzyb": {
       "command": "echo",
-      "args": ["disabled"],
-      "disabled": true
+      "args": [
+        "disabled"
+      ]
     },
     "xero-expert": {
       "command": "echo",
-      "args": ["disabled"],
-      "disabled": true
+      "args": [
+        "disabled"
+      ]
     }
   }
 }

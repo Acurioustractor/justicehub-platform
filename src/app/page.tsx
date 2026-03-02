@@ -10,6 +10,7 @@ import EmpathyLedgerStories from '@/components/EmpathyLedgerStories';
 import { ThematicSection } from '@/components/thematic-section';
 import { basecampLocations } from '@/content/excellence-map-locations';
 import { MapPin, Building2 } from 'lucide-react';
+import { trackJourneyEvent } from '@/lib/analytics/journey';
 
 interface HomepageStats {
   programs_documented: number;
@@ -113,6 +114,94 @@ export default function HomePage() {
 
           <div className="mt-20">
             <ArrowDown className="w-8 h-8 mx-auto animate-bounce" />
+          </div>
+        </div>
+      </section>
+
+      {/* Start Here - Intent Router */}
+      <section id="start-here" className="section-padding border-t-2 border-black bg-gray-50">
+        <div className="container-justice">
+          <div className="text-center mb-10">
+            <h2 className="headline-truth mb-4">
+              Start here in under 60 seconds
+            </h2>
+            <p className="text-xl max-w-3xl mx-auto">
+              Pick what you need right now and we'll route you to the fastest next step.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Link
+              href="/services?intent=support&source=home&type=support"
+              onClick={() => {
+                void trackJourneyEvent({
+                  eventName: 'journey_path_selected',
+                  properties: {
+                    intent: 'support',
+                    source: 'home',
+                    type: 'support',
+                  },
+                });
+              }}
+              className="border-2 border-black bg-white p-6 hover:bg-black hover:text-white transition-all"
+            >
+              <div className="text-xs font-bold uppercase tracking-widest mb-3">Support Pathway</div>
+              <h3 className="text-2xl font-black mb-3">I need help now</h3>
+              <p className="text-sm mb-4">
+                Find verified services by urgency, location, and need.
+              </p>
+              <span className="inline-flex items-center gap-2 font-bold text-sm uppercase tracking-wider">
+                Find support <ArrowRight className="w-4 h-4" />
+              </span>
+            </Link>
+
+            <Link
+              href="/for-community-leaders?intent=partner&source=home&type=partnership"
+              onClick={() => {
+                void trackJourneyEvent({
+                  eventName: 'journey_path_selected',
+                  properties: {
+                    intent: 'partner',
+                    source: 'home',
+                    type: 'partnership',
+                  },
+                });
+              }}
+              className="border-2 border-black bg-white p-6 hover:bg-black hover:text-white transition-all"
+            >
+              <div className="text-xs font-bold uppercase tracking-widest mb-3">Partner Pathway</div>
+              <h3 className="text-2xl font-black mb-3">I run a community organization</h3>
+              <p className="text-sm mb-4">
+                Join the network, share your impact, and access practical support.
+              </p>
+              <span className="inline-flex items-center gap-2 font-bold text-sm uppercase tracking-wider">
+                Join the network <ArrowRight className="w-4 h-4" />
+              </span>
+            </Link>
+
+            <Link
+              href="/for-funders?intent=funding&source=home&type=briefing"
+              onClick={() => {
+                void trackJourneyEvent({
+                  eventName: 'journey_path_selected',
+                  properties: {
+                    intent: 'funding',
+                    source: 'home',
+                    type: 'briefing',
+                  },
+                });
+              }}
+              className="border-2 border-black bg-white p-6 hover:bg-black hover:text-white transition-all"
+            >
+              <div className="text-xs font-bold uppercase tracking-widest mb-3">Decision Pathway</div>
+              <h3 className="text-2xl font-black mb-3">I fund or shape policy</h3>
+              <p className="text-sm mb-4">
+                Move from evidence to action with fund-ready community pathways.
+              </p>
+              <span className="inline-flex items-center gap-2 font-bold text-sm uppercase tracking-wider">
+                View investment pathways <ArrowRight className="w-4 h-4" />
+              </span>
+            </Link>
           </div>
         </div>
       </section>

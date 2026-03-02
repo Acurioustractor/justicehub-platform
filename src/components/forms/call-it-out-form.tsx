@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { callItOutSchema, type CallItOutFormValues, SYSTEM_TYPES, AUSTRALIAN_STATES } from '@/lib/validation';
@@ -24,9 +25,13 @@ interface SuccessData {
 }
 
 export function CallItOutForm() {
+  const searchParams = useSearchParams();
   const [formState, setFormState] = useState<FormState>('idle');
   const [serverError, setServerError] = useState<string | null>(null);
   const [successData, setSuccessData] = useState<SuccessData | null>(null);
+
+  const prefillRegion = searchParams.get('region') || '';
+  const prefillState = searchParams.get('state') || '';
 
   const {
     register,
@@ -35,6 +40,10 @@ export function CallItOutForm() {
     reset,
   } = useForm<CallItOutFormValues>({
     resolver: zodResolver(callItOutSchema),
+    defaultValues: {
+      suburb: prefillRegion,
+      state: (prefillState || undefined) as typeof AUSTRALIAN_STATES[number] | '' | undefined,
+    },
   });
 
   const onSubmit = async (data: CallItOutFormValues) => {
@@ -103,7 +112,7 @@ export function CallItOutForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-8">
       {/* Cultural safety notice */}
       <div className="border-2 border-amber-400 bg-amber-50 p-6 space-y-3">
         <div className="flex items-center gap-3">

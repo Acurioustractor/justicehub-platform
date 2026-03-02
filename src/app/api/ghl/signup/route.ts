@@ -88,26 +88,15 @@ export async function POST(request: NextRequest) {
 
     // Update profile with GHL contact ID
     if (user_id && ghlContactId) {
-      await supabase
-        .from('public_profiles')
-        .update({
-          metadata: supabase.rpc('jsonb_set_deep', {
-            target: 'metadata',
-            path: '{ghl_contact_id}',
-            value: `"${ghlContactId}"`,
-          }),
-        })
-        .eq('user_id', user_id);
-
-      // Simpler approach - just update metadata directly
-      const { data: profile } = await supabase
+      // Read current metadata then merge
+      const { data: profile } = await (supabase as any)
         .from('public_profiles')
         .select('metadata')
         .eq('user_id', user_id)
         .single();
 
       if (profile) {
-        await supabase
+        await (supabase as any)
           .from('public_profiles')
           .update({
             metadata: {

@@ -242,7 +242,7 @@ export default function RoadmapPage() {
               <div className="bg-sand-50 rounded-xl p-8 border border-neutral-200">
                 <h3 className="text-xl font-bold text-neutral-900 mb-3">For Communities</h3>
                 <p className="text-neutral-600 mb-4">Share your solutions and get paid when your knowledge creates value.</p>
-                <a href="/stories/share" className="text-ochre-700 font-medium hover:text-ochre-800">
+                <a href="/stories/new" className="text-ochre-700 font-medium hover:text-ochre-800">
                   Share your story →
                 </a>
               </div>

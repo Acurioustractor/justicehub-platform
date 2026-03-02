@@ -5,55 +5,69 @@ import { ArrowRight, TrendingUp, Users, MapPin, FileText, Scale, Globe } from 'l
 export const dynamic = 'force-dynamic';
 
 async function getReportStats() {
-  const supabase = createServiceClient();
+  try {
+    const supabase = createServiceClient();
 
-  const [interventions, evidence, inquiries, international] = await Promise.all([
-    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
-    supabase.from('alma_evidence').select('*', { count: 'exact', head: true }),
-    supabase.from('historical_inquiries').select('*', { count: 'exact', head: true }),
-    supabase.from('international_programs').select('*', { count: 'exact', head: true }),
-  ]);
+    const [interventions, evidence, inquiries, international] = await Promise.all([
+      supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
+      supabase.from('alma_evidence').select('*', { count: 'exact', head: true }),
+      supabase.from('historical_inquiries').select('*', { count: 'exact', head: true }),
+      supabase.from('international_programs').select('*', { count: 'exact', head: true }),
+    ]);
 
-  // Get state distribution
-  const { data: stateData } = await supabase
-    .from('alma_interventions')
-    .select('metadata')
-    .limit(1500);
+    // Get state distribution
+    const { data: stateData } = await supabase
+      .from('alma_interventions')
+      .select('metadata')
+      .limit(1500);
 
-  const stateCounts: Record<string, number> = {};
-  stateData?.forEach((row: any) => {
-    const state = row.metadata?.state || 'Unknown';
-    if (state !== 'Unknown') {
-      stateCounts[state] = (stateCounts[state] || 0) + 1;
-    }
-  });
+    const stateCounts: Record<string, number> = {};
+    stateData?.forEach((row: any) => {
+      const state = row.metadata?.state || 'Unknown';
+      if (state !== 'Unknown') {
+        stateCounts[state] = (stateCounts[state] || 0) + 1;
+      }
+    });
 
-  // Get intervention type distribution
-  const { data: typeData } = await supabase
-    .from('alma_interventions')
-    .select('type')
-    .limit(1500);
+    // Get intervention type distribution
+    const { data: typeData } = await supabase
+      .from('alma_interventions')
+      .select('type')
+      .limit(1500);
 
-  const typeCounts: Record<string, number> = {};
-  typeData?.forEach((row: any) => {
-    if (row.type) {
-      typeCounts[row.type] = (typeCounts[row.type] || 0) + 1;
-    }
-  });
+    const typeCounts: Record<string, number> = {};
+    typeData?.forEach((row: any) => {
+      if (row.type) {
+        typeCounts[row.type] = (typeCounts[row.type] || 0) + 1;
+      }
+    });
 
-  // Fallback to 4 for inquiries if database is empty (matches sample data on inquiries page)
-  const inquiriesCount = inquiries.count || 4;
+    // Fallback to 4 for inquiries if database is empty (matches sample data on inquiries page)
+    const inquiriesCount = inquiries.count || 4;
 
-  return {
-    interventions: interventions.count || 0,
-    evidence: evidence.count || 0,
-    inquiries: inquiriesCount,
-    international: international.count || 0,
-    stateCount: Object.keys(stateCounts).length,
-    stateCounts,
-    typeCounts,
-    lastUpdated: new Date().toISOString(),
-  };
+    return {
+      interventions: interventions.count || 0,
+      evidence: evidence.count || 0,
+      inquiries: inquiriesCount,
+      international: international.count || 0,
+      stateCount: Object.keys(stateCounts).length,
+      stateCounts,
+      typeCounts,
+      lastUpdated: new Date().toISOString(),
+    };
+  } catch (error) {
+    console.error('Failed to load youth justice report stats:', error);
+    return {
+      interventions: 0,
+      evidence: 0,
+      inquiries: 4,
+      international: 0,
+      stateCount: 0,
+      stateCounts: {},
+      typeCounts: {},
+      lastUpdated: new Date().toISOString(),
+    };
+  }
 }
 
 export default async function YouthJusticeReportPage() {

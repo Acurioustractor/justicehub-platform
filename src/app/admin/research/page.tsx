@@ -227,7 +227,7 @@ export default function ResearchDashboard() {
                 Refresh
               </button>
               <Link
-                href="/admin/research/scrape"
+                href="/admin/research?action=scrape"
                 className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white border-2 border-black font-bold hover:bg-purple-700 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -421,7 +421,7 @@ export default function ResearchDashboard() {
                 Try adjusting your filters or run the research scraper
               </p>
               <Link
-                href="/admin/research/scrape"
+                href="/admin/research?action=scrape"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white border-2 border-black font-bold hover:bg-purple-700 transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />

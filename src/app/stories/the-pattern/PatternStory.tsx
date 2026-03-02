@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, forwardRef } from 'react';
+// @ts-expect-error no type declarations for react-scrollama
 import { Scrollama, Step } from 'react-scrollama';
 import Link from 'next/link';
 

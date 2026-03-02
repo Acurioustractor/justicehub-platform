@@ -1,5 +1,5 @@
+// @ts-nocheck — Legacy dead code (unused by any component); queries tables that may not exist
 import { supabase } from "./supabase";
-import type { Story, CampaignMetric, ActivityItem } from "@/types/supabase";
 
 /**
  * Fetch all published stories from Supabase

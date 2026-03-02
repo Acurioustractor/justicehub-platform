@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     // Validate with Zod
     const parsed = callItOutSchema.safeParse(body);
     if (!parsed.success) {
-      const firstError = parsed.error.errors[0];
+      const firstError = (parsed.error as any).errors?.[0] ?? parsed.error.issues[0];
       return NextResponse.json(
         { error: firstError?.message || 'Invalid form data' },
         { status: 400 }
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     const state = data.state || (postcode ? stateFromPostcode(postcode) : null);
     const sa3Code = resolveSA3(postcode || undefined, state || undefined);
 
-    const supabase = createServiceClient();
+    const supabase = createServiceClient() as any;
 
     const { data: report, error } = await supabase
       .from('discrimination_reports')

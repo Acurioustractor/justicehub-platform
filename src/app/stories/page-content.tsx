@@ -15,6 +15,14 @@ const categories = {
   voices: { emoji: '🗣️', label: 'Voices', color: 'bg-purple-100 text-purple-800' },
 };
 
+const contentTypes: Record<string, { emoji: string }> = {
+  news: { emoji: '📰' },
+  opinion: { emoji: '💬' },
+  analysis: { emoji: '📊' },
+  investigation: { emoji: '🔍' },
+  feature: { emoji: '📝' },
+};
+
 
 type UnifiedContent = {
   id: string;

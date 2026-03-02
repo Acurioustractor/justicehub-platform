@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
+import { Json } from '@/types/database.types';
 
 interface EmpathyLedgerProfile {
   id: string;
@@ -35,11 +36,11 @@ export async function POST(request: NextRequest) {
 
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('is_super_admin')
+      .select('role')
       .eq('id', user.id)
       .single();
 
-    if (!profileData?.is_super_admin) {
+    if (profileData?.role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
         // Check if already exists in JusticeHub
         const { data: existing, error: checkError } = await serviceSupabase
           .from('profiles')
-          .select('id, slug')
+          .select('id')
           .eq('empathy_ledger_profile_id', profile.id)
           .maybeSingle();
 
@@ -87,13 +88,13 @@ export async function POST(request: NextRequest) {
             empathy_ledger_profile_id: profile.id,
             sync_action: 'check',
             sync_status: 'failed',
-            sync_details: { profile },
+            sync_details: { profile } as unknown as Json,
             error_message: checkError.message
           });
           continue;
         }
 
-        const slug = existing?.slug || generateSlug(profile.display_name);
+        const slug = generateSlug(profile.display_name);
 
         if (existing) {
           // Update existing profile
@@ -119,7 +120,7 @@ export async function POST(request: NextRequest) {
               empathy_ledger_profile_id: profile.id,
               sync_action: 'updated',
               sync_status: 'failed',
-              sync_details: { profile },
+              sync_details: { profile } as unknown as Json,
               error_message: updateError.message
             });
           } else {
@@ -132,7 +133,7 @@ export async function POST(request: NextRequest) {
               sync_details: {
                 profile,
                 changes: ['bio', 'photo_url', 'role_tags', 'is_featured']
-              }
+              } as unknown as Json
             });
           }
         } else {
@@ -162,7 +163,7 @@ export async function POST(request: NextRequest) {
               empathy_ledger_profile_id: profile.id,
               sync_action: 'created',
               sync_status: 'failed',
-              sync_details: { profile },
+              sync_details: { profile } as unknown as Json,
               error_message: insertError.message
             });
           } else {
@@ -172,7 +173,7 @@ export async function POST(request: NextRequest) {
               empathy_ledger_profile_id: profile.id,
               sync_action: 'created',
               sync_status: 'success',
-              sync_details: { profile, slug }
+              sync_details: { profile, slug } as unknown as Json
             });
           }
         }
@@ -190,7 +191,7 @@ export async function POST(request: NextRequest) {
           empathy_ledger_profile_id: profile.id,
           sync_action: 'sync',
           sync_status: 'failed',
-          sync_details: { profile },
+          sync_details: { profile } as unknown as Json,
           error_message: String(error)
         });
       }

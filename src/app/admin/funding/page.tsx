@@ -8,7 +8,6 @@ import {
   Calendar,
   Building2,
   ExternalLink,
-  Clock,
   AlertTriangle,
   TrendingUp,
   Filter,
@@ -18,6 +17,11 @@ import {
   Plus,
   ArrowRight,
   Sparkles,
+  Bot,
+  Play,
+  CheckCircle2,
+  XCircle,
+  MessageSquareWarning,
 } from 'lucide-react';
 
 interface FundingOpportunity {
@@ -47,6 +51,72 @@ interface FundingStats {
   by_source: Record<string, number>;
 }
 
+interface System0Metrics {
+  queue: {
+    queued: number;
+    running: number;
+    failed: number;
+    needsReview: number;
+  };
+  runs: {
+    total: number;
+    completed: number;
+    failed: number;
+    running: number;
+    queued: number;
+    avgDurationMs: number | null;
+    lastRunAt: string | null;
+  };
+  review: {
+    pending: number;
+    reviewed: number;
+    total: number;
+  };
+  recentRuns: Array<{
+    runId: string;
+    status: 'queued' | 'running' | 'completed' | 'failed';
+    createdAt: string | null;
+    completedAt: string | null;
+    durationMs: number | null;
+    summary: {
+      total: number;
+      completed: number;
+      failed: number;
+      running: number;
+      queued: number;
+    };
+  }>;
+}
+
+interface ReviewInboxItem {
+  id: string;
+  status: string;
+  needsReview: boolean;
+  createdAt: string;
+  reviewDecision: string | null;
+  reviewFeedback: string | null;
+  reviewedAt: string | null;
+  organizationId: string | null;
+  organizationName: string | null;
+  opportunityId: string | null;
+  opportunityName: string | null;
+  funderName: string | null;
+  score: number | null;
+  confidence: number | null;
+  reasons: string[];
+  daysToDeadline: number | null;
+  hasEligibilityRisk: boolean;
+}
+
+interface System0AuditEvent {
+  id: string;
+  eventType: string;
+  source: string;
+  runId: string | null;
+  message: string | null;
+  createdAt: string;
+}
+
 const SOURCE_TYPE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   government: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-600' },
   philanthropy: { bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-600' },
@@ -65,7 +135,13 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
 export default function FundingDashboard() {
   const [opportunities, setOpportunities] = useState<FundingOpportunity[]>([]);
   const [stats, setStats] = useState<FundingStats | null>(null);
+  const [system0Metrics, setSystem0Metrics] = useState<System0Metrics | null>(null);
+  const [reviewInbox, setReviewInbox] = useState<ReviewInboxItem[]>([]);
+  const [system0Events, setSystem0Events] = useState<System0AuditEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [system0Loading, setSystem0Loading] = useState(false);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [system0Notice, setSystem0Notice] = useState<{ type: 'success' | 'warning' | 'info'; message: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Filters
@@ -73,6 +149,41 @@ export default function FundingDashboard() {
   const [sourceTypeFilter, setSourceTypeFilter] = useState<string>('');
   const [jurisdictionFilter, setJurisdictionFilter] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    if (!system0Notice) return;
+    const timer = setTimeout(() => setSystem0Notice(null), 6000);
+    return () => clearTimeout(timer);
+  }, [system0Notice]);
+
+  const fetchSystem0Data = async () => {
+    setSystem0Loading(true);
+    try {
+      const [metricsRes, reviewRes, eventsRes] = await Promise.all([
+        fetch('/api/admin/funding/system-0/metrics?days=7'),
+        fetch('/api/admin/funding/system-0/review?status=pending&limit=10'),
+        fetch('/api/admin/funding/system-0/events?limit=6'),
+      ]);
+
+      if (metricsRes.ok) {
+        setSystem0Metrics(await metricsRes.json());
+      }
+
+      if (reviewRes.ok) {
+        const payload = await reviewRes.json();
+        setReviewInbox(payload.items || []);
+      }
+
+      if (eventsRes.ok) {
+        const payload = await eventsRes.json();
+        setSystem0Events(payload.events || []);
+      }
+    } catch (fetchError) {
+      console.error('Failed to fetch System 0 data:', fetchError);
+    } finally {
+      setSystem0Loading(false);
+    }
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -101,6 +212,8 @@ export default function FundingDashboard() {
 
       setOpportunities(oppsData.data || []);
       setStats(statsData.stats || null);
+
+      await fetchSystem0Data();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -115,6 +228,130 @@ export default function FundingDashboard() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     fetchData();
+  };
+
+  const processSystem0Queue = async () => {
+    setActionLoading('process_queue');
+    try {
+      const response = await fetch('/api/admin/funding/system-0/worker', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to process System 0 queue');
+      }
+      const payload = await response.json();
+      await fetchSystem0Data();
+      const processed = Number(payload?.processedCount || 0);
+      const recovered = Number(payload?.staleRecovery?.recovered || 0);
+      if (recovered > 0) {
+        setSystem0Notice({
+          type: 'warning',
+          message: `Processed ${processed} task(s); recovered ${recovered} stale task(s).`,
+        });
+      } else {
+        setSystem0Notice({
+          type: 'success',
+          message: `Processed ${processed} task(s).`,
+        });
+      }
+    } catch (actionError) {
+      setError(actionError instanceof Error ? actionError.message : 'Failed to process queue');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const runSystem0 = async () => {
+    setActionLoading('run_system0');
+    try {
+      const response = await fetch('/api/admin/funding/system-0/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode: 'incremental' }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to start System 0 run');
+      }
+      const payload = await response.json();
+      await fetchSystem0Data();
+      setSystem0Notice({
+        type: 'success',
+        message: `Started incremental run ${payload?.runId ? String(payload.runId).slice(0, 8) : ''}`.trim(),
+      });
+    } catch (actionError) {
+      setError(actionError instanceof Error ? actionError.message : 'Failed to start System 0');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const runSystem0SchedulerTick = async () => {
+    setActionLoading('scheduler_tick');
+    try {
+      const response = await fetch('/api/admin/funding/system-0/scheduler', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to run scheduler tick');
+      }
+      const payload = await response.json();
+      await fetchSystem0Data();
+      const processed = Number(payload?.processedCount || 0);
+      if (payload?.skipped) {
+        setSystem0Notice({
+          type: 'info',
+          message: 'Scheduler tick skipped because scheduler is disabled in System 0 policy.',
+        });
+      } else if (payload?.queueResult?.blocked === true) {
+        setSystem0Notice({
+          type: 'warning',
+          message: `Scheduler tick processed ${processed} task(s), but queue remains blocked by dependencies.`,
+        });
+      } else {
+        setSystem0Notice({
+          type: 'success',
+          message: payload?.autoStarted
+            ? `Scheduler tick started a run and processed ${processed} task(s).`
+            : `Scheduler tick processed ${processed} task(s).`,
+        });
+      }
+    } catch (actionError) {
+      setError(actionError instanceof Error ? actionError.message : 'Failed to run scheduler tick');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const submitReviewDecision = async (taskId: string, decision: 'approved' | 'rejected' | 'needs_more_info') => {
+    setActionLoading(`review_${taskId}_${decision}`);
+    try {
+      const response = await fetch('/api/admin/funding/system-0/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ taskId, decision }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to submit review decision');
+      }
+      await response.json();
+      await fetchSystem0Data();
+      const decisionLabel =
+        decision === 'approved' ? 'approved'
+          : decision === 'rejected' ? 'rejected'
+            : 'held for follow-up';
+      setSystem0Notice({
+        type: decision === 'needs_more_info' ? 'info' : 'success',
+        message: `Review decision saved: ${decisionLabel}.`,
+      });
+    } catch (actionError) {
+      setError(actionError instanceof Error ? actionError.message : 'Failed to submit decision');
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   const formatCurrency = (amount?: number) => {
@@ -145,6 +382,33 @@ export default function FundingDashboard() {
     }
 
     return formatted;
+  };
+
+  const formatDuration = (durationMs?: number | null) => {
+    if (!durationMs || durationMs <= 0) return '—';
+    if (durationMs < 1000) return `${durationMs}ms`;
+    const seconds = Math.round(durationMs / 1000);
+    if (seconds < 60) return `${seconds}s`;
+    const minutes = Math.floor(seconds / 60);
+    const remSeconds = seconds % 60;
+    return `${minutes}m ${remSeconds}s`;
+  };
+
+  const runStatusColor = (status: string) => {
+    if (status === 'completed') return 'bg-green-100 text-green-800';
+    if (status === 'failed') return 'bg-red-100 text-red-800';
+    if (status === 'running') return 'bg-blue-100 text-blue-800';
+    return 'bg-gray-100 text-gray-700';
+  };
+
+  const eventTypeColor = (eventType: string) => {
+    if (eventType === 'policy_updated') return 'bg-indigo-100 text-indigo-800';
+    if (eventType === 'filter_preset_saved') return 'bg-violet-100 text-violet-800';
+    if (eventType === 'filter_preset_deleted') return 'bg-violet-100 text-violet-800';
+    if (eventType === 'scheduler_tick') return 'bg-blue-100 text-blue-800';
+    if (eventType === 'worker_process') return 'bg-amber-100 text-amber-800';
+    if (eventType === 'run_enqueued') return 'bg-green-100 text-green-800';
+    return 'bg-gray-100 text-gray-700';
   };
 
   // Group opportunities by status for Kanban view
@@ -180,7 +444,7 @@ export default function FundingDashboard() {
                 Refresh
               </button>
               <Link
-                href="/admin/funding/new"
+                href="/admin/funding"
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white border-2 border-black font-bold hover:bg-green-700 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
               >
                 <Plus className="w-4 h-4" />
@@ -230,6 +494,229 @@ export default function FundingDashboard() {
               <div className="text-4xl font-black text-blue-600">{upcoming.length}</div>
               <div className="text-xs text-gray-500 mt-1">opening soon</div>
             </div>
+          </div>
+
+          {/* System 0 Operations */}
+          <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 mb-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Bot className="w-5 h-5 text-indigo-600" />
+                  <h2 className="text-2xl font-black text-black">System 0 Control Plane</h2>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Continuous scrape → match → notion → notify pipeline with human review gating
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/admin/funding/system-0"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 border-2 border-black font-bold hover:bg-gray-200 transition-colors"
+                >
+                  <Bot className="w-4 h-4" />
+                  Open Console
+                </Link>
+                <Link
+                  href="/admin/funding/os"
+                  className="flex items-center gap-2 px-4 py-2 bg-emerald-100 border-2 border-black font-bold hover:bg-emerald-200 transition-colors"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Funding OS Review
+                </Link>
+                <button
+                  onClick={runSystem0}
+                  disabled={Boolean(actionLoading)}
+                  className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white border-2 border-black font-bold hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                >
+                  <Play className="w-4 h-4" />
+                  Start Run
+                </button>
+                <button
+                  onClick={processSystem0Queue}
+                  disabled={Boolean(actionLoading)}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-black font-bold hover:bg-gray-100 transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-4 h-4 ${actionLoading === 'process_queue' ? 'animate-spin' : ''}`} />
+                  Process Queue
+                </button>
+                <button
+                  onClick={runSystem0SchedulerTick}
+                  disabled={Boolean(actionLoading)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-100 border-2 border-black font-bold hover:bg-blue-200 transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-4 h-4 ${actionLoading === 'scheduler_tick' ? 'animate-spin' : ''}`} />
+                  Scheduler Tick
+                </button>
+              </div>
+            </div>
+
+            {system0Notice && (
+              <div
+                className={`border-2 p-3 mb-6 font-medium ${
+                  system0Notice.type === 'success'
+                    ? 'bg-green-50 border-green-500 text-green-800'
+                    : system0Notice.type === 'warning'
+                      ? 'bg-amber-50 border-amber-500 text-amber-800'
+                      : 'bg-blue-50 border-blue-500 text-blue-800'
+                }`}
+              >
+                {system0Notice.message}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="border-2 border-gray-200 bg-gray-50 p-4">
+                <div className="text-xs uppercase font-bold text-gray-600 mb-1">Queue Backlog</div>
+                <div className="text-3xl font-black text-black">
+                  {system0Metrics?.queue.queued ?? 0}
+                </div>
+                <div className="text-xs text-gray-500">queued tasks</div>
+              </div>
+              <div className="border-2 border-gray-200 bg-gray-50 p-4">
+                <div className="text-xs uppercase font-bold text-gray-600 mb-1">In Flight</div>
+                <div className="text-3xl font-black text-blue-700">
+                  {system0Metrics?.queue.running ?? 0}
+                </div>
+                <div className="text-xs text-gray-500">running tasks</div>
+              </div>
+              <div className="border-2 border-gray-200 bg-gray-50 p-4">
+                <div className="text-xs uppercase font-bold text-gray-600 mb-1">Runs (7d)</div>
+                <div className="text-3xl font-black text-green-700">
+                  {system0Metrics?.runs.completed ?? 0}
+                </div>
+                <div className="text-xs text-gray-500">completed runs</div>
+              </div>
+              <div className="border-2 border-gray-200 bg-gray-50 p-4">
+                <div className="text-xs uppercase font-bold text-gray-600 mb-1">Human Review</div>
+                <div className="text-3xl font-black text-amber-700">
+                  {system0Metrics?.review.pending ?? 0}
+                </div>
+                <div className="text-xs text-gray-500">pending approvals</div>
+              </div>
+            </div>
+
+            {system0Metrics && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                <div className="border border-gray-200">
+                  <div className="px-4 py-2 bg-gray-100 border-b border-gray-200 text-sm font-bold">
+                    Recent System 0 Runs
+                  </div>
+                  <div className="max-h-64 overflow-auto divide-y divide-gray-100">
+                    {system0Metrics.recentRuns.length === 0 && (
+                      <div className="px-4 py-6 text-sm text-gray-500">No runs in lookback window.</div>
+                    )}
+                    {system0Metrics.recentRuns.map((run) => (
+                      <div key={run.runId} className="px-4 py-3">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-mono text-xs text-gray-600">{run.runId.slice(0, 8)}</span>
+                          <span className={`px-2 py-0.5 text-xs font-bold ${runStatusColor(run.status)}`}>
+                            {run.status.toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          Tasks: {run.summary.completed}/{run.summary.total} complete
+                          {run.summary.failed > 0 ? ` • ${run.summary.failed} failed` : ''}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          Duration: {formatDuration(run.durationMs)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border border-gray-200">
+                  <div className="px-4 py-2 bg-gray-100 border-b border-gray-200 text-sm font-bold">
+                    Human Review Inbox
+                  </div>
+                  <div className="max-h-64 overflow-auto divide-y divide-gray-100">
+                    {system0Loading && (
+                      <div className="px-4 py-6 text-sm text-gray-500">Loading inbox...</div>
+                    )}
+                    {!system0Loading && reviewInbox.length === 0 && (
+                      <div className="px-4 py-6 text-sm text-gray-500">
+                        No pending reviews. Autopilot can continue.
+                      </div>
+                    )}
+                    {reviewInbox.map((item) => (
+                      <div key={item.id} className="px-4 py-3">
+                        <div className="font-bold text-sm text-black line-clamp-1">
+                          {item.opportunityName || 'Untitled opportunity'}
+                        </div>
+                        <div className="text-xs text-gray-600 mb-2">
+                          {item.organizationName || 'Unknown org'}
+                          {typeof item.score === 'number' ? ` • Score ${item.score}` : ''}
+                          {typeof item.confidence === 'number'
+                            ? ` • Confidence ${Math.round(item.confidence * 100)}%`
+                            : ''}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => submitReviewDecision(item.id, 'approved')}
+                            disabled={Boolean(actionLoading)}
+                            className="px-2.5 py-1 text-xs font-bold bg-green-100 text-green-800 border border-green-300 hover:bg-green-200 disabled:opacity-50"
+                          >
+                            <CheckCircle2 className="inline w-3 h-3 mr-1" />
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => submitReviewDecision(item.id, 'rejected')}
+                            disabled={Boolean(actionLoading)}
+                            className="px-2.5 py-1 text-xs font-bold bg-red-100 text-red-800 border border-red-300 hover:bg-red-200 disabled:opacity-50"
+                          >
+                            <XCircle className="inline w-3 h-3 mr-1" />
+                            Reject
+                          </button>
+                          <button
+                            onClick={() => submitReviewDecision(item.id, 'needs_more_info')}
+                            disabled={Boolean(actionLoading)}
+                            className="px-2.5 py-1 text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300 hover:bg-amber-200 disabled:opacity-50"
+                          >
+                            <MessageSquareWarning className="inline w-3 h-3 mr-1" />
+                            Hold
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="border border-gray-200">
+                  <div className="px-4 py-2 bg-gray-100 border-b border-gray-200 text-sm font-bold">
+                    Recent System 0 Events
+                  </div>
+                  <div className="max-h-64 overflow-auto divide-y divide-gray-100">
+                    {system0Loading && (
+                      <div className="px-4 py-6 text-sm text-gray-500">Loading events...</div>
+                    )}
+                    {!system0Loading && system0Events.length === 0 && (
+                      <div className="px-4 py-6 text-sm text-gray-500">
+                        No recent events captured.
+                      </div>
+                    )}
+                    {system0Events.map((event) => (
+                      <div key={event.id} className="px-4 py-3">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className={`px-2 py-0.5 text-[11px] font-bold ${eventTypeColor(event.eventType)}`}>
+                            {event.eventType}
+                          </span>
+                          <span className="text-[11px] text-gray-500">
+                            {new Date(event.createdAt).toLocaleTimeString()}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-700 line-clamp-2">
+                          {event.message || 'No message'}
+                        </div>
+                        <div className="text-[11px] text-gray-500 mt-1">
+                          {event.source}
+                          {event.runId ? ` • ${event.runId.slice(0, 8)}` : ''}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Filters */}
@@ -331,7 +818,7 @@ export default function FundingDashboard() {
                 Try adjusting your filters or add a new opportunity
               </p>
               <Link
-                href="/admin/funding/new"
+                href="/admin/funding"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white border-2 border-black font-bold hover:bg-green-700 transition-colors"
               >
                 <Plus className="w-4 h-4" />
@@ -510,9 +997,9 @@ export default function FundingDashboard() {
           {/* Quick Actions */}
           <div className="mt-12 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">
             <h2 className="text-2xl font-black text-black mb-6">Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Link
-                href="/admin/funding/scrape"
+                href="/admin/funding?action=scrape"
                 className="flex items-center gap-3 px-4 py-3 bg-blue-50 border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-100 transition-colors"
               >
                 <RefreshCw className="w-5 h-5" />
@@ -520,7 +1007,7 @@ export default function FundingDashboard() {
               </Link>
 
               <Link
-                href="/admin/funding/applications"
+                href="/admin/funding?view=applications"
                 className="flex items-center gap-3 px-4 py-3 bg-purple-50 border-2 border-purple-600 text-purple-600 font-bold hover:bg-purple-100 transition-colors"
               >
                 <Building2 className="w-5 h-5" />
@@ -528,11 +1015,19 @@ export default function FundingDashboard() {
               </Link>
 
               <Link
-                href="/admin/funding/reports"
+                href="/admin/funding?view=reports"
                 className="flex items-center gap-3 px-4 py-3 bg-green-50 border-2 border-green-600 text-green-600 font-bold hover:bg-green-100 transition-colors"
               >
                 <TrendingUp className="w-5 h-5" />
                 Weekly Reports
+              </Link>
+
+              <Link
+                href="/admin/funding/system-0"
+                className="flex items-center gap-3 px-4 py-3 bg-indigo-50 border-2 border-indigo-600 text-indigo-700 font-bold hover:bg-indigo-100 transition-colors"
+              >
+                <Bot className="w-5 h-5" />
+                System 0 Console
               </Link>
             </div>
           </div>

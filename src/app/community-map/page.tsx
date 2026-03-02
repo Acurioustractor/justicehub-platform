@@ -415,7 +415,7 @@ export default function CommunityMapPage() {
       }
 
       mapRef.current = new maplibregl.Map({
-        container: mapContainerRef.current,
+        container: mapContainerRef.current!,
         style: mapStyle,
         center: [133.7751, -26.2744],
         zoom: 3.4,

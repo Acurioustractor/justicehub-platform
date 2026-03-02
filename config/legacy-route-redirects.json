@@ -1,0 +1,38 @@
+[
+  { "source": "/admin/programs/new", "destination": "/admin/programs", "permanent": false },
+  { "source": "/admin/services/import", "destination": "/admin/services", "permanent": false },
+  { "source": "/admin/art-innovation/new", "destination": "/admin/art-innovation", "permanent": false },
+  { "source": "/admin/funding/new", "destination": "/admin/funding", "permanent": false },
+  { "source": "/admin/funding/scrape", "destination": "/admin/funding", "permanent": false },
+  { "source": "/admin/funding/applications", "destination": "/admin/funding", "permanent": false },
+  { "source": "/admin/funding/reports", "destination": "/admin/funding", "permanent": false },
+  { "source": "/admin/research/scrape", "destination": "/admin/research", "permanent": false },
+
+  { "source": "/dashboard", "destination": "/admin", "permanent": false },
+  { "source": "/dashboard/youth", "destination": "/youth-scout/youth-login", "permanent": false },
+  { "source": "/dashboard/dreamtrack", "destination": "/youth-scout/talent-login", "permanent": false },
+
+  { "source": "/support", "destination": "/contact", "permanent": false },
+  { "source": "/partners", "destination": "/for-community-leaders", "permanent": false },
+  { "source": "/media", "destination": "/contact", "permanent": false },
+  { "source": "/community", "destination": "/for-community-leaders", "permanent": false },
+
+  { "source": "/stories/share", "destination": "/stories/new", "permanent": false },
+  { "source": "/stories/submit", "destination": "/stories/new", "permanent": false },
+  { "source": "/community-programs/nominate", "destination": "/community-programs/add", "permanent": false },
+
+  { "source": "/youth-scout/youth-preview", "destination": "/youth-scout/youth-login", "permanent": false },
+  { "source": "/youth-scout/talent-preview", "destination": "/youth-scout/talent-login", "permanent": false },
+  { "source": "/youth-scout/forgot-password", "destination": "/reset-password", "permanent": false },
+
+  { "source": "/book-experience", "destination": "/contained/vip-dinner", "permanent": false },
+  { "source": "/vision-2030-report", "destination": "/about/roadmap", "permanent": false },
+  { "source": "/economics-report", "destination": "/transparency", "permanent": false },
+  { "source": "/grassroots/apply", "destination": "/grassroots", "permanent": false },
+  { "source": "/resources/funder-prospectus.pdf", "destination": "/for-funders", "permanent": false },
+  { "source": "/docs/NT_BASELINE_COMPARISON_REPORT", "destination": "/intelligence/nt-showcase", "permanent": false },
+
+  { "source": "/JUSTICEHUB_PLANNING.md", "destination": "/wiki/justicehub-planning", "permanent": false },
+  { "source": "/BUDGET_SUMMARY.md", "destination": "/wiki/budget-summary", "permanent": false },
+  { "source": "/FUNDING_PITCH_TEMPLATES.md", "destination": "/wiki/funding-pitch-templates", "permanent": false }
+]

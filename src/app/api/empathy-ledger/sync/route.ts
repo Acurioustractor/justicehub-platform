@@ -34,11 +34,11 @@ export async function POST(request: NextRequest) {
     // Check admin access
     const { data: profileData } = await authSupabase
       .from('profiles')
-      .select('is_super_admin')
+      .select('role')
       .eq('id', user.id)
       .single();
 
-    if (!profileData?.is_super_admin) {
+    if (profileData?.role !== 'admin') {
       return NextResponse.json(
         { error: 'Admin access required' },
         { status: 403 }
@@ -54,13 +54,13 @@ export async function POST(request: NextRequest) {
     // Get the last sync timestamp from JusticeHub
     let lastSyncAt: string | null = null;
     if (!force) {
-      const { data: syncRecord } = await supabase
+      const { data: syncRecord } = await (supabase as any)
         .from('sync_metadata')
         .select('last_synced_at')
         .eq('source', 'empathy_ledger_stories')
         .single();
 
-      lastSyncAt = syncRecord?.last_synced_at || null;
+      lastSyncAt = (syncRecord as any)?.last_synced_at || null;
     }
 
     // Fetch public stories from Empathy Ledger (avoiding storytellers join due to RLS)
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
     }));
 
     // Upsert stories to JusticeHub (using empathy_ledger_id as unique key)
-    const { data: syncedStories, error: syncError } = await supabase
+    const { data: syncedStories, error: syncError } = await (supabase as any)
       .from('synced_stories')
       .upsert(storiesToSync, {
         onConflict: 'empathy_ledger_id',
@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
 
     // Update sync metadata
     const now = new Date().toISOString();
-    await supabase
+    await (supabase as any)
       .from('sync_metadata')
       .upsert({
         source: 'empathy_ledger_stories',
@@ -207,7 +207,7 @@ export async function GET() {
   try {
     const supabase = createServiceClient();
 
-    const { data: syncRecord, error } = await supabase
+    const { data: syncRecord, error } = await (supabase as any)
       .from('sync_metadata')
       .select('*')
       .eq('source', 'empathy_ledger_stories')
@@ -221,7 +221,7 @@ export async function GET() {
     }
 
     // Get count of synced stories
-    const { count } = await supabase
+    const { count } = await (supabase as any)
       .from('synced_stories')
       .select('*', { count: 'exact', head: true })
       .eq('source', 'empathy_ledger');

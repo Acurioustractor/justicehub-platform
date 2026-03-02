@@ -1,27 +1,9 @@
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { requireAdmin } from '@/lib/supabase/admin';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import OrganizationList from '@/components/admin/OrganizationList';
 
 export default async function AdminOrganizationsPage() {
-  const supabase = await createClient();
-
-  // Check if user is admin
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect('/login?redirect=/admin/organizations');
-  }
-  // Check admin role
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('is_super_admin')
-    .eq('id', user.id)
-    .single();
-
-  if (!profileData?.is_super_admin) {
-    redirect('/');
-  }
+  const { supabase } = await requireAdmin('/admin/organizations');
 
   // Fetch all organizations with team member counts
   const { data: organizations } = await supabase

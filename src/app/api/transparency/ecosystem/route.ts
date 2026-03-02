@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
 
       const partnershipCounts: Record<string, number> = {};
       partnerships?.forEach(p => {
-        partnershipCounts[p.facility_id] = (partnershipCounts[p.facility_id] || 0) + 1;
+        if (p.facility_id) partnershipCounts[p.facility_id] = (partnershipCounts[p.facility_id] || 0) + 1;
       });
 
       facilitiesWithPartners = facilities?.map(f => ({

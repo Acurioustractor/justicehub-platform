@@ -53,7 +53,7 @@ export default function ContentHealthPage() {
 
     const intComplete = interventions?.filter(i =>
       i.description && i.description.length > 50 &&
-      i.type && i.evidence_level && i.metadata?.state
+      i.type && i.evidence_level && (i.metadata as Record<string, unknown>)?.state
     ).length || 0;
 
     results.push({
@@ -68,8 +68,8 @@ export default function ContentHealthPage() {
         ...(interventions?.filter(i => !i.description || i.description.length < 50).length
           ? [`${interventions.filter(i => !i.description || i.description.length < 50).length} missing descriptions`]
           : []),
-        ...(interventions?.filter(i => !i.metadata?.state).length
-          ? [`${interventions.filter(i => !i.metadata?.state).length} missing state`]
+        ...(interventions?.filter(i => !(i.metadata as Record<string, unknown>)?.state).length
+          ? [`${interventions.filter(i => !(i.metadata as Record<string, unknown>)?.state).length} missing state`]
           : []),
       ],
       route: '/intelligence/interventions',
@@ -197,10 +197,10 @@ export default function ContentHealthPage() {
     // 6. Services
     const { data: services, count: svcCount } = await supabase
       .from('services')
-      .select('id, name, description, categories, location', { count: 'exact' });
+      .select('id, name, description, categories', { count: 'exact' });
 
     const svcComplete = services?.filter(s =>
-      s.description && s.categories?.length > 0
+      s.description && s.categories && s.categories.length > 0
     ).length || 0;
 
     results.push({

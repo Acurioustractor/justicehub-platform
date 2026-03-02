@@ -266,7 +266,7 @@ export default function YouthLoginPage() {
                       <input type="checkbox" className="rounded" />
                       <span>Remember me</span>
                     </label>
-                    <Link href="/youth-scout/forgot-password" className="text-blue-800 hover:underline font-medium">
+                    <Link href="/reset-password" className="text-blue-800 hover:underline font-medium">
                       Forgot password?
                     </Link>
                   </div>
@@ -367,7 +367,7 @@ export default function YouthLoginPage() {
             {/* Quick Preview Link */}
             <div className="mt-6 text-center">
               <Link
-                href="/youth-scout/youth-preview"
+                href="/youth-scout/youth-login"
                 className="text-blue-800 hover:underline font-medium text-sm"
               >
                 Want to see what Youth Scout offers? Take a quick tour →

@@ -41,9 +41,9 @@ export default function ReportsPage() {
       if (error) {
         console.error('Error fetching reports:', error);
       } else {
-        setReports(data || []);
+        setReports((data || []) as any as WeeklyReport[]);
         if (data && data.length > 0) {
-          setSelectedReport(data[0]);
+          setSelectedReport(data[0] as any as WeeklyReport);
         }
       }
       setLoading(false);

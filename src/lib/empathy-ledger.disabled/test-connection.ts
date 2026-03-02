@@ -1,3 +1,4 @@
+// @ts-nocheck — Module disabled; types stale
 /**
  * Test Empathy Ledger Database Connection
  * 

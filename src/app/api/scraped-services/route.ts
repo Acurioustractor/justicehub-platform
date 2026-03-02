@@ -53,14 +53,14 @@ export async function GET(request: NextRequest) {
     const transformedServices = scrapedServices?.map(service => ({
       id: service.id,
       name: service.name,
-      category: mapCategory(service.category),
+      category: mapCategory(service.category || ''),
       description: service.description,
-      location: extractLocation(service.contact_info, service.source_url),
+      location: extractLocation(service.contact_info, service.source_url || ''),
       contact: extractContact(service.contact_info),
-      cost: mapCost(service.cost_structure),
-      rating: Math.round(service.confidence_score * 5 * 100) / 100, // Convert confidence to 5-star rating
-      verified: service.validation_status === 'approved' || service.confidence_score >= 0.8,
-      lastUpdated: formatTimestamp(service.extraction_timestamp),
+      cost: mapCost(service.cost_structure || ''),
+      rating: Math.round((service.confidence_score ?? 0) * 5 * 100) / 100, // Convert confidence to 5-star rating
+      verified: service.validation_status === 'approved' || (service.confidence_score ?? 0) >= 0.8,
+      lastUpdated: formatTimestamp(service.extraction_timestamp ?? ''),
       source: service.source_url,
       aiDiscovered: true,
       eligibility: service.eligibility_criteria,

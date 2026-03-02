@@ -89,7 +89,7 @@ export default async function ArtInnovationDetailPage({
     notFound();
   }
 
-  const typedProject = project as ArtInnovationProject;
+  const typedProject = project as unknown as ArtInnovationProject;
 
   // Sort profiles by display_order
   const sortedProfiles = [...typedProject.art_innovation_profiles].sort(

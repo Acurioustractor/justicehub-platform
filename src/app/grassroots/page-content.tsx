@@ -307,7 +307,7 @@ export function GrassrootsContent({ initialPrograms }: GrassrootsContentProps) {
               Running a program with proven outcomes? Apply for editorial review and join our curated collection of community-led solutions.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/grassroots/apply" className="cta-primary bg-white text-black hover:bg-gray-100">
+              <Link href="/grassroots" className="cta-primary bg-white text-black hover:bg-gray-100">
                 APPLY FOR CURATION
               </Link>
               <Link href="/stories/new" className="cta-secondary border-white text-white hover:bg-white hover:text-black">

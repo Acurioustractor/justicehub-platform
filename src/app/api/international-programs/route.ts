@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       .from('international_programs')
       .select('*')
       .eq('status', 'published')
-      .order('recidivism_rate', { ascending: true, nullsLast: true });
+      .order('recidivism_rate', { ascending: true, nullsLast: true } as any);
 
     // Apply filters
     if (region) {

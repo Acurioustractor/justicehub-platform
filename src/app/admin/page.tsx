@@ -1,9 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
-import { createServiceClient } from '@/lib/supabase/service';
 import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, CheckCircle2, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign } from 'lucide-react';
+import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, CheckCircle2, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink } from 'lucide-react';
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -17,18 +16,15 @@ export default async function AdminDashboard() {
   // Check admin role
   const { data: profileData } = await supabase
     .from('profiles')
-    .select('is_super_admin')
+    .select('role')
     .eq('id', user.id)
     .single();
 
-  if (!profileData?.is_super_admin) {
+  if (profileData?.role !== 'admin') {
     redirect('/');
   }
 
-  // Use service client for data queries to bypass RLS
-  const sc = createServiceClient();
-
-  // Fetch all content counts in parallel
+  // Fetch all content counts in parallel using authenticated server client
   const [
     { count: profilesCount },
     { count: publicProfilesCount },
@@ -44,7 +40,6 @@ export default async function AdminDashboard() {
     { count: organizationsCount },
     { count: orgLinksCount },
     { count: blogPostLinksCount },
-    { count: empathyProfilesCount },
     { count: empathyTranscriptsCount },
     { count: frameworksCount },
     { count: researchCount },
@@ -57,33 +52,39 @@ export default async function AdminDashboard() {
     { count: videosCount },
     { count: intlProgramsCount },
   ] = await Promise.all([
-    sc.from('public_profiles').select('*', { count: 'exact', head: true }),
-    sc.from('public_profiles').select('*', { count: 'exact', head: true }).eq('is_public', true),
-    sc.from('organizations_profiles').select('public_profile_id', { count: 'exact', head: true }),
-    sc.from('articles').select('*', { count: 'exact', head: true }),
-    sc.from('art_innovation').select('*', { count: 'exact', head: true }),
-    sc.from('registered_services').select('*', { count: 'exact', head: true }),
-    sc.from('services').select('*', { count: 'exact', head: true }),
-    sc.from('profile_appearances').select('*', { count: 'exact', head: true }),
-    sc.from('art_innovation_profiles').select('*', { count: 'exact', head: true }),
-    sc.from('registered_services_profiles').select('*', { count: 'exact', head: true }),
-    sc.from('services_profiles').select('*', { count: 'exact', head: true }),
-    sc.from('organizations').select('*', { count: 'exact', head: true }),
-    sc.from('organizations_profiles').select('*', { count: 'exact', head: true }),
-    sc.from('blog_posts_profiles').select('*', { count: 'exact', head: true }),
-    sc.from('profiles').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
-    sc.from('blog_posts').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
-    sc.from('australian_frameworks').select('*', { count: 'exact', head: true }),
-    sc.from('research_items').select('*', { count: 'exact', head: true }),
-    sc.from('coe_key_people').select('*', { count: 'exact', head: true }),
-    sc.from('events').select('*', { count: 'exact', head: true }),
-    sc.from('events').select('*', { count: 'exact', head: true }).gte('start_time', new Date().toISOString()),
-    sc.from('blog_posts').select('*', { count: 'exact', head: true }),
-    sc.from('blog_posts').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
-    sc.from('partner_photos').select('*', { count: 'exact', head: true }),
-    sc.from('partner_videos').select('*', { count: 'exact', head: true }),
-    sc.from('international_programs').select('*', { count: 'exact', head: true }),
+    supabase.from('public_profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('public_profiles').select('*', { count: 'exact', head: true }).eq('is_public', true),
+    supabase.from('organizations_profiles').select('public_profile_id', { count: 'exact', head: true }),
+    supabase.from('articles').select('*', { count: 'exact', head: true }),
+    supabase.from('art_innovation').select('*', { count: 'exact', head: true }),
+    supabase.from('registered_services').select('*', { count: 'exact', head: true }),
+    supabase.from('services').select('*', { count: 'exact', head: true }),
+    supabase.from('profile_appearances').select('*', { count: 'exact', head: true }),
+    supabase.from('art_innovation_profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('registered_services_profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('services_profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('organizations').select('*', { count: 'exact', head: true }),
+    supabase.from('organizations_profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('blog_posts_profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('synced_from_empathy_ledger', true),
+    supabase.from('australian_frameworks').select('*', { count: 'exact', head: true }),
+    supabase.from('research_items').select('*', { count: 'exact', head: true }),
+    supabase.from('coe_key_people').select('*', { count: 'exact', head: true }),
+    supabase.from('events').select('*', { count: 'exact', head: true }),
+    supabase.from('events').select('*', { count: 'exact', head: true }).gte('start_date', new Date().toISOString()),
+    supabase.from('blog_posts').select('*', { count: 'exact', head: true }),
+    supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
+    supabase.from('partner_photos').select('*', { count: 'exact', head: true }),
+    supabase.from('partner_videos').select('*', { count: 'exact', head: true }),
+    supabase.from('international_programs').select('*', { count: 'exact', head: true }),
   ]);
+
+  // Fetch onboarded partner organizations (those with active system accounts)
+  const { data: partnerOrgs } = await supabase
+    .from('organization_members')
+    .select('organization_id, role, status, user_id, organizations(id, name, slug, type, location), profiles(email)')
+    .eq('status', 'active')
+    .order('created_at', { ascending: true });
 
   // Calculate connection rates
   const servicesConnectionRate = servicesCount ? Math.round((serviceLinksCount! / servicesCount) * 100) : 0;
@@ -167,8 +168,8 @@ export default async function AdminDashboard() {
     },
     {
       title: 'Empathy Ledger',
-      count: empathyProfilesCount || 0,
-      subtitle: `${empathyTranscriptsCount || 0} transcripts synced`,
+      count: empathyTranscriptsCount || 0,
+      subtitle: 'Synced from Empathy Ledger',
       icon: Database,
       href: '/admin/empathy-ledger',
       color: 'from-violet-500 to-violet-600',
@@ -204,6 +205,16 @@ export default async function AdminDashboard() {
       color: 'from-amber-500 to-amber-600',
       bgColor: 'bg-amber-50',
       textColor: 'text-amber-600',
+    },
+    {
+      title: 'Signal Engine',
+      count: '⚡',
+      subtitle: 'Autonomous content pipeline',
+      icon: Zap,
+      href: '/admin/signal-engine',
+      color: 'from-yellow-500 to-yellow-600',
+      bgColor: 'bg-yellow-50',
+      textColor: 'text-yellow-600',
     },
   ];
 
@@ -281,6 +292,55 @@ export default async function AdminDashboard() {
             })}
           </div>
 
+          {/* Partner Organizations — onboarded with system accounts */}
+          {partnerOrgs && partnerOrgs.length > 0 && (
+            <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8 mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-black text-black">Partner Organizations</h2>
+                  <p className="text-sm text-gray-600">{partnerOrgs.length} organizations with active system accounts</p>
+                </div>
+                <Handshake className="w-8 h-8 text-ochre-600" />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {partnerOrgs.map((member: any) => {
+                  const org = member.organizations;
+                  if (!org) return null;
+                  return (
+                    <div key={org.id} className="border-2 border-black p-4 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <h3 className="font-black text-lg">{org.name}</h3>
+                          <p className="text-xs text-gray-500">{org.type} {org.location ? `· ${org.location}` : ''}</p>
+                        </div>
+                        <span className="text-xs font-bold bg-green-100 text-green-800 border border-green-600 px-2 py-0.5">
+                          Active
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-600 mb-3">{member.profiles?.email}</p>
+                      <div className="flex gap-2">
+                        <Link
+                          href={`/admin/organizations/${org.slug}/hub`}
+                          className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-ochre-600 text-white text-sm font-bold hover:bg-ochre-700 transition-colors"
+                        >
+                          Support Hub
+                          <ExternalLink className="w-3 h-3" />
+                        </Link>
+                        <Link
+                          href={`/admin/organizations/${org.slug}`}
+                          className="flex items-center justify-center px-3 py-2 border-2 border-black text-sm font-bold hover:bg-gray-100 transition-colors"
+                        >
+                          Manage
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Quick Actions */}
           <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8 mb-12">
             <h2 className="text-2xl font-black text-black mb-6">Quick Actions</h2>
@@ -303,7 +363,7 @@ export default async function AdminDashboard() {
               </Link>
 
               <Link
-                href="/admin/programs/new"
+                href="/admin/programs"
                 className="flex items-center gap-3 px-4 py-3 bg-green-50 border-2 border-green-600 text-green-600 font-bold hover:bg-green-100 transition-colors"
               >
                 <Building2 className="w-5 h-5" />
@@ -311,7 +371,7 @@ export default async function AdminDashboard() {
               </Link>
 
               <Link
-                href="/admin/services/import"
+                href="/admin/services"
                 className="flex items-center gap-3 px-4 py-3 bg-orange-50 border-2 border-orange-600 text-orange-600 font-bold hover:bg-orange-100 transition-colors"
               >
                 <MapPin className="w-5 h-5" />
@@ -351,11 +411,69 @@ export default async function AdminDashboard() {
               </Link>
 
               <Link
+                href="/admin/signal-engine"
+                className="flex items-center gap-3 px-4 py-3 bg-yellow-50 border-2 border-yellow-600 text-yellow-600 font-bold hover:bg-yellow-100 transition-colors"
+              >
+                <Zap className="w-5 h-5" />
+                Signal Engine
+              </Link>
+
+              <Link
                 href="/admin/research"
                 className="flex items-center gap-3 px-4 py-3 bg-purple-50 border-2 border-purple-600 text-purple-600 font-bold hover:bg-purple-100 transition-colors"
               >
                 <BookOpen className="w-5 h-5" />
                 Evidence Library
+              </Link>
+            </div>
+          </div>
+
+          {/* JusticeHub Innovations */}
+          <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8 mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-black text-black">JusticeHub Innovations</h2>
+                <p className="text-sm text-gray-600">Products in development — preview and test</p>
+              </div>
+              <FlaskConical className="w-8 h-8 text-purple-600" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Link href="/preview/racism-heatmap" className="flex items-center gap-3 px-4 py-3 bg-orange-50 border-2 border-orange-600 text-orange-600 font-bold hover:bg-orange-100 transition-colors">
+                <MapPin className="w-5 h-5" />
+                Racism Heatmap
+              </Link>
+              <Link href="/preview/signal-engine" className="flex items-center gap-3 px-4 py-3 bg-amber-50 border-2 border-amber-600 text-amber-600 font-bold hover:bg-amber-100 transition-colors">
+                <Zap className="w-5 h-5" />
+                Signal Engine
+              </Link>
+              <Link href="/preview/pledge-map" className="flex items-center gap-3 px-4 py-3 bg-emerald-50 border-2 border-emerald-600 text-emerald-600 font-bold hover:bg-emerald-100 transition-colors">
+                <Users className="w-5 h-5" />
+                Pledge Map
+              </Link>
+              <Link href="/preview/complaint-pathfinder" className="flex items-center gap-3 px-4 py-3 bg-blue-50 border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-100 transition-colors">
+                <FileText className="w-5 h-5" />
+                Complaint Pathfinder
+              </Link>
+              <Link href="/preview/justice-navigator" className="flex items-center gap-3 px-4 py-3 bg-purple-50 border-2 border-purple-600 text-purple-600 font-bold hover:bg-purple-100 transition-colors">
+                <Network className="w-5 h-5" />
+                Justice Navigator
+              </Link>
+              <Link href="/preview/watchguard-support-pack" className="flex items-center gap-3 px-4 py-3 bg-red-50 border-2 border-red-600 text-red-600 font-bold hover:bg-red-100 transition-colors">
+                <Building2 className="w-5 h-5" />
+                WatchGuard Support Pack
+              </Link>
+              <Link href="/preview/justice-matrix" className="flex items-center gap-3 px-4 py-3 bg-indigo-50 border-2 border-indigo-600 text-indigo-600 font-bold hover:bg-indigo-100 transition-colors">
+                <TrendingUp className="w-5 h-5" />
+                Justice Matrix
+              </Link>
+              <Link href="/preview/justice-project" className="flex items-center gap-3 px-4 py-3 bg-pink-50 border-2 border-pink-600 text-pink-600 font-bold hover:bg-pink-100 transition-colors">
+                <BookOpen className="w-5 h-5" />
+                Justice Project
+              </Link>
+              <Link href="/preview/grassroots-activation" className="flex items-center gap-3 px-4 py-3 bg-teal-50 border-2 border-teal-600 text-teal-600 font-bold hover:bg-teal-100 transition-colors">
+                <Palette className="w-5 h-5" />
+                Grassroots Activation
               </Link>
             </div>
           </div>

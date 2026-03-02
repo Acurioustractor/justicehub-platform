@@ -223,7 +223,7 @@ export default async function NTShowcasePage() {
                   <Link href={`/intelligence/interventions/${oochiumpa.id}`} className="cta-primary flex-1 text-center">
                     VIEW FULL DETAILS
                   </Link>
-                  <Link href="/docs/NT_BASELINE_COMPARISON_REPORT" className="cta-secondary flex-1 text-center">
+                  <Link href="/intelligence/nt-showcase" className="cta-secondary flex-1 text-center">
                     READ COMPARISON REPORT
                   </Link>
                 </div>

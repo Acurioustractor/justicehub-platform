@@ -9,6 +9,7 @@
 
 import { getExaClient } from '@/lib/exa/client';
 import OpenAI from 'openai';
+import { routeModel } from '@/lib/ai/model-router';
 
 interface EnrichedProfile {
     summary: string;
@@ -69,17 +70,33 @@ export class EnrichmentService {
     `;
 
         try {
-            const completion = await this.openai.chat.completions.create({
-                model: "gpt-4o",
-                messages: [
-                    { role: "system", content: "You are a helpful assistant that outputs JSON." },
-                    { role: "user", content: prompt }
-                ],
-                response_format: { type: "json_object" },
-            });
+            const modelPlan = routeModel('contact_enrichment');
+            const openAICandidates = [modelPlan.primary, ...modelPlan.fallbacks]
+              .filter((candidate) => candidate.provider === 'openai');
 
-            const responseText = completion.choices[0].message.content || '{}';
-            return JSON.parse(responseText) as EnrichedProfile;
+            let lastError: unknown = null;
+            for (const candidate of openAICandidates) {
+                try {
+                    const completion = await this.openai.chat.completions.create({
+                        model: candidate.model,
+                        messages: [
+                            { role: "system", content: "You are a helpful assistant that outputs JSON." },
+                            { role: "user", content: prompt }
+                        ],
+                        response_format: { type: "json_object" },
+                    });
+
+                    const responseText = completion.choices[0].message.content || '{}';
+                    return JSON.parse(responseText) as EnrichedProfile;
+                } catch (error) {
+                    lastError = error;
+                }
+            }
+
+            if (lastError) {
+                throw lastError;
+            }
+            return null;
         } catch (error) {
             console.error('Enrichment synthesis error:', error);
             return null;

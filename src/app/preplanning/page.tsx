@@ -354,7 +354,7 @@ export default function PreplanningPage() {
 
           <div className="space-y-4">
             <a
-              href="/JUSTICEHUB_PLANNING.md"
+              href="/wiki/justicehub-planning"
               className="block border-2 border-black p-6 hover:bg-gray-50 transition-colors"
             >
               <h3 className="text-xl font-bold mb-2">📄 JusticeHub Planning (25,000 words)</h3>
@@ -365,7 +365,7 @@ export default function PreplanningPage() {
             </a>
 
             <a
-              href="/BUDGET_SUMMARY.md"
+              href="/wiki/budget-summary"
               className="block border-2 border-black p-6 hover:bg-gray-50 transition-colors"
             >
               <h3 className="text-xl font-bold mb-2">💰 Budget Summary (5,000 words)</h3>
@@ -376,7 +376,7 @@ export default function PreplanningPage() {
             </a>
 
             <a
-              href="/FUNDING_PITCH_TEMPLATES.md"
+              href="/wiki/funding-pitch-templates"
               className="block border-2 border-black p-6 hover:bg-gray-50 transition-colors"
             >
               <h3 className="text-xl font-bold mb-2">🎯 Funding Pitch Templates (12,000 words)</h3>

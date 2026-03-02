@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
+      CI_FUNDING_SMOKE_ENABLED: ${{ secrets.CI_DATABASE_URL != '' && secrets.CI_SUPABASE_URL != '' && secrets.CI_SUPABASE_ANON_KEY != '' && secrets.CI_SUPABASE_SERVICE_ROLE_KEY != '' }}
       DATABASE_URL: ${{ secrets.CI_DATABASE_URL || secrets.SUPABASE_DB_URL }}
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.CI_SUPABASE_URL || secrets.STAGING_SUPABASE_URL || secrets.PROD_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.CI_SUPABASE_ANON_KEY || secrets.STAGING_SUPABASE_ANON_KEY || secrets.PROD_SUPABASE_ANON_KEY }}
@@ -55,6 +56,9 @@ jobs:
       - name: Runtime schema contract audit
         run: npm run audit:runtime-schema
 
+      - name: Route link integrity
+        run: npm run check:route-links
+
       - name: Frontend smoke check
         run: |
           set -euo pipefail
@@ -80,5 +84,42 @@ jobs:
         with:
           name: frontend-smoke-${{ github.run_number }}
           path: artifacts/frontend-smoke/**
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Funding regression smoke
+        env:
+          DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.CI_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.CI_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.CI_SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -euo pipefail
+          if [ "${CI_FUNDING_SMOKE_ENABLED}" != "true" ]; then
+            echo "Skipping funding regression smoke: dedicated CI funding secrets are not configured."
+            exit 0
+          fi
+          npm run dev > /tmp/next-dev-funding.log 2>&1 &
+          DEV_PID=$!
+          cleanup() {
+            kill $DEV_PID >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          for i in {1..90}; do
+            if curl -sf "http://127.0.0.1:3000/api/funding/accountability?limit=1" >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+
+          FUNDING_SMOKE_BASE_URL=http://127.0.0.1:3000 npm run check:funding-regression:seed
+
+      - name: Upload funding smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: funding-smoke-${{ github.run_number }}
+          path: artifacts/funding-smoke/**
           if-no-files-found: ignore
           retention-days: 14

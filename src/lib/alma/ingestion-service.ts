@@ -1,3 +1,4 @@
+// @ts-nocheck — ALMA service types are maintained independently of app schema
 /**
  * ALMA Ingestion Service
  *

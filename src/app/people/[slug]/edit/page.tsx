@@ -102,7 +102,7 @@ export default function EditProfilePage({ params }: { params: { slug: string } }
       photo_url: profileData.photo_url || '',
       website_url: profileData.website_url || '',
       email: profileData.email || '',
-      social_links: profileData.social_links || {},
+      social_links: (profileData.social_links as Record<string, string>) || {},
       is_public: profileData.is_public || false
     });
 

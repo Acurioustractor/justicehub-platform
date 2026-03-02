@@ -10,13 +10,13 @@ import { createClient } from '@/lib/supabase/client';
 interface Storyteller {
   id: string;
   display_name: string;
-  role: string | null;        // New standardized field
-  role_at_org?: string | null; // Legacy field (backward compatibility)
+  role: string | null;
+  role_at_org?: string | null;
   bio_excerpt: string | null;
   quote: string | null;
   avatar_url: string | null;
-  is_featured: boolean;
-  is_public: boolean;
+  is_featured: boolean | null;
+  is_public: boolean | null;
   display_order: number | null;
   consent_level: string | null;
   empathy_ledger_profile_id: string | null;
@@ -26,7 +26,7 @@ interface Storyteller {
 interface Organization {
   id: string;
   name: string;
-  slug: string;
+  slug: string | null;
 }
 
 interface ProfileOption {
@@ -79,11 +79,11 @@ export default function StorytellerManagementPage() {
     // Check admin
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('is_super_admin')
+      .select('role')
       .eq('id', user.id)
       .single();
 
-    if (!profileData?.is_super_admin) {
+    if (profileData?.role !== 'admin') {
       router.push('/');
       return;
     }
@@ -395,7 +395,7 @@ export default function StorytellerManagementPage() {
                   {/* Actions */}
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => toggleVisibility(storyteller.id, storyteller.is_public)}
+                      onClick={() => toggleVisibility(storyteller.id, storyteller.is_public ?? false)}
                       className={`p-2 border-2 border-black ${
                         storyteller.is_public
                           ? 'bg-green-100 text-green-700 hover:bg-green-200'
@@ -406,7 +406,7 @@ export default function StorytellerManagementPage() {
                       {storyteller.is_public ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                     </button>
                     <button
-                      onClick={() => toggleFeatured(storyteller.id, storyteller.is_featured)}
+                      onClick={() => toggleFeatured(storyteller.id, storyteller.is_featured ?? false)}
                       className={`p-2 border-2 border-black ${
                         storyteller.is_featured
                           ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'

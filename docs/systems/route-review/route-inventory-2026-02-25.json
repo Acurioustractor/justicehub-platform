@@ -1,0 +1,1280 @@
+{
+  "pages": [
+    {
+      "file": "src/app/about/page.tsx",
+      "route": "/about",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/about/roadmap/page.tsx",
+      "route": "/about/roadmap",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/art-innovation/page.tsx",
+      "route": "/admin/art-innovation",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/auto-linking/page.tsx",
+      "route": "/admin/auto-linking",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/blog/new/page.tsx",
+      "route": "/admin/blog/new",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/blog/page.tsx",
+      "route": "/admin/blog",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/coe/frameworks/[slug]/page.tsx",
+      "route": "/admin/coe/frameworks/[slug]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/coe/frameworks/new/page.tsx",
+      "route": "/admin/coe/frameworks/new",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/coe/frameworks/page.tsx",
+      "route": "/admin/coe/frameworks",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/coe/people/[id]/page.tsx",
+      "route": "/admin/coe/people/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/coe/people/new/page.tsx",
+      "route": "/admin/coe/people/new",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/coe/people/page.tsx",
+      "route": "/admin/coe/people",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/coe/research/[slug]/page.tsx",
+      "route": "/admin/coe/research/[slug]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/coe/research/new/page.tsx",
+      "route": "/admin/coe/research/new",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/coe/research/page.tsx",
+      "route": "/admin/coe/research",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/content-health/page.tsx",
+      "route": "/admin/content-health",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/data-health/page.tsx",
+      "route": "/admin/data-health",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/data-operations/page.tsx",
+      "route": "/admin/data-operations",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/empathy-ledger/page.tsx",
+      "route": "/admin/empathy-ledger",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/empathy-ledger/sync/page.tsx",
+      "route": "/admin/empathy-ledger/sync",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/events/[id]/page.tsx",
+      "route": "/admin/events/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/events/new/page.tsx",
+      "route": "/admin/events/new",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/events/page.tsx",
+      "route": "/admin/events",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/funding/page.tsx",
+      "route": "/admin/funding",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/justice-matrix/discoveries/page.tsx",
+      "route": "/admin/justice-matrix/discoveries",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/justice-matrix/page.tsx",
+      "route": "/admin/justice-matrix",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/media/page.tsx",
+      "route": "/admin/media",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/organizations/[slug]/edit/page.tsx",
+      "route": "/admin/organizations/[slug]/edit",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/organizations/[slug]/hub/page.tsx",
+      "route": "/admin/organizations/[slug]/hub",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/organizations/[slug]/page.tsx",
+      "route": "/admin/organizations/[slug]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/organizations/[slug]/storytellers/page.tsx",
+      "route": "/admin/organizations/[slug]/storytellers",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/organizations/page.tsx",
+      "route": "/admin/organizations",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/page.tsx",
+      "route": "/admin",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/people/page.tsx",
+      "route": "/admin/people",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/profiles/[id]/connections/page.tsx",
+      "route": "/admin/profiles/[id]/connections",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/profiles/new/page.tsx",
+      "route": "/admin/profiles/new",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/profiles/page.tsx",
+      "route": "/admin/profiles",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/programs/[id]/page.tsx",
+      "route": "/admin/programs/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/programs/[id]/people/page.tsx",
+      "route": "/admin/programs/[id]/people",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/programs/page.tsx",
+      "route": "/admin/programs",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/research/page.tsx",
+      "route": "/admin/research",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/services/page.tsx",
+      "route": "/admin/services",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/signal-engine/page.tsx",
+      "route": "/admin/signal-engine",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/stories/[id]/page.tsx",
+      "route": "/admin/stories/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/stories/new/page.tsx",
+      "route": "/admin/stories/new",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/stories/page.tsx",
+      "route": "/admin/stories",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/admin/stories/transcript/page.tsx",
+      "route": "/admin/stories/transcript",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/art-innovation/[slug]/page.tsx",
+      "route": "/art-innovation/[slug]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/art-innovation/page.tsx",
+      "route": "/art-innovation",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/blog/[slug]/page.tsx",
+      "route": "/blog/[slug]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/blog/page.tsx",
+      "route": "/blog",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/call-it-out/page.tsx",
+      "route": "/call-it-out",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/centre-of-excellence/best-practice/page.tsx",
+      "route": "/centre-of-excellence/best-practice",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/centre-of-excellence/global-insights/page.tsx",
+      "route": "/centre-of-excellence/global-insights",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/centre-of-excellence/map/page.tsx",
+      "route": "/centre-of-excellence/map",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/centre-of-excellence/page.tsx",
+      "route": "/centre-of-excellence",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/centre-of-excellence/people/page.tsx",
+      "route": "/centre-of-excellence/people",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/centre-of-excellence/research/page.tsx",
+      "route": "/centre-of-excellence/research",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/check-cookies/page.tsx",
+      "route": "/check-cookies",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/claims/[id]/page.tsx",
+      "route": "/claims/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/community-map/page.tsx",
+      "route": "/community-map",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/community-programs/[id]/page.tsx",
+      "route": "/community-programs/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/community-programs/add/page.tsx",
+      "route": "/community-programs/add",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/community-programs/page.tsx",
+      "route": "/community-programs",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/contact/page.tsx",
+      "route": "/contact",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/contained/about/page.tsx",
+      "route": "/contained/about",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/contained/launch/page.tsx",
+      "route": "/contained/launch",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/contained/page.tsx",
+      "route": "/contained",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/contained/register/page.tsx",
+      "route": "/contained/register",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/contained/vip-dinner/page.tsx",
+      "route": "/contained/vip-dinner",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/events/[id]/page.tsx",
+      "route": "/events/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/events/[id]/register/page.tsx",
+      "route": "/events/[id]/register",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/events/page.tsx",
+      "route": "/events",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/flywheel/page.tsx",
+      "route": "/flywheel",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/for-community-leaders/page.tsx",
+      "route": "/for-community-leaders",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/for-funders/page.tsx",
+      "route": "/for-funders",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/for-government/page.tsx",
+      "route": "/for-government",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/for-researchers/page.tsx",
+      "route": "/for-researchers",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/gallery/[id]/page.tsx",
+      "route": "/gallery/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/gallery/page.tsx",
+      "route": "/gallery",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/grassroots/page.tsx",
+      "route": "/grassroots",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/how-it-works/page.tsx",
+      "route": "/how-it-works",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/chat/page.tsx",
+      "route": "/intelligence/chat",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/dashboard/page.tsx",
+      "route": "/intelligence/dashboard",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/evidence/[id]/page.tsx",
+      "route": "/intelligence/evidence/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/evidence/page.tsx",
+      "route": "/intelligence/evidence",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/funding/page.tsx",
+      "route": "/intelligence/funding",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/impact-calculator/page.tsx",
+      "route": "/intelligence/impact-calculator",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/interventions/[id]/page.tsx",
+      "route": "/intelligence/interventions/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/interventions/page.tsx",
+      "route": "/intelligence/interventions",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/knowledge/page.tsx",
+      "route": "/intelligence/knowledge",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/map/page.tsx",
+      "route": "/intelligence/map",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/media/[id]/page.tsx",
+      "route": "/intelligence/media/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/nt-showcase/page.tsx",
+      "route": "/intelligence/nt-showcase",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/overview/page.tsx",
+      "route": "/intelligence/overview",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/page.tsx",
+      "route": "/intelligence",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/portfolio/page.tsx",
+      "route": "/intelligence/portfolio",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/programs/[id]/page.tsx",
+      "route": "/intelligence/programs/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/reports/page.tsx",
+      "route": "/intelligence/reports",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/reports/portfolio/page.tsx",
+      "route": "/intelligence/reports/portfolio",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/research/page.tsx",
+      "route": "/intelligence/research",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/status/page.tsx",
+      "route": "/intelligence/status",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/intelligence/tools/dividend-calculator/page.tsx",
+      "route": "/intelligence/tools/dividend-calculator",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/international-exchange/page.tsx",
+      "route": "/international-exchange",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/login/page.tsx",
+      "route": "/login",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/network/[id]/page.tsx",
+      "route": "/network/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/network/page.tsx",
+      "route": "/network",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/opportunities/page.tsx",
+      "route": "/opportunities",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/organizations/[slug]/page.tsx",
+      "route": "/organizations/[slug]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/organizations/page.tsx",
+      "route": "/organizations",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/page.tsx",
+      "route": "/",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/people/[slug]/edit/page.tsx",
+      "route": "/people/[slug]/edit",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/people/[slug]/page.tsx",
+      "route": "/people/[slug]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/people/page.tsx",
+      "route": "/people",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/portal/[slug]/page.tsx",
+      "route": "/portal/[slug]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/portal/page.tsx",
+      "route": "/portal",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/preplanning/page.tsx",
+      "route": "/preplanning",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/preview/complaint-pathfinder/page.tsx",
+      "route": "/preview/complaint-pathfinder",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/preview/grassroots-activation/page.tsx",
+      "route": "/preview/grassroots-activation",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/preview/justice-matrix/page.tsx",
+      "route": "/preview/justice-matrix",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/preview/justice-navigator/page.tsx",
+      "route": "/preview/justice-navigator",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/preview/justice-project/page.tsx",
+      "route": "/preview/justice-project",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/preview/page.tsx",
+      "route": "/preview",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/preview/pledge-map/page.tsx",
+      "route": "/preview/pledge-map",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/preview/racism-heatmap/page.tsx",
+      "route": "/preview/racism-heatmap",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/preview/signal-engine/page.tsx",
+      "route": "/preview/signal-engine",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/preview/watchguard-support-pack/page.tsx",
+      "route": "/preview/watchguard-support-pack",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/privacy/page.tsx",
+      "route": "/privacy",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/reset-password/page.tsx",
+      "route": "/reset-password",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/roadmap/page.tsx",
+      "route": "/roadmap",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/search/page.tsx",
+      "route": "/search",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/services/[id]/page.tsx",
+      "route": "/services/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/services/page.tsx",
+      "route": "/services",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/signup/page.tsx",
+      "route": "/signup",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/stewards/impact/page.tsx",
+      "route": "/stewards/impact",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/stewards/page.tsx",
+      "route": "/stewards",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/stories/[slug]/page.tsx",
+      "route": "/stories/[slug]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/stories/empathy-ledger/[id]/page.tsx",
+      "route": "/stories/empathy-ledger/[id]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/stories/intelligence/page.tsx",
+      "route": "/stories/intelligence",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/stories/new/page.tsx",
+      "route": "/stories/new",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/stories/page.tsx",
+      "route": "/stories",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/stories/the-pattern/page.tsx",
+      "route": "/stories/the-pattern",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/talent-scout/page.tsx",
+      "route": "/talent-scout",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/terms/page.tsx",
+      "route": "/terms",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/test-auth/page.tsx",
+      "route": "/test-auth",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/test-services/page.tsx",
+      "route": "/test-services",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/themes/disability/page.tsx",
+      "route": "/themes/disability",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/themes/page.tsx",
+      "route": "/themes",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/transparency/page.tsx",
+      "route": "/transparency",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/visuals/connections/page.tsx",
+      "route": "/visuals/connections",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/visuals/flow/page.tsx",
+      "route": "/visuals/flow",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/visuals/network/page.tsx",
+      "route": "/visuals/network",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/visuals/page.tsx",
+      "route": "/visuals",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/visuals/transformation/page.tsx",
+      "route": "/visuals/transformation",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/widget/embed/page.tsx",
+      "route": "/widget/embed",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/wiki/[slug]/page.tsx",
+      "route": "/wiki/[slug]",
+      "dynamic": true,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/wiki/mindaroo-pitch/budget-breakdown/page.mdx",
+      "route": "/wiki/mindaroo-pitch/budget-breakdown",
+      "dynamic": false,
+      "type": "mdx"
+    },
+    {
+      "file": "src/app/wiki/mindaroo-pitch/one-pager/page.mdx",
+      "route": "/wiki/mindaroo-pitch/one-pager",
+      "dynamic": false,
+      "type": "mdx"
+    },
+    {
+      "file": "src/app/wiki/mindaroo-pitch/page.mdx",
+      "route": "/wiki/mindaroo-pitch",
+      "dynamic": false,
+      "type": "mdx"
+    },
+    {
+      "file": "src/app/wiki/mindaroo-pitch/research-paper/page.mdx",
+      "route": "/wiki/mindaroo-pitch/research-paper",
+      "dynamic": false,
+      "type": "mdx"
+    },
+    {
+      "file": "src/app/wiki/mindaroo-pitch/screenshots/page.mdx",
+      "route": "/wiki/mindaroo-pitch/screenshots",
+      "dynamic": false,
+      "type": "mdx"
+    },
+    {
+      "file": "src/app/wiki/mindaroo-pitch/sovereignty-flywheel/page.mdx",
+      "route": "/wiki/mindaroo-pitch/sovereignty-flywheel",
+      "dynamic": false,
+      "type": "mdx"
+    },
+    {
+      "file": "src/app/wiki/mindaroo-pitch/strategic-pitch/page.mdx",
+      "route": "/wiki/mindaroo-pitch/strategic-pitch",
+      "dynamic": false,
+      "type": "mdx"
+    },
+    {
+      "file": "src/app/wiki/page.tsx",
+      "route": "/wiki",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/youth-justice-report/chat/page.tsx",
+      "route": "/youth-justice-report/chat",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/youth-justice-report/inquiries/page.tsx",
+      "route": "/youth-justice-report/inquiries",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/youth-justice-report/international/page.tsx",
+      "route": "/youth-justice-report/international",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/youth-justice-report/interventions/page.tsx",
+      "route": "/youth-justice-report/interventions",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/youth-justice-report/page.tsx",
+      "route": "/youth-justice-report",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/youth-justice-report/recommendations/page.tsx",
+      "route": "/youth-justice-report/recommendations",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/youth-justice-report/research/page.tsx",
+      "route": "/youth-justice-report/research",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/youth-scout/page.tsx",
+      "route": "/youth-scout",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/youth-scout/talent-login/page.tsx",
+      "route": "/youth-scout/talent-login",
+      "dynamic": false,
+      "type": "tsx"
+    },
+    {
+      "file": "src/app/youth-scout/youth-login/page.tsx",
+      "route": "/youth-scout/youth-login",
+      "dynamic": false,
+      "type": "tsx"
+    }
+  ],
+  "layouts": [
+    {
+      "file": "src/app/gallery/layout.tsx",
+      "route": "/gallery"
+    },
+    {
+      "file": "src/app/intelligence/layout.tsx",
+      "route": "/intelligence"
+    },
+    {
+      "file": "src/app/layout.tsx",
+      "route": "/"
+    },
+    {
+      "file": "src/app/wiki/layout.tsx",
+      "route": "/wiki"
+    },
+    {
+      "file": "src/app/wiki/mindaroo-pitch/layout.tsx",
+      "route": "/wiki/mindaroo-pitch"
+    },
+    {
+      "file": "src/app/youth-justice-report/layout.tsx",
+      "route": "/youth-justice-report"
+    }
+  ],
+  "pageTop": [
+    [
+      "admin",
+      45
+    ],
+    [
+      "intelligence",
+      21
+    ],
+    [
+      "preview",
+      10
+    ],
+    [
+      "wiki",
+      9
+    ],
+    [
+      "youth-justice-report",
+      7
+    ],
+    [
+      "centre-of-excellence",
+      6
+    ],
+    [
+      "stories",
+      6
+    ],
+    [
+      "contained",
+      5
+    ],
+    [
+      "visuals",
+      5
+    ],
+    [
+      "community-programs",
+      3
+    ],
+    [
+      "events",
+      3
+    ],
+    [
+      "people",
+      3
+    ],
+    [
+      "youth-scout",
+      3
+    ],
+    [
+      "about",
+      2
+    ],
+    [
+      "art-innovation",
+      2
+    ],
+    [
+      "blog",
+      2
+    ],
+    [
+      "gallery",
+      2
+    ],
+    [
+      "network",
+      2
+    ],
+    [
+      "organizations",
+      2
+    ],
+    [
+      "portal",
+      2
+    ],
+    [
+      "services",
+      2
+    ],
+    [
+      "stewards",
+      2
+    ],
+    [
+      "themes",
+      2
+    ],
+    [
+      "call-it-out",
+      1
+    ],
+    [
+      "check-cookies",
+      1
+    ],
+    [
+      "claims",
+      1
+    ],
+    [
+      "community-map",
+      1
+    ],
+    [
+      "contact",
+      1
+    ],
+    [
+      "flywheel",
+      1
+    ],
+    [
+      "for-community-leaders",
+      1
+    ],
+    [
+      "for-funders",
+      1
+    ],
+    [
+      "for-government",
+      1
+    ],
+    [
+      "for-researchers",
+      1
+    ],
+    [
+      "grassroots",
+      1
+    ],
+    [
+      "how-it-works",
+      1
+    ],
+    [
+      "international-exchange",
+      1
+    ],
+    [
+      "login",
+      1
+    ],
+    [
+      "opportunities",
+      1
+    ],
+    [
+      "/",
+      1
+    ],
+    [
+      "preplanning",
+      1
+    ],
+    [
+      "privacy",
+      1
+    ],
+    [
+      "reset-password",
+      1
+    ],
+    [
+      "roadmap",
+      1
+    ],
+    [
+      "search",
+      1
+    ],
+    [
+      "signup",
+      1
+    ],
+    [
+      "talent-scout",
+      1
+    ],
+    [
+      "terms",
+      1
+    ],
+    [
+      "test-auth",
+      1
+    ],
+    [
+      "test-services",
+      1
+    ],
+    [
+      "transparency",
+      1
+    ],
+    [
+      "widget",
+      1
+    ]
+  ]
+}

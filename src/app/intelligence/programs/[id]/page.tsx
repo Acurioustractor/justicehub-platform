@@ -87,7 +87,7 @@ export default async function InterventionDetailPage({ params }: PageProps) {
     // Media mentions
     supabase
       .from('alma_media_articles')
-      .select('id, headline, source_name, article_url')
+      .select('id, headline, source_name, url')
       .contains('related_programs', [id])
       .limit(10),
   ]);
@@ -106,7 +106,7 @@ export default async function InterventionDetailPage({ params }: PageProps) {
       role: item.role,
       relevance_note: item.notes,
     })) || [],
-    evidence: evidenceData.data?.map((item: any) => {
+    evidence: (evidenceData.data?.map((item: any) => {
       const evidence = item.alma_evidence;
       if (!evidence) return null;
       return {
@@ -114,8 +114,13 @@ export default async function InterventionDetailPage({ params }: PageProps) {
         title: evidence.title,
         source_title: evidence.metadata?.source_title || evidence.source_url || 'Source unavailable',
       };
-    }).filter(Boolean) || [],
-    mediaArticles: mediaData.data || [],
+    }).filter(Boolean) || []) as { id: string; title: string; source_title: string }[],
+    mediaArticles: (mediaData.data || []).map((item: any) => ({
+      id: item.id,
+      headline: item.headline,
+      source_name: item.source_name,
+      article_url: item.url,
+    })),
   };
 
   return (
@@ -231,11 +236,11 @@ export default async function InterventionDetailPage({ params }: PageProps) {
             )}
 
             {/* Source Documents */}
-            {intervention.source_documents && intervention.source_documents.length > 0 && (
+            {intervention.source_documents && Array.isArray(intervention.source_documents) && intervention.source_documents.length > 0 && (
               <div className="border-2 border-black p-6 bg-white">
                 <h2 className="text-2xl font-bold mb-4">Source Documents</h2>
                 <div className="space-y-2">
-                  {intervention.source_documents.map((doc: any, idx: number) => (
+                  {(intervention.source_documents as any[]).map((doc: any, idx: number) => (
                     <a
                       key={idx}
                       href={doc.url}

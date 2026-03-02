@@ -1,5 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { requireAdmin } from '@/lib/supabase/admin';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { Edit, Eye, EyeOff, Trash2, UserPlus } from 'lucide-react';
@@ -9,32 +8,11 @@ export default async function AdminProfilesPage({
 }: {
   searchParams: { filter?: string };
 }) {
-  const supabase = await createClient();
-
-  // Check if user is admin
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect('/login?redirect=/admin/profiles');
-  }
-
-  // Check admin role
-  const { data: profileData } = await supabase
-    .from('profiles')
-    .select('is_super_admin')
-    .eq('id', user.id)
-    .single();
-
-  if (!profileData?.is_super_admin) {
-    console.log('Not super admin - redirecting.');
-    redirect('/');
-  }
-
-  console.log('Admin access granted!');
+  const { supabase } = await requireAdmin('/admin/profiles');
 
   // Fetch all public profiles with filters
   // Note: public_profiles is the display-focused table with slug, photo_url, role_tags
-  // The 'profiles' table is auth-linked and used for is_super_admin checks
+  // The 'profiles' table is auth-linked and used for role-based admin checks
   let query = supabase
     .from('public_profiles')
     .select(`
@@ -192,9 +170,9 @@ export default async function AdminProfilesPage({
                           <span className="text-gray-400 italic">No email</span>
                         )}
                       </div>
-                      {profile.is_super_admin && (
+                      {(profile as any).role === 'admin' && (
                         <div className="text-xs text-earth-600 font-bold">
-                          SUPER ADMIN
+                          ADMIN
                         </div>
                       )}
                     </td>

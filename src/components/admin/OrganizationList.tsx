@@ -7,12 +7,12 @@ import { Search, Filter, X, Sparkles, MapPin, Building2 } from 'lucide-react';
 interface Organization {
   id: string;
   name: string;
-  slug: string;
+  slug: string | null;
   description: string | null;
   type: string | null;
   location: string | null;
   website: string | null;
-  created_at: string;
+  created_at: string | null;
   organizations_profiles: Array<{
     id: string;
     role: string | null;
@@ -21,7 +21,7 @@ interface Organization {
       id: string;
       full_name: string;
       photo_url: string | null;
-      slug: string;
+      slug: string | null;
     } | null;
   }>;
 }

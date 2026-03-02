@@ -1,9 +1,5 @@
 // Main campaign components
-export { HeroSection } from "./hero-section";
 export { StoriesSection } from "./stories-section";
-export { EvidenceSection } from "./evidence-section";
-export { NominateSection } from "./nominate-section";
-export { BookSection } from "./book-section";
 
 // Layout components
 export { SiteHeader } from "./site-header";

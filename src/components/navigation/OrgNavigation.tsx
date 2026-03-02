@@ -29,12 +29,12 @@ interface NavItem {
 const navItems: NavItem[] = [
   {
     label: 'Dashboard',
-    href: '/dashboard/organization',
+    href: '/admin',
     icon: Home,
   },
   {
     label: 'Youth Members',
-    href: '/admin/youth',
+    href: '/youth-scout',
     icon: Users,
   },
   {
@@ -44,18 +44,18 @@ const navItems: NavItem[] = [
   },
   {
     label: 'Opportunities',
-    href: '/admin/opportunities',
+    href: '/opportunities',
     icon: Briefcase,
   },
   {
     label: 'Analytics',
-    href: '/analytics',
+    href: '/intelligence/dashboard',
     icon: Heart,
     badge: 'Empathy Ledger',
   },
   {
     label: 'Settings',
-    href: '/admin/settings',
+    href: '/admin',
     icon: Settings,
   },
 ];
@@ -72,7 +72,7 @@ export function OrgNavigation() {
         <div className="flex flex-col flex-1 pt-5 pb-4 overflow-y-auto">
           {/* Logo */}
           <div className="flex items-center flex-shrink-0 px-4">
-            <Link href="/dashboard" className="flex items-center">
+            <Link href="/admin" className="flex items-center">
               <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center mr-3">
                 <Heart className="h-5 w-5 text-white" />
               </div>
@@ -160,7 +160,7 @@ export function OrgNavigation() {
             <Menu className="h-6 w-6" aria-hidden="true" />
           </button>
           <div className="flex-1 flex items-center">
-            <Link href="/dashboard" className="flex items-center">
+            <Link href="/admin" className="flex items-center">
               <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center mr-3">
                 <Heart className="h-5 w-5 text-white" />
               </div>
@@ -175,7 +175,7 @@ export function OrgNavigation() {
             <div className="fixed inset-0 bg-gray-900/80" onClick={() => setMobileMenuOpen(false)} />
             <div className="fixed inset-y-0 left-0 w-full max-w-xs bg-white dark:bg-gray-900 shadow-xl">
               <div className="flex items-center justify-between p-4">
-                <Link href="/dashboard" className="flex items-center">
+                <Link href="/admin" className="flex items-center">
                   <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center mr-3">
                     <Heart className="h-5 w-5 text-white" />
                   </div>

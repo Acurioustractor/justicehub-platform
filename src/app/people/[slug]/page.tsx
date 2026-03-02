@@ -79,12 +79,12 @@ export default async function ProfilePage({
     // Check admin status from auth-linked profiles table
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('is_super_admin')
+      .select('role')
       .eq('id', user.id)
       .single();
 
     console.log('👤 Profile data:', profileData);
-    canEdit = profileData?.is_super_admin === true;
+    canEdit = profileData?.role === 'admin';
   }
 
   // Fetch public profile - allow private profiles if user owns them
@@ -244,7 +244,7 @@ export default async function ProfilePage({
               {/* Role Tags */}
               {typedProfile.role_tags && typedProfile.role_tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {typedProfile.role_tags.map((tag, index) => (
+                  {typedProfile.role_tags.map((tag: string, index: number) => (
                     <span
                       key={index}
                       className="px-3 py-1 bg-black text-white text-sm font-bold uppercase tracking-wider"

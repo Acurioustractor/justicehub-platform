@@ -1,27 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient as createAuthClient } from '@/lib/supabase/server';
+import { createClient as createServiceClient } from '@supabase/supabase-js';
+import {
+  fetchNotificationTargets,
+  generateClosingSoonNotifications,
+  generateFundingAlertNotifications,
+  persistFundingNotifications,
+  type BasecampNotificationTarget,
+  type NotificationPayload,
+} from '@/lib/funding/notification-engine';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-interface BasecampMatch {
-  organization_id: string;
-  organization_name: string;
-  jurisdictions: string[];
-  focus_areas: string[];
+function getServiceClient() {
+  return createServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 }
 
-interface NotificationPayload {
-  type: 'funding_alert' | 'research_digest' | 'closing_soon' | 'weekly_report';
-  organization_id?: string;
-  data: Record<string, unknown>;
+async function isAdmin(supabase: any, userId: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', userId)
+    .single();
+  return data?.role === 'admin';
 }
 
 // POST - Send notifications to basecamps
 export async function POST(request: NextRequest) {
   try {
+    const authClient = await createAuthClient();
+    const { data: { user } } = await authClient.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!await isAdmin(authClient, user.id)) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    }
+
+    const supabase = getServiceClient();
     const body = await request.json();
     const { type, organization_ids, data } = body;
 
@@ -32,40 +49,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get target organizations
-    let targetOrgs: BasecampMatch[] = [];
-
-    if (organization_ids && organization_ids.length > 0) {
-      // Specific organizations
-      const { data: orgs, error } = await supabase
-        .from('organizations')
-        .select('id, name, metadata')
-        .in('id', organization_ids);
-
-      if (error) throw error;
-
-      targetOrgs = (orgs || []).map((org) => ({
-        organization_id: org.id,
-        organization_name: org.name,
-        jurisdictions: org.metadata?.jurisdictions || [],
-        focus_areas: org.metadata?.focus_areas || [],
-      }));
-    } else {
-      // All basecamps (partner_tier = 'basecamp')
-      const { data: orgs, error } = await supabase
-        .from('organizations')
-        .select('id, name, metadata')
-        .eq('partner_tier', 'basecamp');
-
-      if (error) throw error;
-
-      targetOrgs = (orgs || []).map((org) => ({
-        organization_id: org.id,
-        organization_name: org.name,
-        jurisdictions: org.metadata?.jurisdictions || [],
-        focus_areas: org.metadata?.focus_areas || [],
-      }));
-    }
+    const targetOrgs = await fetchNotificationTargets(
+      supabase,
+      Array.isArray(organization_ids) ? organization_ids : undefined
+    );
 
     if (targetOrgs.length === 0) {
       return NextResponse.json({
@@ -80,25 +67,25 @@ export async function POST(request: NextRequest) {
     switch (type) {
       case 'funding_alert':
         notifications.push(
-          ...(await generateFundingAlerts(targetOrgs, data))
+          ...(await generateFundingAlertNotifications(supabase, targetOrgs))
         );
         break;
 
       case 'closing_soon':
         notifications.push(
-          ...(await generateClosingSoonAlerts(targetOrgs))
+          ...(await generateClosingSoonNotifications(supabase, targetOrgs))
         );
         break;
 
       case 'research_digest':
         notifications.push(
-          ...(await generateResearchDigests(targetOrgs, data))
+          ...(await generateResearchDigests(supabase, targetOrgs, data))
         );
         break;
 
       case 'weekly_report':
         notifications.push(
-          ...(await generateWeeklyReports(targetOrgs))
+          ...(await generateWeeklyReports(supabase, targetOrgs))
         );
         break;
 
@@ -109,25 +96,37 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    // Store notifications (for in-app display)
-    const { error: insertError } = await supabase
-      .from('alma_report_deliveries')
-      .insert(
-        notifications.map((n) => ({
-          report_id: data?.report_id || null,
-          delivery_method: 'dashboard',
-          status: 'sent',
-          sent_at: new Date().toISOString(),
-        }))
-      );
+    const persisted = await persistFundingNotifications(supabase, notifications, {
+      source: 'funding_notifications_admin',
+      requestedBy: user.id,
+    });
 
-    if (insertError) {
-      console.error('Error storing notifications:', insertError);
+    let deliveriesStored = 0;
+    const reportId = typeof data?.report_id === 'string' ? data.report_id : null;
+    if (type === 'weekly_report' && reportId) {
+      const { error: deliveryError } = await supabase
+        .from('alma_report_deliveries')
+        .insert(
+          notifications.map(() => ({
+            report_id: reportId,
+            delivery_method: 'dashboard',
+            status: 'sent',
+            sent_at: new Date().toISOString(),
+          }))
+        );
+
+      if (deliveryError) {
+        console.error('Error storing report deliveries:', deliveryError);
+      } else {
+        deliveriesStored = notifications.length;
+      }
     }
 
     return NextResponse.json({
       message: `${notifications.length} notifications generated`,
       notifications_sent: notifications.length,
+      notifications_stored: persisted.stored,
+      report_deliveries_stored: deliveriesStored,
       target_organizations: targetOrgs.length,
       type,
     });
@@ -143,6 +142,17 @@ export async function POST(request: NextRequest) {
 // GET - Get notification stats
 export async function GET() {
   try {
+    const authClient = await createAuthClient();
+    const { data: { user } } = await authClient.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    if (!await isAdmin(authClient, user.id)) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    }
+
+    const supabase = getServiceClient();
+
     // Get recent notification stats
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -150,6 +160,8 @@ export async function GET() {
     const [
       { count: totalDeliveries },
       { count: recentDeliveries },
+      { count: totalFundingNotifications },
+      { count: recentFundingNotifications },
       { data: basecamps },
     ] = await Promise.all([
       supabase
@@ -158,6 +170,17 @@ export async function GET() {
       supabase
         .from('alma_report_deliveries')
         .select('*', { count: 'exact', head: true })
+        .gte('created_at', sevenDaysAgo.toISOString()),
+      supabase
+        .from('agent_task_queue')
+        .select('*', { count: 'exact', head: true })
+        .in('source', ['funding_notifications_admin', 'funding_notifications_system0'])
+        .eq('task_type', 'funding_notification'),
+      supabase
+        .from('agent_task_queue')
+        .select('*', { count: 'exact', head: true })
+        .in('source', ['funding_notifications_admin', 'funding_notifications_system0'])
+        .eq('task_type', 'funding_notification')
         .gte('created_at', sevenDaysAgo.toISOString()),
       supabase
         .from('organizations')
@@ -169,6 +192,8 @@ export async function GET() {
       stats: {
         total_deliveries: totalDeliveries || 0,
         deliveries_last_7_days: recentDeliveries || 0,
+        total_funding_notifications: totalFundingNotifications || 0,
+        funding_notifications_last_7_days: recentFundingNotifications || 0,
         active_basecamps: basecamps?.length || 0,
       },
       basecamps: basecamps || [],
@@ -182,124 +207,10 @@ export async function GET() {
   }
 }
 
-// Helper: Generate funding alerts for matched opportunities
-async function generateFundingAlerts(
-  orgs: BasecampMatch[],
-  data?: Record<string, unknown>
-): Promise<NotificationPayload[]> {
-  const notifications: NotificationPayload[] = [];
-
-  // Get recent high-relevance funding opportunities
-  const { data: opportunities } = await supabase
-    .from('alma_funding_opportunities')
-    .select('*')
-    .in('status', ['open', 'closing_soon'])
-    .gte('relevance_score', 50)
-    .order('relevance_score', { ascending: false })
-    .limit(20);
-
-  if (!opportunities || opportunities.length === 0) {
-    return notifications;
-  }
-
-  for (const org of orgs) {
-    // Find opportunities matching this org's jurisdictions
-    const matchedOpps = opportunities.filter((opp) => {
-      const oppJurisdictions = opp.jurisdictions || [];
-      const hasJurisdictionMatch =
-        oppJurisdictions.includes('National') ||
-        oppJurisdictions.some((j: string) => org.jurisdictions.includes(j));
-
-      // Check focus area overlap
-      const oppFocusAreas = opp.focus_areas || [];
-      const hasFocusMatch = oppFocusAreas.some((f: string) =>
-        org.focus_areas.includes(f)
-      );
-
-      return hasJurisdictionMatch || hasFocusMatch;
-    });
-
-    if (matchedOpps.length > 0) {
-      notifications.push({
-        type: 'funding_alert',
-        organization_id: org.organization_id,
-        data: {
-          organization_name: org.organization_name,
-          matched_opportunities: matchedOpps.slice(0, 5).map((opp) => ({
-            id: opp.id,
-            name: opp.name,
-            funder: opp.funder_name,
-            amount: opp.max_grant_amount,
-            deadline: opp.deadline,
-            relevance: opp.relevance_score,
-          })),
-          total_matches: matchedOpps.length,
-        },
-      });
-    }
-  }
-
-  return notifications;
-}
-
-// Helper: Generate closing soon alerts
-async function generateClosingSoonAlerts(
-  orgs: BasecampMatch[]
-): Promise<NotificationPayload[]> {
-  const notifications: NotificationPayload[] = [];
-
-  // Get opportunities closing in next 14 days
-  const futureDate = new Date();
-  futureDate.setDate(futureDate.getDate() + 14);
-
-  const { data: closingSoon } = await supabase
-    .from('alma_funding_opportunities')
-    .select('*')
-    .in('status', ['open', 'closing_soon'])
-    .gt('deadline', new Date().toISOString())
-    .lt('deadline', futureDate.toISOString())
-    .order('deadline', { ascending: true });
-
-  if (!closingSoon || closingSoon.length === 0) {
-    return notifications;
-  }
-
-  for (const org of orgs) {
-    const matched = closingSoon.filter((opp) => {
-      const oppJurisdictions = opp.jurisdictions || [];
-      return (
-        oppJurisdictions.includes('National') ||
-        oppJurisdictions.some((j: string) => org.jurisdictions.includes(j))
-      );
-    });
-
-    if (matched.length > 0) {
-      notifications.push({
-        type: 'closing_soon',
-        organization_id: org.organization_id,
-        data: {
-          organization_name: org.organization_name,
-          closing_soon: matched.map((opp) => ({
-            id: opp.id,
-            name: opp.name,
-            funder: opp.funder_name,
-            deadline: opp.deadline,
-            days_left: Math.ceil(
-              (new Date(opp.deadline).getTime() - Date.now()) /
-                (1000 * 60 * 60 * 24)
-            ),
-          })),
-        },
-      });
-    }
-  }
-
-  return notifications;
-}
-
 // Helper: Generate research digests
 async function generateResearchDigests(
-  orgs: BasecampMatch[],
+  supabase: any,
+  orgs: BasecampNotificationTarget[],
   data?: Record<string, unknown>
 ): Promise<NotificationPayload[]> {
   const notifications: NotificationPayload[] = [];
@@ -322,7 +233,7 @@ async function generateResearchDigests(
 
   for (const org of orgs) {
     // Filter evidence relevant to this org
-    const matched = evidence.filter((item) => {
+    const matched = evidence.filter((item: any) => {
       const jurisdictions = item.metadata?.jurisdictions || [];
       const topics = item.metadata?.topics || [];
 
@@ -344,7 +255,7 @@ async function generateResearchDigests(
         data: {
           organization_name: org.organization_name,
           period_days: periodDays,
-          new_evidence: matched.slice(0, 10).map((item) => ({
+          new_evidence: matched.slice(0, 10).map((item: any) => ({
             id: item.id,
             title: item.title,
             type: item.evidence_type,
@@ -361,7 +272,8 @@ async function generateResearchDigests(
 
 // Helper: Generate weekly reports
 async function generateWeeklyReports(
-  orgs: BasecampMatch[]
+  supabase: any,
+  orgs: BasecampNotificationTarget[]
 ): Promise<NotificationPayload[]> {
   const notifications: NotificationPayload[] = [];
 

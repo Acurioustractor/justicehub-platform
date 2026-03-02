@@ -164,28 +164,28 @@ export async function GET(request: Request) {
     const supabase = createServiceClient();
 
     // Try to fetch from transparency_budget table
-    const { data: budgetData, error: budgetError } = await supabase
-      .from('transparency_budget')
+    const { data: budgetData, error: budgetError } = await (supabase
+      .from('transparency_budget' as never)
       .select('*')
       .eq('state', state)
       .eq('financial_year', financialYear)
-      .order('department');
+      .order('department') as unknown as Promise<{ data: BudgetItem[] | null; error: unknown }>);
 
     // Try to fetch alerts
-    const { data: alertData, error: alertError } = await supabase
-      .from('transparency_alerts')
+    const { data: alertData, error: alertError } = await (supabase
+      .from('transparency_alerts' as never)
       .select('*')
       .eq('state', state)
       .eq('is_active', true)
       .order('date', { ascending: false })
-      .limit(10);
+      .limit(10) as unknown as Promise<{ data: Alert[] | null; error: unknown }>);
 
     // Try to fetch key metrics
-    const { data: metricData, error: metricError } = await supabase
-      .from('transparency_metrics')
+    const { data: metricData, error: metricError } = await (supabase
+      .from('transparency_metrics' as never)
       .select('*')
       .eq('state', state)
-      .eq('financial_year', financialYear);
+      .eq('financial_year', financialYear) as unknown as Promise<{ data: KeyMetric[] | null; error: unknown }>);
 
     // Use database data if available, otherwise fallback
     const budget = budgetData && budgetData.length > 0 ? budgetData : fallbackBudgetData;

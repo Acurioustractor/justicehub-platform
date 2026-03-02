@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   Mail,
   Phone,
@@ -15,6 +16,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import { trackJourneyEvent } from '@/lib/analytics/journey';
 
 interface ContactFormData {
   name: string;
@@ -26,7 +28,52 @@ interface ContactFormData {
   organization: string;
 }
 
-export default function ContactPage() {
+type QueryLike = { get(name: string): string | null };
+
+function getPrefillCategory(params: QueryLike): string {
+  const topic = (params.get('topic') || '').toLowerCase();
+  const type = (params.get('type') || '').toLowerCase();
+  const intent = (params.get('intent') || '').toLowerCase();
+
+  if (topic === 'media' || type === 'press') return 'press';
+  if (type === 'partner' || type === 'partnership' || intent === 'partner') return 'partnership';
+  if (type === 'support' || intent === 'support') return 'support';
+  if (type === 'story') return 'story';
+  return 'general';
+}
+
+function getPrefillSubject(params: QueryLike): string {
+  const source = params.get('source') || 'website';
+  const type = params.get('type') || params.get('topic') || 'inquiry';
+  const selectedId = params.get('selected_id');
+  if (selectedId) return `[${source}] ${type} - ${selectedId}`;
+  return `[${source}] ${type} inquiry`;
+}
+
+function getPrefillMessage(params: QueryLike): string {
+  const intent = params.get('intent') || 'general';
+  const route = params.get('route') || 'unknown';
+  const selectedId = params.get('selected_id') || 'none';
+  const source = params.get('source') || 'website';
+
+  return [
+    'Hi JusticeHub team,',
+    '',
+    `I am reaching out from the ${source} journey.`,
+    `Intent: ${intent}`,
+    `Route context: ${route}`,
+    `Selected item: ${selectedId}`,
+    '',
+    'What I need help with:',
+    '- ',
+    '',
+    'Preferred response channel:',
+    '- '
+  ].join('\n');
+}
+
+function ContactPageContent() {
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
@@ -36,10 +83,46 @@ export default function ContactPage() {
     message: '',
     organization: ''
   });
+  const [prefillApplied, setPrefillApplied] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (prefillApplied) return;
+
+    const hasJourneyContext = ['source', 'type', 'intent', 'topic', 'route', 'selected_id']
+      .some((key) => searchParams.get(key));
+
+    if (!hasJourneyContext) {
+      setPrefillApplied(true);
+      return;
+    }
+
+    const category = getPrefillCategory(searchParams);
+    const subject = getPrefillSubject(searchParams);
+    const message = getPrefillMessage(searchParams);
+
+    void trackJourneyEvent({
+      eventName: 'contact_prefill_loaded',
+      properties: {
+        source: searchParams.get('source') || 'unknown',
+        intent: searchParams.get('intent') || 'general',
+        type: searchParams.get('type') || searchParams.get('topic') || 'inquiry',
+        route: searchParams.get('route') || null,
+        selected_id: searchParams.get('selected_id') || null,
+      },
+    });
+
+    setFormData((prev) => ({
+      ...prev,
+      category,
+      subject: prev.subject || subject,
+      message: prev.message || message
+    }));
+    setPrefillApplied(true);
+  }, [prefillApplied, searchParams]);
 
   const categories = [
     { value: 'general', label: 'General Inquiry', icon: MessageSquare },
@@ -394,7 +477,7 @@ export default function ContactPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               <Link
-                href="/support"
+                href="/how-it-works"
                 className="group bg-white border-2 border-black p-6 hover:bg-blue-800 hover:text-white transition-all"
               >
                 <HelpCircle className="h-8 w-8 mb-3" />
@@ -403,7 +486,7 @@ export default function ContactPage() {
               </Link>
 
               <Link
-                href="/partners"
+                href="/for-community-leaders"
                 className="group bg-white border-2 border-black p-6 hover:bg-blue-800 hover:text-white transition-all"
               >
                 <Building2 className="h-8 w-8 mb-3" />
@@ -412,7 +495,7 @@ export default function ContactPage() {
               </Link>
 
               <Link
-                href="/media"
+                href="/contact?topic=media"
                 className="group bg-white border-2 border-black p-6 hover:bg-blue-800 hover:text-white transition-all"
               >
                 <Mail className="h-8 w-8 mb-3" />
@@ -426,5 +509,13 @@ export default function ContactPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function ContactPage() {
+  return (
+    <Suspense fallback={null}>
+      <ContactPageContent />
+    </Suspense>
   );
 }

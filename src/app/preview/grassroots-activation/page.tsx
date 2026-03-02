@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { usePreviewAuth } from '@/lib/hooks/use-preview-auth';
 import {
   Lock,
   MapPin,
@@ -97,32 +98,11 @@ const categoryStyles: Record<string, { text: string; bg: string; dot: string; ic
 };
 
 export default function GrassrootsActivationPreviewPage() {
-  const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [error, setError] = useState('');
+  const { isAuthenticated, isLoading, password, setPassword, error, handleSubmit } = usePreviewAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'basecamps' | 'services' | 'funders' | 'timeline' | 'revenue'>('overview');
   const [selectedBasecamp, setSelectedBasecamp] = useState<Basecamp | null>(null);
   const [expandedPhase, setExpandedPhase] = useState<number | null>(1);
   const [calculatorAmount, setCalculatorAmount] = useState(100000);
-
-  useEffect(() => {
-    const auth = sessionStorage.getItem('grassroots-activation-preview-auth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === 'justice2026') {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('grassroots-activation-preview-auth', 'true');
-      setError('');
-    } else {
-      setError('Incorrect password');
-      setPassword('');
-    }
-  };
 
   const calculatedBenefits = useMemo(() => {
     const stateGovShare = calculatorAmount * 0.3;
@@ -135,6 +115,14 @@ export default function GrassrootsActivationPreviewPage() {
       average: (stateGovShare + corporateShare + researchShare) / 3
     };
   }, [calculatorAmount]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-900 to-green-900 flex items-center justify-center">
+        <div className="text-emerald-300">Loading...</div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return (

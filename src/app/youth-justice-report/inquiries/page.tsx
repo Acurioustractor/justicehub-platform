@@ -141,7 +141,7 @@ export default async function InquiriesPage() {
       <section className="py-8">
         <div className="container-justice max-w-5xl">
           <div className="space-y-6">
-            {displayInquiries.map((inquiry, index) => (
+            {displayInquiries.map((inquiry: any, index: number) => (
               <div
                 key={inquiry.id || index}
                 className="border-2 border-black p-6 bg-white"

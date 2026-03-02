@@ -1,5 +1,16 @@
 import { SignalGauge } from './SignalGauge';
-import type { PortfolioScore } from '@/types/alma';
+
+interface PortfolioScore {
+  composite: number;
+  evidence_strength: number;
+  community_authority: number;
+  harm_risk: number;
+  implementation_capability: number;
+  option_value: number;
+  tier?: string;
+  recommendations?: string[];
+  tags?: string[];
+}
 
 interface PortfolioScoreCardProps {
   score: PortfolioScore;

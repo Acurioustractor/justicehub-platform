@@ -56,7 +56,6 @@ export default function StatusPage() {
     const formatDate = (dateStr: string | null) => {
         if (!dateStr) return 'NEVER';
         return new Date(dateStr).toLocaleString('en-AU', {
-            fontFamily: 'monospace',
             month: 'short',
             day: 'numeric',
             hour: '2-digit',

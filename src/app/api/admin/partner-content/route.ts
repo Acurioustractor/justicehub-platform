@@ -15,10 +15,10 @@ const CONTENT_TABLES: Record<string, string> = {
 async function isAdmin(supabase: any, userId: string): Promise<boolean> {
   const { data } = await supabase
     .from('profiles')
-    .select('is_super_admin')
+    .select('role')
     .eq('id', userId)
     .single();
-  return data?.is_super_admin === true;
+  return data?.role === 'admin';
 }
 
 // Get service client

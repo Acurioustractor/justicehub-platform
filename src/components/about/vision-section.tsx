@@ -376,7 +376,7 @@ export function VisionSection() {
               Get Involved
             </a>
             <a
-              href="/vision-2030-report"
+              href="/about/roadmap"
               className="px-6 py-3 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors"
             >
               Full Vision Report

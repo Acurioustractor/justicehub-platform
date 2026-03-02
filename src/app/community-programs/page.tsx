@@ -81,10 +81,10 @@ function normalizeProgramRecord(row: unknown): ProgramCatalogRecord | null {
 }
 
 async function getCommunityProgramsData() {
-  const supabase = createServiceClient();
-  const untypedSupabase = supabase as any;
-
   try {
+    const supabase = createServiceClient();
+    const untypedSupabase = supabase as any;
+
     const { data: programs, error } = await untypedSupabase
       .from('programs_catalog_v')
       .select('*')

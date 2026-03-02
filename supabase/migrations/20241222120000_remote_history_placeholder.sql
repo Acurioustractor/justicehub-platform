@@ -1,0 +1,4 @@
+-- Remote history placeholder
+-- Version: 20241222120000
+-- Purpose: records an existing remote migration history entry so local Supabase CLI state can be re-baselined.
+-- This file is intentionally a no-op and must not be treated as a new schema change.

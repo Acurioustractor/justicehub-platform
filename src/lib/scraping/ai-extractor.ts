@@ -205,7 +205,7 @@ Extract ALL services found. Return empty array [] if no services found.`;
             scrape_confidence_score: validated.confidence,
             contact_email: validated.contact_email || undefined,
             website_url: validated.website_url || undefined,
-          });
+          } as unknown as ScrapedService);
         } catch (validationError) {
           console.warn('Service validation failed:', validationError);
           // Continue with other services

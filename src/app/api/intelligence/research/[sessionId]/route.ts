@@ -96,7 +96,7 @@ export async function POST(
     }
 
     const updatedScratchpad = {
-      ...session.scratchpad,
+      ...(session.scratchpad as Record<string, unknown>),
       feedback: {
         helpful,
         corrections,

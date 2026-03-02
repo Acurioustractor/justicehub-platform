@@ -1,0 +1,4 @@
+-- Remote history placeholder
+-- This no-op migration exists only to represent a migration version
+-- already present in the linked Supabase project's remote history.
+-- Do not add schema changes here.

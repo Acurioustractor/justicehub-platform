@@ -96,15 +96,16 @@ export default function DataOperationsPage() {
     return icons[type] || <Database className="w-5 h-5" />;
   };
 
-  if (loading) return (<div className="min-h-screen bg-gray-50"><Navigation /><main className="pt-32 pb-16"><div className="container-justice"><div className="flex justify-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div></div></div></main><Footer /></div>);
+  if (loading) return (<div className="min-h-screen bg-gray-50 page-content"><Navigation /><div className="pt-8 pb-16"><div className="container-justice"><div className="flex justify-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div></div></div></div><Footer /></div>);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 page-content">
       <Navigation />
-      <main className="pt-32 pb-16">
+      <div className="pt-8 pb-16">
         <div className="container-justice">
           <div className="flex items-center justify-between mb-8">
             <div>
+              <Link href="/admin" className="text-sm text-gray-500 hover:text-black font-medium mb-2 inline-block">&larr; Admin Dashboard</Link>
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-black text-white"><Database className="w-6 h-6" /></div>
                 <h1 className="text-4xl font-black">Data Operations</h1>
@@ -150,7 +151,7 @@ export default function DataOperationsPage() {
               <div className="border-2 border-black bg-white p-4 h-[300px]">
                 {stateChartData.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
-                    <PieChart><Pie data={stateChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>{stateChartData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}</Pie><Tooltip /></PieChart>
+                    <PieChart><Pie data={stateChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={(({ name, percent }: { name: string; percent?: number }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`) as any} labelLine={false}>{stateChartData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}</Pie><Tooltip /></PieChart>
                   </ResponsiveContainer>
                 ) : <div className="h-full flex items-center justify-center text-gray-500">No state data</div>}
               </div>
@@ -223,7 +224,7 @@ export default function DataOperationsPage() {
             </div>
           </section>
         </div>
-      </main>
+      </div>
       <Footer />
     </div>
   );
