@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, CheckCircle2, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink } from 'lucide-react';
+import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, CheckCircle2, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink, Mail } from 'lucide-react';
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -51,6 +51,8 @@ export default async function AdminDashboard() {
     { count: photosCount },
     { count: videosCount },
     { count: intlProgramsCount },
+    { count: inboxCount },
+    { count: inboxNewCount },
   ] = await Promise.all([
     supabase.from('public_profiles').select('*', { count: 'exact', head: true }),
     supabase.from('public_profiles').select('*', { count: 'exact', head: true }).eq('is_public', true),
@@ -77,6 +79,8 @@ export default async function AdminDashboard() {
     supabase.from('partner_photos').select('*', { count: 'exact', head: true }),
     supabase.from('partner_videos').select('*', { count: 'exact', head: true }),
     supabase.from('international_programs').select('*', { count: 'exact', head: true }),
+    (supabase as any).from('contact_submissions').select('*', { count: 'exact', head: true }),
+    (supabase as any).from('contact_submissions').select('*', { count: 'exact', head: true }).eq('status', 'new'),
   ]);
 
   // Fetch onboarded partner organizations (those with active system accounts)
@@ -215,6 +219,17 @@ export default async function AdminDashboard() {
       color: 'from-yellow-500 to-yellow-600',
       bgColor: 'bg-yellow-50',
       textColor: 'text-yellow-600',
+    },
+    {
+      title: 'Inbox',
+      count: inboxCount || 0,
+      subtitle: `${inboxNewCount || 0} new`,
+      icon: Mail,
+      href: '/admin/inbox',
+      color: 'from-rose-500 to-rose-600',
+      bgColor: 'bg-rose-50',
+      textColor: 'text-rose-600',
+      alert: (inboxNewCount || 0) > 0 ? `${inboxNewCount} unread` : undefined,
     },
   ];
 

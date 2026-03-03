@@ -599,6 +599,15 @@ export default async function OrganizationPage({
                       : 'Open Funding Workspace'}
                   </Link>
                 )}
+                {org.slug && (
+                  <Link
+                    href={`/sites/${org.slug}`}
+                    className="inline-flex items-center gap-2 bg-ochre-600 text-white px-6 py-3 font-bold hover:bg-ochre-700 transition-colors"
+                  >
+                    <Globe className="w-5 h-5" />
+                    Visit Full Site
+                  </Link>
+                )}
                 {org.website && (
                   <a
                     href={org.website}
@@ -1170,18 +1179,29 @@ export default async function OrganizationPage({
                 <p className="text-earth-600 mb-6">
                   This organization hasn't added their programs and services to JusticeHub yet.
                 </p>
-                {org.website && (
-                  <a
-                    href={org.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 font-bold hover:bg-earth-800 transition-colors"
-                  >
-                    <Globe className="w-5 h-5" />
-                    Visit Their Website
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                )}
+                <div className="flex flex-wrap gap-3 justify-center">
+                  {org.slug && (
+                    <Link
+                      href={`/sites/${org.slug}`}
+                      className="inline-flex items-center gap-2 bg-ochre-600 text-white px-6 py-3 font-bold hover:bg-ochre-700 transition-colors"
+                    >
+                      <Globe className="w-5 h-5" />
+                      Visit Full Site
+                    </Link>
+                  )}
+                  {org.website && (
+                    <a
+                      href={org.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 font-bold hover:bg-earth-800 transition-colors"
+                    >
+                      <Globe className="w-5 h-5" />
+                      Visit Their Website
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           </section>

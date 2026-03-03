@@ -2,8 +2,12 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Phone, Mail, Globe, Users, Calendar, Heart, ArrowRight, ExternalLink, Shield, Dumbbell, Tent, UserCheck, Home, GraduationCap, Handshake, CheckCircle2, Camera } from 'lucide-react';
+import type { Metadata } from 'next';
+import { MapPin, Phone, Mail, Globe, Users, Calendar, Heart, ArrowRight, ExternalLink, Shield, Dumbbell, Tent, UserCheck, Home, GraduationCap, Handshake, CheckCircle2, Camera, Compass, Scale, TreePine, MessageCircle } from 'lucide-react';
 import { ContactModal } from '@/components/sites/ContactModal';
+import { ShareButton } from '@/components/ShareButton';
+import NewsletterSignup from '@/components/NewsletterSignup';
+import SiteGallery from '@/components/sites/SiteGallery';
 
 // Rich site content per org — will move to DB later
 const ORG_SITE_CONTENT: Record<string, any> = {
@@ -92,11 +96,129 @@ const ORG_SITE_CONTENT: Record<string, any> = {
       phone: '0411 388 526',
     },
   },
+  'oonchiumpa': {
+    images: {
+      hero: '/images/orgs/oonchiumpa/hero.jpg',
+      founder: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/profile-images/storytellers/kristy_bloomfield.jpg',
+      gallery: [
+        { src: '/images/orgs/oonchiumpa/homestead.jpg', alt: 'On-country walk at Atnarpa with MacDonnell Ranges' },
+        { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/story-images/stories/084fcde5-0941-4f6e-9966-ec9c4b7116b3/2.png', alt: 'Youth exploring Standley Chasm gorge' },
+        { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/story-images/stories/084fcde5-0941-4f6e-9966-ec9c4b7116b3/3.png', alt: 'Girls day trip — peace signs at Standley Chasm' },
+        { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/story-images/stories/2c7a2131-c371-4ff5-8d83-b7707f412404/2.png', alt: 'Basketball girls team with Oonchiumpa staff' },
+        { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/story-images/stories/bfde4125-ec37-4456-a1c5-b3b61a32eec0/2.png', alt: 'Young fellas on country in the MacDonnell Ranges' },
+        { src: '/images/orgs/oonchiumpa/law-students.jpg', alt: 'ANU Law students True Justice partnership at Anzac Hill' },
+      ],
+    },
+    heroSubtitle: 'Two Cultures, One World, Working Together',
+    heroDescription: 'An Aboriginal community-controlled organisation in Central Australia empowering communities through cultural preservation, youth mentorship, and deep listening on country across 7 language groups.',
+    founder: {
+      name: 'Kristy Bloomfield',
+      title: 'Visionary Leader & Director',
+      heritage: 'Eastern Arrernte Traditional Owner',
+      bio: 'Kristy Bloomfield is a visionary leader and passionate advocate for Indigenous empowerment and community. As an Eastern Arrernte Traditional Owner, she brings cultural authority and deep connection to country into everything Oonchiumpa does. Her leadership spans youth mentorship, cultural brokerage, and building bridges between Aboriginal communities and service systems across Central Australia.',
+    },
+    stats: [
+      { value: '21+', label: 'Young people mentored' },
+      { value: '95%', label: 'School re-engagement' },
+      { value: '90%', label: 'Youth retention rate' },
+      { value: '32+', label: 'Partner organisations' },
+      { value: '7', label: 'Language groups served' },
+      { value: '150km', label: 'Service reach from Mparntwe' },
+    ],
+    programs: [
+      {
+        icon: 'Users',
+        title: 'Youth Mentorship & Cultural Healing',
+        description: 'Culturally grounded mentorship for 21+ young people — basketball, on-country experiences, leadership development, and Elder-guided healing with 90% retention.',
+      },
+      {
+        icon: 'Scale',
+        title: 'True Justice: Deep Listening on Country',
+        description: 'Partnership with ANU since 2022 — restorative justice through deep listening circles, cultural authority recognition, and trauma-informed community healing.',
+      },
+      {
+        icon: 'TreePine',
+        title: 'Atnarpa Homestead On-Country',
+        description: 'Cultural camps at Atnarpa Station — traditional knowledge transmission, bush tucker and medicine programs, and intergenerational connection on country.',
+      },
+      {
+        icon: 'Compass',
+        title: 'Cultural Brokerage & Service Navigation',
+        description: 'Navigating services across 32+ partner organisations and 7 language groups — cultural interpretation, community advocacy, and partnership facilitation.',
+      },
+      {
+        icon: 'Heart',
+        title: 'Good News Stories',
+        description: 'Celebrating community strength through storytelling — McDonald\'s Fellas Tour, Girls Day Trip to Standley Chasm, basketball tournaments, and community gatherings.',
+      },
+      {
+        icon: 'MessageCircle',
+        title: 'Community Advocacy',
+        description: 'Amplifying Aboriginal voices in policy and services — ensuring cultural authority guides decision-making and that communities lead their own solutions.',
+      },
+    ],
+    values: [
+      { title: 'Cultural Authority', description: 'Everything is grounded in cultural authority and traditional knowledge. Elders guide programs, cultural protocols are respected, and Aboriginal sovereignty is exercised in all decision-making.' },
+      { title: 'Deep Listening', description: 'True understanding comes from deep listening — to community, to country, to Elders. We put community voices and aspirations at the centre of everything we do.' },
+      { title: 'On-Country Healing', description: 'Connection to country and culture is medicine. Our on-country programs at Atnarpa create lasting healing through traditional practices and intergenerational knowledge.' },
+      { title: 'Community Strength', description: 'Building bridges between cultures and communities. Two cultures, one world, working together — creating sustainable partnerships that respect and honour both knowledge systems.' },
+    ],
+    whySection: {
+      challenge: 'Aboriginal young people in Central Australia are vastly overrepresented in the youth justice system. In Alice Springs, many face cycles of disengagement, contact with police, and a system that punishes rather than heals. Mainstream services often lack cultural safety and fail to address root causes.',
+      response: 'Oonchiumpa proves that culture is medicine and that Aboriginal communities know what works for Aboriginal young people. Through culturally grounded mentorship, on-country healing at Atnarpa, deep listening circles with ANU, and service navigation across 32+ partners, Oonchiumpa creates pathways rooted in cultural authority — not deficit.',
+    },
+    funding: {
+      name: 'Community Safety & Youth Diversion',
+      funder: 'NIAA (National Indigenous Australians Agency)',
+      amount: 'NIAA-funded',
+      period: 'Ongoing partnership',
+    },
+    cta: {
+      title: 'Connect with Oonchiumpa',
+      description: 'Looking to refer a young person, partner with us, or learn more about our cultural programs in Central Australia? We work across 7 language groups within 150km of Mparntwe (Alice Springs).',
+      email: 'info@oonchiumpa.com',
+      phone: '0400 000 000',
+    },
+  },
 };
 
 const PROGRAM_ICONS: Record<string, any> = {
-  Dumbbell, Tent, UserCheck, Home, GraduationCap, Handshake,
+  Dumbbell, Tent, UserCheck, Home, GraduationCap, Handshake, Compass, Scale, TreePine, MessageCircle, Users, Heart,
 };
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const supabase = await createClient();
+  const { data: org } = await supabase
+    .from('organizations')
+    .select('name, slug, tagline, description, location, state')
+    .eq('slug', params.slug)
+    .eq('is_active', true)
+    .single();
+
+  if (!org) return { title: 'Organization — JusticeHub' };
+
+  const siteContent = ORG_SITE_CONTENT[params.slug];
+  const title = `${org.name} — JusticeHub`;
+  const description = org.tagline || org.description?.slice(0, 160) || `${org.name} is supported by JusticeHub.`;
+  const heroImage = siteContent?.images?.hero;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: org.name,
+      description,
+      type: 'website',
+      url: `https://justicehub.org.au/sites/${org.slug}`,
+      ...(heroImage && { images: [{ url: heroImage.startsWith('/') ? `https://justicehub.org.au${heroImage}` : heroImage, width: 1200, height: 630, alt: org.name }] }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: org.name,
+      description,
+    },
+  };
+}
 
 export default async function OrgSitePage({ params }: { params: { slug: string } }) {
   const supabase = await createClient();
@@ -122,19 +244,43 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
 
   const team = (teamLinks || []).map((t: any) => t.public_profiles).filter(Boolean);
 
-  // Fetch stories
-  const { data: stories } = await supabase
-    .from('articles')
-    .select('id, title, slug, excerpt, published_date, hero_image_url')
-    .or(`organization_id.eq.${org.id}`)
-    .eq('status', 'published')
-    .order('published_date', { ascending: false })
-    .limit(3);
+  // Fetch stories tagged to this organization
+  let stories: any[] | null = null;
+  if (org) {
+    const { data } = await supabase
+      .from('articles')
+      .select('id, title, slug, excerpt, published_at, featured_image_url')
+      .eq('organization_id', org.id)
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .limit(6);
+    stories = data;
+  }
 
   // Rich site (has content data)
   if (siteContent) {
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: org.name,
+      description: siteContent.heroDescription,
+      url: `https://justicehub.org.au/sites/${org.slug}`,
+      ...(siteContent.images?.hero && { image: siteContent.images.hero.startsWith('/') ? `https://justicehub.org.au${siteContent.images.hero}` : siteContent.images.hero }),
+      ...(org.contact_email && { email: org.contact_email }),
+      ...(org.phone && { telephone: org.phone }),
+      ...(org.website_url && { sameAs: [org.website_url] }),
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: org.city || org.location,
+        addressRegion: org.state,
+        ...(org.postcode && { postalCode: org.postcode }),
+        addressCountry: 'AU',
+      },
+    };
+
     return (
       <div className="min-h-screen bg-white">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         {/* Hero — Full Width with Photo */}
         <header className="relative text-white overflow-hidden">
           {siteContent.images?.hero && (
@@ -167,6 +313,7 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
                     Visit Full Website <ExternalLink className="w-4 h-4" />
                   </a>
                 )}
+                <ShareButton title={org.name} className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm px-4 py-2 text-sm font-medium rounded-full hover:bg-white/25 transition-colors text-white" />
               </div>
             </div>
           </div>
@@ -227,28 +374,9 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
           </section>
         )}
 
-        {/* Photo Gallery */}
+        {/* Photo Gallery with Lightbox */}
         {siteContent.images?.gallery && siteContent.images.gallery.length > 0 && (
-          <section className="max-w-6xl mx-auto px-6 py-16">
-            <h2 className="text-3xl font-black mb-3 text-center text-[#43302b] flex items-center justify-center gap-3">
-              <Camera className="w-7 h-7 text-orange-600" /> In Action
-            </h2>
-            <p className="text-center text-[#8b7355] mb-8">On country, in the gym, and in the community</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {siteContent.images.gallery.map((img: any, i: number) => (
-                <div key={i} className={`relative overflow-hidden rounded-lg ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}>
-                  <img
-                    src={img.src}
-                    alt={img.alt}
-                    className={`w-full object-cover hover:scale-105 transition-transform duration-500 ${i === 0 ? 'h-64 md:h-full' : 'h-48 md:h-56'}`}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity">
-                    <p className="absolute bottom-3 left-3 text-white text-sm font-medium">{img.alt}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+          <SiteGallery images={siteContent.images.gallery} />
         )}
 
         {/* Founder */}
@@ -371,6 +499,19 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
             </div>
           </section>
         )}
+
+        {/* Newsletter */}
+        <section className="bg-[#fdf8f6] border-y border-orange-100">
+          <div className="max-w-2xl mx-auto px-6 py-12">
+            <NewsletterSignup
+              variant="stacked"
+              title={`Stay connected with ${org.name}`}
+              description="Get updates on programs, events, and community stories."
+              buttonText="Subscribe"
+              subscriptionType="general"
+            />
+          </div>
+        </section>
 
         {/* Contact & Footer */}
         <footer className="bg-[#43302b] text-white">

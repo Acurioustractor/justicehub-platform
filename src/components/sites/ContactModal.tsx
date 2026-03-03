@@ -126,7 +126,7 @@ export function ContactModal({ orgId, orgName }: ContactModalProps) {
                     onChange={(e) => setName(e.target.value)}
                     required
                     maxLength={200}
-                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-colors"
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-colors"
                     placeholder="Your full name"
                   />
                 </div>
@@ -141,7 +141,7 @@ export function ContactModal({ orgId, orgName }: ContactModalProps) {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     maxLength={254}
-                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-colors"
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-colors"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -155,7 +155,7 @@ export function ContactModal({ orgId, orgName }: ContactModalProps) {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     maxLength={20}
-                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-colors"
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-colors"
                     placeholder="04XX XXX XXX"
                   />
                 </div>
@@ -170,7 +170,7 @@ export function ContactModal({ orgId, orgName }: ContactModalProps) {
                     required
                     maxLength={5000}
                     rows={4}
-                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-colors resize-none"
+                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-900 bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-colors resize-none"
                     placeholder="How can we help?"
                   />
                 </div>

@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
-import { MapPin } from 'lucide-react';
+import { MapPin, ArrowLeft } from 'lucide-react';
 
 export default async function SitesIndexPage() {
   const supabase = await createClient();
@@ -14,6 +14,18 @@ export default async function SitesIndexPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-ochre-50 via-sand-50 to-eucalyptus-50">
+      {/* Back to JusticeHub */}
+      <nav className="border-b-2 border-black bg-white/80 backdrop-blur-sm">
+        <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 text-sm font-bold text-earth-700 hover:text-ochre-600 transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            Back to JusticeHub
+          </Link>
+          <Link href="/organizations" className="text-sm font-medium text-earth-500 hover:text-ochre-600 transition-colors">
+            All Organizations
+          </Link>
+        </div>
+      </nav>
       <div className="max-w-5xl mx-auto px-6 py-16">
         <h1 className="text-4xl font-black mb-2">Community Organizations</h1>
         <p className="text-lg text-earth-600 mb-10">Organizations supported by JusticeHub</p>
