@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, LayoutDashboard, DollarSign, ShieldCheck, Calendar, ArrowRightLeft, BookOpen, MessageSquare, Inbox } from 'lucide-react';
+import { ArrowLeft, LayoutDashboard, DollarSign, ShieldCheck, Calendar, ArrowRightLeft, BookOpen, MessageSquare, Inbox, Mail, Image as ImageIcon } from 'lucide-react';
 import { OverviewTab } from './tabs/OverviewTab';
 import { GrantsTab } from './tabs/GrantsTab';
 import { ComplianceTab } from './tabs/ComplianceTab';
@@ -11,6 +11,8 @@ import { ReferralsTab } from './tabs/ReferralsTab';
 import { StoriesTab } from './tabs/StoriesTab';
 import { CommunicationsTab } from './tabs/CommunicationsTab';
 import { InboxTab } from './tabs/InboxTab';
+import { MessagesTab } from './tabs/MessagesTab';
+import { MediaTab } from './tabs/MediaTab';
 
 interface Organization {
   id: string;
@@ -30,8 +32,10 @@ const TABS = [
   { key: 'programs', label: 'Programs', icon: Calendar },
   { key: 'referrals', label: 'Referrals', icon: ArrowRightLeft },
   { key: 'stories', label: 'Stories', icon: BookOpen },
+  { key: 'media', label: 'Media', icon: ImageIcon },
   { key: 'communications', label: 'Communications', icon: MessageSquare },
-  { key: 'inbox', label: 'Inbox', icon: Inbox },
+  { key: 'messages', label: 'Messages', icon: Mail },
+  { key: 'inbox', label: 'Tasks', icon: Inbox },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
@@ -92,7 +96,9 @@ export function OrgSupportHubClient({ organization, isPortal }: { organization: 
         {activeTab === 'programs' && <SessionsTab orgId={organization.id} />}
         {activeTab === 'referrals' && <ReferralsTab orgId={organization.id} />}
         {activeTab === 'stories' && <StoriesTab orgId={organization.id} />}
+        {activeTab === 'media' && <MediaTab orgId={organization.id} />}
         {activeTab === 'communications' && <CommunicationsTab orgId={organization.id} />}
+        {activeTab === 'messages' && <MessagesTab orgId={organization.id} />}
         {activeTab === 'inbox' && <InboxTab orgId={organization.id} />}
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { createClient as createServiceClient } from '@supabase/supabase-js';
+import { createServiceClient } from '@/lib/supabase/service';
 import { checkOrgAccess } from '@/lib/org-hub/auth';
 
 const SECTION_TABLES: Record<string, string> = {
@@ -15,15 +15,11 @@ const SECTION_TABLES: Record<string, string> = {
   referrals: 'org_referrals',
   milestones: 'org_milestones',
   action_items: 'org_action_items',
+  contact_messages: 'contact_submissions',
 };
 
 function getServiceClient() {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceRoleKey) throw new Error('Missing service role key');
-  return createServiceClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    serviceRoleKey
-  );
+  return createServiceClient();
 }
 
 export async function GET(
@@ -46,7 +42,9 @@ export async function GET(
 
     const tableName = SECTION_TABLES[section];
 
-    let query = (supabase as any).from(tableName).select('*').eq('organization_id', orgId);
+    // contact_submissions has admin-only RLS; use service client since access is already verified
+    const queryClient = section === 'contact_messages' ? getServiceClient() : supabase;
+    let query = (queryClient as any).from(tableName).select('*').eq('organization_id', orgId);
 
     // Default ordering
     if (['grants', 'sessions'].includes(section)) {

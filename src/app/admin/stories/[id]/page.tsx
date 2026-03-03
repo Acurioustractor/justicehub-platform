@@ -36,13 +36,31 @@ export default function EditStoryPage() {
     category: '',
     seo_title: '',
     seo_description: '',
+    organization_id: '',
   });
 
   const [currentTag, setCurrentTag] = useState('');
   const [currentCategory, setCurrentCategory] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [organizations, setOrganizations] = useState<Array<{ id: string; name: string; slug: string | null }>>([]);
+  const [orgSearch, setOrgSearch] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<any>(null);
+
+  // Fetch organizations for the dropdown
+  useEffect(() => {
+    const fetchOrgs = async () => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from('organizations')
+        .select('id, name, slug')
+        .eq('is_active', true)
+        .not('slug', 'is', null)
+        .order('name');
+      if (data) setOrganizations(data);
+    };
+    fetchOrgs();
+  }, []);
 
   // Load story data
   useEffect(() => {
@@ -71,6 +89,7 @@ export default function EditStoryPage() {
           category: article.category || '',
           seo_title: (article as any).seo_title || (article as any).meta_title || '',
           seo_description: (article as any).seo_description || (article as any).meta_description || '',
+          organization_id: (article as any).organization_id || '',
         });
         setLoading(false);
         return;
@@ -98,6 +117,7 @@ export default function EditStoryPage() {
           category: '',
           seo_title: (blog as any).seo_title || (blog as any).meta_title || '',
           seo_description: (blog as any).seo_description || (blog as any).meta_description || '',
+          organization_id: '',
         });
         setLoading(false);
         return;
@@ -244,6 +264,7 @@ export default function EditStoryPage() {
         category: formData.category,
         seo_title: formData.seo_title || null,
         seo_description: formData.seo_description || null,
+        organization_id: formData.organization_id || null,
       };
 
       console.log('💾 Article data to save:', articleData);
@@ -636,6 +657,36 @@ export default function EditStoryPage() {
                 </select>
                 <p className="text-xs text-gray-500 mt-2">
                   Required for the articles section. Choose the category that best fits your story.
+                </p>
+              </div>
+
+              {/* Organization */}
+              <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
+                <label className="block text-sm font-bold text-black mb-2">
+                  Organization
+                </label>
+                <input
+                  type="text"
+                  value={orgSearch}
+                  onChange={(e) => setOrgSearch(e.target.value)}
+                  className="w-full px-3 py-2 border-2 border-black text-sm focus:outline-none focus:ring-2 focus:ring-black mb-2"
+                  placeholder="Search organizations..."
+                />
+                <select
+                  value={formData.organization_id}
+                  onChange={(e) => setFormData({ ...formData, organization_id: e.target.value })}
+                  className="w-full px-3 py-2 border-2 border-black text-sm focus:outline-none focus:ring-2 focus:ring-black"
+                >
+                  <option value="">-- No organization --</option>
+                  {organizations
+                    .filter(org => !orgSearch || org.name.toLowerCase().includes(orgSearch.toLowerCase()))
+                    .map(org => (
+                      <option key={org.id} value={org.id}>{org.name}</option>
+                    ))
+                  }
+                </select>
+                <p className="text-xs text-gray-500 mt-2">
+                  Tag this story to an organization. It will appear on their site.
                 </p>
               </div>
 

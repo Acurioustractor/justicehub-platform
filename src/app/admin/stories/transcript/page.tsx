@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
-import { ArrowLeft, Sparkles, FileText, User, Mail, Calendar } from 'lucide-react';
+import { ArrowLeft, Sparkles, FileText, User, Mail, Calendar, Database, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface ExtractedData {
@@ -26,6 +26,18 @@ interface ExtractedData {
   }>;
 }
 
+interface ELStory {
+  id: string;
+  title: string;
+  storyteller_name: string;
+  has_transcript: boolean;
+  transcript_length: number;
+  privacy_level: string;
+  is_public: boolean;
+  themes: string[] | null;
+  created_at: string;
+}
+
 export default function TranscriptToStoryPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -37,6 +49,60 @@ export default function TranscriptToStoryPage() {
   const [processing, setProcessing] = useState(false);
   const [extractedData, setExtractedData] = useState<ExtractedData | null>(null);
   const [error, setError] = useState<string>('');
+
+  // Empathy Ledger state
+  const [elStories, setElStories] = useState<ELStory[]>([]);
+  const [elLoading, setElLoading] = useState(false);
+  const [elError, setElError] = useState('');
+  const [showEL, setShowEL] = useState(false);
+  const [elImporting, setElImporting] = useState<string | null>(null);
+
+  const loadELTranscripts = async () => {
+    setElLoading(true);
+    setElError('');
+    try {
+      const res = await fetch('/api/empathy-ledger/transcripts');
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to load transcripts');
+      }
+      const json = await res.json();
+      setElStories(json.data || []);
+    } catch (err) {
+      setElError(err instanceof Error ? err.message : 'Failed to load');
+    } finally {
+      setElLoading(false);
+    }
+  };
+
+  const importELTranscript = async (storyId: string) => {
+    setElImporting(storyId);
+    try {
+      const res = await fetch('/api/empathy-ledger/transcripts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ storyId }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to fetch transcript');
+      }
+      const json = await res.json();
+      const data = json.data;
+
+      setFormData({
+        storytellerName: data.storyteller_name || '',
+        storytellerContact: '',
+        interviewDate: '',
+        transcript: data.transcript || '',
+      });
+      setShowEL(false);
+    } catch (err) {
+      setElError(err instanceof Error ? err.message : 'Import failed');
+    } finally {
+      setElImporting(null);
+    }
+  };
 
   const wordCount = formData.transcript.split(/\s+/).filter(Boolean).length;
   const charCount = formData.transcript.length;
@@ -136,6 +202,74 @@ export default function TranscriptToStoryPage() {
           {!extractedData ? (
             /* STEP 1: Input Form */
             <div className="space-y-6">
+              {/* Import from Empathy Ledger */}
+              <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold text-black flex items-center gap-2">
+                    <Database className="w-6 h-6" />
+                    Import from Empathy Ledger
+                  </h2>
+                  <button
+                    onClick={() => { setShowEL(!showEL); if (!showEL && elStories.length === 0) loadELTranscripts(); }}
+                    className="px-4 py-2 bg-purple-600 text-white font-bold hover:bg-purple-700 text-sm"
+                  >
+                    {showEL ? 'Hide' : 'Browse Transcripts'}
+                  </button>
+                </div>
+                <p className="text-sm text-gray-600 mb-4">
+                  Pull interview transcripts directly from the Empathy Ledger database to create stories.
+                </p>
+
+                {showEL && (
+                  <div className="border-t-2 border-gray-200 pt-4">
+                    {elLoading && (
+                      <div className="flex items-center gap-2 py-4 justify-center text-gray-500">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Loading transcripts from Empathy Ledger...
+                      </div>
+                    )}
+
+                    {elError && (
+                      <div className="p-3 bg-red-50 border-2 border-red-300 text-sm text-red-800 mb-4">
+                        {elError}
+                      </div>
+                    )}
+
+                    {!elLoading && elStories.length === 0 && !elError && (
+                      <p className="text-sm text-gray-500 text-center py-4">
+                        No transcripts found in Empathy Ledger. Check that EL env vars are configured.
+                      </p>
+                    )}
+
+                    {elStories.length > 0 && (
+                      <div className="space-y-2 max-h-64 overflow-y-auto">
+                        {elStories.filter(s => s.has_transcript).map(story => (
+                          <div
+                            key={story.id}
+                            className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 hover:bg-purple-50 transition-colors"
+                          >
+                            <div className="flex-1 min-w-0">
+                              <p className="font-bold text-sm truncate">{story.title}</p>
+                              <p className="text-xs text-gray-500">
+                                {story.storyteller_name} &middot; {Math.round(story.transcript_length / 1000)}k chars
+                                {story.privacy_level && <span className="ml-2 text-purple-600">[{story.privacy_level}]</span>}
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => importELTranscript(story.id)}
+                              disabled={elImporting === story.id}
+                              className="ml-3 px-3 py-1.5 bg-purple-600 text-white text-xs font-bold hover:bg-purple-700 disabled:opacity-50 flex-shrink-0"
+                            >
+                              {elImporting === story.id ? 'Importing...' : 'Import'}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               {/* Storyteller Information */}
               <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">
                 <h2 className="text-2xl font-bold text-black mb-6 flex items-center gap-2">
