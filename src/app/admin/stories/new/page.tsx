@@ -4,7 +4,7 @@
 console.log('🚀🚀🚀 STORIES EDITOR LOADED - AUTO-SAVE DISABLED - Version 2025-11-05-NOCACHE 🚀🚀🚀');
 
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { Save, Eye, ArrowLeft, Upload, X, Clock, FileText, Maximize2, Minimize2 } from 'lucide-react';
@@ -78,6 +78,7 @@ const TEMPLATES = [
 
 export default function UnifiedStoriesEditor() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [saving, setSaving] = useState(false);
   const [autoSaving, setAutoSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -129,6 +130,14 @@ export default function UnifiedStoriesEditor() {
     };
     fetchOrgs();
   }, []);
+
+  // Pre-fill organization from query param
+  useEffect(() => {
+    const orgParam = searchParams.get('org');
+    if (orgParam && !formData.organization_id) {
+      setFormData(prev => ({ ...prev, organization_id: orgParam }));
+    }
+  }, [searchParams]);
 
   // Check if coming from transcript flow and load extracted data
   useEffect(() => {
