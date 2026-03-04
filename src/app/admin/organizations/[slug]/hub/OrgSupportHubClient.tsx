@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, LayoutDashboard, DollarSign, ShieldCheck, Layers, ArrowRightLeft, BookOpen, MessageSquare, Inbox, Mail, Image as ImageIcon, Users } from 'lucide-react';
+import { ArrowLeft, LayoutDashboard, DollarSign, ShieldCheck, Layers, ArrowRightLeft, BookOpen, MessageSquare, Inbox, Mail, Image as ImageIcon, Users, BarChart3 } from 'lucide-react';
 import { OverviewTab } from './tabs/OverviewTab';
 import { GrantsTab } from './tabs/GrantsTab';
 import { ComplianceTab } from './tabs/ComplianceTab';
@@ -14,6 +14,7 @@ import { InboxTab } from './tabs/InboxTab';
 import { MessagesTab } from './tabs/MessagesTab';
 import { MediaTab } from './tabs/MediaTab';
 import { PeopleTab } from './tabs/PeopleTab';
+import { AnalysisTab } from './tabs/AnalysisTab';
 
 interface Organization {
   id: string;
@@ -34,6 +35,7 @@ const TABS = [
   { key: 'programs', label: 'Programs', icon: Layers },
   { key: 'referrals', label: 'Referrals', icon: ArrowRightLeft },
   { key: 'stories', label: 'Stories', icon: BookOpen },
+  { key: 'analysis', label: 'Analysis', icon: BarChart3 },
   { key: 'media', label: 'Media', icon: ImageIcon },
   { key: 'communications', label: 'Communications', icon: MessageSquare },
   { key: 'messages', label: 'Messages', icon: Mail },
@@ -99,6 +101,7 @@ export function OrgSupportHubClient({ organization, isPortal }: { organization: 
         {activeTab === 'programs' && <ProgramsTab orgId={organization.id} />}
         {activeTab === 'referrals' && <ReferralsTab orgId={organization.id} />}
         {activeTab === 'stories' && <StoriesTab orgId={organization.id} />}
+        {activeTab === 'analysis' && <AnalysisTab orgId={organization.id} />}
         {activeTab === 'media' && <MediaTab orgId={organization.id} />}
         {activeTab === 'communications' && <CommunicationsTab orgId={organization.id} />}
         {activeTab === 'messages' && <MessagesTab orgId={organization.id} />}
