@@ -1,0 +1,776 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import {
+  Users,
+  Loader2,
+  Plus,
+  Eye,
+  EyeOff,
+  Star,
+  Edit3,
+  ChevronDown,
+  ChevronUp,
+  ExternalLink,
+  RefreshCw,
+  Shield,
+  Search,
+  X,
+  Layers,
+  UserPlus,
+  FileText,
+  Tag,
+  Save,
+} from 'lucide-react';
+
+interface OrgPerson {
+  link_id: string;
+  role: string | null;
+  role_description: string | null;
+  is_current: boolean;
+  is_featured: boolean;
+  display_order: number;
+  profile: {
+    id: string;
+    full_name: string;
+    slug: string;
+    preferred_name: string | null;
+    bio: string | null;
+    photo_url: string | null;
+    role_tags: string[] | null;
+    is_public: boolean;
+    is_featured: boolean;
+    location: string | null;
+    empathy_ledger_profile_id: string | null;
+    synced_from_empathy_ledger: boolean;
+    last_synced_at: string | null;
+  };
+  linkedPrograms: { id: string; name: string }[];
+}
+
+type PersonType = 'staff' | 'elder' | 'community' | 'youth' | 'volunteer' | 'partner';
+
+const PERSON_TYPES: { value: PersonType; label: string; description: string }[] = [
+  { value: 'staff', label: 'Staff', description: 'Organisation employee or contractor' },
+  { value: 'elder', label: 'Elder / Cultural Authority', description: 'Cultural leader or elder advisor' },
+  { value: 'community', label: 'Community Member', description: 'Community participant or supporter' },
+  { value: 'youth', label: 'Young Person', description: 'Youth participant (use initials for privacy)' },
+  { value: 'volunteer', label: 'Volunteer', description: 'Volunteer supporter' },
+  { value: 'partner', label: 'Partner', description: 'External partner or collaborator' },
+];
+
+export function PeopleTab({ orgId }: { orgId: string }) {
+  const [people, setPeople] = useState<OrgPerson[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expandedPerson, setExpandedPerson] = useState<string | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [toggling, setToggling] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'current' | 'public' | 'el-synced'>('all');
+  const [editingPerson, setEditingPerson] = useState<string | null>(null);
+  const [editRole, setEditRole] = useState('');
+  const [editTags, setEditTags] = useState<string[]>([]);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [transcripts, setTranscripts] = useState<Record<string, any[]>>({});
+  const [loadingTranscripts, setLoadingTranscripts] = useState<string | null>(null);
+
+  // Add form state
+  const [newPerson, setNewPerson] = useState({
+    full_name: '',
+    preferred_name: '',
+    role: '',
+    role_description: '',
+    person_type: 'staff' as PersonType,
+    bio: '',
+    location: '',
+    is_public: true,
+    is_featured: false,
+  });
+
+  const fetchPeople = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/org-hub/${orgId}/people`);
+      if (res.ok) {
+        const json = await res.json();
+        setPeople(json.data || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch people:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [orgId]);
+
+  useEffect(() => { fetchPeople(); }, [fetchPeople]);
+
+  const handleAddPerson = async () => {
+    if (!newPerson.full_name.trim()) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/org-hub/${orgId}/people`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPerson),
+      });
+      if (res.ok) {
+        setShowAddForm(false);
+        setNewPerson({
+          full_name: '',
+          preferred_name: '',
+          role: '',
+          role_description: '',
+          person_type: 'staff',
+          bio: '',
+          location: '',
+          is_public: true,
+          is_featured: false,
+        });
+        await fetchPeople();
+      }
+    } catch (err) {
+      console.error('Failed to add person:', err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleToggleVisibility = async (person: OrgPerson) => {
+    setToggling(person.link_id);
+    try {
+      const res = await fetch(`/api/org-hub/${orgId}/people/${person.profile.id}/visibility`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_public: !person.profile.is_public }),
+      });
+      if (res.ok) await fetchPeople();
+    } catch (err) {
+      console.error('Failed to toggle visibility:', err);
+    } finally {
+      setToggling(null);
+    }
+  };
+
+  const handleToggleFeatured = async (person: OrgPerson) => {
+    setToggling(`feat-${person.link_id}`);
+    try {
+      const res = await fetch(`/api/org-hub/${orgId}/people/${person.profile.id}/visibility`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_featured: !person.is_featured }),
+      });
+      if (res.ok) await fetchPeople();
+    } catch (err) {
+      console.error('Failed to toggle featured:', err);
+    } finally {
+      setToggling(null);
+    }
+  };
+
+  const startEditing = (person: OrgPerson) => {
+    setEditingPerson(person.link_id);
+    setEditRole(person.role || '');
+    setEditTags([...(person.profile.role_tags || [])]);
+  };
+
+  const handleSaveEdit = async (person: OrgPerson) => {
+    setSavingEdit(true);
+    try {
+      const res = await fetch(`/api/org-hub/${orgId}/people/${person.profile.id}/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: editRole, role_tags: editTags }),
+      });
+      if (res.ok) {
+        setEditingPerson(null);
+        await fetchPeople();
+      }
+    } catch (err) {
+      console.error('Failed to save:', err);
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const addTag = (tag: string) => {
+    if (tag && !editTags.includes(tag)) {
+      setEditTags([...editTags, tag]);
+    }
+  };
+
+  const removeTag = (tag: string) => {
+    setEditTags(editTags.filter(t => t !== tag));
+  };
+
+  const fetchTranscripts = async (person: OrgPerson) => {
+    const elId = person.profile.empathy_ledger_profile_id;
+    if (!elId) return;
+    if (transcripts[elId]) return; // already loaded
+
+    setLoadingTranscripts(person.link_id);
+    try {
+      const res = await fetch(`/api/org-hub/${orgId}/people/${person.profile.id}/transcripts`);
+      if (res.ok) {
+        const json = await res.json();
+        setTranscripts(prev => ({ ...prev, [elId]: json.data || [] }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch transcripts:', err);
+    } finally {
+      setLoadingTranscripts(null);
+    }
+  };
+
+  // Filtered people
+  const filteredPeople = people.filter(p => {
+    if (filter === 'current') return p.is_current;
+    if (filter === 'public') return p.profile.is_public;
+    if (filter === 'el-synced') return p.profile.synced_from_empathy_ledger;
+    return true;
+  });
+
+  const publicCount = people.filter(p => p.profile.is_public).length;
+  const elSyncedCount = people.filter(p => p.profile.synced_from_empathy_ledger).length;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <Users className="w-5 h-5" />
+            <h2 className="text-xl font-black">People</h2>
+          </div>
+          <p className="text-sm text-gray-500 mt-1">
+            {people.length} people — {publicCount} public, {elSyncedCount} synced from Empathy Ledger
+          </p>
+        </div>
+        <button
+          onClick={() => setShowAddForm(true)}
+          className="px-3 py-2 text-sm font-bold bg-ochre-600 text-white hover:bg-ochre-700 inline-flex items-center gap-2"
+        >
+          <UserPlus className="w-4 h-4" />
+          Add Person
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2">
+        {(['all', 'current', 'public', 'el-synced'] as const).map(f => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-3 py-1.5 text-xs font-bold border transition-colors ${
+              filter === f
+                ? 'bg-black text-white border-black'
+                : 'bg-white text-gray-600 border-gray-300 hover:border-black'
+            }`}
+          >
+            {f === 'all' && `All (${people.length})`}
+            {f === 'current' && `Current (${people.filter(p => p.is_current).length})`}
+            {f === 'public' && `Public (${publicCount})`}
+            {f === 'el-synced' && `EL Synced (${elSyncedCount})`}
+          </button>
+        ))}
+      </div>
+
+      {/* EL consent note */}
+      <div className="p-3 bg-blue-50 border border-blue-200 text-xs text-blue-700">
+        <div className="flex items-start gap-2">
+          <Shield className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-bold">Empathy Ledger consent controls</p>
+            <p className="mt-0.5">
+              People synced from Empathy Ledger control their own visibility through the EL platform.
+              Their <code className="bg-blue-100 px-1">justicehub_enabled</code> flag determines whether they appear publicly.
+              You can set organisational visibility here, but EL consent always takes precedence.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Add Person Form */}
+      {showAddForm && (
+        <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-black">Add New Person</h3>
+            <button onClick={() => setShowAddForm(false)} className="p-1 hover:bg-gray-100">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold mb-1">Full Name *</label>
+              <input
+                type="text"
+                value={newPerson.full_name}
+                onChange={(e) => setNewPerson({ ...newPerson, full_name: e.target.value })}
+                className="w-full border-2 border-black p-2 text-sm focus:ring-2 focus:ring-ochre-600 focus:outline-none"
+                placeholder="e.g. Kristy Bloomfield or 'MS' for privacy"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold mb-1">Preferred Name</label>
+              <input
+                type="text"
+                value={newPerson.preferred_name}
+                onChange={(e) => setNewPerson({ ...newPerson, preferred_name: e.target.value })}
+                className="w-full border-2 border-black p-2 text-sm focus:ring-2 focus:ring-ochre-600 focus:outline-none"
+                placeholder="How they like to be called"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold mb-1">Type</label>
+              <select
+                value={newPerson.person_type}
+                onChange={(e) => setNewPerson({ ...newPerson, person_type: e.target.value as PersonType })}
+                className="w-full border-2 border-black p-2 text-sm focus:ring-2 focus:ring-ochre-600 focus:outline-none"
+              >
+                {PERSON_TYPES.map(t => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+              </select>
+              <p className="text-[10px] text-gray-400 mt-0.5">
+                {PERSON_TYPES.find(t => t.value === newPerson.person_type)?.description}
+              </p>
+            </div>
+            <div>
+              <label className="block text-xs font-bold mb-1">Role / Title</label>
+              <input
+                type="text"
+                value={newPerson.role}
+                onChange={(e) => setNewPerson({ ...newPerson, role: e.target.value })}
+                className="w-full border-2 border-black p-2 text-sm focus:ring-2 focus:ring-ochre-600 focus:outline-none"
+                placeholder="e.g. Director, Elder Advisor, Youth Participant"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs font-bold mb-1">Bio</label>
+              <textarea
+                value={newPerson.bio}
+                onChange={(e) => setNewPerson({ ...newPerson, bio: e.target.value })}
+                rows={3}
+                className="w-full border-2 border-black p-2 text-sm focus:ring-2 focus:ring-ochre-600 focus:outline-none resize-none"
+                placeholder="Brief bio or description..."
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold mb-1">Location</label>
+              <input
+                type="text"
+                value={newPerson.location}
+                onChange={(e) => setNewPerson({ ...newPerson, location: e.target.value })}
+                className="w-full border-2 border-black p-2 text-sm focus:ring-2 focus:ring-ochre-600 focus:outline-none"
+                placeholder="e.g. Alice Springs, NT"
+              />
+            </div>
+            <div className="flex items-center gap-6 pt-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={newPerson.is_public}
+                  onChange={(e) => setNewPerson({ ...newPerson, is_public: e.target.checked })}
+                  className="w-4 h-4 accent-ochre-600"
+                />
+                <span className="text-sm font-bold">Public profile</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={newPerson.is_featured}
+                  onChange={(e) => setNewPerson({ ...newPerson, is_featured: e.target.checked })}
+                  className="w-4 h-4 accent-ochre-600"
+                />
+                <span className="text-sm font-bold">Featured</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-gray-200">
+            <button
+              onClick={() => setShowAddForm(false)}
+              className="px-4 py-2 text-sm font-bold border-2 border-black hover:bg-gray-100"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAddPerson}
+              disabled={saving || !newPerson.full_name.trim()}
+              className="px-4 py-2 text-sm font-bold bg-ochre-600 text-white hover:bg-ochre-700 disabled:opacity-50 inline-flex items-center gap-2"
+            >
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+              Add Person
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* People list */}
+      {filteredPeople.length === 0 ? (
+        <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-12 text-center">
+          <Users className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+          <p className="font-bold text-gray-600">
+            {people.length === 0 ? 'No people added yet' : 'No matches for this filter'}
+          </p>
+          {people.length === 0 && (
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2 font-bold bg-ochre-600 text-white hover:bg-ochre-700"
+            >
+              <UserPlus className="w-4 h-4" />
+              Add First Person
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {filteredPeople.map((person) => {
+            const isExpanded = expandedPerson === person.link_id;
+            const p = person.profile;
+
+            return (
+              <div key={person.link_id} className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                {/* Person row */}
+                <button
+                  onClick={() => setExpandedPerson(isExpanded ? null : person.link_id)}
+                  className="w-full text-left p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors"
+                >
+                  {/* Avatar */}
+                  {p.photo_url ? (
+                    <img src={p.photo_url} alt="" className="w-12 h-12 rounded-full object-cover flex-shrink-0 border-2 border-gray-200" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-earth-100 border-2 border-earth-200 flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-black text-earth-600">
+                        {p.full_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-sm">{p.preferred_name || p.full_name}</h3>
+                      {person.is_featured && <Star className="w-3 h-3 text-ochre-500 fill-ochre-500" />}
+                      {p.synced_from_empathy_ledger && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 bg-blue-100 text-blue-700 border border-blue-200" title="Synced from Empathy Ledger">
+                          EL
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
+                      {person.role && (
+                        <span className="text-xs text-gray-600">{person.role}</span>
+                      )}
+                      {!p.is_public && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 bg-gray-200 text-gray-600 flex items-center gap-0.5">
+                          <EyeOff className="w-3 h-3" /> Private
+                        </span>
+                      )}
+                      {!person.is_current && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 bg-yellow-100 text-yellow-700 border border-yellow-200">
+                          Past
+                        </span>
+                      )}
+                      {(p.role_tags || []).length > 0 && (
+                        <span className="text-[10px] text-gray-400">
+                          {(p.role_tags || []).slice(0, 2).join(', ')}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                </button>
+
+                {/* Expanded detail */}
+                {isExpanded && (
+                  <div className="border-t-2 border-black p-4 space-y-4">
+                    {/* Bio */}
+                    {p.bio && (
+                      <div>
+                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Bio</p>
+                        <p className="text-sm text-gray-700 leading-relaxed">{p.bio}</p>
+                      </div>
+                    )}
+
+                    {/* Role & Tags — editable */}
+                    {editingPerson === person.link_id ? (
+                      <div className="p-3 bg-gray-50 border border-gray-200 space-y-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold mb-1">Role / Title</label>
+                            <input
+                              type="text"
+                              value={editRole}
+                              onChange={(e) => setEditRole(e.target.value)}
+                              className="w-full border-2 border-black p-2 text-sm focus:ring-2 focus:ring-ochre-600 focus:outline-none"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold mb-1">Type Tags</label>
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {editTags.map(tag => (
+                                <span key={tag} className="text-xs px-2 py-0.5 bg-earth-100 border border-earth-300 text-earth-700 font-medium inline-flex items-center gap-1">
+                                  {tag}
+                                  <button onClick={() => removeTag(tag)} className="hover:text-red-600"><X className="w-3 h-3" /></button>
+                                </span>
+                              ))}
+                            </div>
+                            <div className="flex flex-wrap gap-1">
+                              {PERSON_TYPES.filter(t => !editTags.includes(t.value)).map(t => (
+                                <button
+                                  key={t.value}
+                                  onClick={() => addTag(t.value)}
+                                  className="text-[10px] px-2 py-0.5 border border-dashed border-gray-300 text-gray-500 hover:border-earth-400 hover:text-earth-600 hover:bg-earth-50"
+                                >
+                                  + {t.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleSaveEdit(person)}
+                            disabled={savingEdit}
+                            className="px-3 py-1.5 text-xs font-bold bg-ochre-600 text-white hover:bg-ochre-700 inline-flex items-center gap-1"
+                          >
+                            {savingEdit ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                            Save
+                          </button>
+                          <button
+                            onClick={() => setEditingPerson(null)}
+                            className="px-3 py-1.5 text-xs font-bold border border-gray-300 hover:bg-gray-100"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-2">
+                          {/* Details grid */}
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            {person.role_description && (
+                              <div>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase">Role Description</p>
+                                <p className="text-xs text-gray-700">{person.role_description}</p>
+                              </div>
+                            )}
+                            {p.location && (
+                              <div>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase">Location</p>
+                                <p className="text-xs text-gray-700">{p.location}</p>
+                              </div>
+                            )}
+                            {p.empathy_ledger_profile_id && (
+                              <div>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase">Empathy Ledger</p>
+                                <p className="text-xs text-blue-600 font-medium">Linked</p>
+                                {p.last_synced_at && (
+                                  <p className="text-[10px] text-gray-400">
+                                    Synced {new Date(p.last_synced_at).toLocaleDateString()}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Tags display */}
+                          {(p.role_tags || []).length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {p.role_tags!.map(tag => {
+                                const typeInfo = PERSON_TYPES.find(t => t.value === tag);
+                                return (
+                                  <span key={tag} className="text-xs px-2 py-0.5 bg-earth-100 border border-earth-300 text-earth-700 font-medium">
+                                    {typeInfo?.label || tag}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => startEditing(person)}
+                          className="px-2 py-1 text-xs font-bold text-gray-400 hover:text-black flex items-center gap-1"
+                        >
+                          <Edit3 className="w-3 h-3" />
+                          Edit
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Linked Programs */}
+                    {person.linkedPrograms.length > 0 && (
+                      <div>
+                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Linked Programs</p>
+                        <div className="flex flex-wrap gap-1">
+                          {person.linkedPrograms.map(prog => (
+                            <span key={prog.id} className="text-xs px-2 py-0.5 bg-ochre-50 border border-ochre-200 text-ochre-700 font-medium flex items-center gap-1">
+                              <Layers className="w-3 h-3" />
+                              {prog.name}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Transcripts section — only for EL-synced profiles */}
+                    {p.empathy_ledger_profile_id && (
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Empathy Ledger Stories</p>
+                          {!transcripts[p.empathy_ledger_profile_id] && (
+                            <button
+                              onClick={() => fetchTranscripts(person)}
+                              disabled={loadingTranscripts === person.link_id}
+                              className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                            >
+                              {loadingTranscripts === person.link_id ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                              ) : (
+                                <FileText className="w-3 h-3" />
+                              )}
+                              Load Stories
+                            </button>
+                          )}
+                        </div>
+
+                        {transcripts[p.empathy_ledger_profile_id] && (
+                          <>
+                            {transcripts[p.empathy_ledger_profile_id].length === 0 ? (
+                              <p className="text-xs text-gray-400">No stories found in Empathy Ledger for this person</p>
+                            ) : (
+                              <div className="space-y-2">
+                                {transcripts[p.empathy_ledger_profile_id].map((t: any) => (
+                                  <div key={t.id} className="p-3 bg-blue-50 border border-blue-200">
+                                    <div className="flex items-start justify-between gap-2">
+                                      <div className="min-w-0 flex-1">
+                                        <p className="font-bold text-blue-800 text-xs">{t.title || 'Untitled Story'}</p>
+                                        <div className="flex flex-wrap gap-2 mt-1">
+                                          {t.collection_date && (
+                                            <span className="text-[10px] text-blue-600">
+                                              {new Date(t.collection_date).toLocaleDateString()}
+                                            </span>
+                                          )}
+                                          {t.word_count > 0 && (
+                                            <span className="text-[10px] text-blue-600">{t.word_count.toLocaleString()} words</span>
+                                          )}
+                                          {t.story_type && (
+                                            <span className="text-[10px] text-blue-500">{t.story_type.replace(/_/g, ' ')}</span>
+                                          )}
+                                          {t.privacy_level && (
+                                            <span className={`text-[10px] font-bold px-1 py-0.5 ${
+                                              t.privacy_level === 'public' ? 'bg-green-100 text-green-700' :
+                                              t.privacy_level === 'community' ? 'bg-yellow-100 text-yellow-700' :
+                                              'bg-gray-100 text-gray-600'
+                                            }`}>
+                                              {t.privacy_level}
+                                            </span>
+                                          )}
+                                        </div>
+                                        {t.content_preview && (
+                                          <p className="text-xs text-blue-700/70 mt-1 line-clamp-2 italic">{t.content_preview}</p>
+                                        )}
+                                        {(t.themes || []).length > 0 && (
+                                          <div className="flex flex-wrap gap-1 mt-1.5">
+                                            {t.themes.slice(0, 4).map((theme: string) => (
+                                              <span key={theme} className="text-[10px] px-1.5 py-0.5 bg-blue-100 text-blue-600 border border-blue-200">
+                                                {theme.replace(/_/g, ' ')}
+                                              </span>
+                                            ))}
+                                            {t.themes.length > 4 && (
+                                              <span className="text-[10px] text-blue-400">+{t.themes.length - 4}</span>
+                                            )}
+                                          </div>
+                                        )}
+                                      </div>
+                                      <div className="flex flex-col gap-1 flex-shrink-0">
+                                        {t.consent_for_story_creation && (
+                                          <Link
+                                            href={`/admin/stories/transcript?el_story=${t.id}`}
+                                            className="px-2 py-1 text-[10px] font-bold bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-1"
+                                          >
+                                            <FileText className="w-3 h-3" />
+                                            Extract
+                                          </Link>
+                                        )}
+                                        {!t.consent_for_story_creation && (
+                                          <span className="text-[10px] text-gray-400 px-2 py-1">
+                                            {t.privacy_level === 'private' ? 'Private' : 'Not public'}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Actions */}
+                    <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
+                      <button
+                        onClick={() => handleToggleVisibility(person)}
+                        disabled={toggling === person.link_id}
+                        className={`px-3 py-1.5 text-xs font-bold border inline-flex items-center gap-1 ${
+                          p.is_public
+                            ? 'border-green-300 text-green-700 hover:bg-green-50'
+                            : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        {toggling === person.link_id ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : p.is_public ? (
+                          <Eye className="w-3 h-3" />
+                        ) : (
+                          <EyeOff className="w-3 h-3" />
+                        )}
+                        {p.is_public ? 'Public' : 'Private'}
+                      </button>
+                      <button
+                        onClick={() => handleToggleFeatured(person)}
+                        disabled={toggling === `feat-${person.link_id}`}
+                        className={`px-3 py-1.5 text-xs font-bold border inline-flex items-center gap-1 ${
+                          person.is_featured
+                            ? 'border-ochre-300 text-ochre-700 hover:bg-ochre-50'
+                            : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        {toggling === `feat-${person.link_id}` ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Star className={`w-3 h-3 ${person.is_featured ? 'fill-ochre-500' : ''}`} />
+                        )}
+                        {person.is_featured ? 'Featured' : 'Feature'}
+                      </button>
+                      <Link
+                        href={`/people/${p.slug}`}
+                        target="_blank"
+                        className="px-3 py-1.5 text-xs font-bold border border-gray-300 hover:bg-gray-50 inline-flex items-center gap-1 text-gray-600"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        View Profile
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

@@ -4,7 +4,7 @@
   "description": "Digital platform that transforms how grassroots organizations support young people",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3004",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

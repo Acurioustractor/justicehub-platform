@@ -2,17 +2,18 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, LayoutDashboard, DollarSign, ShieldCheck, Calendar, ArrowRightLeft, BookOpen, MessageSquare, Inbox, Mail, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, LayoutDashboard, DollarSign, ShieldCheck, Layers, ArrowRightLeft, BookOpen, MessageSquare, Inbox, Mail, Image as ImageIcon, Users } from 'lucide-react';
 import { OverviewTab } from './tabs/OverviewTab';
 import { GrantsTab } from './tabs/GrantsTab';
 import { ComplianceTab } from './tabs/ComplianceTab';
-import { SessionsTab } from './tabs/SessionsTab';
+import { ProgramsTab } from './tabs/ProgramsTab';
 import { ReferralsTab } from './tabs/ReferralsTab';
 import { StoriesTab } from './tabs/StoriesTab';
 import { CommunicationsTab } from './tabs/CommunicationsTab';
 import { InboxTab } from './tabs/InboxTab';
 import { MessagesTab } from './tabs/MessagesTab';
 import { MediaTab } from './tabs/MediaTab';
+import { PeopleTab } from './tabs/PeopleTab';
 
 interface Organization {
   id: string;
@@ -29,7 +30,8 @@ const TABS = [
   { key: 'overview', label: 'Overview', icon: LayoutDashboard },
   { key: 'grants', label: 'Grants & Finance', icon: DollarSign },
   { key: 'compliance', label: 'Compliance', icon: ShieldCheck },
-  { key: 'programs', label: 'Programs', icon: Calendar },
+  { key: 'people', label: 'People', icon: Users },
+  { key: 'programs', label: 'Programs', icon: Layers },
   { key: 'referrals', label: 'Referrals', icon: ArrowRightLeft },
   { key: 'stories', label: 'Stories', icon: BookOpen },
   { key: 'media', label: 'Media', icon: ImageIcon },
@@ -93,7 +95,8 @@ export function OrgSupportHubClient({ organization, isPortal }: { organization: 
         {activeTab === 'overview' && <OverviewTab orgId={organization.id} orgSlug={organization.slug || ''} />}
         {activeTab === 'grants' && <GrantsTab orgId={organization.id} />}
         {activeTab === 'compliance' && <ComplianceTab orgId={organization.id} />}
-        {activeTab === 'programs' && <SessionsTab orgId={organization.id} />}
+        {activeTab === 'people' && <PeopleTab orgId={organization.id} />}
+        {activeTab === 'programs' && <ProgramsTab orgId={organization.id} />}
         {activeTab === 'referrals' && <ReferralsTab orgId={organization.id} />}
         {activeTab === 'stories' && <StoriesTab orgId={organization.id} />}
         {activeTab === 'media' && <MediaTab orgId={organization.id} />}

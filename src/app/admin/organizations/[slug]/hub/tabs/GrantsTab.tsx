@@ -149,7 +149,11 @@ export function GrantsTab({ orgId }: { orgId: string }) {
       const res = await fetch(`/api/org-hub/${orgId}?section=grants`);
       if (!res.ok) throw new Error('Failed to load grants');
       const json = await res.json();
-      setGrants(json.data || []);
+      setGrants((json.data || []).map((g: any) => ({
+        ...g,
+        transactions: g.transactions || [],
+        budget_lines: g.budget_lines || [],
+      })));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {

@@ -95,10 +95,10 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
     return (
         <header className={headerClasses} suppressHydrationWarning>
             <div className="container-justice" suppressHydrationWarning>
-                {/* Top Row - Logo Centered */}
-                <div className="flex items-center justify-between py-4 border-b border-gray-200">
-                    {/* Left spacer for mobile menu */}
-                    <div className="w-10 lg:w-0">
+                {/* Top Row - 3-column grid: left actions | center logo | right actions */}
+                <div className="grid grid-cols-3 items-center py-4 border-b border-gray-200">
+                    {/* Left: Mobile hamburger / Desktop empty */}
+                    <div className="flex items-center">
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             className="lg:hidden p-2 text-black hover:text-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
@@ -114,37 +114,88 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
                         </button>
                     </div>
 
-                    {/* Centered Logo with Rad Wordmark */}
-                    <Link
-                        href="/"
-                        className="group transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 no-underline"
-                        aria-label="JusticeHub - Home"
-                    >
-                        <div className="text-center">
-                            <div className="relative">
-                                <h1 className="text-2xl md:text-3xl font-black tracking-tighter">
-                                    <span className="bg-gradient-to-r from-black via-red-600 to-black bg-clip-text text-transparent group-hover:from-red-600 group-hover:via-black group-hover:to-red-600 transition-all duration-500">
-                                        JUSTICE
-                                    </span>
-                                    <span className="text-black group-hover:text-red-600 transition-colors duration-500">
-                                        HUB
-                                    </span>
-                                </h1>
-                                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    {/* Center: Logo */}
+                    <div className="flex justify-center">
+                        <Link
+                            href="/"
+                            className="group transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 no-underline"
+                            aria-label="JusticeHub - Home"
+                        >
+                            <div className="text-center">
+                                <div className="relative">
+                                    <h1 className="text-2xl md:text-3xl font-black tracking-tighter">
+                                        <span className="bg-gradient-to-r from-black via-red-600 to-black bg-clip-text text-transparent group-hover:from-red-600 group-hover:via-black group-hover:to-red-600 transition-all duration-500">
+                                            JUSTICE
+                                        </span>
+                                        <span className="text-black group-hover:text-red-600 transition-colors duration-500">
+                                            HUB
+                                        </span>
+                                    </h1>
+                                    <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                </div>
+                                <div className="text-xs font-bold tracking-widest text-gray-600 group-hover:text-black transition-colors duration-300 mt-1">
+                                    TRUTH • ACTION • JUSTICE
+                                </div>
                             </div>
-                            <div className="text-xs font-bold tracking-widest text-gray-600 group-hover:text-black transition-colors duration-300 mt-1">
-                                TRUTH • ACTION • JUSTICE
-                            </div>
-                        </div>
-                    </Link>
+                        </Link>
+                    </div>
 
-                    {/* Right spacer for balance */}
-                    <div className="w-10 lg:w-0"></div>
+                    {/* Right: Search, Grid, Auth */}
+                    <div className="flex items-center justify-end gap-2">
+                        {/* Search - visible on all sizes */}
+                        <button
+                            onClick={() => setIsSearchOpen(true)}
+                            className="flex items-center gap-1.5 px-2.5 py-2 text-sm font-medium text-gray-500 hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 rounded-lg border border-gray-200 hover:border-gray-400"
+                            aria-label="Search (⌘K)"
+                            title="Search (⌘K)"
+                        >
+                            <Search className="h-4 w-4" />
+                            <span className="hidden sm:inline text-xs text-gray-400">⌘K</span>
+                        </button>
+
+                        {/* All Pages grid */}
+                        <button
+                            onClick={() => setIsMegaMenuOpen(true)}
+                            className="hidden lg:flex items-center px-2.5 py-2 text-sm font-medium text-gray-500 hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 rounded-lg border border-gray-200 hover:border-gray-400"
+                            aria-label="Open full menu"
+                            title="All pages"
+                        >
+                            <LayoutGrid className="h-4 w-4" />
+                        </button>
+
+                        {/* Auth */}
+                        <div suppressHydrationWarning>
+                            {mounted && user && userProfile ? (
+                                <UserMenu
+                                    user={user}
+                                    userProfile={userProfile}
+                                    onSignOut={signOut}
+                                />
+                            ) : (
+                                <div className="hidden lg:flex items-center gap-2">
+                                    <Link
+                                        href="/login"
+                                        className="px-4 py-2 text-black font-bold text-xs uppercase tracking-wider hover:text-red-600 transition-colors"
+                                        aria-label="Log in to your account"
+                                    >
+                                        Log in
+                                    </Link>
+                                    <Link
+                                        href="/signup"
+                                        className="px-4 py-2 bg-black text-white font-bold text-xs uppercase tracking-wider hover:bg-red-600 transition-colors rounded-sm"
+                                        aria-label="Create your profile"
+                                    >
+                                        Sign up
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Bottom Row - Navigation */}
-                <div className="hidden lg:flex items-center justify-center py-3">
-                    <nav className="flex items-center gap-8" role="navigation" aria-label="Main navigation">
+                <div className="hidden lg:flex items-center justify-center py-2.5 border-b border-gray-100">
+                    <nav className="flex items-center gap-12" role="navigation" aria-label="Main navigation">
                         {navigationItems.map((item) => (
                             <div key={item.label} className="relative">
                                 {item.type === 'dropdown' ? (
@@ -170,28 +221,53 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
 
                                         {/* Bridge element to prevent hover gaps */}
                                         {activeDropdown === item.label && (
-                                            <div className="absolute top-full left-0 w-64 h-2 bg-transparent z-40"></div>
+                                            <div className={`absolute top-full h-2 bg-transparent z-40 ${(item.items?.length || 0) > 6 ? 'left-1/2 -translate-x-1/2 w-[540px]' : 'left-0 w-64'}`}></div>
                                         )}
 
                                         {activeDropdown === item.label && (
-                                            <div className="absolute top-full left-0 mt-1 w-64 bg-white border-2 border-black shadow-lg z-50">
-                                                {item.items?.map((dropdownItem) => (
-                                                    dropdownItem.href && (
-                                                        <Link
-                                                            key={dropdownItem.href}
-                                                            href={dropdownItem.href}
-                                                            className={`block px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors border-b border-gray-200 last:border-b-0 ${isActivePath(dropdownItem.href)
-                                                                ? 'text-red-600 bg-red-50'
-                                                                : 'text-black'
-                                                                }`}
-                                                            aria-current={isActivePath(dropdownItem.href) ? 'page' : undefined}
-                                                        >
-                                                            <div className="font-bold">{dropdownItem.label}</div>
-                                                            <div className="text-xs text-gray-600 mt-1">{dropdownItem.description}</div>
-                                                        </Link>
-                                                    )
-                                                ))}
-                                            </div>
+                                            (item.items?.length || 0) > 6 ? (
+                                                /* Wide 2-column mega panel for large dropdowns */
+                                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-[540px] bg-white border-2 border-black shadow-lg z-50">
+                                                    <div className="grid grid-cols-2">
+                                                        {item.items?.map((dropdownItem, idx) => (
+                                                            dropdownItem.href && (
+                                                                <Link
+                                                                    key={dropdownItem.href}
+                                                                    href={dropdownItem.href}
+                                                                    className={`block px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors border-b border-gray-200 ${idx % 2 === 0 ? 'border-r border-gray-200' : ''} ${isActivePath(dropdownItem.href)
+                                                                        ? 'text-red-600 bg-red-50'
+                                                                        : 'text-black'
+                                                                        }`}
+                                                                    aria-current={isActivePath(dropdownItem.href) ? 'page' : undefined}
+                                                                >
+                                                                    <div className="font-bold">{dropdownItem.label}</div>
+                                                                    <div className="text-xs text-gray-600 mt-1">{dropdownItem.description}</div>
+                                                                </Link>
+                                                            )
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                /* Single column for small dropdowns */
+                                                <div className="absolute top-full left-0 mt-1 w-64 bg-white border-2 border-black shadow-lg z-50">
+                                                    {item.items?.map((dropdownItem) => (
+                                                        dropdownItem.href && (
+                                                            <Link
+                                                                key={dropdownItem.href}
+                                                                href={dropdownItem.href}
+                                                                className={`block px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors border-b border-gray-200 last:border-b-0 ${isActivePath(dropdownItem.href)
+                                                                    ? 'text-red-600 bg-red-50'
+                                                                    : 'text-black'
+                                                                    }`}
+                                                                aria-current={isActivePath(dropdownItem.href) ? 'page' : undefined}
+                                                            >
+                                                                <div className="font-bold">{dropdownItem.label}</div>
+                                                                <div className="text-xs text-gray-600 mt-1">{dropdownItem.description}</div>
+                                                            </Link>
+                                                        )
+                                                    ))}
+                                                </div>
+                                            )
                                         )}
                                     </div>
                                 ) : (
@@ -214,56 +290,6 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
                             </div>
                         ))}
 
-                        {/* Search Button */}
-                        <button
-                            onClick={() => setIsSearchOpen(true)}
-                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 rounded-md border border-gray-200 hover:border-gray-300"
-                            aria-label="Search (⌘K)"
-                            title="Search (⌘K)"
-                        >
-                            <Search className="h-4 w-4" />
-                            <span className="hidden xl:inline text-xs text-gray-400">⌘K</span>
-                        </button>
-
-                        {/* Full Screen Mega Menu */}
-                        <button
-                            onClick={() => setIsMegaMenuOpen(true)}
-                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 rounded-md border border-gray-200 hover:border-gray-300"
-                            aria-label="Open full menu"
-                            title="Open full menu"
-                        >
-                            <LayoutGrid className="h-4 w-4" />
-                            <span className="hidden xl:inline">All Pages</span>
-                        </button>
-
-                        {/* Show SIGN UP or Profile Dropdown based on auth state */}
-                        {/* Use suppressHydrationWarning to prevent hydration mismatch due to client-only auth state */}
-                        <div suppressHydrationWarning className="ml-4">
-                            {mounted && user && userProfile ? (
-                                <UserMenu
-                                    user={user}
-                                    userProfile={userProfile}
-                                    onSignOut={signOut}
-                                />
-                            ) : (
-                                <div className="flex items-center gap-3">
-                                    <Link
-                                        href="/login"
-                                        className="px-5 py-2.5 bg-white text-black font-bold text-xs uppercase tracking-wider hover:bg-gray-100 transition-colors border-2 border-black shadow-lg rounded-sm"
-                                        aria-label="Log in to your account"
-                                    >
-                                        LOG IN
-                                    </Link>
-                                    <Link
-                                        href="/signup"
-                                        className="px-5 py-2.5 bg-black text-white font-bold text-xs uppercase tracking-wider hover:bg-gray-800 transition-colors border-2 border-black shadow-lg rounded-sm"
-                                        aria-label="Create your profile"
-                                    >
-                                        SIGN UP
-                                    </Link>
-                                </div>
-                            )}
-                        </div>
                     </nav>
                 </div>
 

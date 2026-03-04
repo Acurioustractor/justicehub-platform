@@ -7,32 +7,24 @@ export interface NavigationItem {
 }
 
 /**
- * Navigation Configuration
+ * Navigation Configuration — 5 top-level items
  *
- * NOTE: Some descriptions contain counts that need periodic review:
- * - Basecamps: 4 founding hubs (verified Jan 2026)
- * - Research Library: 27+ studies (use X+ format for growth)
- * - Best Practice: 4 Australian frameworks (QLD, NSW, VIC, NT)
- * - Global Map: 16+ international models
- *
- * These are intentionally static for performance. Update quarterly
- * or when significant changes occur.
+ * Explore: Content discovery (people, orgs, stories, services, map)
+ * Intelligence: ALMA + evidence + research tools
+ * Network: Centre of Excellence + partner pathways
+ * Action: Blog, events, stewards, art, transparency
+ * About: Mission, roadmap, how it works, contact
  */
 export const navigationItems: NavigationItem[] = [
     {
-        label: 'Start Here',
-        href: '/#start-here',
-        description: 'Choose your pathway: support, partner, or fund'
-    },
-    {
-        label: 'Stories',
-        href: '/stories',
-        description: 'Voices and insights from the movement'
-    },
-    {
-        label: 'Discover',
+        label: 'Explore',
         type: 'dropdown',
         items: [
+            {
+                label: 'Stories',
+                href: '/stories',
+                description: 'Voices from the movement'
+            },
             {
                 label: 'People',
                 href: '/people',
@@ -61,38 +53,17 @@ export const navigationItems: NavigationItem[] = [
             {
                 label: 'Thematic Areas',
                 href: '/themes',
-                description: 'Explore by disability, health, housing, and more'
+                description: 'Disability, health, housing, and more'
+            },
+            {
+                label: 'Gallery',
+                href: '/gallery',
+                description: 'Programs in action'
             },
             {
                 label: 'Opportunities',
                 href: '/opportunities',
                 description: 'Jobs, scholarships, and apprenticeships'
-            }
-        ]
-    },
-    {
-        label: 'For Partners',
-        type: 'dropdown',
-        items: [
-            {
-                label: 'Community Leaders',
-                href: '/for-community-leaders',
-                description: 'Practical tools for local leadership'
-            },
-            {
-                label: 'Funders',
-                href: '/for-funders',
-                description: 'Invest in proven community solutions'
-            },
-            {
-                label: 'Government',
-                href: '/for-government',
-                description: 'Evidence for policy and systems reform'
-            },
-            {
-                label: 'Researchers',
-                href: '/for-researchers',
-                description: 'Methods, datasets, and collaboration'
             }
         ]
     },
@@ -153,11 +124,11 @@ export const navigationItems: NavigationItem[] = [
         ]
     },
     {
-        label: 'Centre of Excellence',
+        label: 'Network',
         type: 'dropdown',
         items: [
             {
-                label: 'Overview',
+                label: 'Centre of Excellence',
                 href: '/centre-of-excellence',
                 description: 'Join the network proving what works'
             },
@@ -187,19 +158,34 @@ export const navigationItems: NavigationItem[] = [
                 description: '16+ international models'
             },
             {
-                label: 'Global Insights',
-                href: '/centre-of-excellence/global-insights',
-                description: 'International best practice'
-            },
-            {
                 label: 'International Exchange',
                 href: '/international-exchange',
                 description: 'June 2026 learning mission'
+            },
+            {
+                label: 'For Community Leaders',
+                href: '/for-community-leaders',
+                description: 'Practical tools for local leadership'
+            },
+            {
+                label: 'For Funders',
+                href: '/for-funders',
+                description: 'Invest in proven community solutions'
+            },
+            {
+                label: 'For Government',
+                href: '/for-government',
+                description: 'Evidence for policy and systems reform'
+            },
+            {
+                label: 'For Researchers',
+                href: '/for-researchers',
+                description: 'Methods, datasets, and collaboration'
             }
         ]
     },
     {
-        label: 'Platform',
+        label: 'Action',
         type: 'dropdown',
         items: [
             {
@@ -218,19 +204,19 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Protect what works'
             },
             {
+                label: 'Art & Innovation',
+                href: '/art-innovation',
+                description: 'Creative solutions'
+            },
+            {
                 label: 'Transparency',
                 href: '/transparency',
                 description: 'Track funding and outcomes'
             },
             {
-                label: 'Gallery',
-                href: '/gallery',
-                description: 'Programs in action'
-            },
-            {
-                label: 'Art & Innovation',
-                href: '/art-innovation',
-                description: 'Creative solutions'
+                label: 'Call It Out',
+                href: '/call-it-out',
+                description: 'Report racism and injustice'
             }
         ]
     },
@@ -295,7 +281,16 @@ export const footerSections = [
         ]
     },
     {
-        title: 'Platform',
+        title: 'Network',
+        links: [
+            { label: 'Centre of Excellence', href: '/centre-of-excellence', description: 'Proving what works' },
+            { label: 'Basecamps', href: '/centre-of-excellence/map?category=basecamp', description: 'Founding hubs' },
+            { label: 'Global Map', href: '/centre-of-excellence/map', description: 'International models' },
+            { label: 'International Exchange', href: '/international-exchange', description: 'June 2026 mission' }
+        ]
+    },
+    {
+        title: 'Action',
         links: [
             { label: 'Blog', href: '/blog', description: 'News and updates' },
             { label: 'Events', href: '/events', description: 'Upcoming gatherings' },
@@ -309,16 +304,10 @@ export const footerSections = [
         links: [
             { label: 'Our Mission', href: '/about', description: 'Why we exist' },
             { label: 'Roadmap', href: '/about/roadmap', description: '2026-2028 journey' },
-            { label: 'International Exchange', href: '/international-exchange', description: 'June 2026 mission' },
             { label: 'How It Works', href: '/how-it-works', description: 'Platform overview' },
             { label: 'Privacy Policy', href: '/privacy', description: 'Your data protection' },
-            { label: 'Terms of Service', href: '/terms', description: 'Usage guidelines' }
-        ]
-    },
-    {
-        title: 'Connect',
-        links: [
-            { label: 'Contact Us', href: '/contact', description: 'Get in touch' },
+            { label: 'Terms of Service', href: '/terms', description: 'Usage guidelines' },
+            { label: 'Contact Us', href: '/contact', description: 'Get in touch' }
         ]
     }
 ];
