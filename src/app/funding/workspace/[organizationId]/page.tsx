@@ -341,7 +341,9 @@ export default async function FundingOrganizationWorkspacePage({
                       No outcome commitments yet. This is where impact measurement needs to become explicit before or as funding moves live.
                     </div>
                   ) : (
-                    workspace.commitments.map((commitment) => (
+                    workspace.commitments.map((c) => {
+                      const commitment = c as any;
+                      return (
                       <div key={commitment.id} className="border border-gray-200 bg-[#f8fafc] p-3">
                         <div className="flex items-center justify-between gap-2 mb-1">
                           <div className="text-sm font-black text-black">
@@ -373,7 +375,8 @@ export default async function FundingOrganizationWorkspacePage({
                           Latest validations {commitment.latestUpdateValidationCount}
                         </div>
                       </div>
-                    ))
+                      );
+                    })
                   )}
                 </div>
               </div>

@@ -308,7 +308,7 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
                   </span>
                 )}
                 {hasOwnWebsite && (
-                  <a href={org.website_url} target="_blank" rel="noopener noreferrer"
+                  <a href={org.website_url!} target="_blank" rel="noopener noreferrer"
                     className="flex items-center gap-1.5 bg-orange-600 px-4 py-2 text-sm font-bold rounded-full hover:bg-orange-700 transition-colors">
                     Visit Full Website <ExternalLink className="w-4 h-4" />
                   </a>
@@ -535,7 +535,7 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
                   </a>
                 )}
                 {hasOwnWebsite && (
-                  <a href={org.website_url} target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white flex items-center gap-1.5">
+                  <a href={org.website_url!} target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white flex items-center gap-1.5">
                     <Globe className="w-4 h-4" /> Website
                   </a>
                 )}
@@ -569,7 +569,7 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
             )}
             {org.type && <span className="bg-white/10 px-4 py-2 text-sm rounded-full capitalize">{org.type}</span>}
             {hasOwnWebsite && (
-              <a href={org.website_url} target="_blank" rel="noopener noreferrer"
+              <a href={org.website_url!} target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-1.5 bg-ochre-600 px-4 py-2 text-sm font-bold rounded-full hover:bg-ochre-700">
                 Visit Website <ExternalLink className="w-4 h-4" />
               </a>

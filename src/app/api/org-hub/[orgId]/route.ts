@@ -88,8 +88,11 @@ export async function POST(
     const serviceClient = getServiceClient();
     const tableName = SECTION_TABLES[section];
 
+    // Cast to any — tableName is a dynamic string from SECTION_TABLES
+    const sc = serviceClient as any;
+
     if (action === 'create') {
-      const { data: result, error } = await serviceClient
+      const { data: result, error } = await sc
         .from(tableName)
         .insert({ organization_id: orgId, ...data })
         .select()
@@ -100,7 +103,7 @@ export async function POST(
 
     if (action === 'update') {
       if (!id) return NextResponse.json({ error: 'ID required for update' }, { status: 400 });
-      const { data: result, error } = await serviceClient
+      const { data: result, error } = await sc
         .from(tableName)
         .update(data)
         .eq('id', id)
@@ -113,7 +116,7 @@ export async function POST(
 
     if (action === 'delete') {
       if (!id) return NextResponse.json({ error: 'ID required for delete' }, { status: 400 });
-      const { error } = await serviceClient
+      const { error } = await sc
         .from(tableName)
         .delete()
         .eq('id', id)

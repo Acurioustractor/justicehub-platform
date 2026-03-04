@@ -98,14 +98,15 @@ export async function POST(request: NextRequest) {
           recommendationId: null,
         };
 
+    const r = result as any;
     return NextResponse.json({
       success: true,
-      draft: result.draft,
-      reviewTask: result.reviewTask,
-      existing: result.existing,
-      applicationId: result.applicationId || null,
-      awardId: result.awardId || null,
-      recommendationId: result.recommendationId || null,
+      draft: r.draft,
+      reviewTask: r.reviewTask,
+      existing: r.existing,
+      applicationId: r.applicationId || null,
+      awardId: r.awardId || null,
+      recommendationId: r.recommendationId || null,
     });
   } catch (error) {
     const response = fundingOsErrorResponse(error);
