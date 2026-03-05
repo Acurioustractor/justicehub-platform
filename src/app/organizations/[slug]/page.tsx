@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import { ClaimOrgButton } from '@/components/claims/ClaimOrgButton';
 import {
   Building2,
   MapPin,
@@ -638,11 +639,12 @@ export default async function OrganizationPage({
                     Call
                   </a>
                 )}
+                <ClaimOrgButton orgId={org.id} orgSlug={org.slug || org.id} />
               </div>
 
               <div className="mt-6 text-sm text-gray-700 leading-relaxed max-w-3xl">
                 <p>
-                  This workspace now bridges BG Fit’s accounting, impact commitments, and
+                  This workspace now bridges BG Fit's accounting, impact commitments, and
                   grant-readiness work into the funding operating system: the same shared notes,
                   draft reviews, and business-support signals you see here sync directly to the
                   admin pipelines, application drafts, and community-review tasks that power the

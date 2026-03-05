@@ -44,7 +44,7 @@ async function getOrganizationsData() {
 
     if (orgsError) {
       console.error('Error fetching organizations:', orgsError);
-      return { organizations: [], programCounts: {}, serviceCounts: {}, teamCounts: {}, detentionFacilities: [] };
+      return { organizations: [], programCounts: {}, serviceCounts: {}, teamCounts: {}, detentionFacilities: [], claimedOrgIds: [] };
     }
 
     // Fetch detention facilities
@@ -125,21 +125,35 @@ async function getOrganizationsData() {
       });
     }
 
+    // Fetch verified claim counts (table not yet in generated types)
+    const { data: verifiedClaims } = await (supabase as any)
+      .from('organization_claims')
+      .select('organization_id')
+      .eq('status', 'verified');
+
+    const claimedOrgIds = new Set<string>();
+    if (verifiedClaims) {
+      verifiedClaims.forEach((c: { organization_id: string }) => {
+        claimedOrgIds.add(c.organization_id);
+      });
+    }
+
     return {
       organizations: orgs || [],
       programCounts,
       serviceCounts,
       teamCounts,
       detentionFacilities: facilitiesWithPartners,
+      claimedOrgIds: Array.from(claimedOrgIds),
     };
   } catch (error) {
     console.error('Error fetching organizations data:', error);
-    return { organizations: [], programCounts: {}, serviceCounts: {}, teamCounts: {}, detentionFacilities: [] };
+    return { organizations: [], programCounts: {}, serviceCounts: {}, teamCounts: {}, detentionFacilities: [], claimedOrgIds: [] };
   }
 }
 
 export default async function OrganizationsPage() {
-  const { organizations, programCounts, serviceCounts, teamCounts, detentionFacilities } = await getOrganizationsData();
+  const { organizations, programCounts, serviceCounts, teamCounts, detentionFacilities, claimedOrgIds } = await getOrganizationsData();
 
   const verifiedCount = organizations.filter(
     (org: Organization) => org.verification_status === 'verified'
@@ -181,6 +195,16 @@ export default async function OrganizationsPage() {
                   Verified
                 </p>
               </div>
+              {claimedOrgIds.length > 0 && (
+                <div>
+                  <div className="text-4xl font-bold text-purple-600 mb-1">
+                    {claimedOrgIds.length}
+                  </div>
+                  <p className="text-sm uppercase tracking-wide text-earth-600 font-medium">
+                    Active
+                  </p>
+                </div>
+              )}
               <div>
                 <div className="text-4xl font-bold text-red-600 mb-1">
                   {operationalFacilities.length}
@@ -225,6 +249,7 @@ export default async function OrganizationsPage() {
           serviceCounts={serviceCounts}
           teamCounts={teamCounts}
           detentionFacilities={detentionFacilities}
+          claimedOrgIds={claimedOrgIds}
         />
 
         {organizations.length === 0 && (

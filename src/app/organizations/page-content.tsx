@@ -45,6 +45,7 @@ interface OrganizationsPageContentProps {
   serviceCounts: Record<string, number>;
   teamCounts: Record<string, number>;
   detentionFacilities: DetentionFacility[];
+  claimedOrgIds: string[];
 }
 
 export function OrganizationsPageContent({
@@ -53,7 +54,9 @@ export function OrganizationsPageContent({
   serviceCounts,
   teamCounts,
   detentionFacilities,
+  claimedOrgIds,
 }: OrganizationsPageContentProps) {
+  const claimedSet = useMemo(() => new Set(claimedOrgIds), [claimedOrgIds]);
   const [searchQuery, setSearchQuery] = useState('');
   const [stateFilter, setStateFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -103,10 +106,18 @@ export function OrganizationsPageContent({
         if (typeFilter !== 'all' && org.type !== typeFilter) return false;
         // Verification
         if (verificationFilter === 'verified' && org.verification_status !== 'verified') return false;
+        if (verificationFilter === 'claimed' && !claimedSet.has(org.id)) return false;
         if (verificationFilter === 'unverified' && org.verification_status === 'verified') return false;
         return true;
       })
       .sort((a, b) => {
+        // Always sort claimed orgs first in default sort
+        if (sortBy === 'name-asc' || sortBy === 'name-desc') {
+          const aClaimed = claimedSet.has(a.id) ? 1 : 0;
+          const bClaimed = claimedSet.has(b.id) ? 1 : 0;
+          if (aClaimed !== bClaimed) return bClaimed - aClaimed;
+        }
+
         switch (sortBy) {
           case 'name-desc':
             return b.name.localeCompare(a.name);
@@ -124,7 +135,7 @@ export function OrganizationsPageContent({
             return a.name.localeCompare(b.name);
         }
       });
-  }, [organizations, searchQuery, stateFilter, typeFilter, verificationFilter, sortBy, programCounts, serviceCounts]);
+  }, [organizations, searchQuery, stateFilter, typeFilter, verificationFilter, sortBy, programCounts, serviceCounts, claimedSet]);
 
   const clearFilters = () => {
     setSearchQuery('');
@@ -197,6 +208,7 @@ export function OrganizationsPageContent({
             >
               <option value="all">All Status</option>
               <option value="verified">Verified</option>
+              <option value="claimed">Active (Claimed)</option>
               <option value="unverified">Unverified</option>
             </select>
 
@@ -254,6 +266,14 @@ export function OrganizationsPageContent({
                         {org.name}
                       </h3>
                       <div className="flex flex-shrink-0 gap-1">
+                        {claimedSet.has(org.id) && (
+                          <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-800 px-2 py-0.5 border border-purple-600 text-xs font-bold uppercase tracking-wider">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            Active
+                          </span>
+                        )}
                         {isVerified && (
                           <span className="inline-flex items-center gap-1 bg-eucalyptus-100 text-eucalyptus-800 px-2 py-0.5 border border-black text-xs font-bold uppercase tracking-wider">
                             <svg

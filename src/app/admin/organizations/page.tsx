@@ -1,4 +1,6 @@
 import { requireAdmin } from '@/lib/supabase/admin';
+import { createServiceClient } from '@/lib/supabase/service';
+import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import OrganizationList from '@/components/admin/OrganizationList';
 
@@ -31,6 +33,13 @@ export default async function AdminOrganizationsPage() {
     `)
     .order('name');
 
+  // Fetch pending claims count
+  const serviceClient = createServiceClient();
+  const { count: pendingClaimsCount } = await (serviceClient as any)
+    .from('organization_claims')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'pending');
+
   // Calculate stats
   const totalOrgs = organizations?.length || 0;
   const totalMembers = organizations?.reduce((sum, org) => sum + (org.organizations_profiles?.length || 0), 0) || 0;
@@ -55,7 +64,7 @@ export default async function AdminOrganizationsPage() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
             <div className="bg-white border-2 border-black p-4">
               <div className="text-3xl font-black">{totalOrgs}</div>
               <div className="text-sm text-earth-600 font-medium">Total Organizations</div>
@@ -68,6 +77,12 @@ export default async function AdminOrganizationsPage() {
               <div className="text-3xl font-black text-indigo-600">{autoLinkedOrgs}</div>
               <div className="text-sm text-earth-600 font-medium">With Auto-Links</div>
             </div>
+            {(pendingClaimsCount ?? 0) > 0 && (
+              <Link href="/admin/org-claims" className="bg-purple-50 border-2 border-purple-600 p-4 hover:bg-purple-100 transition-colors">
+                <div className="text-3xl font-black text-purple-600">{pendingClaimsCount}</div>
+                <div className="text-sm text-purple-700 font-medium">Pending Claims →</div>
+              </Link>
+            )}
           </div>
         </div>
       </section>
