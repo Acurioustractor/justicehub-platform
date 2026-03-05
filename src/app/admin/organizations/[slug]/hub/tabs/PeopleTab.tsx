@@ -22,6 +22,7 @@ import {
   FileText,
   Tag,
   Save,
+  BookOpen,
 } from 'lucide-react';
 
 interface OrgPerson {
@@ -49,9 +50,10 @@ interface OrgPerson {
   linkedPrograms: { id: string; name: string }[];
 }
 
-type PersonType = 'staff' | 'elder' | 'community' | 'youth' | 'volunteer' | 'partner';
+type PersonType = 'founder' | 'staff' | 'elder' | 'community' | 'youth' | 'volunteer' | 'partner';
 
 const PERSON_TYPES: { value: PersonType; label: string; description: string }[] = [
+  { value: 'founder', label: 'Founder', description: 'Founder or co-founder of the organisation' },
   { value: 'staff', label: 'Staff', description: 'Organisation employee or contractor' },
   { value: 'elder', label: 'Elder / Cultural Authority', description: 'Cultural leader or elder advisor' },
   { value: 'community', label: 'Community Member', description: 'Community participant or supporter' },
@@ -67,7 +69,7 @@ export function PeopleTab({ orgId }: { orgId: string }) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toggling, setToggling] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'current' | 'public' | 'el-synced'>('all');
+  const [filter, setFilter] = useState<string>('all');
   const [editingPerson, setEditingPerson] = useState<string | null>(null);
   const [editRole, setEditRole] = useState('');
   const [editTags, setEditTags] = useState<string[]>([]);
@@ -76,6 +78,8 @@ export function PeopleTab({ orgId }: { orgId: string }) {
   const [loadingTranscripts, setLoadingTranscripts] = useState<string | null>(null);
 
   // Add form state
+  const [orgStories, setOrgStories] = useState<any[]>([]);
+
   const [newPerson, setNewPerson] = useState({
     full_name: '',
     preferred_name: '',
@@ -90,10 +94,17 @@ export function PeopleTab({ orgId }: { orgId: string }) {
 
   const fetchPeople = useCallback(async () => {
     try {
-      const res = await fetch(`/api/org-hub/${orgId}/people`);
-      if (res.ok) {
-        const json = await res.json();
+      const [peopleRes, storiesRes] = await Promise.all([
+        fetch(`/api/org-hub/${orgId}/people`),
+        fetch(`/api/org-hub/${orgId}/stories`),
+      ]);
+      if (peopleRes.ok) {
+        const json = await peopleRes.json();
         setPeople(json.data || []);
+      }
+      if (storiesRes.ok) {
+        const json = await storiesRes.json();
+        setOrgStories(json.data || []);
       }
     } catch (err) {
       console.error('Failed to fetch people:', err);
@@ -221,16 +232,31 @@ export function PeopleTab({ orgId }: { orgId: string }) {
     }
   };
 
+  // Compute filter counts
+  const publicCount = people.filter(p => p.profile.is_public).length;
+  const elSyncedCount = people.filter(p => p.profile.synced_from_empathy_ledger).length;
+  const featuredCount = people.filter(p => p.is_featured).length;
+  const hasStoriesCount = people.filter(p => (transcripts[p.profile.empathy_ledger_profile_id || ''] || []).length > 0).length;
+  const typeCounts: Record<string, number> = {};
+  for (const p of people) {
+    for (const tag of (p.profile.role_tags || [])) {
+      typeCounts[tag] = (typeCounts[tag] || 0) + 1;
+    }
+  }
+
   // Filtered people
   const filteredPeople = people.filter(p => {
     if (filter === 'current') return p.is_current;
     if (filter === 'public') return p.profile.is_public;
     if (filter === 'el-synced') return p.profile.synced_from_empathy_ledger;
+    if (filter === 'featured') return p.is_featured;
+    if (filter === 'has-stories') return (transcripts[p.profile.empathy_ledger_profile_id || ''] || []).length > 0;
+    // Type filters
+    if (PERSON_TYPES.some(t => t.value === filter)) {
+      return (p.profile.role_tags || []).includes(filter);
+    }
     return true;
   });
-
-  const publicCount = people.filter(p => p.profile.is_public).length;
-  const elSyncedCount = people.filter(p => p.profile.synced_from_empathy_ledger).length;
 
   if (loading) {
     return (
@@ -263,23 +289,44 @@ export function PeopleTab({ orgId }: { orgId: string }) {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-2">
-        {(['all', 'current', 'public', 'el-synced'] as const).map(f => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 text-xs font-bold border transition-colors ${
-              filter === f
-                ? 'bg-black text-white border-black'
-                : 'bg-white text-gray-600 border-gray-300 hover:border-black'
-            }`}
-          >
-            {f === 'all' && `All (${people.length})`}
-            {f === 'current' && `Current (${people.filter(p => p.is_current).length})`}
-            {f === 'public' && `Public (${publicCount})`}
-            {f === 'el-synced' && `EL Synced (${elSyncedCount})`}
-          </button>
-        ))}
+      <div className="space-y-2">
+        <div className="flex flex-wrap gap-2">
+          {[
+            { key: 'all', label: `All (${people.length})` },
+            { key: 'current', label: `Current (${people.filter(p => p.is_current).length})` },
+            { key: 'public', label: `Public (${publicCount})` },
+            { key: 'featured', label: `Featured (${featuredCount})` },
+            { key: 'el-synced', label: `EL Synced (${elSyncedCount})` },
+          ].map(f => (
+            <button
+              key={f.key}
+              onClick={() => setFilter(f.key)}
+              className={`px-3 py-1.5 text-xs font-bold border transition-colors ${
+                filter === f.key
+                  ? 'bg-black text-white border-black'
+                  : 'bg-white text-gray-600 border-gray-300 hover:border-black'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+        {/* Type filters */}
+        <div className="flex flex-wrap gap-1.5">
+          {PERSON_TYPES.filter(t => (typeCounts[t.value] || 0) > 0).map(t => (
+            <button
+              key={t.value}
+              onClick={() => setFilter(filter === t.value ? 'all' : t.value)}
+              className={`px-2.5 py-1 text-[11px] font-bold border transition-colors ${
+                filter === t.value
+                  ? 'bg-black text-white border-black'
+                  : 'bg-earth-50 text-earth-700 border-earth-200 hover:border-earth-400'
+              }`}
+            >
+              {t.label} ({typeCounts[t.value]})
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* EL consent note */}
@@ -484,6 +531,15 @@ export function PeopleTab({ orgId }: { orgId: string }) {
                           {(p.role_tags || []).slice(0, 2).join(', ')}
                         </span>
                       )}
+                      {(() => {
+                        const elStories = transcripts[p.empathy_ledger_profile_id || ''] || [];
+                        return elStories.length > 0 ? (
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 bg-purple-100 text-purple-700 border border-purple-200 flex items-center gap-0.5">
+                            <BookOpen className="w-3 h-3" />
+                            {elStories.length} {elStories.length === 1 ? 'story' : 'stories'}
+                          </span>
+                        ) : null;
+                      })()}
                     </div>
                   </div>
 
@@ -618,6 +674,37 @@ export function PeopleTab({ orgId }: { orgId: string }) {
                               <Layers className="w-3 h-3" />
                               {prog.name}
                             </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Linked JH Stories */}
+                    {orgStories.length > 0 && (
+                      <div>
+                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Organisation Stories</p>
+                        <div className="space-y-1.5">
+                          {orgStories.map((story: any) => (
+                            <div key={story.id} className="flex items-center justify-between p-2 bg-gray-50 border border-gray-200">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <BookOpen className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                                <span className="text-xs font-medium text-gray-700 truncate">{story.title}</span>
+                                <span className={`text-[10px] font-bold px-1.5 py-0.5 flex-shrink-0 ${
+                                  story.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                                }`}>
+                                  {story.status}
+                                </span>
+                                {story.category && (
+                                  <span className="text-[10px] text-gray-400 flex-shrink-0">{story.category}</span>
+                                )}
+                              </div>
+                              <Link
+                                href={`/admin/stories/${story.slug || story.id}`}
+                                className="text-[10px] font-bold text-ochre-600 hover:text-ochre-800 flex-shrink-0 ml-2"
+                              >
+                                View
+                              </Link>
+                            </div>
                           ))}
                         </div>
                       </div>

@@ -50,6 +50,18 @@ const configuredEmpathyLedgerClient: EmpathyLedgerClient | null =
 
 export const isEmpathyLedgerConfigured = Boolean(configuredEmpathyLedgerClient);
 
+// Service role client for write operations (push sync to EL)
+const elServiceKey = process.env.EMPATHY_LEDGER_SERVICE_KEY;
+const configuredEmpathyLedgerServiceClient: EmpathyLedgerClient | null =
+  empathyLedgerUrl && elServiceKey
+    ? createClient<any>(empathyLedgerUrl, elServiceKey, {
+        auth: { autoRefreshToken: false, persistSession: false },
+      })
+    : null;
+
+export const empathyLedgerServiceClient = configuredEmpathyLedgerServiceClient;
+export const isEmpathyLedgerWriteConfigured = Boolean(configuredEmpathyLedgerServiceClient);
+
 // Defer config errors to request-time so local dev can run without Empathy Ledger env.
 export const empathyLedgerClient = (configuredEmpathyLedgerClient ??
   new Proxy(

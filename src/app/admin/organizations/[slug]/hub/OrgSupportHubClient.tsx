@@ -94,7 +94,7 @@ export function OrgSupportHubClient({ organization, isPortal }: { organization: 
 
       {/* Tab content */}
       <div className="container-justice py-8">
-        {activeTab === 'overview' && <OverviewTab orgId={organization.id} orgSlug={organization.slug || ''} />}
+        {activeTab === 'overview' && <OverviewTab orgId={organization.id} orgSlug={organization.slug || ''} onNavigateTab={(tab) => setActiveTab(tab)} />}
         {activeTab === 'grants' && <GrantsTab orgId={organization.id} />}
         {activeTab === 'compliance' && <ComplianceTab orgId={organization.id} />}
         {activeTab === 'people' && <PeopleTab orgId={organization.id} />}
