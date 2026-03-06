@@ -482,6 +482,324 @@ function BackerSection({ slug }: { slug: string }) {
   );
 }
 
+const ROLE_LABELS: Record<string, string> = {
+  attendee: 'Attendee',
+  volunteer: 'Volunteer',
+  media: 'Media',
+  politician: 'Politician',
+  educator: 'Educator',
+  other: 'Other',
+};
+
+function ReactionsSection({
+  reactions,
+  reactionCount,
+  recommendRate,
+  slug,
+  onNewReaction,
+}: {
+  reactions: { name: string; role: string; reaction: string; rating?: number; created_at: string }[];
+  reactionCount: number;
+  recommendRate: number;
+  slug: string;
+  onNewReaction: (r: { name: string; role: string; reaction: string; created_at: string }) => void;
+}) {
+  const [formOpen, setFormOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState('attendee');
+  const [reaction, setReaction] = useState('');
+  const [rating, setRating] = useState(0);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!name || !reaction) return;
+    setStatus('loading');
+    setErrorMsg('');
+
+    try {
+      const res = await fetch(`/api/projects/${slug}/reactions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email: email || undefined,
+          role,
+          reaction,
+          rating: rating || undefined,
+          would_recommend: true,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to submit');
+      }
+      setStatus('success');
+      onNewReaction({ name, role, reaction, created_at: new Date().toISOString() });
+      setName('');
+      setEmail('');
+      setReaction('');
+      setRating(0);
+    } catch (err: unknown) {
+      setStatus('error');
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong');
+    }
+  };
+
+  return (
+    <section className="py-16 bg-amber-50 border-y-2 border-black">
+      <div className="container-justice">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-black uppercase tracking-tighter mb-2">
+            After the Container
+          </h2>
+          <p className="text-xl text-gray-700 mb-8 max-w-2xl">
+            What people say after experiencing thirty minutes inside.
+          </p>
+
+          {/* Stats row */}
+          {reactionCount > 0 && (
+            <div className="flex flex-wrap gap-6 mb-8">
+              <div className="text-center">
+                <div className="text-4xl font-black">{reactionCount}</div>
+                <div className="text-xs font-bold uppercase tracking-widest text-gray-500">Reactions</div>
+              </div>
+              {recommendRate > 0 && (
+                <div className="text-center">
+                  <div className="text-4xl font-black text-emerald-700">{recommendRate}%</div>
+                  <div className="text-xs font-bold uppercase tracking-widest text-gray-500">Would Recommend</div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Recent reactions */}
+          {reactions.length > 0 && (
+            <div className="space-y-3 mb-8">
+              {reactions.slice(0, 6).map((r, i) => (
+                <div key={i} className="bg-white border-2 border-gray-200 p-5">
+                  <p className="text-gray-800 mb-3 italic">&ldquo;{r.reaction}&rdquo;</p>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-bold">{r.name}</span>
+                    {r.role && (
+                      <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 uppercase tracking-widest font-bold">
+                        {ROLE_LABELS[r.role] || r.role}
+                      </span>
+                    )}
+                    {r.rating && (
+                      <span className="text-amber-500">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Submit form */}
+          {status === 'success' ? (
+            <div className="bg-emerald-50 border-2 border-emerald-600 p-6 text-center">
+              <CheckCircle className="w-8 h-8 mx-auto mb-3 text-emerald-600" />
+              <p className="font-bold text-lg">Thank you for sharing.</p>
+              <p className="text-gray-600 text-sm mt-1">
+                Your reaction helps build the case for change.
+              </p>
+              <button
+                onClick={() => { setStatus('idle'); setFormOpen(true); }}
+                className="mt-4 text-sm font-bold uppercase tracking-widest text-emerald-700 hover:underline"
+              >
+                Share Another
+              </button>
+            </div>
+          ) : (
+            <div className="bg-white border-2 border-black">
+              <button
+                onClick={() => setFormOpen(!formOpen)}
+                className="w-full flex items-center justify-between p-6 text-left"
+              >
+                <span className="font-bold text-lg">Share Your Reaction</span>
+                <ChevronDown className={`w-5 h-5 transition-transform ${formOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {formOpen && (
+                <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Your name *"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      className="px-4 py-3 border-2 border-gray-300 text-sm focus:outline-none focus:border-black"
+                    />
+                    <input
+                      type="email"
+                      placeholder="Email (optional — kept private)"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="px-4 py-3 border-2 border-gray-300 text-sm focus:outline-none focus:border-black"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">
+                      I am a...
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {Object.entries(ROLE_LABELS).map(([value, label]) => (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => setRole(value)}
+                          className={`px-3 py-1.5 text-sm font-bold border transition-colors ${
+                            role === value
+                              ? 'bg-black text-white border-black'
+                              : 'bg-white text-gray-700 border-gray-300 hover:border-black'
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <textarea
+                    placeholder="What was your experience? What did you feel? *"
+                    value={reaction}
+                    onChange={(e) => setReaction(e.target.value)}
+                    required
+                    rows={4}
+                    className="w-full px-4 py-3 border-2 border-gray-300 text-sm focus:outline-none focus:border-black resize-none"
+                  />
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">
+                      Rating (optional)
+                    </label>
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setRating(star === rating ? 0 : star)}
+                          className={`text-2xl ${star <= rating ? 'text-amber-500' : 'text-gray-300'} hover:text-amber-400`}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={status === 'loading' || !name || !reaction}
+                    className="bg-black text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-900 transition-colors disabled:opacity-50"
+                  >
+                    {status === 'loading' ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" /> Submitting...
+                      </span>
+                    ) : (
+                      'Share Reaction'
+                    )}
+                  </button>
+                  {status === 'error' && (
+                    <p className="text-red-600 text-sm">{errorMsg}</p>
+                  )}
+                </form>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+interface BasecampStory {
+  title: string;
+  excerpt: string;
+  quote: string;
+  thumbnail_url: string;
+}
+
+function BasecampStoriesSection({ basecamps }: { basecamps: { slug: string; name: string; region: string }[] }) {
+  const [storiesByOrg, setStoriesByOrg] = useState<Record<string, BasecampStory[]>>({});
+
+  useEffect(() => {
+    basecamps.forEach((bc) => {
+      fetch(`/api/organizations/${bc.slug}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const stories = (data.stories || [])
+            .filter((s: { is_public: boolean }) => s.is_public)
+            .slice(0, 3);
+          if (stories.length > 0) {
+            setStoriesByOrg((prev) => ({ ...prev, [bc.slug]: stories }));
+          }
+        })
+        .catch(console.error);
+    });
+  }, [basecamps]);
+
+  const orgsWithStories = basecamps.filter((bc) => storiesByOrg[bc.slug]?.length > 0);
+
+  if (orgsWithStories.length === 0) return null;
+
+  return (
+    <section className="py-16">
+      <div className="container-justice">
+        <h2 className="text-3xl font-black uppercase tracking-tighter mb-2">
+          Stories From the Basecamps
+        </h2>
+        <p className="text-xl text-gray-700 mb-12 max-w-3xl">
+          Lived experience from the communities anchoring this tour — the organisations already doing what works.
+        </p>
+
+        <div className="space-y-12">
+          {orgsWithStories.map((bc) => (
+            <div key={bc.slug}>
+              <div className="flex items-center gap-3 mb-4">
+                <MapPin className="w-4 h-4 text-emerald-600" />
+                <h3 className="font-black text-xl">{bc.name}</h3>
+                <span className="text-sm text-gray-500">{bc.region}</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {storiesByOrg[bc.slug].map((story, i) => (
+                  <div key={i} className="border-2 border-black">
+                    {story.thumbnail_url && (
+                      <div className="aspect-video relative overflow-hidden">
+                        <img
+                          src={story.thumbnail_url}
+                          alt={story.title}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <h4 className="font-bold mb-2">{story.title}</h4>
+                      {story.quote && (
+                        <p className="text-sm italic text-gray-600 mb-2">
+                          &ldquo;{story.quote}&rdquo;
+                        </p>
+                      )}
+                      {story.excerpt && (
+                        <p className="text-sm text-gray-700 line-clamp-3">{story.excerpt}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Link
+                href={`/organizations/${bc.slug}`}
+                className="inline-flex items-center gap-2 mt-4 text-sm font-bold uppercase tracking-widest hover:underline"
+              >
+                See All From {bc.name} <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 const NOMINATION_CATEGORIES = [
   { value: 'politician', label: 'Politician', emoji: '🏛' },
   { value: 'justice_official', label: 'Justice Official', emoji: '⚖️' },
@@ -795,6 +1113,11 @@ export function TourContent() {
   const [projectStories, setProjectStories] = useState<ProjectStory[]>([]);
   const [projectPhotos, setProjectPhotos] = useState<ProjectPhoto[]>([]);
   const [voices, setVoices] = useState<{ name: string; image_url: string; quote: string; video_url?: string }[]>([]);
+  const [liveRaised, setLiveRaised] = useState<number | null>(null);
+  const [liveDonorCount, setLiveDonorCount] = useState(0);
+  const [reactions, setReactions] = useState<{ name: string; role: string; reaction: string; rating?: number; created_at: string }[]>([]);
+  const [reactionCount, setReactionCount] = useState(0);
+  const [recommendRate, setRecommendRate] = useState(0);
   const tourStopRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
@@ -875,10 +1198,32 @@ export function TourContent() {
         if (Array.isArray(data) && data.length > 0) setVoices(data);
       })
       .catch(console.error);
+
+    // Fetch live fundraising stats from Stripe
+    fetch('/api/campaign/stats')
+      .then((res) => res.json())
+      .then((data) => {
+        if (typeof data.total_raised_cents === 'number') {
+          setLiveRaised(data.total_raised_cents / 100);
+          setLiveDonorCount(data.donor_count || 0);
+        }
+      })
+      .catch(console.error);
+
+    // Fetch tour reactions
+    fetch('/api/projects/the-contained/reactions')
+      .then((res) => res.json())
+      .then((data) => {
+        if (typeof data.count === 'number') setReactionCount(data.count);
+        if (typeof data.recommendRate === 'number') setRecommendRate(data.recommendRate);
+        if (Array.isArray(data.recent)) setReactions(data.recent);
+      })
+      .catch(console.error);
   }, []);
 
+  const currentAmount = liveRaised ?? campaignFundraising.currentAmount;
   const progressPercent = Math.min(
-    (campaignFundraising.currentAmount / campaignFundraising.goal) * 100,
+    (currentAmount / campaignFundraising.goal) * 100,
     100
   );
 
@@ -1403,8 +1748,9 @@ export function TourContent() {
                 </div>
               )}
               <p className="text-xl text-gray-700">
-                ${campaignFundraising.currentAmount.toLocaleString()} raised of ${campaignFundraising.goal.toLocaleString()} goal.
-                Help us close the gap.
+                ${currentAmount.toLocaleString()} raised of ${campaignFundraising.goal.toLocaleString()} goal.
+                {liveDonorCount > 0 && <span className="text-gray-500"> ({liveDonorCount} donors)</span>}
+                {' '}Help us close the gap.
               </p>
             </div>
 
@@ -1413,7 +1759,7 @@ export function TourContent() {
               <div className="mb-8">
                 <div className="flex justify-between text-sm font-bold mb-2">
                   <span>
-                    ${campaignFundraising.currentAmount.toLocaleString()} raised
+                    ${currentAmount.toLocaleString()} raised
                   </span>
                   <span>
                     ${campaignFundraising.goal.toLocaleString()} goal
@@ -1445,13 +1791,13 @@ export function TourContent() {
                   <div
                     key={milestone.amount}
                     className={`p-4 border-2 ${
-                      campaignFundraising.currentAmount >= milestone.amount
+                      currentAmount >= milestone.amount
                         ? 'border-emerald-600 bg-emerald-50'
                         : 'border-gray-300'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      {campaignFundraising.currentAmount >= milestone.amount ? (
+                      {currentAmount >= milestone.amount ? (
                         <CheckCircle className="w-4 h-4 text-emerald-600" />
                       ) : (
                         <Target className="w-4 h-4 text-gray-400" />
@@ -1486,12 +1832,31 @@ export function TourContent() {
         </div>
 
         {/* ============================================================
-            10. NOMINATE A DECISION MAKER
+            10. BASECAMP STORIES
+            ============================================================ */}
+        <BasecampStoriesSection basecamps={basecamps} />
+
+        {/* ============================================================
+            11. NOMINATE A DECISION MAKER
             ============================================================ */}
         <NominateSection slug="the-contained" />
 
         {/* ============================================================
-            11. THE PLATFORM
+            12. AFTER THE CONTAINER — Reactions
+            ============================================================ */}
+        <ReactionsSection
+          reactions={reactions}
+          reactionCount={reactionCount}
+          recommendRate={recommendRate}
+          slug="the-contained"
+          onNewReaction={(r) => {
+            setReactions((prev) => [r, ...prev].slice(0, 10));
+            setReactionCount((c) => c + 1);
+          }}
+        />
+
+        {/* ============================================================
+            13. THE PLATFORM
             ============================================================ */}
         <section className="py-16 bg-black text-white">
           <div className="container-justice">
