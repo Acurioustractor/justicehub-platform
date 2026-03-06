@@ -199,6 +199,11 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Upcoming gatherings'
             },
             {
+                label: 'The Contained Tour',
+                href: '/contained/tour',
+                description: 'Immersive youth justice experience'
+            },
+            {
                 label: 'Stewards',
                 href: '/stewards',
                 description: 'Protect what works'
@@ -217,6 +222,11 @@ export const navigationItems: NavigationItem[] = [
                 label: 'Call It Out',
                 href: '/call-it-out',
                 description: 'Report racism and injustice'
+            },
+            {
+                label: 'Back This',
+                href: '/back-this',
+                description: 'Fund the infrastructure'
             }
         ]
     },

@@ -37,7 +37,18 @@ export async function POST(request: NextRequest) {
         const organizationId = session.metadata?.organization_id
         const tier = session.metadata?.tier
 
-        if (organizationId && tier) {
+        if (session.metadata?.type === 'donation') {
+          await supabase.from('campaign_donations').insert({
+            stripe_session_id: session.id,
+            stripe_payment_intent_id: session.payment_intent as string,
+            amount_cents: session.amount_total || 0,
+            currency: session.currency || 'aud',
+            donor_email: session.customer_details?.email || null,
+            donor_name: session.customer_details?.name || null,
+            campaign_id: session.metadata.campaign_id || 'launch-2026',
+          })
+          console.log(`💰 JusticeHub donation received: $${((session.amount_total || 0) / 100).toFixed(2)}`)
+        } else if (organizationId && tier) {
           await supabase
             .from('organizations')
             .update({
