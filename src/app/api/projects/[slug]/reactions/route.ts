@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
 
 const VALID_ROLES = ['attendee', 'volunteer', 'media', 'politician', 'educator', 'other'];
 
@@ -142,6 +143,23 @@ export async function POST(
     });
 
     if (error) throw error;
+
+    // Sync to GHL if email provided
+    if (email) {
+      const ghl = getGHLClient();
+      if (ghl.isConfigured()) {
+        ghl.upsertContact({
+          email: email.trim().toLowerCase(),
+          name: name.trim(),
+          tags: [GHL_TAGS.CONTAINED_REACTION, GHL_TAGS.CONTAINED_LAUNCH],
+          source: 'JusticeHub CONTAINED Reaction',
+          customFields: {
+            reaction_role: role || 'attendee',
+            reaction_rating: rating ? String(rating) : '',
+          },
+        }).catch(console.error); // fire-and-forget
+      }
+    }
 
     const { count } = await supabase
       .from('tour_reactions')

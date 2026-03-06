@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
 
 const VALID_CATEGORIES = [
   'politician',
@@ -150,6 +151,23 @@ export async function POST(
     });
 
     if (error) throw error;
+
+    // Sync nominator to GHL if they provided email
+    if (nominator_email) {
+      const ghl = getGHLClient();
+      if (ghl.isConfigured()) {
+        ghl.upsertContact({
+          email: nominator_email.trim().toLowerCase(),
+          name: nominator_name?.trim() || '',
+          tags: [GHL_TAGS.CONTAINED_NOMINATOR, GHL_TAGS.CONTAINED_LAUNCH],
+          source: 'JusticeHub CONTAINED Nomination',
+          customFields: {
+            nominated: nominee_name.trim(),
+            nomination_category: category,
+          },
+        }).catch(console.error); // fire-and-forget
+      }
+    }
 
     // Return updated count
     const { count } = await supabase
