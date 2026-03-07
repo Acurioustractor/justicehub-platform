@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSignalEngineClient } from '@/lib/supabase/signal-engine';
+import { parseJSON } from '@/lib/ai/parse-json';
 
 /**
  * COMPOSER Agent — Content Generator
@@ -137,13 +138,8 @@ async function composeForEvent(supabase: ReturnType<typeof createSignalEngineCli
     const result = await response.json();
     const text = result.content?.[0]?.text || '';
 
-    // Parse JSON from response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error('Failed to parse AI response as JSON');
-    }
-
-    const content = JSON.parse(jsonMatch[0]) as Record<string, { title: string | null; body: string }>;
+    // Parse JSON from response (robust parser handles markdown, think blocks, etc.)
+    const content = parseJSON<Record<string, { title: string | null; body: string }>>(text);
     await insertContent(supabase, event.id, content);
     await supabase.from('signal_events').update({ status: 'queued' }).eq('id', event.id);
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import FirecrawlApp from '@mendable/firecrawl-js';
+import { scrapeViaJina, shouldPreferFirecrawl } from '@/lib/scraping/jina-reader';
 
 // Helper to check admin status
 async function isAdmin(supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never, userId: string): Promise<boolean> {
@@ -152,18 +153,51 @@ async function scrapeUrl(url: string, predictedType: string | null): Promise<{
     
     // Use actual URL (follow redirect if needed)
     const actualUrl = healthCheck.redirectUrl || url;
-    
+
     // Block certain domains
     const blockedDomains = ['facebook.com', 'twitter.com', 'instagram.com', 'linkedin.com'];
     if (blockedDomains.some(d => urlObj.hostname.includes(d))) {
-      return { 
-        success: false, 
+      return {
+        success: false,
         error: 'Social media URLs not supported',
         scrapeTimeMs: Date.now() - startTime
       };
     }
-    
-    // Initialize Firecrawl
+
+    // Try Jina Reader first (free) unless it's been failing
+    if (!shouldPreferFirecrawl()) {
+      const jinaContent = await scrapeViaJina(actualUrl);
+      if (jinaContent) {
+        const hasMeaningfulWords = /youth|justice|program|community|child|young|detention|support/i.test(jinaContent);
+        if (jinaContent.length >= 500 && hasMeaningfulWords) {
+          const isGov = urlObj.hostname.includes('.gov.');
+          const isEdu = urlObj.hostname.includes('.edu.');
+          const detectedType = predictedType || (isGov ? 'government' : isEdu ? 'research' : 'website');
+
+          const entityMatches = jinaContent.match(/(?:program|service|initiative|organization|centre|project)/gi);
+          const entityCount = entityMatches ? Math.min(entityMatches.length, 10) : 1;
+          const summary = jinaContent.slice(0, 500).replace(/\n/g, ' ').trim() + '...';
+
+          recordSuccess(domain);
+          console.log(`[Scraper] Jina success for ${url} (${jinaContent.length} chars, free)`);
+
+          return {
+            success: true,
+            type: detectedType,
+            entities: entityCount,
+            data: {
+              title: urlObj.hostname,
+              content: jinaContent.slice(0, 10000),
+              summary,
+            },
+            scrapeTimeMs: Date.now() - startTime,
+          };
+        }
+      }
+      // Jina didn't return good enough content — fall through to Firecrawl
+    }
+
+    // Initialize Firecrawl (paid fallback)
     const firecrawl = getFirecrawlClient();
     
     // Scrape the URL

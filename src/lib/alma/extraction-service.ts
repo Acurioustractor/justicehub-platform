@@ -402,22 +402,18 @@ Return valid JSON with this structure:
    */
   private parseExtractionResponse(responseText: string): Omit<ExtractionResult, 'metadata'> {
     try {
-      // Remove markdown code blocks if present
-      const cleaned = responseText
-        .replace(/```json\n?/g, '')
-        .replace(/```\n?/g, '')
-        .trim();
-
-      const parsed = JSON.parse(cleaned);
+      // Dynamic import to avoid circular deps in @ts-nocheck file
+      const { parseJSON } = require('@/lib/ai/parse-json');
+      const parsed = parseJSON<Record<string, unknown[]>>(responseText);
 
       return {
-        interventions: parsed.interventions || [],
-        evidence: parsed.evidence || [],
-        outcomes: parsed.outcomes || [],
-        contexts: parsed.contexts || [],
+        interventions: (parsed.interventions || []) as Partial<ALMAIntervention>[],
+        evidence: (parsed.evidence || []) as Partial<ALMAEvidence>[],
+        outcomes: (parsed.outcomes || []) as Partial<ALMAOutcome>[],
+        contexts: (parsed.contexts || []) as Partial<ALMACommunityContext>[],
       };
     } catch (err) {
-      console.error('Failed to parse extraction response:', responseText);
+      console.error('Failed to parse extraction response:', responseText?.slice(0, 500));
       throw new Error('Claude returned invalid JSON');
     }
   }

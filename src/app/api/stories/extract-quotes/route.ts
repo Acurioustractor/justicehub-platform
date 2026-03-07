@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+import { parseJSON } from '@/lib/ai/parse-json';
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -111,18 +112,12 @@ Return ONLY the JSON object, no other text.`
       throw new Error('Unexpected response type from Claude');
     }
 
-    // Parse JSON response
+    // Parse JSON response (robust parser handles markdown, think blocks, etc.)
     let extractedData;
     try {
-      // Claude sometimes wraps JSON in markdown code blocks, so clean it
-      const cleanedText = content.text
-        .replace(/```json\n?/g, '')
-        .replace(/```\n?/g, '')
-        .trim();
-
-      extractedData = JSON.parse(cleanedText);
+      extractedData = parseJSON<Record<string, unknown>>(content.text);
     } catch (parseError) {
-      console.error('Failed to parse Claude response:', content.text);
+      console.error('Failed to parse Claude response:', content.text?.slice(0, 500));
       throw new Error('Failed to parse AI response as JSON');
     }
 

@@ -5,6 +5,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { z } from 'zod';
 import { ScrapedService } from './types';
+import { parseJSON } from '@/lib/ai/parse-json';
 
 // Validation schema for extracted data - handles nulls gracefully
 const ServiceSchema = z.object({
@@ -181,15 +182,7 @@ Extract ALL services found. Return empty array [] if no services found.`;
 
   private parseResponse(responseText: string, sourceUrl: string): ScrapedService[] {
     try {
-      // Remove markdown code blocks if present
-      let jsonText = responseText.trim();
-      if (jsonText.startsWith('```json')) {
-        jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?$/g, '');
-      } else if (jsonText.startsWith('```')) {
-        jsonText = jsonText.replace(/```\n?/g, '');
-      }
-
-      const parsed = JSON.parse(jsonText);
+      const parsed = parseJSON<unknown>(responseText);
       const servicesArray = Array.isArray(parsed) ? parsed : [parsed];
 
       // Validate and transform each service
