@@ -7,9 +7,10 @@
  * Provider order (free/cheap first):
  * 1. Groq (free, llama-3.3-70b)
  * 2. Gemini (free tier, gemini-2.5-flash)
- * 3. DeepSeek ($0.27/M tokens)
- * 4. OpenAI (gpt-4o-mini)
- * 5. Anthropic (claude-sonnet-4-5)
+ * 3. MiniMax (cheap, MiniMax-M2.5, reasoning model)
+ * 4. DeepSeek ($0.27/M tokens)
+ * 5. OpenAI (gpt-4o-mini)
+ * 6. Anthropic (claude-sonnet-4-5)
  */
 
 import Anthropic from '@anthropic-ai/sdk';
@@ -55,6 +56,15 @@ const PROVIDERS: ProviderConfig[] = [
     model: 'gemini-2.5-flash',
     maxTokens: 4096,
     supportsJsonMode: true,
+  },
+  {
+    name: 'minimax',
+    envKey: 'MINIMAX_API_KEY',
+    baseUrl: 'https://api.minimaxi.chat/v1',
+    model: 'MiniMax-M2.5',
+    maxTokens: 4096,
+    supportsJsonMode: false,
+    isReasoning: true,
   },
   {
     name: 'deepseek',
