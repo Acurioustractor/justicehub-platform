@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, CheckCircle2, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink, Mail } from 'lucide-react';
+import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink, Mail } from 'lucide-react';
+import { SystemStatus } from '@/components/admin/SystemStatus';
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -611,43 +612,8 @@ export default async function AdminDashboard() {
               </div>
             </div>
 
-            {/* System Status */}
-            <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-black text-black">System Status</h3>
-                <CheckCircle2 className="w-5 h-5 text-green-600" />
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between py-2 border-b border-gray-200">
-                  <span className="text-sm font-medium text-gray-700">Database</span>
-                  <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 border border-green-600">
-                    OPERATIONAL
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between py-2 border-b border-gray-200">
-                  <span className="text-sm font-medium text-gray-700">Authentication</span>
-                  <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 border border-green-600">
-                    OPERATIONAL
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between py-2 border-b border-gray-200">
-                  <span className="text-sm font-medium text-gray-700">Storage</span>
-                  <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 border border-green-600">
-                    OPERATIONAL
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-sm font-medium text-gray-700">Admin Access</span>
-                  <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 border border-green-600">
-                    AUTHENTICATED
-                  </span>
-                </div>
-              </div>
-            </div>
+            {/* System Status — live from /api/admin/system-status */}
+            <SystemStatus />
           </div>
         </div>
       </div>
