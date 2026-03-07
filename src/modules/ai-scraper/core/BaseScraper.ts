@@ -4,10 +4,12 @@
  * Foundational scraping infrastructure with AI integration and quality controls
  */
 
-import { createFirecrawlClient, createOpenAIClient, createAnthropicClient } from '@/lib/api/config';
+import { createFirecrawlClient } from '@/lib/api/config';
 import { env } from '@/lib/env';
 import { createSupabaseClient } from '@/lib/supabase/client';
-import { routeModel } from '@/lib/ai/model-router';
+import { callLLM } from '@/lib/ai/model-router';
+import { parseJSON } from '@/lib/ai/parse-json';
+import { scrapeViaJina, shouldPreferFirecrawl } from '@/lib/scraping/jina-reader';
 import type {
   DataSource,
   ProcessingJob,
@@ -25,10 +27,8 @@ export abstract class BaseScraper {
   protected dataSource: DataSource;
   protected config: ScrapingConfig;
   
-  // AI clients - initialized only when needed
+  // Firecrawl client - initialized only when needed
   private firecrawlClient?: any;
-  private openaiClient?: any;
-  private anthropicClient?: any;
 
   constructor(dataSource: DataSource) {
     this.dataSource = dataSource;
@@ -96,12 +96,22 @@ export abstract class BaseScraper {
   }
 
   /**
-   * Extract content using Firecrawl for intelligent web scraping
+   * Extract content from URL — tries Jina (free) first, falls back to Firecrawl
    */
   protected async extractContentWithFirecrawl(url: string): Promise<{
     content: string;
     metadata: any;
   }> {
+    // Try Jina Reader first (free)
+    if (!shouldPreferFirecrawl()) {
+      const jinaContent = await scrapeViaJina(url);
+      if (jinaContent && jinaContent.length >= 200) {
+        console.log(`[BaseScraper] Jina success for ${url} (${jinaContent.length} chars, free)`);
+        return { content: jinaContent, metadata: { source: 'jina' } };
+      }
+    }
+
+    // Fall back to Firecrawl (paid)
     if (!this.firecrawlClient) {
       this.firecrawlClient = createFirecrawlClient();
     }
@@ -125,135 +135,38 @@ export abstract class BaseScraper {
   }
 
   /**
-   * Use AI to extract structured data from unstructured content
+   * Use AI to extract structured data from unstructured content.
+   * Uses multi-provider rotation (Groq/Gemini free → DeepSeek → OpenAI → Anthropic).
+   * modelPreference param kept for API compat but ignored (rotation handles selection).
    */
   protected async extractWithAI(
     content: string,
     extractionGoals: string[],
-    modelPreference: 'openai' | 'anthropic' | 'auto' = 'auto'
+    _modelPreference: 'openai' | 'anthropic' | 'auto' = 'auto'
   ): Promise<AIExtractionResult> {
-    const request: AIExtractionRequest = {
-      url: '',
-      content_type: 'text',
-      extraction_goals: extractionGoals as any,
-      processing_priority: 'medium',
-      ai_model_preference: modelPreference
-    };
-
-    if (!env.OPENAI_API_KEY && !env.ANTHROPIC_API_KEY) {
-      throw new Error('No AI API keys configured');
-    }
-
-    const modelPlan = routeModel('entity_extraction');
-    const orderedModels = modelPreference === 'auto'
-      ? [modelPlan.primary, ...modelPlan.fallbacks]
-      : [
-          ...[modelPlan.primary, ...modelPlan.fallbacks].filter((m) => m.provider === modelPreference),
-          ...[modelPlan.primary, ...modelPlan.fallbacks].filter((m) => m.provider !== modelPreference),
-        ];
-
-    let lastError: Error | null = null;
-    for (const candidate of orderedModels) {
-      try {
-        if (candidate.provider === 'openai' && env.OPENAI_API_KEY) {
-          return await this.extractWithOpenAI(content, request, candidate.model);
-        }
-        if (candidate.provider === 'anthropic' && env.ANTHROPIC_API_KEY) {
-          return await this.extractWithAnthropic(content, request, candidate.model);
-        }
-      } catch (error) {
-        lastError = error as Error;
-      }
-    }
-
-    throw lastError || new Error('Failed to extract with all model candidates');
-  }
-
-  /**
-   * Extract using OpenAI GPT-4
-   */
-  private async extractWithOpenAI(
-    content: string,
-    request: AIExtractionRequest,
-    model: string
-  ): Promise<AIExtractionResult> {
-    if (!this.openaiClient) {
-      this.openaiClient = createOpenAIClient();
-    }
-
-    const systemPrompt = this.buildExtractionPrompt(request.extraction_goals);
+    const systemPrompt = this.buildExtractionPrompt(extractionGoals);
     const startTime = Date.now();
 
-    const response = await this.openaiClient.request('/chat/completions', {
-      method: 'POST',
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: `Extract organization data from this content:\n\n${content}` }
-        ],
+    const responseText = await callLLM(
+      `Extract organization data from this content and return as JSON:\n\n${content}`,
+      {
+        systemPrompt,
         temperature: 0.1,
-        max_tokens: 4000,
-        response_format: { type: 'json_object' }
-      })
-    }, `openai-extraction-${this.dataSource.id}`);
+        maxTokens: 4000,
+      }
+    );
 
     const processingTime = Date.now() - startTime;
-    const extractedData = JSON.parse(response.choices[0].message.content);
+    const extractedData = parseJSON<Record<string, unknown>>(responseText);
 
     return {
       request_id: crypto.randomUUID(),
       extracted_data: extractedData,
       confidence_scores: this.calculateConfidenceScores(extractedData),
-      processing_notes: [`Extracted using OpenAI ${model}`],
+      processing_notes: [`Extracted using multi-provider rotation`],
       flagged_issues: [],
       processing_time_ms: processingTime,
-      ai_model_used: model
-    };
-  }
-
-  /**
-   * Extract using Anthropic Claude
-   */
-  private async extractWithAnthropic(
-    content: string,
-    request: AIExtractionRequest,
-    model: string
-  ): Promise<AIExtractionResult> {
-    if (!this.anthropicClient) {
-      this.anthropicClient = createAnthropicClient();
-    }
-
-    const systemPrompt = this.buildExtractionPrompt(request.extraction_goals);
-    const startTime = Date.now();
-
-    const response = await this.anthropicClient.request('/messages', {
-      method: 'POST',
-      body: JSON.stringify({
-        model,
-        max_tokens: 4000,
-        system: systemPrompt,
-        messages: [
-          {
-            role: 'user',
-            content: `Extract organization data from this content and return as JSON:\n\n${content}`
-          }
-        ],
-        temperature: 0.1
-      })
-    }, `anthropic-extraction-${this.dataSource.id}`);
-
-    const processingTime = Date.now() - startTime;
-    const extractedData = JSON.parse(response.content[0].text);
-
-    return {
-      request_id: crypto.randomUUID(),
-      extracted_data: extractedData,
-      confidence_scores: this.calculateConfidenceScores(extractedData),
-      processing_notes: [`Extracted using Anthropic ${model}`],
-      flagged_issues: [],
-      processing_time_ms: processingTime,
-      ai_model_used: model
+      ai_model_used: 'auto-rotation'
     };
   }
 

@@ -3,13 +3,13 @@
  *
  * Orchestrates the data enrichment process:
  * 1. Search for contact via Exa.ai
- * 2. Synthesize results via OpenAI (GPT-4o)
+ * 2. Synthesize results via LLM (multi-provider rotation)
  * 3. Return structured profile
  */
 
 import { getExaClient } from '@/lib/exa/client';
-import OpenAI from 'openai';
-import { routeModel } from '@/lib/ai/model-router';
+import { callLLM } from '@/lib/ai/model-router';
+import { parseJSON } from '@/lib/ai/parse-json';
 
 interface EnrichedProfile {
     summary: string;
@@ -20,14 +20,7 @@ interface EnrichedProfile {
 }
 
 export class EnrichmentService {
-    private openai: OpenAI;
     private exa = getExaClient();
-
-    constructor() {
-        this.openai = new OpenAI({
-            apiKey: process.env.OPENAI_API_KEY || '',
-        });
-    }
 
     async enrichContact(name: string, organization: string): Promise<EnrichedProfile | null> {
         if (!this.exa.isConfigured()) {
@@ -43,8 +36,8 @@ export class EnrichmentService {
             return null;
         }
 
-        // 2. Synthesize with OpenAI
-        console.log(`Synthesizing ${results.length} results with GPT-4o...`);
+        // 2. Synthesize with LLM (auto-rotates through cheapest available provider)
+        console.log(`Synthesizing ${results.length} results with LLM...`);
 
         // Prepare context from search results
         const context = results.map(r => `
@@ -70,33 +63,12 @@ export class EnrichmentService {
     `;
 
         try {
-            const modelPlan = routeModel('contact_enrichment');
-            const openAICandidates = [modelPlan.primary, ...modelPlan.fallbacks]
-              .filter((candidate) => candidate.provider === 'openai');
+            const response = await callLLM(prompt, {
+                systemPrompt: 'You are a helpful assistant that outputs JSON.',
+                jsonMode: true,
+            });
 
-            let lastError: unknown = null;
-            for (const candidate of openAICandidates) {
-                try {
-                    const completion = await this.openai.chat.completions.create({
-                        model: candidate.model,
-                        messages: [
-                            { role: "system", content: "You are a helpful assistant that outputs JSON." },
-                            { role: "user", content: prompt }
-                        ],
-                        response_format: { type: "json_object" },
-                    });
-
-                    const responseText = completion.choices[0].message.content || '{}';
-                    return JSON.parse(responseText) as EnrichedProfile;
-                } catch (error) {
-                    lastError = error;
-                }
-            }
-
-            if (lastError) {
-                throw lastError;
-            }
-            return null;
+            return parseJSON<EnrichedProfile>(response);
         } catch (error) {
             console.error('Enrichment synthesis error:', error);
             return null;

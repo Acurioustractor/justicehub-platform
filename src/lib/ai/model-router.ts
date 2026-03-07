@@ -18,30 +18,6 @@ import Anthropic from '@anthropic-ai/sdk';
 // Types
 // ---------------------------------------------------------------------------
 
-export type ModelProvider = 'openai' | 'anthropic' | 'groq' | 'gemini' | 'deepseek';
-export type ModelTask =
-  | 'entity_extraction'
-  | 'contact_enrichment'
-  | 'grant_matching'
-  | 'notification_drafting'
-  | 'general';
-
-export interface ModelCandidate {
-  provider: ModelProvider;
-  model: string;
-  reason: string;
-}
-
-export interface ModelRoutePlan {
-  task: ModelTask;
-  primary: ModelCandidate;
-  fallbacks: ModelCandidate[];
-  policy: {
-    maxRetries: number;
-    timeoutMs: number;
-  };
-}
-
 interface ProviderConfig {
   name: string;
   envKey: string;
@@ -292,58 +268,3 @@ export async function callLLM(prompt: string, options?: CallLLMOptions): Promise
   return LLMClient.getInstance().call(prompt, options);
 }
 
-// ---------------------------------------------------------------------------
-// Backward-compatible routeModel() — used by enrichment.ts, BaseScraper.ts
-// ---------------------------------------------------------------------------
-
-function hasProvider(provider: 'openai' | 'anthropic'): boolean {
-  if (provider === 'openai') return Boolean(process.env.OPENAI_API_KEY);
-  return Boolean(process.env.ANTHROPIC_API_KEY);
-}
-
-function getTaskCandidates(task: ModelTask): ModelCandidate[] {
-  switch (task) {
-    case 'entity_extraction':
-      return [
-        { provider: 'openai', model: 'gpt-4o-mini', reason: 'Strong structured extraction quality' },
-        { provider: 'anthropic', model: 'claude-sonnet-4-5-20250929', reason: 'Robust fallback for long context extraction' },
-      ];
-    case 'contact_enrichment':
-      return [
-        { provider: 'openai', model: 'gpt-4o-mini', reason: 'Fast, cost-effective summarization and tagging' },
-        { provider: 'anthropic', model: 'claude-sonnet-4-5-20250929', reason: 'Cross-provider resilience' },
-      ];
-    case 'grant_matching':
-      return [
-        { provider: 'openai', model: 'gpt-4o-mini', reason: 'Reasoning-heavy fit assessment' },
-        { provider: 'anthropic', model: 'claude-sonnet-4-5-20250929', reason: 'Fallback for explainable ranking' },
-      ];
-    case 'notification_drafting':
-      return [
-        { provider: 'openai', model: 'gpt-4o-mini', reason: 'Fast concise drafting' },
-        { provider: 'anthropic', model: 'claude-sonnet-4-5-20250929', reason: 'Fallback for quality and tone control' },
-      ];
-    default:
-      return [
-        { provider: 'openai', model: 'gpt-4o-mini', reason: 'Default balanced model' },
-        { provider: 'anthropic', model: 'claude-sonnet-4-5-20250929', reason: 'Default fallback model' },
-      ];
-  }
-}
-
-export function routeModel(task: ModelTask): ModelRoutePlan {
-  const candidates = getTaskCandidates(task).filter((c) => hasProvider(c.provider));
-  if (candidates.length === 0) {
-    throw new Error('No AI providers configured for model routing');
-  }
-
-  return {
-    task,
-    primary: candidates[0],
-    fallbacks: candidates.slice(1),
-    policy: {
-      maxRetries: 3,
-      timeoutMs: task === 'entity_extraction' ? 90000 : 60000,
-    },
-  };
-}
