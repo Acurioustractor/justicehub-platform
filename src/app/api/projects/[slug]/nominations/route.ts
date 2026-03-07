@@ -39,6 +39,42 @@ export async function GET(
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const mode = searchParams.get('mode');
+
+    // Wall mode: paginated full nominations for /contained/nominations
+    if (mode === 'wall') {
+      const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+      const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
+      const category = searchParams.get('category');
+      const offset = (page - 1) * limit;
+
+      let query = supabase
+        .from('campaign_nominations')
+        .select('nominee_name, nominee_title, nominee_org, category, reason, created_at', { count: 'exact' })
+        .eq('project_id', project.id)
+        .eq('is_public', true);
+
+      if (category && VALID_CATEGORIES.includes(category)) {
+        query = query.eq('category', category);
+      }
+
+      const { data, count: totalCount, error: wallError } = await query
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
+
+      if (wallError) throw wallError;
+
+      return NextResponse.json({
+        nominations: data || [],
+        total: totalCount || 0,
+        page,
+        limit,
+        hasMore: (totalCount || 0) > offset + limit,
+      });
+    }
+
+    // Default mode: summary with counts and truncated recent
     // Total count
     const { count, error: countError } = await supabase
       .from('campaign_nominations')

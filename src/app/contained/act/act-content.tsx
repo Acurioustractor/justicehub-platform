@@ -10,6 +10,7 @@ import {
   Heart,
   Mail,
   Megaphone,
+  MessageCircle,
   MessageSquare,
   Share2,
   Smartphone,
@@ -321,6 +322,14 @@ export function ActContent() {
                 >
                   <MessageSquare className="w-4 h-4" /> Open in Messages
                 </a>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(SMS_TEMPLATE)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-3 text-sm font-bold uppercase tracking-widest bg-green-500 text-white hover:bg-green-600 transition-colors flex items-center gap-2"
+                >
+                  <MessageCircle className="w-4 h-4" /> WhatsApp
+                </a>
                 <CopyButton text={SMS_TEMPLATE} />
               </div>
             </div>
@@ -502,6 +511,8 @@ export function ActContent() {
                 { label: 'Nominate a Leader', url: `${SITE_URL}/contained#nominate`, desc: 'Nomination form' },
                 { label: 'Back the Tour', url: `${SITE_URL}/contained#back-this-tour`, desc: 'Add your name' },
                 { label: 'Donate', url: `${SITE_URL}/back-this`, desc: 'Fund the infrastructure' },
+                { label: 'All Nominations', url: `${SITE_URL}/contained/nominations`, desc: 'Public nominations wall' },
+                { label: 'Share Your Story', url: `${SITE_URL}/contained/share`, desc: 'Tour attendee stories' },
                 { label: 'Social Media Kit', url: `${SITE_URL}/contained/tour/social`, desc: 'Ready-to-post content' },
                 { label: 'For Funders', url: `${SITE_URL}/for-funders`, desc: 'Investment thesis' },
                 { label: 'Community Map', url: `${SITE_URL}/community-map`, desc: '507 organisations' },
