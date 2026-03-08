@@ -70,7 +70,7 @@ export const journeyContainers = [
       { label: "Community Programs", value: "$75/day" },
       { label: "Reoffending", value: "3%" },
       { label: "Success Rate", value: "88%" },
-      { label: "Orgs on ALMA", value: "507" },
+      { label: "Orgs on ALMA", value: "527" },
     ],
     duration: "10 minutes to see what works",
     tone: "hopeful",

@@ -54,7 +54,8 @@ const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE
 
 const args = process.argv.slice(2);
 const applyMode = args.includes('--apply');
-const batchSize = parseInt(args.find((_, i) => args[i - 1] === '--batch') || (applyMode ? '20' : '5'));
+const batchSize = parseInt(args.find((_, i) => args[i - 1] === '--batch') || (applyMode ? '100' : '5'));
+const minDescLen = parseInt(args.find((_, i) => args[i - 1] === '--min-desc') || '50');
 
 // Dynamic import of callLLM and parseJSON (ESM → TS via tsx)
 let callLLM, parseJSON;
@@ -169,17 +170,17 @@ async function main() {
 
   const hasOutcome = new Set((existingLinks || []).map((l) => l.intervention_id));
 
-  // Filter: description > 200 chars AND no outcomes yet
+  // Filter: description > minDescLen chars AND no outcomes yet
   const candidates = allInterventions.filter(
     (i) =>
       i.description &&
-      i.description.length > 200 &&
+      i.description.length > minDescLen &&
       !hasOutcome.has(i.id)
   );
 
   console.log(`Total interventions: ${allInterventions.length}`);
   console.log(`Already have outcomes: ${hasOutcome.size}`);
-  console.log(`Candidates (desc > 200 chars, no outcomes): ${candidates.length}`);
+  console.log(`Candidates (desc > ${minDescLen} chars, no outcomes): ${candidates.length}`);
   console.log(`Processing: ${Math.min(batchSize, candidates.length)}\n`);
 
   if (candidates.length === 0) {

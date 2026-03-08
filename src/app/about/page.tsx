@@ -65,7 +65,7 @@ export default function AboutPage() {
       .then(data => {
         if (data.stats) {
           setStats({
-            interventions: data.stats.programs_documented || 624,
+            interventions: data.stats.programs_documented || 1112,
             services: data.stats.total_services || 150,
             organizations: data.stats.total_organizations || 67,
             stories: data.stats.stories || 100,

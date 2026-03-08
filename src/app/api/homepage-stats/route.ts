@@ -54,6 +54,25 @@ export async function GET() {
       stateData?.map((s) => s.location_state).filter(Boolean) || []
     );
 
+    // ALMA deep stats
+    const [
+      { count: highImpactCount },
+      { count: orgsLinkedCount },
+      { count: totalOutcomes },
+      { count: totalOutcomeLinks },
+      { count: totalEvidence },
+      { count: totalEvidenceLinks },
+      { count: indigenousLedCount },
+    ] = await Promise.all([
+      supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).gte('portfolio_score', 0.7),
+      supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).not('operating_organization_id', 'is', null),
+      supabase.from('alma_outcomes').select('*', { count: 'exact', head: true }),
+      supabase.from('alma_intervention_outcomes').select('*', { count: 'exact', head: true }),
+      supabase.from('alma_evidence').select('*', { count: 'exact', head: true }),
+      supabase.from('alma_intervention_evidence').select('*', { count: 'exact', head: true }),
+      supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).eq('evidence_level', 'Indigenous-led (culturally grounded, community authority)'),
+    ]);
+
     // Calculate outcomes rate percentage
     const outcomesRate = totalInterventions
       ? Math.round(((withOutcomes || 0) / totalInterventions) * 100)
@@ -77,6 +96,14 @@ export async function GET() {
         total_organizations: totalOrganizations || 0,
         states_covered: statesWithServices.size,
         estimated_cost_savings_millions: costSavingsMillions,
+        // ALMA deep stats — single source of truth
+        high_impact_programs: highImpactCount || 0,
+        orgs_linked: orgsLinkedCount || 0,
+        indigenous_led_programs: indigenousLedCount || 0,
+        total_outcomes: totalOutcomes || 0,
+        total_outcome_links: totalOutcomeLinks || 0,
+        total_evidence: totalEvidence || 0,
+        total_evidence_links: totalEvidenceLinks || 0,
       },
       updated_at: new Date().toISOString(),
     });
@@ -89,15 +116,22 @@ export async function GET() {
         error: 'Failed to fetch statistics',
         // Return fallback stats - last known good values
         stats: {
-          programs_documented: 624,
-          programs_with_outcomes: 418,
-          outcomes_rate: 67,
+          programs_documented: 1112,
+          programs_with_outcomes: 1094,
+          outcomes_rate: 98,
           total_services: 150,
           youth_services: 89,
           total_people: 45,
           total_organizations: 67,
-          states_covered: 7,
+          states_covered: 8,
           estimated_cost_savings_millions: 45,
+          high_impact_programs: 480,
+          orgs_linked: 527,
+          indigenous_led_programs: 0,
+          total_outcomes: 721,
+          total_outcome_links: 1040,
+          total_evidence: 113,
+          total_evidence_links: 242,
         },
         fallback_note: 'Using cached data due to temporary database issue',
       },

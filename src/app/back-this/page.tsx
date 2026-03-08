@@ -113,7 +113,7 @@ export default function BackThisPage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="data-card">
               <p className="text-4xl font-black mb-2">
-                {liveStats?.programs_documented ?? '624'}
+                {liveStats?.programs_documented?.toLocaleString() ?? '1,112'}
               </p>
               <p className="text-lg font-semibold">Programs Mapped</p>
               <p className="text-gray-600 mt-2">
@@ -158,7 +158,7 @@ export default function BackThisPage() {
                 icon: '🧠',
                 title: 'ALMA Intelligence',
                 desc: 'AI evidence engine that connects programs to outcomes data.',
-                metric: '624 programs analysed',
+                metric: `${liveStats?.programs_documented?.toLocaleString() ?? '1,112'} programs analysed`,
               },
               {
                 icon: '📍',

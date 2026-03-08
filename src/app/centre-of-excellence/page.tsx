@@ -294,7 +294,7 @@ export default function CentreOfExcellencePage() {
                 $1.1B
               </div>
               <p className="text-lg md:text-xl max-w-2xl mx-auto text-gray-300">
-                This is not a projection. This is the calculated economic value of 624+ verified community programs currently operating without adequate funding.
+                This is not a projection. This is the calculated economic value of 1,112+ verified community programs currently operating without adequate funding.
               </p>
             </div>
           </div>

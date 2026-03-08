@@ -62,7 +62,7 @@ CONTAINED is an immersive experience touring four Australian cities in 2026. One
 
 Key stats:
 - $1.2M/child/year in detention, 84% reoffend
-- Community programs: $75/day, 3% reoffending, 507 organisations on ALMA
+- Community programs: $75/day, 3% reoffending, 527 organisations on ALMA
 - Therapeutic model (Spain): 73% success rate, €5.64 return per €1
 
 Tour stops: Mount Druitt, Adelaide, Perth, Tennant Creek
@@ -102,7 +102,7 @@ The stats are staggering:
 Decision-makers need to experience this. Nominate someone: ${SITE_URL}/contained#nominate`,
   linkedin: `Australia spends $1.2M per child per year on youth detention. 84% reoffend.
 
-Community alternatives cost $75/day with 3% reoffending and 507 organisations already doing what works.
+Community alternatives cost $75/day with 3% reoffending and 527 organisations already doing what works.
 
 CONTAINED is a national tour taking this evidence directly to decision-makers — 30 minutes inside a shipping container that makes you understand it in your bones.
 
@@ -482,7 +482,7 @@ export function ActContent() {
                 { stat: '84% of detained young people reoffend within 12 months', source: 'Productivity Commission' },
                 { stat: '$3,320 per day per child in detention', source: 'AIHW' },
                 { stat: 'Community programs cost $75/day with 3% reoffending', source: 'ALMA Database' },
-                { stat: '507 community organisations on ALMA across Australia', source: 'JusticeHub' },
+                { stat: '527 community organisations on ALMA across Australia', source: 'JusticeHub' },
                 { stat: "Diagrama (Spain): 73% success rate, €5.64 return per €1 invested", source: 'University of Valencia' },
                 { stat: 'Indigenous young people are 17x more likely to be detained', source: 'AIHW' },
                 { stat: '18% education completion rate in detention vs 88% in community programs', source: 'AIHW / ALMA' },
@@ -515,7 +515,7 @@ export function ActContent() {
                 { label: 'Share Your Story', url: `${SITE_URL}/contained/share`, desc: 'Tour attendee stories' },
                 { label: 'Social Media Kit', url: `${SITE_URL}/contained/tour/social`, desc: 'Ready-to-post content' },
                 { label: 'For Funders', url: `${SITE_URL}/for-funders`, desc: 'Investment thesis' },
-                { label: 'Community Map', url: `${SITE_URL}/community-map`, desc: '507 organisations' },
+                { label: 'Community Map', url: `${SITE_URL}/community-map`, desc: '527 organisations' },
                 { label: 'Tour Events', url: `${SITE_URL}/events`, desc: 'Dates and registration' },
                 { label: 'Take Action', url: `${SITE_URL}/contained/act`, desc: 'This page — share it!' },
               ].map((link) => (

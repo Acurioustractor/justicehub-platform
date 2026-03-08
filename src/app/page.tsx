@@ -286,7 +286,7 @@ export default function HomePage() {
                   </div>
                 ) : (
                   <div className="font-mono text-4xl font-bold mb-2">
-                    {stats?.programs_documented.toLocaleString() || '624'}
+                    {stats?.programs_documented.toLocaleString() || '1,112'}
                   </div>
                 )}
                 <p className="text-lg font-bold mb-1">Programs Documented</p>
@@ -526,7 +526,7 @@ export default function HomePage() {
             {/* More programs */}
             <div className="p-8 bg-black md:col-span-2 lg:col-span-3">
               <p className="text-2xl font-bold mb-4 text-white">
-                {stats?.programs_documented || 624}+ programs across Australia. Working. Right now.
+                {stats?.programs_documented?.toLocaleString() || '1,112'}+ programs across Australia. Working. Right now.
               </p>
               <p className="text-xl mb-6 text-white">
                 The solutions exist. They're just invisible, underfunded, and 
@@ -558,11 +558,11 @@ export default function HomePage() {
               <div className="flex-1 text-center md:text-left">
                 <h3 className="text-2xl font-black mb-2">ASK ALMA</h3>
                 <p className="text-lg mb-4">
-                  AI-powered guide to 624+ youth justice programs across Australia.
+                  AI-powered guide to {stats?.programs_documented?.toLocaleString() || '1,112'}+ youth justice programs across Australia.
                   Find services, explore evidence, connect with communities.
                 </p>
                 <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                  <span className="px-3 py-1 bg-green-100 border border-green-600 text-green-800 text-sm font-bold">624 Programs</span>
+                  <span className="px-3 py-1 bg-green-100 border border-green-600 text-green-800 text-sm font-bold">{stats?.programs_documented?.toLocaleString() || '1,112'} Programs</span>
                   <span className="px-3 py-1 bg-blue-100 border border-blue-600 text-blue-800 text-sm font-bold">7 States</span>
                   <span className="px-3 py-1 bg-purple-100 border border-purple-600 text-purple-800 text-sm font-bold">Real-time Data</span>
                 </div>
