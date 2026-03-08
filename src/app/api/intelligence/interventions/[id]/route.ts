@@ -35,20 +35,34 @@ type Context = {
   metadata: Record<string, unknown> | null;
 };
 
-function mockPortfolioScore() {
+function buildPortfolioScore(intervention: Record<string, unknown>) {
+  const composite = Number(intervention.portfolio_score) || 0;
+  const evidence = Number(intervention.evidence_strength_signal) || 0;
+  const authority = Number(intervention.community_authority_signal) || 0;
+  const harm = Number(intervention.harm_risk_signal) || 0;
+  const capability = Number(intervention.implementation_capability_signal) || 0;
+  const option = Number(intervention.option_value_signal) || 0;
+
+  const tier = composite >= 0.7 ? 'High Impact' : composite >= 0.4 ? 'Promising' : 'Needs Development';
+
+  const recommendations: string[] = [];
+  if (authority >= 0.8) recommendations.push('Strong community authority indicates deep local engagement');
+  if (evidence >= 0.7) recommendations.push('Solid evidence base supports scaling decisions');
+  if (evidence < 0.4) recommendations.push('Would benefit from formal evaluation or RCT validation');
+  if (capability >= 0.7) recommendations.push('Implementation-ready with documented methodology');
+  if (capability < 0.4) recommendations.push('Needs further development before replication');
+  if (harm < 0.5) recommendations.push('Elevated harm risk — requires careful monitoring');
+  if (option >= 0.8) recommendations.push('High learning potential — worth investing in evaluation');
+
   return {
-    composite: 0.75,
-    evidence_strength: 0.8,
-    community_authority: 0.85,
-    harm_risk: 0.2,
-    implementation_capability: 0.7,
-    option_value: 0.65,
-    tier: 'High Impact',
-    recommendations: [
-      'Strong community authority indicates deep local engagement',
-      'Evidence base is solid but could benefit from RCT validation',
-      'Ready for scaling with additional funding',
-    ],
+    composite,
+    evidence_strength: evidence,
+    community_authority: authority,
+    harm_risk: harm,
+    implementation_capability: capability,
+    option_value: option,
+    tier,
+    recommendations: recommendations.slice(0, 3),
   };
 }
 
@@ -66,7 +80,7 @@ function buildProvenance() {
       { table: 'alma_outcomes', role: 'supporting', classification: 'canonical' },
       { table: 'alma_community_contexts', role: 'supporting', classification: 'canonical' },
     ],
-    notes: ['portfolioScore uses temporary heuristic calculation and is not an authoritative persisted metric'],
+    notes: ['portfolioScore is calculated from persisted signal fields via calculate_portfolio_signals RPC'],
     generated_at: new Date().toISOString(),
   };
 }
@@ -160,7 +174,7 @@ export async function GET(
       outcomes: (outcomesResult.data || []) as Outcome[],
       contexts: (contextsResult.data || []) as Context[],
       similarInterventions: (similarInterventionsResult.data || []) as Intervention[],
-      portfolioScore: mockPortfolioScore(),
+      portfolioScore: buildPortfolioScore(intervention as Record<string, unknown>),
       provenance: buildProvenance(),
     });
   } catch (error: unknown) {

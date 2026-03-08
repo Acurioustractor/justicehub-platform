@@ -15,6 +15,8 @@ import {
   Shield,
   ExternalLink,
   Loader2,
+  ArrowUpDown,
+  TrendingUp,
 } from 'lucide-react';
 
 type ViewMode = 'grid' | 'list' | 'table';
@@ -27,6 +29,7 @@ interface Intervention {
   geography: string[] | null;
   evidence_level: string | null;
   consent_level: string | null;
+  portfolio_score: number | null;
   created_at: string;
 }
 
@@ -69,6 +72,7 @@ export default function InterventionsPage() {
   const [selectedEvidence, setSelectedEvidence] = useState('');
   const [selectedOutcome, setSelectedOutcome] = useState('');
   const [selectedContext, setSelectedContext] = useState('');
+  const [sortBy, setSortBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 24;
 
@@ -105,6 +109,9 @@ export default function InterventionsPage() {
         }
         if (selectedContext) {
           params.set('context_type', selectedContext);
+        }
+        if (sortBy !== 'name') {
+          params.set('sort', sortBy);
         }
 
         const response = await fetch(`/api/intelligence/interventions?${params.toString()}`, {
@@ -145,7 +152,7 @@ export default function InterventionsPage() {
     return () => {
       cancelled = true;
     };
-  }, [searchQuery, selectedType, selectedEvidence, selectedOutcome, selectedContext, currentPage]);
+  }, [searchQuery, selectedType, selectedEvidence, selectedOutcome, selectedContext, sortBy, currentPage]);
 
   const totalPages = Math.ceil(total / pageSize);
 
@@ -155,10 +162,11 @@ export default function InterventionsPage() {
     setSelectedEvidence('');
     setSelectedOutcome('');
     setSelectedContext('');
+    setSortBy('name');
     setCurrentPage(1);
   };
 
-  const hasFilters = searchQuery || selectedType || selectedEvidence || selectedOutcome || selectedContext;
+  const hasFilters = searchQuery || selectedType || selectedEvidence || selectedOutcome || selectedContext || sortBy !== 'name';
 
   return (
     <div className="min-h-screen bg-white text-black font-sans">
@@ -188,8 +196,24 @@ export default function InterventionsPage() {
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-widest text-gray-500 mr-2">View:</span>
+              <div className="flex items-center gap-4">
+                {/* Sort Toggle */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Sort:</span>
+                  <button
+                    onClick={() => { setSortBy(sortBy === 'name' ? 'score' : 'name'); setCurrentPage(1); }}
+                    className={`px-3 py-2 border-2 text-sm font-bold flex items-center gap-1.5 ${
+                      sortBy === 'score' ? 'bg-black text-white border-black' : 'border-gray-300 hover:border-black'
+                    }`}
+                    title={sortBy === 'score' ? 'Sorted by portfolio score' : 'Sort by portfolio score'}
+                  >
+                    <TrendingUp className="w-4 h-4" />
+                    Score
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-widest text-gray-500">View:</span>
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 border-2 ${viewMode === 'grid' ? 'bg-black text-white border-black' : 'border-gray-300 hover:border-black'}`}
@@ -211,6 +235,7 @@ export default function InterventionsPage() {
                 >
                   <Table2 className="w-5 h-5" />
                 </button>
+              </div>
               </div>
             </div>
           </div>
@@ -365,12 +390,26 @@ export default function InterventionsPage() {
                         )}
                       </div>
 
-                      {item.evidence_level && (
-                        <div className={`mt-3 px-2 py-1 text-[10px] font-bold border ${EVIDENCE_COLORS[item.evidence_level] || EVIDENCE_COLORS['Unknown']}`}>
-                          <Shield className="w-3 h-3 inline mr-1" />
-                          {item.evidence_level.split(' (')[0]}
-                        </div>
-                      )}
+                      <div className="flex items-center gap-2 mt-3">
+                        {item.evidence_level && (
+                          <div className={`px-2 py-1 text-[10px] font-bold border ${EVIDENCE_COLORS[item.evidence_level] || EVIDENCE_COLORS['Unknown']}`}>
+                            <Shield className="w-3 h-3 inline mr-1" />
+                            {item.evidence_level.split(' (')[0]}
+                          </div>
+                        )}
+                        {item.portfolio_score != null && (
+                          <div className={`px-2 py-1 text-[10px] font-bold font-mono border ${
+                            item.portfolio_score >= 0.7
+                              ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                              : item.portfolio_score >= 0.4
+                              ? 'bg-blue-50 text-blue-800 border-blue-300'
+                              : 'bg-gray-50 text-gray-600 border-gray-300'
+                          }`}>
+                            <TrendingUp className="w-3 h-3 inline mr-1" />
+                            {(item.portfolio_score * 100).toFixed(0)}
+                          </div>
+                        )}
+                      </div>
                     </Link>
                   ))}
                 </div>
@@ -410,6 +449,17 @@ export default function InterventionsPage() {
                               {item.geography[0]}
                             </span>
                           )}
+                          {item.portfolio_score != null && (
+                            <span className={`px-2 py-1 text-[10px] font-bold font-mono border ${
+                              item.portfolio_score >= 0.7
+                                ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                                : item.portfolio_score >= 0.4
+                                ? 'bg-blue-50 text-blue-800 border-blue-300'
+                                : 'bg-gray-50 text-gray-600 border-gray-300'
+                            }`}>
+                              {(item.portfolio_score * 100).toFixed(0)}
+                            </span>
+                          )}
                           {item.evidence_level && (
                             <span className={`px-2 py-1 text-[10px] font-bold border ${EVIDENCE_COLORS[item.evidence_level] || EVIDENCE_COLORS['Unknown']}`}>
                               {item.evidence_level.split(' (')[0]}
@@ -433,6 +483,7 @@ export default function InterventionsPage() {
                         <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Type</th>
                         <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Location</th>
                         <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Evidence</th>
+                        <th className="px-4 py-3 text-center font-bold uppercase tracking-wider w-20">Score</th>
                         <th className="px-4 py-3 text-center font-bold uppercase tracking-wider w-20">View</th>
                       </tr>
                     </thead>
@@ -458,6 +509,19 @@ export default function InterventionsPage() {
                             {item.evidence_level ? (
                               <span className={`px-2 py-0.5 text-[10px] font-bold border ${EVIDENCE_COLORS[item.evidence_level] || EVIDENCE_COLORS['Unknown']}`}>
                                 {item.evidence_level.split(' (')[0]}
+                              </span>
+                            ) : '-'}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            {item.portfolio_score != null ? (
+                              <span className={`px-2 py-0.5 text-[10px] font-bold font-mono border ${
+                                item.portfolio_score >= 0.7
+                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                                  : item.portfolio_score >= 0.4
+                                  ? 'bg-blue-50 text-blue-800 border-blue-300'
+                                  : 'bg-gray-50 text-gray-600 border-gray-300'
+                              }`}>
+                                {(item.portfolio_score * 100).toFixed(0)}
                               </span>
                             ) : '-'}
                           </td>

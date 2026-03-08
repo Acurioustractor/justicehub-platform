@@ -51,6 +51,7 @@ export async function GET(request: NextRequest) {
     const evidenceLevel = searchParams.get('evidence_level')?.trim() || '';
     const outcomeType = searchParams.get('outcome_type')?.trim() || '';
     const contextType = searchParams.get('context_type')?.trim() || '';
+    const sortBy = searchParams.get('sort') || 'name';
 
     const hasLegacyPagination = searchParams.has('limit') || searchParams.has('offset');
     const legacyLimit = Math.max(1, Math.min(MAX_PAGE_SIZE, toInt(searchParams.get('limit'), DEFAULT_PAGE_SIZE)));
@@ -132,10 +133,10 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('alma_interventions')
-      .select('id, name, description, type, geography, evidence_level, consent_level, created_at', {
+      .select('id, name, description, type, geography, evidence_level, consent_level, portfolio_score, created_at', {
         count: 'exact',
       })
-      .order('name', { ascending: true })
+      .order(sortBy === 'score' ? 'portfolio_score' : 'name', { ascending: sortBy !== 'score' })
       .range(offset, offset + pageSize - 1);
 
     if (search) {
