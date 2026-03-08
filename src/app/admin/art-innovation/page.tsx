@@ -75,6 +75,12 @@ export default async function AdminArtInnovationPage() {
                             Edit
                           </Link>
                           <Link
+                            href={`/admin/art-innovation/${project.id}/media`}
+                            className="text-sm font-bold text-purple-600 hover:text-purple-800"
+                          >
+                            Media
+                          </Link>
+                          <Link
                             href={`/admin/art-innovation/${project.id}/people`}
                             className="text-sm font-bold text-green-600 hover:text-green-800"
                           >

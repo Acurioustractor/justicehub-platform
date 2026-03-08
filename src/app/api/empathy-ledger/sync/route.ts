@@ -126,21 +126,32 @@ export async function POST(request: NextRequest) {
     };
 
     // Prepare stories for upsert to JusticeHub
-    const storiesToSync = stories.map(story => ({
-      empathy_ledger_id: story.id,
-      title: story.title,
-      summary: story.summary,
-      content: story.content,
-      story_image_url: story.story_image_url,
-      story_type: story.story_type,
-      story_category: story.story_type ? storyTypeLabels[story.story_type] || story.story_type : null,
-      themes: story.themes,
-      is_featured: story.is_featured || story.justicehub_featured,
-      cultural_sensitivity_level: story.cultural_sensitivity_level,
-      source: 'empathy_ledger',
-      source_published_at: story.published_at,
-      synced_at: new Date().toISOString(),
-    }));
+    const storiesToSync = stories.map(story => {
+      // Auto-tag stories with project slugs based on themes
+      const projectSlugs: string[] = [];
+      const themes = (story.themes as string[]) || [];
+      if (themes.some(t => /\bcontained\b/i.test(t))) {
+        projectSlugs.push('the-contained');
+      }
+
+      return {
+        empathy_ledger_id: story.id,
+        title: story.title,
+        summary: story.summary,
+        content: story.content,
+        story_image_url: story.story_image_url,
+        story_type: story.story_type,
+        story_category: story.story_type ? storyTypeLabels[story.story_type] || story.story_type : null,
+        themes: story.themes,
+        is_featured: story.is_featured || story.justicehub_featured,
+        cultural_sensitivity_level: story.cultural_sensitivity_level,
+        source: 'empathy_ledger',
+        source_published_at: story.published_at,
+        synced_at: new Date().toISOString(),
+        // Only set project_slugs if auto-tags found; preserves manual tags via merge below
+        ...(projectSlugs.length > 0 ? { project_slugs: projectSlugs } : {}),
+      };
+    });
 
     // Upsert stories to JusticeHub (using empathy_ledger_id as unique key)
     const { data: syncedStories, error: syncError } = await (supabase as any)
