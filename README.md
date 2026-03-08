@@ -1,69 +1,107 @@
 # JusticeHub Platform
 
-A Next.js platform connecting system-impacted youth with support services, legal resources, and community advocates.
+A Next.js platform for Australian youth justice — connecting system-impacted young people with support services, surfacing evidence-based interventions, and powering community-led advocacy campaigns.
 
-## 🚀 Quick Start
+## Core Systems
+
+### ALMA (Authentic Learning for Meaningful Accountability)
+The evidence intelligence engine. 1,112 youth justice interventions from 507+ organisations across Australia, each scored on 5 signals:
+- **Evidence Strength** (25%) — from Untested to Proven (RCT-validated)
+- **Community Authority** (30%) — highest weight, prioritises Indigenous-led programs
+- **Harm Risk** (20%) — inverse score, flags programs needing cultural review
+- **Implementation Capability** (15%) — replication readiness assessment
+- **Option Value** (10%) — learning potential for emerging programs
+
+**Key routes:**
+- `/intelligence/interventions` — Explorer with search, filters, sort-by-score
+- `/intelligence/interventions/[id]` — Detail page with portfolio score card, evidence, outcomes
+- `/intelligence/portfolio` — Funder analytics dashboard
+- `/api/intelligence/interventions` — REST API (supports `?sort=score&type=X&evidence_level=X`)
+
+**Database tables:** `alma_interventions`, `alma_evidence`, `alma_outcomes`, `alma_organizations`, `alma_discovered_links`, plus junction tables (`alma_intervention_evidence`, `alma_intervention_outcomes`, `alma_intervention_contexts`)
+
+**Data pipeline scripts** (in `scripts/`):
+- `alma-link-organizations.mjs` — 4-tier fuzzy org matching
+- `alma-cleanup-cohorts.mjs` — Geography term removal from target_cohort
+- `alma-link-evidence-v2.mjs` — Scoring-based evidence-intervention linking
+- `alma-extract-outcomes.mjs` — LLM-powered outcome extraction
+- `alma-process-queue-v2.mjs` — Discovered link processing (scrape + extract)
+- `alma-calculate-scores.mjs` — Portfolio score calculation via RPC
+- `alma-enrich-signals.mjs` — LLM enrichment of evidence_level, harm_risk, replication_readiness
+
+### Signal Engine
+Automated local news intelligence pipeline:
+- **SENTINEL** — scans for youth justice events by postcode/SA3 region
+- **COMPOSER** — AI-generated contextual content
+- **REVIEW** — admin approval workflow
+- **PUBLISH** — widget embedding for community sites
+- Routes: `/api/signal-engine/{scan,compose,events,widget}`, `/admin/signal-engine`
+
+### CONTAINED Tour
+National youth justice awareness campaign with shipping container exhibition:
+- `/contained` — Tour hub with event listings, basecamp stories, nominations, reactions
+- `/contained/act` — Campaign action hub (SMS, email, social share templates)
+- Nomination system, backer tracking, reaction collection
+- GHL (GoHighLevel) CRM integration for campaign contacts
+
+### Empathy Ledger Integration
+Bi-directional sync with Empathy Ledger storytelling platform:
+- Push-sync: JusticeHub → EL (storyteller profiles, org membership)
+- Pull-sync: EL → JusticeHub (stories, partner data)
+- Script: `scripts/run-push-sync.mjs`
+
+### AI Infrastructure
+Multi-provider LLM rotation for cost-effective AI operations:
+- `src/lib/ai/model-router.ts` — `callLLM()` with automatic rotation: Groq (free) → Gemini (free) → MiniMax → DeepSeek → OpenAI → Anthropic
+- `src/lib/ai/parse-json.ts` — 7-stage robust JSON parser for LLM responses
+- `src/lib/scraping/jina-reader.ts` — Free web scraping via Jina Reader
+
+## Quick Start
 
 ```bash
-# Install dependencies
 npm install
-
-# Set up environment variables
-cp .env.local.example .env.local
-# Edit .env.local with your Supabase credentials
-
-# Run development server
-npm run dev
+cp .env.local.example .env.local  # Edit with Supabase credentials
+npm run dev                        # Starts on port 3004
 ```
 
-Visit [http://localhost:3000](http://localhost:3000)
-
-## 📁 Project Structure
+## Project Structure
 
 ```
-justicehub-platform/
-├── src/
-│   ├── app/              # Next.js App Router pages
-│   │   ├── about/        # About page
-│   │   ├── contact/      # Contact form
-│   │   ├── how-it-works/ # Platform overview
-│   │   ├── privacy/      # Privacy policy
-│   │   ├── services/     # Services directory
-│   │   ├── stories/      # Story submission
-│   │   ├── terms/        # Terms of service
-│   │   └── youth-scout/  # Youth authentication
-│   ├── components/       # React components
-│   │   ├── ui/          # Reusable UI components
-│   │   └── forms/       # Form components
-│   ├── lib/             # Utilities and helpers
-│   ├── styles/          # Global styles
-│   └── content/         # Static content
-├── docs/                # Documentation
-│   ├── archive/         # Historical docs
-│   ├── guides/          # Setup & deployment guides
-│   ├── status/          # Progress reports
-│   └── sql-scripts/     # Database scripts
-├── public/              # Static assets
-└── supabase/            # Supabase configuration
-
+src/
+├── app/
+│   ├── intelligence/     # ALMA evidence hub pages
+│   ├── contained/        # CONTAINED tour campaign
+│   ├── admin/            # Admin dashboards
+│   ├── api/              # API routes
+│   │   ├── intelligence/ # ALMA REST API
+│   │   ├── signal-engine/# Signal Engine pipeline
+│   │   ├── ghl/          # GoHighLevel CRM integration
+│   │   └── org-hub/      # Organization hub API
+│   └── ...
+├── components/
+│   ├── alma/             # PortfolioScoreCard, SignalGauge, ConsentIndicator
+│   ├── contained/        # Tour components (SupportersWall, TourMap)
+│   └── ui/               # Shared UI components
+├── lib/
+│   ├── ai/               # LLM rotation, JSON parsing
+│   ├── alma/             # ALMA services (extraction, portfolio, scraping)
+│   ├── scraping/         # Web scraping (Jina, Firecrawl)
+│   └── supabase/         # Database clients
+scripts/                  # Data pipeline and sync scripts
+supabase/migrations/      # Database schema migrations
 ```
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-- **Framework**: Next.js 14.2.30 (App Router)
+- **Framework**: Next.js 14 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Database**: Supabase (PostgreSQL)
-- **Auth**: Auth0 / Supabase Auth
-- **Deployment**: Vercel
-- **UI Components**: Radix UI, Lucide Icons
-
-## 📚 Documentation
-
-- [Deployment Guide](docs/guides/DEPLOYMENT_GUIDE.md)
-- [Development Workflow](docs/guides/DEVELOPMENT_WORKFLOW.md)
-- [Setup Guide](docs/guides/SETUP_GUIDE.md)
-- [Architecture](docs/archive/JusticeHub-Technical-Architecture.md)
+- **Database**: Supabase (PostgreSQL) with RLS
+- **Auth**: Supabase Auth (email/password + GitHub OAuth)
+- **Deployment**: Vercel (auto-deploys on push to main)
+- **CRM**: GoHighLevel (GHL) for campaign contacts
+- **AI**: Multi-provider rotation (Groq, Gemini, MiniMax, DeepSeek, OpenAI, Anthropic)
+- **UI**: Radix UI, Lucide Icons
 
 ## 🔑 Environment Variables
 
@@ -110,33 +148,39 @@ System 0 funding orchestration now uses a shared policy store for scheduler + wo
   - RLS enforces admin access with private-presets owner scope.
 - Cron scheduler: `GET/POST /api/cron/funding/system-0` (requires `SYSTEM0_CRON_SECRET` or `CRON_SECRET`)
 
-## 📝 Scripts
+## Key Data Metrics (as of March 2026)
+
+| Metric | Count |
+|--------|-------|
+| Interventions | 1,112 |
+| Portfolio Scores | 1,112 (100%) |
+| Organizations | 507 (527 linked) |
+| Evidence Items | 113 |
+| Evidence Links | 215 |
+| Outcomes | 289 |
+| Outcome Links | 520 |
+
+## Scripts
 
 ```bash
-npm run dev          # Start development server
+npm run dev          # Start dev server (port 3004)
 npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run type-check   # Check TypeScript types
+npx tsc --noEmit     # Type check
 ```
 
-## 🤝 Contributing
+## Environment Variables
 
-1. Create a feature branch
-2. Make your changes
-3. Test locally with `npm run dev`
-4. Push and create a PR
+See `.env.local.example`. Key variables:
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+- `GHL_API_KEY`, `GHL_LOCATION_ID` — GoHighLevel CRM
+- `GROQ_API_KEY`, `GEMINI_API_KEY`, `MINIMAX_API_KEY`, `OPENAI_API_KEY` — AI providers
+- `FIRECRAWL_API_KEY` — Web scraping (Jina Reader is free fallback)
 
-## 📄 License
+## Links
 
-MIT License - see LICENSE file for details
-
-## 🔗 Links
-
-- [Production Site](https://justicehub-act.vercel.app)
-- [GitHub Repository](https://github.com/Acurioustractor/justicehub-platform)
-- [Supabase Dashboard](https://supabase.com/dashboard)
+- [Production](https://justicehub-act.vercel.app)
+- [GitHub](https://github.com/Acurioustractor/justicehub-platform)
 
 ---
 
-Built with ❤️ for justice-impacted youth
+Built for justice-impacted youth across Australia
