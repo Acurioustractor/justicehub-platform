@@ -66,19 +66,22 @@ async function loadModules() {
   scrapeViaJina = jinaModule.scrapeViaJina;
 }
 
-// Jina search endpoint (free)
-async function searchJina(query) {
+// Search via Jina Search API
+async function searchWeb(query) {
   try {
+    const apiKey = process.env.JINA_API_KEY;
+    const headers = { Accept: 'application/json' };
+    if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+
     const response = await fetch(`https://s.jina.ai/${encodeURIComponent(query)}`, {
-      headers: {
-        Accept: 'application/json',
-        'X-No-Cache': 'true',
-      },
-      signal: AbortSignal.timeout(15_000),
+      headers,
+      signal: AbortSignal.timeout(30_000),
     });
-    if (!response.ok) return [];
+    if (!response.ok) {
+      console.warn(`[Search] HTTP ${response.status}`);
+      return [];
+    }
     const data = await response.json();
-    // Jina search returns { data: [{ title, url, description }] }
     return (data.data || []).slice(0, 5).map((r) => ({
       title: r.title || '',
       url: r.url || '',
@@ -91,18 +94,19 @@ async function searchJina(query) {
 }
 
 function buildSearchQuery(intervention, searchMode) {
-  const name = intervention.name || '';
-  const org = intervention.operating_organization || '';
+  // Keep names short to avoid 422 errors — Jina has URL length limits
+  const name = (intervention.name || '').substring(0, 60);
+  const org = (intervention.operating_organization || '').substring(0, 40);
   const type = intervention.type || '';
 
   if (searchMode === 'media') {
-    return `"${name}" OR "${org}" youth justice Australia news 2024 2025 2026`;
+    return `${name} ${org} youth justice Australia`;
   }
   if (searchMode === 'orgs') {
-    return `"${org}" youth justice evaluation report Australia`;
+    return `${org} youth justice evaluation Australia`;
   }
   // Default: intervention-focused
-  return `"${name}" ${type} evaluation evidence outcomes Australia`;
+  return `${name} ${type} evaluation outcomes Australia`;
 }
 
 function buildExtractionPrompt(searchResults, intervention) {
@@ -201,7 +205,7 @@ async function main() {
     process.stdout.write(`[${i + 1}/${candidates.length}] ${intervention.name.substring(0, 50)}... `);
 
     // Search
-    const results = await searchJina(query);
+    const results = await searchWeb(query);
     searchCount++;
 
     if (results.length === 0) {
