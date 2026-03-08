@@ -73,6 +73,23 @@ export async function GET() {
       supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).eq('evidence_level', 'Indigenous-led (culturally grounded, community authority)'),
     ]);
 
+    // ROGS justice spending data (Productivity Commission)
+    const [
+      { data: rogsYouthDetention },
+      { data: rogsYouthCommunity },
+      { data: rogsYouthTotal },
+      { data: rogsPrison },
+      { data: rogsPolice },
+      { data: rogsIndigenousRatio },
+    ] = await Promise.all([
+      supabase.from('rogs_justice_spending').select('aust').eq('rogs_section', 'youth_justice').eq('rogs_table', '17A.10').eq('financial_year', '2024-25').eq('unit', "$'000").eq('service_type', 'Detention-based supervision').eq('description3', 'Detention-based services').limit(1).single(),
+      supabase.from('rogs_justice_spending').select('aust').eq('rogs_section', 'youth_justice').eq('rogs_table', '17A.10').eq('financial_year', '2024-25').eq('unit', "$'000").eq('service_type', 'Community-based supervision').eq('description3', 'Community-based services').limit(1).single(),
+      supabase.from('rogs_justice_spending').select('aust').eq('rogs_section', 'youth_justice').eq('rogs_table', '17A.10').eq('financial_year', '2024-25').eq('unit', "$'000").eq('service_type', '').eq('description3', 'Total expenditure').limit(1).single(),
+      supabase.from('rogs_justice_spending').select('aust').eq('rogs_section', 'corrections').eq('financial_year', '2023-24').eq('unit', "$'000").eq('service_type', 'Prison').eq('description3', 'Total net operating expenditure and capital costs').limit(1).single(),
+      supabase.from('rogs_justice_spending').select('aust').eq('rogs_section', 'police').eq('financial_year', '2024-25').eq('unit', '$m').eq('description3', 'Total recurrent expenditure').limit(1).single(),
+      supabase.from('rogs_justice_spending').select('aust').eq('rogs_section', 'youth_justice').eq('rogs_table', '17A.7').eq('financial_year', '2024-25').eq('unit', 'ratio').eq('service_type', 'Detention-based supervision').limit(1).single(),
+    ]);
+
     // Calculate outcomes rate percentage
     const outcomesRate = totalInterventions
       ? Math.round(((withOutcomes || 0) / totalInterventions) * 100)
@@ -104,6 +121,19 @@ export async function GET() {
         total_outcome_links: totalOutcomeLinks || 0,
         total_evidence: totalEvidence || 0,
         total_evidence_links: totalEvidenceLinks || 0,
+        // ROGS justice spending (Productivity Commission) — the money trail
+        rogs_youth_detention_millions: rogsYouthDetention?.aust ? Math.round(rogsYouthDetention.aust / 1000) : 1141,
+        rogs_youth_community_millions: rogsYouthCommunity?.aust ? Math.round(rogsYouthCommunity.aust / 1000) : 520,
+        rogs_youth_total_millions: rogsYouthTotal?.aust ? Math.round(rogsYouthTotal.aust / 1000) : 1723,
+        rogs_prison_billions: rogsPrison?.aust ? parseFloat((rogsPrison.aust / 1000000).toFixed(1)) : 6.8,
+        rogs_police_billions: rogsPolice?.aust ? parseFloat((rogsPolice.aust / 1000).toFixed(1)) : 18.4,
+        rogs_indigenous_detention_ratio: rogsIndigenousRatio?.aust ? parseFloat(rogsIndigenousRatio.aust) : 23.1,
+        rogs_total_punitive_billions: parseFloat((
+          ((rogsPrison?.aust || 6845161) / 1000000) +
+          ((rogsPolice?.aust || 18400) / 1000) +
+          ((rogsYouthDetention?.aust || 1141155) / 1000000)
+        ).toFixed(1)),
+        rogs_year: '2024-25',
       },
       updated_at: new Date().toISOString(),
     });
@@ -130,8 +160,16 @@ export async function GET() {
           indigenous_led_programs: 0,
           total_outcomes: 1150,
           total_outcome_links: 1699,
-          total_evidence: 198,
-          total_evidence_links: 327,
+          total_evidence: 334,
+          total_evidence_links: 463,
+          rogs_youth_detention_millions: 1141,
+          rogs_youth_community_millions: 520,
+          rogs_youth_total_millions: 1723,
+          rogs_prison_billions: 6.8,
+          rogs_police_billions: 18.4,
+          rogs_indigenous_detention_ratio: 23.1,
+          rogs_total_punitive_billions: 26.4,
+          rogs_year: '2024-25',
         },
         fallback_note: 'Using cached data due to temporary database issue',
       },

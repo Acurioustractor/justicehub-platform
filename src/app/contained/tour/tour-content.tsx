@@ -1113,6 +1113,15 @@ interface AlmaStats {
   total_outcomes: number;
   total_evidence: number;
   total_evidence_links: number;
+  // ROGS justice spending
+  rogs_youth_detention_millions: number;
+  rogs_youth_community_millions: number;
+  rogs_youth_total_millions: number;
+  rogs_prison_billions: number;
+  rogs_police_billions: number;
+  rogs_indigenous_detention_ratio: number;
+  rogs_total_punitive_billions: number;
+  rogs_year: string;
 }
 
 export function TourContent() {
@@ -1589,11 +1598,53 @@ export function TourContent() {
                   ))}
                 </div>
 
+                {/* The Money Trail — ROGS data */}
+                {almaStats.rogs_total_punitive_billions > 0 && (
+                  <div className="bg-white/5 border border-white/10 p-6 mb-10">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-red-400 mb-4">
+                      Where the Money Actually Goes
+                    </h3>
+                    <div className="grid grid-cols-3 gap-4 mb-4">
+                      <div className="text-center">
+                        <div className="text-2xl md:text-3xl font-black text-red-400">${almaStats.rogs_police_billions}B</div>
+                        <div className="text-xs text-gray-400 uppercase">Police</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl md:text-3xl font-black text-red-400">${almaStats.rogs_prison_billions}B</div>
+                        <div className="text-xs text-gray-400 uppercase">Prisons</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl md:text-3xl font-black text-red-400">${(almaStats.rogs_youth_detention_millions / 1000).toFixed(1)}B</div>
+                        <div className="text-xs text-gray-400 uppercase">Youth Detention</div>
+                      </div>
+                    </div>
+                    <div className="border-t border-white/10 pt-4 flex items-center justify-between">
+                      <div>
+                        <span className="text-3xl font-black text-red-500">${almaStats.rogs_total_punitive_billions}B</span>
+                        <span className="text-sm text-gray-400 ml-2">total punitive system / year</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-3xl font-black text-emerald-400">${(almaStats.rogs_youth_community_millions / 1000).toFixed(1)}B</span>
+                        <span className="text-sm text-gray-400 ml-2">on what works</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-3">
+                      Source: Productivity Commission Report on Government Services {almaStats.rogs_year}
+                    </p>
+                  </div>
+                )}
+
                 {almaStats.high_impact_programs > 0 && (
                   <div className="border-l-4 border-emerald-500 pl-6 mb-10">
                     <p className="text-xl">
                       <span className="font-black text-emerald-400">{almaStats.high_impact_programs.toLocaleString()}</span> programs
                       score 70%+ on our portfolio assessment — high evidence, strong community authority, ready to scale.
+                      {almaStats.rogs_indigenous_detention_ratio > 0 && (
+                        <span className="block mt-2 text-gray-400 text-base">
+                          Indigenous youth are locked up at <span className="text-red-400 font-bold">{almaStats.rogs_indigenous_detention_ratio}x</span> the
+                          rate of non-Indigenous youth. These programs are the alternative.
+                        </span>
+                      )}
                     </p>
                   </div>
                 )}

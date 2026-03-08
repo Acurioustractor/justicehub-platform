@@ -45,15 +45,30 @@ const TYPE_COLORS: Record<string, string> = {
   'Early Intervention': 'bg-blue-600',
 };
 
+interface RogsStats {
+  rogs_youth_detention_millions: number;
+  rogs_youth_community_millions: number;
+  rogs_youth_total_millions: number;
+  rogs_prison_billions: number;
+  rogs_police_billions: number;
+  rogs_indigenous_detention_ratio: number;
+  rogs_total_punitive_billions: number;
+  rogs_year: string;
+}
+
 export default function FoundationReportPage() {
   const [data, setData] = useState<ReportData | null>(null);
+  const [rogs, setRogs] = useState<RogsStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/intelligence/report')
-      .then((res) => res.json())
-      .then((payload) => {
-        if (payload.success) setData(payload);
+    Promise.all([
+      fetch('/api/intelligence/report').then((r) => r.json()),
+      fetch('/api/homepage-stats').then((r) => r.json()),
+    ])
+      .then(([reportPayload, statsPayload]) => {
+        if (reportPayload.success) setData(reportPayload);
+        if (statsPayload.stats) setRogs(statsPayload.stats);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -171,12 +186,13 @@ export default function FoundationReportPage() {
 
               <div className="bg-red-50 p-8 border-2 border-red-200">
                 <Scale className="w-8 h-8 text-red-600 mb-4" />
-                <div className="text-4xl font-black text-red-700 mb-2">24x</div>
+                <div className="text-4xl font-black text-red-700 mb-2">{rogs ? `${rogs.rogs_indigenous_detention_ratio}x` : '23x'}</div>
                 <div className="font-bold mb-2">Indigenous overrepresentation</div>
                 <p className="text-sm text-gray-700">
-                  First Nations young people are incarcerated at 24 times the rate of
+                  First Nations young people are incarcerated at {rogs?.rogs_indigenous_detention_ratio || 23} times the rate of
                   non-Indigenous youth. This is the highest overrepresentation rate in the
                   developed world.
+                  {rogs?.rogs_year && <span className="block mt-1 text-xs text-gray-500">Source: Productivity Commission ROGS {rogs.rogs_year}</span>}
                 </p>
               </div>
 
@@ -215,33 +231,40 @@ export default function FoundationReportPage() {
                   <div>
                     <div className="flex items-baseline justify-between mb-1">
                       <span className="font-bold">Police Services</span>
-                      <span className="text-2xl font-black text-red-700">$16.6B</span>
+                      <span className="text-2xl font-black text-red-700">${rogs?.rogs_police_billions || 18.4}B</span>
                     </div>
                     <div className="w-full bg-gray-200 h-4">
-                      <div className="bg-red-500 h-4" style={{ width: '34%' }} />
+                      <div className="bg-red-500 h-4" style={{ width: `${rogs ? Math.round((rogs.rogs_police_billions / rogs.rogs_total_punitive_billions) * 100) : 70}%` }} />
                     </div>
                   </div>
                   <div>
                     <div className="flex items-baseline justify-between mb-1">
                       <span className="font-bold">Prisons</span>
-                      <span className="text-2xl font-black text-red-700">$8.8B</span>
+                      <span className="text-2xl font-black text-red-700">${rogs?.rogs_prison_billions || 6.8}B</span>
                     </div>
                     <div className="w-full bg-gray-200 h-4">
-                      <div className="bg-red-400 h-4" style={{ width: '18%' }} />
+                      <div className="bg-red-400 h-4" style={{ width: `${rogs ? Math.round((rogs.rogs_prison_billions / rogs.rogs_total_punitive_billions) * 100) : 26}%` }} />
                     </div>
                   </div>
                   <div>
                     <div className="flex items-baseline justify-between mb-1">
-                      <span className="font-bold">Other Public Order &amp; Safety</span>
-                      <span className="text-2xl font-black text-gray-600">$23.7B</span>
+                      <span className="font-bold">Youth Detention</span>
+                      <span className="text-2xl font-black text-red-700">${rogs ? (rogs.rogs_youth_detention_millions / 1000).toFixed(1) : '1.1'}B</span>
                     </div>
                     <div className="w-full bg-gray-200 h-4">
-                      <div className="bg-gray-400 h-4" style={{ width: '48%' }} />
+                      <div className="bg-red-300 h-4" style={{ width: `${rogs ? Math.round((rogs.rogs_youth_detention_millions / 1000 / rogs.rogs_total_punitive_billions) * 100) : 4}%` }} />
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      734 young people — ${rogs ? Math.round(rogs.rogs_youth_detention_millions / 0.734) .toLocaleString() : '1,555,000'}/child/year
                     </div>
                   </div>
                 </div>
+                <div className="mt-6 p-4 bg-red-50 border border-red-200">
+                  <div className="text-xs font-bold uppercase text-red-700 mb-1">Total Punitive System</div>
+                  <div className="text-3xl font-black text-red-800">${rogs?.rogs_total_punitive_billions || 26.4}B/year</div>
+                </div>
                 <p className="text-xs text-gray-500 mt-4">
-                  Source: ABS Government Finance Statistics, 2023-24
+                  Source: Productivity Commission ROGS {rogs?.rogs_year || '2024-25'}
                 </p>
               </div>
 
