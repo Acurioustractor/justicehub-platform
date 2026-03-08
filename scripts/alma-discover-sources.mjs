@@ -55,42 +55,17 @@ const applyMode = args.includes('--apply');
 const batchSize = parseInt(args.find((_, i) => args[i - 1] === '--batch') || (applyMode ? '20' : '5'));
 const mode = args.find((_, i) => args[i - 1] === '--mode') || 'interventions';
 
-let callLLM, parseJSON, scrapeViaJina;
+let callLLM, parseJSON, scrapeViaJina, searchWeb;
 
 async function loadModules() {
   const { LLMClient } = await import('../src/lib/ai/model-router.ts');
   const parseJsonModule = await import('../src/lib/ai/parse-json.ts');
   const jinaModule = await import('../src/lib/scraping/jina-reader.ts');
+  const searchModule = await import('../src/lib/scraping/web-search.ts');
   callLLM = (prompt, options) => LLMClient.getInstance().call(prompt, options);
   parseJSON = parseJsonModule.parseJSON;
   scrapeViaJina = jinaModule.scrapeViaJina;
-}
-
-// Search via Jina Search API
-async function searchWeb(query) {
-  try {
-    const apiKey = process.env.JINA_API_KEY;
-    const headers = { Accept: 'application/json' };
-    if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
-
-    const response = await fetch(`https://s.jina.ai/${encodeURIComponent(query)}`, {
-      headers,
-      signal: AbortSignal.timeout(30_000),
-    });
-    if (!response.ok) {
-      console.warn(`[Search] HTTP ${response.status}`);
-      return [];
-    }
-    const data = await response.json();
-    return (data.data || []).slice(0, 5).map((r) => ({
-      title: r.title || '',
-      url: r.url || '',
-      description: r.description || '',
-    }));
-  } catch (err) {
-    console.warn(`[Search] Failed: ${err.message}`);
-    return [];
-  }
+  searchWeb = searchModule.searchWeb;
 }
 
 function buildSearchQuery(intervention, searchMode) {
