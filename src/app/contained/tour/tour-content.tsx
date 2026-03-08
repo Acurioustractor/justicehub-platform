@@ -1139,6 +1139,7 @@ export function TourContent() {
   const [reactionCount, setReactionCount] = useState(0);
   const [recommendRate, setRecommendRate] = useState(0);
   const [almaStats, setAlmaStats] = useState<AlmaStats | null>(null);
+  const [stateSpending, setStateSpending] = useState<Record<string, { detention_millions: number | null; community_millions: number | null; indigenous_ratio: number | null }>>({});
   const tourStopRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
@@ -1231,11 +1232,29 @@ export function TourContent() {
       })
       .catch(console.error);
 
-    // Fetch ALMA stats for evidence showcase
+    // Fetch ALMA stats + state spending for evidence showcase
     fetch('/api/homepage-stats')
       .then((res) => res.json())
       .then((data) => {
         if (data.stats) setAlmaStats(data.stats);
+      })
+      .catch(console.error);
+
+    // Fetch state-by-state justice spending for tour stops
+    fetch('/api/justice-spending')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.states) {
+          const map: Record<string, { detention_millions: number | null; community_millions: number | null; indigenous_ratio: number | null }> = {};
+          for (const s of data.states) {
+            map[s.state] = {
+              detention_millions: s.youth_justice?.detention_millions,
+              community_millions: s.youth_justice?.community_millions,
+              indigenous_ratio: s.indigenous_detention_ratio,
+            };
+          }
+          setStateSpending(map);
+        }
       })
       .catch(console.error);
 
@@ -1733,6 +1752,31 @@ export function TourContent() {
                     <div className="text-sm text-gray-500 mb-4">
                       <strong className="text-gray-300">Partner:</strong> {stop.partner}
                     </div>
+                    {stateSpending[stop.state] && (
+                      <div className="bg-black/50 border border-gray-700 p-3 mb-4 text-xs">
+                        <div className="font-bold uppercase tracking-widest text-gray-500 mb-2">{stop.state} Justice Spending</div>
+                        <div className="flex gap-4">
+                          {stateSpending[stop.state].detention_millions != null && (
+                            <div>
+                              <span className="text-red-400 font-bold">${stateSpending[stop.state].detention_millions}M</span>
+                              <span className="text-gray-500 ml-1">detention</span>
+                            </div>
+                          )}
+                          {stateSpending[stop.state].community_millions != null && (
+                            <div>
+                              <span className="text-emerald-400 font-bold">${stateSpending[stop.state].community_millions}M</span>
+                              <span className="text-gray-500 ml-1">community</span>
+                            </div>
+                          )}
+                          {stateSpending[stop.state].indigenous_ratio != null && (
+                            <div>
+                              <span className="text-amber-400 font-bold">{stateSpending[stop.state].indigenous_ratio}x</span>
+                              <span className="text-gray-500 ml-1">Indigenous</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                     <Link
                       href={`/events/${stop.eventSlug}`}
                       className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-emerald-400 hover:text-emerald-300"

@@ -19,99 +19,131 @@ import {
 
 const SITE_URL = 'https://justicehub.org.au';
 
-// ── Shareable message templates ──────────────────────────────────
-const SHARE_TEMPLATES = {
-  general: {
-    subject: 'You need to see this — CONTAINED',
-    body: `I just found out about CONTAINED — a shipping container touring Australia that lets you experience 30 minutes of what youth detention is actually like.
+interface LiveStats {
+  detentionBillions: string;
+  communityMillions: string;
+  totalPunitiveBillions: string;
+  programs: string;
+  orgs: string;
+  indigenousRatio: string;
+  costPerChild: string;
+}
 
-$1.2 million per child per year. 84% reoffend. Community alternatives cost $75/day with 3% reoffending.
+const DEFAULT_STATS: LiveStats = {
+  detentionBillions: '1.1',
+  communityMillions: '520',
+  totalPunitiveBillions: '26.4',
+  programs: '1,112',
+  orgs: '527',
+  indigenousRatio: '23',
+  costPerChild: '1.6M',
+};
+
+function buildTemplates(s: LiveStats) {
+  return {
+    general: {
+      subject: 'You need to see this — CONTAINED',
+      body: `I just found out about CONTAINED — a shipping container touring Australia that lets you experience 30 minutes of what youth detention is actually like.
+
+Australia spends $${s.totalPunitiveBillions} billion/year on the punitive justice system. Youth detention alone: $${s.detentionBillions}B for just 734 kids. That's $${s.costPerChild}/child/year.
+
+Meanwhile, ${s.programs} proven community programs get a fraction. Indigenous youth are locked up at ${s.indigenousRatio}x the rate of non-Indigenous youth.
 
 The evidence is overwhelming. Decision-makers need to experience this.
 
 ${SITE_URL}/contained`,
-  },
-  nominate: {
-    subject: 'Nominate a decision-maker for CONTAINED',
-    body: `CONTAINED is touring Australia in 2026 — a shipping container where decision-makers experience 30 minutes of youth detention reality.
+    },
+    nominate: {
+      subject: 'Nominate a decision-maker for CONTAINED',
+      body: `CONTAINED is touring Australia in 2026 — a shipping container where decision-makers experience 30 minutes of youth detention reality.
 
 I'm nominating leaders who need to see this. You can too:
 ${SITE_URL}/contained#nominate
 
 Every nomination builds public pressure for change.`,
-  },
-  politician: {
-    subject: 'CONTAINED: Your constituents are watching',
-    body: `Dear [Name],
+    },
+    politician: {
+      subject: 'CONTAINED: Your constituents are watching',
+      body: `Dear [Name],
 
 CONTAINED is an immersive experience touring Australia that reveals the reality of youth detention — and what works instead.
 
-$1.2M per child per year in detention. 84% reoffend.
-Community alternatives: $75/day. 3% reoffending.
+$${s.detentionBillions}B/year on youth detention for 734 children. $${s.costPerChild}/child/year.
+Indigenous youth: ${s.indigenousRatio}x overrepresentation in detention.
+Community alternatives: $${s.communityMillions}M total — with ${s.programs} proven programs.
 
 I'm inviting you to experience 30 minutes inside this container. Your constituents have nominated you.
 
 Learn more: ${SITE_URL}/contained
 Nominations: ${SITE_URL}/contained#nominate`,
-  },
-  media: {
-    subject: 'Story: CONTAINED tour reveals youth detention reality',
-    body: `Hi,
+    },
+    media: {
+      subject: 'Story: CONTAINED tour reveals youth detention reality',
+      body: `Hi,
 
 CONTAINED is an immersive experience touring four Australian cities in 2026. One shipping container, three rooms, thirty minutes — the reality of youth detention, the therapeutic alternative (Diagrama, Spain), and local community solutions.
 
-Key stats:
-- $1.2M/child/year in detention, 84% reoffend
-- Community programs: $75/day, 3% reoffending, 527 organisations on ALMA
-- Therapeutic model (Spain): 73% success rate, €5.64 return per €1
+Key stats (Productivity Commission ROGS 2024-25):
+- $${s.totalPunitiveBillions}B/year total punitive system (police + prisons + detention)
+- $${s.detentionBillions}B on youth detention for just 734 kids ($${s.costPerChild}/child/year)
+- ${s.programs} community programs on ALMA from ${s.orgs} organisations
+- Indigenous youth: ${s.indigenousRatio}x overrepresentation in detention
 
 Tour stops: Mount Druitt, Adelaide, Perth, Tennant Creek
 
 Press kit & details: ${SITE_URL}/contained
 Contact: hello@justicehub.org.au`,
-  },
-  funder: {
-    subject: 'Investment opportunity: CONTAINED national tour',
-    body: `CONTAINED is a national campaign proving that youth justice can be different — through immersive experience, evidence, and community voice.
+    },
+    funder: {
+      subject: 'Investment opportunity: CONTAINED national tour',
+      body: `CONTAINED is a national campaign proving that youth justice can be different — through immersive experience, evidence, and community voice.
 
-The tour visits four cities in 2026, building the case for therapeutic alternatives that cost a fraction of detention and actually work.
+Australia spends $${s.totalPunitiveBillions}B/year on the punitive system. ${s.programs} proven alternatives exist. The tour takes this evidence directly to decision-makers.
 
 We're seeking philanthropic partners at $10K–$250K+ to fund the tour, documentation, and the platform behind it.
 
 Investment thesis: ${SITE_URL}/for-funders
 Tour details: ${SITE_URL}/contained
 Contact: hello@justicehub.org.au`,
-  },
-};
+    },
+  };
+}
 
-const SOCIAL_POSTS = {
-  twitter: `CONTAINED: One shipping container. Three rooms. Thirty minutes. The reality of youth detention — and what works instead.
+function buildSocialPosts(s: LiveStats) {
+  return {
+    twitter: `CONTAINED: One shipping container. Three rooms. Thirty minutes. The reality of youth detention — and what works instead.
 
-$1.2M/child/year. 84% reoffend. Community alternatives: $75/day, 3%.
+$${s.totalPunitiveBillions}B/year on the punitive system. ${s.programs} proven alternatives get a fraction.
 
 Australian Tour 2026. Nominate a leader: ${SITE_URL}/contained#nominate
 
 #CONTAINED #YouthJustice`,
-  facebook: `Just learned about CONTAINED — a shipping container touring Australia that lets you experience 30 minutes of what youth detention is actually like.
+    facebook: `Just learned about CONTAINED — a shipping container touring Australia that lets you experience 30 minutes of what youth detention is actually like.
 
-The stats are staggering:
-- $1.2 million per detained child per year
-- 84% reoffending rate
-- Community alternatives cost $75/day with 3% reoffending
+The stats are staggering (Productivity Commission data):
+- $${s.totalPunitiveBillions} billion/year on the punitive justice system
+- $${s.detentionBillions}B on youth detention for just 734 kids
+- Indigenous youth locked up at ${s.indigenousRatio}x the rate
+- ${s.programs} proven community alternatives from ${s.orgs} organisations
 
 Decision-makers need to experience this. Nominate someone: ${SITE_URL}/contained#nominate`,
-  linkedin: `Australia spends $1.2M per child per year on youth detention. 84% reoffend.
+    linkedin: `Australia spends $${s.totalPunitiveBillions}B/year on its punitive justice system. $${s.detentionBillions}B on youth detention alone — for 734 children.
 
-Community alternatives cost $75/day with 3% reoffending and 527 organisations already doing what works.
+Indigenous youth are incarcerated at ${s.indigenousRatio}x the rate of non-Indigenous youth.
+
+Meanwhile, ${s.programs} proven community programs from ${s.orgs} organisations deliver better outcomes at a fraction of the cost.
 
 CONTAINED is a national tour taking this evidence directly to decision-makers — 30 minutes inside a shipping container that makes you understand it in your bones.
 
 Four cities. 2026. Nominate a leader: ${SITE_URL}/contained
 
 #YouthJustice #CONTAINED #SocialImpact #PolicyReform`,
-};
+  };
+}
 
-const SMS_TEMPLATE = `Check this out — CONTAINED is a shipping container touring Australia showing what youth detention is really like. $1.2M/child/year, 84% reoffend. Community alternatives: $75/day, 3%. Nominate a leader: ${SITE_URL}/contained#nominate`;
+function buildSmsTemplate(s: LiveStats) {
+  return `Check this out — CONTAINED is a shipping container touring Australia showing what youth detention is really like. $${s.totalPunitiveBillions}B/yr on the punitive system, ${s.programs} proven alternatives get a fraction. Indigenous youth: ${s.indigenousRatio}x overrepresented. Nominate a leader: ${SITE_URL}/contained#nominate`;
+}
 
 function CopyButton({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
@@ -190,15 +222,17 @@ export function ActContent() {
     raised: 0,
     donors: 0,
   });
+  const [liveStats, setLiveStats] = useState<LiveStats>(DEFAULT_STATS);
 
   useEffect(() => {
-    // Fetch all campaign stats in parallel
+    // Fetch all campaign stats + ROGS data in parallel
     Promise.all([
       fetch('/api/projects/the-contained/nominations').then((r) => r.json()).catch(() => ({ count: 0 })),
       fetch('/api/projects/the-contained/backers').then((r) => r.json()).catch(() => ({ count: 0 })),
       fetch('/api/projects/the-contained/reactions').then((r) => r.json()).catch(() => ({ count: 0 })),
       fetch('/api/campaign/stats').then((r) => r.json()).catch(() => ({ total_raised_cents: 0, donor_count: 0 })),
-    ]).then(([noms, backers, reactions, campaign]) => {
+      fetch('/api/homepage-stats').then((r) => r.json()).catch(() => null),
+    ]).then(([noms, backers, reactions, campaign, homepage]) => {
       setStats({
         nominations: noms.count || 0,
         backers: backers.count || 0,
@@ -206,9 +240,25 @@ export function ActContent() {
         raised: (campaign.total_raised_cents || 0) / 100,
         donors: campaign.donor_count || 0,
       });
+      if (homepage?.stats) {
+        const s = homepage.stats;
+        const detM = s.rogs_youth_detention_millions || 1141;
+        setLiveStats({
+          detentionBillions: (detM / 1000).toFixed(1),
+          communityMillions: String(s.rogs_youth_community_millions || 520),
+          totalPunitiveBillions: String(s.rogs_total_punitive_billions || 26.4),
+          programs: (s.programs_documented || 1112).toLocaleString(),
+          orgs: (s.orgs_linked || 527).toLocaleString(),
+          indigenousRatio: String(Math.round(s.rogs_indigenous_detention_ratio || 23)),
+          costPerChild: `${(detM / 0.734 / 1000).toFixed(1)}M`,
+        });
+      }
     });
   }, []);
 
+  const SHARE_TEMPLATES = buildTemplates(liveStats);
+  const SOCIAL_POSTS = buildSocialPosts(liveStats);
+  const SMS_TEMPLATE = buildSmsTemplate(liveStats);
   const smsLink = `sms:?&body=${encodeURIComponent(SMS_TEMPLATE)}`;
 
   return (
