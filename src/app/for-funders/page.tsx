@@ -182,10 +182,10 @@ export default function ForFundersPage() {
                   Schedule a Briefing
                 </Link>
                 <Link
-                  href="#investment-thesis"
+                  href="/for-funders/report"
                   className="border-2 border-black px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors text-center"
                 >
-                  View Investment Thesis
+                  View Foundation Report
                 </Link>
               </div>
             </div>
@@ -472,10 +472,10 @@ export default function ForFundersPage() {
                 Schedule Briefing
               </Link>
               <Link
-                href="/for-funders"
+                href="/for-funders/report"
                 className="border-2 border-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
               >
-                Download Prospectus
+                View Foundation Report
               </Link>
             </div>
           </div>

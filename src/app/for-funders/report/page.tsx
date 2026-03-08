@@ -1,0 +1,544 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Navigation, Footer } from '@/components/ui/navigation';
+import {
+  TrendingUp, Shield, Users, BarChart3, DollarSign,
+  ArrowRight, CheckCircle, AlertTriangle, MapPin,
+  Loader2, ExternalLink, Target, BookOpen, Scale,
+} from 'lucide-react';
+
+interface ReportData {
+  overview: {
+    totalInterventions: number;
+    highImpactPrograms: number;
+    indigenousLedPrograms: number;
+    orgsLinked: number;
+    totalEvidence: number;
+    totalOutcomes: number;
+    outcomeLinks: number;
+  };
+  typeBreakdown: { type: string; total: number; highImpact: number }[];
+  outcomeBreakdown: { type: string; count: number }[];
+  topPrograms: {
+    name: string;
+    type: string;
+    score: number;
+    evidenceLevel: string;
+    geography: string[];
+    organization: string;
+  }[];
+  generated_at: string;
+}
+
+const TYPE_COLORS: Record<string, string> = {
+  'Cultural Connection': 'bg-orange-600',
+  'Wraparound Support': 'bg-amber-600',
+  'Community-Led': 'bg-purple-600',
+  'Diversion': 'bg-green-600',
+  'Justice Reinvestment': 'bg-indigo-600',
+  'Prevention': 'bg-teal-600',
+  'Education/Employment': 'bg-cyan-600',
+  'Therapeutic': 'bg-rose-600',
+  'Family Strengthening': 'bg-pink-600',
+  'Early Intervention': 'bg-blue-600',
+};
+
+export default function FoundationReportPage() {
+  const [data, setData] = useState<ReportData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/intelligence/report')
+      .then((res) => res.json())
+      .then((payload) => {
+        if (payload.success) setData(payload);
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p>Failed to load report data.</p>
+      </div>
+    );
+  }
+
+  const { overview, typeBreakdown, outcomeBreakdown, topPrograms } = data;
+
+  return (
+    <div className="min-h-screen bg-white text-black">
+      <Navigation />
+
+      <main className="pt-40">
+        {/* Report Header */}
+        <section className="py-16 md:py-24 border-b-2 border-black">
+          <div className="container-justice">
+            <div className="max-w-4xl">
+              <div className="inline-block bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-6">
+                Foundation Report 2026
+              </div>
+
+              <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase mb-6">
+                THE EVIDENCE FOR<br />COMMUNITY-LED<br />YOUTH JUSTICE
+              </h1>
+
+              <p className="text-xl md:text-2xl text-gray-700 mb-6 leading-relaxed">
+                Australia&apos;s most comprehensive database of youth justice interventions reveals
+                what works, what doesn&apos;t, and where philanthropic investment delivers the
+                greatest return. Live data from{' '}
+                <strong className="text-black">{overview.totalInterventions.toLocaleString()} programs</strong>{' '}
+                across every state and territory.
+              </p>
+
+              <p className="text-sm text-gray-500 font-mono">
+                Report generated: {new Date(data.generated_at).toLocaleDateString('en-AU', { year: 'numeric', month: 'long', day: 'numeric' })}
+                {' '}&middot; Data updates in real time
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Key Numbers */}
+        <section className="py-16 bg-black text-white">
+          <div className="container-justice">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="text-5xl md:text-6xl font-black text-emerald-400">
+                  {overview.totalInterventions.toLocaleString()}
+                </div>
+                <div className="text-sm font-bold uppercase tracking-widest mt-2 text-gray-300">
+                  Programs Documented
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-5xl md:text-6xl font-black text-emerald-400">
+                  {overview.highImpactPrograms}
+                </div>
+                <div className="text-sm font-bold uppercase tracking-widest mt-2 text-gray-300">
+                  High-Impact (Score 70+)
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-5xl md:text-6xl font-black text-orange-400">
+                  {overview.indigenousLedPrograms}
+                </div>
+                <div className="text-sm font-bold uppercase tracking-widest mt-2 text-gray-300">
+                  Indigenous-Led
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-5xl md:text-6xl font-black text-blue-400">
+                  {overview.orgsLinked}
+                </div>
+                <div className="text-sm font-bold uppercase tracking-widest mt-2 text-gray-300">
+                  Organisations Mapped
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* The Crisis */}
+        <section className="py-16 border-b-2 border-black">
+          <div className="container-justice">
+            <h2 className="text-3xl font-black uppercase tracking-tighter mb-8">
+              The Crisis in Numbers
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-red-50 p-8 border-2 border-red-200">
+                <AlertTriangle className="w-8 h-8 text-red-600 mb-4" />
+                <div className="text-4xl font-black text-red-700 mb-2">$1.2M</div>
+                <div className="font-bold mb-2">Per child, per year in detention</div>
+                <p className="text-sm text-gray-700">
+                  Australia spends over $1.2 million annually to detain a single young person —
+                  with recidivism rates above 75%. Community programs cost $50-75K and achieve
+                  dramatically better outcomes.
+                </p>
+              </div>
+
+              <div className="bg-red-50 p-8 border-2 border-red-200">
+                <Scale className="w-8 h-8 text-red-600 mb-4" />
+                <div className="text-4xl font-black text-red-700 mb-2">24x</div>
+                <div className="font-bold mb-2">Indigenous overrepresentation</div>
+                <p className="text-sm text-gray-700">
+                  First Nations young people are incarcerated at 24 times the rate of
+                  non-Indigenous youth. This is the highest overrepresentation rate in the
+                  developed world.
+                </p>
+              </div>
+
+              <div className="bg-emerald-50 p-8 border-2 border-emerald-200">
+                <TrendingUp className="w-8 h-8 text-emerald-600 mb-4" />
+                <div className="text-4xl font-black text-emerald-700 mb-2">5-10x</div>
+                <div className="font-bold mb-2">ROI on community programs</div>
+                <p className="text-sm text-gray-700">
+                  Every dollar invested in community-led alternatives returns $5-10 in avoided
+                  incarceration costs, reduced reoffending, and improved life outcomes for young
+                  people and their families.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* What Works — by Type */}
+        <section className="py-16 bg-gray-50 border-b-2 border-black">
+          <div className="container-justice">
+            <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
+              What Works
+            </h2>
+            <p className="text-xl text-gray-700 mb-12 max-w-3xl">
+              Portfolio scores are calculated from 5 signals: evidence strength, community authority,
+              harm risk, implementation capability, and option value. Programs scoring 70+ are
+              classified as &ldquo;High Impact&rdquo;.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {typeBreakdown.map((item) => {
+                const pct = item.total > 0 ? Math.round((item.highImpact / item.total) * 100) : 0;
+                return (
+                  <div key={item.type} className="bg-white p-6 border-2 border-black flex items-center gap-4">
+                    <div className={`w-3 h-12 ${TYPE_COLORS[item.type] || 'bg-gray-600'}`} />
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className="font-bold">{item.type}</h3>
+                        <span className="text-sm font-mono text-gray-500">{item.total} programs</span>
+                      </div>
+                      <div className="w-full bg-gray-200 h-3 relative">
+                        <div
+                          className="bg-emerald-500 h-3 absolute left-0 top-0"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-sm text-emerald-700 font-bold">{item.highImpact} high-impact</span>
+                        <span className="text-xs text-gray-500">{pct}% high-impact rate</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-8 p-6 bg-white border-2 border-black">
+              <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                <BookOpen className="w-5 h-5" />
+                Key Finding
+              </h3>
+              <p className="text-gray-700">
+                <strong>Cultural Connection programs have the highest impact rate</strong> at{' '}
+                {typeBreakdown.find((t) => t.type === 'Cultural Connection')
+                  ? Math.round(
+                      ((typeBreakdown.find((t) => t.type === 'Cultural Connection')?.highImpact || 0) /
+                        (typeBreakdown.find((t) => t.type === 'Cultural Connection')?.total || 1)) *
+                        100
+                    )
+                  : 0}
+                % of programs scoring 70+. This aligns with decades of research showing that
+                connection to culture, country, and community is the strongest protective factor
+                for First Nations young people.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Outcomes Tracked */}
+        <section className="py-16 border-b-2 border-black">
+          <div className="container-justice">
+            <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
+              Outcomes We Track
+            </h2>
+            <p className="text-xl text-gray-700 mb-12 max-w-3xl">
+              {overview.totalOutcomes} distinct outcomes linked across {overview.outcomeLinks} program-outcome
+              connections. These are the measurable changes that prove community alternatives work.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {outcomeBreakdown.map((outcome) => (
+                <div key={outcome.type} className="bg-white p-5 border-2 border-black">
+                  <div className="text-2xl font-black text-emerald-700 mb-1">{outcome.count}</div>
+                  <div className="font-bold text-sm">{outcome.type}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Top 20 Programs */}
+        <section className="py-16 bg-gray-50 border-b-2 border-black">
+          <div className="container-justice">
+            <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
+              Top 20 High-Impact Programs
+            </h2>
+            <p className="text-xl text-gray-700 mb-12 max-w-3xl">
+              These programs represent the strongest evidence base, deepest community authority,
+              and greatest readiness for investment. Each one is a proven alternative to detention.
+            </p>
+
+            <div className="border-2 border-black overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-black text-white">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-bold uppercase tracking-wider w-8">#</th>
+                    <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Program</th>
+                    <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Type</th>
+                    <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Location</th>
+                    <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Evidence</th>
+                    <th className="px-4 py-3 text-center font-bold uppercase tracking-wider">Score</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {topPrograms.map((program, idx) => (
+                    <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                      <td className="px-4 py-3 font-mono text-gray-400">{idx + 1}</td>
+                      <td className="px-4 py-3">
+                        <div className="font-bold">{program.name}</div>
+                        {program.organization && (
+                          <div className="text-xs text-gray-500">{program.organization}</div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-0.5 text-[10px] font-bold uppercase text-white ${TYPE_COLORS[program.type] || 'bg-gray-600'}`}>
+                          {program.type}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        {program.geography?.slice(0, 2).join(', ') || '-'}
+                      </td>
+                      <td className="px-4 py-3 text-xs">
+                        {program.evidenceLevel?.split(' (')[0] || '-'}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className="px-2 py-1 bg-emerald-100 text-emerald-800 font-bold font-mono text-xs border border-emerald-300">
+                          {(program.score * 100).toFixed(0)}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-4 text-right">
+              <Link
+                href="/intelligence/interventions?sort=score"
+                className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest hover:underline"
+              >
+                View all {overview.totalInterventions} programs <ExternalLink className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* CONTAINED Tour Connection */}
+        <section className="py-16 bg-black text-white">
+          <div className="container-justice">
+            <div className="max-w-4xl mx-auto text-center">
+              <div className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-4">
+                See the Evidence in Person
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-6">
+                THE CONTAINED:<br />AUSTRALIAN TOUR 2026
+              </h2>
+              <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                Three shipping containers. One powerful experience. The CONTAINED tour brings
+                this evidence to life — showing what detention does to young people and what
+                community alternatives achieve. Touring nationally with stops in Alice Springs,
+                Mount Isa, Mount Druitt, and Townsville.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div className="border border-gray-700 p-6">
+                  <div className="text-3xl font-black text-red-400 mb-2">Container 1</div>
+                  <div className="font-bold mb-2">Designed by Young People</div>
+                  <p className="text-sm text-gray-400">
+                    At every stop, local young people design this room. They are the experts.
+                    They know what detention feels like.
+                  </p>
+                </div>
+                <div className="border border-gray-700 p-6">
+                  <div className="text-3xl font-black text-blue-400 mb-2">Container 2</div>
+                  <div className="font-bold mb-2">The Evidence Wall</div>
+                  <p className="text-sm text-gray-400">
+                    Live data from {overview.totalInterventions} programs. Interactive screens showing
+                    what works, scored by our 5-signal portfolio system.
+                  </p>
+                </div>
+                <div className="border border-gray-700 p-6">
+                  <div className="text-3xl font-black text-emerald-400 mb-2">Container 3</div>
+                  <div className="font-bold mb-2">The Orgs Doing It</div>
+                  <p className="text-sm text-gray-400">
+                    Each stop celebrates the local grassroots organisations — Indigenous-led and
+                    community orgs that aren&apos;t being funded the way they should be.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/contained"
+                  className="bg-white text-black px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
+                >
+                  Tour Details
+                </Link>
+                <Link
+                  href="/contained/act"
+                  className="border-2 border-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+                >
+                  Take Action
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Investment Ask */}
+        <section className="py-16 border-b-2 border-black">
+          <div className="container-justice">
+            <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
+              The Investment Case
+            </h2>
+            <p className="text-xl text-gray-700 mb-12 max-w-3xl">
+              Three ways philanthropic capital can drive systemic change in Australian youth justice.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="border-2 border-black">
+                <div className="p-6 bg-emerald-50 border-b-2 border-black">
+                  <DollarSign className="w-8 h-8 text-emerald-700 mb-2" />
+                  <h3 className="text-xl font-bold">Fund Programs Directly</h3>
+                  <div className="text-3xl font-black text-emerald-700 mt-2">$50K-250K</div>
+                </div>
+                <div className="p-6">
+                  <p className="text-gray-700 mb-4">
+                    Direct investment into {overview.highImpactPrograms} high-impact programs
+                    identified by ALMA. Your funding goes to organisations with proven track records.
+                  </p>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-emerald-600 mt-0.5" />
+                      <span>Portfolio-scored program matching</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-emerald-600 mt-0.5" />
+                      <span>Outcome tracking and impact reporting</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-emerald-600 mt-0.5" />
+                      <span>Community authority verification</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="border-2 border-black">
+                <div className="p-6 bg-blue-50 border-b-2 border-black">
+                  <BarChart3 className="w-8 h-8 text-blue-700 mb-2" />
+                  <h3 className="text-xl font-bold">Fund the Evidence Platform</h3>
+                  <div className="text-3xl font-black text-blue-700 mt-2">$100K-500K</div>
+                </div>
+                <div className="p-6">
+                  <p className="text-gray-700 mb-4">
+                    Scale ALMA — the intelligence infrastructure that identifies what works.
+                    Currently {overview.totalInterventions} programs scored with{' '}
+                    {overview.totalOutcomes} tracked outcomes.
+                  </p>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-blue-600 mt-0.5" />
+                      <span>Expand evidence database nationally</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-blue-600 mt-0.5" />
+                      <span>Community-controlled data governance</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-blue-600 mt-0.5" />
+                      <span>Open API for researchers and policymakers</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="border-2 border-black">
+                <div className="p-6 bg-orange-50 border-b-2 border-black">
+                  <Target className="w-8 h-8 text-orange-700 mb-2" />
+                  <h3 className="text-xl font-bold">Fund the CONTAINED Tour</h3>
+                  <div className="text-3xl font-black text-orange-700 mt-2">$25K-100K</div>
+                </div>
+                <div className="p-6">
+                  <p className="text-gray-700 mb-4">
+                    Sponsor the national tour that makes the evidence impossible to ignore.
+                    Four cities, three containers, thousands of people experiencing the case for change.
+                  </p>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-orange-600 mt-0.5" />
+                      <span>Named sponsorship at tour stops</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-orange-600 mt-0.5" />
+                      <span>VIP briefings with community leaders</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-orange-600 mt-0.5" />
+                      <span>Media and advocacy reach amplification</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="py-16 bg-black text-white">
+          <div className="container-justice text-center">
+            <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-6">
+              The Data Is Clear.<br />The Opportunity Is Now.
+            </h2>
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+              Schedule a briefing to see the full ALMA dataset, meet community leaders,
+              and explore how your investment can transform youth justice in Australia.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/contact?source=foundation-report&type=briefing"
+                className="bg-white text-black px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
+              >
+                Schedule a Briefing
+              </Link>
+              <Link
+                href="/intelligence/interventions?sort=score"
+                className="border-2 border-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+              >
+                Explore the Data
+              </Link>
+            </div>
+
+            <p className="mt-8 text-sm text-gray-500">
+              This report is generated live from the ALMA database. All program scores,
+              outcome counts, and organisation data update in real time.
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
