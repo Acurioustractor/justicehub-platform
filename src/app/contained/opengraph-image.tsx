@@ -83,7 +83,7 @@ export default async function Image() {
           }}
         >
           {[
-            { value: '$1.2M', label: 'per child/year' },
+            { value: '$1.55M', label: 'per child/year' },
             { value: '84%', label: 'reoffend' },
             { value: '$75/day', label: 'alternatives' },
             { value: '3%', label: 'reoffending' },

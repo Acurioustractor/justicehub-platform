@@ -101,7 +101,7 @@ export default function PricingPage() {
             <span className="text-primary">that pays for itself.</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Every child diverted from detention saves $1.2 million per year. JusticeHub tracks
+            Every child diverted from detention saves $1.55 million per year. JusticeHub tracks
             which interventions actually work — so communities get free access, and institutions
             get the evidence they need.
           </p>
@@ -227,7 +227,7 @@ export default function PricingPage() {
                 </p>
               </div>
               <div className="bg-card rounded-xl p-5 border border-border">
-                <p className="text-2xl font-bold text-primary mb-1">$1.2M</p>
+                <p className="text-2xl font-bold text-primary mb-1">$1.55M</p>
                 <p className="text-sm text-muted-foreground">
                   Saved per child diverted. One child pays for the platform 23x over.
                 </p>

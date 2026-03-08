@@ -1139,7 +1139,7 @@ export function TourContent() {
   const [reactionCount, setReactionCount] = useState(0);
   const [recommendRate, setRecommendRate] = useState(0);
   const [almaStats, setAlmaStats] = useState<AlmaStats | null>(null);
-  const [stateSpending, setStateSpending] = useState<Record<string, { detention_millions: number | null; community_millions: number | null; indigenous_ratio: number | null }>>({});
+  const [stateSpending, setStateSpending] = useState<Record<string, { detention_millions: number | null; community_millions: number | null; indigenous_ratio: number | null; cost_per_child: number | null; detention_population: number | null }>>({});
   const tourStopRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
@@ -1245,12 +1245,14 @@ export function TourContent() {
       .then((res) => res.json())
       .then((data) => {
         if (data.states) {
-          const map: Record<string, { detention_millions: number | null; community_millions: number | null; indigenous_ratio: number | null }> = {};
+          const map: Record<string, { detention_millions: number | null; community_millions: number | null; indigenous_ratio: number | null; cost_per_child: number | null; detention_population: number | null }> = {};
           for (const s of data.states) {
             map[s.state] = {
               detention_millions: s.youth_justice?.detention_millions,
               community_millions: s.youth_justice?.community_millions,
               indigenous_ratio: s.indigenous_detention_ratio,
+              cost_per_child: s.youth_justice?.cost_per_child_per_year,
+              detention_population: s.youth_justice?.detention_population,
             };
           }
           setStateSpending(map);
@@ -1373,7 +1375,7 @@ export function TourContent() {
             {/* Stat strip */}
             <div className="flex flex-wrap justify-center gap-3 text-xs font-mono uppercase tracking-wider">
               <span className="bg-black/60 backdrop-blur-sm border border-white/20 px-3 py-1.5 text-white">
-                <strong className="text-red-400">$1.2M</strong>/child/year
+                <strong className="text-red-400">$1.55M</strong>/child/year
               </span>
               <span className="bg-black/60 backdrop-blur-sm border border-white/20 px-3 py-1.5 text-white">
                 <strong className="text-red-400">84%</strong> reoffend
@@ -1410,7 +1412,7 @@ export function TourContent() {
               <div className="space-y-4 text-gray-700 leading-relaxed">
                 <p>
                   Hosts signed up. Community leaders backed it. The evidence was
-                  already overwhelming — $1.2M per detained child per year, 84%
+                  already overwhelming — $1.55M per detained child per year, 84%
                   reoffending, while community programs cost a fraction and actually
                   work.
                 </p>
@@ -1441,7 +1443,7 @@ export function TourContent() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
           <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
             <p className="text-white text-lg md:text-2xl font-black max-w-3xl tracking-tight">
-              Left: what healing looks like. Right: what $1.2 million per child buys.
+              Left: what healing looks like. Right: what $1.55 million per child buys.
             </p>
             <p className="text-white/50 text-sm mt-2">
               CONTAINED — Brisbane prototype, 2025
@@ -1495,10 +1497,10 @@ export function TourContent() {
               </div>
 
               <p className="text-center text-white/90 text-2xl md:text-3xl font-black mt-8 tracking-tight">
-                This is what $3,320 per day looks like.
+                This is what $4,250 per day looks like.
               </p>
               <p className="text-center text-white/40 text-sm mt-2 font-mono">
-                Average daily cost per child in youth detention — Australian Institute of Health and Welfare
+                Average daily cost per child in youth detention — Productivity Commission ROGS 2024-25
               </p>
             </div>
           </section>
@@ -1754,8 +1756,8 @@ export function TourContent() {
                     </div>
                     {stateSpending[stop.state] && (
                       <div className="bg-black/50 border border-gray-700 p-3 mb-4 text-xs">
-                        <div className="font-bold uppercase tracking-widest text-gray-500 mb-2">{stop.state} Justice Spending</div>
-                        <div className="flex gap-4">
+                        <div className="font-bold uppercase tracking-widest text-gray-500 mb-2">{stop.state} Justice Spending (ROGS)</div>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1">
                           {stateSpending[stop.state].detention_millions != null && (
                             <div>
                               <span className="text-red-400 font-bold">${stateSpending[stop.state].detention_millions}M</span>
@@ -1766,6 +1768,18 @@ export function TourContent() {
                             <div>
                               <span className="text-emerald-400 font-bold">${stateSpending[stop.state].community_millions}M</span>
                               <span className="text-gray-500 ml-1">community</span>
+                            </div>
+                          )}
+                          {stateSpending[stop.state].cost_per_child != null && (
+                            <div>
+                              <span className="text-red-400 font-bold">${(stateSpending[stop.state].cost_per_child! / 1000000).toFixed(1)}M</span>
+                              <span className="text-gray-500 ml-1">/child/yr</span>
+                            </div>
+                          )}
+                          {stateSpending[stop.state].detention_population != null && (
+                            <div>
+                              <span className="text-gray-300 font-bold">{stateSpending[stop.state].detention_population}</span>
+                              <span className="text-gray-500 ml-1">children detained</span>
                             </div>
                           )}
                           {stateSpending[stop.state].indigenous_ratio != null && (

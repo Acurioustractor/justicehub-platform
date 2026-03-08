@@ -35,8 +35,8 @@ export const journeyContainers = [
     summary:
       "At every tour stop, young people from the local community design this room. They are the experts. They know what detention feels like. They decide what the public needs to see.",
     stats: [
-      { label: "Daily Cost", value: "$3,320" },
-      { label: "Annual Cost", value: "$1.212M" },
+      { label: "Daily Cost", value: "$4,250" },
+      { label: "Annual Cost", value: "$1.55M" },
       { label: "Reoffending", value: "84%" },
       { label: "Education Completion", value: "18%" },
     ],
@@ -115,8 +115,8 @@ export type EvidenceHighlight = {
 export const evidenceHighlights: EvidenceHighlight[] = [
   {
     label: "Cost per detained youth",
-    value: "$1.212M",
-    source: "Queensland Treasury Budget 2024",
+    value: "$1.55M",
+    source: "Productivity Commission ROGS 2024-25",
   },
   {
     label: "Detention reoffending",
@@ -344,7 +344,7 @@ One shipping container, three rooms. Thirty minutes inside youth detention reali
 
 April 25, Mounty Yarns, Mount Druitt.
 
-This is what $1.2M per child per year looks like. And what we could do instead.`,
+This is what $1.55M per child per year looks like. And what we could do instead.`,
         hashtags: [...CORE_HASHTAGS, '#MountDruitt', '#WesternSydney'],
       },
       {
@@ -354,7 +354,7 @@ This is what $1.2M per child per year looks like. And what we could do instead.`
 
 THE CONTAINED launches April 25 at Mounty Yarns in Mount Druitt — a youth-led storytelling space in the heart of Western Sydney.
 
-Container 1: The reality of youth detention. $3,320/day. 84% reoffending.
+Container 1: The reality of youth detention. $4,250/day. 84% reoffending.
 Container 2: The therapeutic alternative. Spain's Diagrama model. 73% success.
 Container 3: Australia's future. Community-led. Culture-centred. Evidence-based.
 
@@ -375,7 +375,7 @@ Three rooms tell three stories:
 → A therapeutic alternative that actually works (Spain's Diagrama model — 73% success rate)
 → A future we can build together
 
-Australia spends $1.2 million per child per year on detention. 84% reoffend. Community programs cost a fraction and deliver lasting change.
+Australia spends $1.55 million per child per year on detention. 84% reoffend. Community programs cost a fraction and deliver lasting change.
 
 Come experience it. Bring someone who needs to see it.
 
@@ -385,7 +385,7 @@ Register: justicehub.org.au/events/contained-mount-druitt-launch`,
       {
         platform: 'linkedin',
         label: 'Professional',
-        content: `Australia spends $1.2M per child per year on youth detention. The reoffending rate is 84%.
+        content: `Australia spends $1.55M per child per year on youth detention. The reoffending rate is 84%.
 
 Meanwhile, therapeutic models like Spain's Diagrama Foundation achieve 73% success rates at a fraction of the cost.
 
@@ -423,7 +423,7 @@ THE CONTAINED brings its one shipping container, three rooms to the national sta
 
 Policymakers. Practitioners. People with lived experience. Same containers. Same thirty minutes. Same unavoidable truth.
 
-Youth detention costs $1.2M per child. It fails 84% of the time. The alternative exists. It works. It costs less.
+Youth detention costs $1.55M per child. It fails 84% of the time. The alternative exists. It works. It costs less.
 
 This is the conference that could change the conversation.`,
         hashtags: [...CORE_HASHTAGS, '#Adelaide', '#Reintegration', '#JusticeReform', '#PolicyChange'],
@@ -529,7 +529,7 @@ THE CONTAINED's final Australian tour stop is community-controlled from the grou
 
 This isn't about bringing something to a community. It's about a community using a tool for their own advocacy.
 
-Indigenous young people are 24x overrepresented in detention. The communities most affected deserve the biggest say in what replaces it.`,
+Indigenous young people are 23x overrepresented in detention. The communities most affected deserve the biggest say in what replaces it.`,
         hashtags: [...CORE_HASHTAGS, '#TennantCreek', '#FirstNations', '#CommunityLed', '#NorthernTerritory'],
       },
       {
@@ -539,7 +539,7 @@ Indigenous young people are 24x overrepresented in detention. The communities mo
 
 This one is different. Community-controlled from the start — First Nations families and leaders deciding how the immersive experience works in their community.
 
-Indigenous young people are 24x overrepresented in youth detention nationally. The communities most affected by this system deserve the loudest voice in changing it.
+Indigenous young people are 23x overrepresented in youth detention nationally. The communities most affected by this system deserve the loudest voice in changing it.
 
 THE CONTAINED in Tennant Creek centres culture, community authority, and self-determination. Because the best youth justice alternatives already exist in community — they just need to be resourced.`,
         hashtags: [...CORE_HASHTAGS, '#TennantCreek', '#FirstNations', '#SelfDetermination'],
@@ -549,7 +549,7 @@ THE CONTAINED in Tennant Creek centres culture, community authority, and self-de
         label: 'Professional',
         content: `THE CONTAINED's national tour concludes in Tennant Creek, NT — September 2026.
 
-A community-controlled activation centring First Nations leadership in youth justice reform. Indigenous young people are 24x overrepresented in detention — the communities most affected must lead the conversation about alternatives.
+A community-controlled activation centring First Nations leadership in youth justice reform. Indigenous young people are 23x overrepresented in detention — the communities most affected must lead the conversation about alternatives.
 
 This stop demonstrates what community-controlled advocacy looks like in practice: cultural safety, self-determination, and local authority over how the evidence is presented and acted upon.`,
         hashtags: [...CORE_HASHTAGS, '#FirstNations', '#CommunityLed', '#SelfDetermination'],
@@ -585,7 +585,7 @@ Four cities across Australia in 2026. One shipping container, three rooms that m
 🟡 Perth — August (Planning)
 🟡 Tennant Creek — September (Planning)
 
-$1.2M per child per year on detention. 84% reoffend.
+$1.55M per child per year on detention. 84% reoffend.
 $75/day for community alternatives. 88% success rate.
 
 The numbers are clear. The containers make you feel them.
@@ -596,7 +596,7 @@ Link in bio to register and follow the tour.`,
   {
     platform: 'twitter',
     label: 'Stats Hook',
-    content: `$1.2 million per child per year on youth detention.
+    content: `$1.55 million per child per year on youth detention.
 84% reoffend within 2 years.
 
 Community programs: $75/day. 88% success rate.

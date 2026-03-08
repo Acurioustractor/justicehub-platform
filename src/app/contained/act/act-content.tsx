@@ -528,13 +528,13 @@ export function ActContent() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
               {[
-                { stat: '$1.2M per child per year in youth detention', source: 'AIHW' },
+                { stat: `$${liveStats.costPerChild} per child per year in youth detention`, source: 'Productivity Commission ROGS' },
                 { stat: '84% of detained young people reoffend within 12 months', source: 'Productivity Commission' },
-                { stat: '$3,320 per day per child in detention', source: 'AIHW' },
+                { stat: `$${liveStats.detentionBillions}B total youth detention spending for 734 children`, source: 'Productivity Commission ROGS' },
                 { stat: 'Community programs cost $75/day with 3% reoffending', source: 'ALMA Database' },
-                { stat: '527 community organisations on ALMA across Australia', source: 'JusticeHub' },
+                { stat: `${liveStats.orgs} community organisations on ALMA across Australia`, source: 'JusticeHub' },
                 { stat: "Diagrama (Spain): 73% success rate, €5.64 return per €1 invested", source: 'University of Valencia' },
-                { stat: 'Indigenous young people are 17x more likely to be detained', source: 'AIHW' },
+                { stat: `Indigenous young people are ${liveStats.indigenousRatio}x more likely to be detained`, source: 'Productivity Commission ROGS' },
                 { stat: '18% education completion rate in detention vs 88% in community programs', source: 'AIHW / ALMA' },
               ].map((item, i) => (
                 <div key={i} className="bg-white border border-gray-200 p-4 flex items-start justify-between gap-3">

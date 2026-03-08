@@ -534,10 +534,10 @@ async function handleSystemStats(supabase: any): Promise<Partial<ChatResponse>> 
 • **${outcomes}** outcomes measured
 
 🎯 **Key Findings:**
-• Detention costs **$3,320/day** vs Community **$150/day**
+• Detention costs **$4,250/day** vs Community **$150/day**
 • Detention recidivism: **84.5%**
 • Community recidivism: **20-40%**
-• Indigenous overrepresentation: **24x**
+• Indigenous overrepresentation: **23x**
 
 💰 **The Opportunity:**
 Every diversion saves **$570,000/year** and reduces reoffending by **50%+**.`,

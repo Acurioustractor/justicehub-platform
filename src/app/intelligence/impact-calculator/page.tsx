@@ -312,7 +312,7 @@ export default function ImpactCalculator() {
                 <div className="space-y-3">
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
                     <span>Cost per day</span>
-                    <span className="font-mono font-bold text-red-700">$3,320</span>
+                    <span className="font-mono font-bold text-red-700">$4,250</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
                     <span>Recidivism rate</span>
