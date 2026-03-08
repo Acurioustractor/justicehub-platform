@@ -156,9 +156,9 @@ System 0 funding orchestration now uses a shared policy store for scheduler + wo
 | Portfolio Scores | 1,112 (100%) |
 | Organizations | 507 (527 linked) |
 | Evidence Items | 113 |
-| Evidence Links | 215 |
-| Outcomes | 289 |
-| Outcome Links | 520 |
+| Evidence Links | 242 |
+| Outcomes | 653 |
+| Outcome Links | 951 |
 
 ## Scripts
 

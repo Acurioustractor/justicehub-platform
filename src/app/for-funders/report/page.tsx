@@ -160,12 +160,12 @@ export default function FoundationReportPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="bg-red-50 p-8 border-2 border-red-200">
                 <AlertTriangle className="w-8 h-8 text-red-600 mb-4" />
-                <div className="text-4xl font-black text-red-700 mb-2">$1.2M</div>
-                <div className="font-bold mb-2">Per child, per year in detention</div>
+                <div className="text-4xl font-black text-red-700 mb-2">$7,304</div>
+                <div className="font-bold mb-2">Maximum daily detention cost</div>
                 <p className="text-sm text-gray-700">
-                  Australia spends over $1.2 million annually to detain a single young person —
-                  with recidivism rates above 75%. Community programs cost $50-75K and achieve
-                  dramatically better outcomes.
+                  Youth detention costs $2,573-$7,304 per day across jurisdictions (Productivity
+                  Commission 2024-25). Community supervision costs $101-$601 — up to 72x cheaper
+                  with better outcomes.
                 </p>
               </div>
 
@@ -189,6 +189,122 @@ export default function FoundationReportPage() {
                   incarceration costs, reduced reoffending, and improved life outcomes for young
                   people and their families.
                 </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* The Money Trail */}
+        <section className="py-16 bg-gray-50 border-b-2 border-black">
+          <div className="container-justice">
+            <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
+              Following the Money Trail
+            </h2>
+            <p className="text-xl text-gray-700 mb-12 max-w-3xl">
+              Australia spends tens of billions annually on justice services. Tracking where those
+              dollars flow — from budget appropriation to community outcome — reveals a systemic
+              misallocation away from what works.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+              <div className="border-2 border-black bg-white p-8">
+                <div className="text-xs font-bold uppercase tracking-widest text-red-600 mb-4">
+                  Current Spending
+                </div>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex items-baseline justify-between mb-1">
+                      <span className="font-bold">Police Services</span>
+                      <span className="text-2xl font-black text-red-700">$16.6B</span>
+                    </div>
+                    <div className="w-full bg-gray-200 h-4">
+                      <div className="bg-red-500 h-4" style={{ width: '34%' }} />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-baseline justify-between mb-1">
+                      <span className="font-bold">Prisons</span>
+                      <span className="text-2xl font-black text-red-700">$8.8B</span>
+                    </div>
+                    <div className="w-full bg-gray-200 h-4">
+                      <div className="bg-red-400 h-4" style={{ width: '18%' }} />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-baseline justify-between mb-1">
+                      <span className="font-bold">Other Public Order &amp; Safety</span>
+                      <span className="text-2xl font-black text-gray-600">$23.7B</span>
+                    </div>
+                    <div className="w-full bg-gray-200 h-4">
+                      <div className="bg-gray-400 h-4" style={{ width: '48%' }} />
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-4">
+                  Source: ABS Government Finance Statistics, 2023-24
+                </p>
+              </div>
+
+              <div className="border-2 border-black bg-white p-8">
+                <div className="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-4">
+                  The Cost Comparison
+                </div>
+                <div className="space-y-6">
+                  <div className="flex items-center gap-6">
+                    <div className="flex-1">
+                      <div className="font-bold text-sm text-gray-600 mb-1">Youth Detention</div>
+                      <div className="text-3xl font-black text-red-700">$2,573-$7,304</div>
+                      <div className="text-sm text-gray-500">per day, per young person</div>
+                    </div>
+                    <ArrowRight className="w-6 h-6 text-gray-400" />
+                    <div className="flex-1">
+                      <div className="font-bold text-sm text-gray-600 mb-1">Community Supervision</div>
+                      <div className="text-3xl font-black text-emerald-700">$101-$601</div>
+                      <div className="text-sm text-gray-500">per day, per young person</div>
+                    </div>
+                  </div>
+                  <div className="border-t border-gray-200 pt-4">
+                    <div className="text-center">
+                      <div className="text-5xl font-black text-emerald-700">12-72x</div>
+                      <div className="text-sm font-bold text-gray-600 mt-1">
+                        cheaper to support in community than to detain
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-4">
+                  Source: Productivity Commission, Report on Government Services 2026
+                </p>
+              </div>
+            </div>
+
+            <div className="border-2 border-black bg-white p-8">
+              <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                <DollarSign className="w-5 h-5" />
+                Key Funding Streams We Track
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <div className="text-2xl font-black text-indigo-700 mb-1">$3.9B</div>
+                  <div className="font-bold text-sm">National Access to Justice Partnership 2025-30</div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Legal assistance funding over 5 years — the largest single justice investment
+                  </p>
+                </div>
+                <div>
+                  <div className="text-2xl font-black text-indigo-700 mb-1">$49.1B</div>
+                  <div className="font-bold text-sm">Total Public Order &amp; Safety Spend</div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Annual government expenditure across policing, courts, corrections, and related services
+                  </p>
+                </div>
+                <div>
+                  <div className="text-2xl font-black text-indigo-700 mb-1">Growing</div>
+                  <div className="font-bold text-sm">National Justice Reinvestment Program</div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Place-based and First Nations-led reinvestment with ongoing funding from 2026-27
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -412,10 +528,10 @@ export default function FoundationReportPage() {
               The Investment Case
             </h2>
             <p className="text-xl text-gray-700 mb-12 max-w-3xl">
-              Three ways philanthropic capital can drive systemic change in Australian youth justice.
+              Four ways philanthropic capital can drive systemic change in Australian youth justice.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="border-2 border-black">
                 <div className="p-6 bg-emerald-50 border-b-2 border-black">
                   <DollarSign className="w-8 h-8 text-emerald-700 mb-2" />
@@ -496,6 +612,34 @@ export default function FoundationReportPage() {
                     <li className="flex items-start gap-2">
                       <CheckCircle className="w-4 h-4 text-orange-600 mt-0.5" />
                       <span>Media and advocacy reach amplification</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="border-2 border-black">
+                <div className="p-6 bg-indigo-50 border-b-2 border-black">
+                  <MapPin className="w-8 h-8 text-indigo-700 mb-2" />
+                  <h3 className="text-xl font-bold">Fund the Money Trail</h3>
+                  <div className="text-3xl font-black text-indigo-700 mt-2">$150K-500K</div>
+                </div>
+                <div className="p-6">
+                  <p className="text-gray-700 mb-4">
+                    Build Australia&apos;s first national justice funding ledger — tracking every
+                    dollar from budget appropriation to community outcome across all jurisdictions.
+                  </p>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-indigo-600 mt-0.5" />
+                      <span>GrantConnect + AusTender ingestion (Phase A)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-indigo-600 mt-0.5" />
+                      <span>State budget paper parsing across 8 jurisdictions</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-indigo-600 mt-0.5" />
+                      <span>Community-led data governance (CARE + Maiam nayri Wingara)</span>
                     </li>
                   </ul>
                 </div>
