@@ -1104,6 +1104,17 @@ function NominateSection({ slug }: { slug: string }) {
   );
 }
 
+interface AlmaStats {
+  programs_documented: number;
+  total_organizations: number;
+  high_impact_programs: number;
+  orgs_linked: number;
+  indigenous_led_programs: number;
+  total_outcomes: number;
+  total_evidence: number;
+  total_evidence_links: number;
+}
+
 export function TourContent() {
   const [basecamps, setBasecamps] = useState<Basecamp[]>(FALLBACK_BASECAMPS);
   const [basecampsLoading, setBasecampsLoading] = useState(true);
@@ -1118,6 +1129,7 @@ export function TourContent() {
   const [reactions, setReactions] = useState<{ name: string; role: string; reaction: string; rating?: number; created_at: string }[]>([]);
   const [reactionCount, setReactionCount] = useState(0);
   const [recommendRate, setRecommendRate] = useState(0);
+  const [almaStats, setAlmaStats] = useState<AlmaStats | null>(null);
   const tourStopRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
@@ -1207,6 +1219,14 @@ export function TourContent() {
           setLiveRaised(data.total_raised_cents / 100);
           setLiveDonorCount(data.donor_count || 0);
         }
+      })
+      .catch(console.error);
+
+    // Fetch ALMA stats for evidence showcase
+    fetch('/api/homepage-stats')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.stats) setAlmaStats(data.stats);
       })
       .catch(console.error);
 
@@ -1494,39 +1514,108 @@ export function TourContent() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {journeyContainers.map((container) => (
-                <div
-                  key={container.id}
-                  className={`border-2 p-6 ${containerTones[container.tone] || 'border-black'}`}
-                >
-                  <div className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-2">
-                    Container {container.step}
-                  </div>
-                  <h3
-                    className={`text-2xl font-black mb-1 ${containerAccents[container.tone] || ''}`}
+              {journeyContainers.map((container) => {
+                // Override Container 3 stats with live ALMA data
+                const stats = container.id === 'future-vision' && almaStats
+                  ? [
+                      { label: 'Community Programs', value: '$75/day' },
+                      { label: 'Reoffending', value: '3%' },
+                      { label: 'Programs on ALMA', value: almaStats.programs_documented.toLocaleString() },
+                      { label: 'Orgs Linked', value: almaStats.orgs_linked.toLocaleString() },
+                    ]
+                  : container.stats;
+
+                return (
+                  <div
+                    key={container.id}
+                    className={`border-2 p-6 ${containerTones[container.tone] || 'border-black'}`}
                   >
-                    {container.title}
-                  </h3>
-                  <div className="text-sm font-bold text-gray-600 mb-4">
-                    {container.headline}
+                    <div className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-2">
+                      Container {container.step}
+                    </div>
+                    <h3
+                      className={`text-2xl font-black mb-1 ${containerAccents[container.tone] || ''}`}
+                    >
+                      {container.title}
+                    </h3>
+                    <div className="text-sm font-bold text-gray-600 mb-4">
+                      {container.headline}
+                    </div>
+                    <p className="text-gray-700 mb-4">{container.summary}</p>
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      {stats.map((stat, i) => (
+                        <div key={i} className="text-center p-2 bg-white/80 border border-gray-200">
+                          <div className="text-lg font-black">{stat.value}</div>
+                          <div className="text-xs text-gray-500">{stat.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-sm italic text-gray-500">
+                      {container.duration}
+                    </div>
                   </div>
-                  <p className="text-gray-700 mb-4">{container.summary}</p>
-                  <div className="grid grid-cols-2 gap-2 mb-4">
-                    {container.stats.map((stat, i) => (
-                      <div key={i} className="text-center p-2 bg-white/80 border border-gray-200">
-                        <div className="text-lg font-black">{stat.value}</div>
-                        <div className="text-xs text-gray-500">{stat.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="text-sm italic text-gray-500">
-                    {container.duration}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
+
+        {/* ============================================================
+            5b. ALMA EVIDENCE SHOWCASE — Live data from the platform
+            ============================================================ */}
+        {almaStats && (
+          <section className="py-16 bg-black text-white">
+            <div className="container-justice">
+              <div className="max-w-4xl mx-auto">
+                <h2 className="text-3xl font-black uppercase tracking-tighter mb-2">
+                  The Evidence Behind Container 3
+                </h2>
+                <p className="text-lg text-gray-400 mb-10">
+                  ALMA — our evidence intelligence engine — documents what works across Australia.
+                  Every number below is live from the database, updated daily.
+                </p>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                  {[
+                    { value: almaStats.programs_documented.toLocaleString(), label: 'Interventions Documented' },
+                    { value: almaStats.orgs_linked.toLocaleString(), label: 'Organisations Linked' },
+                    { value: almaStats.total_outcomes.toLocaleString(), label: 'Outcomes Tracked' },
+                    { value: almaStats.total_evidence.toLocaleString(), label: 'Evidence Items' },
+                  ].map((stat, i) => (
+                    <div key={i} className="border border-white/20 p-4 text-center">
+                      <div className="text-3xl md:text-4xl font-black font-mono">{stat.value}</div>
+                      <div className="text-xs uppercase tracking-widest text-gray-400 mt-1">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {almaStats.high_impact_programs > 0 && (
+                  <div className="border-l-4 border-emerald-500 pl-6 mb-10">
+                    <p className="text-xl">
+                      <span className="font-black text-emerald-400">{almaStats.high_impact_programs.toLocaleString()}</span> programs
+                      score 70%+ on our portfolio assessment — high evidence, strong community authority, ready to scale.
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link
+                    href="/intelligence/interventions"
+                    className="inline-flex items-center justify-center gap-2 bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors"
+                  >
+                    Explore All Programs <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    href="/for-funders/report"
+                    className="inline-flex items-center justify-center gap-2 border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-colors"
+                  >
+                    Foundation Report <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ============================================================
             6. TOUR MAP + STOPS — Dark theme
