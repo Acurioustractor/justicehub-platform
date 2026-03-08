@@ -290,6 +290,29 @@ export default function InternationalExchangePage() {
           </div>
         </section>
 
+        {/* World Tour Connection */}
+        <section className="py-20 bg-white border-t border-neutral-200">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="bg-neutral-900 text-white rounded-2xl p-8 md:p-12 border-2 border-black">
+              <div className="max-w-3xl">
+                <p className="text-ochre-400 font-medium mb-2">Empathy Ledger World Tour</p>
+                <h2 className="text-3xl font-bold mb-4">From Australia to the World</h2>
+                <p className="text-neutral-300 mb-6 leading-relaxed">
+                  The CONTAINED immersive experience is touring Australia in 2026 — and the
+                  International Exchange is the next chapter. Europe, Africa, and the Pacific.
+                  Same mission: learning from systems that work, building the evidence for change.
+                </p>
+                <a
+                  href="/contained/tour"
+                  className="inline-flex items-center px-6 py-3 bg-ochre-500 text-white rounded-lg font-medium hover:bg-ochre-600 transition-colors"
+                >
+                  The Contained Tour 2026
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Follow Along */}
         <section className="py-20 bg-sand-50">
           <div className="max-w-6xl mx-auto px-6 text-center">

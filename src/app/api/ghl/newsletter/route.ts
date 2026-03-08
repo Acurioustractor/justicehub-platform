@@ -7,7 +7,7 @@ import { sanitizeEmail, sanitizeInput } from '@/lib/security';
 const ALLOWED_SUBSCRIPTION_TYPES = ['general', 'steward', 'researcher', 'organization'];
 
 // Allowed source values
-const ALLOWED_SOURCES = ['newsletter_form', 'homepage', 'signup', 'footer', 'contained_launch', 'get_involved_form', 'storyteller_registration'];
+const ALLOWED_SOURCES = ['newsletter_form', 'homepage', 'signup', 'footer', 'contained_launch', 'contained_tour', 'get_involved_form', 'storyteller_registration'];
 
 /**
  * POST /api/ghl/newsletter

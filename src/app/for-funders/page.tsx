@@ -229,6 +229,32 @@ export default function ForFundersPage() {
           </div>
         </section>
 
+        {/* CONTAINED Tour Callout */}
+        <section className="py-12 bg-black text-white border-b-2 border-black">
+          <div className="container-justice">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div>
+                <div className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-2">
+                  Featured Investment Opportunity
+                </div>
+                <h3 className="text-2xl font-black uppercase tracking-tighter">
+                  The Contained: Australian Tour 2026
+                </h3>
+                <p className="text-gray-300 mt-2 max-w-xl">
+                  $100K to take an immersive youth justice experience to four cities across Australia.
+                  Three shipping containers that make the case for change.
+                </p>
+              </div>
+              <Link
+                href="/contained/tour"
+                className="flex-shrink-0 bg-white text-black px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
+              >
+                Learn More
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Investment Thesis */}
         <section id="investment-thesis" className="py-16">
           <div className="container-justice">
