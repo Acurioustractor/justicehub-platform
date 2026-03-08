@@ -453,6 +453,56 @@ export default function ForFundersPage() {
           </div>
         </section>
 
+        {/* Due Diligence Tools */}
+        <section className="py-16 border-t-2 border-black">
+          <div className="container-justice">
+            <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
+              Due Diligence Tools
+            </h2>
+            <p className="text-xl text-gray-700 mb-8 max-w-3xl">
+              We believe in radical transparency. Use these tools to verify every claim we make.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Link href="/justice-funding" className="border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
+                <DollarSign className="w-8 h-8 text-red-600 mb-3" />
+                <h3 className="font-bold text-lg mb-2 group-hover:text-red-600 transition-colors">Justice Spending Tracker</h3>
+                <p className="text-gray-600 text-sm mb-3">
+                  Search $8.7B+ in QLD justice funding. See who gets funded, who misses out,
+                  and the inequality gap facing Indigenous communities.
+                </p>
+                <span className="text-sm font-bold text-red-600 flex items-center gap-1">
+                  Explore the data <ArrowRight className="w-4 h-4" />
+                </span>
+              </Link>
+
+              <Link href="/intelligence/dashboard" className="border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
+                <BarChart3 className="w-8 h-8 text-emerald-600 mb-3" />
+                <h3 className="font-bold text-lg mb-2 group-hover:text-emerald-600 transition-colors">ALMA Evidence Engine</h3>
+                <p className="text-gray-600 text-sm mb-3">
+                  1,112 interventions, 1,150+ outcomes, 334 evidence items.
+                  AI-powered analysis of what works in youth justice.
+                </p>
+                <span className="text-sm font-bold text-emerald-600 flex items-center gap-1">
+                  View the evidence <ArrowRight className="w-4 h-4" />
+                </span>
+              </Link>
+
+              <Link href="/for-funders/report" className="border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
+                <Scale className="w-8 h-8 text-blue-600 mb-3" />
+                <h3 className="font-bold text-lg mb-2 group-hover:text-blue-600 transition-colors">Foundation Report</h3>
+                <p className="text-gray-600 text-sm mb-3">
+                  Detailed impact analysis, financial breakdown, and the case
+                  for community-led justice investment.
+                </p>
+                <span className="text-sm font-bold text-blue-600 flex items-center gap-1">
+                  Read the report <ArrowRight className="w-4 h-4" />
+                </span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* CTA */}
         <section className="py-16 bg-black text-white">
           <div className="container-justice text-center">

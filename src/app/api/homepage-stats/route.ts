@@ -73,6 +73,21 @@ export async function GET() {
       supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).eq('evidence_level', 'Indigenous-led (culturally grounded, community authority)'),
     ]);
 
+    // Organization enrichment stats
+    const [
+      { count: orgsWithAbn },
+      { count: indigenousOrgs },
+      { count: smallOrgs },
+      { count: mediumOrgs },
+      { count: largeOrgs },
+    ] = await Promise.all([
+      supabase.from('organizations').select('*', { count: 'exact', head: true }).not('abn', 'is', null),
+      supabase.from('organizations').select('*', { count: 'exact', head: true }).eq('is_indigenous_org', true),
+      supabase.from('organizations').select('*', { count: 'exact', head: true }).eq('charity_size', 'Small'),
+      supabase.from('organizations').select('*', { count: 'exact', head: true }).eq('charity_size', 'Medium'),
+      supabase.from('organizations').select('*', { count: 'exact', head: true }).eq('charity_size', 'Large'),
+    ]);
+
     // ROGS justice spending data (Productivity Commission)
     const [
       { data: rogsYouthDetention },
@@ -121,6 +136,12 @@ export async function GET() {
         total_outcome_links: totalOutcomeLinks || 0,
         total_evidence: totalEvidence || 0,
         total_evidence_links: totalEvidenceLinks || 0,
+        // Organization enrichment
+        orgs_with_abn: orgsWithAbn || 0,
+        indigenous_orgs: indigenousOrgs || 0,
+        org_size_small: smallOrgs || 0,
+        org_size_medium: mediumOrgs || 0,
+        org_size_large: largeOrgs || 0,
         // ROGS justice spending (Productivity Commission) — the money trail
         rogs_youth_detention_millions: rogsYouthDetention?.aust ? Math.round(rogsYouthDetention.aust / 1000) : 1141,
         rogs_youth_community_millions: rogsYouthCommunity?.aust ? Math.round(rogsYouthCommunity.aust / 1000) : 520,

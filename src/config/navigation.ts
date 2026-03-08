@@ -112,6 +112,11 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Grants and funding opportunities'
             },
             {
+                label: 'Justice Spending',
+                href: '/justice-funding',
+                description: 'Track where QLD justice dollars go'
+            },
+            {
                 label: 'Reports',
                 href: '/intelligence/reports',
                 description: 'Weekly intelligence summaries'
@@ -287,6 +292,7 @@ export const footerSections = [
             { label: 'Interventions', href: '/intelligence/interventions', description: 'Evidence database' },
             { label: 'Impact Calculator', href: '/intelligence/impact-calculator', description: 'Cost comparison' },
             { label: 'Funding', href: '/intelligence/funding', description: 'Grants & opportunities' },
+            { label: 'Justice Spending', href: '/justice-funding', description: 'Track where justice dollars go' },
             { label: 'Reports', href: '/intelligence/reports', description: 'Weekly summaries' }
         ]
     },
