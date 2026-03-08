@@ -42,6 +42,7 @@ interface Stats {
   rogs_indigenous_detention_ratio: number;
   rogs_total_punitive_billions: number;
   rogs_year: string;
+  total_outcome_links: number;
 }
 
 export default function TransparencyPage() {
@@ -285,6 +286,129 @@ export default function TransparencyPage() {
                     </p>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* WHAT WORKS VS WHAT WE SPEND */}
+        <section className="py-16 border-b-2 border-black bg-gradient-to-br from-amber-50 to-orange-50">
+          <div className="container-justice">
+            <h2 className="text-3xl font-bold mb-4 flex items-center gap-3">
+              <TrendingUp className="h-8 w-8 text-amber-600" />
+              WHAT WORKS vs WHAT WE SPEND
+            </h2>
+            <p className="text-gray-700 mb-8 max-w-3xl">
+              Australia spends ${punitiveB}B/year on punitive responses. Meanwhile, {s?.programs_documented || 1112} community
+              programs with {(s?.total_outcomes || 1150).toLocaleString()} documented outcomes show what actually reduces reoffending,
+              strengthens families, and keeps communities safe — at a fraction of the cost.
+            </p>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              {/* The Spending Side */}
+              <div className="border-2 border-red-300 bg-white p-6">
+                <h3 className="font-bold text-lg mb-4 text-red-700 flex items-center gap-2">
+                  <DollarSign className="h-5 w-5" />
+                  WHAT WE SPEND (Punitive)
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-red-50 border border-red-200">
+                    <span className="font-bold text-sm">Youth Detention</span>
+                    <div className="text-right">
+                      <span className="font-bold text-red-600">${detentionM}M/yr</span>
+                      <div className="text-xs text-gray-500">734 children · ${costPerDay.toLocaleString()}/day each</div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-red-50 border border-red-200">
+                    <span className="font-bold text-sm">Adult Prisons</span>
+                    <span className="font-bold text-red-600">${prisonB}B/yr</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-red-50 border border-red-200">
+                    <span className="font-bold text-sm">Police Services</span>
+                    <span className="font-bold text-red-600">${policeB}B/yr</span>
+                  </div>
+                  <div className="p-3 bg-red-100 border-2 border-red-300 text-center">
+                    <div className="text-sm font-bold text-red-800">Evidence of reducing reoffending?</div>
+                    <div className="text-2xl font-black text-red-600">Minimal</div>
+                    <div className="text-xs text-red-700">Recidivism rates remain 50-80% within 2 years</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* The Evidence Side */}
+              <div className="border-2 border-green-300 bg-white p-6">
+                <h3 className="font-bold text-lg mb-4 text-green-700 flex items-center gap-2">
+                  <Search className="h-5 w-5" />
+                  WHAT WORKS (ALMA Evidence)
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-green-50 border border-green-200">
+                    <span className="font-bold text-sm">Community Programs Budget</span>
+                    <div className="text-right">
+                      <span className="font-bold text-green-600">${communityM}M/yr</span>
+                      <div className="text-xs text-gray-500">{communityPct}% of youth justice budget</div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-green-50 border border-green-200">
+                    <span className="font-bold text-sm">Programs Documented</span>
+                    <span className="font-bold text-green-600">{s?.programs_documented || 1112}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-green-50 border border-green-200">
+                    <span className="font-bold text-sm">Evidence Items</span>
+                    <span className="font-bold text-green-600">{s?.total_evidence || 475}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-green-50 border border-green-200">
+                    <span className="font-bold text-sm">Measured Outcomes</span>
+                    <span className="font-bold text-green-600">{(s?.total_outcomes || 1150).toLocaleString()}</span>
+                  </div>
+                  <div className="p-3 bg-green-100 border-2 border-green-300 text-center">
+                    <div className="text-sm font-bold text-green-800">Evidence of reducing reoffending?</div>
+                    <div className="text-2xl font-black text-green-600">Growing</div>
+                    <div className="text-xs text-green-700">{s?.high_impact_programs || 480} high-impact programs identified</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* The Gap */}
+            <div className="border-2 border-black bg-white p-8">
+              <h3 className="font-bold text-xl mb-6 text-center">THE INVESTMENT GAP</h3>
+              <div className="max-w-3xl mx-auto">
+                {/* Visual bar comparison */}
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <div className="flex justify-between text-sm font-bold mb-1">
+                      <span>Punitive spending (detention + prisons)</span>
+                      <span className="text-red-600">${(prisonB + detentionM/1000).toFixed(1)}B</span>
+                    </div>
+                    <div className="w-full bg-gray-200 h-8 border border-gray-300">
+                      <div className="bg-red-500 h-full" style={{ width: '100%' }} />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-sm font-bold mb-1">
+                      <span>Community programs (what works)</span>
+                      <span className="text-green-600">${communityM}M</span>
+                    </div>
+                    <div className="w-full bg-gray-200 h-8 border border-gray-300">
+                      <div className="bg-green-500 h-full" style={{ width: `${Math.round((communityM / (prisonB * 1000 + detentionM)) * 100)}%` }} />
+                    </div>
+                  </div>
+                </div>
+                <p className="text-center text-sm text-gray-700">
+                  For every <strong className="text-green-700">$1</strong> spent on community programs that work,
+                  <strong className="text-red-700"> ${Math.round((prisonB * 1000 + detentionM) / communityM)}</strong> goes to
+                  punitive responses with minimal evidence of reducing reoffending.
+                </p>
+              </div>
+
+              <div className="mt-8 text-center">
+                <Link
+                  href="/intelligence/interventions"
+                  className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 font-bold hover:bg-green-700 transition-all"
+                >
+                  Explore What Works <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
           </div>
