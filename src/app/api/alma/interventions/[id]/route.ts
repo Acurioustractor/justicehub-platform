@@ -52,10 +52,26 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Require admin authentication
+    const { createClient } = await import('@/lib/supabase/server');
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+    if (profile?.role !== 'admin') {
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
+    }
+
     const body = await request.json();
 
     // Update intervention using service layer
-    const result = await interventionService.update({ id: params.id, ...body }, 'anonymous');
+    const result = await interventionService.update({ id: params.id, ...body }, user.id);
 
     if (result.error) {
       return NextResponse.json({ error: result.error.message }, { status: 400 });
