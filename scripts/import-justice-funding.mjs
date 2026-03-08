@@ -183,13 +183,24 @@ async function getQGIPGrants() {
   const JUSTICE_AGENCIES = new Set(['DCYJMA', 'DYJ', 'DYJEVS', 'DYJESBT', 'DCSYW', 'DCSSDS', 'DJAG', 'QCS']);
   const JUSTICE_KEYWORDS = ['youth justice', 'youth detention', 'juvenile', 'justice reinvestment', 'diversion', 'community safety', 'crime prevention', 'victim support', 'offend', 'custod', 'probation', 'parole', 'legal aid', 'legal assistance'];
 
+  // All 13 years of QGIP expenditure data
   const files = [
     { path: '/tmp/qgip-2024-25.csv', year: '2024-25' },
     { path: '/tmp/qgip-2023-24.csv', year: '2023-24' },
     { path: '/tmp/qgip-2022-23.csv', year: '2022-23' },
-  ];
+    { path: '/tmp/qgip-2021-22.csv', year: '2021-22' },
+    { path: '/tmp/qgip-2020-21.csv', year: '2020-21' },
+    { path: '/tmp/qgip-2019-20.csv', year: '2019-20' },
+    { path: '/tmp/qgip-2018-19.csv', year: '2018-19' },
+    { path: '/tmp/qgip-2017-18.csv', year: '2017-18' },
+    { path: '/tmp/qgip-2016-17.csv', year: '2016-17' },
+    { path: '/tmp/qgip-2015-16.csv', year: '2015-16' },
+    { path: '/tmp/qgip-2014-15.csv', year: '2014-15' },
+    { path: '/tmp/qgip-2013-14.csv', year: '2013-14' },
+    { path: '/tmp/qgip-2012-13.csv', year: '2012-13' },
+  ].filter(f => fs.existsSync(f.path));
 
-  // Download if not cached
+  // Download URLs (for files not yet cached)
   const urls = {
     '2024-25': 'https://www.data.qld.gov.au/dataset/b102c881-2c7f-484a-a8b6-b056fe318964/resource/1c1786e3-16b7-4fc0-ac3f-4d9314e59bdf/download/2024-25-expenditure-consolidated.csv',
     '2023-24': 'https://www.data.qld.gov.au/dataset/b102c881-2c7f-484a-a8b6-b056fe318964/resource/66bfd607-0bb5-4c28-bc1e-1c40f2e9c2c1/download/2023-24-expenditure-consolidated.csv',
@@ -212,15 +223,21 @@ async function getQGIPGrants() {
 
     for (const row of records) {
       const agency = row['Funding agency'] || '';
-      const program = `${row['Program title'] || ''} ${row['Sub-program title'] || ''} ${row['Purpose'] || ''}`.toLowerCase();
+      // Handle column name variations across years
+      const programTitle = row['Program title'] || row['Funding title'] || '';
+      const subProgram = row['Sub-program title'] || '';
+      const purpose = row['Purpose'] || row['Funding type'] || '';
+      const program = `${programTitle} ${subProgram} ${purpose}`.toLowerCase();
 
       if (!JUSTICE_AGENCIES.has(agency) && !JUSTICE_KEYWORDS.some(k => program.includes(k))) continue;
 
-      const orgName = (row['Service provider name'] || row['Legal entity name'] || '').trim();
+      // Handle column name variations: 'Service provider name' (2018+), 'Service provider' (older), 'Legal entity name'/'Legal entity'
+      const orgName = (row['Service provider name'] || row['Service provider'] || row['Legal entity name'] || row['Legal entity'] || '').trim();
       if (!orgName || orgName === '0') continue;
 
-      let amount = (row['Financial year expenditure'] || '0').replace(/,/g, '').replace(/\$/g, '');
-      amount = parseFloat(amount) || null;
+      // Handle 'Financial year expenditure' (2018+) vs 'Expenditure ($)' (older) vs 'Total funding' etc
+      let amountRaw = row['Financial year expenditure'] || row['Expenditure ($)'] || row['Expenditure'] || row['Total funding under this agreement to date'] || '0';
+      let amount = parseFloat(String(amountRaw).replace(/,/g, '').replace(/\$/g, '')) || null;
 
       const agencySector = {
         'DJAG': 'legal_services',
@@ -234,17 +251,19 @@ async function getQGIPGrants() {
         'DCSYW': 'community_services',
       };
 
+      const location = (row['Service delivery suburb/locality'] || row['Legal entity suburb/locality'] || row['Legal entity LGA'] || '').trim();
+
       allResults.push({
         source: 'qgip',
         source_url: 'https://www.data.qld.gov.au/dataset/queensland-government-investment-portal-expenditure-data-consolidated-view',
         recipient_name: orgName,
         recipient_abn: (row['Australian Business Number (ABN)'] || '').trim() || null,
-        program_name: (row['Program title'] || '').trim(),
-        program_round: (row['Sub-program title'] || '').trim() || null,
+        program_name: programTitle.trim(),
+        program_round: subProgram.trim() || null,
         amount_dollars: amount,
         state: 'QLD',
-        location: (row['Service delivery suburb/locality'] || '').trim() || null,
-        funding_type: (row['Funding use'] || 'grant').toLowerCase().includes('capital') ? 'capital' : 'grant',
+        location: location || null,
+        funding_type: (row['Funding use'] || row['Funding type'] || 'grant').toLowerCase().includes('capital') ? 'capital' : 'grant',
         sector: agencySector[agency] || classifyQGIPSector(program),
         project_description: (row['Purpose'] || '').trim() || null,
         financial_year: file.year,
