@@ -1,7 +1,7 @@
 import { requireAdmin } from '@/lib/supabase/admin';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { Edit, Eye, EyeOff, Trash2, UserPlus } from 'lucide-react';
+import { Edit, Eye, EyeOff, Trash2, UserPlus, RefreshCw } from 'lucide-react';
 
 export default async function AdminProfilesPage({
   searchParams,
@@ -33,6 +33,10 @@ export default async function AdminProfilesPage({
     query = query.eq('is_featured', true);
   } else if (filter === 'no-user') {
     query = query.is('user_id', null);
+  } else if (filter === 'el-synced') {
+    query = query.eq('synced_from_empathy_ledger', true);
+  } else if (filter === 'native') {
+    query = query.or('synced_from_empathy_ledger.is.null,synced_from_empathy_ledger.eq.false');
   }
 
   const { data: profiles } = await query;
@@ -41,6 +45,7 @@ export default async function AdminProfilesPage({
   const publicProfiles = profiles?.filter(p => p.is_public).length || 0;
   const privateProfiles = profiles?.filter(p => !p.is_public).length || 0;
   const featuredProfiles = profiles?.filter(p => p.is_featured).length || 0;
+  const elSyncedProfiles = profiles?.filter(p => p.synced_from_empathy_ledger).length || 0;
 
   return (
     <div className="min-h-screen bg-white page-content">
@@ -68,7 +73,7 @@ export default async function AdminProfilesPage({
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-8">
             <div className="bg-white border-2 border-black p-4">
               <div className="text-3xl font-black">{totalProfiles}</div>
               <div className="text-sm text-earth-600 font-medium">Total Profiles</div>
@@ -84,6 +89,10 @@ export default async function AdminProfilesPage({
             <div className="bg-white border-2 border-black p-4">
               <div className="text-3xl font-black text-ochre-600">{featuredProfiles}</div>
               <div className="text-sm text-earth-600 font-medium">Featured</div>
+            </div>
+            <div className="bg-white border-2 border-black p-4">
+              <div className="text-3xl font-black text-blue-600">{elSyncedProfiles}</div>
+              <div className="text-sm text-earth-600 font-medium">EL Synced</div>
             </div>
           </div>
         </div>
@@ -128,6 +137,20 @@ export default async function AdminProfilesPage({
             >
               No User Account
             </Link>
+            <Link
+              href="/admin/profiles?filter=el-synced"
+              className={`px-4 py-2 font-bold text-sm border-2 border-black transition-colors ${filter === 'el-synced' ? 'bg-blue-600 text-white' : 'bg-white text-black hover:bg-gray-100'
+                }`}
+            >
+              EL Synced
+            </Link>
+            <Link
+              href="/admin/profiles?filter=native"
+              className={`px-4 py-2 font-bold text-sm border-2 border-black transition-colors ${filter === 'native' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-100'
+                }`}
+            >
+              JH Native
+            </Link>
           </div>
         </div>
       </section>
@@ -159,7 +182,15 @@ export default async function AdminProfilesPage({
                           />
                         )}
                         <div>
-                          <div className="font-bold">{profile.full_name}</div>
+                          <div className="font-bold flex items-center gap-2">
+                            {profile.full_name}
+                            {profile.synced_from_empathy_ledger && (
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-bold rounded">
+                                <RefreshCw className="h-2.5 w-2.5" />
+                                EL
+                              </span>
+                            )}
+                          </div>
                           <div className="text-sm text-earth-600">/{profile.slug}</div>
                         </div>
                       </div>

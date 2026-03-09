@@ -71,6 +71,48 @@ async function fetchELProfileLookup(): Promise<Map<string, ELSyndicationProfile>
   return map;
 }
 
+/**
+ * Get storyteller/profile IDs that are in the 'justicehub' syndication channel.
+ * Returns null if channel not found (no filter applied).
+ */
+async function getJusticeHubChannelMembers(): Promise<{
+  storytellerIds: Set<string>;
+  profileIds: Set<string>;
+} | null> {
+  const elService = empathyLedgerServiceClient!;
+
+  const { data: channel } = await elService
+    .from('syndication_channels')
+    .select('id')
+    .eq('slug', 'justicehub')
+    .maybeSingle();
+
+  if (!channel) return null;
+
+  const { data: members } = await (elService as any)
+    .from('storyteller_channels')
+    .select('storyteller_id')
+    .eq('channel_id', channel.id);
+
+  const storytellerIds = new Set<string>(
+    ((members || []) as any[]).map((m: any) => m.storyteller_id)
+  );
+
+  const profileIds = new Set<string>();
+  if (storytellerIds.size > 0) {
+    const { data: storytellers } = await elService
+      .from('storytellers')
+      .select('id, profile_id')
+      .in('id', [...storytellerIds]);
+    for (const st of (storytellers || []) as any[]) {
+      profileIds.add(st.profile_id || st.id);
+      profileIds.add(st.id);
+    }
+  }
+
+  return { storytellerIds, profileIds };
+}
+
 interface OrgMember {
   profileId: string;       // EL profiles.id
   storytellerId?: string;  // EL storytellers.id (if they have one)
@@ -381,7 +423,17 @@ export async function syncOrgToEL(orgId: string): Promise<SyncResult> {
 
   // Step 5: Pull — EL people → JH
   // Uses stories + storyteller_organizations + project_storytellers for org membership
-  const orgMembers = await getOrgMembers(orgResult.elOrgId);
+  const allOrgMembers = await getOrgMembers(orgResult.elOrgId);
+
+  // Filter by justicehub channel — only pull storytellers tagged for JusticeHub
+  const channelMembers = await getJusticeHubChannelMembers();
+  let orgMembers = allOrgMembers;
+  if (channelMembers) {
+    orgMembers = allOrgMembers.filter(m =>
+      channelMembers.profileIds.has(m.profileId) ||
+      (m.storytellerId && channelMembers.storytellerIds.has(m.storytellerId))
+    );
+  }
 
   const processedProfileIds = new Set(peopleResults.map(p => p.elProfileId).filter(Boolean));
 

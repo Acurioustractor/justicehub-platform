@@ -36,6 +36,42 @@ async function fetchProfileLookup() {
   return map;
 }
 
+// Get storyteller IDs that are in the 'justicehub' syndication channel
+async function getJusticeHubChannelMembers() {
+  const { data: channel } = await el
+    .from('syndication_channels')
+    .select('id')
+    .eq('slug', 'justicehub')
+    .maybeSingle();
+
+  if (!channel) {
+    console.log('  WARNING: justicehub channel not found — no channel filter applied');
+    return null; // null = no filter (allow all)
+  }
+
+  const { data: members } = await el
+    .from('storyteller_channels')
+    .select('storyteller_id')
+    .eq('channel_id', channel.id);
+
+  const storytellerIds = new Set((members || []).map(m => m.storyteller_id));
+
+  // Resolve to profile IDs too
+  const profileIds = new Set();
+  if (storytellerIds.size > 0) {
+    const { data: storytellers } = await el
+      .from('storytellers')
+      .select('id, profile_id')
+      .in('id', [...storytellerIds]);
+    for (const st of storytellers || []) {
+      profileIds.add(st.profile_id || st.id);
+      profileIds.add(st.id);
+    }
+  }
+
+  return { storytellerIds, profileIds };
+}
+
 // Get all org members from stories + storyteller_organizations + project_storytellers
 async function getOrgMembers(elOrgId) {
   const [storiesRes, junctionRes] = await Promise.all([
@@ -117,8 +153,24 @@ async function syncOrg(orgId) {
   }
 
   // Pull: EL people → JH
-  const orgMembers = await getOrgMembers(elOrgId);
-  console.log(`  EL org members: ${orgMembers.length}`);
+  const allOrgMembers = await getOrgMembers(elOrgId);
+  console.log(`  EL org members: ${allOrgMembers.length}`);
+
+  // Filter by justicehub channel (unless --all flag)
+  const skipChannelFilter = process.argv.includes('--all');
+  let orgMembers = allOrgMembers;
+  if (!skipChannelFilter) {
+    const channelMembers = await getJusticeHubChannelMembers();
+    if (channelMembers) {
+      orgMembers = allOrgMembers.filter(m =>
+        channelMembers.profileIds.has(m.profileId) ||
+        (m.storytellerId && channelMembers.storytellerIds.has(m.storytellerId))
+      );
+      console.log(`  After justicehub channel filter: ${orgMembers.length} (filtered out ${allOrgMembers.length - orgMembers.length})`);
+    }
+  } else {
+    console.log('  --all flag: skipping channel filter');
+  }
 
   for (const member of orgMembers) {
     if (processedProfileIds.has(member.profileId)) continue;
