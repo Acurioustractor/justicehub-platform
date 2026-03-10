@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
-import { MapPin, Phone, Mail, Globe, Users, Calendar, Heart, ArrowRight, ExternalLink, Shield, Dumbbell, Tent, UserCheck, Home, GraduationCap, Handshake, CheckCircle2, Camera, Compass, Scale, TreePine, MessageCircle } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, Users, Calendar, Heart, ArrowRight, ExternalLink, Shield, Dumbbell, Tent, UserCheck, Home, GraduationCap, Handshake, CheckCircle2, Camera, Compass, Scale, TreePine, MessageCircle, Mic, Film, BookOpen, Hammer, UtensilsCrossed, Play } from 'lucide-react';
 import { ContactModal } from '@/components/sites/ContactModal';
 import { ShareButton } from '@/components/ShareButton';
 import NewsletterSignup from '@/components/NewsletterSignup';
@@ -180,10 +180,94 @@ const ORG_SITE_CONTENT: Record<string, any> = {
       phone: '0400 000 000',
     },
   },
+  'mounty-yarns': {
+    images: {
+      hero: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/mounty-yarns/backyard-workbee/20251210-1E5A8290.jpg',
+      founder: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/mounty-yarns/backyard-workbee/20251210-1E5A8203.jpg',
+      gallery: [
+        { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/mounty-yarns/backyard-workbee/1E5A8327.jpg', alt: 'Building the Backyard Campus — containers and Aboriginal flag in background' },
+        { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/mounty-yarns/backyard-workbee/DJI_0453.jpg', alt: 'Drone aerial view of the Backyard Campus site' },
+        { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/mounty-yarns/backyard-workbee/20251210-1E5A8122.jpg', alt: 'Young people working together on the backyard build' },
+        { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/mounty-yarns/backyard-workbee/1E5A8345.jpg', alt: 'Shipping containers with shade sail — the gym and kitchen spaces' },
+        { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/mounty-yarns/backyard-workbee/DJI_0431.jpg', alt: 'Aerial view of Mount Druitt — where Mounty Yarns calls home' },
+        { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/mounty-yarns/backyard-workbee/20251210-1E5A8267.jpg', alt: 'Building garden beds — wheelbarrows and teamwork' },
+      ],
+    },
+    heroSubtitle: 'Nothing About Us Without Us',
+    heroDescription: 'A youth-led storytelling and advocacy organisation in Western Sydney\'s Mount Druitt. Young people lead documentary filmmaking, podcasting, community journalism, and the Backyard Campus — challenging deficit narratives and creating real change.',
+    founder: {
+      name: 'Shayle McKellar',
+      title: 'Lived Experience Consultant & Youth Worker',
+      heritage: 'Proud Wangkamarra man from Burke',
+      bio: 'Shayle finished his HSC while in custody, then turned his experience into expertise. As a lived experience consultant and youth worker with Just Reinvest, he co-built Mounty Yarns to give young people the platform he never had. "I was the kid that was locked up. They enter the system as victims, and they come out as even more victimised people. It\'s very important that you listen to these young people because they are the ones going through it."',
+    },
+    stats: [
+      { value: '50+', label: 'Young people trained' },
+      { value: '100K+', label: 'Documentary viewers' },
+      { value: '1→20', label: 'Team growth' },
+      { value: '12', label: 'Community voices recorded' },
+      { value: '6+', label: 'Programs running' },
+      { value: '3-4x', label: 'Weekly attendance' },
+    ],
+    programs: [
+      {
+        icon: 'Film',
+        title: 'Documentary & Media Production',
+        description: 'Young people write, film, and produce documentaries and content that share their real stories — reaching 100,000+ viewers and challenging mainstream narratives about Western Sydney.',
+      },
+      {
+        icon: 'Mic',
+        title: 'Youth Peak & Advocacy',
+        description: 'Youth-led policy advocacy program co-run by Leah and Adam. Young people speak directly to government, researchers, and services about what actually works.',
+      },
+      {
+        icon: 'Hammer',
+        title: 'Backyard Campus Activation',
+        description: 'Young people designing and building their own community space — yarning circle, gym container, basketball court, kitchen, and Aboriginal flag ground mural.',
+      },
+      {
+        icon: 'Dumbbell',
+        title: 'Boxing & Gym Programs',
+        description: 'Fitness programs run by Archie and the team — boxing, strength training, and mentoring in the converted shipping container gym.',
+      },
+      {
+        icon: 'UtensilsCrossed',
+        title: 'Cooking & Life Skills',
+        description: 'Practical programs where young people learn cooking, nutrition, and life skills together in the kitchen container. Food brings people together.',
+      },
+      {
+        icon: 'Heart',
+        title: 'Cultural Connection & Mentoring',
+        description: 'Cultural days, case work support, and one-on-one mentoring from workers with lived experience who see young people as people, not files.',
+      },
+    ],
+    values: [
+      { title: 'Youth Leadership', description: 'Young people lead everything — from program design to content creation to organisational decisions. Nothing about us without us.' },
+      { title: 'Lived Experience as Expertise', description: 'People who have been through the system are the experts on what works. Shayle, Archie, Leah, and the team bring their own journeys into the work every day.' },
+      { title: 'Safe Spaces Over Surveillance', description: 'We create spaces where young people can be themselves — no judgment, no pressure, no postcode wars. The Backyard Campus is proof that when you build it right, kids show up.' },
+      { title: 'Culture is Protection', description: 'Connection to culture, community, and identity keeps young people strong. Programs blend cultural activities, mentoring, and creative expression.' },
+    ],
+    whySection: {
+      challenge: 'Young people in Mount Druitt face constant police surveillance, over-representation in the justice system, and a media that only tells deficit stories about their community. Support workers come and go. After-hours help barely exists. The system talks about young people but rarely listens to them.',
+      response: 'Mounty Yarns puts cameras, microphones, and decision-making power directly into the hands of young people. Their 24-minute documentary has been seen by 100,000+ people. The Backyard Campus gives them a space that\'s theirs. And the team — built from 1 person to 20 — is led by people with lived experience who actually show up.',
+    },
+    funding: {
+      name: 'Youth Justice & Community Strengthening',
+      funder: 'Just Reinvest NSW',
+      amount: 'Partnership-funded',
+      period: 'Ongoing',
+    },
+    cta: {
+      title: 'Get Involved with Mounty Yarns',
+      description: 'Want to support youth-led storytelling in Western Sydney? Whether you\'re a young person, funder, researcher, or community member — there\'s a place for you.',
+      email: 'info@mountyyarns.org.au',
+      phone: '0400 000 000',
+    },
+  },
 };
 
 const PROGRAM_ICONS: Record<string, any> = {
-  Dumbbell, Tent, UserCheck, Home, GraduationCap, Handshake, Compass, Scale, TreePine, MessageCircle, Users, Heart,
+  Dumbbell, Tent, UserCheck, Home, GraduationCap, Handshake, Compass, Scale, TreePine, MessageCircle, Users, Heart, Mic, Film, BookOpen, Hammer, UtensilsCrossed, Play,
 };
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
