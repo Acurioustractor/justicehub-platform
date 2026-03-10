@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { ClaimOrgButton } from '@/components/claims/ClaimOrgButton';
+import { getEntityEnrichment, type EntityEnrichment } from '@/lib/grantscope/entity-enrichment';
 import {
   Building2,
   MapPin,
@@ -33,7 +34,10 @@ import {
   Home,
   Award,
   Link2,
-  ImageIcon
+  ImageIcon,
+  BarChart3,
+  MapPinned,
+  DollarSign
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -187,7 +191,7 @@ interface Photo {
   [key: string]: unknown;
 }
 
-async function getOrganization(slugOrId: string): Promise<Organization | null> {
+async function getOrganization(slugOrId: string): Promise<(Organization & { gs_entity_id?: string | null }) | null> {
   const supabase = createServiceClient();
 
   // Check if it's a UUID (ID) or a slug
@@ -219,6 +223,15 @@ async function getOrganization(slugOrId: string): Promise<Organization | null> {
   }
 
   return data;
+}
+
+async function getOrgEnrichment(gsEntityId: string | null | undefined): Promise<EntityEnrichment | null> {
+  if (!gsEntityId) return null;
+  try {
+    return await getEntityEnrichment(gsEntityId);
+  } catch {
+    return null;
+  }
 }
 
 async function getOrganizationPrograms(orgId: string): Promise<Program[]> {
@@ -471,7 +484,7 @@ export default async function OrganizationPage({
   }
 
   // Fetch all related data in parallel
-  const [programs, services, team, storytellers, videos, stories, goals, impactMetrics, externalLinks, contacts, photos] = await Promise.all([
+  const [programs, services, team, storytellers, videos, stories, goals, impactMetrics, externalLinks, contacts, photos, enrichment] = await Promise.all([
     getOrganizationPrograms(org.id),
     getOrganizationServices(org.id),
     getOrganizationTeam(org.id),
@@ -483,6 +496,7 @@ export default async function OrganizationPage({
     getExternalLinks(org.id),
     getContacts(org.id),
     getPhotos(org.id),
+    getOrgEnrichment((org as any).gs_entity_id),
   ]);
 
   // Separate goals by type
@@ -673,6 +687,83 @@ export default async function OrganizationPage({
             </div>
           </div>
         </section>
+
+        {/* Data Insights Section — from GrantScope entity graph */}
+        {enrichment && (
+          <section className="py-10 border-b-2 border-black bg-blue-50">
+            <div className="container-justice">
+              <div className="flex items-center gap-3 mb-6">
+                <BarChart3 className="h-7 w-7 text-blue-700" />
+                <h2 className="text-2xl font-black">Data Insights</h2>
+                <span className="text-xs font-bold uppercase tracking-wider bg-blue-200 text-blue-800 px-2 py-1">
+                  via GrantScope
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                {enrichment.isCommunityControlled && (
+                  <div className="bg-white p-4 border-2 border-black">
+                    <Shield className="w-6 h-6 mb-2 text-eucalyptus-600" />
+                    <div className="font-bold text-sm uppercase tracking-wide text-eucalyptus-700">Community Controlled</div>
+                  </div>
+                )}
+                {enrichment.remoteness && (
+                  <div className="bg-white p-4 border-2 border-black">
+                    <MapPinned className="w-6 h-6 mb-2 text-ochre-600" />
+                    <div className="text-2xl font-black text-earth-900">{enrichment.remoteness}</div>
+                    <div className="text-xs font-bold uppercase tracking-wide text-earth-600">Remoteness</div>
+                  </div>
+                )}
+                {enrichment.seifaDecile && (
+                  <div className="bg-white p-4 border-2 border-black">
+                    <BarChart3 className="w-6 h-6 mb-2 text-blue-600" />
+                    <div className="text-2xl font-black text-earth-900">{enrichment.seifaDecile}/10</div>
+                    <div className="text-xs font-bold uppercase tracking-wide text-earth-600">SEIFA Decile</div>
+                  </div>
+                )}
+                {enrichment.latestRevenue && (
+                  <div className="bg-white p-4 border-2 border-black">
+                    <DollarSign className="w-6 h-6 mb-2 text-eucalyptus-600" />
+                    <div className="text-2xl font-black text-earth-900">
+                      ${enrichment.latestRevenue >= 1_000_000
+                        ? `${(enrichment.latestRevenue / 1_000_000).toFixed(1)}M`
+                        : enrichment.latestRevenue >= 1_000
+                          ? `${(enrichment.latestRevenue / 1_000).toFixed(0)}K`
+                          : enrichment.latestRevenue.toLocaleString()}
+                    </div>
+                    <div className="text-xs font-bold uppercase tracking-wide text-earth-600">
+                      Revenue {enrichment.financialYear ? `(${enrichment.financialYear})` : ''}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Top Funding Sources */}
+              {enrichment.relationshipSummary.topFundingSources.length > 0 && (
+                <div className="bg-white border-2 border-black p-4">
+                  <h3 className="font-bold text-sm uppercase tracking-wider text-earth-600 mb-3">
+                    Top Funding Sources ({enrichment.relationshipSummary.totalRelationships} relationships)
+                  </h3>
+                  <div className="space-y-2">
+                    {enrichment.relationshipSummary.topFundingSources.map((source, i) => (
+                      <div key={i} className="flex items-center justify-between text-sm">
+                        <span className="font-medium text-earth-800 truncate mr-4">{source.name}</span>
+                        <span className="font-bold text-eucalyptus-700 whitespace-nowrap">
+                          ${source.amount >= 1_000_000
+                            ? `${(source.amount / 1_000_000).toFixed(1)}M`
+                            : source.amount >= 1_000
+                              ? `${(source.amount / 1_000).toFixed(0)}K`
+                              : source.amount.toLocaleString()}
+                          {source.year ? ` (${source.year})` : ''}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Team Section */}
         {team.length > 0 && (
