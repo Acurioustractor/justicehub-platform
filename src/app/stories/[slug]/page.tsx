@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { Calendar, Clock, Tag, MapPin, User } from 'lucide-react';
+import { PasswordGate } from '@/components/ui/password-gate';
+
+const PASSWORD_PROTECTED_SLUGS = ['the-cure-already-exists'];
 
 export const dynamic = 'force-dynamic';
 
@@ -65,7 +68,9 @@ export default async function StoryPage({ params }: { params: { slug: string } }
   const author = story.public_profiles;
   const publishDate = new Date(story.published_at as string);
 
-  return (
+  const needsPassword = PASSWORD_PROTECTED_SLUGS.includes(slug);
+
+  const content = (
     <>
       <Navigation />
       <article className="min-h-screen page-content">
@@ -248,4 +253,10 @@ export default async function StoryPage({ params }: { params: { slug: string } }
       <Footer />
     </>
   );
+
+  if (needsPassword) {
+    return <PasswordGate>{content}</PasswordGate>;
+  }
+
+  return content;
 }
