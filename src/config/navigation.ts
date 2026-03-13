@@ -112,6 +112,11 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Grants and funding opportunities'
             },
             {
+                label: 'Sector Map',
+                href: '/sector-map',
+                description: 'Full sector landscape and funding flows'
+            },
+            {
                 label: 'Justice Spending',
                 href: '/justice-funding',
                 description: 'Track where QLD justice dollars go'
