@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import {
@@ -8,7 +9,8 @@ import {
   DollarSign, TrendingUp, CheckCircle, Zap
 } from 'lucide-react';
 
-const audiences = [
+function buildAudiences(stats: ReturnType<typeof useDataStats>) {
+  return [
   {
     icon: Heart,
     title: 'Community Organisations',
@@ -18,8 +20,8 @@ const audiences = [
     description:
       'You do the work. You shouldn\'t pay for data about it. Full access to Call It Out, program discovery, and basic analytics. No credit card, no trial, no upsell.',
     gets: [
-      'Search 826 verified interventions',
-      'Browse $8.7B in funding data',
+      `Search ${stats.interventions} verified interventions`,
+      `Browse $${stats.fundingBillions}B in funding data`,
       'Program discovery tools',
       'Up to 5 team members',
     ],
@@ -83,6 +85,7 @@ const audiences = [
     ctaHref: 'mailto:benjamin@act.place?subject=JusticeHub Government Tier',
   },
 ];
+}
 
 const basecampBenefits = [
   { icon: Globe, label: 'Free mini-site on JusticeHub' },
@@ -93,14 +96,42 @@ const basecampBenefits = [
   { icon: TrendingUp, label: 'Impact metrics dashboard' },
 ];
 
-const dataAssets = [
-  { value: '$8.7B', label: 'Justice funding tracked', detail: '51,000+ grants across all states' },
-  { value: '826', label: 'Verified interventions', detail: 'Community-governed, evidence-linked' },
-  { value: '64K', label: 'ACNC charities indexed', detail: 'Cross-linked with ABN + governance data' },
-  { value: '7/8', label: 'States covered', detail: 'National jurisdiction mapping' },
-];
+function useDataStats() {
+  const [stats, setStats] = useState({
+    fundingBillions: '9.1',
+    fundingGrants: '52,000+',
+    interventions: '826',
+    evidence: '334',
+  });
+  useEffect(() => {
+    fetch('/api/homepage-stats')
+      .then(r => r.json())
+      .then(d => {
+        if (d.stats) {
+          setStats({
+            fundingBillions: String(d.stats.total_funding_billions || '9.1'),
+            fundingGrants: (d.stats.total_funding_grants || 52000).toLocaleString() + '+',
+            interventions: (d.stats.programs_documented || 826).toLocaleString(),
+            evidence: (d.stats.total_evidence || 334).toLocaleString(),
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+  return stats;
+}
 
 export default function HowItWorksPage() {
+  const stats = useDataStats();
+  const audiences = buildAudiences(stats);
+
+  const dataAssets = [
+    { value: `$${stats.fundingBillions}B`, label: 'Justice funding tracked', detail: `${stats.fundingGrants} grants across all states` },
+    { value: stats.interventions, label: 'Verified interventions', detail: 'Community-governed, evidence-linked' },
+    { value: '64K', label: 'ACNC charities indexed', detail: 'Cross-linked with ABN + governance data' },
+    { value: '7/8', label: 'States covered', detail: 'National jurisdiction mapping' },
+  ];
+
   return (
     <div className="min-h-screen bg-white text-black">
       <Navigation />
@@ -115,8 +146,8 @@ export default function HowItWorksPage() {
               for intelligence.
             </h1>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-12 leading-relaxed">
-              JusticeHub tracks which youth justice interventions actually work — $8.7 billion in
-              funding data, 826 verified programs, political donation cross-links. The communities
+              JusticeHub tracks which youth justice interventions actually work — ${stats.fundingBillions} billion in
+              funding data, {stats.interventions} verified programs, political donation cross-links. The communities
               most affected should never be the ones paying for the data about it.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -473,7 +504,7 @@ export default function HowItWorksPage() {
                   <div className="text-4xl font-black text-ochre-700 mb-2">Only</div>
                   <div className="font-bold mb-2">Platform combining all three</div>
                   <p className="text-sm text-gray-600">
-                    No other platform combines $8.7B in funding data + 826 verified interventions +
+                    No other platform combines ${stats.fundingBillions}B in funding data + {stats.interventions} verified interventions +
                     political donation cross-links. The UK and US have evidence clearinghouses.
                     None have funding intelligence.
                   </p>

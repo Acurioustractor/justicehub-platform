@@ -7,6 +7,22 @@
     {
       "path": "/api/cron/funding/system-0",
       "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/alma?batch=20",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/alma/discover?batch=5&mode=interventions",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/alma/discover?batch=5&mode=media",
+      "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/tenders",
+      "schedule": "0 2 * * 1,4"
     }
   ]
 }

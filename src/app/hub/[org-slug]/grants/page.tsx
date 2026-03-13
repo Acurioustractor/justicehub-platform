@@ -4,6 +4,8 @@ import { getGrantHealthByOrg } from '@/lib/bgfit/queries';
 import { checkFeatureAccess, getRequiredTier, getFeatureLabel } from '@/lib/org-hub/feature-gates';
 import { FeatureGate } from '@/components/ui/feature-gate';
 import { GrantsView } from './GrantsView';
+import { GrantDiscovery } from './GrantDiscovery';
+import { GrantsTabs } from './GrantsTabs';
 
 async function getOrgData(slug: string) {
   const supabase = createServiceClient();
@@ -46,5 +48,11 @@ export default async function GrantsPage({ params }: { params: { 'org-slug': str
   }
 
   const grants = await getGrantHealthByOrg(org.id);
-  return <GrantsView grants={grants} />;
+
+  return (
+    <GrantsTabs
+      yourGrants={<GrantsView grants={grants} />}
+      discover={<GrantDiscovery />}
+    />
+  );
 }

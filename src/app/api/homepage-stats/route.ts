@@ -87,6 +87,13 @@ export async function GET() {
       supabase.from('organizations').select('*', { count: 'exact', head: true }).eq('charity_size', 'Large'),
     ]);
 
+    // Justice funding totals (dynamic — replaces hardcoded $8.7B)
+    const { data: fundingTotal } = await supabase.rpc('get_funding_total').single();
+    const totalFundingGrants = fundingTotal?.grant_count ?? 52133;
+    const totalFundingBillions = fundingTotal?.total_dollars
+      ? parseFloat((Number(fundingTotal.total_dollars) / 1_000_000_000).toFixed(1))
+      : 9.1;
+
     // ROGS justice spending data (Productivity Commission)
     const [
       { data: rogsYouthDetention },
@@ -116,6 +123,9 @@ export async function GET() {
         total_people: totalPeople || 0,
         total_organizations: totalOrganizations || 0,
         states_covered: statesWithServices.size,
+        // Justice funding (dynamic)
+        total_funding_grants: totalFundingGrants,
+        total_funding_billions: totalFundingBillions,
         // ALMA stats — honest numbers
         orgs_linked: orgsLinkedCount || 0,
         total_evidence: totalEvidence || 0,
@@ -159,7 +169,9 @@ export async function GET() {
           total_organizations: 67,
           states_covered: 8,
           orgs_linked: 527,
-          total_evidence: 482,
+          total_funding_grants: 52133,
+          total_funding_billions: 9.1,
+          total_evidence: 334,
           total_evidence_links: 838,
           rogs_youth_detention_millions: 1141,
           rogs_youth_community_millions: 520,

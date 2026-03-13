@@ -480,7 +480,7 @@ export default function ForFundersPage() {
                 <BarChart3 className="w-8 h-8 text-emerald-600 mb-3" />
                 <h3 className="font-bold text-lg mb-2 group-hover:text-emerald-600 transition-colors">ALMA Evidence Engine</h3>
                 <p className="text-gray-600 text-sm mb-3">
-                  939 interventions catalogued, 482 evidence items collected.
+                  939+ interventions catalogued, 330+ evidence items collected.
                   AI-powered analysis of what works in youth justice.
                 </p>
                 <span className="text-sm font-bold text-emerald-600 flex items-center gap-1">
