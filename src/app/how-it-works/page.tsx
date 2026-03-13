@@ -408,6 +408,297 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
+        {/* Industry Benchmarking */}
+        <section className="section-padding border-b-2 border-black">
+          <div className="container-justice">
+            <h2 className="text-3xl font-black uppercase tracking-tight text-center mb-4">
+              How We Compare
+            </h2>
+            <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+              JusticeHub is 50-75% cheaper than comparable platforms — and the only one
+              that combines funding intelligence with intervention evidence and community ownership.
+            </p>
+
+            <div className="max-w-5xl mx-auto">
+              {/* Pricing comparison table */}
+              <div className="border-2 border-black bg-white overflow-hidden mb-12">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b-2 border-black bg-black text-white">
+                      <th className="text-left p-4 font-black">Platform</th>
+                      <th className="text-left p-4 font-black">What It Does</th>
+                      <th className="text-right p-4 font-black">Annual Cost</th>
+                      <th className="text-center p-4 font-black">Community Revenue</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'Salesforce Nonprofit', what: 'CRM + case management', cost: '$7,200-14,400', rev: 'None', highlight: false },
+                      { name: 'SocialSuite', what: 'Impact measurement', cost: '$9,500+', rev: 'None', highlight: false },
+                      { name: 'Blackbaud', what: 'Fundraising + grants', cost: '$10,000+', rev: 'None', highlight: false },
+                      { name: 'Bonterra (Apricot)', what: 'Case management', cost: '$5,000+', rev: 'None', highlight: false },
+                      { name: 'JusticeHub Organisation', what: 'Funding intel + grants + outcomes', cost: '$3,588', rev: '30% to basecamps', highlight: true },
+                      { name: 'JusticeHub Institution', what: 'Full research datasets + proof', cost: '$29,988', rev: '30% to basecamps', highlight: true },
+                      { name: 'CrimeSolutions (US)', what: 'Evidence clearinghouse', cost: 'Free (gov funded)', rev: 'None', highlight: false },
+                      { name: 'What Works (UK)', what: 'Evidence clearinghouse', cost: 'Free (gov funded)', rev: 'None', highlight: false },
+                    ].map((row) => (
+                      <tr key={row.name} className={`border-b border-gray-200 ${row.highlight ? 'bg-ochre-50' : ''}`}>
+                        <td className="p-4 font-bold">{row.name}</td>
+                        <td className="p-4 text-gray-600">{row.what}</td>
+                        <td className="p-4 text-right font-bold">{row.cost}</td>
+                        <td className="p-4 text-center">
+                          {row.rev === 'None' ? (
+                            <span className="text-gray-300">None</span>
+                          ) : (
+                            <span className="font-bold text-green-700">{row.rev}</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Key differentiators */}
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="border-2 border-black p-6 bg-white">
+                  <div className="text-4xl font-black text-green-700 mb-2">50-75%</div>
+                  <div className="font-bold mb-2">Cheaper than enterprise NFP tools</div>
+                  <p className="text-sm text-gray-600">
+                    Salesforce Nonprofit costs $7,200-14,400/year for 10 users.
+                    JusticeHub Organisation is $3,588/year for 25 users — per-org, not per-seat.
+                  </p>
+                </div>
+                <div className="border-2 border-black p-6 bg-white">
+                  <div className="text-4xl font-black text-ochre-700 mb-2">Only</div>
+                  <div className="font-bold mb-2">Platform combining all three</div>
+                  <p className="text-sm text-gray-600">
+                    No other platform combines $8.7B in funding data + 826 verified interventions +
+                    political donation cross-links. The UK and US have evidence clearinghouses.
+                    None have funding intelligence.
+                  </p>
+                </div>
+                <div className="border-2 border-black p-6 bg-white">
+                  <div className="text-4xl font-black text-green-700 mb-2">30%</div>
+                  <div className="font-bold mb-2">Revenue to communities</div>
+                  <p className="text-sm text-gray-600">
+                    No comparable data platform shares revenue with the communities whose knowledge
+                    powers it. This isn't CSR — it's the business model.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* The Cooperative Model */}
+        <section className="section-padding border-b-2 border-black bg-gray-50">
+          <div className="container-justice">
+            <h2 className="text-3xl font-black uppercase tracking-tight text-center mb-4">
+              Not a Startup. A Community Platform.
+            </h2>
+            <p className="text-center text-gray-600 mb-16 max-w-3xl mx-auto">
+              JusticeHub borrows from the cooperative movement — the knowledge holders
+              aren't just users, they're the reason the platform has value. Revenue flows accordingly.
+            </p>
+
+            <div className="max-w-5xl mx-auto">
+              {/* Cooperative comparison */}
+              <div className="md:flex gap-8 mb-16">
+                <div className="md:w-1/2 mb-8 md:mb-0">
+                  <h3 className="text-xl font-black mb-6 text-red-800">Extractive Model (Industry Standard)</h3>
+                  <div className="space-y-4">
+                    {[
+                      { label: 'Salesforce', detail: 'Community data powers their product. $0 goes back to communities.' },
+                      { label: 'Blackbaud', detail: 'NFPs pay to manage data they created. Hidden fees, lock-in.' },
+                      { label: 'University research', detail: 'Extract community knowledge. Publish behind paywalls. Communities get nothing.' },
+                      { label: 'Government data portals', detail: 'Collect data from communities. Aggregate it. Communities can\'t access their own data.' },
+                    ].map((item) => (
+                      <div key={item.label} className="border-l-4 border-red-300 pl-4">
+                        <div className="font-bold text-sm">{item.label}</div>
+                        <div className="text-sm text-gray-600">{item.detail}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="md:w-1/2">
+                  <h3 className="text-xl font-black mb-6 text-green-800">Cooperative Model (JusticeHub)</h3>
+                  <div className="space-y-4">
+                    {[
+                      { label: 'Basecamps control their data', detail: 'Self-service editing. Choose what\'s public. Revoke access anytime.' },
+                      { label: '30% revenue flows back', detail: 'Not a donation. A share of the value their knowledge creates.' },
+                      { label: 'Summaries are free for everyone', detail: 'The intelligence belongs to the sector. Depth is the paid product.' },
+                      { label: 'Community-governed evidence', detail: 'ALMA principles ensure knowledge holders control how data is used.' },
+                    ].map((item) => (
+                      <div key={item.label} className="border-l-4 border-green-500 pl-4">
+                        <div className="font-bold text-sm">{item.label}</div>
+                        <div className="text-sm text-gray-600">{item.detail}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Platform co-op benchmarks */}
+              <div className="border-2 border-black bg-white p-8">
+                <h3 className="font-black text-lg mb-6">How Our Revenue Share Compares to Platform Cooperatives</h3>
+                <div className="grid md:grid-cols-4 gap-6">
+                  {[
+                    { name: 'Up&Go', type: 'Cleaning co-op', share: '95%', context: 'to workers (5% platform fee)' },
+                    { name: 'Stocksy', type: 'Photo co-op', share: '50-75%', context: 'to photographers' },
+                    { name: 'Resonate', type: 'Music co-op', share: '45%', context: 'to artists' },
+                    { name: 'JusticeHub', type: 'Data intelligence', share: '30%', context: 'to basecamps (knowledge holders)', highlight: true },
+                  ].map((coop) => (
+                    <div key={coop.name} className={`text-center p-4 ${coop.highlight ? 'border-2 border-black bg-ochre-50' : 'border border-gray-200'}`}>
+                      <div className="text-3xl font-black mb-1">{coop.share}</div>
+                      <div className="font-bold text-sm mb-1">{coop.name}</div>
+                      <div className="text-xs text-gray-500">{coop.type}</div>
+                      <div className="text-xs text-gray-600 mt-2">{coop.context}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-6">
+                  Platform co-ops share revenue with workers who deliver a service.
+                  JusticeHub shares revenue with communities whose <em>knowledge</em> creates value —
+                  a model with no direct equivalent in the cooperative movement.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Indigenous Data Sovereignty */}
+        <section className="section-padding border-b-2 border-black">
+          <div className="container-justice">
+            <div className="max-w-5xl mx-auto">
+              <div className="md:flex gap-12 items-start">
+                <div className="md:w-1/2 mb-8 md:mb-0">
+                  <div className="inline-flex items-center gap-2 bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-6">
+                    <Shield className="h-3.5 w-3.5" />
+                    Data Sovereignty
+                  </div>
+                  <h2 className="text-3xl font-black tracking-tight mb-6">
+                    Built on CARE Principles.<br />
+                    Not just compliance — conviction.
+                  </h2>
+                  <p className="text-gray-700 leading-relaxed mb-6">
+                    Most platforms bolt on Indigenous data governance as an afterthought.
+                    JusticeHub is architected around it. The CARE Principles for Indigenous Data
+                    Governance aren't a checkbox — they shaped the business model.
+                  </p>
+                  <p className="text-gray-600 mb-6">
+                    We align with the work of Maiam nayri Wingara (the Australian Aboriginal and
+                    Torres Strait Islander Data Sovereignty Collective), the OCAP principles from
+                    Canada, and Te Mana Raraunga from Aotearoa New Zealand.
+                  </p>
+                </div>
+                <div className="md:w-1/2">
+                  <div className="space-y-4">
+                    {[
+                      {
+                        letter: 'C',
+                        title: 'Collective Benefit',
+                        description: 'Data ecosystems should benefit Indigenous communities. Revenue share, free access, and community-owned mini-sites ensure basecamps benefit directly.',
+                        color: 'bg-green-700',
+                      },
+                      {
+                        letter: 'A',
+                        title: 'Authority to Control',
+                        description: 'Communities control what data is shared, how it\'s presented, and who accesses it. Self-service editing and revocable consent are built in.',
+                        color: 'bg-ochre-700',
+                      },
+                      {
+                        letter: 'R',
+                        title: 'Responsibility',
+                        description: 'Those who use this data have a responsibility to the communities it describes. ALMA\'s verification workflow ensures accuracy and cultural appropriateness.',
+                        color: 'bg-blue-700',
+                      },
+                      {
+                        letter: 'E',
+                        title: 'Ethics',
+                        description: 'Data should be used to advance community self-determination. 30% revenue share isn\'t charity — it\'s an ethical obligation to the knowledge holders.',
+                        color: 'bg-purple-700',
+                      },
+                    ].map((principle) => (
+                      <div key={principle.letter} className="flex gap-4 border-2 border-black p-5 bg-white">
+                        <div className={`w-12 h-12 ${principle.color} text-white flex items-center justify-center font-black text-xl shrink-0`}>
+                          {principle.letter}
+                        </div>
+                        <div>
+                          <h3 className="font-black mb-1">{principle.title}</h3>
+                          <p className="text-sm text-gray-600">{principle.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Global alignment */}
+              <div className="mt-12 border-2 border-black bg-gray-50 p-8">
+                <h3 className="font-black text-lg mb-6 text-center">Global Data Sovereignty Alignment</h3>
+                <div className="grid md:grid-cols-4 gap-6 text-center">
+                  {[
+                    { framework: 'CARE Principles', origin: 'Global', focus: 'Indigenous data governance', status: 'Core alignment' },
+                    { framework: 'OCAP', origin: 'Canada', focus: 'Ownership, Control, Access, Possession', status: 'Architectural influence' },
+                    { framework: 'Maiam nayri Wingara', origin: 'Australia', focus: 'Aboriginal & Torres Strait Islander data sovereignty', status: 'Active engagement' },
+                    { framework: 'Te Mana Raraunga', origin: 'Aotearoa NZ', focus: 'Maori data sovereignty', status: 'Reference framework' },
+                  ].map((f) => (
+                    <div key={f.framework} className="border border-gray-300 bg-white p-4">
+                      <div className="font-black text-sm mb-1">{f.framework}</div>
+                      <div className="text-xs text-gray-500 mb-2">{f.origin}</div>
+                      <div className="text-xs text-gray-600 mb-3">{f.focus}</div>
+                      <div className="text-xs font-bold text-green-700">{f.status}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Why It Costs What It Costs */}
+        <section className="section-padding border-b-2 border-black bg-gray-50">
+          <div className="container-justice">
+            <h2 className="text-3xl font-black uppercase tracking-tight text-center mb-4">
+              Where the Money Goes
+            </h2>
+            <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+              Every dollar is accounted for. No VC extraction. No exit strategy.
+              This platform exists to serve communities — the business model reflects that.
+            </p>
+
+            <div className="max-w-4xl mx-auto">
+              <div className="space-y-3">
+                {[
+                  { category: 'Community Revenue Share', pct: 30, color: 'bg-green-600', detail: 'Direct payments to basecamps — the communities whose knowledge creates value' },
+                  { category: 'Evidence Discovery & Data Quality', pct: 20, color: 'bg-ochre-600', detail: 'ALMA cataloguing, source verification, AI-assisted evidence discovery, data integrity' },
+                  { category: 'Engineering & Infrastructure', pct: 20, color: 'bg-blue-600', detail: 'Platform development, hosting, security, API infrastructure, uptime' },
+                  { category: 'Support & Operations', pct: 10, color: 'bg-purple-600', detail: 'Onboarding, customer support, documentation, basecamp training' },
+                  { category: 'Growth & New Basecamps', pct: 15, color: 'bg-gray-600', detail: 'Expanding to new states, onboarding new basecamps, new data sources' },
+                  { category: 'Reserve & Sustainability', pct: 5, color: 'bg-gray-400', detail: 'Operational reserve to ensure the platform survives downturns' },
+                ].map((item) => (
+                  <div key={item.category} className="border-2 border-black bg-white p-4">
+                    <div className="flex items-center gap-4 mb-2">
+                      <div className="w-16 text-right font-black text-lg">{item.pct}%</div>
+                      <div className="flex-1">
+                        <div className="h-6 bg-gray-100 border border-gray-200 overflow-hidden">
+                          <div className={`h-full ${item.color}`} style={{ width: `${item.pct * 3.3}%` }} />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="ml-20">
+                      <div className="font-bold text-sm">{item.category}</div>
+                      <div className="text-xs text-gray-500">{item.detail}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ROI */}
         <section className="section-padding border-b-2 border-black">
           <div className="container-justice text-center">
