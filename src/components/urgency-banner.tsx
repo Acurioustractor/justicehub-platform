@@ -16,10 +16,10 @@ export function UrgencyBanner() {
       <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-6 py-4 text-center sm:flex-row sm:text-left">
         <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
           <span className="font-display text-lg uppercase tracking-[0.25em]">
-            ⏰ {daysLeft} days until launch
+            ⏰ {daysLeft} days until Mount Druitt
           </span>
           <span className="text-sm uppercase tracking-[0.25em] text-white/90">
-            {campaignMetadata.counters.slotsPerDay} slots released daily · Secure yours now
+            First public stop on April 25, 2026 · Secure your place now
           </span>
         </div>
         <CTAButton href="#book" variant="light" className="hover:bg-white/90">

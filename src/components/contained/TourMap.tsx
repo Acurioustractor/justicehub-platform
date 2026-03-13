@@ -13,12 +13,14 @@ const STATUS_COLORS: Record<string, string> = {
   confirmed: '#16a34a',
   planning: '#d97706',
   tentative: '#9ca3af',
+  exploring: '#3b82f6',
 };
 
 const GLOW_COLORS: Record<string, string> = {
   confirmed: '#22c55e',
   planning: '#f59e0b',
   tentative: '#d1d5db',
+  exploring: '#60a5fa',
 };
 
 export default function TourMap({ stops, onStopClick }: TourMapProps) {
@@ -102,12 +104,12 @@ export default function TourMap({ stops, onStopClick }: TourMapProps) {
       <div className="absolute bottom-3 left-3 z-[400] bg-gray-900/95 border border-gray-700 px-3 py-2 text-xs text-white">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-emerald-500 border border-emerald-300 inline-block shadow-[0_0_6px_rgba(34,197,94,0.5)]" />
-            Confirmed
-          </span>
-          <span className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-full bg-amber-500 border border-amber-300 inline-block shadow-[0_0_6px_rgba(245,158,11,0.5)]" />
             Planning
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-blue-500 border border-blue-300 inline-block shadow-[0_0_6px_rgba(59,130,246,0.5)]" />
+            In Conversation
           </span>
         </div>
       </div>

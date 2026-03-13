@@ -78,7 +78,7 @@ export async function GET(
     if (storytellerIds.length > 0) {
       const { data } = await elClient
         .from('storytellers')
-        .select('id, display_name, bio, cultural_background, is_elder, is_featured, is_justicehub_featured, justicehub_enabled, location, areas_of_expertise, language_skills, storytelling_experience')
+        .select('id, display_name, bio, cultural_background, is_elder, is_featured, is_justicehub_featured, justicehub_enabled, location, areas_of_expertise, language_skills, storytelling_experience, public_avatar_url')
         .in('id', storytellerIds);
       storytellers = data || [];
     }
@@ -163,6 +163,7 @@ export async function GET(
             location: s.location,
             areas_of_expertise: s.areas_of_expertise,
             language_skills: s.language_skills,
+            public_avatar_url: s.public_avatar_url,
           })),
           justicehubEnabled: (allJhStorytellers || []).length,
           total: (allJhStorytellers || []).length,

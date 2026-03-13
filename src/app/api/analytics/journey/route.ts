@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase/service';
+import { createServiceClient } from '@/lib/supabase/service-lite';
 
 const ALLOWED_EVENTS = new Set([
   'journey_path_selected',
@@ -62,4 +62,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Invalid payload' }, { status: 400 });
   }
 }
-

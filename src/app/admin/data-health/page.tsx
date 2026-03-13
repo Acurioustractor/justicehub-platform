@@ -13,6 +13,14 @@ import {
   BarChart3,
   Activity,
   ExternalLink,
+  Shield,
+  DollarSign,
+  Building2,
+  Zap,
+  Lightbulb,
+  ArrowRight,
+  Globe,
+  TrendingUp,
 } from 'lucide-react';
 
 interface TableHealth {
@@ -21,6 +29,29 @@ interface TableHealth {
   lastUpdated: string | null;
   healthScore: 'green' | 'yellow' | 'red';
   keyColumns: string[];
+  domain: string;
+}
+
+interface EnrichmentMetric {
+  label: string;
+  current: number;
+  total: number;
+  percentage: number;
+}
+
+interface ApiHealthResult {
+  endpoint: string;
+  status: number | null;
+  latencyMs: number;
+  healthy: boolean;
+  error?: string;
+}
+
+interface Recommendation {
+  priority: 'high' | 'medium' | 'low';
+  title: string;
+  description: string;
+  action?: string;
 }
 
 interface HealthData {
@@ -33,12 +64,16 @@ interface HealthData {
     empty_tables: number;
     total_records: number;
   };
+  enrichment: EnrichmentMetric[];
+  verificationBreakdown: Record<string, number>;
+  provenanceBreakdown: Record<string, number>;
+  apis: ApiHealthResult[];
+  recommendations: Recommendation[];
   lastScrapeJob: {
     job_type: string;
     status: string;
     started_at: string;
     completed_at: string | null;
-    result: Record<string, any> | null;
   } | null;
   generatedAt: string;
 }
@@ -67,12 +102,24 @@ const HEALTH_COLORS = {
   },
 };
 
-// Map table names to admin/view routes
+const DOMAIN_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
+  alma: { label: 'ALMA Evidence Engine', icon: Shield, color: 'border-purple-600' },
+  funding: { label: 'Justice Funding', icon: DollarSign, color: 'border-green-600' },
+  grantscope: { label: 'GrantScope Public Data (2.6M)', icon: TrendingUp, color: 'border-indigo-600' },
+  geo: { label: 'Geographic Data', icon: Globe, color: 'border-teal-600' },
+  charity: { label: 'Charity Registry', icon: Building2, color: 'border-blue-600' },
+  campaign: { label: 'CONTAINED Campaign', icon: Lightbulb, color: 'border-red-600' },
+  detention: { label: 'Detention Data', icon: Activity, color: 'border-orange-600' },
+  platform: { label: 'Platform Content', icon: Globe, color: 'border-gray-600' },
+  signal: { label: 'Signal Engine', icon: Zap, color: 'border-yellow-600' },
+};
+
 const TABLE_LINKS: Record<string, string> = {
   alma_interventions: '/intelligence/interventions',
   alma_evidence: '/intelligence/evidence',
   alma_funding_opportunities: '/intelligence/funding',
   alma_weekly_reports: '/intelligence/reports',
+  justice_funding: '/justice-funding',
   organizations: '/organizations',
   services: '/services',
   articles: '/blog',
@@ -81,6 +128,12 @@ const TABLE_LINKS: Record<string, string> = {
   stories: '/stories',
   opportunities: '/opportunities',
   public_profiles: '/people',
+};
+
+const PRIORITY_COLORS = {
+  high: { bg: 'bg-red-50', border: 'border-red-600', text: 'text-red-700', badge: 'bg-red-600' },
+  medium: { bg: 'bg-amber-50', border: 'border-amber-600', text: 'text-amber-700', badge: 'bg-amber-600' },
+  low: { bg: 'bg-blue-50', border: 'border-blue-600', text: 'text-blue-700', badge: 'bg-blue-600' },
 };
 
 export default function DataHealthPage() {
@@ -126,6 +179,16 @@ export default function DataHealthPage() {
     return `${Math.floor(days / 30)}mo ago`;
   }
 
+  function groupByDomain(tables: TableHealth[]): Record<string, TableHealth[]> {
+    const groups: Record<string, TableHealth[]> = {};
+    for (const table of tables) {
+      const domain = table.domain || 'platform';
+      if (!groups[domain]) groups[domain] = [];
+      groups[domain].push(table);
+    }
+    return groups;
+  }
+
   return (
     <div className="min-h-screen bg-white text-black font-sans">
       <Navigation />
@@ -143,7 +206,7 @@ export default function DataHealthPage() {
                   Data Health Dashboard
                 </h1>
                 <p className="text-lg text-gray-700 mt-2">
-                  Monitor database tables, content freshness, and scraper status
+                  All data sources, enrichment coverage, API health, and recommendations
                 </p>
               </div>
               <button
@@ -173,7 +236,7 @@ export default function DataHealthPage() {
           ) : data && (
             <>
               {/* Summary Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                 <div className="bg-white border-2 border-black p-6">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-bold text-gray-600">Total Records</span>
@@ -209,7 +272,247 @@ export default function DataHealthPage() {
                   <div className="text-3xl font-black font-mono text-red-700">{data.summary.critical}</div>
                   <div className="text-xs text-red-600 mt-1">empty or stale &gt;30d</div>
                 </div>
+
+                <div className="bg-white border-2 border-black p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-bold text-gray-600">APIs</span>
+                    <Activity className="w-5 h-5 text-gray-400" />
+                  </div>
+                  <div className="text-3xl font-black font-mono">
+                    {data.apis.filter(a => a.healthy).length}/{data.apis.length}
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">endpoints healthy</div>
+                </div>
               </div>
+
+              {/* Recommendations */}
+              {data.recommendations.length > 0 && (
+                <div className="bg-white border-2 border-black mb-8">
+                  <div className="bg-black text-white px-6 py-3 flex items-center gap-2">
+                    <Lightbulb className="w-5 h-5" />
+                    <h2 className="font-bold uppercase tracking-wider">Recommendations</h2>
+                    <span className="ml-auto text-xs font-mono opacity-70">{data.recommendations.length} actions</span>
+                  </div>
+                  <div className="divide-y divide-gray-200">
+                    {data.recommendations.map((rec, idx) => {
+                      const colors = PRIORITY_COLORS[rec.priority];
+                      return (
+                        <div key={idx} className={`px-6 py-4 ${colors.bg}`}>
+                          <div className="flex items-start gap-3">
+                            <span className={`${colors.badge} text-white text-xs font-bold px-2 py-0.5 uppercase mt-0.5`}>
+                              {rec.priority}
+                            </span>
+                            <div className="flex-1">
+                              <div className={`font-bold ${colors.text}`}>{rec.title}</div>
+                              <div className="text-sm text-gray-600 mt-1">{rec.description}</div>
+                              {rec.action && (
+                                <code className="text-xs bg-gray-100 px-2 py-1 mt-2 inline-block font-mono">{rec.action}</code>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Enrichment Coverage */}
+              {data.enrichment.length > 0 && (
+                <div className="bg-white border-2 border-black mb-8">
+                  <div className="bg-black text-white px-6 py-3 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" />
+                    <h2 className="font-bold uppercase tracking-wider">Enrichment Coverage</h2>
+                  </div>
+                  <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {data.enrichment.map((metric) => (
+                      <div key={metric.label}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-bold text-gray-700">{metric.label}</span>
+                          <span className="text-sm font-bold font-mono text-gray-900">{metric.percentage}%</span>
+                        </div>
+                        <div className="w-full bg-gray-200 h-4 border border-gray-300">
+                          <div
+                            className={`h-full transition-all ${
+                              metric.percentage >= 75 ? 'bg-emerald-500' :
+                              metric.percentage >= 50 ? 'bg-amber-500' :
+                              metric.percentage >= 25 ? 'bg-orange-500' : 'bg-red-500'
+                            }`}
+                            style={{ width: `${Math.min(metric.percentage, 100)}%` }}
+                          />
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1 font-mono">
+                          {metric.current.toLocaleString()} / {metric.total.toLocaleString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Verification & Provenance Breakdowns */}
+                  <div className="border-t border-gray-200 p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {Object.keys(data.verificationBreakdown).length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-gray-600 mb-3">Verification Status</h3>
+                        <div className="space-y-2">
+                          {Object.entries(data.verificationBreakdown)
+                            .sort(([, a], [, b]) => b - a)
+                            .map(([status, count]) => (
+                              <div key={status} className="flex items-center justify-between">
+                                <span className="text-sm font-mono">{status}</span>
+                                <span className="text-sm font-bold font-mono">{count.toLocaleString()}</span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                    {Object.keys(data.provenanceBreakdown).length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-gray-600 mb-3">Data Provenance</h3>
+                        <div className="space-y-2">
+                          {Object.entries(data.provenanceBreakdown)
+                            .sort(([, a], [, b]) => b - a)
+                            .map(([prov, count]) => (
+                              <div key={prov} className="flex items-center justify-between">
+                                <span className="text-sm font-mono">{prov}</span>
+                                <span className="text-sm font-bold font-mono">{count.toLocaleString()}</span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* API Health */}
+              {data.apis.length > 0 && (
+                <div className="bg-white border-2 border-black mb-8">
+                  <div className="bg-black text-white px-6 py-3 flex items-center gap-2">
+                    <Activity className="w-5 h-5" />
+                    <h2 className="font-bold uppercase tracking-wider">API Health</h2>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-100 border-b-2 border-black">
+                        <tr>
+                          <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Status</th>
+                          <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Endpoint</th>
+                          <th className="px-4 py-3 text-right font-bold uppercase tracking-wider">HTTP</th>
+                          <th className="px-4 py-3 text-right font-bold uppercase tracking-wider">Latency</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {data.apis.map((api) => (
+                          <tr key={api.endpoint} className="hover:bg-gray-50">
+                            <td className="px-4 py-3">
+                              {api.healthy ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-500">
+                                  <CheckCircle2 className="w-3 h-3" /> OK
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold bg-red-50 text-red-700 border border-red-500">
+                                  <XCircle className="w-3 h-3" /> FAIL
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 font-mono text-xs">{api.endpoint}</td>
+                            <td className="px-4 py-3 text-right font-mono">
+                              {api.status ?? '—'}
+                            </td>
+                            <td className="px-4 py-3 text-right font-mono">
+                              <span className={api.latencyMs > 3000 ? 'text-red-600 font-bold' : api.latencyMs > 1000 ? 'text-amber-600' : 'text-gray-600'}>
+                                {api.latencyMs}ms
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Data Domains */}
+              {Object.entries(groupByDomain(data.tables)).map(([domain, tables]) => {
+                const config = DOMAIN_CONFIG[domain] || DOMAIN_CONFIG.platform;
+                const DomainIcon = config.icon;
+                const domainRecords = tables.reduce((s, t) => s + t.count, 0);
+
+                return (
+                  <div key={domain} className={`bg-white border-2 ${config.color} mb-6`}>
+                    <div className="bg-gray-50 border-b border-gray-200 px-6 py-3 flex items-center gap-3">
+                      <DomainIcon className="w-5 h-5" />
+                      <h2 className="font-black uppercase tracking-wider">{config.label}</h2>
+                      <span className="ml-auto text-xs font-mono text-gray-500">
+                        {domainRecords.toLocaleString()} records across {tables.length} tables
+                      </span>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead className="bg-gray-50 border-b border-gray-200">
+                          <tr>
+                            <th className="px-4 py-2 text-left font-bold uppercase tracking-wider text-xs">Status</th>
+                            <th className="px-4 py-2 text-left font-bold uppercase tracking-wider text-xs">Table</th>
+                            <th className="px-4 py-2 text-right font-bold uppercase tracking-wider text-xs">Records</th>
+                            <th className="px-4 py-2 text-left font-bold uppercase tracking-wider text-xs">Last Updated</th>
+                            <th className="px-4 py-2 text-center font-bold uppercase tracking-wider text-xs w-16">Link</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                          {tables
+                            .sort((a, b) => b.count - a.count)
+                            .map((table) => {
+                              const health = HEALTH_COLORS[table.healthScore];
+                              const HealthIcon = health.icon;
+                              const link = TABLE_LINKS[table.name];
+
+                              return (
+                                <tr key={table.name} className="hover:bg-gray-50">
+                                  <td className="px-4 py-2">
+                                    <div className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold ${health.bg} ${health.text} border ${health.border}`}>
+                                      <HealthIcon className="w-3 h-3" />
+                                      {health.label}
+                                    </div>
+                                  </td>
+                                  <td className="px-4 py-2 font-mono font-medium text-xs">
+                                    {table.name}
+                                  </td>
+                                  <td className="px-4 py-2 text-right font-mono font-bold">
+                                    {table.count === 0 ? (
+                                      <span className="text-red-500">0</span>
+                                    ) : (
+                                      table.count.toLocaleString()
+                                    )}
+                                  </td>
+                                  <td className="px-4 py-2">
+                                    {table.lastUpdated ? (
+                                      <div className="flex items-center gap-1 text-gray-600">
+                                        <Clock className="w-3 h-3" />
+                                        <span className="font-mono text-xs">{timeAgo(table.lastUpdated)}</span>
+                                      </div>
+                                    ) : (
+                                      <span className="text-gray-400 text-xs">—</span>
+                                    )}
+                                  </td>
+                                  <td className="px-4 py-2 text-center">
+                                    {link && (
+                                      <Link
+                                        href={link}
+                                        className="inline-flex items-center justify-center w-7 h-7 border border-black hover:bg-black hover:text-white transition-colors"
+                                      >
+                                        <ExternalLink className="w-3 h-3" />
+                                      </Link>
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                );
+              })}
 
               {/* Scraper Status */}
               {data.lastScrapeJob && (
@@ -246,77 +549,25 @@ export default function DataHealthPage() {
                 </div>
               )}
 
-              {/* Table Grid */}
-              <div className="bg-white border-2 border-black overflow-hidden">
+              {/* Quick Links */}
+              <div className="bg-white border-2 border-black mb-8">
                 <div className="bg-black text-white px-6 py-3 flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5" />
-                  <h2 className="font-bold uppercase tracking-wider">Table Health Overview</h2>
+                  <ArrowRight className="w-5 h-5" />
+                  <h2 className="font-bold uppercase tracking-wider">Quick Links</h2>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-100 border-b-2 border-black">
-                      <tr>
-                        <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Status</th>
-                        <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Table</th>
-                        <th className="px-4 py-3 text-right font-bold uppercase tracking-wider">Records</th>
-                        <th className="px-4 py-3 text-left font-bold uppercase tracking-wider">Last Updated</th>
-                        <th className="px-4 py-3 text-center font-bold uppercase tracking-wider w-20">Link</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {data.tables
-                        .sort((a, b) => {
-                          const order = { red: 0, yellow: 1, green: 2 };
-                          return order[a.healthScore] - order[b.healthScore];
-                        })
-                        .map((table, idx) => {
-                          const health = HEALTH_COLORS[table.healthScore];
-                          const HealthIcon = health.icon;
-                          const link = TABLE_LINKS[table.name];
-
-                          return (
-                            <tr key={table.name} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`}>
-                              <td className="px-4 py-3">
-                                <div className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-bold ${health.bg} ${health.text} border ${health.border}`}>
-                                  <HealthIcon className="w-3 h-3" />
-                                  {health.label}
-                                </div>
-                              </td>
-                              <td className="px-4 py-3 font-mono font-medium">
-                                {table.name}
-                              </td>
-                              <td className="px-4 py-3 text-right font-mono font-bold">
-                                {table.count === 0 ? (
-                                  <span className="text-red-500">0</span>
-                                ) : (
-                                  table.count.toLocaleString()
-                                )}
-                              </td>
-                              <td className="px-4 py-3">
-                                {table.lastUpdated ? (
-                                  <div className="flex items-center gap-1 text-gray-600">
-                                    <Clock className="w-3 h-3" />
-                                    <span className="font-mono text-xs">{timeAgo(table.lastUpdated)}</span>
-                                  </div>
-                                ) : (
-                                  <span className="text-gray-400 text-xs">—</span>
-                                )}
-                              </td>
-                              <td className="px-4 py-3 text-center">
-                                {link && (
-                                  <Link
-                                    href={link}
-                                    className="inline-flex items-center justify-center w-8 h-8 border border-black hover:bg-black hover:text-white transition-colors"
-                                  >
-                                    <ExternalLink className="w-4 h-4" />
-                                  </Link>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                  </table>
+                <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <Link href="/justice-funding" className="flex items-center gap-2 px-4 py-3 border-2 border-black font-bold text-sm hover:bg-black hover:text-white transition-colors">
+                    <DollarSign className="w-4 h-4" /> Funding Explorer
+                  </Link>
+                  <Link href="/intelligence/interventions" className="flex items-center gap-2 px-4 py-3 border-2 border-black font-bold text-sm hover:bg-black hover:text-white transition-colors">
+                    <Shield className="w-4 h-4" /> ALMA Browser
+                  </Link>
+                  <Link href="/transparency" className="flex items-center gap-2 px-4 py-3 border-2 border-black font-bold text-sm hover:bg-black hover:text-white transition-colors">
+                    <BarChart3 className="w-4 h-4" /> Money Trail
+                  </Link>
+                  <Link href="/#where-money-goes" className="flex items-center gap-2 px-4 py-3 border-2 border-black font-bold text-sm hover:bg-black hover:text-white transition-colors">
+                    <Globe className="w-4 h-4" /> Homepage Stats
+                  </Link>
                 </div>
               </div>
 

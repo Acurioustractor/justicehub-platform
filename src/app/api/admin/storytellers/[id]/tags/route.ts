@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkAdmin } from '@/lib/supabase/admin';
+import { checkAdmin } from '@/lib/supabase/admin-lite';
 import {
   empathyLedgerClient,
   empathyLedgerServiceClient,
   isEmpathyLedgerWriteConfigured,
-} from '@/lib/supabase/empathy-ledger';
+} from '@/lib/supabase/empathy-ledger-lite';
 
 /**
  * PATCH /api/admin/storytellers/[id]/tags

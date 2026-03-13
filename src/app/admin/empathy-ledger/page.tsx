@@ -1,4 +1,4 @@
-import { requireAdmin } from '@/lib/supabase/admin';
+import { requireAdmin } from '@/lib/supabase/admin-lite';
 import Link from 'next/link';
 import { ArrowLeft, Database, Users, BookOpen, CheckCircle2, Clock, Sparkles } from 'lucide-react';
 

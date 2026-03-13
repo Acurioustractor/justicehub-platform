@@ -1,4 +1,4 @@
-import { createServiceClient } from '@/lib/supabase/service';
+import { createServiceClient } from '@/lib/supabase/service-lite';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
@@ -8,16 +8,23 @@ export async function GET() {
   const supabase = createServiceClient();
 
   try {
-    // Get total interventions (ALMA programs)
+    // Get total interventions excluding ai_generated filler
     const { count: totalInterventions } = await supabase
       .from('alma_interventions')
-      .select('*', { count: 'exact', head: true });
+      .select('*', { count: 'exact', head: true })
+      .neq('verification_status', 'ai_generated');
 
-    // Get interventions with evidence level data (indicates documented evaluation/outcomes)
-    const { count: withOutcomes } = await supabase
+    // Get verified programs
+    const { count: verifiedCount } = await supabase
       .from('alma_interventions')
       .select('*', { count: 'exact', head: true })
-      .not('evidence_level', 'is', null);
+      .eq('verification_status', 'verified');
+
+    // Get programs under review
+    const { count: underReviewCount } = await supabase
+      .from('alma_interventions')
+      .select('*', { count: 'exact', head: true })
+      .eq('verification_status', 'needs_review');
 
     // Get total services
     const { count: totalServices } = await supabase
@@ -54,23 +61,15 @@ export async function GET() {
       stateData?.map((s) => s.location_state).filter(Boolean) || []
     );
 
-    // ALMA deep stats
+    // ALMA stats (honest — no outcomes, no fake scores)
     const [
-      { count: highImpactCount },
       { count: orgsLinkedCount },
-      { count: totalOutcomes },
-      { count: totalOutcomeLinks },
       { count: totalEvidence },
       { count: totalEvidenceLinks },
-      { count: indigenousLedCount },
     ] = await Promise.all([
-      supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).gte('portfolio_score', 0.7),
-      supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).not('operating_organization_id', 'is', null),
-      supabase.from('alma_outcomes').select('*', { count: 'exact', head: true }),
-      supabase.from('alma_intervention_outcomes').select('*', { count: 'exact', head: true }),
+      supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).not('operating_organization_id', 'is', null).neq('verification_status', 'ai_generated'),
       supabase.from('alma_evidence').select('*', { count: 'exact', head: true }),
       supabase.from('alma_intervention_evidence').select('*', { count: 'exact', head: true }),
-      supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).eq('evidence_level', 'Indigenous-led (culturally grounded, community authority)'),
     ]);
 
     // Organization enrichment stats
@@ -105,35 +104,20 @@ export async function GET() {
       supabase.from('rogs_justice_spending').select('aust').eq('rogs_section', 'youth_justice').eq('rogs_table', '17A.7').eq('financial_year', '2024-25').eq('unit', 'ratio').eq('service_type', 'Detention-based supervision').limit(1).single(),
     ]);
 
-    // Calculate outcomes rate percentage
-    const outcomesRate = totalInterventions
-      ? Math.round(((withOutcomes || 0) / totalInterventions) * 100)
-      : 0;
-
-    // Estimated cost savings (based on $1.04M savings per youth diverted)
-    // Using conservative estimate of 50 youth diverted per active service
-    const estimatedDiverted = (totalServices || 0) * 50;
-    const costSavingsMillions = Math.round(estimatedDiverted * 1.04);
-
     return NextResponse.json({
       success: true,
       is_fallback: false,
       stats: {
         programs_documented: totalInterventions || 0,
-        programs_with_outcomes: withOutcomes || 0,
-        outcomes_rate: outcomesRate,
+        programs_verified: verifiedCount || 0,
+        programs_under_review: underReviewCount || 0,
         total_services: totalServices || 0,
         youth_services: youthServices || 0,
         total_people: totalPeople || 0,
         total_organizations: totalOrganizations || 0,
         states_covered: statesWithServices.size,
-        estimated_cost_savings_millions: costSavingsMillions,
-        // ALMA deep stats — single source of truth
-        high_impact_programs: highImpactCount || 0,
+        // ALMA stats — honest numbers
         orgs_linked: orgsLinkedCount || 0,
-        indigenous_led_programs: indigenousLedCount || 0,
-        total_outcomes: totalOutcomes || 0,
-        total_outcome_links: totalOutcomeLinks || 0,
         total_evidence: totalEvidence || 0,
         total_evidence_links: totalEvidenceLinks || 0,
         // Organization enrichment
@@ -165,24 +149,18 @@ export async function GET() {
         success: false,
         is_fallback: true,
         error: 'Failed to fetch statistics',
-        // Return fallback stats - last known good values
         stats: {
-          programs_documented: 1112,
-          programs_with_outcomes: 1094,
-          outcomes_rate: 98,
+          programs_documented: 853,
+          programs_verified: 0,
+          programs_under_review: 0,
           total_services: 150,
           youth_services: 89,
           total_people: 45,
           total_organizations: 67,
           states_covered: 8,
-          estimated_cost_savings_millions: 45,
-          high_impact_programs: 480,
           orgs_linked: 527,
-          indigenous_led_programs: 0,
-          total_outcomes: 1150,
-          total_outcome_links: 1699,
-          total_evidence: 334,
-          total_evidence_links: 463,
+          total_evidence: 482,
+          total_evidence_links: 838,
           rogs_youth_detention_millions: 1141,
           rogs_youth_community_millions: 520,
           rogs_youth_total_millions: 1723,

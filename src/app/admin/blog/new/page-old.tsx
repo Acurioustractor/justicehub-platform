@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { Save, Eye, ArrowLeft, Image as ImageIcon, Link2, Tag, Video, FileText, Upload, X } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 
 export default function NewBlogPostPage() {
   const router = useRouter();

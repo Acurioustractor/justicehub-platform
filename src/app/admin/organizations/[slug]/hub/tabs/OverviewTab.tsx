@@ -73,7 +73,7 @@ interface AgentResult {
   data?: Record<string, unknown>;
 }
 
-type TabKey = 'overview' | 'grants' | 'compliance' | 'people' | 'programs' | 'referrals' | 'stories' | 'analysis' | 'media' | 'communications' | 'messages' | 'inbox';
+type TabKey = 'overview' | 'grants' | 'compliance' | 'people' | 'programs' | 'referrals' | 'stories' | 'analysis' | 'media' | 'communications' | 'messages' | 'inbox' | 'support_network';
 
 // --- Helpers ---
 

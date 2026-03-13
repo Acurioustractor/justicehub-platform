@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { Save, Eye, ArrowLeft, Upload, X, Clock, FileText, Maximize2, Minimize2, Users, Plus, Trash2 } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 import dynamic from 'next/dynamic';
 import RoleSelector, { RoleBadge } from '@/components/admin/RoleSelector';
 

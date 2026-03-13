@@ -5,7 +5,7 @@ const buildVideos = [
   {
     id: "timelapse-full",
     title: "Complete Build Timelapse",
-    description: "Watch three shipping containers transform into chambers of possibility - every weld, every wire, every moment of revolution being built by hand.",
+    description: "Watch the CONTAINED experience take shape — every weld, every wire, every room built by hand to move people from shock to action.",
     mediaType: "video" as const,
     videoSource: "supabase" as const,
     src: "https://tednluwflfhxyucgwigh.supabase.co/storage/v1/object/public/videos/build/full-timelapse.mp4",
@@ -226,7 +226,7 @@ export function BuildProcessSection() {
               Join the Build
             </a>
             <a
-              href="/contained/vip-dinner"
+              href="/contained/register"
               className="px-6 py-3 rounded-lg bg-color-warning-orange/20 text-color-warning-orange border border-color-warning-orange/30 hover:bg-color-warning-orange/30 transition-colors"
             >
               Book an Experience

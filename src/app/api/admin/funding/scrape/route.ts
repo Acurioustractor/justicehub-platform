@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient as createAuthClient } from '@/lib/supabase/server';
+import { createClient as createAuthClient } from '@/lib/supabase/server-lite';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { chooseScrapeStrategy } from '@/lib/scraping/strategy-engine';
 

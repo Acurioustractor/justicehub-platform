@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 import ResearchForm from '@/components/admin/coe/ResearchForm';
 
 export default function EditResearchPage() {

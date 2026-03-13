@@ -14,11 +14,25 @@ import {
   persistFundingNotifications,
   type NotificationPayload,
 } from '@/lib/funding/notification-engine';
+import type { Database, Json } from '@/types/database.types';
 
 type AnySupabase = ReturnType<typeof createServiceClient> & {
   from: (table: string) => any;
   rpc: (fn: string, args?: Record<string, unknown>) => Promise<any>;
 };
+
+type FundingAgentWorkflowInsert =
+  Database['public']['Tables']['funding_agent_workflows']['Insert'];
+type CommunityOutcomeDefinitionInsert =
+  Database['public']['Tables']['community_outcome_definitions']['Insert'];
+type PublicSpendingTransactionInsert =
+  Database['public']['Tables']['public_spending_transactions']['Insert'];
+type FundingOutcomeCommitmentInsert =
+  Database['public']['Tables']['funding_outcome_commitments']['Insert'];
+type OrganizationCapabilityProfileInsert =
+  Database['public']['Tables']['organization_capability_profiles']['Insert'];
+type FundingMatchRecommendationInsert =
+  Database['public']['Tables']['funding_match_recommendations']['Insert'];
 
 export type FundingOsIngestOptions = {
   opportunityIds?: string[];
@@ -407,7 +421,9 @@ function sanitizeCapabilitySignals(signals: CapabilitySignalInput[] | undefined)
     });
 }
 
-function sanitizeCapabilityProfileInput(input: CapabilityProfileInput) {
+function sanitizeCapabilityProfileInput(
+  input: CapabilityProfileInput
+): OrganizationCapabilityProfileInsert {
   const organizationId = String(input.organizationId || '').trim();
   if (!organizationId) {
     throw new Error('Validation: organizationId is required');
@@ -438,8 +454,8 @@ function sanitizeCapabilityProfileInput(input: CapabilityProfileInput) {
     last_capability_review_at: input.lastCapabilityReviewAt || null,
     next_capability_review_at: input.nextCapabilityReviewAt || null,
     capability_notes: input.capabilityNotes || null,
-    supporting_evidence: input.supportingEvidence || {},
-    metadata: input.metadata || {},
+    supporting_evidence: asJson(input.supportingEvidence || {}),
+    metadata: asJson(input.metadata || {}),
   };
 }
 
@@ -702,6 +718,10 @@ function normalizePersistedActorUserId(userId: string | null | undefined) {
   return userId && userId === getDevAdminBypassUser().id ? null : userId || null;
 }
 
+function asJson(value: unknown): Json {
+  return (value ?? null) as Json;
+}
+
 async function createWorkflow(
   serviceClient: AnySupabase,
   workflowType: string,
@@ -710,18 +730,17 @@ async function createWorkflow(
   inputPayload: Record<string, unknown>
 ) {
   const normalizedUserId = normalizePersistedActorUserId(userId);
+  const workflowPayload: FundingAgentWorkflowInsert = {
+    workflow_type: workflowType,
+    scope_kind: scopeKind,
+    workflow_status: 'running',
+    triggered_by_user_id: normalizedUserId,
+    input_payload: asJson(inputPayload),
+  };
 
   const { data, error } = await serviceClient
     .from('funding_agent_workflows')
-    .insert([
-      {
-        workflow_type: workflowType,
-        scope_kind: scopeKind,
-        workflow_status: 'running',
-        triggered_by_user_id: normalizedUserId,
-        input_payload: inputPayload,
-      },
-    ])
+    .insert([workflowPayload])
     .select('*')
     .single();
 
@@ -750,7 +769,7 @@ async function completeWorkflow(
       records_scanned: metrics.recordsScanned,
       records_changed: metrics.recordsChanged,
       error_count: metrics.errorCount || 0,
-      output_payload: outputPayload,
+      output_payload: asJson(outputPayload),
     })
     .eq('id', workflowId);
 }
@@ -4832,7 +4851,7 @@ export async function upsertFundingOutcomeDefinition(
     }
   );
 
-  const payload = {
+  const payload: CommunityOutcomeDefinitionInsert = {
     name,
     outcome_domain: outcomeDomain,
     unit: input.unit || null,
@@ -4845,8 +4864,9 @@ export async function upsertFundingOutcomeDefinition(
         ? input.firstNationsDataSensitive
         : false,
     is_active: typeof input.isActive === 'boolean' ? input.isActive : true,
-    metadata:
-      input.metadata && typeof input.metadata === 'object' ? input.metadata : {},
+    metadata: asJson(
+      input.metadata && typeof input.metadata === 'object' ? input.metadata : {}
+    ),
     updated_at: new Date().toISOString(),
   };
 
@@ -5263,7 +5283,7 @@ export async function upsertFundingSpendingTransaction(
     }
   );
 
-  const payload = {
+  const payload: PublicSpendingTransactionInsert = {
     funding_program_id: fundingProgramId,
     opportunity_id: input.opportunityId ? String(input.opportunityId).trim() : null,
     organization_id: input.organizationId ? String(input.organizationId).trim() : null,
@@ -5280,8 +5300,9 @@ export async function upsertFundingSpendingTransaction(
     entered_by_user_id: adminUserId,
     community_visible:
       typeof input.communityVisible === 'boolean' ? input.communityVisible : true,
-    metadata:
-      input.metadata && typeof input.metadata === 'object' ? input.metadata : {},
+    metadata: asJson(
+      input.metadata && typeof input.metadata === 'object' ? input.metadata : {}
+    ),
     updated_at: new Date().toISOString(),
   };
 
@@ -5728,7 +5749,7 @@ export async function upsertFundingOutcomeCommitment(
     throw new Error('Validation: Organization not found for award');
   }
 
-  const payload = {
+  const payload: FundingOutcomeCommitmentInsert = {
     funding_award_id: fundingAwardId,
     organization_id: organizationId,
     outcome_definition_id: outcomeDefinitionId,
@@ -5755,8 +5776,9 @@ export async function upsertFundingOutcomeCommitment(
       0,
       Math.min(100, Number(input.communityPriorityWeight ?? 50) || 50)
     ),
-    metadata:
-      input.metadata && typeof input.metadata === 'object' ? input.metadata : {},
+    metadata: asJson(
+      input.metadata && typeof input.metadata === 'object' ? input.metadata : {}
+    ),
     updated_at: new Date().toISOString(),
   };
 
@@ -11915,7 +11937,7 @@ export async function upsertFundingApplicationDraftWorkspace(
   const { data: currentRow, error: currentError } = await serviceClient
     .from('funding_application_draft_workspace')
     .select(
-      'id, narrative_draft, support_material, community_review_notes, budget_notes, draft_status, last_review_requested_at, last_review_completed_at'
+      'id, application_id, narrative_draft, support_material, community_review_notes, budget_notes, draft_status, last_review_requested_at, last_review_completed_at'
     )
     .eq('organization_id', organizationId)
     .eq('opportunity_id', opportunityId)
@@ -13180,7 +13202,7 @@ export async function generateFundingMatchRecommendations(
     throw new Error(profileError.message || 'Failed to load capability profiles');
   }
 
-  const candidateRows: Array<Record<string, unknown>> = [];
+  const candidateRows: FundingMatchRecommendationInsert[] = [];
   let evaluated = 0;
 
   for (const opportunity of (opportunities || []) as OpportunityRecord[]) {
@@ -13230,7 +13252,8 @@ export async function generateFundingMatchRecommendations(
         community_alignment_score: communityAlignmentScore,
         outcome_alignment_score: outcomeAlignmentScore,
         geographic_fit_score: geographicFitScore,
-        explainability: buildExplainability(
+        explainability: asJson(
+          buildExplainability(
           opportunity,
           profile,
           matchScore,
@@ -13238,6 +13261,7 @@ export async function generateFundingMatchRecommendations(
           communityAlignmentScore,
           outcomeAlignmentScore,
           geographicFitScore
+          )
         ),
         last_evaluated_at: new Date().toISOString(),
       });

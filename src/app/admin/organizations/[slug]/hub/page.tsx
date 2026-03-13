@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server-lite';
 import { redirect } from 'next/navigation';
 import { OrgSupportHubClient } from './OrgSupportHubClient';
 

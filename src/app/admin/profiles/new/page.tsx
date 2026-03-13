@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Save, Loader2, UserPlus } from 'lucide-react';
 import { Navigation } from '@/components/ui/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 
 export default function NewProfilePage() {
   const router = useRouter();

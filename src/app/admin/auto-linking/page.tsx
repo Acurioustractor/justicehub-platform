@@ -1,6 +1,14 @@
-import { requireAdmin } from '@/lib/supabase/admin';
+import { requireAdmin } from '@/lib/supabase/admin-lite';
 import Link from 'next/link';
 import { ArrowLeft, Sparkles, Building2, BookOpen, ExternalLink } from 'lucide-react';
+
+function getSingleRelation<T>(value: T | T[] | null | undefined): T | null {
+  if (Array.isArray(value)) {
+    return value[0] ?? null;
+  }
+
+  return value ?? null;
+}
 
 export default async function AutoLinkingDashboard() {
   const { supabase } = await requireAdmin('/admin/auto-linking');
@@ -42,13 +50,11 @@ export default async function AutoLinkingDashboard() {
     .order('created_at', { ascending: false });
 
   // Filter for auto-linked items
-  const autoLinkedOrgs = orgLinks?.filter(link =>
-    link.public_profiles?.synced_from_empathy_ledger
-  ) || [];
+  const autoLinkedOrgs =
+    orgLinks?.filter((link) => getSingleRelation(link.public_profiles)?.synced_from_empathy_ledger) || [];
 
-  const autoLinkedPosts = postLinks?.filter(link =>
-    link.blog_posts?.synced_from_empathy_ledger
-  ) || [];
+  const autoLinkedPosts =
+    postLinks?.filter((link) => getSingleRelation(link.blog_posts)?.synced_from_empathy_ledger) || [];
 
   const totalAutoLinks = autoLinkedOrgs.length + autoLinkedPosts.length;
 
@@ -107,20 +113,24 @@ export default async function AutoLinkingDashboard() {
 
           {autoLinkedOrgs.length > 0 ? (
             <div className="space-y-3">
-              {autoLinkedOrgs.map((link: any) => (
+              {autoLinkedOrgs.map((link: any) => {
+                const publicProfile = getSingleRelation(link.public_profiles);
+                const organization = getSingleRelation(link.organizations);
+
+                return (
                 <div key={link.id} className="border-2 border-black p-4 bg-cyan-50 hover:bg-cyan-100 transition-colors">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-4 flex-1">
-                      {link.public_profiles?.photo_url && (
+                      {publicProfile?.photo_url && (
                         <img
-                          src={link.public_profiles.photo_url}
-                          alt={link.public_profiles.full_name}
+                          src={publicProfile.photo_url}
+                          alt={publicProfile.full_name}
                           className="w-16 h-16 object-cover border-2 border-black"
                         />
                       )}
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <div className="font-bold text-lg">{link.public_profiles?.full_name}</div>
+                          <div className="font-bold text-lg">{publicProfile?.full_name}</div>
                           <div className="flex items-center gap-1 px-2 py-0.5 bg-indigo-50 border border-indigo-600 text-indigo-700 text-xs font-bold">
                             <Sparkles className="h-3 w-3" />
                             AUTO-LINKED
@@ -133,7 +143,7 @@ export default async function AutoLinkingDashboard() {
                         </div>
                         <div className="text-earth-700 mb-2">
                           <span className="font-medium">{link.role}</span> at{' '}
-                          <span className="font-bold">{link.organizations?.name}</span>
+                          <span className="font-bold">{organization?.name}</span>
                         </div>
                         <div className="text-sm text-earth-600">
                           Linked on {new Date(link.created_at).toLocaleDateString()}
@@ -142,13 +152,13 @@ export default async function AutoLinkingDashboard() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Link
-                        href={`/admin/profiles/${link.public_profiles?.id}/connections`}
+                        href={`/admin/profiles/${publicProfile?.id}/connections`}
                         className="px-4 py-2 bg-white border-2 border-black font-bold hover:bg-earth-50 transition-colors"
                       >
                         View Profile
                       </Link>
                       <Link
-                        href={`/admin/organizations/${link.organizations?.slug}`}
+                        href={`/admin/organizations/${organization?.slug}`}
                         className="px-4 py-2 bg-cyan-600 text-white border-2 border-black font-bold hover:bg-cyan-700 transition-colors"
                       >
                         View Org
@@ -156,7 +166,7 @@ export default async function AutoLinkingDashboard() {
                     </div>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           ) : (
             <div className="border-2 border-black p-8 bg-gray-50 text-center">
@@ -174,20 +184,24 @@ export default async function AutoLinkingDashboard() {
 
           {autoLinkedPosts.length > 0 ? (
             <div className="space-y-3">
-              {autoLinkedPosts.map((link: any) => (
+              {autoLinkedPosts.map((link: any) => {
+                const publicProfile = getSingleRelation(link.public_profiles);
+                const blogPost = getSingleRelation(link.blog_posts);
+
+                return (
                 <div key={link.id} className="border-2 border-black p-4 bg-violet-50 hover:bg-violet-100 transition-colors">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-4 flex-1">
-                      {link.public_profiles?.photo_url && (
+                      {publicProfile?.photo_url && (
                         <img
-                          src={link.public_profiles.photo_url}
-                          alt={link.public_profiles.full_name}
+                          src={publicProfile.photo_url}
+                          alt={publicProfile.full_name}
                           className="w-16 h-16 object-cover border-2 border-black"
                         />
                       )}
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <div className="font-bold text-lg">{link.public_profiles?.full_name}</div>
+                          <div className="font-bold text-lg">{publicProfile?.full_name}</div>
                           <div className="flex items-center gap-1 px-2 py-0.5 bg-indigo-50 border border-indigo-600 text-indigo-700 text-xs font-bold">
                             <Sparkles className="h-3 w-3" />
                             AUTO-LINKED
@@ -200,7 +214,7 @@ export default async function AutoLinkingDashboard() {
                         </div>
                         <div className="text-earth-700 mb-2">
                           <span className="font-medium">{link.role}</span> in{' '}
-                          <span className="font-bold">{link.blog_posts?.title}</span>
+                          <span className="font-bold">{blogPost?.title}</span>
                         </div>
                         <div className="text-sm text-earth-600">
                           Linked on {new Date(link.created_at).toLocaleDateString()}
@@ -209,14 +223,14 @@ export default async function AutoLinkingDashboard() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Link
-                        href={`/admin/profiles/${link.public_profiles?.id}/connections`}
+                        href={`/admin/profiles/${publicProfile?.id}/connections`}
                         className="px-4 py-2 bg-white border-2 border-black font-bold hover:bg-earth-50 transition-colors"
                       >
                         View Profile
                       </Link>
-                      {link.blog_posts?.slug && (
+                      {blogPost?.slug && (
                         <Link
-                          href={`/stories/${link.blog_posts.slug}`}
+                          href={`/stories/${blogPost.slug}`}
                           className="px-4 py-2 bg-violet-600 text-white border-2 border-black font-bold hover:bg-violet-700 transition-colors flex items-center gap-2"
                         >
                           View Story
@@ -226,7 +240,7 @@ export default async function AutoLinkingDashboard() {
                     </div>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           ) : (
             <div className="border-2 border-black p-8 bg-gray-50 text-center">

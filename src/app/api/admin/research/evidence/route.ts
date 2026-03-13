@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase
       .from('alma_evidence')
-      .insert([body])
+      .upsert([body], { onConflict: 'source_url', ignoreDuplicates: false })
       .select()
       .single();
 

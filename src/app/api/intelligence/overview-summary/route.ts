@@ -224,7 +224,7 @@ export async function GET() {
       evidenceResult,
     ] = await Promise.all([
       supabase.from('services').select('*', { count: 'exact', head: true }),
-      supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
+      supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated'),
       supabase.from('alma_evidence').select('*', { count: 'exact', head: true }),
       supabase.from('organizations').select('*', { count: 'exact', head: true }),
       supabase
@@ -235,7 +235,7 @@ export async function GET() {
         .from('services')
         .select('location_state')
         .not('location_state', 'is', null),
-      supabase.from('alma_interventions').select('geography').range(0, 4999),
+      supabase.from('alma_interventions').select('geography').neq('verification_status', 'ai_generated').range(0, 4999),
       supabase
         .from('alma_funding_opportunities')
         .select('jurisdictions')
@@ -246,6 +246,7 @@ export async function GET() {
         .select(
           'id, name, type, cost_per_young_person, evidence_level, evidence_strength_signal, geography, operating_organization, portfolio_score, service_area_km, years_operating, target_cohort'
         )
+        .neq('verification_status', 'ai_generated')
         .order('updated_at', { ascending: false })
         .limit(120),
       supabase.from('alma_evidence').select('metadata').range(0, 1999),

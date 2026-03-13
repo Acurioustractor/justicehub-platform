@@ -1,4 +1,4 @@
-import { requireAdmin } from '@/lib/supabase/admin';
+import { requireAdmin } from '@/lib/supabase/admin-lite';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
 import {

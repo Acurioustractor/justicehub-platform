@@ -112,6 +112,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 3. Trigger welcome sequence if GHL contact was created
+    if (ghlContactId && ghl.isConfigured()) {
+      const welcomeWorkflowId = process.env.GHL_WELCOME_WORKFLOW_ID;
+      if (welcomeWorkflowId) {
+        ghl.addToWorkflow(ghlContactId, welcomeWorkflowId).catch(err =>
+          console.error('Failed to trigger welcome sequence:', err)
+        );
+      }
+    }
+
     return NextResponse.json({
       success: true,
       subscription_id: subscription.id,

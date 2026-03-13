@@ -21,7 +21,7 @@ export const liveActivitySeed: ActivityItem[] = [
   {
     id: "activity-003",
     actor: "David L.",
-    action: "completed the journey—'Every Queenslander needs this'",
+    action: "completed the journey. 'Every Queenslander needs this'",
     timestampMinutesAgo: 14,
   },
   {

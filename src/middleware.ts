@@ -36,7 +36,7 @@ const securityHeaders = {
       'blob:',
       'data:'
     ].join(' '),
-    "frame-src 'self' https://*.auth0.com",
+    "frame-src 'self' https://*.auth0.com https://share.descript.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -126,7 +126,22 @@ export async function middleware(request: NextRequest) {
   }
 
   // Public routes that don't need Supabase auth
-  const publicRoutes = ['/wiki', '/preplanning', '/', '/stories', '/community-programs', '/organizations', '/intelligence', '/gallery'];
+  const publicRoutes = [
+    '/',
+    '/about',
+    '/community-programs',
+    '/contained',
+    '/events',
+    '/for-funders',
+    '/gallery',
+    '/intelligence',
+    '/justice-funding',
+    '/organizations',
+    '/preplanning',
+    '/search',
+    '/stories',
+    '/wiki',
+  ];
   const isPublicRoute = publicRoutes.some(route => path === route || path.startsWith(`${route}/`));
 
   // Only create Supabase client if we have environment variables and not on a fully public route

@@ -1,4 +1,4 @@
-import { requireAdmin } from '@/lib/supabase/admin';
+import { requireAdmin } from '@/lib/supabase/admin-lite';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { Edit, Eye, EyeOff, Trash2, UserPlus, RefreshCw } from 'lucide-react';

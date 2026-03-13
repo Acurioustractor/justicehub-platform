@@ -124,6 +124,16 @@ export async function POST(request: NextRequest) {
         );
     }
 
+    // 4. Trigger pre-event drip if GHL contact was created
+    if (ghlContactId && ghl.isConfigured()) {
+      const preEventWorkflowId = process.env.GHL_PRE_EVENT_WORKFLOW_ID;
+      if (preEventWorkflowId) {
+        ghl.addToWorkflow(ghlContactId, preEventWorkflowId).catch(err =>
+          console.error('Failed to trigger pre-event drip:', err)
+        );
+      }
+    }
+
     return NextResponse.json({
       success: true,
       registration_id: registration.id,

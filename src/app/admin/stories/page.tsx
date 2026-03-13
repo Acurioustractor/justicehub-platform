@@ -1,45 +1,10 @@
-import { requireAdmin } from '@/lib/supabase/admin';
-import { createServiceClient } from '@/lib/supabase/service';
+import { requireAdmin } from '@/lib/supabase/admin-lite';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { StoriesTable } from './stories-table';
+import { UnifiedStoriesHub } from './unified-stories-hub';
 
 export default async function AdminStoriesPage() {
   await requireAdmin('/admin/stories');
-
-  // Use service client to bypass RLS for admin queries
-  const serviceClient = createServiceClient();
-
-  // Fetch articles (the primary content table) with author profiles
-  const { data: storiesData, error: storiesError } = await serviceClient
-    .from('articles')
-    .select(`
-      *,
-      public_profiles!articles_author_id_fkey (
-        id,
-        full_name,
-        slug
-      )
-    `)
-    .order('created_at', { ascending: false });
-
-  if (storiesError) {
-    console.error('Error fetching stories:', storiesError);
-  }
-
-  // Map to the Story interface expected by StoriesTable with safe fallbacks
-  const stories = (storiesData || []).map((item: any) => ({
-    id: item.id,
-    title: item.title || 'Untitled',
-    status: item.status || 'draft',
-    created_at: item.created_at || new Date().toISOString(),
-    content_type: 'article' as const,
-    excerpt: item.excerpt || '',
-    public_profiles: item.public_profiles ? {
-      full_name: item.public_profiles.full_name,
-      slug: item.public_profiles.slug || ''
-    } : undefined
-  }));
 
   return (
     <div className="min-h-screen bg-gray-50 page-content">
@@ -52,9 +17,9 @@ export default async function AdminStoriesPage() {
               <Link href="/admin" className="text-sm text-gray-600 hover:text-black mb-2 inline-block">
                 ← Back to Dashboard
               </Link>
-              <h1 className="text-4xl font-black text-black mb-2">Stories</h1>
+              <h1 className="text-4xl font-black text-black mb-2">Story Hub</h1>
               <p className="text-lg text-gray-600">
-                Manage user stories and testimonials
+                All stories across every source — articles, interviews, EL synced, partner, community
               </p>
             </div>
             <div className="flex gap-4">
@@ -76,7 +41,7 @@ export default async function AdminStoriesPage() {
             </div>
           </div>
 
-          <StoriesTable initialStories={stories || []} />
+          <UnifiedStoriesHub />
         </div>
       </div>
     </div>

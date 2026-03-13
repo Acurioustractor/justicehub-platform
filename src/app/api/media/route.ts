@@ -1,5 +1,15 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server-lite';
 import { NextRequest, NextResponse } from 'next/server';
+
+function getSingleOrganization(
+  value: { name: string; slug: string } | { name: string; slug: string }[] | null | undefined
+) {
+  if (Array.isArray(value)) {
+    return value[0] ?? null;
+  }
+
+  return value ?? null;
+}
 
 /**
  * GET /api/media
@@ -57,7 +67,9 @@ export async function GET(request: NextRequest) {
 
     // Normalize and combine results
     const photos = (photosResult.data || []).map(p => {
-      const org = p.organizations as { name: string; slug: string } | null;
+      const org = getSingleOrganization(
+        p.organizations as { name: string; slug: string } | { name: string; slug: string }[] | null
+      );
       return {
         id: p.id,
         type: 'photo' as const,
@@ -119,7 +131,9 @@ export async function GET(request: NextRequest) {
         platform = 'vimeo';
       }
 
-      const org = v.organizations as { name: string; slug: string } | null;
+      const org = getSingleOrganization(
+        v.organizations as { name: string; slug: string } | { name: string; slug: string }[] | null
+      );
       return {
         id: v.id,
         type: 'video' as const,

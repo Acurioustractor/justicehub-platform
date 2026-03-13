@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkAdmin } from '@/lib/supabase/admin';
+import { checkAdmin } from '@/lib/supabase/admin-lite';
 
 const ABN_REGEX = /^\d{11}$/;
 

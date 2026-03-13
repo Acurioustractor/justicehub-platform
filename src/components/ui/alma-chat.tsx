@@ -311,7 +311,7 @@ export function ALMAChat() {
                           <span className="w-1.5 h-1.5 bg-green-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500">Searching {stats?.interventions || 1112} programs...</p>
+                      <p className="text-xs text-gray-500">Searching {stats?.interventions || 939} programs...</p>
                     </div>
                   </div>
                 </div>

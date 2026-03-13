@@ -33,7 +33,7 @@ const DEFAULT_STATS: LiveStats = {
   detentionBillions: '1.1',
   communityMillions: '520',
   totalPunitiveBillions: '26.4',
-  programs: '1,112',
+  programs: '939',
   orgs: '527',
   indigenousRatio: '23',
   costPerChild: '1.6M',
@@ -43,22 +43,26 @@ function buildTemplates(s: LiveStats) {
   return {
     general: {
       subject: 'You need to see this — CONTAINED',
-      body: `I just found out about CONTAINED — a shipping container touring Australia that lets you experience 30 minutes of what youth detention is actually like.
+      body: `I just found out about CONTAINED — one shipping container, three rooms, and 30 minutes that make youth detention impossible to ignore.
 
 Australia spends $${s.totalPunitiveBillions} billion/year on the punitive justice system. Youth detention alone: $${s.detentionBillions}B for just 734 kids. That's $${s.costPerChild}/child/year.
 
 Meanwhile, ${s.programs} proven community programs get a fraction. Indigenous youth are locked up at ${s.indigenousRatio}x the rate of non-Indigenous youth.
 
-The evidence is overwhelming. Decision-makers need to experience this.
+CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
+
+First public stop: Mount Druitt, April 25, 2026.
 
 ${SITE_URL}/contained`,
     },
     nominate: {
       subject: 'Nominate a decision-maker for CONTAINED',
-      body: `CONTAINED is touring Australia in 2026 — a shipping container where decision-makers experience 30 minutes of youth detention reality.
+      body: `CONTAINED is touring Australia in 2026 — one shipping container, three rooms, thirty minutes inside youth detention reality and the alternatives communities are already building.
 
 I'm nominating leaders who need to see this. You can too:
 ${SITE_URL}/contained#nominate
+
+First public stop: Mount Druitt, April 25, 2026.
 
 Every nomination builds public pressure for change.`,
     },
@@ -72,7 +76,11 @@ $${s.detentionBillions}B/year on youth detention for 734 children. $${s.costPerC
 Indigenous youth: ${s.indigenousRatio}x overrepresentation in detention.
 Community alternatives: $${s.communityMillions}M total — with ${s.programs} proven programs.
 
+CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
+
 I'm inviting you to experience 30 minutes inside this container. Your constituents have nominated you.
+
+First public stop: Mount Druitt, April 25, 2026.
 
 Learn more: ${SITE_URL}/contained
 Nominations: ${SITE_URL}/contained#nominate`,
@@ -81,7 +89,7 @@ Nominations: ${SITE_URL}/contained#nominate`,
       subject: 'Story: CONTAINED tour reveals youth detention reality',
       body: `Hi,
 
-CONTAINED is an immersive experience touring four Australian cities in 2026. One shipping container, three rooms, thirty minutes — the reality of youth detention, the therapeutic alternative (Diagrama, Spain), and local community solutions.
+CONTAINED is an immersive experience touring four Australian communities in 2026. One shipping container, three rooms, thirty minutes — the reality of youth detention, the therapeutic alternative (Diagrama, Spain), and local community solutions.
 
 Key stats (Productivity Commission ROGS 2024-25):
 - $${s.totalPunitiveBillions}B/year total punitive system (police + prisons + detention)
@@ -89,7 +97,10 @@ Key stats (Productivity Commission ROGS 2024-25):
 - ${s.programs} community programs on ALMA from ${s.orgs} organisations
 - Indigenous youth: ${s.indigenousRatio}x overrepresentation in detention
 
-Tour stops: Mount Druitt, Adelaide, Perth, Tennant Creek
+CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
+
+First public stop: Mount Druitt, April 25, 2026
+Tour route: Mount Druitt, Adelaide, Perth, Tennant Creek
 
 Press kit & details: ${SITE_URL}/contained
 Contact: hello@justicehub.org.au`,
@@ -115,7 +126,7 @@ function buildSocialPosts(s: LiveStats) {
 
 $${s.totalPunitiveBillions}B/year on the punitive system. ${s.programs} proven alternatives get a fraction.
 
-Australian Tour 2026. Nominate a leader: ${SITE_URL}/contained#nominate
+First public stop: Mount Druitt, April 25. Nominate a leader: ${SITE_URL}/contained#nominate
 
 #CONTAINED #YouthJustice`,
     facebook: `Just learned about CONTAINED — a shipping container touring Australia that lets you experience 30 minutes of what youth detention is actually like.
@@ -126,7 +137,9 @@ The stats are staggering (Productivity Commission data):
 - Indigenous youth locked up at ${s.indigenousRatio}x the rate
 - ${s.programs} proven community alternatives from ${s.orgs} organisations
 
-Decision-makers need to experience this. Nominate someone: ${SITE_URL}/contained#nominate`,
+CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
+
+First public stop: Mount Druitt, April 25. Nominate someone: ${SITE_URL}/contained#nominate`,
     linkedin: `Australia spends $${s.totalPunitiveBillions}B/year on its punitive justice system. $${s.detentionBillions}B on youth detention alone — for 734 children.
 
 Indigenous youth are incarcerated at ${s.indigenousRatio}x the rate of non-Indigenous youth.
@@ -135,14 +148,16 @@ Meanwhile, ${s.programs} proven community programs from ${s.orgs} organisations 
 
 CONTAINED is a national tour taking this evidence directly to decision-makers — 30 minutes inside a shipping container that makes you understand it in your bones.
 
-Four cities. 2026. Nominate a leader: ${SITE_URL}/contained
+CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
+
+First public stop: Mount Druitt, April 25, 2026. Nominate a leader: ${SITE_URL}/contained
 
 #YouthJustice #CONTAINED #SocialImpact #PolicyReform`,
   };
 }
 
 function buildSmsTemplate(s: LiveStats) {
-  return `Check this out — CONTAINED is a shipping container touring Australia showing what youth detention is really like. $${s.totalPunitiveBillions}B/yr on the punitive system, ${s.programs} proven alternatives get a fraction. Indigenous youth: ${s.indigenousRatio}x overrepresented. Nominate a leader: ${SITE_URL}/contained#nominate`;
+  return `Check this out — CONTAINED is one shipping container, three rooms, showing what youth detention is really like. First stop: Mount Druitt, April 25. $${s.totalPunitiveBillions}B/yr on the punitive system, ${s.programs} proven alternatives get a fraction. Nominate a leader: ${SITE_URL}/contained#nominate`;
 }
 
 function CopyButton({ text, label }: { text: string; label?: string }) {
@@ -247,7 +262,7 @@ export function ActContent() {
           detentionBillions: (detM / 1000).toFixed(1),
           communityMillions: String(s.rogs_youth_community_millions || 520),
           totalPunitiveBillions: String(s.rogs_total_punitive_billions || 26.4),
-          programs: (s.programs_documented || 1112).toLocaleString(),
+          programs: (s.programs_documented || 939).toLocaleString(),
           orgs: (s.orgs_linked || 527).toLocaleString(),
           indigenousRatio: String(Math.round(s.rogs_indigenous_detention_ratio || 23)),
           costPerChild: `${(detM / 0.734 / 1000).toFixed(1)}M`,
@@ -561,8 +576,7 @@ export function ActContent() {
                 { label: 'Nominate a Leader', url: `${SITE_URL}/contained#nominate`, desc: 'Nomination form' },
                 { label: 'Back the Tour', url: `${SITE_URL}/contained#back-this-tour`, desc: 'Add your name' },
                 { label: 'Donate', url: `${SITE_URL}/back-this`, desc: 'Fund the infrastructure' },
-                { label: 'All Nominations', url: `${SITE_URL}/contained/nominations`, desc: 'Public nominations wall' },
-                { label: 'Share Your Story', url: `${SITE_URL}/contained/share`, desc: 'Tour attendee stories' },
+                { label: 'Register', url: `${SITE_URL}/contained/register`, desc: 'Register for the experience' },
                 { label: 'Social Media Kit', url: `${SITE_URL}/contained/tour/social`, desc: 'Ready-to-post content' },
                 { label: 'For Funders', url: `${SITE_URL}/for-funders`, desc: 'Investment thesis' },
                 { label: 'Community Map', url: `${SITE_URL}/community-map`, desc: '527 organisations' },

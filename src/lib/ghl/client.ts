@@ -410,7 +410,7 @@ export function getGHLClient(): GHLClient {
 
 // Pipeline and tag constants
 export const GHL_TAGS = {
-  NEWSLETTER: 'Newsletter',
+  NEWSLETTER: 'JusticeHub Newsletter',
   STEWARD: 'Steward',
   RESEARCHER: 'Researcher',
   PRACTITIONER: 'Practitioner',

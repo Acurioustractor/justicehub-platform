@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { checkOrgAccess } from '@/lib/org-hub/auth';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+
+function getEmpathyLedgerClient() {
+  const url = process.env.EMPATHY_LEDGER_URL;
+  const key = process.env.EMPATHY_LEDGER_API_KEY;
+  if (!url || !key) return null;
+  return createSupabaseClient(url, key);
+}
 
 export async function GET(
   request: NextRequest,
@@ -69,11 +77,102 @@ export async function GET(
       }
     }
 
+    // Fetch EL enrichment via Content Hub API + direct DB for avatars
+    const elEnrichmentMap: Record<string, any> = {};
+    const elClient = getEmpathyLedgerClient();
+    const allElProfileIds = (links || [])
+      .map(l => (l.public_profiles as any)?.empathy_ledger_profile_id)
+      .filter(Boolean);
+
+    if (allElProfileIds.length > 0) {
+      // Get org's EL project slug for Content Hub API
+      const { data: org } = await serviceClient
+        .from('organizations')
+        .select('empathy_ledger_org_id, slug')
+        .eq('id', orgId)
+        .single();
+
+      // Fetch enriched storyteller data from Content Hub API
+      const elApiKey = process.env.EMPATHY_LEDGER_API_KEY || '';
+      const elApiBase = 'https://empathy-ledger-v2.vercel.app/api/v1/content-hub';
+      const projectSlug = org?.slug || 'bg-fit'; // fallback
+
+      let chStorytellers: any[] = [];
+      try {
+        const res = await fetch(`${elApiBase}/storytellers?project=${projectSlug}&limit=50`, {
+          headers: { 'X-API-Key': elApiKey },
+        });
+        if (res.ok) {
+          const json = await res.json();
+          chStorytellers = json.storytellers || [];
+        }
+      } catch (e) {
+        // Content Hub API unavailable, fall through
+      }
+
+      // Also fetch avatars from direct DB (Content Hub doesn't return avatar URLs)
+      const avatarMap: Record<string, string> = {};
+      if (elClient) {
+        const { data: elStorytellers } = await elClient
+          .from('storytellers')
+          .select('id, public_avatar_url, bio, cultural_background, is_elder, location')
+          .in('id', allElProfileIds);
+        for (const s of elStorytellers || []) {
+          avatarMap[s.id] = s.public_avatar_url || '';
+          // Seed enrichment from DB for fields Content Hub might not have
+          elEnrichmentMap[s.id] = {
+            avatar_url: s.public_avatar_url,
+            bio: s.bio,
+            cultural_background: s.cultural_background,
+            is_elder: s.is_elder,
+            location: s.location,
+            themes: [],
+            quotes: [],
+            transcript_count: 0,
+            story_count: 0,
+          };
+        }
+      }
+
+      // Merge Content Hub enrichment (themes, quotes, transcript counts)
+      for (const ch of chStorytellers) {
+        // Match by display name to EL profile ID
+        const matchedLink = (links || []).find(l => {
+          const p = l.public_profiles as any;
+          return p?.empathy_ledger_profile_id && (
+            ch.displayName?.toLowerCase().trim() === p.full_name?.toLowerCase().trim() ||
+            ch.id === p.empathy_ledger_profile_id
+          );
+        });
+        const elId = (matchedLink?.public_profiles as any)?.empathy_ledger_profile_id;
+        if (!elId) continue;
+
+        const existing = elEnrichmentMap[elId] || {};
+        elEnrichmentMap[elId] = {
+          ...existing,
+          avatar_url: existing.avatar_url || avatarMap[elId] || ch.avatarUrl,
+          bio: existing.bio || ch.bio,
+          is_elder: existing.is_elder ?? ch.elderStatus,
+          themes: (ch.themes || []).map((t: string) => ({ name: t, count: 1 })),
+          quotes: (ch.quotes || []).slice(0, 3).map((q: any) => ({
+            text: q.text,
+            context: q.context,
+            impactScore: q.impactScore,
+          })),
+          transcript_count: ch.transcriptCount || 0,
+          story_count: ch.storyCount || 0,
+        };
+      }
+    }
+
     // Transform to flat response
     const data = (links || [])
       .filter(l => l.public_profiles)
       .map(l => {
         const profile = l.public_profiles as any;
+        const elId = profile.empathy_ledger_profile_id;
+        const elData = elId ? elEnrichmentMap[elId] : null;
+        const photoUrl = profile.photo_url || elData?.avatar_url || null;
         return {
           link_id: l.id,
           role: l.role,
@@ -86,16 +185,24 @@ export async function GET(
             full_name: profile.full_name,
             slug: profile.slug,
             preferred_name: profile.preferred_name,
-            bio: profile.bio,
-            photo_url: profile.photo_url,
+            bio: profile.bio || elData?.bio || null,
+            photo_url: photoUrl,
             role_tags: profile.role_tags,
             is_public: profile.is_public ?? true,
             is_featured: profile.is_featured ?? false,
-            location: profile.location,
-            empathy_ledger_profile_id: profile.empathy_ledger_profile_id,
+            location: profile.location || elData?.location || null,
+            empathy_ledger_profile_id: elId,
             synced_from_empathy_ledger: profile.synced_from_empathy_ledger ?? false,
             last_synced_at: profile.last_synced_at,
           },
+          elEnrichment: elData ? {
+            themes: elData.themes,
+            quotes: elData.quotes,
+            cultural_background: elData.cultural_background,
+            is_elder: elData.is_elder,
+            transcript_count: elData.transcript_count || 0,
+            story_count: elData.story_count || 0,
+          } : null,
           linkedPrograms: programLinks
             .filter(pl => pl.public_profile_id === profile.id)
             .map(pl => ({ id: pl.program_id, name: pl.program_name })),

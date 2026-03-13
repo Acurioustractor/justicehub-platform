@@ -133,10 +133,11 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('alma_interventions')
-      .select('id, name, description, type, geography, evidence_level, consent_level, portfolio_score, created_at', {
+      .select('id, name, description, type, geography, evidence_level, consent_level, portfolio_score, verification_status, created_at', {
         count: 'exact',
       })
-      .order(sortBy === 'score' ? 'portfolio_score' : 'name', { ascending: sortBy !== 'score' })
+      .neq('verification_status', 'ai_generated')
+      .order(sortBy === 'score' ? 'portfolio_score' : 'name', { ascending: sortBy !== 'score', nullsFirst: false })
       .range(offset, offset + pageSize - 1);
 
     if (search) {

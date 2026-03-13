@@ -202,6 +202,11 @@ export class ExtractionService {
           .single();
 
         if (error) {
+          // Handle duplicate key (name+org unique constraint)
+          if (error.code === '23505') {
+            errors.push(`Intervention "${intervention.name}": duplicate — skipped`);
+            continue;
+          }
           errors.push(`Intervention "${intervention.name}": ${error.message}`);
         } else if (data) {
           created_interventions.push(data.id);

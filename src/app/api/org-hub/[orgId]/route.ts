@@ -16,6 +16,7 @@ const SECTION_TABLES: Record<string, string> = {
   milestones: 'org_milestones',
   action_items: 'org_action_items',
   contact_messages: 'contact_submissions',
+  deadlines: 'org_deadlines',
 };
 
 function getServiceClient() {
@@ -49,6 +50,8 @@ export async function GET(
     // Default ordering
     if (['grants', 'sessions'].includes(section)) {
       query = query.order('created_at', { ascending: false });
+    } else if (section === 'deadlines') {
+      query = query.order('due_date', { ascending: true });
     } else if (section === 'transactions') {
       query = query.order('transaction_date', { ascending: false });
     } else if (section === 'action_items') {

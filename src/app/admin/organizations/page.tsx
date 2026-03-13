@@ -1,8 +1,30 @@
-import { requireAdmin } from '@/lib/supabase/admin';
-import { createServiceClient } from '@/lib/supabase/service';
+import { requireAdmin } from '@/lib/supabase/admin-lite';
+import { createServiceClient } from '@/lib/supabase/service-lite';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import OrganizationList from '@/components/admin/OrganizationList';
+
+type OrganizationListItem = {
+  id: string;
+  name: string;
+  slug: string | null;
+  description: string | null;
+  type: string | null;
+  location: string | null;
+  website: string | null;
+  created_at: string | null;
+  organizations_profiles: Array<{
+    id: string;
+    role: string | null;
+    is_current: boolean | null;
+    public_profiles: {
+      id: string;
+      full_name: string;
+      photo_url: string | null;
+      slug: string | null;
+    } | null;
+  }>;
+};
 
 export default async function AdminOrganizationsPage() {
   const { supabase } = await requireAdmin('/admin/organizations');
@@ -33,6 +55,39 @@ export default async function AdminOrganizationsPage() {
     `)
     .order('name');
 
+  const normalizedOrganizations: OrganizationListItem[] = (organizations || []).map((org: any) => ({
+    id: org.id,
+    name: org.name,
+    slug: org.slug ?? null,
+    description: org.description ?? null,
+    type: org.type ?? null,
+    location: org.location ?? null,
+    website: org.website ?? null,
+    created_at: org.created_at ?? null,
+    organizations_profiles: (org.organizations_profiles || []).map((profileLink: any) => ({
+      id: profileLink.id,
+      role: profileLink.role ?? null,
+      is_current: profileLink.is_current ?? null,
+      public_profiles: Array.isArray(profileLink.public_profiles)
+        ? (profileLink.public_profiles[0]
+            ? {
+                id: profileLink.public_profiles[0].id,
+                full_name: profileLink.public_profiles[0].full_name,
+                photo_url: profileLink.public_profiles[0].photo_url ?? null,
+                slug: profileLink.public_profiles[0].slug ?? null,
+              }
+            : null)
+        : profileLink.public_profiles
+          ? {
+              id: profileLink.public_profiles.id,
+              full_name: profileLink.public_profiles.full_name,
+              photo_url: profileLink.public_profiles.photo_url ?? null,
+              slug: profileLink.public_profiles.slug ?? null,
+            }
+          : null,
+    })),
+  }));
+
   // Fetch pending claims count
   const serviceClient = createServiceClient();
   const { count: pendingClaimsCount } = await (serviceClient as any)
@@ -41,9 +96,9 @@ export default async function AdminOrganizationsPage() {
     .eq('status', 'pending');
 
   // Calculate stats
-  const totalOrgs = organizations?.length || 0;
-  const totalMembers = organizations?.reduce((sum, org) => sum + (org.organizations_profiles?.length || 0), 0) || 0;
-  const autoLinkedOrgs = organizations?.filter(org => org.organizations_profiles && org.organizations_profiles.length > 0).length || 0;
+  const totalOrgs = normalizedOrganizations.length;
+  const totalMembers = normalizedOrganizations.reduce((sum, org) => sum + (org.organizations_profiles?.length || 0), 0);
+  const autoLinkedOrgs = normalizedOrganizations.filter((org) => org.organizations_profiles.length > 0).length;
 
   return (
     <div className="min-h-screen bg-white page-content">
@@ -89,7 +144,7 @@ export default async function AdminOrganizationsPage() {
 
       {/* Organizations List with Search/Filters */}
       <section className="container-justice py-8">
-        <OrganizationList organizations={organizations || []} />
+        <OrganizationList organizations={normalizedOrganizations} />
       </section>
 
       <Footer />

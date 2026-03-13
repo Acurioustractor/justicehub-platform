@@ -76,6 +76,15 @@ export class InterventionService {
         .single();
 
       if (insertError) {
+        // Handle duplicate key (name+org unique constraint) — return existing
+        if (insertError.code === '23505') {
+          const { data: existing } = await getSupabase()
+            .from('alma_interventions')
+            .select()
+            .ilike('name', data.name)
+            .single();
+          if (existing) return { data: existing, error: null };
+        }
         return { data: null, error: new Error(insertError.message) };
       }
 

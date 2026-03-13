@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { createServiceClient } from '@/lib/supabase/service';
-import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
+import { createClient } from '@/lib/supabase/server-lite';
+import { createServiceClient } from '@/lib/supabase/service-lite';
+import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger-lite';
 import { Json } from '@/types/database.types';
 
 interface EmpathyLedgerProfile {

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import {
   ArrowLeft, Save, Building2, Image as ImageIcon, Video, BarChart3,

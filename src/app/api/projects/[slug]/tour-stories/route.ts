@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service-lite';
 import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
 
 const VALID_TOUR_STOPS = [
@@ -30,7 +30,7 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const supabase = await createClient();
+    const supabase = createServiceClient();
 
     const project = await resolveProject(supabase, slug);
     if (!project) {
@@ -75,7 +75,7 @@ export async function POST(
 ) {
   try {
     const { slug } = await params;
-    const supabase = await createClient();
+    const supabase = createServiceClient();
 
     const project = await resolveProject(supabase, slug);
     if (!project) {

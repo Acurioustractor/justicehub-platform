@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Plus, User, Check, X, Edit, Trash2, GripVertical, Search, Shield, Eye, EyeOff } from 'lucide-react';
 import { Navigation } from '@/components/ui/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 
 interface Storyteller {
   id: string;

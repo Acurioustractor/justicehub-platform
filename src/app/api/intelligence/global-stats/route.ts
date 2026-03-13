@@ -50,7 +50,7 @@ export async function GET() {
             // For now, let's just get totals of the relationship table to approximate "coverage".
             { count: linkedEvidenceCount }
         ] = await Promise.all([
-            supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
+            supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated'),
             supabase.from('alma_evidence').select('*', { count: 'exact', head: true }),
             supabase.from('alma_outcomes').select('*', { count: 'exact', head: true }),
             supabase.from('alma_community_contexts').select('*', { count: 'exact', head: true }),
@@ -62,8 +62,8 @@ export async function GET() {
 
             // Get distribution of evidence levels (limit to 1000 for perfs if needed, but grouping is better done in SQL or RPC. 
             // Here we fetch minimal data to calc distributions in JS for simplicity without new RPCs)
-            supabase.from('alma_interventions').select('evidence_level'),
-            supabase.from('alma_interventions').select('consent_level'),
+            supabase.from('alma_interventions').select('evidence_level').neq('verification_status', 'ai_generated'),
+            supabase.from('alma_interventions').select('consent_level').neq('verification_status', 'ai_generated'),
 
             supabase.from('alma_intervention_evidence').select('*', { count: 'exact', head: true })
         ]);

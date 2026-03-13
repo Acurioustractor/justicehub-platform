@@ -23,7 +23,17 @@ import {
   Tag,
   Save,
   BookOpen,
+  Quote,
 } from 'lucide-react';
+
+interface ELEnrichment {
+  themes: { name: string; count: number }[];
+  quotes: { text: string; context: string; impactScore: number }[];
+  cultural_background: string | null;
+  is_elder: boolean;
+  transcript_count: number;
+  story_count: number;
+}
 
 interface OrgPerson {
   link_id: string;
@@ -47,6 +57,7 @@ interface OrgPerson {
     synced_from_empathy_ledger: boolean;
     last_synced_at: string | null;
   };
+  elEnrichment: ELEnrichment | null;
   linkedPrograms: { id: string; name: string }[];
 }
 
@@ -61,6 +72,237 @@ const PERSON_TYPES: { value: PersonType; label: string; description: string }[] 
   { value: 'volunteer', label: 'Volunteer', description: 'Volunteer supporter' },
   { value: 'partner', label: 'Partner', description: 'External partner or collaborator' },
 ];
+
+// -- Community Voice Summary sub-component --
+function CommunityVoiceSummary({ orgId }: { orgId: string }) {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
+  const [expandedStory, setExpandedStory] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/org-hub/${orgId}/analysis`)
+      .then(res => res.json())
+      .then(json => {
+        if (!json.error && json.data) setData(json.data);
+      })
+      .catch(err => console.error('Failed to fetch analysis:', err))
+      .finally(() => setLoading(false));
+  }, [orgId]);
+
+  if (loading) {
+    return (
+      <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-4">
+        <div className="flex items-center gap-2 text-gray-400">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span className="text-sm font-bold">Loading community voice data...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) return null;
+
+  const themes = (data.stories?.themes || []).slice(0, 12);
+  const storyItems = data.stories?.items || [];
+  const storytellers = data.storytellers?.fromStories || [];
+  const storytellerCount = data.storytellers?.total || 0;
+  const storyCount = data.stories?.total || 0;
+
+  // Use projectAnalyses quotes if available, otherwise extract from story summaries
+  const keyQuotes = (data.projectAnalyses?.[0]?.key_quotes || []).slice(0, 3);
+  const impact = data.projectAnalyses?.[0]?.aggregated_impact;
+
+  // Build storyteller lookup for avatars/names
+  const storytellerMap: Record<string, any> = {};
+  for (const s of storytellers) storytellerMap[s.id] = s;
+
+  const hasContent = themes.length > 0 || storyItems.length > 0 || storytellers.length > 0;
+  if (!hasContent) return null;
+
+  return (
+    <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      {/* Header */}
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="w-full text-left p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <BookOpen className="w-5 h-5 text-indigo-600" />
+          <h3 className="text-lg font-black">Empathy Ledger Report</h3>
+          <span className="text-xs font-bold px-2 py-0.5 bg-indigo-100 text-indigo-700 border border-indigo-200">
+            {storytellerCount} storytellers / {storyCount} stories
+          </span>
+        </div>
+        {collapsed ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronUp className="w-4 h-4 text-gray-400" />}
+      </button>
+
+      {!collapsed && (
+        <div className="border-t-2 border-black p-4 space-y-5">
+          {/* Top Themes */}
+          {themes.length > 0 && (
+            <div>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Themes from Community Voices</p>
+              <div className="flex flex-wrap gap-2">
+                {themes.map((theme: { name: string; count: number }) => (
+                  <span
+                    key={theme.name}
+                    className="px-3 py-1.5 text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 inline-flex items-center gap-1.5"
+                  >
+                    <Tag className="w-3 h-3" />
+                    {theme.name.replace(/_/g, ' ')}
+                    <span className="text-indigo-400 font-medium">({theme.count})</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Key Quotes from projectAnalyses (if available) */}
+          {keyQuotes.length > 0 && (
+            <div>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Key Quotes</p>
+              <div className="space-y-2">
+                {keyQuotes.map((q: any, i: number) => (
+                  <div key={i} className="p-3 bg-indigo-50 border border-indigo-200">
+                    <div className="flex items-start gap-2">
+                      <Quote className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm text-indigo-900 italic leading-relaxed">
+                          &ldquo;{q.text || q.quote || q.content}&rdquo;
+                        </p>
+                        {(q.storyteller_name || q.speaker || q.attribution) && (
+                          <p className="text-xs text-indigo-600 font-bold mt-1">
+                            &mdash; {q.storyteller_name || q.speaker || q.attribution}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ALMA Impact Signals */}
+          {impact && typeof impact === 'object' && Object.keys(impact).length > 0 && (
+            <div>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">ALMA Impact Signals</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                {Object.entries(impact).map(([key, value]) => {
+                  const pct = typeof value === 'number' ? Math.round(value * 100) : null;
+                  if (pct === null) return null;
+                  return (
+                    <div key={key} className="p-2 bg-indigo-50 border border-indigo-200 text-center">
+                      <p className="text-lg font-black text-indigo-700">{pct}%</p>
+                      <p className="text-[10px] font-bold text-indigo-500 uppercase mt-0.5">
+                        {key.replace(/_/g, ' ')}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Stories with Summaries */}
+          {storyItems.length > 0 && (
+            <div>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Stories</p>
+              <div className="space-y-2">
+                {storyItems.map((story: any) => {
+                  const teller = story.storyteller_id ? storytellerMap[story.storyteller_id] : null;
+                  const isOpen = expandedStory === story.id;
+                  return (
+                    <div key={story.id} className="border border-indigo-200 bg-indigo-50/50">
+                      <button
+                        onClick={() => setExpandedStory(isOpen ? null : story.id)}
+                        className="w-full text-left p-3 flex items-start gap-3 hover:bg-indigo-50 transition-colors"
+                      >
+                        {teller?.public_avatar_url ? (
+                          <img src={teller.public_avatar_url} alt="" className="w-8 h-8 rounded-full object-cover flex-shrink-0 border border-indigo-200" />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center flex-shrink-0">
+                            <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-bold text-indigo-900 truncate">{story.title}</p>
+                            {story.is_public && (
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 bg-green-100 text-green-700 border border-green-200 flex-shrink-0">Public</span>
+                            )}
+                          </div>
+                          {teller && (
+                            <p className="text-[11px] text-indigo-600 font-medium mt-0.5">{teller.display_name}</p>
+                          )}
+                          {(story.themes || []).length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {story.themes.slice(0, 4).map((t: string) => (
+                                <span key={t} className="text-[10px] px-1.5 py-0.5 bg-indigo-100 text-indigo-500 border border-indigo-200">
+                                  {t.replace(/_/g, ' ')}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        {isOpen ? <ChevronUp className="w-4 h-4 text-indigo-400 flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-indigo-400 flex-shrink-0" />}
+                      </button>
+                      {isOpen && story.summary && (
+                        <div className="px-3 pb-3 pt-0 ml-11">
+                          <div className="flex items-start gap-2 p-2 bg-white border border-indigo-200">
+                            <Quote className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0 mt-0.5" />
+                            <p className="text-xs text-indigo-800 italic leading-relaxed">{story.summary}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Storyteller Profiles */}
+          {storytellers.length > 0 && (
+            <div>
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Storytellers</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {storytellers.map((s: any) => (
+                  <div key={s.id} className="flex items-start gap-3 p-3 bg-gray-50 border border-gray-200">
+                    {s.public_avatar_url ? (
+                      <img src={s.public_avatar_url} alt="" className="w-10 h-10 rounded-full object-cover flex-shrink-0 border-2 border-indigo-200" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-indigo-100 border-2 border-indigo-200 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs font-black text-indigo-600">
+                          {s.display_name?.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
+                        </span>
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-bold truncate">{s.display_name}</p>
+                        {s.is_elder && (
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 bg-ochre-100 text-ochre-700 border border-ochre-200 flex-shrink-0">Elder</span>
+                        )}
+                      </div>
+                      {s.bio && (
+                        <p className="text-[11px] text-gray-600 mt-0.5 line-clamp-2">{s.bio}</p>
+                      )}
+                      {s.cultural_background && (
+                        <p className="text-[10px] text-gray-400 mt-0.5">{s.cultural_background}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function PeopleTab({ orgId }: { orgId: string }) {
   const [people, setPeople] = useState<OrgPerson[]>([]);
@@ -114,6 +356,18 @@ export function PeopleTab({ orgId }: { orgId: string }) {
   }, [orgId]);
 
   useEffect(() => { fetchPeople(); }, [fetchPeople]);
+
+  // Auto-load transcripts when a person with EL profile is expanded
+  useEffect(() => {
+    if (!expandedPerson) return;
+    const person = people.find(p => p.link_id === expandedPerson);
+    if (!person) return;
+    const elId = person.profile.empathy_ledger_profile_id;
+    if (!elId) return;
+    if (transcripts[elId]) return; // already loaded
+    if (loadingTranscripts === person.link_id) return; // already loading
+    fetchTranscripts(person);
+  }, [expandedPerson, people]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleAddPerson = async () => {
     if (!newPerson.full_name.trim()) return;
@@ -287,6 +541,9 @@ export function PeopleTab({ orgId }: { orgId: string }) {
           Add Person
         </button>
       </div>
+
+      {/* Community Voice Summary */}
+      <CommunityVoiceSummary orgId={orgId} />
 
       {/* Filters */}
       <div className="space-y-2">
@@ -503,12 +760,21 @@ export function PeopleTab({ orgId }: { orgId: string }) {
                   )}
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-bold text-sm">{p.preferred_name || p.full_name}</h3>
+                      {person.elEnrichment?.is_elder && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 bg-ochre-100 text-ochre-700 border border-ochre-200">Elder</span>
+                      )}
                       {person.is_featured && <Star className="w-3 h-3 text-ochre-500 fill-ochre-500" />}
                       {p.synced_from_empathy_ledger && (
                         <span className="text-[10px] font-bold px-1.5 py-0.5 bg-blue-100 text-blue-700 border border-blue-200" title="Synced from Empathy Ledger">
                           EL
+                        </span>
+                      )}
+                      {person.elEnrichment && person.elEnrichment.transcript_count > 0 && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 bg-purple-100 text-purple-700 border border-purple-200 flex items-center gap-0.5">
+                          <BookOpen className="w-3 h-3" />
+                          {person.elEnrichment.transcript_count} {person.elEnrichment.transcript_count === 1 ? 'transcript' : 'transcripts'}
                         </span>
                       )}
                     </div>
@@ -531,16 +797,20 @@ export function PeopleTab({ orgId }: { orgId: string }) {
                           {(p.role_tags || []).slice(0, 2).join(', ')}
                         </span>
                       )}
-                      {(() => {
-                        const elStories = transcripts[p.empathy_ledger_profile_id || ''] || [];
-                        return elStories.length > 0 ? (
-                          <span className="text-[10px] font-bold px-1.5 py-0.5 bg-purple-100 text-purple-700 border border-purple-200 flex items-center gap-0.5">
-                            <BookOpen className="w-3 h-3" />
-                            {elStories.length} {elStories.length === 1 ? 'story' : 'stories'}
-                          </span>
-                        ) : null;
-                      })()}
                     </div>
+                    {/* Inline themes from EL */}
+                    {(person.elEnrichment?.themes || []).length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1.5">
+                        {person.elEnrichment!.themes.slice(0, 4).map(t => (
+                          <span key={t.name} className="text-[10px] px-1.5 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-200">
+                            {t.name.replace(/_/g, ' ')}
+                          </span>
+                        ))}
+                        {person.elEnrichment!.themes.length > 4 && (
+                          <span className="text-[10px] text-indigo-400">+{person.elEnrichment!.themes.length - 4}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
@@ -554,6 +824,57 @@ export function PeopleTab({ orgId }: { orgId: string }) {
                       <div>
                         <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Bio</p>
                         <p className="text-sm text-gray-700 leading-relaxed">{p.bio}</p>
+                      </div>
+                    )}
+
+                    {/* EL Enrichment: quotes, cultural background, expertise */}
+                    {person.elEnrichment && (
+                      <div className="space-y-3">
+                        {/* Cultural background */}
+                        {person.elEnrichment.cultural_background && (
+                          <div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase">Cultural Background</p>
+                            <p className="text-xs text-gray-700">{person.elEnrichment.cultural_background}</p>
+                          </div>
+                        )}
+
+                        {/* Themes */}
+                        {person.elEnrichment.themes.length > 0 && (
+                          <div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Key Themes</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {person.elEnrichment.themes.map(t => (
+                                <span key={t.name} className="text-[10px] px-2 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 font-medium inline-flex items-center gap-1">
+                                  <Tag className="w-2.5 h-2.5" />
+                                  {t.name.replace(/_/g, ' ')}
+                                  <span className="text-indigo-400">({t.count})</span>
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Key Quotes from transcripts */}
+                        {person.elEnrichment.quotes.length > 0 && (
+                          <div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Key Quotes</p>
+                            <div className="space-y-2">
+                              {person.elEnrichment.quotes.map((q, i) => (
+                                <div key={i} className="p-3 bg-indigo-50 border border-indigo-200">
+                                  <div className="flex items-start gap-2">
+                                    <Quote className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0 mt-0.5" />
+                                    <div>
+                                      <p className="text-xs text-indigo-900 italic leading-relaxed">&ldquo;{q.text}&rdquo;</p>
+                                      {q.context && (
+                                        <p className="text-[10px] text-indigo-500 mt-1">{q.context}</p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
 

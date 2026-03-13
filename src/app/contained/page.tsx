@@ -4,7 +4,7 @@ import { TourContent } from './tour/tour-content';
 export const metadata: Metadata = {
   title: 'THE CONTAINED: Australian Tour 2026 | JusticeHub',
   description:
-    'Three shipping containers. Thirty minutes. The reality of youth detention, the therapeutic alternative, and Australia\'s possible future. Mount Druitt, Adelaide, Perth, Tennant Creek.',
+    'One shipping container. Three rooms. Thirty minutes. The reality of youth detention, the therapeutic alternative, and the community-led future already taking shape across Australia.',
   keywords: [
     'youth justice',
     'youth detention',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'THE CONTAINED: Australian Tour 2026',
     description:
-      'Three shipping containers reveal the reality of youth detention — and the alternative. Four cities across Australia in 2026.',
+      'One shipping container. Three rooms. Thirty minutes that make the case for youth justice reform across Australia.',
     type: 'website',
     locale: 'en_AU',
     url: '/contained',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'THE CONTAINED: Australian Tour 2026',
     description:
-      'Three shipping containers. Thirty minutes. The reality of youth detention, the therapeutic alternative, and Australia\'s possible future.',
+      'One shipping container. Three rooms. Thirty minutes. The reality of youth detention, the therapeutic alternative, and the future communities are already building.',
   },
 };
 

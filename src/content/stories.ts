@@ -53,7 +53,7 @@ export const campaignStories: CampaignStory[] = [
     name: "Dr. Amara T.",
     role: "Clinical Psychologist",
     quote:
-      "Container 2 is what my patients tell me they needed—people who listen, calm spaces, and real investment in healing.",
+      "Container 2 is what my patients tell me they needed. People who listen, calm spaces, and real investment in healing.",
     mediaType: "video",
     descriptShareId: "REPLACE_WITH_DESCRIPT_ID",
     posterImage: "/images/stories/amara.jpg",

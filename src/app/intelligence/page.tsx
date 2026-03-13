@@ -14,17 +14,19 @@ export const metadata = {
 async function getALMAStats() {
   const supabase = createServerComponentClient({ cookies });
 
-  const [interventions, evidence, outcomes, contexts] = await Promise.all([
-    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
+  const [interventions, evidence, contexts, verified, underReview] = await Promise.all([
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated'),
     supabase.from('alma_evidence').select('*', { count: 'exact', head: true }),
-    supabase.from('alma_outcomes').select('*', { count: 'exact', head: true }),
     supabase.from('alma_community_contexts').select('*', { count: 'exact', head: true }),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).eq('verification_status', 'verified'),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).eq('verification_status', 'needs_review'),
   ]);
 
   // Get state coverage
   const { data: stateData } = await supabase
     .from('alma_interventions')
     .select('metadata')
+    .neq('verification_status', 'ai_generated')
     .not('metadata->>state', 'is', null);
 
   const states = new Set(
@@ -34,9 +36,10 @@ async function getALMAStats() {
   return {
     interventions: interventions.count || 0,
     evidence: evidence.count || 0,
-    outcomes: outcomes.count || 0,
     contexts: contexts.count || 0,
     states: states.size,
+    verified: verified.count || 0,
+    underReview: underReview.count || 0,
   };
 }
 
@@ -55,7 +58,7 @@ export default async function IntelligencePage() {
           </h1>
 
           <p className="body-truth mx-auto mb-12 max-w-3xl">
-            {stats.interventions} programs documented. {stats.evidence} evidence records. {stats.outcomes} outcomes tracked.
+            {stats.interventions} programs catalogued. {stats.evidence} evidence records.
             Across {stats.states} Australian states. This is ALMA—the intelligence system
             that ensures revenue flows to communities, not extractive researchers.
           </p>
@@ -63,15 +66,15 @@ export default async function IntelligencePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 max-w-4xl mx-auto">
             <div className="border-2 border-black p-6">
               <div className="text-4xl font-bold text-black mb-2">{stats.interventions}</div>
-              <div className="text-sm uppercase tracking-wider text-gray-700">Interventions</div>
+              <div className="text-sm uppercase tracking-wider text-gray-700">Programs</div>
             </div>
             <div className="border-2 border-black p-6">
               <div className="text-4xl font-bold text-black mb-2">{stats.evidence}</div>
               <div className="text-sm uppercase tracking-wider text-gray-700">Evidence</div>
             </div>
             <div className="border-2 border-black p-6">
-              <div className="text-4xl font-bold text-black mb-2">{stats.outcomes}</div>
-              <div className="text-sm uppercase tracking-wider text-gray-700">Outcomes</div>
+              <div className="text-4xl font-bold text-black mb-2">{stats.verified}</div>
+              <div className="text-sm uppercase tracking-wider text-gray-700">Verified</div>
             </div>
             <div className="border-2 border-black p-6">
               <div className="text-4xl font-bold text-black mb-2">{stats.states}/8</div>
@@ -79,12 +82,18 @@ export default async function IntelligencePage() {
             </div>
           </div>
 
+          {stats.underReview > 0 && (
+            <p className="text-sm text-gray-600 mb-8">
+              {stats.underReview} programs currently under review for verification.
+            </p>
+          )}
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/intelligence/interventions" className="cta-primary">
               EXPLORE INTERVENTIONS <ArrowRight className="inline w-5 h-5 ml-2" />
             </Link>
-            <Link href="/intelligence/portfolio" className="cta-secondary">
-              VIEW PORTFOLIO ANALYTICS
+            <Link href="/transparency" className="cta-secondary">
+              VIEW DATA QUALITY
             </Link>
           </div>
         </div>
@@ -99,7 +108,7 @@ export default async function IntelligencePage() {
 
           <div className="max-w-4xl mx-auto">
             <p className="text-lg text-gray-800 mb-6">
-              <strong>Adaptive Learning & Measurement Architecture.</strong> Not a product. A practiced method
+              <strong>Authentic Learning for Meaningful Accountability.</strong> Not a product. A practiced method
               for valuing Indigenous and community knowledge while ensuring those knowledge holders control
               access and benefit from its use.
             </p>
@@ -108,20 +117,20 @@ export default async function IntelligencePage() {
               <div className="border-l-4 border-black pl-6">
                 <h3 className="text-xl font-bold mb-3">Traditional Research (Extractive)</h3>
                 <ul className="space-y-2 text-gray-700">
-                  <li>→ Universities extract data</li>
-                  <li>→ Communities get nothing</li>
-                  <li>→ Knowledge locked behind paywalls</li>
-                  <li>→ No ongoing revenue</li>
+                  <li>Universities extract data</li>
+                  <li>Communities get nothing</li>
+                  <li>Knowledge locked behind paywalls</li>
+                  <li>No ongoing revenue</li>
                 </ul>
               </div>
 
               <div className="border-l-4 border-black pl-6">
                 <h3 className="text-xl font-bold mb-3">ALMA (Regenerative)</h3>
                 <ul className="space-y-2 text-gray-700">
-                  <li>→ Communities control their data</li>
-                  <li>→ 30% revenue flows to knowledge holders</li>
-                  <li>→ Open access intelligence</li>
-                  <li>→ Ongoing value from citations</li>
+                  <li>Communities control their data</li>
+                  <li>30% revenue flows to knowledge holders</li>
+                  <li>Open access intelligence</li>
+                  <li>Ongoing value from citations</li>
                 </ul>
               </div>
             </div>
@@ -144,13 +153,12 @@ export default async function IntelligencePage() {
               href="/stories/intelligence"
               className="group border-2 border-black p-8 bg-white hover:bg-black hover:text-white transition-all"
             >
-              <div className="text-4xl mb-4">📊</div>
               <h3 className="text-2xl font-bold mb-3">Media Intelligence Studio</h3>
               <p className="text-gray-700 group-hover:text-white mb-4">
                 Real-time sentiment tracking, topic analysis, and source validation across 37+ articles
               </p>
               <div className="font-bold uppercase text-sm">
-                Explore Data →
+                Explore Data
               </div>
             </Link>
 
@@ -158,27 +166,25 @@ export default async function IntelligencePage() {
               href="/intelligence/interventions"
               className="group border-2 border-black p-8 bg-white hover:bg-black hover:text-white transition-all"
             >
-              <div className="text-4xl mb-4">🌱</div>
-              <h3 className="text-2xl font-bold mb-3">Intervention Database</h3>
+              <h3 className="text-2xl font-bold mb-3">Program Catalogue</h3>
               <p className="text-gray-700 group-hover:text-white mb-4">
-                Browse {stats.interventions} documented programs with outcomes, costs, and community leadership data
+                Browse {stats.interventions} catalogued programs with evidence links and community leadership data
               </p>
               <div className="font-bold uppercase text-sm">
-                Browse Programs →
+                Browse Programs
               </div>
             </Link>
 
             <Link
-              href="/intelligence/portfolio"
+              href="/transparency"
               className="group border-2 border-black p-8 bg-white hover:bg-black hover:text-white transition-all"
             >
-              <div className="text-4xl mb-4">📈</div>
-              <h3 className="text-2xl font-bold mb-3">Portfolio Analytics</h3>
+              <h3 className="text-2xl font-bold mb-3">Data Quality</h3>
               <p className="text-gray-700 group-hover:text-white mb-4">
-                Compare intervention effectiveness, cost analysis, and community control models
+                Our commitment to honest data — see what is verified, under review, and how we ensure integrity
               </p>
               <div className="font-bold uppercase text-sm">
-                View Analytics →
+                View Transparency
               </div>
             </Link>
 
@@ -186,13 +192,12 @@ export default async function IntelligencePage() {
               href="/stories/the-pattern"
               className="group border-2 border-black p-8 bg-white hover:bg-black hover:text-white transition-all"
             >
-              <div className="text-4xl mb-4">🔍</div>
               <h3 className="text-2xl font-bold mb-3">The Pattern Story</h3>
               <p className="text-gray-700 group-hover:text-white mb-4">
                 Interactive scrollytelling journey through the data revealing what community control really means
               </p>
               <div className="font-bold uppercase text-sm">
-                Experience Story →
+                Experience Story
               </div>
             </Link>
           </div>
@@ -228,12 +233,12 @@ export default async function IntelligencePage() {
             </div>
 
             <div className="border-2 border-black p-6 bg-white">
-              <div className="text-sm uppercase tracking-wider text-gray-600 mb-2">Emerging Pattern</div>
-              <h3 className="text-xl font-bold mb-3">Diversion Programs: High Community Authority</h3>
+              <div className="text-sm uppercase tracking-wider text-amber-600 mb-2">Data Integrity</div>
+              <h3 className="text-xl font-bold mb-3">Audit Complete: Fabricated Data Removed</h3>
               <p className="text-gray-700">
-                Programs focusing on diversion and community-led approaches consistently show higher
-                Community Authority scores (weighted at 30% in portfolio analysis). These programs are
-                ready for scaling and replication.
+                We completed an audit of ALMA data and removed AI-generated scores, placeholder outcomes,
+                and template-generated entries. All remaining data is sourced from real documents
+                and websites. Verification workflow is being built.
               </p>
             </div>
 

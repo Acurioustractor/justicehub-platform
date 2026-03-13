@@ -41,7 +41,7 @@ export function Hero() {
           30 Minutes That Could Transform Youth Justice Forever
         </h1>
         <p className="max-w-3xl text-lg text-white/85 sm:text-xl">
-          Experience the reality of youth detention. Witness proven alternatives. Commit to the future Queensland youth deserve.
+          Experience the reality of youth detention. Witness proven alternatives. Commit to the future young people deserve.
         </p>
 
         <div className="grid gap-6 sm:grid-cols-2">
@@ -90,9 +90,9 @@ export function Hero() {
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-3 text-xs uppercase tracking-[0.25em] text-white/60">
-          <span>Launches {new Date(campaignMetadata.launchDate).toLocaleDateString("en-AU", { month: "long", day: "numeric" })}</span>
+          <span>First stop {new Date(campaignMetadata.launchDate).toLocaleDateString("en-AU", { month: "long", day: "numeric" })}</span>
           <span className="text-white/40">•</span>
-          <span>{daysRemaining} days to mobilise Brisbane</span>
+          <span>{daysRemaining} days to mobilise Mount Druitt</span>
           <span className="text-white/40">•</span>
           <span>{counters.slotsPerDay} slots available daily</span>
         </div>

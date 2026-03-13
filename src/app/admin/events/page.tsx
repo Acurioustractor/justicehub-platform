@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 import Link from 'next/link';
 import { Plus, Edit2, Calendar, MapPin, Eye, FileText } from 'lucide-react';
 import { Navigation } from '@/components/ui/navigation';

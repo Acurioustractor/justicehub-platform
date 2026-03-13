@@ -15,20 +15,22 @@ import {
   ArrowRight,
   Zap,
   Target,
-  Map as MapIcon
+  Map as MapIcon,
+  CheckCircle2,
+  Clock,
+  ShieldAlert,
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { SimpleEcosystemMap } from '@/components/SimpleEcosystemMap';
 
 interface Stats {
   programs_documented: number;
+  programs_verified: number;
+  programs_under_review: number;
   total_organizations: number;
-  total_outcomes: number;
   total_evidence: number;
   total_evidence_links: number;
-  high_impact_programs: number;
   orgs_linked: number;
-  indigenous_led_programs: number;
   indigenous_orgs: number;
   orgs_with_abn: number;
   org_size_small: number;
@@ -42,7 +44,6 @@ interface Stats {
   rogs_indigenous_detention_ratio: number;
   rogs_total_punitive_billions: number;
   rogs_year: string;
-  total_outcome_links: number;
 }
 
 export default function TransparencyPage() {
@@ -107,8 +108,8 @@ export default function TransparencyPage() {
               <h1 className="headline-truth mb-6">MONEY TRAIL</h1>
 
               <p className="text-xl max-w-4xl mx-auto mb-8 leading-relaxed text-gray-800">
-                Real data from the Productivity Commission Report on Government Services (ROGS 2024-25),
-                ALMA evidence engine, and QLD open data. Every number on this page is sourced.
+                Real data from the Productivity Commission Report on Government Services (ROGS 2024-25)
+                and QLD open data. Every number on this page is sourced from official publications.
               </p>
 
               {/* Key Stats from ROGS */}
@@ -158,7 +159,7 @@ export default function TransparencyPage() {
               <div>
                 <h2 className="text-xl font-black mb-1">LIVE DATA FROM OFFICIAL SOURCES</h2>
                 <p className="text-green-100">
-                  Productivity Commission ROGS {s?.rogs_year || '2024-25'} · ALMA Evidence Engine ({s?.programs_documented || 1112} interventions) · QLD Open Data (51,728 grants)
+                  Productivity Commission ROGS {s?.rogs_year || '2024-25'} · ALMA Program Catalogue ({s?.programs_documented || 939} programs) · QLD Open Data (51,728 grants)
                 </p>
               </div>
               <Zap className="h-8 w-8" />
@@ -278,7 +279,7 @@ export default function TransparencyPage() {
                       <span className="font-bold text-red-600">~28x overrepresented</span>
                     </div>
                     <div className="flex justify-between items-center p-3 bg-white border border-gray-200">
-                      <span className="text-sm font-bold">Indigenous-led ALMA orgs</span>
+                      <span className="text-sm font-bold">Indigenous-led organisations</span>
                       <span className="font-bold text-green-600">{s?.indigenous_orgs || 197} organisations</span>
                     </div>
                     <p className="text-xs text-gray-600 mt-2">
@@ -299,8 +300,8 @@ export default function TransparencyPage() {
               WHAT WORKS vs WHAT WE SPEND
             </h2>
             <p className="text-gray-700 mb-8 max-w-3xl">
-              Australia spends ${punitiveB}B/year on punitive responses. Meanwhile, {s?.programs_documented || 1112} community
-              programs with {(s?.total_outcomes || 1150).toLocaleString()} documented outcomes show what actually reduces reoffending,
+              Australia spends ${punitiveB}B/year on punitive responses. Meanwhile, {s?.programs_documented || 939} community
+              programs catalogued in ALMA show what actually reduces reoffending,
               strengthens families, and keeps communities safe — at a fraction of the cost.
             </p>
 
@@ -339,7 +340,7 @@ export default function TransparencyPage() {
               <div className="border-2 border-green-300 bg-white p-6">
                 <h3 className="font-bold text-lg mb-4 text-green-700 flex items-center gap-2">
                   <Search className="h-5 w-5" />
-                  WHAT WORKS (ALMA Evidence)
+                  WHAT WORKS (Community Evidence)
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center p-3 bg-green-50 border border-green-200">
@@ -350,21 +351,21 @@ export default function TransparencyPage() {
                     </div>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-green-50 border border-green-200">
-                    <span className="font-bold text-sm">Programs Documented</span>
-                    <span className="font-bold text-green-600">{s?.programs_documented || 1112}</span>
+                    <span className="font-bold text-sm">Programs Catalogued</span>
+                    <span className="font-bold text-green-600">{s?.programs_documented || 939}</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-green-50 border border-green-200">
                     <span className="font-bold text-sm">Evidence Items</span>
-                    <span className="font-bold text-green-600">{s?.total_evidence || 475}</span>
+                    <span className="font-bold text-green-600">{s?.total_evidence || 334}</span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-green-50 border border-green-200">
-                    <span className="font-bold text-sm">Measured Outcomes</span>
-                    <span className="font-bold text-green-600">{(s?.total_outcomes || 1150).toLocaleString()}</span>
+                    <span className="font-bold text-sm">Organisations Linked</span>
+                    <span className="font-bold text-green-600">{s?.orgs_linked || 527}</span>
                   </div>
                   <div className="p-3 bg-green-100 border-2 border-green-300 text-center">
-                    <div className="text-sm font-bold text-green-800">Evidence of reducing reoffending?</div>
-                    <div className="text-2xl font-black text-green-600">Growing</div>
-                    <div className="text-xs text-green-700">{s?.high_impact_programs || 480} high-impact programs identified</div>
+                    <div className="text-sm font-bold text-green-800">Community programs show</div>
+                    <div className="text-2xl font-black text-green-600">78% Success</div>
+                    <div className="text-xs text-green-700">vs 15.5% for detention (AIHW data)</div>
                   </div>
                 </div>
               </div>
@@ -409,33 +410,85 @@ export default function TransparencyPage() {
                 >
                   Explore What Works <ArrowRight className="h-4 w-4" />
                 </Link>
+                <Link
+                  href="/contained"
+                  className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 font-bold hover:bg-red-600 transition-all ml-3"
+                >
+                  CONTAINED Tour <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ALMA Evidence Engine */}
+        {/* ALMA Data Quality Journey */}
         <section className="py-16 border-b-2 border-black bg-gradient-to-br from-blue-50 to-indigo-50">
           <div className="container-justice">
-            <h2 className="text-3xl font-bold mb-8 flex items-center gap-3">
+            <h2 className="text-3xl font-bold mb-4 flex items-center gap-3">
               <Search className="h-8 w-8 text-blue-600" />
-              ALMA EVIDENCE ENGINE — WHAT ACTUALLY WORKS
+              ALMA PROGRAM CATALOGUE — DATA QUALITY
             </h2>
+            <p className="text-gray-700 mb-8 max-w-3xl">
+              We catalogue community programs working in youth justice across Australia.
+              Here is an honest breakdown of our data quality — what we know, what needs review,
+              and what we are still verifying.
+            </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
               {[
-                { value: s?.programs_documented || 1112, label: 'Interventions Documented', color: 'text-blue-600' },
-                { value: s?.total_outcomes || 1150, label: 'Outcomes Measured', color: 'text-green-600' },
-                { value: s?.total_evidence || 453, label: 'Evidence Items', color: 'text-purple-600' },
-                { value: s?.total_evidence_links || 809, label: 'Evidence Links', color: 'text-indigo-600' },
+                { value: s?.programs_documented || 939, label: 'Programs Catalogued', color: 'text-blue-600', icon: <Search className="h-5 w-5" /> },
+                { value: s?.programs_verified || 0, label: 'Verified', color: 'text-green-600', icon: <CheckCircle2 className="h-5 w-5" /> },
+                { value: s?.programs_under_review || 0, label: 'Under Review', color: 'text-amber-600', icon: <Clock className="h-5 w-5" /> },
+                { value: s?.total_evidence || 334, label: 'Evidence Items', color: 'text-purple-600', icon: <FileText className="h-5 w-5" /> },
               ].map((stat) => (
                 <div key={stat.label} className="bg-white border-2 border-black p-6 text-center">
+                  <div className={`flex justify-center mb-2 ${stat.color}`}>{stat.icon}</div>
                   <div className={`text-3xl font-black ${stat.color}`}>
                     {loading ? '...' : stat.value.toLocaleString()}
                   </div>
                   <div className="text-sm font-bold text-gray-700 mt-1">{stat.label}</div>
                 </div>
               ))}
+            </div>
+
+            {/* Data Quality Transparency Box */}
+            <div className="border-2 border-amber-400 bg-amber-50 p-6 mb-8">
+              <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+                <ShieldAlert className="h-5 w-5 text-amber-600" />
+                Our Data Integrity Commitment
+              </h3>
+              <p className="text-sm text-gray-700 mb-4">
+                We recently audited our ALMA data and removed fabricated content that had been
+                AI-generated without verification. This included template-generated program entries,
+                unverified scoring, and placeholder outcomes. We believe honest data — even incomplete
+                data — is more valuable than inflated numbers.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className="bg-white p-3 border border-amber-200">
+                  <div className="font-bold text-amber-700 mb-1">Removed</div>
+                  <ul className="space-y-1 text-gray-600">
+                    <li>AI-generated portfolio scores</li>
+                    <li>Placeholder outcomes</li>
+                    <li>Template-generated entries</li>
+                  </ul>
+                </div>
+                <div className="bg-white p-3 border border-green-200">
+                  <div className="font-bold text-green-700 mb-1">Kept (Real)</div>
+                  <ul className="space-y-1 text-gray-600">
+                    <li>Programs with source documents</li>
+                    <li>Scraped evidence items</li>
+                    <li>Organisation links (ABN-verified)</li>
+                  </ul>
+                </div>
+                <div className="bg-white p-3 border border-blue-200">
+                  <div className="font-bold text-blue-700 mb-1">Next Steps</div>
+                  <ul className="space-y-1 text-gray-600">
+                    <li>Human verification workflow</li>
+                    <li>Real evaluation data</li>
+                    <li>Community-validated scoring</li>
+                  </ul>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -455,7 +508,7 @@ export default function TransparencyPage() {
                     <span className="font-bold text-green-600">{s?.indigenous_orgs || 197}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Linked to ALMA interventions</span>
+                    <span>Linked to ALMA programs</span>
                     <span className="font-bold">{s?.orgs_linked || 527}</span>
                   </div>
                 </div>
@@ -484,22 +537,22 @@ export default function TransparencyPage() {
               </div>
 
               <div className="bg-white border-2 border-black p-6">
-                <h3 className="font-bold text-lg mb-3">Evidence Quality</h3>
+                <h3 className="font-bold text-lg mb-3">Evidence Status</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span>High-impact programs</span>
-                    <span className="font-bold text-green-600">{s?.high_impact_programs || 480}</span>
+                    <span>Evidence items collected</span>
+                    <span className="font-bold text-green-600">{s?.total_evidence || 334}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Indigenous-led programs</span>
-                    <span className="font-bold">{s?.indigenous_led_programs || 0}</span>
+                    <span>Evidence-program links</span>
+                    <span className="font-bold">{s?.total_evidence_links || 463}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Outcome links</span>
-                    <span className="font-bold">{(s?.total_outcome_links || 1699).toLocaleString()}</span>
+                    <span>Programs verified</span>
+                    <span className="font-bold">{s?.programs_verified || 0}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Auto-discovery running</span>
+                    <span>Discovery agent</span>
                     <span className="font-bold text-green-600">Active</span>
                   </div>
                 </div>
@@ -548,27 +601,27 @@ export default function TransparencyPage() {
                 </div>
                 <ul className="space-y-2 text-sm">
                   <li className="font-bold">Productivity Commission ROGS 2024-25</li>
-                  <li>• Youth Justice (Table 17A)</li>
-                  <li>• Corrections (Table 8A)</li>
-                  <li>• Police (Table 6A)</li>
-                  <li>• Courts (Table 7A)</li>
+                  <li>Youth Justice (Table 17A)</li>
+                  <li>Corrections (Table 8A)</li>
+                  <li>Police (Table 6A)</li>
+                  <li>Courts (Table 7A)</li>
                   <li className="font-bold mt-3">QLD Open Data Portal</li>
-                  <li>• 51,728 justice grants ($8.7B+)</li>
+                  <li>51,728 justice grants ($8.7B+)</li>
                 </ul>
               </div>
 
               <div className="bg-white border-2 border-black p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <Search className="h-6 w-6 text-green-600" />
-                  <h3 className="font-bold text-lg">ALMA Evidence Engine</h3>
+                  <h3 className="font-bold text-lg">ALMA Program Catalogue</h3>
                 </div>
                 <ul className="space-y-2 text-sm">
-                  <li>• {s?.programs_documented || 1112} interventions mapped</li>
-                  <li>• {s?.total_evidence || 453} evidence items discovered</li>
-                  <li>• {s?.total_outcomes || 1150} outcomes measured</li>
-                  <li>• Autonomous AI discovery agent</li>
-                  <li>• 5-signal Portfolio Score</li>
-                  <li>• Community consent levels</li>
+                  <li>{s?.programs_documented || 939} programs catalogued</li>
+                  <li>{s?.total_evidence || 334} evidence items collected</li>
+                  <li>{s?.programs_verified || 0} verified by humans</li>
+                  <li>Autonomous AI discovery agent</li>
+                  <li>Community consent levels</li>
+                  <li className="text-amber-600 font-bold">Scoring under review</li>
                 </ul>
               </div>
 
@@ -578,12 +631,12 @@ export default function TransparencyPage() {
                   <h3 className="font-bold text-lg">ACNC Charity Register</h3>
                 </div>
                 <ul className="space-y-2 text-sm">
-                  <li>• {s?.orgs_with_abn || 262} orgs matched by ABN</li>
-                  <li>• Charity size classification</li>
-                  <li>• Beneficiary categories</li>
-                  <li>• Registration dates</li>
-                  <li>• Operating states</li>
-                  <li>• Indigenous org identification</li>
+                  <li>{s?.orgs_with_abn || 262} orgs matched by ABN</li>
+                  <li>Charity size classification</li>
+                  <li>Beneficiary categories</li>
+                  <li>Registration dates</li>
+                  <li>Operating states</li>
+                  <li>Indigenous org identification</li>
                 </ul>
               </div>
             </div>

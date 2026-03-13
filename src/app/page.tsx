@@ -14,14 +14,25 @@ import { trackJourneyEvent } from '@/lib/analytics/journey';
 
 interface HomepageStats {
   programs_documented: number;
-  programs_with_outcomes: number;
-  outcomes_rate: number;
+  programs_verified: number;
+  programs_under_review: number;
   total_services: number;
   youth_services: number;
   total_people: number;
   total_organizations: number;
   states_covered: number;
-  estimated_cost_savings_millions: number;
+  total_evidence: number;
+}
+
+interface TopRecipient {
+  recipient_name: string;
+  recipient_abn: string | null;
+  grant_count: number;
+  total_dollars: number;
+  years_funded: number;
+  is_indigenous: boolean;
+  alma_linked: boolean;
+  charity_size?: string | null;
 }
 
 export default function HomePage() {
@@ -30,6 +41,8 @@ export default function HomePage() {
   const [stats, setStats] = useState<HomepageStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
   const [isStatsFallback, setIsStatsFallback] = useState(false);
+  const [topRecipients, setTopRecipients] = useState<TopRecipient[]>([]);
+  const [recipientsLoading, setRecipientsLoading] = useState(true);
 
   // Fetch live stats from database
   useEffect(() => {
@@ -45,6 +58,12 @@ export default function HomePage() {
       })
       .catch(console.error)
       .finally(() => setStatsLoading(false));
+
+    fetch('/api/justice-funding?view=top_recipients&state=QLD&limit=10')
+      .then(res => res.json())
+      .then(data => { if (Array.isArray(data)) setTopRecipients(data); })
+      .catch(console.error)
+      .finally(() => setRecipientsLoading(false));
   }, []);
 
   // Only start rotation after mounting to prevent hydration issues
@@ -286,12 +305,12 @@ export default function HomePage() {
                   </div>
                 ) : (
                   <div className="font-mono text-4xl font-bold mb-2">
-                    {stats?.programs_documented.toLocaleString() || '1,112'}
+                    {stats?.programs_documented.toLocaleString() || '939'}
                   </div>
                 )}
-                <p className="text-lg font-bold mb-1">Programs Documented</p>
+                <p className="text-lg font-bold mb-1">Programs Catalogued</p>
                 <p className="text-sm text-blue-800 font-medium">
-                  {stats?.outcomes_rate || 67}% with outcomes data
+                  {stats?.total_evidence || 334} evidence items
                 </p>
               </div>
 
@@ -333,12 +352,71 @@ export default function HomePage() {
                   </div>
                 ) : (
                   <div className="font-mono text-4xl font-bold mb-2">
-                    ${stats?.estimated_cost_savings_millions || 45}M
+                    {stats?.total_organizations?.toLocaleString() || '67'}
                   </div>
                 )}
-                <p className="text-lg font-bold mb-1">Cost Savings</p>
-                <p className="text-sm text-gray-600">Identified annually</p>
+                <p className="text-lg font-bold mb-1">Organisations</p>
+                <p className="text-sm text-gray-600">In the network</p>
               </div>
+            </div>
+          </div>
+
+          {/* Where QLD Justice Money Goes */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold mb-2 text-center">WHERE QLD JUSTICE MONEY GOES</h3>
+            <p className="text-sm text-gray-500 text-center mb-6">
+              {topRecipients.length > 0
+                ? `Top 10 of ${stats?.total_organizations?.toLocaleString() || 'hundreds of'} funded organisations`
+                : 'Loading funding data...'}
+            </p>
+
+            {recipientsLoading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+              </div>
+            ) : (
+              <div className="border-2 border-black">
+                {topRecipients.map((r, i) => (
+                  <Link
+                    key={r.recipient_abn || r.recipient_name}
+                    href={r.recipient_abn ? `/justice-funding/org/${r.recipient_abn}` : '/justice-funding?tab=organizations'}
+                    className={`flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors ${i < topRecipients.length - 1 ? 'border-b-2 border-black' : ''}`}
+                  >
+                    <div className="font-mono text-2xl font-bold text-gray-400 w-8 text-right flex-shrink-0">
+                      {i + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-gray-900 truncate">{r.recipient_name}</span>
+                        {r.is_indigenous && (
+                          <span className="px-1.5 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold flex-shrink-0">
+                            Indigenous-led
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-0.5">
+                        {r.grant_count} grants · {r.years_funded} years
+                      </div>
+                    </div>
+                    <div className="font-mono text-xl font-bold text-gray-900 flex-shrink-0">
+                      {r.total_dollars >= 1_000_000_000
+                        ? `$${(r.total_dollars / 1_000_000_000).toFixed(2)}B`
+                        : r.total_dollars >= 1_000_000
+                        ? `$${(r.total_dollars / 1_000_000).toFixed(0)}M`
+                        : `$${(r.total_dollars / 1_000).toFixed(0)}K`}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+              <Link href="/justice-funding?tab=organizations" className="cta-secondary inline-flex items-center gap-2 justify-center">
+                VIEW ALL ORGANISATIONS <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link href="/transparency" className="cta-secondary inline-flex items-center gap-2 justify-center">
+                EXPLORE THE MONEY TRAIL <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
 
@@ -526,7 +604,7 @@ export default function HomePage() {
             {/* More programs */}
             <div className="p-8 bg-black md:col-span-2 lg:col-span-3">
               <p className="text-2xl font-bold mb-4 text-white">
-                {stats?.programs_documented?.toLocaleString() || '1,112'}+ programs across Australia. Working. Right now.
+                {stats?.programs_documented?.toLocaleString() || '939'}+ programs across Australia. Working. Right now.
               </p>
               <p className="text-xl mb-6 text-white">
                 The solutions exist. They're just invisible, underfunded, and 
@@ -558,11 +636,11 @@ export default function HomePage() {
               <div className="flex-1 text-center md:text-left">
                 <h3 className="text-2xl font-black mb-2">ASK ALMA</h3>
                 <p className="text-lg mb-4">
-                  AI-powered guide to {stats?.programs_documented?.toLocaleString() || '1,112'}+ youth justice programs across Australia.
+                  AI-powered guide to {stats?.programs_documented?.toLocaleString() || '939'}+ youth justice programs across Australia.
                   Find services, explore evidence, connect with communities.
                 </p>
                 <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                  <span className="px-3 py-1 bg-green-100 border border-green-600 text-green-800 text-sm font-bold">{stats?.programs_documented?.toLocaleString() || '1,112'} Programs</span>
+                  <span className="px-3 py-1 bg-green-100 border border-green-600 text-green-800 text-sm font-bold">{stats?.programs_documented?.toLocaleString() || '939'} Programs</span>
                   <span className="px-3 py-1 bg-blue-100 border border-blue-600 text-blue-800 text-sm font-bold">7 States</span>
                   <span className="px-3 py-1 bg-purple-100 border border-purple-600 text-purple-800 text-sm font-bold">Real-time Data</span>
                 </div>

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, RefreshCw, Check, X, AlertCircle, Clock, User, Download, Eye, EyeOff } from 'lucide-react';
 import { Navigation } from '@/components/ui/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 
 interface EmpathyLedgerProfile {
   id: string;

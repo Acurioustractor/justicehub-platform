@@ -18,14 +18,18 @@ export async function GET() {
     ] = await Promise.all([
       supabase
         .from('alma_interventions')
-        .select('id, portfolio_score, evidence_level, type, geography, operating_organization_id', { count: 'exact' }),
+        .select('id, portfolio_score, evidence_level, type, geography, operating_organization_id', { count: 'exact' })
+        .neq('verification_status', 'ai_generated'),
       supabase.from('alma_intervention_evidence').select('id', { count: 'exact' }),
       supabase.from('alma_outcomes').select('id', { count: 'exact' }),
       supabase.from('alma_intervention_outcomes').select('id', { count: 'exact' }),
+      // Top programs — only show if scores exist (currently all NULL after cleanup)
       supabase
         .from('alma_interventions')
         .select('name, type, portfolio_score, evidence_level, geography, operating_organization')
+        .not('portfolio_score', 'is', null)
         .gte('portfolio_score', 0.7)
+        .neq('verification_status', 'ai_generated')
         .order('portfolio_score', { ascending: false })
         .limit(20),
       supabase.from('alma_interventions').select('type'),

@@ -51,24 +51,53 @@
           "role": "True Justice Partner - ANU",
           "bio": "Professor Helen Milroy leads the True Justice Initiative partnership with Oonchiumpa, focusing on deep listening and restorative justice approaches since 2022.",
           "featured": false
+        },
+        {
+          "name": "Max Bloomfield",
+          "role": "Traditional Owner - Atnarpa Station",
+          "bio": "Max Bloomfield is a Traditional Owner of Atnarpa (Loves Creek Station). His father Henry grew up at Atnarpa, and the family has maintained connection to this land through generations of cultural practice and ceremony.",
+          "quote": "Being part of the 1994 land claim was a privilege and unique experience.",
+          "featured": true
+        },
+        {
+          "name": "Patricia Ann Miller AO",
+          "role": "Traditional Owner",
+          "bio": "Patricia Ann Miller AO is a Traditional Owner who has made significant contributions to Aboriginal rights, community development, and cultural preservation in Central Australia.",
+          "featured": true
         }
       ],
       "videos": [
         {
-          "title": "True Justice: Deep Listening on Country",
-          "description": "Documentary exploring Oonchiumpa's partnership with ANU's True Justice Initiative, showing how deep listening and cultural healing transforms young people's lives.",
-          "url": "https://www.youtube.com/watch?v=oonchiumpa-true-justice",
+          "title": "Atnarpa Station — Drone Flyover",
+          "description": "Aerial drone footage over Atnarpa Homestead and the MacDonnell Ranges, showcasing the beauty of country east of Alice Springs.",
+          "url": "https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/oonchiumpa/videos/header-dji-0323-light.mp4",
           "type": "documentary",
-          "duration": 1440,
+          "duration": 15,
           "featured": true
         },
         {
-          "title": "Atnarpa Homestead - On Country Experience",
-          "description": "Young people share their experiences at Atnarpa Station, connecting with country, elders, and traditional knowledge.",
-          "url": "https://www.youtube.com/watch?v=atnarpa-on-country",
+          "title": "Camp Life at Atnarpa",
+          "description": "Camp footage showing cultural activities, yarning circles, and community gathering at Atnarpa Homestead campground.",
+          "url": "https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/oonchiumpa/videos/camp-cut-20s-light.mp4",
           "type": "documentary",
-          "duration": 720,
+          "duration": 20,
           "featured": true
+        },
+        {
+          "title": "Drone Follow — Camp to Homestead",
+          "description": "Aerial drone footage following the path from the campground to the historic homestead at Atnarpa Station.",
+          "url": "https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/oonchiumpa/videos/camp-to-house-drone-follow-light.mp4",
+          "type": "documentary",
+          "duration": 120,
+          "featured": true
+        },
+        {
+          "title": "Working on Station — Part 1",
+          "description": "Station activities at Atnarpa — the family continuing their connection to land through daily work on the homestead.",
+          "url": "https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/oonchiumpa/videos/work-on-station-01-light.mp4",
+          "type": "documentary",
+          "duration": 60,
+          "featured": false
         }
       ],
       "externalLinks": [

@@ -10,7 +10,7 @@ import {
   updateFundingRelationshipEngagementStage,
   updateFundingRelationshipPathwayTaskStatus,
 } from '@/lib/funding/funding-operating-system';
-import { createServiceClient } from '@/lib/supabase/service';
+import { createServiceClient } from '@/lib/supabase/service-lite';
 
 function getSmokeSecret() {
   return String(process.env.FUNDING_SMOKE_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();

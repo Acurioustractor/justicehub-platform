@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server-lite';
 
 export default async function TestAuthPage() {
   const supabase = await createClient();

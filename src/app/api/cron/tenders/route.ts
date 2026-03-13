@@ -3,6 +3,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { LLMClient } from '@/lib/ai/model-router';
 import { parseJSON } from '@/lib/ai/parse-json';
 import { searchWeb, type SearchResult } from '@/lib/scraping/web-search';
+import type { Database } from '@/types/database.types';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
@@ -34,6 +35,21 @@ const QUERIES = [
   { state: 'NSW', source: 'nsw_etender', query: 'NSW government tender youth justice corrections 2026' },
   { state: 'VIC', source: 'vic_buying', query: 'Victoria government tender youth justice corrections 2026' },
 ];
+
+type ExtractedTender = {
+  source_id?: string | null;
+  title?: string | null;
+  description?: string | null;
+  contract_value?: number | null;
+  status?: string | null;
+  buyer_name?: string | null;
+  supplier_name?: string | null;
+  source_url?: string | null;
+};
+
+type TenderExtractionResponse = {
+  tenders?: ExtractedTender[];
+};
 
 /**
  * Cron: Scrape state procurement portals for justice-related tenders.
@@ -91,17 +107,17 @@ Only include actual tenders. Return {"tenders": []} if none found.`;
 
   try {
     const raw = await LLMClient.getInstance().call(prompt, { maxTokens: 2000 });
-    const parsed = parseJSON(raw);
+    const parsed = parseJSON(raw) as TenderExtractionResponse | null;
     if (!parsed?.tenders) {
       return NextResponse.json({ success: true, state: target.state, results });
     }
 
-    for (const tender of parsed.tenders as { source_id?: string; title?: string; description?: string; contract_value?: number; status?: string; buyer_name?: string; supplier_name?: string; source_url?: string }[]) {
+    for (const tender of parsed.tenders) {
       if (!tender.title) continue;
 
       const { isJustice, keywords } = classifyJustice(tender.title || '', tender.description || '');
 
-      const record = {
+      const record: Database['public']['Tables']['state_tenders']['Insert'] = {
         source: target.source,
         source_id: tender.source_id || `auto_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
         title: tender.title,

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server-lite';
 import { NextResponse } from 'next/server';
 import { sanitizeInput, sanitizeUrl } from '@/lib/security';
 

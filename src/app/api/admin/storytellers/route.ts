@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { checkAdmin } from '@/lib/supabase/admin';
-import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
+import { checkAdmin } from '@/lib/supabase/admin-lite';
+import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger-lite';
 
 /**
  * GET /api/admin/storytellers

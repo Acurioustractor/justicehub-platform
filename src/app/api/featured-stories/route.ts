@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import {
   getFeaturedJusticeStories,
   isEmpathyLedgerConfigured,
-} from '@/lib/supabase/empathy-ledger';
+} from '@/lib/supabase/empathy-ledger-lite';
 
 export const dynamic = 'force-dynamic';
 

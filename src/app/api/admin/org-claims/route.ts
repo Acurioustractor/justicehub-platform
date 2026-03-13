@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkAdmin } from '@/lib/supabase/admin';
-import { createServiceClient } from '@/lib/supabase/service';
+import { checkAdmin } from '@/lib/supabase/admin-lite';
+import { createServiceClient } from '@/lib/supabase/service-lite';
 
 export async function GET(request: NextRequest) {
   try {

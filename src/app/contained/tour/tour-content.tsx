@@ -6,15 +6,18 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import {
-  tourStops,
+  tourStops as staticTourStops,
   journeyContainers,
   campaignFundraising,
   campaignMedia,
   worldTour,
+  type TourStop,
 } from '@/content/campaign';
 import FeaturedVideo from '@/components/FeaturedVideo';
-import ImageGallery from '@/components/ImageGallery';
+
 import SupportersWall from '@/components/contained/SupportersWall';
+import { GalleryEditor } from '@/components/contained/GalleryEditor';
+import { StoryEditor } from '@/components/contained/StoryEditor';
 import {
   ArrowRight,
   Calendar,
@@ -95,6 +98,17 @@ const containerAccents: Record<string, string> = {
   hopeful: 'text-emerald-700',
 };
 
+const FALLBACK_GALLERY = [
+  { src: '/images/orgs/oonchiumpa/hero.jpg', alt: 'Oonchiumpa team, Aboriginal-led cultural healing, Alice Springs', caption: 'Oonchiumpa, Alice Springs NT' },
+  { src: '/images/orgs/bg-fit/hero.jpg', alt: 'BG Fit youth program, fitness and mentoring, Mount Isa', caption: 'BG Fit, Mount Isa QLD' },
+  { src: '/images/orgs/oonchiumpa/homestead.jpg', alt: 'Oonchiumpa homestead and country', caption: 'On Country, Oonchiumpa' },
+  { src: '/images/orgs/bg-fit/gallery-1.jpg', alt: 'BG Fit community engagement with young people', caption: 'Community, BG Fit' },
+  { src: '/images/orgs/oonchiumpa/mentoring.jpg', alt: 'Oonchiumpa mentoring on country', caption: 'Mentoring, Oonchiumpa' },
+  { src: '/images/orgs/bg-fit/gallery-2.jpg', alt: 'BG Fit youth fitness program', caption: 'Youth Programs, BG Fit' },
+  { src: '/images/orgs/bg-fit/gallery-3.jpg', alt: 'BG Fit community gathering', caption: 'Gathering, BG Fit' },
+  { src: '/images/orgs/oonchiumpa/law-students.jpg', alt: 'Law students visiting Oonchiumpa', caption: 'Learning, Oonchiumpa' },
+];
+
 const SHARE_TEXT = 'CONTAINED: One shipping container, three rooms revealing the reality of youth detention. Australian Tour 2026.';
 const SHARE_URL = 'https://justicehub.org.au/contained';
 
@@ -111,7 +125,7 @@ const ENDORSEMENT_QUOTES = [
     name: 'Youth Justice Advocate',
   },
   {
-    quote: 'This is what accountability looks like — making the system feel what it does to young people.',
+    quote: 'This is what accountability looks like. Making the system feel what it does to young people.',
     name: 'Community Leader',
   },
   {
@@ -452,7 +466,7 @@ function BackerSection({ slug }: { slug: string }) {
           {/* Share CTA */}
           <div className="text-center">
             <p className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-3">
-              Add pressure — share with your network
+              Add pressure. Share with your network
             </p>
             <div className="flex justify-center">
               <div className="flex items-center gap-3">
@@ -634,7 +648,7 @@ function ReactionsSection({
                     />
                     <input
                       type="email"
-                      placeholder="Email (optional — kept private)"
+                      placeholder="Email (optional, kept private)"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="px-4 py-3 border-2 border-gray-300 text-sm focus:outline-none focus:border-black"
@@ -749,7 +763,7 @@ function BasecampStoriesSection({ basecamps }: { basecamps: { slug: string; name
           Stories From the Basecamps
         </h2>
         <p className="text-xl text-gray-700 mb-12 max-w-3xl">
-          Lived experience from the communities anchoring this tour — the organisations already doing what works.
+          Lived experience from the communities anchoring this tour. The organisations already doing what works.
         </p>
 
         <div className="space-y-12">
@@ -942,7 +956,7 @@ function NominateSection({ slug }: { slug: string }) {
               <CheckCircle className="w-8 h-8 mx-auto mb-3 text-emerald-400" />
               <p className="font-bold text-lg">Nomination submitted.</p>
               <p className="text-gray-400 text-sm mt-1">
-                Share to build more pressure — every nomination counts.
+                Share to build more pressure. Every nomination counts.
               </p>
               <button
                 onClick={() => { setStatus('idle'); setFormOpen(true); }}
@@ -1025,7 +1039,7 @@ function NominateSection({ slug }: { slug: string }) {
                   {/* Optional: your info */}
                   <details className="group">
                     <summary className="text-xs font-bold uppercase tracking-widest text-gray-400 cursor-pointer hover:text-gray-300">
-                      Your details (optional — kept private)
+                      Your details (optional, kept private)
                     </summary>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
                       <input
@@ -1106,11 +1120,10 @@ function NominateSection({ slug }: { slug: string }) {
 
 interface AlmaStats {
   programs_documented: number;
+  programs_verified: number;
+  programs_under_review: number;
   total_organizations: number;
-  high_impact_programs: number;
   orgs_linked: number;
-  indigenous_led_programs: number;
-  total_outcomes: number;
   total_evidence: number;
   total_evidence_links: number;
   // ROGS justice spending
@@ -1140,6 +1153,10 @@ export function TourContent() {
   const [recommendRate, setRecommendRate] = useState(0);
   const [almaStats, setAlmaStats] = useState<AlmaStats | null>(null);
   const [stateSpending, setStateSpending] = useState<Record<string, { detention_millions: number | null; community_millions: number | null; indigenous_ratio: number | null; cost_per_child: number | null; detention_population: number | null }>>({});
+  const [stateFundingTop, setStateFundingTop] = useState<Record<string, Array<{ recipient_name: string; total_dollars: number; is_indigenous: boolean }>>>({});
+  const [tourStops, setTourStops] = useState<TourStop[]>(staticTourStops);
+  const [galleryImages, setGalleryImages] = useState(FALLBACK_GALLERY);
+  const [isAdmin, setIsAdmin] = useState(false);
   const tourStopRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
@@ -1260,6 +1277,31 @@ export function TourContent() {
       })
       .catch(console.error);
 
+    // Fetch top funding recipients per tour stop state
+    const tourStates = [...new Set(staticTourStops.map(s => s.state))];
+    Promise.all(
+      tourStates.map(state =>
+        fetch(`/api/justice-funding?view=top_recipients&state=${state}&limit=5`)
+          .then(r => r.json())
+          .then(data => ({ state, recipients: (data?.justice_funding_top_recipients || (Array.isArray(data) ? data : [])).slice(0, 5) }))
+          .catch(() => ({ state, recipients: [] }))
+      )
+    ).then(results => {
+      const map: Record<string, Array<{ recipient_name: string; total_dollars: number; is_indigenous: boolean }>> = {};
+      for (const r of results) {
+        if (r.recipients.length > 0) map[r.state] = r.recipients;
+      }
+      setStateFundingTop(map);
+    });
+
+    // Fetch tour stops from DB (fallback to static)
+    fetch('/api/contained/tour-stops')
+      .then((res) => res.json())
+      .then((data: TourStop[]) => {
+        if (Array.isArray(data) && data.length > 0) setTourStops(data);
+      })
+      .catch(console.error);
+
     // Fetch tour reactions
     fetch('/api/projects/the-contained/reactions')
       .then((res) => res.json())
@@ -1269,6 +1311,21 @@ export function TourContent() {
         if (Array.isArray(data.recent)) setReactions(data.recent);
       })
       .catch(console.error);
+
+    // Fetch gallery images from DB
+    fetch('/api/admin/contained/gallery')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.images) && data.images.length > 0) {
+          setGalleryImages(data.images);
+        }
+      })
+      .catch(console.error);
+
+    // Check if user is admin (for gallery editor)
+    fetch('/api/admin/system-status')
+      .then((res) => { if (res.ok) setIsAdmin(true); })
+      .catch(() => {});
   }, []);
 
   const currentAmount = liveRaised ?? campaignFundraising.currentAmount;
@@ -1277,12 +1334,12 @@ export function TourContent() {
     100
   );
 
-  // Days until first tour stop
-  const firstStopDate = new Date(tourStops[0].date + 'T00:00:00');
-  const daysUntil = Math.max(
-    0,
-    Math.ceil((firstStopDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-  );
+  // Days until launch + first tour stop
+  const launchDate = new Date('2026-03-17T00:00:00');
+  const mtDruittDate = new Date('2026-04-11T00:00:00');
+  const daysUntilLaunch = Math.max(0, Math.ceil((launchDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+  const daysUntilMtDruitt = Math.max(0, Math.ceil((mtDruittDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+  const daysUntil = daysUntilMtDruitt;
 
   const handleMapStopClick = (eventSlug: string) => {
     const el = tourStopRefs.current[eventSlug];
@@ -1291,6 +1348,15 @@ export function TourContent() {
       el.classList.add('ring-4', 'ring-emerald-500');
       setTimeout(() => el.classList.remove('ring-4', 'ring-emerald-500'), 2000);
     }
+  };
+
+  const refreshStories = () => {
+    fetch('/api/projects/the-contained/stories')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.stories?.length > 0) setProjectStories(data.stories);
+      })
+      .catch(console.error);
   };
 
   // Story display: max 6, portrait style for those with images
@@ -1334,9 +1400,18 @@ export function TourContent() {
 
           {/* Centred text block */}
           <div className="relative z-10 text-center text-white px-6" style={{ textShadow: '0 2px 30px rgba(0,0,0,0.9), 0 0 60px rgba(0,0,0,0.5)' }}>
-            {daysUntil > 0 && (
-              <div className="inline-block bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-6">
-                {daysUntil} days until Mount Druitt
+            {(daysUntilLaunch > 0 || daysUntilMtDruitt > 0) && (
+              <div className="flex flex-wrap justify-center gap-2 mb-6">
+                {daysUntilLaunch > 0 && (
+                  <div className="inline-block bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase tracking-widest">
+                    {daysUntilLaunch} days till launch
+                  </div>
+                )}
+                {daysUntilMtDruitt > 0 && (
+                  <div className="inline-block bg-white/10 backdrop-blur-sm border border-white/30 text-white px-3 py-1 text-xs font-bold uppercase tracking-widest">
+                    {daysUntilMtDruitt} days till first stop
+                  </div>
+                )}
               </div>
             )}
 
@@ -1348,7 +1423,7 @@ export function TourContent() {
               One shipping container. Three rooms. Thirty minutes.
             </p>
             <p className="text-sm md:text-base text-white/60 mb-8 max-w-lg mx-auto">
-              The reality of youth detention — and what works instead.
+              The reality of youth detention, and what works instead.
             </p>
 
             <div className="flex flex-wrap justify-center gap-3 mb-8">
@@ -1369,6 +1444,12 @@ export function TourContent() {
                 className="bg-white/10 backdrop-blur-sm border border-white/30 text-white px-6 py-3 font-bold uppercase tracking-widest text-sm hover:bg-white/20 transition-colors"
               >
                 Tour Events
+              </Link>
+              <Link
+                href="/contained/act"
+                className="bg-white/10 backdrop-blur-sm border border-white/30 text-white px-6 py-3 font-bold uppercase tracking-widest text-sm hover:bg-white/20 transition-colors"
+              >
+                Take Action
               </Link>
             </div>
 
@@ -1404,15 +1485,16 @@ export function TourContent() {
                   is actually like? Not read about it. Not hear statistics. Feel it.
                 </p>
                 <p>
-                  CONTAINED was born in Brisbane and prototyped at Mount
-                  Druitt with Mounty Yarns — a youth-led storytelling organisation
-                  that understood the power of immersive experience.
+                  CONTAINED was developed in Brisbane and is launching its first
+                  public tour stop with Mounty Yarns in Mount Druitt, a youth-led
+                  storytelling organisation that understood the power of immersive
+                  experience from the start.
                 </p>
               </div>
               <div className="space-y-4 text-gray-700 leading-relaxed">
                 <p>
                   Hosts signed up. Community leaders backed it. The evidence was
-                  already overwhelming — $1.55M per detained child per year, 84%
+                  already overwhelming. $1.55M per detained child per year, 84%
                   reoffending, while community programs cost a fraction and actually
                   work.
                 </p>
@@ -1435,7 +1517,7 @@ export function TourContent() {
         <section className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
           <Image
             src="/media/contained/container-room.jpg"
-            alt="CONTAINED — therapeutic room vs detention cell, side by side"
+            alt="CONTAINED, therapeutic room vs detention cell, side by side"
             fill
             className="object-cover"
             sizes="100vw"
@@ -1446,7 +1528,7 @@ export function TourContent() {
               Left: what healing looks like. Right: what $1.55 million per child buys.
             </p>
             <p className="text-white/50 text-sm mt-2">
-              CONTAINED — Brisbane prototype, 2025
+              CONTAINED, Brisbane prototype, 2025
             </p>
           </div>
         </section>
@@ -1483,7 +1565,7 @@ export function TourContent() {
               {/* Timestamp badge */}
               <div className="flex justify-end mb-4">
                 <div className="font-mono text-xs text-green-500 bg-black/80 border border-green-900 px-3 py-1.5 tracking-wider">
-                  REC <span className="animate-pulse text-red-500 inline-block">●</span> BRISBANE — CONTAINER 01
+                  REC <span className="animate-pulse text-red-500 inline-block">●</span> BRISBANE / CONTAINER 01
                 </div>
               </div>
 
@@ -1500,7 +1582,7 @@ export function TourContent() {
                 This is what $4,250 per day looks like.
               </p>
               <p className="text-center text-white/40 text-sm mt-2 font-mono">
-                Average daily cost per child in youth detention — Productivity Commission ROGS 2024-25
+                Average daily cost per child in youth detention. Productivity Commission ROGS 2024-25
               </p>
             </div>
           </section>
@@ -1509,26 +1591,40 @@ export function TourContent() {
         {/* ============================================================
             4. FROM THE GROUND — Photo Gallery (4-col, denser)
             ============================================================ */}
-        {projectPhotos.length > 0 && (
-          <section className="py-16">
-            <div className="container-justice">
-              <h2 className="text-4xl font-black uppercase tracking-tighter mb-4">
-                FROM THE GROUND
-              </h2>
-              <p className="text-xl text-gray-700 mb-8 max-w-3xl">
-                Behind the scenes and on the ground — the people and places making this tour happen.
-              </p>
-              <ImageGallery
-                images={projectPhotos.map((p) => ({
-                  src: p.photo_url,
-                  alt: p.title || 'Tour photo',
-                  caption: p.title || undefined,
-                }))}
-                columns={4}
-              />
+        <section className="py-16 relative">
+          <div className="container-justice">
+            <h2 className="text-4xl font-black uppercase tracking-tighter mb-4">
+              FROM THE GROUND
+            </h2>
+            <p className="text-xl text-gray-700 mb-8 max-w-3xl">
+              The organisations already doing the work. Community-led programs that prove youth justice can be different.
+            </p>
+            <div className="relative">
+              {isAdmin && (
+                <GalleryEditor
+                  images={galleryImages}
+                  onSave={(imgs) => setGalleryImages(imgs)}
+                />
+              )}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
+                {galleryImages.map((img, i) => (
+                  <div key={img.src} className="relative aspect-square overflow-hidden group">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={img.src}
+                      alt={img.alt}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading={i < 4 ? 'eager' : 'lazy'}
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/80 px-3 py-2 translate-y-full group-hover:translate-y-0 transition-transform duration-200">
+                      <p className="text-xs font-bold text-white">{img.caption}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </section>
-        )}
+          </div>
+        </section>
 
         {/* ============================================================
             5. THREE CONTAINERS
@@ -1539,7 +1635,7 @@ export function TourContent() {
               The Three Rooms
             </h2>
             <p className="text-xl text-gray-700 mb-12 max-w-3xl">
-              Thirty minutes. One container. Three rooms — each one tells a different part of
+              Thirty minutes. One container. Three rooms, each one tells a different part of
               Australia&apos;s youth justice story.
             </p>
 
@@ -1601,16 +1697,16 @@ export function TourContent() {
                   The Evidence Behind Container 3
                 </h2>
                 <p className="text-lg text-gray-400 mb-10">
-                  ALMA — our evidence intelligence engine — documents what works across Australia.
+                  ALMA, our evidence intelligence engine, documents what works across Australia.
                   Every number below is live from the database, updated daily.
                 </p>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
                   {[
-                    { value: almaStats.programs_documented.toLocaleString(), label: 'Interventions Documented' },
+                    { value: almaStats.programs_documented.toLocaleString(), label: 'Programs Catalogued' },
                     { value: almaStats.orgs_linked.toLocaleString(), label: 'Organisations Linked' },
-                    { value: almaStats.total_outcomes.toLocaleString(), label: 'Outcomes Tracked' },
                     { value: almaStats.total_evidence.toLocaleString(), label: 'Evidence Items' },
+                    { value: almaStats.total_evidence_links.toLocaleString(), label: 'Evidence Links' },
                   ].map((stat, i) => (
                     <div key={i} className="border border-white/20 p-4 text-center">
                       <div className="text-3xl md:text-4xl font-black font-mono">{stat.value}</div>
@@ -1655,17 +1751,12 @@ export function TourContent() {
                   </div>
                 )}
 
-                {almaStats.high_impact_programs > 0 && (
+                {almaStats.rogs_indigenous_detention_ratio > 0 && (
                   <div className="border-l-4 border-emerald-500 pl-6 mb-10">
                     <p className="text-xl">
-                      <span className="font-black text-emerald-400">{almaStats.high_impact_programs.toLocaleString()}</span> programs
-                      score 70%+ on our portfolio assessment — high evidence, strong community authority, ready to scale.
-                      {almaStats.rogs_indigenous_detention_ratio > 0 && (
-                        <span className="block mt-2 text-gray-400 text-base">
-                          Indigenous youth are locked up at <span className="text-red-400 font-bold">{almaStats.rogs_indigenous_detention_ratio}x</span> the
-                          rate of non-Indigenous youth. These programs are the alternative.
-                        </span>
-                      )}
+                      Indigenous youth are locked up at <span className="text-red-400 font-bold">{almaStats.rogs_indigenous_detention_ratio}x</span> the
+                      rate of non-Indigenous youth. {almaStats.programs_documented.toLocaleString()} community programs
+                      are catalogued and ready for proper evaluation. Real scoring, not AI guesses.
                     </p>
                   </div>
                 )}
@@ -1698,8 +1789,8 @@ export function TourContent() {
               Tour Stops
             </h2>
             <p className="text-xl text-gray-400 mb-8 max-w-3xl">
-              Four cities. Four communities. One mission: proving that youth justice
-              can be different.
+              We&apos;re building a national tour, reaching out to communities, partners,
+              and venues across Australia. Here&apos;s where conversations are happening.
             </p>
 
             {/* Interactive Map */}
@@ -1728,21 +1819,25 @@ export function TourContent() {
                       className={`px-3 py-1 text-xs font-bold uppercase tracking-widest ${
                         stop.status === 'confirmed'
                           ? 'bg-emerald-900/50 text-emerald-400 border border-emerald-700'
-                          : 'bg-yellow-900/50 text-yellow-400 border border-yellow-700'
+                          : stop.status === 'planning'
+                          ? 'bg-yellow-900/50 text-yellow-400 border border-yellow-700'
+                          : 'bg-blue-900/50 text-blue-400 border border-blue-700'
                       }`}
                     >
-                      {stop.status}
+                      {stop.status === 'tentative' ? 'in conversation' : stop.status === 'planning' ? 'planned' : stop.status}
                     </span>
                   </div>
                   <div className="p-6">
                     <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
                       <Calendar className="w-4 h-4" />
                       <span>
-                        {new Date(stop.date + 'T00:00:00').toLocaleDateString('en-AU', {
-                          day: 'numeric',
-                          month: 'long',
-                          year: 'numeric',
-                        })}
+                        {stop.date.startsWith('TBC')
+                          ? stop.date
+                          : new Date(stop.date + 'T00:00:00').toLocaleDateString('en-AU', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                            })}
                       </span>
                     </div>
                     <p className="text-gray-300 mb-3">{stop.description}</p>
@@ -1791,6 +1886,40 @@ export function TourContent() {
                         </div>
                       </div>
                     )}
+                    {stateFundingTop[stop.state] && stateFundingTop[stop.state].length > 0 && (
+                      <div className="border border-gray-800 bg-gray-900/50 p-4 space-y-3">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                          Follow the Money: {stop.state}
+                        </h4>
+                        <div className="space-y-2">
+                          {stateFundingTop[stop.state].map((r, i) => (
+                            <div key={i} className="flex items-center justify-between text-sm">
+                              <span className="text-gray-300 truncate mr-2">
+                                {r.recipient_name}
+                                {r.is_indigenous && (
+                                  <span className="ml-1.5 text-[10px] bg-amber-900/50 text-amber-400 px-1.5 py-0.5 rounded-sm font-bold uppercase">
+                                    Indigenous-led
+                                  </span>
+                                )}
+                              </span>
+                              <span className="text-white font-mono font-bold whitespace-nowrap">
+                                ${r.total_dollars >= 1_000_000
+                                  ? `${(r.total_dollars / 1_000_000).toFixed(1)}M`
+                                  : r.total_dollars >= 1_000
+                                    ? `${(r.total_dollars / 1_000).toFixed(0)}K`
+                                    : r.total_dollars.toLocaleString()}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        <Link
+                          href={`/justice-funding?state=${stop.state}`}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-emerald-400 hover:text-emerald-300 mt-1"
+                        >
+                          Full funding data <ArrowRight className="w-3 h-3" />
+                        </Link>
+                      </div>
+                    )}
                     <Link
                       href={`/events/${stop.eventSlug}`}
                       className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-emerald-400 hover:text-emerald-300"
@@ -1813,9 +1942,17 @@ export function TourContent() {
               <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
                 Stories From the Movement
               </h2>
-              <p className="text-xl text-gray-700 mb-12 max-w-3xl">
+              <p className="text-xl text-gray-700 mb-4 max-w-3xl">
                 Lived experience stories from the communities driving change.
               </p>
+              {isAdmin && (
+                <div className="mb-8">
+                  <StoryEditor
+                    currentStoryIds={projectStories.map(s => s.id)}
+                    onUpdate={refreshStories}
+                  />
+                </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {displayStories.map((story) => {
@@ -1939,10 +2076,10 @@ export function TourContent() {
 
             {/* Urgency + backer connection */}
             <div className="flex flex-wrap items-center gap-4 mb-8">
-              {daysUntil > 0 && (
+              {daysUntilLaunch > 0 && (
                 <div className="bg-red-600 text-white px-4 py-2">
-                  <span className="font-black">{daysUntil} days</span>
-                  <span className="text-red-100 text-sm ml-2">until first tour stop</span>
+                  <span className="font-black">{daysUntilLaunch} days</span>
+                  <span className="text-red-100 text-sm ml-2">till launch</span>
                 </div>
               )}
               <p className="text-xl text-gray-700">
@@ -2061,17 +2198,22 @@ export function TourContent() {
             <h2 className="text-3xl font-black uppercase tracking-tighter mb-8">
               The Platform Behind It
             </h2>
+            <p className="text-lg text-gray-300 mb-10 max-w-4xl">
+              CONTAINED is the front door. JusticeHub carries the public evidence
+              and coordination work, Empathy Ledger protects story consent and
+              community authority, and ALMA keeps the evidence base live.
+            </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl">
               <div>
                 <h3 className="font-bold text-xl mb-4 text-emerald-400">
                   JusticeHub
                 </h3>
                 <p className="text-gray-300 mb-4">
-                  The digital infrastructure connecting community-led youth justice
+                  The public infrastructure connecting community-led youth justice
                   programs with evidence, funding, and political will. Every tour
-                  stop generates stories, data, and connections that feed back into
-                  the platform.
+                  stop feeds new stories, new relationships, and new accountability
+                  back into the platform.
                 </p>
                 <Link
                   href="/about"
@@ -2086,15 +2228,32 @@ export function TourContent() {
                 </h3>
                 <p className="text-gray-300 mb-4">
                   Story-led infrastructure that ensures lived experience drives
-                  change. CONTAINED is built on Empathy Ledger
-                  technology — capturing impact, consent, and community authority
-                  at every step.
+                  change without losing consent, context, or community authority.
+                  CONTAINED uses it to capture impact in a way people can actually
+                  stand behind.
                 </p>
                 <Link
                   href="/for-funders"
                   className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-emerald-400 transition-colors"
                 >
                   Investment Thesis <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+              <div>
+                <h3 className="font-bold text-xl mb-4 text-emerald-400">
+                  ALMA
+                </h3>
+                <p className="text-gray-300 mb-4">
+                  JusticeHub&apos;s evidence engine. ALMA documents what works,
+                  links organisations to evidence, and keeps Container 3 grounded
+                  in live community-led intelligence rather than static campaign
+                  claims.
+                </p>
+                <Link
+                  href="/intelligence"
+                  className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-emerald-400 transition-colors"
+                >
+                  Explore Evidence <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
@@ -2110,7 +2269,7 @@ export function TourContent() {
               Tour Hosts: The Basecamps
             </h2>
             <p className="text-xl text-gray-700 mb-12 max-w-3xl">
-              Our four founding Basecamps anchor the tour — place-based organisations
+              Our four founding Basecamps anchor the tour. Place-based organisations
               that have already proven what works.
             </p>
 
@@ -2280,6 +2439,52 @@ export function TourContent() {
                       </div>
                     )}
                   </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ============================================================
+            12.6. VIDEO TESTIMONIALS — Descript interview embeds
+            ============================================================ */}
+        {voices.some(v => v.video_url) && (
+          <section className="py-16 bg-gray-950 text-white">
+            <div className="container-justice">
+              <h2 className="text-3xl font-black uppercase tracking-tighter mb-2 text-center">
+                Video Testimonials
+              </h2>
+              <p className="text-gray-500 text-center mb-10">
+                Hear directly from the people at the heart of this movement.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                {voices.filter(v => v.video_url).slice(0, 6).map((voice, i) => (
+                  <a
+                    key={i}
+                    href={voice.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block border border-white/10 hover:border-red-600 transition-colors overflow-hidden"
+                  >
+                    <div className="relative aspect-video bg-gray-900 flex items-center justify-center">
+                      {voice.image_url ? (
+                        <>
+                          <img
+                            src={voice.image_url}
+                            alt={voice.name}
+                            className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                          />
+                          <Play className="relative w-12 h-12 text-white fill-white/80 drop-shadow-lg" />
+                        </>
+                      ) : (
+                        <Play className="w-12 h-12 text-gray-600" />
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <div className="font-bold text-lg mb-1">{voice.name}</div>
+                      <p className="text-gray-400 text-sm line-clamp-2">&ldquo;{voice.quote}&rdquo;</p>
+                    </div>
+                  </a>
                 ))}
               </div>
             </div>

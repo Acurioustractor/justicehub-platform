@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 import { useRouter } from 'next/navigation';
 import { Mail, MailOpen, Reply, Archive, Trash2, Search, ChevronDown, ChevronUp } from 'lucide-react';
 

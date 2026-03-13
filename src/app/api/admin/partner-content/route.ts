@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server-lite';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 
 // Valid content types and their tables

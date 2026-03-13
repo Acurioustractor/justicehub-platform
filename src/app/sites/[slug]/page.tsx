@@ -102,11 +102,15 @@ const ORG_SITE_CONTENT: Record<string, any> = {
       founder: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/profile-images/storytellers/kristy_bloomfield.jpg',
       gallery: [
         { src: '/images/orgs/oonchiumpa/homestead.jpg', alt: 'On-country walk at Atnarpa with MacDonnell Ranges' },
+        { src: '/images/orgs/oonchiumpa/atnarpa/originals/20251103-DJI_0271.jpg', alt: 'Aerial view of Atnarpa Station from drone' },
         { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/story-images/stories/084fcde5-0941-4f6e-9966-ec9c4b7116b3/2.png', alt: 'Youth exploring Standley Chasm gorge' },
+        { src: '/images/orgs/oonchiumpa/atnarpa/campsite/20251103-1E5A4798.jpg', alt: 'Campsite at Atnarpa Homestead' },
         { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/story-images/stories/084fcde5-0941-4f6e-9966-ec9c4b7116b3/3.png', alt: 'Girls day trip — peace signs at Standley Chasm' },
+        { src: '/images/orgs/oonchiumpa/atnarpa/originals/img-009.jpg', alt: 'Red earth country at Atnarpa Station' },
         { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/story-images/stories/2c7a2131-c371-4ff5-8d83-b7707f412404/2.png', alt: 'Basketball girls team with Oonchiumpa staff' },
         { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/story-images/stories/bfde4125-ec37-4456-a1c5-b3b61a32eec0/2.png', alt: 'Young fellas on country in the MacDonnell Ranges' },
         { src: '/images/orgs/oonchiumpa/law-students.jpg', alt: 'ANU Law students True Justice partnership at Anzac Hill' },
+        { src: '/images/orgs/oonchiumpa/atnarpa/campsite/20251103-1E5A4819.jpg', alt: 'Camp gathering area at Atnarpa' },
       ],
     },
     heroSubtitle: 'Two Cultures, One World, Working Together',
@@ -194,7 +198,7 @@ const ORG_SITE_CONTENT: Record<string, any> = {
       ],
     },
     heroSubtitle: 'Nothing About Us Without Us',
-    heroDescription: 'A youth-led storytelling and advocacy organisation in Western Sydney\'s Mount Druitt. Young people lead documentary filmmaking, podcasting, community journalism, and the Backyard Campus — challenging deficit narratives and creating real change.',
+    heroDescription: 'A youth-led storytelling and advocacy organisation in Western Sydney\'s Mount Druitt. Young people lead documentary filmmaking, podcasting, community journalism, and the Backyard Campus, challenging deficit narratives and creating real change.',
     founder: {
       name: 'Shayle McKellar',
       title: 'Lived Experience Consultant & Youth Worker',
@@ -259,7 +263,7 @@ const ORG_SITE_CONTENT: Record<string, any> = {
     },
     cta: {
       title: 'Get Involved with Mounty Yarns',
-      description: 'Want to support youth-led storytelling in Western Sydney? Whether you\'re a young person, funder, researcher, or community member — there\'s a place for you.',
+      description: 'Want to support youth-led storytelling in Western Sydney? Whether you\'re a young person, funder, researcher, or community member, there\'s a place for you.',
       email: 'info@mountyyarns.org.au',
       phone: '0400 000 000',
     },
@@ -340,6 +344,25 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
       .limit(6);
     stories = data;
   }
+
+  // Fetch partner videos
+  const { data: videos } = await supabase
+    .from('partner_videos')
+    .select('*')
+    .eq('organization_id', org.id)
+    .eq('is_public', true)
+    .order('is_featured', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(8);
+
+  // Fetch partner stories (Good News Stories)
+  const { data: partnerStories } = await supabase
+    .from('partner_stories')
+    .select('*')
+    .eq('organization_id', org.id)
+    .eq('is_public', true)
+    .order('display_order', { ascending: true })
+    .limit(10);
 
   // Rich site (has content data)
   if (siteContent) {
@@ -463,6 +486,53 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
           <SiteGallery images={siteContent.images.gallery} />
         )}
 
+        {/* On Country Videos */}
+        {videos && videos.length > 0 && (
+          <section className="max-w-6xl mx-auto px-6 py-16">
+            <h2 className="text-3xl font-black mb-3 text-center flex items-center justify-center gap-3">
+              <Play className="w-7 h-7 text-orange-600" /> On Country
+            </h2>
+            <p className="text-center text-[#8b7355] mb-10 max-w-2xl mx-auto">Video from Atnarpa Station and on-country experiences — see the land, the work, and the community in action.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {videos.filter((v: any) => v.is_featured).map((video: any) => (
+                <div key={video.id} className="rounded-lg overflow-hidden border-2 border-[#43302b]/10 hover:border-orange-300 transition-colors">
+                  <video
+                    controls
+                    preload="metadata"
+                    poster={video.thumbnail_url}
+                    className="w-full aspect-video bg-black"
+                  >
+                    <source src={video.video_url} type="video/mp4" />
+                  </video>
+                  <div className="p-4 bg-[#fdf8f6]">
+                    <h3 className="font-bold text-[#43302b]">{video.title}</h3>
+                    {video.description && <p className="text-sm text-[#8b7355] mt-1 line-clamp-2">{video.description}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {videos.filter((v: any) => !v.is_featured).length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                {videos.filter((v: any) => !v.is_featured).map((video: any) => (
+                  <div key={video.id} className="rounded-lg overflow-hidden border border-[#43302b]/10 hover:border-orange-300 transition-colors">
+                    <video
+                      controls
+                      preload="metadata"
+                      poster={video.thumbnail_url}
+                      className="w-full aspect-video bg-black"
+                    >
+                      <source src={video.video_url} type="video/mp4" />
+                    </video>
+                    <div className="p-2">
+                      <p className="text-xs font-medium text-[#43302b] truncate">{video.title}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
         {/* Founder */}
         {siteContent.founder && (
           <section className="max-w-6xl mx-auto px-6 py-16">
@@ -497,6 +567,36 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
                     <CheckCircle2 className="w-6 h-6 text-orange-600 mb-3" />
                     <h3 className="font-black text-lg mb-2 text-[#43302b]">{value.title}</h3>
                     <p className="text-sm text-[#5c4033] leading-relaxed">{value.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Good News Stories */}
+        {partnerStories && partnerStories.length > 0 && (
+          <section className="bg-[#fdf8f6] border-y border-orange-100">
+            <div className="max-w-6xl mx-auto px-6 py-16">
+              <h2 className="text-3xl font-black mb-3 text-center flex items-center justify-center gap-3">
+                <Heart className="w-7 h-7 text-orange-600" /> Good News Stories
+              </h2>
+              <p className="text-center text-[#8b7355] mb-10 max-w-2xl mx-auto">Celebrating community strength through real stories of connection, healing, and empowerment.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {partnerStories.filter((s: any) => s.is_featured).map((story: any) => (
+                  <div key={story.id} className="bg-white border-2 border-[#43302b]/10 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                    {story.thumbnail_url && (
+                      <img src={story.thumbnail_url} alt={story.title} className="w-full h-40 object-cover" />
+                    )}
+                    <div className="p-5">
+                      <h3 className="font-bold text-lg mb-2 text-[#43302b]">{story.title}</h3>
+                      {story.excerpt && <p className="text-sm text-[#8b7355] leading-relaxed line-clamp-3">{story.excerpt}</p>}
+                      {story.story_type && (
+                        <span className="inline-block mt-3 px-2 py-1 bg-orange-50 text-orange-700 text-xs font-medium rounded-full border border-orange-200">
+                          {story.story_type.replace(/_/g, ' ')}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

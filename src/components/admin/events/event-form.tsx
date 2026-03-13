@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Save, Calendar, MapPin, Upload, X, Video, Link as LinkIcon, Eye, Image as ImageIcon } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 import dynamic from 'next/dynamic';
 
 // Dynamically import the editor

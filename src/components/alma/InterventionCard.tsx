@@ -104,7 +104,7 @@ export function InterventionCard({
       </div>
 
       {/* Portfolio Score */}
-      {showPortfolioScore && portfolioScore && (
+      {showPortfolioScore && portfolioScore && portfolioScore.composite != null && (
         <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-gray-700">
@@ -133,18 +133,18 @@ export function InterventionCard({
               </span>
             </div>
           )}
-
-          {/* Top Signal */}
-          {portfolioScore.community_authority >= 0.7 && (
-            <div className="mt-2 text-xs text-ochre-700 font-medium">
-              ⭐ High Community Authority
-            </div>
-          )}
-          {portfolioScore.evidence_strength >= 0.7 && (
-            <div className="mt-2 text-xs text-blue-700 font-medium">
-              ⭐ Strong Evidence Base
-            </div>
-          )}
+        </div>
+      )}
+      {showPortfolioScore && (!portfolioScore || portfolioScore.composite == null) && (
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">
+              Portfolio Score
+            </span>
+            <span className="text-sm font-medium text-gray-400">
+              Unscored
+            </span>
+          </div>
         </div>
       )}
     </div>

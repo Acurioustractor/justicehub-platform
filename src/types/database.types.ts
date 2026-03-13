@@ -1,4 +1,3 @@
-Initialising login role...
 export type Json =
   | string
   | number
@@ -3570,8 +3569,10 @@ export type Database = {
           target_cohort: string[] | null
           type: string
           updated_at: string | null
+          verification_status: string | null
           website: string | null
           years_operating: number | null
+          data_provenance: Json | null
         }
         Insert: {
           community_authority_signal?: number | null
@@ -3617,8 +3618,10 @@ export type Database = {
           target_cohort?: string[] | null
           type: string
           updated_at?: string | null
+          verification_status?: string | null
           website?: string | null
           years_operating?: number | null
+          data_provenance?: Json | null
         }
         Update: {
           community_authority_signal?: number | null
@@ -3664,8 +3667,10 @@ export type Database = {
           target_cohort?: string[] | null
           type?: string
           updated_at?: string | null
+          verification_status?: string | null
           website?: string | null
           years_operating?: number | null
+          data_provenance?: Json | null
         }
         Relationships: [
           {
@@ -7857,6 +7862,51 @@ export type Database = {
           transparency?: string | null
           updated_at?: string | null
           visibility?: string | null
+        }
+        Relationships: []
+      }
+      campaign_donations: {
+        Row: {
+          amount_cents: number
+          campaign_id: string | null
+          created_at: string | null
+          currency: string | null
+          donor_email: string | null
+          donor_name: string | null
+          id: string
+          is_anonymous: boolean | null
+          message: string | null
+          status: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string
+        }
+        Insert: {
+          amount_cents: number
+          campaign_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          donor_email?: string | null
+          donor_name?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          message?: string | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id: string
+        }
+        Update: {
+          amount_cents?: number
+          campaign_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          donor_email?: string | null
+          donor_name?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          message?: string | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string
         }
         Relationships: []
       }
@@ -28942,6 +28992,92 @@ export type Database = {
             columns: ["signal_content_id"]
             isOneToOne: false
             referencedRelation: "signal_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      state_tenders: {
+        Row: {
+          alma_organization_id: string | null
+          awarded_date: string | null
+          buyer_department: string | null
+          buyer_name: string | null
+          category: string | null
+          closing_date: string | null
+          contract_value: number | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          id: string
+          is_justice_related: boolean | null
+          justice_keywords: string[] | null
+          published_date: string | null
+          source: string
+          source_id: string | null
+          source_url: string | null
+          state: string
+          status: string | null
+          supplier_abn: string | null
+          supplier_name: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          alma_organization_id?: string | null
+          awarded_date?: string | null
+          buyer_department?: string | null
+          buyer_name?: string | null
+          category?: string | null
+          closing_date?: string | null
+          contract_value?: number | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          is_justice_related?: boolean | null
+          justice_keywords?: string[] | null
+          published_date?: string | null
+          source: string
+          source_id?: string | null
+          source_url?: string | null
+          state: string
+          status?: string | null
+          supplier_abn?: string | null
+          supplier_name?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          alma_organization_id?: string | null
+          awarded_date?: string | null
+          buyer_department?: string | null
+          buyer_name?: string | null
+          category?: string | null
+          closing_date?: string | null
+          contract_value?: number | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          is_justice_related?: boolean | null
+          justice_keywords?: string[] | null
+          published_date?: string | null
+          source?: string
+          source_id?: string | null
+          source_url?: string | null
+          state?: string
+          status?: string | null
+          supplier_abn?: string | null
+          supplier_name?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "state_tenders_alma_organization_id_fkey"
+            columns: ["alma_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]

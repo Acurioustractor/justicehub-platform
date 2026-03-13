@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server-lite';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import FirecrawlApp from '@mendable/firecrawl-js';
 import { scrapeViaJina, shouldPreferFirecrawl } from '@/lib/scraping/jina-reader';
@@ -363,11 +363,11 @@ export async function POST(request: NextRequest) {
         if (scrapeData.success && scrapeData.data) {
           // Store extracted data based on type
           if (scrapeData.type === 'intervention' || scrapeData.type === 'program') {
-            await serviceClient.from('alma_interventions').insert({
+            const { error: insertErr } = await serviceClient.from('alma_interventions').insert({
               name: scrapeData.data.title || link.title || link.url,
               description: scrapeData.data.summary || scrapeData.data.content?.slice(0, 500) || 'Scraped intervention content',
               type: link.predicted_type || scrapeData.type || 'program',
-              metadata: { 
+              metadata: {
                 source_url: link.url,
                 discovered_link_id: link.id,
                 scraped_at: new Date().toISOString(),
@@ -375,6 +375,8 @@ export async function POST(request: NextRequest) {
                 content_length: scrapeData.data.content?.length,
               },
             });
+            // Skip duplicates silently (name+org unique constraint)
+            if (insertErr && insertErr.code !== '23505') throw insertErr;
           }
 
           // Log to scrape history

@@ -19,7 +19,7 @@ interface CampaignStats {
 interface HomepageStats {
   programs_documented: number
   total_services: number
-  outcomes_rate: number
+  total_evidence: number
 }
 
 const AMOUNTS = [25, 50, 100, 250] as const
@@ -113,11 +113,11 @@ export default function BackThisPage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="data-card">
               <p className="text-4xl font-black mb-2">
-                {liveStats?.programs_documented?.toLocaleString() ?? '1,112'}
+                {liveStats?.programs_documented?.toLocaleString() ?? '939'}
               </p>
-              <p className="text-lg font-semibold">Programs Mapped</p>
+              <p className="text-lg font-semibold">Programs Catalogued</p>
               <p className="text-gray-600 mt-2">
-                Community-led interventions documented with evidence and outcomes.
+                Community-led interventions documented across Australia.
               </p>
             </div>
             <div className="data-card">
@@ -131,11 +131,11 @@ export default function BackThisPage() {
             </div>
             <div className="data-card">
               <p className="text-4xl font-black mb-2">
-                {liveStats?.outcomes_rate ?? '67'}%
+                {liveStats?.total_evidence ?? '334'}
               </p>
-              <p className="text-lg font-semibold">With Documented Outcomes</p>
+              <p className="text-lg font-semibold">Evidence Items</p>
               <p className="text-gray-600 mt-2">
-                Programs with evidence of what works, not just what sounds good.
+                Real evidence collected from published sources and evaluations.
               </p>
             </div>
           </div>
@@ -158,7 +158,7 @@ export default function BackThisPage() {
                 icon: '🧠',
                 title: 'ALMA Intelligence',
                 desc: 'AI evidence engine that connects programs to outcomes data.',
-                metric: `${liveStats?.programs_documented?.toLocaleString() ?? '1,112'} programs analysed`,
+                metric: `${liveStats?.programs_documented?.toLocaleString() ?? '939'} programs catalogued`,
               },
               {
                 icon: '📍',

@@ -3,6 +3,12 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { LLMClient } from '@/lib/ai/model-router';
 import { parseJSON } from '@/lib/ai/parse-json';
 import { searchWeb } from '@/lib/scraping/web-search';
+import {
+  OutcomesExtractionResponseSchema,
+  EvidenceDiscoveryResponseSchema,
+  validateLLMOutput,
+  EVIDENCE_TYPES as EVIDENCE_TYPES_ENUM,
+} from '@/lib/ai/llm-schemas';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 min max for Vercel
@@ -111,19 +117,17 @@ async function runEnrichment(batchSize: number) {
       evCountMap[link.intervention_id] = (evCountMap[link.intervention_id] || 0) + 1;
     }
 
-    // Get high-score interventions with fewest evidence links
+    // Get interventions with fewest evidence links (prioritize those with source docs)
     const { data: allInterventions } = await supabase
       .from('alma_interventions')
-      .select('id, name, type, operating_organization, portfolio_score')
-      .order('portfolio_score', { ascending: false })
+      .select('id, name, type, operating_organization')
+      .neq('verification_status', 'ai_generated')
+      .order('updated_at', { ascending: false })
       .limit(200);
 
     const discoveryCandidates = (allInterventions || [])
       .map((i) => ({ ...i, evidenceCount: evCountMap[i.id] || 0 }))
-      .sort((a, b) => {
-        if (a.evidenceCount !== b.evidenceCount) return a.evidenceCount - b.evidenceCount;
-        return (b.portfolio_score || 0) - (a.portfolio_score || 0);
-      })
+      .sort((a, b) => a.evidenceCount - b.evidenceCount)
       .slice(0, discoveryBatch);
 
     for (const intervention of discoveryCandidates) {
@@ -138,24 +142,28 @@ async function runEnrichment(batchSize: number) {
       try {
         const raw = await LLMClient.getInstance().call(prompt, { maxTokens: 2000 });
         const parsed = parseJSON(raw);
-        if (!parsed?.results) continue;
+        const validated = validateLLMOutput(parsed, EvidenceDiscoveryResponseSchema);
+        if (!validated.success) {
+          results.errors.push(`Discovery ${intervention.name}: schema validation failed — ${validated.errors.slice(0, 3).join('; ')}`);
+          continue;
+        }
 
-        for (const ev of parsed.results as { title?: string; evidence_type?: string; url?: string; findings?: string; methodology?: string; author?: string; year?: number; relevance_score?: number }[]) {
-          if (!ev.url || !ev.title || (ev.relevance_score || 0) < 0.4 || existingUrls.has(ev.url)) continue;
+        for (const ev of validated.data.results) {
+          if (ev.relevance_score < 0.4 || existingUrls.has(ev.url)) continue;
 
           const { data: inserted } = await supabase
             .from('alma_evidence')
-            .insert({
-              title: (ev.title || '').substring(0, 500),
-              evidence_type: EVIDENCE_TYPES.includes(ev.evidence_type || '') ? ev.evidence_type : 'Case study',
-              findings: ev.findings || ev.title,
+            .upsert({
+              title: ev.title.substring(0, 500),
+              evidence_type: ev.evidence_type,
+              findings: ev.findings,
               source_url: ev.url,
-              methodology: ev.methodology || null,
-              author: ev.author || null,
+              methodology: ev.methodology ?? null,
+              author: ev.author ?? null,
               publication_date: ev.year ? `${ev.year}-01-01` : null,
               consent_level: 'Public Knowledge Commons',
               metadata: { auto_discovered: true, discovery_method: 'cron' },
-            })
+            }, { onConflict: 'source_url', ignoreDuplicates: true })
             .select('id')
             .single();
 
@@ -190,7 +198,8 @@ async function runEnrichment(batchSize: number) {
       .from('alma_interventions')
       .select('id, name, type, description')
       .not('description', 'is', null)
-      .order('portfolio_score', { ascending: false })
+      .neq('verification_status', 'ai_generated')
+      .order('updated_at', { ascending: false })
       .limit(500);
 
     const needsOutcomes = (candidates || [])
@@ -210,24 +219,27 @@ async function runEnrichment(batchSize: number) {
             maxTokens: 3000,
           });
           const parsed = parseJSON(raw);
-          if (!parsed?.results) continue;
+          const validated = validateLLMOutput(parsed, OutcomesExtractionResponseSchema);
+          if (!validated.success) {
+            results.errors.push(`Outcomes batch ${i}: schema validation failed — ${validated.errors.slice(0, 3).join('; ')}`);
+            continue;
+          }
 
-          for (const result of parsed.results) {
+          for (const result of validated.data.results) {
             if (!result.outcomes?.length) continue;
             const intervention = chunk[result.idx - 1];
             if (!intervention) continue;
 
             for (const outcome of result.outcomes) {
-              if (!outcome.name || !OUTCOME_TYPES.includes(outcome.outcome_type))
-                continue;
 
               const { data: inserted } = await supabase
                 .from('alma_outcomes')
                 .insert({
+                  name: outcome.name,
                   outcome_type: outcome.outcome_type,
                   description: outcome.name,
                   measurement_method: outcome.measurement || null,
-                  metadata: { auto_extracted: true, source: 'cron' },
+                  metadata: { auto_extracted: true, source: 'cron' } as const,
                 })
                 .select('id')
                 .single();
@@ -266,15 +278,19 @@ async function runEnrichment(batchSize: number) {
       .limit(100);
 
     if (unscored && unscored.length > 0) {
-      // Call the score calculation RPC if available
-      const { error: rpcErr } = await supabase.rpc(
-        'calculate_portfolio_scores'
-      );
-      if (!rpcErr) {
-        results.scores_updated = unscored.length;
-      } else {
-        results.errors.push(`Score RPC: ${rpcErr.message}`);
+      let successful = 0;
+      for (const intervention of unscored) {
+        const { error: rpcErr } = await supabase.rpc(
+          'calculate_portfolio_score',
+          { int_id: intervention.id }
+        );
+        if (rpcErr) {
+          results.errors.push(`Score RPC (${intervention.id}): ${rpcErr.message}`);
+          continue;
+        }
+        successful++;
       }
+      results.scores_updated = successful;
     }
   } catch (err) {
     results.errors.push(
@@ -285,31 +301,22 @@ async function runEnrichment(batchSize: number) {
   // Get current coverage stats
   const [
     { count: totalInterventions },
-    { count: withOutcomesCount },
-    { count: totalOutcomes },
     { count: totalEvidence },
+    { count: totalEvidenceLinks },
   ] = await Promise.all([
     supabase
       .from('alma_interventions')
-      .select('*', { count: 'exact', head: true }),
-    supabase
-      .from('alma_intervention_outcomes')
-      .select('intervention_id', { count: 'exact', head: true }),
-    supabase.from('alma_outcomes').select('*', { count: 'exact', head: true }),
+      .select('*', { count: 'exact', head: true })
+      .neq('verification_status', 'ai_generated'),
     supabase.from('alma_evidence').select('*', { count: 'exact', head: true }),
+    supabase.from('alma_intervention_evidence').select('*', { count: 'exact', head: true }),
   ]);
-
-  const { count: totalEvidenceLinks } = await supabase
-    .from('alma_intervention_evidence')
-    .select('*', { count: 'exact', head: true });
 
   return NextResponse.json({
     success: results.errors.length === 0,
     results,
     coverage: {
       total_interventions: totalInterventions,
-      with_outcomes: withOutcomesCount,
-      total_outcomes: totalOutcomes,
       total_evidence: totalEvidence,
       total_evidence_links: totalEvidenceLinks,
     },

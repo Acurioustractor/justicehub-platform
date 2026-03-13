@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
 import { ArrowLeft, Calendar, MapPin, Clock, Check, Loader2 } from 'lucide-react';
+import { tourStops } from '@/content/campaign';
 
 interface RegistrationData {
   full_name: string;
@@ -17,7 +17,6 @@ interface RegistrationData {
 }
 
 export default function ContainedRegisterPage() {
-  const supabase = createClient();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -34,12 +33,18 @@ export default function ContainedRegisterPage() {
     newsletter: true,
   });
 
+  const firstStop = tourStops[0];
   const eventDetails = {
-    title: 'CONTAINED: Exhibition Launch',
-    date: 'Saturday, 15 February 2026',
-    time: '6:00 PM - 9:00 PM',
-    venue: 'Brisbane Powerhouse',
-    address: '119 Lamington St, New Farm QLD 4005',
+    title: `CONTAINED: ${firstStop.city}`,
+    date: firstStop.date.startsWith('TBC') ? firstStop.date : new Date(firstStop.date).toLocaleDateString('en-AU', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }),
+    time: 'Date and session details confirmed after registration',
+    venue: firstStop.venue,
+    address: `${firstStop.city}, ${firstStop.state}`,
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -94,11 +99,11 @@ export default function ContainedRegisterPage() {
       <header className="border-b border-gray-800">
         <div className="container-justice py-4">
           <Link
-            href="/contained/launch"
+            href="/contained"
             className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Launch Info
+            Back to CONTAINED
           </Link>
         </div>
       </header>

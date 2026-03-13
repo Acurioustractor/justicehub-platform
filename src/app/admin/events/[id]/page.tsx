@@ -5,7 +5,7 @@ import { EventForm, EventFormData } from '@/components/admin/events/event-form';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 import { useParams } from 'next/navigation';
 
 export default function EditEventPage() {

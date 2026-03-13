@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 import { Save, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import RoleSelector from '@/components/admin/RoleSelector';

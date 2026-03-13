@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase/service';
+import { createServiceClient } from '@/lib/supabase/service-lite';
 import {
   australianFrameworks as fallbackFrameworks,
   basecampLocations as fallbackBasecamps,
@@ -247,7 +247,7 @@ export async function GET() {
           ...(fallback?.keyStats || []),
         ]).slice(0, 3);
 
-        const programTags = (program.program_type || []).map((value) => labelFromEnum(value));
+        const programTags = (program.program_type || []).map((value: string) => labelFromEnum(value));
 
         return {
           id: program.slug,

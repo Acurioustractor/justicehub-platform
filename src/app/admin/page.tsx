@@ -1,12 +1,14 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server-lite';
 import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink, Mail } from 'lucide-react';
+import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink, Mail, Activity, Target, Workflow } from 'lucide-react';
 import { SystemStatus } from '@/components/admin/SystemStatus';
+import { createServiceClient } from '@/lib/supabase/service-lite';
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
+  const serviceClient = createServiceClient() as any;
 
   // Check authentication
   const { data: { user } } = await supabase.auth.getUser();
@@ -97,6 +99,11 @@ export default async function AdminDashboard() {
 
   // Calculate total auto-linked relationships
   const totalAutoLinks = (orgLinksCount || 0) + (blogPostLinksCount || 0);
+
+  const { count: governedProofBundlesCount } = await serviceClient
+    .from('governed_proof_bundles')
+    .select('*', { count: 'exact', head: true })
+    .eq('subject_type', 'place');
 
   const stats = [
     {
@@ -231,6 +238,26 @@ export default async function AdminDashboard() {
       bgColor: 'bg-rose-50',
       textColor: 'text-rose-600',
       alert: (inboxNewCount || 0) > 0 ? `${inboxNewCount} unread` : undefined,
+    },
+    {
+      title: 'Data Health',
+      count: '📊',
+      subtitle: 'Tables, APIs, enrichment',
+      icon: Activity,
+      href: '/admin/data-health',
+      color: 'from-slate-500 to-slate-600',
+      bgColor: 'bg-slate-50',
+      textColor: 'text-slate-600',
+    },
+    {
+      title: 'Governed Proof',
+      count: governedProofBundlesCount || 0,
+      subtitle: 'Place bundles in control plane',
+      icon: Workflow,
+      href: '/admin/governed-proof',
+      color: 'from-emerald-500 to-emerald-600',
+      bgColor: 'bg-emerald-50',
+      textColor: 'text-emerald-600',
     },
   ];
 
@@ -411,6 +438,14 @@ export default async function AdminDashboard() {
               </Link>
 
               <Link
+                href="/admin/governed-proof"
+                className="flex items-center gap-3 px-4 py-3 bg-emerald-50 border-2 border-emerald-600 text-emerald-700 font-bold hover:bg-emerald-100 transition-colors"
+              >
+                <Workflow className="w-5 h-5" />
+                Governed Proof
+              </Link>
+
+              <Link
                 href="/admin/data-operations"
                 className="flex items-center gap-3 px-4 py-3 bg-slate-50 border-2 border-slate-600 text-slate-600 font-bold hover:bg-slate-100 transition-colors"
               >
@@ -432,6 +467,14 @@ export default async function AdminDashboard() {
               >
                 <Zap className="w-5 h-5" />
                 Signal Engine
+              </Link>
+
+              <Link
+                href="/admin/campaign-engine"
+                className="flex items-center gap-3 px-4 py-3 bg-rose-50 border-2 border-rose-600 text-rose-600 font-bold hover:bg-rose-100 transition-colors"
+              >
+                <Target className="w-5 h-5" />
+                Campaign Alignment Engine
               </Link>
 
               <Link

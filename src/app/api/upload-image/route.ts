@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server-lite';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -12,7 +12,7 @@ const ALLOWED_MIME_TYPES = [
   'image/svg+xml',
 ];
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
-const ALLOWED_FOLDERS = ['blog', 'stories', 'profiles', 'organizations'];
+const ALLOWED_FOLDERS = ['blog', 'stories', 'profiles', 'organizations', 'gallery'];
 
 export async function POST(request: NextRequest) {
   try {

@@ -1,10 +1,5 @@
-import { ContainedEventDetail } from '@/components/contained/event-detail';
+import { redirect } from 'next/navigation';
 
 export default function ContainedLaunchPage() {
-  return <ContainedEventDetail slug="mounty-yarns-contained-launch" />;
+  redirect('/contained');
 }
-
-export const metadata = {
-  title: 'Launch Event - CONTAINED',
-  description: 'Join us for the official launch of the Mounty Yarns backyard campus.',
-};

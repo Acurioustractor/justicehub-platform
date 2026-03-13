@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createServiceClient } from '@/lib/supabase/service'
+import { createServiceClient } from '@/lib/supabase/service-lite'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 60

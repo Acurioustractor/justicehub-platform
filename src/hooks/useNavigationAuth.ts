@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
+import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 
 export interface UserProfile {
     slug: string;
@@ -11,7 +12,7 @@ export interface UserProfile {
 }
 
 export function useNavigationAuth() {
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [mounted, setMounted] = useState(false);
 
@@ -24,8 +25,20 @@ export function useNavigationAuth() {
         // Check auth state
         const checkAuth = async () => {
             try {
-                const { data: { user }, error } = await supabase.auth.getUser();
-                if (error) throw error;
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                if (sessionError) {
+                    setUser(null);
+                    setUserProfile(null);
+                    return;
+                }
+
+                if (!session?.user) {
+                    setUser(null);
+                    setUserProfile(null);
+                    return;
+                }
+
+                const user = session.user;
 
                 setUser(user);
 
@@ -69,14 +82,15 @@ export function useNavigationAuth() {
                     }
                 }
             } catch (error) {
-                console.error('Auth check error:', error);
+                setUser(null);
+                setUserProfile(null);
             }
         };
 
         checkAuth();
 
         // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
             setUser(session?.user ?? null);
             if (!session?.user) {
                 setUserProfile(null);

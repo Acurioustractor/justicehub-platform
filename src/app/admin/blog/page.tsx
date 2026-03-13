@@ -1,5 +1,5 @@
-import { requireAdmin } from '@/lib/supabase/admin';
-import { createServiceClient } from '@/lib/supabase/service';
+import { requireAdmin } from '@/lib/supabase/admin-lite';
+import { createServiceClient } from '@/lib/supabase/service-lite';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { FileText, Plus, Eye, Edit, Trash2 } from 'lucide-react';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 import Link from 'next/link';
 import { Navigation } from '@/components/ui/navigation';
 import {
@@ -38,6 +38,20 @@ interface NetworkStats {
   by_role: { role: string; count: number }[];
 }
 
+type PublicProfileRow = {
+  id: string;
+  full_name: string;
+  slug: string;
+  photo_url: string | null;
+  tagline: string | null;
+  is_public: boolean | null;
+  synced_from_empathy_ledger: boolean | null;
+};
+
+type OrganizationRoleRow = {
+  role: string | null;
+};
+
 export default function PeopleInNetworkPage() {
   const [loading, setLoading] = useState(true);
   const [people, setPeople] = useState<PersonSummary[]>([]);
@@ -66,7 +80,7 @@ export default function PeopleInNetworkPage() {
 
     // Load connection counts for each profile
     const peopleWithConnections: PersonSummary[] = await Promise.all(
-      profiles.map(async (profile) => {
+      (profiles as PublicProfileRow[]).map(async (profile: PublicProfileRow) => {
         // Get organization connections
         const { count: orgCount } = await supabase
           .from('organizations_profiles')
@@ -104,7 +118,9 @@ export default function PeopleInNetworkPage() {
           .eq('public_profile_id', profile.id)
           .limit(3);
 
-        const topRoles = (roles?.map(r => r.role).filter((r): r is string => r !== null && r !== undefined) || []);
+        const topRoles =
+          (roles as OrganizationRoleRow[] | null)?.map((roleRow: OrganizationRoleRow) => roleRow.role)
+            .filter((role): role is string => role !== null && role !== undefined) || [];
 
         return {
           ...profile,

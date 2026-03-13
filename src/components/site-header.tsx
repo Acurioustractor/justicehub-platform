@@ -9,7 +9,7 @@ const navItems = [
   { label: "Journey", href: "/contained#journey" },
   { label: "Stories", href: "/contained#stories" },
   { label: "Evidence", href: "/contained#evidence" },
-  { label: "About", href: "/contained/about" },
+  { label: "Register", href: "/contained/register" },
   { label: "Nominate", href: "/contained#nominate" },
   { label: "Book", href: "/contained#book" },
 ];
@@ -59,16 +59,8 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          {/* About Button - Separated to the right */}
-          <Link
-            href="/contained/about"
-            className="px-4 py-2 border border-white/40 rounded-lg bg-white/15 text-white font-bold hover:bg-white/25 hover:border-white/60 transition-all uppercase tracking-[0.2em] text-sm"
-          >
-            About ?
-          </Link>
-
-          <CTAButton href="/contained#book" className="uppercase tracking-[0.3em]">
-            Book Experience
+          <CTAButton href="/contained/register" className="uppercase tracking-[0.3em]">
+            Register Now
           </CTAButton>
         </div>
 
