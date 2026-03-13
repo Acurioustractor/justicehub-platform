@@ -2,22 +2,27 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, DollarSign, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, DollarSign, ShieldCheck, Globe, PenSquare } from 'lucide-react';
 
 const NAV_ITEMS = [
   { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: 'dashboard' },
   { key: 'grants', label: 'Grants', icon: DollarSign, href: 'grants' },
   { key: 'compliance', label: 'Compliance', icon: ShieldCheck, href: 'compliance' },
+  { key: 'basecamp', label: 'Basecamp', icon: Globe, href: 'basecamp' },
+  { key: 'site-editor', label: 'Site Editor', icon: PenSquare, href: 'site-editor' },
 ] as const;
 
 interface HubShellProps {
   orgName: string;
   orgSlug: string;
+  orgPlan?: string;
+  orgType?: string | null;
+  partnerTier?: string | null;
   modules: string[];
   children: React.ReactNode;
 }
 
-export function HubShell({ orgName, orgSlug, modules, children }: HubShellProps) {
+export function HubShell({ orgName, orgSlug, orgPlan, orgType, partnerTier, modules, children }: HubShellProps) {
   const pathname = usePathname();
   const enabledItems = NAV_ITEMS.filter((item) => modules.includes(item.key));
 

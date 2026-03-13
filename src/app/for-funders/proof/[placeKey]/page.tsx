@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowRight, CheckCircle2, MapPinned, ShieldCheck } from 'lucide-react';
+import { ArrowRight, CheckCircle2, MapPinned, ShieldCheck, Lock } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { createGovernedProofService } from '@/lib/governed-proof/service';
+import { createClient } from '@/lib/supabase/server-lite';
+import { checkApiFeatureAccess } from '@/lib/org-hub/feature-gates';
 
 type PublicProofPageProps = {
   params: Promise<{
@@ -38,7 +40,67 @@ export default async function FunderProofPage({ params }: PublicProofPageProps) 
     notFound();
   }
 
+  // Check access — governed proof requires Institution+ tier
+  let hasAccess = false;
+  try {
+    const authClient = await createClient();
+    const access = await checkApiFeatureAccess(authClient, 'governed_proof');
+    hasAccess = access.allowed;
+  } catch {
+    // Unauthenticated — show teaser
+  }
+
   const proofPack = (bundle.outputContext?.proofPack || {}) as Record<string, unknown>;
+
+  // Teaser for free users — headline stats only
+  if (!hasAccess) {
+    const fundingSnapshotTeaser = (proofPack.fundingSnapshot || {}) as Record<string, unknown>;
+    return (
+      <div className="min-h-screen bg-white text-black">
+        <Navigation />
+        <main className="pt-40">
+          <section className="py-16 border-b-2 border-black">
+            <div className="container-justice">
+              <div className="max-w-4xl">
+                <div className="inline-flex items-center gap-2 bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-6">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Governed Proof
+                </div>
+                <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase mb-6">
+                  Place-Based Report: {placeKey}
+                </h1>
+                <div className="grid grid-cols-2 gap-6 mb-8">
+                  <div className="border-2 border-black p-6">
+                    <div className="text-3xl font-black">{formatCurrency(fundingSnapshotTeaser.totalFunding)}</div>
+                    <div className="text-sm uppercase tracking-wider text-gray-600 mt-1">Total Funding</div>
+                  </div>
+                  <div className="border-2 border-black p-6">
+                    <div className="text-3xl font-black">{fundingSnapshotTeaser.grantCount ?? 'N/A'}</div>
+                    <div className="text-sm uppercase tracking-wider text-gray-600 mt-1">Grants</div>
+                  </div>
+                </div>
+                <div className="border-2 border-dashed border-gray-300 bg-gray-50/50 p-8 text-center">
+                  <Lock className="w-10 h-10 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-black mb-2">Full Report Locked</h3>
+                  <p className="text-earth-600 mb-6 max-w-md mx-auto">
+                    The full place-based proof report — including evidence analysis, community voice themes,
+                    strengths, and gaps — requires an Institution plan or above.
+                  </p>
+                  <Link
+                    href="/pricing"
+                    className="inline-block px-6 py-3 bg-black text-white font-bold hover:bg-earth-800 transition-colors"
+                  >
+                    View Plans
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
   const fundingSnapshot = (proofPack.fundingSnapshot || {}) as Record<string, unknown>;
   const evidenceSnapshot = (proofPack.evidenceSnapshot || {}) as Record<string, unknown>;
   const voiceSnapshot = (proofPack.voiceSnapshot || {}) as Record<string, unknown>;

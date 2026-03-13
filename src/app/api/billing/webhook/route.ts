@@ -47,17 +47,19 @@ export async function POST(request: NextRequest) {
             donor_name: session.customer_details?.name || null,
             campaign_id: session.metadata.campaign_id || 'launch-2026',
           })
-          console.log(`💰 JusticeHub donation received: $${((session.amount_total || 0) / 100).toFixed(2)}`)
+          console.log(`JusticeHub donation received: $${((session.amount_total || 0) / 100).toFixed(2)}`)
         } else if (organizationId && tier) {
           await supabase
             .from('organizations')
             .update({
               plan: tier,
+              billing_status: 'active',
               stripe_customer_id: session.customer as string,
+              trial_ends_at: null, // Clear trial on successful subscription
             })
             .eq('id', organizationId)
 
-          console.log(`✅ JusticeHub subscription activated: org=${organizationId} tier=${tier}`)
+          console.log(`JusticeHub subscription activated: org=${organizationId} tier=${tier}`)
         }
         break
       }
@@ -67,14 +69,29 @@ export async function POST(request: NextRequest) {
         const organizationId = subscription.metadata?.organization_id
 
         if (organizationId) {
+          // Map Stripe subscription status to billing_status
+          const statusMap: Record<string, string> = {
+            active: 'active',
+            trialing: 'trialing',
+            past_due: 'past_due',
+            canceled: 'canceled',
+            unpaid: 'past_due',
+            incomplete: 'none',
+            incomplete_expired: 'expired',
+            paused: 'canceled',
+          }
+
+          const billingStatus = statusMap[subscription.status] || 'none'
+
           await supabase
             .from('organizations')
             .update({
               plan: subscription.metadata?.tier || undefined,
+              billing_status: billingStatus,
             })
             .eq('id', organizationId)
 
-          console.log(`🔄 JusticeHub subscription updated: org=${organizationId} status=${subscription.status}`)
+          console.log(`JusticeHub subscription updated: org=${organizationId} status=${subscription.status} billing=${billingStatus}`)
         }
         break
       }
@@ -86,11 +103,45 @@ export async function POST(request: NextRequest) {
         if (organizationId) {
           await supabase
             .from('organizations')
-            .update({ plan: 'community' })
+            .update({
+              plan: 'community',
+              billing_status: 'canceled',
+            })
             .eq('id', organizationId)
 
-          console.log(`❌ JusticeHub subscription cancelled: org=${organizationId} → community`)
+          console.log(`JusticeHub subscription cancelled: org=${organizationId} -> community`)
         }
+        break
+      }
+
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object as Stripe.Invoice
+        const subscriptionId = typeof invoice.subscription === 'string'
+          ? invoice.subscription
+          : invoice.subscription?.id
+
+        if (subscriptionId) {
+          // Look up the subscription to get the org ID
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+          const organizationId = subscription.metadata?.organization_id
+
+          if (organizationId) {
+            await supabase
+              .from('organizations')
+              .update({ billing_status: 'past_due' })
+              .eq('id', organizationId)
+
+            console.log(`JusticeHub payment failed: org=${organizationId}`)
+          }
+        }
+        break
+      }
+
+      case 'customer.subscription.trial_will_end': {
+        // Stripe sends this 3 days before trial ends — log for now
+        const subscription = event.data.object as Stripe.Subscription
+        const organizationId = subscription.metadata?.organization_id
+        console.log(`JusticeHub trial ending soon: org=${organizationId} ends=${subscription.trial_end}`)
         break
       }
 

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createClient as createAuthClient } from '@/lib/supabase/server-lite';
+import { checkApiFeatureAccess } from '@/lib/org-hub/feature-gates';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -58,6 +60,34 @@ export async function GET(req: NextRequest) {
   const params = req.nextUrl.searchParams;
   const view = params.get('view');
   const stateFilter = params.get('state') || 'QLD';
+
+  // Views requiring paid access (org-level detail, downloads, narratives)
+  const paidViews = ['org_profile', 'org_map', 'power', 'acnc_profile'];
+  if (view && paidViews.includes(view)) {
+    try {
+      const authClient = await createAuthClient();
+      const access = await checkApiFeatureAccess(authClient, 'alma_full_detail');
+      if (!access.allowed) {
+        return NextResponse.json(
+          {
+            error: 'Organisation-level funding detail requires Organisation plan or above',
+            upgradeUrl: '/pricing',
+            access: { fullDetail: false },
+          },
+          { status: 403 }
+        );
+      }
+    } catch {
+      return NextResponse.json(
+        {
+          error: 'Authentication required for org-level funding data',
+          upgradeUrl: '/login',
+          access: { fullDetail: false },
+        },
+        { status: 401 }
+      );
+    }
+  }
 
   // Aggregated overview for the dashboard
   if (view === 'overview') {

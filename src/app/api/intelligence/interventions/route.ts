@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
+import { createClient } from '@/lib/supabase/server-lite';
+import { checkApiFeatureAccess } from '@/lib/org-hub/feature-gates';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,6 +47,30 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createServiceClient();
     const searchParams = request.nextUrl.searchParams;
+
+    // Check feature access for full detail
+    let hasFullAccess = false;
+    let hasExportAccess = false;
+    try {
+      const authClient = await createClient();
+      const fullAccess = await checkApiFeatureAccess(authClient, 'alma_full_detail');
+      hasFullAccess = fullAccess.allowed;
+      if (hasFullAccess) {
+        const exportAccess = await checkApiFeatureAccess(authClient, 'alma_data_export');
+        hasExportAccess = exportAccess.allowed;
+      }
+    } catch {
+      // Unauthenticated — summary only
+    }
+
+    // CSV export — institution+ only
+    const format = searchParams.get('format');
+    if (format === 'csv' && !hasExportAccess) {
+      return NextResponse.json(
+        { success: false, error: 'CSV export requires Institution plan or above', upgradeUrl: '/pricing' },
+        { status: 403 }
+      );
+    }
 
     const search = searchParams.get('search')?.trim() || '';
     const type = searchParams.get('type')?.trim() || '';
@@ -131,9 +157,14 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // Free users see summary fields only; paid users get full detail
+    const selectFields = hasFullAccess
+      ? 'id, name, description, type, geography, evidence_level, consent_level, portfolio_score, verification_status, created_at'
+      : 'id, name, type, geography, evidence_level, verification_status, created_at';
+
     let query = supabase
       .from('alma_interventions')
-      .select('id, name, description, type, geography, evidence_level, consent_level, portfolio_score, verification_status, created_at', {
+      .select(selectFields, {
         count: 'exact',
       })
       .neq('verification_status', 'ai_generated')
@@ -167,15 +198,51 @@ export async function GET(request: NextRequest) {
       throw new Error(interventionsResult.error.message);
     }
 
+    const data = interventionsResult.data || [];
+
+    // Truncate descriptions for free users
+    const responseData = hasFullAccess
+      ? data
+      : data.map((item: any) => ({
+          ...item,
+          description: item.description ? item.description.substring(0, 100) + (item.description.length > 100 ? '...' : '') : null,
+        }));
+
+    // CSV export for institution+ users
+    if (format === 'csv' && hasExportAccess) {
+      const headers = Object.keys(responseData[0] || {});
+      const csvRows = [
+        headers.join(','),
+        ...responseData.map((row: any) =>
+          headers.map((h) => {
+            const val = row[h];
+            if (val === null || val === undefined) return '';
+            const str = String(val).replace(/"/g, '""');
+            return `"${str}"`;
+          }).join(',')
+        ),
+      ];
+      return new NextResponse(csvRows.join('\n'), {
+        headers: {
+          'Content-Type': 'text/csv',
+          'Content-Disposition': 'attachment; filename="alma-interventions.csv"',
+        },
+      });
+    }
+
     return NextResponse.json({
       success: true,
-      data: interventionsResult.data || [],
+      data: responseData,
       count: interventionsResult.count || 0,
       total: interventionsResult.count || 0,
       limit: pageSize,
       offset,
       page,
       pageSize,
+      access: {
+        fullDetail: hasFullAccess,
+        export: hasExportAccess,
+      },
       filters: {
         types: dedupeSorted((interventionFilterRows.data || []).map((row: any) => row.type)),
         evidenceLevels: dedupeSorted((interventionFilterRows.data || []).map((row: any) => row.evidence_level)),

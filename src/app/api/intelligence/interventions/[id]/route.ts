@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
+import { createClient } from '@/lib/supabase/server-lite';
+import { checkApiFeatureAccess } from '@/lib/org-hub/feature-gates';
 
 export const dynamic = 'force-dynamic';
 
@@ -95,6 +97,16 @@ export async function GET(
       return NextResponse.json({ success: false, error: 'Intervention ID is required' }, { status: 400 });
     }
 
+    // Check feature access for full detail
+    let hasFullAccess = false;
+    try {
+      const authClient = await createClient();
+      const access = await checkApiFeatureAccess(authClient, 'alma_full_detail');
+      hasFullAccess = access.allowed;
+    } catch {
+      // Unauthenticated — summary only
+    }
+
     const supabase = createServiceClient();
     const { data: intervention, error: interventionError } = await supabase
       .from('alma_interventions')
@@ -167,6 +179,32 @@ export async function GET(
     if (outcomesResult.error) throw new Error(outcomesResult.error.message);
     if (contextsResult.error) throw new Error(contextsResult.error.message);
 
+    // Free users: truncated description, no evidence/outcomes/contexts
+    if (!hasFullAccess) {
+      const truncatedIntervention = {
+        ...(intervention as Intervention),
+        description: intervention.description
+          ? (intervention.description as string).substring(0, 100) + '...'
+          : null,
+      };
+      return NextResponse.json({
+        success: true,
+        intervention: truncatedIntervention,
+        evidence: [],
+        outcomes: [],
+        contexts: [],
+        similarInterventions: (similarInterventionsResult.data || []) as Intervention[],
+        portfolioScore: buildPortfolioScore(intervention as Record<string, unknown>),
+        provenance: buildProvenance(),
+        access: { fullDetail: false, upgradeUrl: '/pricing' },
+        gated: {
+          evidenceCount: evidenceIds.length,
+          outcomeCount: outcomeIds.length,
+          contextCount: contextIds.length,
+        },
+      });
+    }
+
     return NextResponse.json({
       success: true,
       intervention: intervention as Intervention,
@@ -176,6 +214,7 @@ export async function GET(
       similarInterventions: (similarInterventionsResult.data || []) as Intervention[],
       portfolioScore: buildPortfolioScore(intervention as Record<string, unknown>),
       provenance: buildProvenance(),
+      access: { fullDetail: true },
     });
   } catch (error: unknown) {
     console.error('Intelligence intervention detail API error:', error);
