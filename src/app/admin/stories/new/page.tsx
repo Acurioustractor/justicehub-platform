@@ -3,12 +3,12 @@
 // 🚀 STORIES EDITOR - Version 2025-11-05-NOCACHE
 console.log('🚀🚀🚀 STORIES EDITOR LOADED - AUTO-SAVE DISABLED - Version 2025-11-05-NOCACHE 🚀🚀🚀');
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { Save, Eye, ArrowLeft, Upload, X, Clock, FileText, Maximize2, Minimize2 } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client-lite';
 import dynamic from 'next/dynamic';
 
 // Dynamically import the editor to avoid SSR issues
@@ -76,7 +76,7 @@ const TEMPLATES = [
   },
 ];
 
-export default function UnifiedStoriesEditor() {
+function UnifiedStoriesEditorInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [saving, setSaving] = useState(false);
@@ -962,5 +962,13 @@ export default function UnifiedStoriesEditor() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function UnifiedStoriesEditor() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-gray-500">Loading editor...</div>}>
+      <UnifiedStoriesEditorInner />
+    </Suspense>
   );
 }
