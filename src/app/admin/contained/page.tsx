@@ -82,6 +82,18 @@ export default async function AdminContainedPage() {
                 View Public Page
               </Link>
               <Link
+                href="/admin/contained/campaign"
+                className="px-4 py-2 text-sm font-bold border-2 border-black hover:bg-black hover:text-white transition-colors"
+              >
+                Campaign Centre
+              </Link>
+              <Link
+                href="/admin/contained/templates"
+                className="px-4 py-2 text-sm font-bold border-2 border-black hover:bg-black hover:text-white transition-colors"
+              >
+                Social Templates
+              </Link>
+              <Link
                 href="/admin/contained/stories"
                 className="px-4 py-2 text-sm font-bold bg-black text-white border-2 border-black hover:bg-gray-800 transition-colors"
               >
@@ -240,9 +252,9 @@ export default async function AdminContainedPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-gray-200">
               {[
                 { label: 'Tour Page', href: '/contained' },
+                { label: 'Campaign Centre', href: '/admin/contained/campaign' },
+                { label: 'Social Templates', href: '/admin/contained/templates' },
                 { label: 'Take Action', href: '/contained/act' },
-                { label: 'Nominations Wall', href: '/contained/nominations' },
-                { label: 'Share Story', href: '/contained/share' },
               ].map((link) => (
                 <Link
                   key={link.href}
