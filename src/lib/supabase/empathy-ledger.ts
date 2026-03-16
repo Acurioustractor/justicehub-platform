@@ -1,41 +1,26 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import {
+  getStories as v2GetStories,
+  getStorytellers as v2GetStorytellers,
+  getStoryDetail as v2GetStoryDetail,
+  getProjects as v2GetProjects,
+  isV2Configured,
+  type V2Story,
+} from '@/lib/empathy-ledger/v2-client';
 
 /**
- * Empathy Ledger Supabase Client
- * Multi-tenant cultural storytelling platform
+ * Empathy Ledger Client
+ *
+ * Read operations now use the v2 REST API (org-scoped API key).
+ * Write operations (push-sync, engagement) still use direct Supabase clients.
  *
  * ## Consent Model
- *
- * Empathy Ledger uses a three-tier consent model for content sharing:
- *
- * 1. **Strictly Private** (privacy_level: 'private')
- *    - Only visible to the storyteller and authorized organization staff
- *    - Never synced to external platforms like JusticeHub
- *
- * 2. **Community Controlled** (privacy_level: 'community')
- *    - Visible within the organization's community
- *    - May require elder approval before broader sharing
- *    - Not exposed to public APIs
- *
- * 3. **Public Knowledge Commons** (privacy_level: 'public' AND is_public: true)
- *    - Explicitly consented for public display
- *    - Can be syndicated to JusticeHub and other platforms
- *    - Includes cultural warnings and attribution
- *
- * ## JusticeHub Integration
- *
- * For profiles to appear on JusticeHub, they must have:
- * - justicehub_enabled = true (opt-in flag)
- *
- * For stories to appear on JusticeHub, they must have:
- * - is_public = true
- * - privacy_level = 'public'
- *
- * Additional cultural controls:
- * - cultural_warnings: Array of warnings to display before content
- * - requires_elder_approval: If true, must have elder_approved_at set
- * - cultural_sensitivity_level: Indicates level of cultural sensitivity
+ * The v2 API enforces consent server-side — only published/public content is returned.
+ * Elder approval and cultural sensitivity are preserved in the API layer.
  */
+
+// ─── Supabase Clients (kept for write operations + legacy scripts) ────────────
+
 const empathyLedgerUrl = process.env.EMPATHY_LEDGER_URL;
 const empathyLedgerApiKey = process.env.EMPATHY_LEDGER_API_KEY;
 export const EMPATHY_LEDGER_ENV_ERROR =
@@ -48,7 +33,7 @@ const configuredEmpathyLedgerClient: EmpathyLedgerClient | null =
     ? createClient<any>(empathyLedgerUrl, empathyLedgerApiKey)
     : null;
 
-export const isEmpathyLedgerConfigured = Boolean(configuredEmpathyLedgerClient);
+export const isEmpathyLedgerConfigured = isV2Configured || Boolean(configuredEmpathyLedgerClient);
 
 // Service role client for write operations (push sync to EL)
 const elServiceKey = process.env.EMPATHY_LEDGER_SERVICE_KEY;
@@ -73,14 +58,10 @@ export const empathyLedgerClient = (configuredEmpathyLedgerClient ??
     }
   )) as EmpathyLedgerClient;
 
-/**
- * Consent levels for privacy control
- */
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 export type ConsentLevel = 'private' | 'community' | 'public';
 
-/**
- * Consent info returned with API responses
- */
 export interface ConsentInfo {
   privacy_level: ConsentLevel;
   is_public: boolean;
@@ -89,7 +70,6 @@ export interface ConsentInfo {
   description: string;
 }
 
-// Type definitions based on Empathy Ledger schema
 export interface EmpathyLedgerOrganization {
   id: string;
   tenant_id: string;
@@ -112,19 +92,6 @@ export interface EmpathyLedgerOrganization {
   elder_approval_required?: boolean;
 }
 
-/**
- * Empathy Ledger Story
- *
- * Consent Controls:
- * - is_public: Must be true for story to be visible outside organization
- * - privacy_level: Must be 'public' for JusticeHub syndication
- * - requires_elder_approval: If true, elder_approved_at must be set
- * - has_explicit_consent: Indicates storyteller gave explicit consent
- *
- * Cultural Safety:
- * - cultural_warnings: Array of warnings to show before content
- * - cultural_sensitivity_level: Level of cultural sensitivity (e.g., 'low', 'medium', 'high')
- */
 export interface EmpathyLedgerStory {
   id: string;
   tenant_id: string;
@@ -132,7 +99,7 @@ export interface EmpathyLedgerStory {
   storyteller_id?: string;
   organization_id?: string;
   project_id?: string;
-  service_id?: string; // Link to JusticeHub service
+  service_id?: string;
   title: string;
   content: string;
   summary?: string;
@@ -141,79 +108,24 @@ export interface EmpathyLedgerStory {
   themes?: string[];
   story_category?: string;
   story_type?: string;
-  // Core consent controls
   privacy_level: ConsentLevel;
   is_public: boolean;
   is_featured?: boolean;
-  // Cultural safety controls
   cultural_sensitivity_level?: string;
   cultural_warnings?: string[];
-  // Elder approval workflow
   requires_elder_approval?: boolean;
   elder_approved_by?: string;
   elder_approved_at?: string;
-  // Explicit consent tracking
   has_explicit_consent?: boolean;
   consent_details?: Record<string, unknown>;
-  // Location data
   location_text?: string;
   latitude?: number;
   longitude?: number;
-  // Timestamps
   published_at?: string;
   created_at: string;
   updated_at: string;
 }
 
-/**
- * Check if a story can be displayed on JusticeHub
- * Enforces all consent requirements
- */
-export function canDisplayOnJusticeHub(story: EmpathyLedgerStory): boolean {
-  // Must be public
-  if (!story.is_public) return false;
-  if (story.privacy_level !== 'public') return false;
-
-  // If elder approval required, must have been approved
-  if (story.requires_elder_approval && !story.elder_approved_at) return false;
-
-  return true;
-}
-
-/**
- * Check if a story has cultural warnings that should be shown
- */
-export function hasCulturalWarnings(story: EmpathyLedgerStory): boolean {
-  return !!(story.cultural_warnings && story.cultural_warnings.length > 0);
-}
-
-/**
- * Get consent status for a story
- */
-export function getStoryConsentStatus(story: EmpathyLedgerStory): {
-  canDisplay: boolean;
-  requiresElderApproval: boolean;
-  isElderApproved: boolean;
-  hasCulturalWarnings: boolean;
-  consentLevel: ConsentLevel;
-} {
-  return {
-    canDisplay: canDisplayOnJusticeHub(story),
-    requiresElderApproval: !!story.requires_elder_approval,
-    isElderApproved: !!story.elder_approved_at,
-    hasCulturalWarnings: hasCulturalWarnings(story),
-    consentLevel: story.privacy_level
-  };
-}
-
-/**
- * Empathy Ledger Profile
- *
- * Consent Control:
- * - justicehub_enabled: Must be true for profile to appear on JusticeHub
- * - justicehub_featured: If true, profile is featured on JusticeHub
- * - justicehub_role: Role displayed on JusticeHub (e.g., "Youth Advocate")
- */
 export interface EmpathyLedgerProfile {
   id: string;
   user_id?: string;
@@ -223,7 +135,6 @@ export interface EmpathyLedgerProfile {
   avatar_url?: string;
   location?: string;
   primary_organization_id?: string;
-  // JusticeHub consent controls
   justicehub_enabled?: boolean;
   justicehub_featured?: boolean;
   justicehub_role?: string;
@@ -244,452 +155,35 @@ export interface EmpathyLedgerProject {
   updated_at: string;
 }
 
-// Helper functions for fetching Empathy Ledger data
+// ─── Consent helpers ──────────────────────────────────────────────────────────
 
-/**
- * Get public stories linked to a JusticeHub service
- * Note: Avoided profile join due to RLS recursion issue in Empathy Ledger
- */
-export async function getStoriesForService(serviceId: string) {
-  const { data, error } = await empathyLedgerClient
-    .from('stories')
-    .select(`
-      *,
-      organization:organizations!stories_organization_id_fkey(*)
-    `)
-    .eq('service_id', serviceId)
-    .eq('is_public', true)
-    .eq('privacy_level', 'public');
-
-  if (error) {
-    console.error('Error fetching Empathy Ledger stories:', error);
-    return [];
-  }
-
-  return data || [];
+export function canDisplayOnJusticeHub(story: EmpathyLedgerStory): boolean {
+  if (!story.is_public) return false;
+  if (story.privacy_level !== 'public') return false;
+  if (story.requires_elder_approval && !story.elder_approved_at) return false;
+  return true;
 }
 
-/**
- * Get Indigenous-controlled organizations
- */
-export async function getIndigenousOrganizations() {
-  const { data, error } = await empathyLedgerClient
-    .from('organizations')
-    .select('*')
-    .eq('indigenous_controlled', true)
-    .eq('empathy_ledger_enabled', true);
-
-  if (error) {
-    console.error('Error fetching Indigenous organizations:', error);
-    return [];
-  }
-
-  return data || [];
+export function hasCulturalWarnings(story: EmpathyLedgerStory): boolean {
+  return !!(story.cultural_warnings && story.cultural_warnings.length > 0);
 }
 
-/**
- * Get public stories with cultural context
- * Note: Avoided profile join due to RLS recursion issue in Empathy Ledger
- */
-export async function getPublicStories(limit = 10) {
-  const { data, error } = await empathyLedgerClient
-    .from('stories')
-    .select(`
-      *,
-      organization:organizations!stories_organization_id_fkey(name, slug, traditional_country, indigenous_controlled)
-    `)
-    .eq('is_public', true)
-    .eq('privacy_level', 'public')
-    .order('published_at', { ascending: false })
-    .limit(limit);
-
-  if (error) {
-    console.error('Error fetching public stories:', error);
-    return [];
-  }
-
-  return data || [];
+export function getStoryConsentStatus(story: EmpathyLedgerStory): {
+  canDisplay: boolean;
+  requiresElderApproval: boolean;
+  isElderApproved: boolean;
+  hasCulturalWarnings: boolean;
+  consentLevel: ConsentLevel;
+} {
+  return {
+    canDisplay: canDisplayOnJusticeHub(story),
+    requiresElderApproval: !!story.requires_elder_approval,
+    isElderApproved: !!story.elder_approved_at,
+    hasCulturalWarnings: hasCulturalWarnings(story),
+    consentLevel: story.privacy_level
+  };
 }
 
-/**
- * Get featured public stories for homepage display
- * Note: We avoid joining on organizations due to RLS policy issues in Empathy Ledger
- * Priority: 1) Featured stories with images, 2) Stories with images, 3) Featured stories, 4) Recent stories
- * Images are prioritized for visual appeal on the homepage
- */
-export async function getFeaturedStories(limit = 3) {
-  // First try to get featured stories with images (best of both worlds)
-  let { data, error } = await empathyLedgerClient
-    .from('stories')
-    .select(`
-      id,
-      title,
-      summary,
-      content,
-      story_image_url,
-      story_category,
-      is_featured,
-      published_at
-    `)
-    .eq('is_public', true)
-    .eq('privacy_level', 'public')
-    .eq('is_featured', true)
-    .not('story_image_url', 'is', null)
-    .order('published_at', { ascending: false })
-    .limit(limit);
-
-  // If not enough, get any stories with images (prioritize visual content)
-  if (!data || data.length < limit) {
-    const existingIds = (data || []).map(s => s.id);
-    const remaining = limit - (data?.length || 0);
-
-    const { data: withImages } = await empathyLedgerClient
-      .from('stories')
-      .select(`
-        id,
-        title,
-        summary,
-        content,
-        story_image_url,
-        story_category,
-        is_featured,
-        published_at
-      `)
-      .eq('is_public', true)
-      .eq('privacy_level', 'public')
-      .not('story_image_url', 'is', null)
-      .order('published_at', { ascending: false })
-      .limit(remaining + existingIds.length);
-
-    if (withImages) {
-      const newStories = withImages.filter(s => !existingIds.includes(s.id));
-      data = [...(data || []), ...newStories.slice(0, remaining)];
-    }
-  }
-
-  // If still not enough, get featured stories without images
-  if (!data || data.length < limit) {
-    const existingIds = (data || []).map(s => s.id);
-    const remaining = limit - (data?.length || 0);
-
-    const { data: featured } = await empathyLedgerClient
-      .from('stories')
-      .select(`
-        id,
-        title,
-        summary,
-        content,
-        story_image_url,
-        story_category,
-        is_featured,
-        published_at
-      `)
-      .eq('is_public', true)
-      .eq('privacy_level', 'public')
-      .eq('is_featured', true)
-      .order('published_at', { ascending: false })
-      .limit(remaining + existingIds.length);
-
-    if (featured) {
-      const newStories = featured.filter(s => !existingIds.includes(s.id));
-      data = [...(data || []), ...newStories.slice(0, remaining)];
-    }
-  }
-
-  // Final fallback: get most recent public stories
-  if (!data || data.length < limit) {
-    const existingIds = (data || []).map(s => s.id);
-    const remaining = limit - (data?.length || 0);
-
-    const { data: recent, error: recentError } = await empathyLedgerClient
-      .from('stories')
-      .select(`
-        id,
-        title,
-        summary,
-        content,
-        story_image_url,
-        story_category,
-        is_featured,
-        published_at
-      `)
-      .eq('is_public', true)
-      .eq('privacy_level', 'public')
-      .order('published_at', { ascending: false })
-      .limit(remaining + existingIds.length);
-
-    if (recent) {
-      const newStories = recent.filter(s => !existingIds.includes(s.id));
-      data = [...(data || []), ...newStories.slice(0, remaining)];
-    }
-    if (recentError) error = recentError;
-  }
-
-  if (error) {
-    console.error('Error fetching featured stories:', error);
-    return [];
-  }
-
-  // Create excerpt from content if no summary
-  return (data || []).map(story => ({
-    ...story,
-    excerpt: story.summary || (story.content ? story.content.substring(0, 200) + '...' : '')
-  }));
-}
-
-// Justice-related keywords for filtering stories for JusticeHub
-// Using specific keywords to avoid false positives from partial matching
-const JUSTICE_KEYWORDS = [
-  // Direct justice terms
-  'justice', 'juvenile', 'incarceration', 'rehabilitation', 'restorative',
-  'recidivism', 'court', 'legal', 'prison', 'detention',
-  // Youth-specific
-  'youth empowerment', 'youth advocacy', 'youth engagement', 'youth rehabilitation',
-  'young people', 'at-risk youth', 'youth support',
-  // Support services
-  'drug and alcohol', 'homelessness', 'mental health',
-  // Family
-  'family healing', 'family support',
-  // Community safety
-  'community safety', 'crime prevention',
-  // Indigenous context
-  'indigenous justice', 'cultural healing'
-];
-
-/**
- * Check if a story is justice-related based on themes, category, or service link
- * Uses keyword matching to identify relevant content
- */
-function isJusticeRelatedStory(story: {
-  service_id?: string | null;
-  themes?: string[] | null;
-  story_category?: string | null;
-  story_type?: string | null;
-  title?: string | null;
-}): boolean {
-  // Has service link (linked to JusticeHub service)
-  if (story.service_id) return true;
-
-  // Check title for justice keywords
-  const title = (story.title || '').toLowerCase();
-  if (JUSTICE_KEYWORDS.some(kw => title.includes(kw.toLowerCase()))) {
-    return true;
-  }
-
-  // Check themes for justice keywords
-  if (story.themes?.some(theme => {
-    const themeLower = theme.toLowerCase();
-    return JUSTICE_KEYWORDS.some(kw => themeLower.includes(kw.toLowerCase()));
-  })) {
-    return true;
-  }
-
-  // Story category contains justice
-  if (story.story_category?.toLowerCase().includes('justice')) {
-    return true;
-  }
-
-  // Story type indicates legal/justice context
-  const storyType = (story.story_type || '').toLowerCase();
-  if (storyType.includes('legal') || storyType.includes('court') || storyType.includes('justice')) {
-    return true;
-  }
-
-  return false;
-}
-
-/**
- * Check if content looks like a raw transcript (not curated)
- */
-function isRawTranscript(story: { title?: string; summary?: string; content?: string }): boolean {
-  const title = story.title || '';
-  const summary = story.summary || '';
-  const content = story.content || '';
-
-  // "Key Story" titles are raw transcripts
-  if (title.includes('Key Story')) return true;
-
-  // Content/summary starting with timestamps like [00:00:00] or names followed by ===
-  if (/^\[?\d{2}:\d{2}/.test(summary) || /^\[?\d{2}:\d{2}/.test(content)) return true;
-  if (/^[A-Z][a-z]+ [A-Z][a-z]*\s*===/.test(summary) || /^[A-Z][a-z]+ [A-Z][a-z]*\s*===/.test(content)) return true;
-
-  // Summary that looks like dialogue/transcript
-  if (/^["']?text["']?\s*:\s*["']/.test(summary)) return true;
-
-  // Very short non-descriptive summaries that are just the title repeated
-  if (summary && summary === title) return true;
-
-  return false;
-}
-
-/**
- * Get featured stories for JusticeHub homepage
- * Prioritizes: 1) justicehub_featured flag, 2) stories with images, 3) curated content
- * Filters out raw transcripts and poor quality content
- */
-export async function getFeaturedJusticeStories(limit = 6) {
-  // Fetch more stories than needed so we can filter
-  const fetchLimit = limit * 10;
-
-  // Try to get justicehub_featured stories first (if field exists)
-  let { data: featuredStories } = await empathyLedgerClient
-    .from('stories')
-    .select(`
-      id, title, summary, content, story_image_url, story_category,
-      story_type, is_featured, published_at, themes, service_id
-    `)
-    .eq('is_public', true)
-    .eq('privacy_level', 'public')
-    .not('title', 'like', '%Key Story%')
-    .order('published_at', { ascending: false })
-    .limit(fetchLimit);
-
-  if (!featuredStories) featuredStories = [];
-
-  // Filter out raw transcripts and poor content
-  const qualityStories = featuredStories.filter(story => !isRawTranscript(story));
-
-  // Score and sort stories
-  const scored = qualityStories.map(story => {
-    let score = 0;
-    // Has image - highest priority for visual appeal
-    if (story.story_image_url) score += 100;
-    // Has proper summary (not just title repeated)
-    if (story.summary && story.summary !== story.title && story.summary.length > 50) score += 50;
-    // Is featured in EL
-    if (story.is_featured) score += 30;
-    // Has service link (connected to JusticeHub)
-    if (story.service_id) score += 40;
-    // Justice-related themes
-    if (isJusticeRelatedStory(story)) score += 20;
-
-    return { ...story, _score: score };
-  });
-
-  // Sort by score descending
-  scored.sort((a, b) => b._score - a._score);
-
-  // Return top results with clean excerpt
-  return scored.slice(0, limit).map(story => {
-    // Clean up excerpt - don't show transcript-style content
-    let excerpt = story.summary || '';
-    if (!excerpt || excerpt.length < 20) {
-      excerpt = story.content ? story.content.substring(0, 200) : '';
-    }
-    // Remove any leading quotes or "text": patterns
-    excerpt = excerpt.replace(/^["']?text["']?\s*:\s*["']?/, '').trim();
-    if (excerpt.length > 200) excerpt = excerpt.substring(0, 200) + '...';
-
-    return {
-      id: story.id,
-      title: story.title,
-      summary: story.summary,
-      content: story.content,
-      story_image_url: story.story_image_url,
-      story_category: story.story_category,
-      is_featured: story.is_featured,
-      published_at: story.published_at,
-      themes: story.themes,
-      service_id: story.service_id,
-      excerpt
-    };
-  });
-}
-
-/**
- * Get organization by slug
- */
-export async function getOrganizationBySlug(slug: string) {
-  const { data, error } = await empathyLedgerClient
-    .from('organizations')
-    .select('*')
-    .eq('slug', slug)
-    .single();
-
-  if (error) {
-    console.error('Error fetching organization:', error);
-    return null;
-  }
-
-  return data;
-}
-
-/**
- * Get stories for an organization
- * Note: Avoided profile join due to RLS recursion issue in Empathy Ledger
- */
-export async function getStoriesForOrganization(orgId: string, publicOnly = true) {
-  let query = empathyLedgerClient
-    .from('stories')
-    .select('*')
-    .eq('organization_id', orgId);
-
-  if (publicOnly) {
-    query = query.eq('is_public', true).eq('privacy_level', 'public');
-  }
-
-  const { data, error } = await query.order('published_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching organization stories:', error);
-    return [];
-  }
-
-  return data || [];
-}
-
-/**
- * Search stories with cultural sensitivity filters
- * Note: Avoided profile join due to RLS recursion issue in Empathy Ledger
- */
-export async function searchStories(searchTerm: string, includeWarnings = false) {
-  let query = empathyLedgerClient
-    .from('stories')
-    .select(`
-      *,
-      organization:organizations!stories_organization_id_fkey(name, slug, indigenous_controlled)
-    `)
-    .eq('is_public', true)
-    .eq('privacy_level', 'public')
-    .textSearch('content', searchTerm);
-
-  if (!includeWarnings) {
-    query = query.or('cultural_warnings.is.null,cultural_warnings.eq.{}');
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    console.error('Error searching stories:', error);
-    return [];
-  }
-
-  return data || [];
-}
-
-/**
- * Get projects for display on JusticeHub
- */
-export async function getPublicProjects() {
-  const { data, error } = await empathyLedgerClient
-    .from('projects')
-    .select(`
-      *,
-      organization:organizations!projects_organization_id_fkey(name, slug, indigenous_controlled, traditional_country)
-    `)
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching projects:', error);
-    return [];
-  }
-
-  return data || [];
-}
-
-/**
- * Check if cultural protocols should be displayed
- */
 export function shouldShowCulturalWarning(story: EmpathyLedgerStory): boolean {
   return !!(
     story.cultural_warnings &&
@@ -698,16 +192,222 @@ export function shouldShowCulturalWarning(story: EmpathyLedgerStory): boolean {
   );
 }
 
-/**
- * Format cultural protocols for display
- */
 export function formatCulturalProtocols(org: EmpathyLedgerOrganization): string[] {
   if (!org.cultural_protocols) return [];
-
-  // Parse JSON if it's a string
   const protocols = typeof org.cultural_protocols === 'string'
     ? JSON.parse(org.cultural_protocols)
     : org.cultural_protocols;
-
   return Array.isArray(protocols) ? protocols : [];
+}
+
+// ─── v2 API-powered read functions ────────────────────────────────────────────
+
+function v2StoryToLegacy(story: V2Story): Partial<EmpathyLedgerStory> & { excerpt: string } {
+  return {
+    id: story.id,
+    title: story.title,
+    summary: story.excerpt || undefined,
+    content: '',
+    story_image_url: story.imageUrl || undefined,
+    themes: story.themes,
+    is_public: true,
+    privacy_level: 'public',
+    is_featured: false,
+    cultural_sensitivity_level: story.culturalLevel || undefined,
+    published_at: story.publishedAt || undefined,
+    created_at: story.createdAt,
+    updated_at: story.createdAt,
+    storyteller_id: story.storyteller?.id,
+    project_id: story.projectId || undefined,
+    excerpt: story.excerpt || '',
+    tenant_id: '',
+  };
+}
+
+/**
+ * Get public stories — now via v2 API
+ */
+export async function getPublicStories(limit = 10) {
+  if (isV2Configured) {
+    const result = await v2GetStories({ limit });
+    return result.data.map(v2StoryToLegacy);
+  }
+  // Fallback to direct Supabase if v2 not configured
+  const { data, error } = await empathyLedgerClient
+    .from('stories')
+    .select('*')
+    .eq('is_public', true)
+    .eq('privacy_level', 'public')
+    .order('published_at', { ascending: false })
+    .limit(limit);
+  if (error) { console.error('Error fetching public stories:', error); return []; }
+  return data || [];
+}
+
+/**
+ * Get featured stories for homepage — now via v2 API
+ */
+export async function getFeaturedStories(limit = 3) {
+  if (isV2Configured) {
+    const result = await v2GetStories({ limit: limit * 3 }); // Fetch extra to pick best
+    const stories = result.data.map(s => ({
+      ...v2StoryToLegacy(s),
+      _hasImage: !!s.imageUrl,
+    }));
+    // Sort: stories with images first
+    stories.sort((a, b) => (b._hasImage ? 1 : 0) - (a._hasImage ? 1 : 0));
+    return stories.slice(0, limit);
+  }
+  // Fallback to direct Supabase
+  const { data, error } = await empathyLedgerClient
+    .from('stories')
+    .select('id, title, summary, content, story_image_url, story_category, is_featured, published_at')
+    .eq('is_public', true)
+    .eq('privacy_level', 'public')
+    .order('published_at', { ascending: false })
+    .limit(limit);
+  if (error) { console.error('Error fetching featured stories:', error); return []; }
+  return (data || []).map(story => ({
+    ...story,
+    excerpt: story.summary || (story.content ? story.content.substring(0, 200) + '...' : '')
+  }));
+}
+
+/**
+ * Get featured justice stories for JusticeHub homepage — now via v2 API
+ */
+export async function getFeaturedJusticeStories(limit = 6) {
+  if (isV2Configured) {
+    const result = await v2GetStories({ limit: limit * 3 });
+    const stories = result.data.map(s => {
+      const legacy = v2StoryToLegacy(s);
+      let score = 0;
+      if (s.imageUrl) score += 100;
+      if (s.excerpt && s.excerpt.length > 50) score += 50;
+      return { ...legacy, _score: score };
+    });
+    stories.sort((a, b) => (b._score || 0) - (a._score || 0));
+    return stories.slice(0, limit);
+  }
+  // Fallback to direct Supabase (original complex logic)
+  const { data } = await empathyLedgerClient
+    .from('stories')
+    .select('id, title, summary, content, story_image_url, story_category, story_type, is_featured, published_at, themes, service_id')
+    .eq('is_public', true)
+    .eq('privacy_level', 'public')
+    .not('title', 'like', '%Key Story%')
+    .order('published_at', { ascending: false })
+    .limit(limit * 10);
+  return (data || []).slice(0, limit).map(story => ({
+    ...story,
+    excerpt: story.summary || (story.content ? story.content.substring(0, 200) + '...' : '')
+  }));
+}
+
+/**
+ * Get stories for a service — now via v2 API (returns all org stories)
+ */
+export async function getStoriesForService(_serviceId: string) {
+  if (isV2Configured) {
+    const result = await v2GetStories({ limit: 50 });
+    return result.data.map(v2StoryToLegacy);
+  }
+  const { data, error } = await empathyLedgerClient
+    .from('stories')
+    .select('*')
+    .eq('service_id', _serviceId)
+    .eq('is_public', true)
+    .eq('privacy_level', 'public');
+  if (error) { console.error('Error fetching stories:', error); return []; }
+  return data || [];
+}
+
+/**
+ * Get organization by slug — uses Supabase (org data not in v2 API)
+ */
+export async function getOrganizationBySlug(slug: string) {
+  const { data, error } = await empathyLedgerClient
+    .from('organizations')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+  if (error) { console.error('Error fetching organization:', error); return null; }
+  return data;
+}
+
+/**
+ * Get Indigenous organizations — uses Supabase (org data not in v2 API)
+ */
+export async function getIndigenousOrganizations() {
+  const { data, error } = await empathyLedgerClient
+    .from('organizations')
+    .select('*')
+    .eq('indigenous_controlled', true)
+    .eq('empathy_ledger_enabled', true);
+  if (error) { console.error('Error fetching Indigenous organizations:', error); return []; }
+  return data || [];
+}
+
+/**
+ * Get stories for organization — now via v2 API
+ */
+export async function getStoriesForOrganization(_orgId: string, _publicOnly = true) {
+  if (isV2Configured) {
+    const result = await v2GetStories({ limit: 50 });
+    return result.data.map(v2StoryToLegacy);
+  }
+  let query = empathyLedgerClient
+    .from('stories')
+    .select('*')
+    .eq('organization_id', _orgId);
+  if (_publicOnly) {
+    query = query.eq('is_public', true).eq('privacy_level', 'public');
+  }
+  const { data, error } = await query.order('published_at', { ascending: false });
+  if (error) { console.error('Error fetching organization stories:', error); return []; }
+  return data || [];
+}
+
+/**
+ * Search stories — uses Supabase (full-text search not in v2 API)
+ */
+export async function searchStories(searchTerm: string, includeWarnings = false) {
+  let query = empathyLedgerClient
+    .from('stories')
+    .select('*')
+    .eq('is_public', true)
+    .eq('privacy_level', 'public')
+    .textSearch('content', searchTerm);
+  if (!includeWarnings) {
+    query = query.or('cultural_warnings.is.null,cultural_warnings.eq.{}');
+  }
+  const { data, error } = await query;
+  if (error) { console.error('Error searching stories:', error); return []; }
+  return data || [];
+}
+
+/**
+ * Get public projects — now via v2 API
+ */
+export async function getPublicProjects() {
+  if (isV2Configured) {
+    const result = await v2GetProjects({ limit: 50 });
+    return result.data.map(p => ({
+      id: p.id,
+      name: p.name,
+      code: p.code,
+      description: p.description,
+      location: p.location,
+      status: p.status,
+      start_date: p.startDate,
+      end_date: p.endDate,
+      created_at: p.createdAt,
+    }));
+  }
+  const { data, error } = await empathyLedgerClient
+    .from('projects')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) { console.error('Error fetching projects:', error); return []; }
+  return data || [];
 }

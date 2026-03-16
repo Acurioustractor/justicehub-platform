@@ -1,26 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  empathyLedgerClient,
-  isEmpathyLedgerConfigured,
-} from '@/lib/supabase/empathy-ledger';
+import { getStories, isV2Configured } from '@/lib/empathy-ledger/v2-client';
 
 /**
  * GET /api/empathy-ledger/stories
  *
- * Fetches public stories from Empathy Ledger for JusticeHub display.
- *
- * Consent Model:
- * - Only returns stories where: is_public = true AND privacy_level = 'public'
- * - For JusticeHub featured: justicehub_featured = true
+ * Fetches public stories from Empathy Ledger v2 API for JusticeHub display.
  *
  * Query params:
  *   - limit: number of stories to return (default: 10)
- *   - featured: if 'true', only return justicehub_featured stories
+ *   - featured: if 'true', only return featured stories (NYI in v2 — returns all)
  *   - storyteller_id: filter by storyteller
  */
 export async function GET(request: NextRequest) {
   try {
-    if (!isEmpathyLedgerConfigured) {
+    if (!isV2Configured) {
       return NextResponse.json({
         success: true,
         stories: [],
@@ -36,60 +29,12 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
-    const featured = searchParams.get('featured') === 'true';
-    const storytellerId = searchParams.get('storyteller_id');
+    const storytellerId = searchParams.get('storyteller_id') || undefined;
 
-    // Build query for stories (avoiding storytellers join due to RLS recursion)
-    let query = empathyLedgerClient
-      .from('stories')
-      .select(`
-        id,
-        title,
-        summary,
-        content,
-        story_image_url,
-        story_type,
-        themes,
-        is_featured,
-        justicehub_featured,
-        cultural_sensitivity_level,
-        is_public,
-        privacy_level,
-        published_at,
-        created_at,
-        storyteller_id,
-        organization_id
-      `)
-      // Core consent controls - only public stories
-      .eq('is_public', true)
-      .eq('privacy_level', 'public');
-
-    // For JusticeHub featured, filter by justicehub_featured
-    if (featured) {
-      query = query.eq('justicehub_featured', true);
-    }
-
-    // Filter by storyteller
-    if (storytellerId) {
-      query = query.eq('storyteller_id', storytellerId);
-    }
-
-    // Order and limit
-    query = query
-      .order('justicehub_featured', { ascending: false })
-      .order('is_featured', { ascending: false })
-      .order('published_at', { ascending: false })
-      .limit(limit);
-
-    const { data: stories, error } = await query;
-
-    if (error) {
-      console.error('Error fetching stories from Empathy Ledger:', error);
-      return NextResponse.json(
-        { success: false, error: 'Failed to fetch stories' },
-        { status: 500 }
-      );
-    }
+    const result = await getStories({
+      limit,
+      storytellerId,
+    });
 
     // Map story_type to human-readable category
     const storyTypeLabels: Record<string, string> = {
@@ -102,22 +47,33 @@ export async function GET(request: NextRequest) {
       'cultural_practice': 'Cultural Practice',
     };
 
-    // Enrich stories with excerpt and category (storyteller join removed due to RLS recursion)
-    const enrichedStories = (stories || []).map(story => {
-      return {
-        ...story,
-        excerpt: story.summary || (story.content ? story.content.substring(0, 200) + '...' : ''),
-        // Map story_type to story_category for display
-        story_category: story.story_type ? storyTypeLabels[story.story_type] || story.story_type : null,
-        // Storyteller info not available due to RLS - would need separate query
-        storyteller_name: null,
-      };
-    });
+    // Map v2 response to legacy format expected by JusticeHub frontend
+    const enrichedStories = result.data.map(story => ({
+      id: story.id,
+      title: story.title,
+      summary: story.excerpt,
+      content: null, // List view doesn't need full content
+      story_image_url: story.imageUrl,
+      story_type: null,
+      themes: story.themes,
+      is_featured: false,
+      justicehub_featured: false,
+      cultural_sensitivity_level: story.culturalLevel,
+      is_public: true,
+      privacy_level: 'public',
+      published_at: story.publishedAt,
+      created_at: story.createdAt,
+      storyteller_id: story.storyteller?.id || null,
+      organization_id: null,
+      excerpt: story.excerpt || '',
+      story_category: null,
+      storyteller_name: story.storyteller?.displayName || null,
+    }));
 
     return NextResponse.json({
       success: true,
       stories: enrichedStories,
-      count: enrichedStories.length,
+      count: result.pagination.total,
       consent_info: {
         is_public: true,
         privacy_level: 'public',
