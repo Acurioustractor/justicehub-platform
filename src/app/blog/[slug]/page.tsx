@@ -6,11 +6,70 @@ import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { fetchContentHubArticleBySlug } from '@/lib/empathy-ledger-content-hub';
+import { createServiceClient } from '@/lib/supabase/service';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * Slugify a title for URL matching.
+ * "Why Australia's Youth Justice System Is Failing — And What..." →
+ * "why-australias-youth-justice-system-is-failing-and-what-..."
+ */
+function slugify(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/['']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+/**
+ * Fetch a synced EL story by slug match (fallback for content hub).
+ * Matches against a slugified version of the story title.
+ */
+async function fetchSyncedStoryBySlug(slug: string) {
+  try {
+    const supabase = createServiceClient();
+    const { data: stories } = await (supabase as any)
+      .from('synced_stories')
+      .select('id, empathy_ledger_id, title, summary, content, story_image_url, story_type, story_category, themes, is_featured, source_published_at, project_slugs')
+      .eq('source', 'empathy_ledger')
+      .order('source_published_at', { ascending: false })
+      .limit(100);
+
+    if (!stories) return null;
+
+    // Match by slugified title
+    const match = stories.find((s: any) => slugify(s.title || '') === slug);
+    if (!match) return null;
+
+    // Normalise to same shape as content hub articles
+    return {
+      id: match.id,
+      title: match.title,
+      slug,
+      excerpt: match.summary,
+      content: match.content,
+      authorName: 'JusticeHub',
+      publishedAt: match.source_published_at,
+      tags: match.themes || [],
+      featuredImageUrl: match.story_image_url,
+      metaTitle: match.title,
+      metaDescription: match.summary,
+      source: 'synced_story' as const,
+      projectSlugs: match.project_slugs || [],
+    };
+  } catch (err) {
+    console.error('Synced story lookup error:', err);
+    return null;
+  }
+}
+
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = await fetchContentHubArticleBySlug(params.slug);
+  const post = await fetchContentHubArticleBySlug(params.slug)
+    || await fetchSyncedStoryBySlug(params.slug);
 
   if (!post) return {};
 
@@ -21,17 +80,29 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title: post.metaTitle || post.title,
       description: post.metaDescription || post.excerpt,
       images: post.featuredImageUrl ? [post.featuredImageUrl] : [],
+      type: 'article',
+      url: `https://justicehub.org.au/blog/${params.slug}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.metaTitle || post.title,
+      description: post.metaDescription || post.excerpt,
     },
   };
 }
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = await fetchContentHubArticleBySlug(params.slug);
+  const post = await fetchContentHubArticleBySlug(params.slug)
+    || await fetchSyncedStoryBySlug(params.slug);
 
   if (!post) notFound();
 
   const content = post.content || '';
   const looksLikeHtml = /<\/?[a-z][\s\S]*>/i.test(content);
+
+  // Check if this is a Contained-linked article
+  const isContained = (post as any).projectSlugs?.includes('the-contained')
+    || (post as any).tags?.includes('contained');
 
   return (
     <div className="min-h-screen bg-white">
@@ -175,6 +246,22 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               <p>No content available.</p>
             )}
           </div>
+
+          {/* Contained CTA */}
+          {isContained && (
+            <div className="mt-16 p-8 bg-black text-white border-2 border-black">
+              <h3 className="text-2xl font-black mb-4 text-white">Experience Contained</h3>
+              <p className="text-gray-300 mb-6 text-lg">
+                A 30-minute, three-room installation that closes the gap between evidence and public understanding.
+              </p>
+              <Link
+                href="/contained"
+                className="inline-block bg-red-600 text-white font-black px-8 py-3 text-lg hover:bg-red-700 transition-colors"
+              >
+                Learn More
+              </Link>
+            </div>
+          )}
         </div>
 
       </article>

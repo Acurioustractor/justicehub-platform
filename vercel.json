@@ -23,6 +23,46 @@
     {
       "path": "/api/cron/tenders",
       "schedule": "0 2 * * 1,4"
+    },
+    {
+      "path": "/api/cron/alma/enrich?mode=evidence_metadata&batch=15",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/alma/enrich?mode=cost_data&batch=10",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/alma/enrich?mode=research&batch=5",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/alma/research-loop",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/alma/data-sprint?mode=auto&batch=200",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/alma/data-sprint?mode=linkage&batch=500",
+      "schedule": "0 22 * * *"
+    },
+    {
+      "path": "/api/cron/campaign/ghl-sync",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/campaign/linkedin-monitor",
+      "schedule": "0 10 * * 1"
+    },
+    {
+      "path": "/api/cron/sector-cache",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/empathy-ledger/sync?force=true",
+      "schedule": "0 1 * * *"
     }
   ]
 }
