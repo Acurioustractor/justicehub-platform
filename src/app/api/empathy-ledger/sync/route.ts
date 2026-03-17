@@ -4,12 +4,47 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
 
 /**
+ * Verify request is authorized via:
+ *   1. Bearer token matching CRON_SECRET or SUPABASE_SERVICE_ROLE_KEY
+ *   2. Admin cookie session
+ */
+async function isAuthorized(request: NextRequest): Promise<boolean> {
+  // 1. API key auth (cron, scripts, enterprise integrations)
+  const authHeader = request.headers.get('authorization') || '';
+  if (authHeader.startsWith('Bearer ')) {
+    const token = authHeader.slice(7).trim();
+    const cronSecret = process.env.CRON_SECRET;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (token && (token === cronSecret || token === serviceKey)) {
+      return true;
+    }
+  }
+
+  // 2. Cookie session auth (admin UI)
+  try {
+    const authSupabase = await createClient();
+    const { data: { user } } = await authSupabase.auth.getUser();
+    if (!user) return false;
+
+    const { data: profileData } = await authSupabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    return profileData?.role === 'admin';
+  } catch {
+    return false;
+  }
+}
+
+/**
  * POST /api/empathy-ledger/sync
  *
  * Syncs public stories from Empathy Ledger to JusticeHub's local database.
  * This allows for faster page loads and reduces load on Empathy Ledger.
  *
- * SECURITY: Requires admin authentication.
+ * Auth: Bearer token (CRON_SECRET or service key) OR admin cookie session.
  *
  * Only syncs stories that meet consent requirements:
  * - is_public = true
@@ -20,28 +55,10 @@ import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
  */
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const authSupabase = await createClient();
-    const { data: { user } } = await authSupabase.auth.getUser();
-
-    if (!user) {
+    if (!(await isAuthorized(request))) {
       return NextResponse.json(
-        { error: 'Authentication required' },
+        { error: 'Authentication required. Use Bearer token or admin session.' },
         { status: 401 }
-      );
-    }
-
-    // Check admin access
-    const { data: profileData } = await authSupabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    if (profileData?.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Admin access required' },
-        { status: 403 }
       );
     }
 
@@ -128,8 +145,10 @@ export async function POST(request: NextRequest) {
     // Prepare stories for upsert to JusticeHub
     const storiesToSync = stories.map(story => {
       // Auto-tag stories with project slugs based on themes
+      // Themes may be string[] or {name: string}[] — normalise before matching
       const projectSlugs: string[] = [];
-      const themes = (story.themes as string[]) || [];
+      const rawThemes = (story.themes as Array<string | { name?: string }>) || [];
+      const themes = rawThemes.map(t => typeof t === 'string' ? t : (t?.name || '')).filter(Boolean);
       if (themes.some(t => /\bcontained\b/i.test(t))) {
         projectSlugs.push('the-contained');
       }
