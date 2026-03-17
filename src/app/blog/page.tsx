@@ -3,8 +3,47 @@ import Link from 'next/link';
 import { Calendar, User, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { fetchContentHubArticles } from '@/lib/empathy-ledger-content-hub';
+import { createServiceClient } from '@/lib/supabase/service';
 
 export const dynamic = 'force-dynamic';
+
+function slugify(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/['']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+async function fetchSyncedStories() {
+  try {
+    const supabase = createServiceClient();
+    const { data } = await (supabase as any)
+      .from('synced_stories')
+      .select('id, title, summary, story_image_url, themes, is_featured, source_published_at, story_category')
+      .eq('source', 'empathy_ledger')
+      .order('source_published_at', { ascending: false })
+      .limit(60);
+
+    return (data || []).map((s: any) => ({
+      id: `synced-${s.id}`,
+      title: s.title,
+      slug: slugify(s.title || ''),
+      excerpt: s.summary,
+      authorName: null,
+      publishedAt: s.source_published_at,
+      tags: Array.isArray(s.themes)
+        ? s.themes.map((t: any) => typeof t === 'string' ? t : t?.name || '').filter(Boolean)
+        : [],
+      featuredImageUrl: s.story_image_url,
+      source: 'synced' as const,
+    }));
+  } catch {
+    return [];
+  }
+}
 
 export const metadata = {
   title: 'Blog - JusticeHub',
@@ -21,7 +60,25 @@ export const metadata = {
 };
 
 export default async function BlogPage() {
-  const posts = await fetchContentHubArticles({ project: 'justicehub', limit: 60 });
+  const [contentHubPosts, syncedPosts] = await Promise.all([
+    fetchContentHubArticles({ project: 'justicehub', limit: 60 }),
+    fetchSyncedStories(),
+  ]);
+
+  // Merge and dedupe by title, sort by date descending
+  const seen = new Set<string>();
+  const posts = [...contentHubPosts, ...syncedPosts]
+    .filter(p => {
+      const key = p.title?.toLowerCase().trim();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a, b) => {
+      const da = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
+      const db = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
+      return db - da;
+    });
 
   return (
     <div className="min-h-screen bg-white">
