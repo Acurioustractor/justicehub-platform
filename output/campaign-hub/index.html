@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE CONTAINED — Campaign Command Centre</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   BASE / RESET
+   ═══════════════════════════════════════════════════════════ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e5e5e5; line-height: 1.6; }
+::selection { background: #dc2626; color: white; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a0a0a; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+/* ═══════════════════════════════════════════════════════════
+   NAV
+   ═══════════════════════════════════════════════════════════ */
+.top-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: #0a0a0aee; backdrop-filter: blur(12px);
+  border-bottom: 1px solid #1a1a1a;
+  padding: 0 48px; display: flex; align-items: center;
+  overflow-x: auto;
+}
+.top-nav .logo {
+  font-family: 'Space Grotesk'; font-weight: 700; font-size: 16px;
+  color: white; margin-right: 32px; white-space: nowrap; padding: 16px 0;
+}
+.nav-tabs { display: flex; gap: 0; }
+.nav-tab {
+  font-size: 12px; font-weight: 600; color: #525252;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  text-decoration: none; padding: 18px 16px; white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: all 0.2s; cursor: pointer;
+  background: none; border-top: none; border-left: none; border-right: none;
+  font-family: 'Inter', sans-serif;
+}
+.nav-tab:hover { color: #a3a3a3; }
+.nav-tab.active { color: #dc2626; border-bottom-color: #dc2626; }
+
+/* ═══════════════════════════════════════════════════════════
+   LAYOUT
+   ═══════════════════════════════════════════════════════════ */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.header {
+  padding: 64px 48px 40px; max-width: 1400px; margin: 0 auto;
+  border-bottom: 1px solid #262626;
+}
+.header .badge {
+  display: inline-block; background: #dc2626; color: white;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; padding: 5px 12px; margin-bottom: 20px;
+}
+.header h1 {
+  font-family: 'Space Grotesk'; font-size: 42px; font-weight: 700;
+  letter-spacing: -0.03em; color: white; margin-bottom: 10px;
+}
+.header p { font-size: 16px; color: #737373; max-width: 640px; }
+.section {
+  max-width: 1400px; margin: 0 auto; padding: 48px;
+  border-bottom: 1px solid #1a1a1a;
+}
+.section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: #dc2626; margin-bottom: 6px;
+}
+.section h2 {
+  font-family: 'Space Grotesk'; font-size: 24px; font-weight: 700;
+  color: white; letter-spacing: -0.02em; margin-bottom: 8px;
+}
+.section h2 + p { color: #737373; font-size: 14px; margin-bottom: 28px; max-width: 640px; }
+
+/* ═══════════════════════════════════════════════════════════
+   BRAND IDENTITY
+   ═══════════════════════════════════════════════════════════ */
+.color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.color-swatch {
+  border-radius: 8px; overflow: hidden; border: 1px solid #262626;
+  cursor: pointer; transition: border-color 0.2s;
+}
+.color-swatch:hover { border-color: #525252; }
+.color-swatch .swatch-fill { height: 100px; }
+.color-swatch .swatch-info { padding: 14px 16px; background: #141414; }
+.color-swatch .swatch-name { font-weight: 600; font-size: 14px; color: white; margin-bottom: 2px; }
+.color-swatch .swatch-hex {
+  font-family: 'IBM Plex Mono'; font-size: 13px; color: #737373;
+}
+.color-swatch .swatch-usage { font-size: 12px; color: #525252; margin-top: 6px; }
+.copy-toast {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+  background: #dc2626; color: white; padding: 10px 24px; border-radius: 6px;
+  font-size: 13px; font-weight: 600; z-index: 999; opacity: 0;
+  transition: opacity 0.3s; pointer-events: none;
+}
+.copy-toast.show { opacity: 1; }
+
+.type-specimen { margin-bottom: 24px; padding: 24px; background: #141414; border: 1px solid #1a1a1a; border-radius: 8px; }
+.type-specimen .specimen-label {
+  font-family: 'IBM Plex Mono'; font-size: 11px; font-weight: 600;
+  color: #525252; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 12px;
+}
+.type-specimen .specimen-display { color: white; margin-bottom: 8px; }
+.type-specimen .specimen-meta { font-family: 'IBM Plex Mono'; font-size: 12px; color: #404040; }
+
+.logo-display {
+  display: flex; gap: 32px; align-items: center; flex-wrap: wrap;
+  padding: 32px; background: #141414; border: 1px solid #1a1a1a; border-radius: 8px;
+}
+.logo-display img { max-width: 200px; border-radius: 8px; }
+.logo-meta { flex: 1; min-width: 200px; }
+.logo-meta h3 { font-family: 'Space Grotesk'; font-size: 18px; color: white; margin-bottom: 8px; }
+.logo-meta p { font-size: 13px; color: #737373; margin-bottom: 12px; }
+
+.style-rules { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.style-rule {
+  padding: 20px; background: #141414; border: 1px solid #1a1a1a; border-radius: 8px;
+}
+.style-rule h4 { font-family: 'Space Grotesk'; font-size: 15px; color: white; margin-bottom: 6px; }
+.style-rule p { font-size: 13px; color: #737373; }
+
+/* ═══════════════════════════════════════════════════════════
+   MESSAGING & VOICE
+   ═══════════════════════════════════════════════════════════ */
+.core-line {
+  font-family: 'Space Grotesk'; font-size: 36px; font-weight: 700;
+  color: white; letter-spacing: -0.03em; padding: 32px 0;
+  border-bottom: 1px solid #1a1a1a; margin-bottom: 32px;
+}
+.lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+.lang-col { padding: 20px; background: #141414; border: 1px solid #1a1a1a; border-radius: 8px; }
+.lang-col h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+.lang-col.do h4 { color: #059669; }
+.lang-col.dont h4 { color: #dc2626; }
+.lang-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.lang-col li { font-size: 14px; color: #a3a3a3; padding-left: 20px; position: relative; }
+.lang-col.do li::before { content: '✓'; position: absolute; left: 0; color: #059669; font-weight: 700; }
+.lang-col.dont li::before { content: '✗'; position: absolute; left: 0; color: #dc2626; font-weight: 700; }
+
+.stat-library { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.stat-card {
+  display: flex; gap: 16px; padding: 16px 20px; background: #141414;
+  border: 1px solid #1a1a1a; border-radius: 6px; align-items: center;
+  transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: #262626; }
+.stat-value {
+  font-family: 'Space Grotesk'; font-size: 28px; font-weight: 700;
+  color: white; min-width: 90px; white-space: nowrap;
+}
+.stat-details { flex: 1; min-width: 0; }
+.stat-label { font-size: 14px; color: #a3a3a3; margin-bottom: 2px; }
+.stat-source { font-family: 'IBM Plex Mono'; font-size: 11px; color: #404040; }
+.stat-category {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 3px; display: inline-block; margin-top: 4px;
+}
+.cat-cost { background: #dc262622; color: #dc2626; }
+.cat-outcome { background: #05966922; color: #059669; }
+.cat-intl { background: #3b82f622; color: #3b82f6; }
+.cat-equity { background: #f59e0b22; color: #f59e0b; }
+.stat-actions { display: flex; gap: 6px; margin-left: auto; flex-shrink: 0; }
+.stat-copy-btn {
+  padding: 6px 10px; background: transparent; border: 1px solid #262626;
+  color: #525252; font-size: 10px; font-weight: 600; letter-spacing: 0.05em;
+  text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+  white-space: nowrap;
+}
+.stat-copy-btn:hover { border-color: #dc2626; color: #dc2626; }
+
+.hashtag-group { margin-bottom: 24px; }
+.hashtag-group h4 {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.15em;
+  text-transform: uppercase; color: #525252; margin-bottom: 8px;
+}
+.hashtag-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.hashtag-tag {
+  font-family: 'IBM Plex Mono'; font-size: 13px; padding: 5px 12px;
+  background: #1a1a1a; border: 1px solid #262626; border-radius: 4px;
+  color: #a3a3a3; cursor: pointer; transition: all 0.2s;
+}
+.hashtag-tag:hover { border-color: #dc2626; color: #dc2626; }
+
+.pillar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.pillar {
+  padding: 24px; background: #141414; border: 1px solid #1a1a1a; border-radius: 8px;
+  border-left: 3px solid #dc2626;
+}
+.pillar h4 { font-family: 'Space Grotesk'; font-size: 16px; color: white; margin-bottom: 6px; }
+.pillar p { font-size: 13px; color: #737373; }
+
+/* ═══════════════════════════════════════════════════════════
+   PHOTO LIBRARY
+   ═══════════════════════════════════════════════════════════ */
+.photo-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-btn {
+  padding: 6px 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+  text-transform: uppercase; border: 1px solid #262626; background: transparent;
+  color: #737373; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+.filter-btn:hover { border-color: #525252; color: #a3a3a3; }
+.filter-btn.active { background: #dc2626; border-color: #dc2626; color: white; }
+
+.photo-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px; border: 1px solid #1a1a1a; border-radius: 6px;
+  padding: 8px; background: #0f0f0f;
+}
+.photo-thumb {
+  aspect-ratio: 1; overflow: hidden; border-radius: 4px; cursor: pointer;
+  border: 2px solid transparent; transition: all 0.2s; position: relative;
+}
+.photo-thumb:hover { border-color: #525252; }
+.photo-thumb.selected { border-color: #dc2626; }
+.photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.photo-thumb .photo-label {
+  position: absolute; bottom: 0; left: 0; right: 0; padding: 4px 6px;
+  background: #000000cc; font-size: 9px; color: #a3a3a3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.photo-count {
+  font-family: 'IBM Plex Mono'; font-size: 13px; color: #525252; margin-bottom: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TILE COMPOSER
+   ═══════════════════════════════════════════════════════════ */
+.composer-layout { display: flex; gap: 32px; }
+.composer-left { flex: 1; min-width: 0; }
+.composer-right { width: 440px; flex-shrink: 0; position: sticky; top: 72px; align-self: flex-start; }
+.preview-container { background: #141414; border: 1px solid #262626; border-radius: 8px; overflow: hidden; }
+.preview-canvas {
+  position: relative; width: 100%; aspect-ratio: 1; background: #000; overflow: hidden;
+}
+.preview-canvas.ratio-16-9 { aspect-ratio: 16/9; }
+.preview-canvas.ratio-9-16 { aspect-ratio: 9/16; max-height: 600px; }
+.preview-canvas img { width: 100%; height: 100%; object-fit: cover; }
+.preview-overlay {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  justify-content: flex-end; pointer-events: none;
+}
+.preview-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 40%, transparent 70%);
+}
+.preview-text { position: relative; z-index: 1; padding: 28px; }
+.preview-text .headline {
+  font-family: 'Space Grotesk'; font-size: 26px; font-weight: 700;
+  color: white; line-height: 1.15; margin-bottom: 6px;
+}
+.preview-text .subline { font-size: 13px; color: #a3a3a3; margin-bottom: 10px; }
+.preview-text .brand {
+  font-family: 'IBM Plex Mono'; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase; color: #dc2626;
+}
+.preview-badge {
+  position: absolute; top: 20px; left: 20px; background: #dc2626;
+  padding: 4px 10px; z-index: 2;
+}
+.preview-badge span {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: white;
+}
+.composer-controls { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.control-group { display: flex; flex-direction: column; gap: 3px; }
+.control-group label {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #525252;
+}
+.control-group input, .control-group textarea, .control-group select {
+  background: #1a1a1a; border: 1px solid #262626; border-radius: 4px;
+  padding: 8px 12px; color: #e5e5e5; font-family: 'Inter'; font-size: 13px;
+}
+.control-group textarea { resize: vertical; min-height: 50px; }
+.control-group select { cursor: pointer; }
+.btn-primary {
+  padding: 10px 20px; background: #dc2626; border: none; color: white;
+  font-family: 'Inter'; font-size: 13px; font-weight: 700; letter-spacing: 0.05em;
+  text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: background 0.2s;
+}
+.btn-primary:hover { background: #b91c1c; }
+.btn-secondary {
+  padding: 8px 16px; background: transparent; border: 1px solid #333;
+  color: #a3a3a3; font-family: 'Inter'; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: white; color: white; }
+
+/* ═══════════════════════════════════════════════════════════
+   CONTENT CALENDAR
+   ═══════════════════════════════════════════════════════════ */
+.calendar-week {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 24px;
+}
+.calendar-day {
+  background: #141414; border: 1px solid #1a1a1a; border-radius: 8px;
+  padding: 16px; min-height: 200px;
+}
+.calendar-day-header {
+  font-family: 'Space Grotesk'; font-size: 13px; font-weight: 700;
+  color: white; margin-bottom: 4px;
+}
+.calendar-day-date {
+  font-family: 'IBM Plex Mono'; font-size: 11px; color: #404040; margin-bottom: 12px;
+}
+.calendar-post {
+  padding: 10px; background: #0f0f0f; border: 1px solid #1a1a1a;
+  border-radius: 6px; margin-bottom: 8px;
+}
+.calendar-post .post-platform {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.platform-ig { color: #E1306C; }
+.platform-tw { color: #1DA1F2; }
+.platform-li { color: #0077B5; }
+.platform-fb { color: #4267B2; }
+.calendar-post .post-copy {
+  font-size: 12px; color: #a3a3a3; line-height: 1.5;
+  max-height: 80px; overflow: hidden;
+}
+.calendar-post .post-asset {
+  font-family: 'IBM Plex Mono'; font-size: 10px; color: #404040; margin-top: 6px;
+}
+.post-actions { display: flex; gap: 4px; margin-top: 6px; }
+.post-copy-btn {
+  padding: 3px 8px; background: transparent; border: 1px solid #262626;
+  color: #525252; font-size: 9px; font-weight: 600; text-transform: uppercase;
+  border-radius: 3px; cursor: pointer; transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+.post-copy-btn:hover { border-color: #dc2626; color: #dc2626; }
+
+/* ═══════════════════════════════════════════════════════════
+   AI STUDIO
+   ═══════════════════════════════════════════════════════════ */
+.ai-tools { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 24px; }
+.ai-tool {
+  padding: 24px; background: #141414; border: 1px solid #1a1a1a; border-radius: 8px;
+}
+.ai-tool h3 { font-family: 'Space Grotesk'; font-size: 18px; color: white; margin-bottom: 6px; }
+.ai-tool p { font-size: 13px; color: #737373; margin-bottom: 16px; }
+.ai-tool textarea {
+  width: 100%; background: #0f0f0f; border: 1px solid #262626; border-radius: 4px;
+  padding: 10px; color: #e5e5e5; font-family: 'Inter'; font-size: 13px;
+  resize: vertical; min-height: 80px; margin-bottom: 10px;
+}
+.ai-tool select {
+  width: 100%; background: #0f0f0f; border: 1px solid #262626; border-radius: 4px;
+  padding: 8px 10px; color: #e5e5e5; font-family: 'Inter'; font-size: 13px;
+  cursor: pointer; margin-bottom: 10px;
+}
+.ai-output {
+  margin-top: 12px; padding: 16px; background: #0a0a0a;
+  border: 1px solid #262626; border-radius: 6px;
+  font-size: 13px; color: #a3a3a3; line-height: 1.6;
+  white-space: pre-wrap; display: none; max-height: 400px; overflow-y: auto;
+}
+.ai-output.visible { display: block; }
+.ai-loading {
+  display: none; align-items: center; gap: 8px;
+  font-size: 12px; color: #525252; margin-top: 8px;
+}
+.ai-loading.visible { display: flex; }
+.spinner {
+  width: 14px; height: 14px; border: 2px solid #262626;
+  border-top-color: #dc2626; border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════════════════════════
+   MOOD & PULSE
+   ═══════════════════════════════════════════════════════════ */
+.pulse-input-area {
+  padding: 24px; background: #141414; border: 1px solid #1a1a1a;
+  border-radius: 8px; margin-bottom: 24px;
+}
+.pulse-input-area textarea {
+  width: 100%; background: #0f0f0f; border: 1px solid #262626; border-radius: 4px;
+  padding: 12px; color: #e5e5e5; font-family: 'Inter'; font-size: 13px;
+  resize: vertical; min-height: 120px; margin-bottom: 12px;
+}
+.pulse-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.pulse-card {
+  padding: 20px; background: #141414; border: 1px solid #1a1a1a; border-radius: 8px;
+}
+.pulse-card h4 { font-family: 'Space Grotesk'; font-size: 15px; color: white; margin-bottom: 8px; }
+.health-gauge {
+  width: 100%; height: 8px; background: #1a1a1a; border-radius: 4px;
+  overflow: hidden; margin: 8px 0;
+}
+.health-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .top-nav { padding: 0 16px; }
+  .header { padding: 40px 16px 24px; }
+  .header h1 { font-size: 28px; }
+  .section { padding: 32px 16px; }
+  .composer-layout { flex-direction: column; }
+  .composer-right { width: 100%; position: static; }
+  .calendar-week { grid-template-columns: 1fr; }
+  .lang-grid { grid-template-columns: 1fr; }
+  .color-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     NAVIGATION
+     ═══════════════════════════════════════════════════════════ -->
+<nav class="top-nav">
+  <span class="logo">CONTAINED</span>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('brand', this)">Brand</button>
+    <button class="nav-tab" onclick="switchTab('messaging', this)">Messaging</button>
+    <button class="nav-tab" onclick="switchTab('photos', this)">Photos</button>
+    <button class="nav-tab" onclick="switchTab('composer', this)">Composer</button>
+    <button class="nav-tab" onclick="switchTab('calendar', this)">Calendar</button>
+    <button class="nav-tab" onclick="switchTab('ai', this)">AI Studio</button>
+    <button class="nav-tab" onclick="switchTab('pulse', this)">Pulse</button>
+  </div>
+</nav>
+
+<!-- Copy toast -->
+<div class="copy-toast" id="copy-toast">Copied!</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     1. BRAND IDENTITY
+     ═══════════════════════════════════════════════════════════ -->
+<div class="tab-content active" id="tab-brand">
+  <div class="header">
+    <div class="badge">Brand Identity</div>
+    <h1>Visual DNA</h1>
+    <p>Colours, type, logo, and visual rules. Everything needed to maintain brand consistency across the campaign.</p>
+  </div>
+
+  <!-- Colour Palette -->
+  <div class="section">
+    <div class="section-label">Colour Palette</div>
+    <h2>Four Colours. Maximum Restraint.</h2>
+    <p>Red is for CTAs and critical statistics ONLY. One intense moment per section.</p>
+    <div class="color-grid" id="color-grid"></div>
+    <div class="style-rules" style="margin-top: 16px;">
+      <div class="style-rule">
+        <h4>Off-White Default</h4>
+        <p>Page backgrounds use #F5F0E8, not #FFFFFF. Warmer, intentional.</p>
+      </div>
+      <div class="style-rule">
+        <h4>Black Warmth</h4>
+        <p>Dark backgrounds use #0A0A0A, not #000000. Subtle but important.</p>
+      </div>
+      <div class="style-rule">
+        <h4>One Accent Per Section</h4>
+        <p>Restraint over saturation. Red appears once, with purpose.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Typography -->
+  <div class="section">
+    <div class="section-label">Typography</div>
+    <h2>Type Hierarchy</h2>
+    <p>Maximize contrast between display weight (heavy) and label weight (light/regular).</p>
+
+    <div class="type-specimen">
+      <div class="specimen-label">Display — Space Grotesk</div>
+      <div class="specimen-display" style="font-family: 'Space Grotesk'; font-size: 48px; font-weight: 700; letter-spacing: -0.05em; line-height: 1.1;">
+        One shipping container.<br>Three rooms. Thirty minutes.
+      </div>
+      <div class="specimen-meta">Bold 700 / 48-72px / Tracking -0.05em</div>
+    </div>
+
+    <div class="type-specimen">
+      <div class="specimen-label">Section Headlines — Space Grotesk</div>
+      <div class="specimen-display" style="font-family: 'Space Grotesk'; font-size: 32px; font-weight: 700; letter-spacing: -0.03em;">
+        The evidence is overwhelming
+      </div>
+      <div class="specimen-meta">Bold 700 / 32-40px / Tracking -0.03em</div>
+    </div>
+
+    <div class="type-specimen">
+      <div class="specimen-label">Data & Labels — IBM Plex Mono</div>
+      <div class="specimen-display" style="font-family: 'IBM Plex Mono'; font-size: 18px; font-weight: 500; color: #a3a3a3;">
+        $1.55M per child per year — Productivity Commission ROGS 2024-25
+      </div>
+      <div class="specimen-meta">Medium 500 / 14-18px / Data callouts, captions, meta</div>
+    </div>
+
+    <div class="type-specimen">
+      <div class="specimen-label">Body — Inter</div>
+      <div class="specimen-display" style="font-family: 'Inter'; font-size: 16px; font-weight: 400; color: #a3a3a3;">
+        Community-led alternatives work better, cost less, and keep young people connected to family and culture. The evidence base is overwhelming.
+      </div>
+      <div class="specimen-meta">Regular 400 / 16px / Body copy, descriptions</div>
+    </div>
+  </div>
+
+  <!-- Brand Assets -->
+  <div class="section">
+    <div class="section-label">Logo & Mark</div>
+    <h2>All Brand Assets</h2>
+    <p>Every campaign asset. Click Download to save individually.</p>
+    <div id="brand-assets-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 24px;"></div>
+  </div>
+
+  <!-- Visual Style -->
+  <div class="section">
+    <div class="section-label">Visual Style</div>
+    <h2>Bauhaus / Constructivist</h2>
+    <p>High contrast, angular compositions, brutalist grid with generous whitespace.</p>
+    <div class="style-rules">
+      <div class="style-rule">
+        <img src="/images/contained/poster-brand.png" style="width:100%;border-radius:4px;margin-bottom:12px;aspect-ratio:16/9;object-fit:cover;" />
+        <h4>Surfaces, Not Cards</h4>
+        <p>Information lives on surfaces. Fewer containers, more direct typographic hierarchy.</p>
+      </div>
+      <div class="style-rule">
+        <img src="/images/contained/social-stat-cost.png" style="width:100%;border-radius:4px;margin-bottom:12px;aspect-ratio:1;object-fit:cover;" />
+        <h4>Asymmetric Scale</h4>
+        <p>Large headline next to small muted data. Fewer elements, highly refined.</p>
+      </div>
+      <div class="style-rule">
+        <img src="/images/contained/poster-tour.png" style="width:100%;border-radius:4px;margin-bottom:12px;aspect-ratio:16/9;object-fit:cover;" />
+        <h4>Whitespace is a Feature</h4>
+        <p>Let content breathe. Density through hierarchy, not cramming.</p>
+      </div>
+      <div class="style-rule">
+        <img src="/images/contained/social-stat-ratio.png" style="width:100%;border-radius:4px;margin-bottom:12px;aspect-ratio:1;object-fit:cover;" />
+        <h4>Red Wedge</h4>
+        <p>Constructivist heritage. Clip-paths and diagonal cuts for visual energy. Used sparingly.</p>
+      </div>
+      <div class="style-rule" style="border: 1px solid #dc262644;">
+        <img src="/images/contained/contained-brand-square.png" style="width:100%;border-radius:4px;margin-bottom:12px;aspect-ratio:1;object-fit:contain;background:#111;" />
+        <h4 style="color: #dc2626;">REAL PHOTOS ONLY</h4>
+        <p>NEVER use AI-generated photos of people, places, or scenes. NEVER use AI illustrations depicting people. All imagery must be real photography of real people and real places.</p>
+      </div>
+      <div class="style-rule">
+        <img src="/images/contained/bespoke-data-viz.png" style="width:100%;border-radius:4px;margin-bottom:12px;aspect-ratio:1;object-fit:cover;" />
+        <h4>AI for Brand Graphics Only</h4>
+        <p>Gemini may ONLY generate: text-based quote cards, typographic posters, abstract data visualisations, brand pattern elements. Never people, never scenes, never illustrations of humans.</p>
+      </div>
+      <div class="style-rule">
+        <img src="/images/contained/logo-contained-square.png" style="width:100%;border-radius:4px;margin-bottom:12px;aspect-ratio:1;object-fit:contain;background:#111;" />
+        <h4>Angular Compositions</h4>
+        <p>Clip-paths, diagonal lines, and geometric frames. No rounded softness.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Brand Elements Toolkit -->
+  <div class="section">
+    <div class="section-label">Brand Elements Toolkit</div>
+    <h2>Reusable Graphic Parts</h2>
+    <p>Generate brand-consistent graphic elements with Gemini. These are the building blocks — angular shapes, dividers, icons, patterns — that tie everything together across cards, posters, and social tiles.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin:32px 0;">
+      <div id="brand-elements-grid"></div>
+    </div>
+
+    <!-- Element Generator -->
+    <div style="margin-top:24px;padding:24px;background:#111;border:1px solid #1a1a1a;border-radius:4px;">
+      <h4 style="margin-bottom:16px;">Generate Brand Element</h4>
+      <div style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end;">
+        <div>
+          <label style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#737373;display:block;margin-bottom:6px;">Element Type</label>
+          <select id="element-type" style="width:100%;padding:10px;background:#1a1a1a;color:#e5e5e5;border:1px solid #333;border-radius:3px;font-size:14px;">
+            <option value="red-wedge">Red Wedge Accent</option>
+            <option value="angular-divider">Angular Divider / Separator</option>
+            <option value="stat-frame">Stat Highlight Frame</option>
+            <option value="quote-marks">Typographic Quote Marks</option>
+            <option value="pattern-tile">Geometric Pattern Tile</option>
+            <option value="icon-justice">Icon — Justice / Scales</option>
+            <option value="icon-community">Icon — Community / Connection</option>
+            <option value="icon-container">Icon — Shipping Container</option>
+            <option value="icon-growth">Icon — Growth / Transformation</option>
+            <option value="corner-element">Corner Bracket Element</option>
+            <option value="data-viz-frame">Data Visualisation Frame</option>
+            <option value="diagonal-stripe">Diagonal Stripe Pattern</option>
+            <option value="custom">Custom (describe below)</option>
+          </select>
+        </div>
+        <button onclick="generateBrandElement()" style="padding:10px 24px;background:#dc2626;color:white;border:none;font-weight:700;font-size:13px;cursor:pointer;letter-spacing:0.04em;white-space:nowrap;height:42px;">GENERATE</button>
+      </div>
+      <div id="custom-element-row" style="display:none;margin-top:12px;">
+        <label style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#737373;display:block;margin-bottom:6px;">Describe the element</label>
+        <input id="custom-element-desc" type="text" placeholder="e.g. Arrow pointing right, angular, red on black" style="width:100%;padding:10px;background:#1a1a1a;color:#e5e5e5;border:1px solid #333;border-radius:3px;font-size:14px;" />
+      </div>
+      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#737373;display:block;margin-bottom:6px;">Size</label>
+          <select id="element-size" style="width:100%;padding:10px;background:#1a1a1a;color:#e5e5e5;border:1px solid #333;border-radius:3px;font-size:14px;">
+            <option value="512x512">512 × 512 (Square)</option>
+            <option value="1024x256">1024 × 256 (Wide Banner)</option>
+            <option value="256x1024">256 × 1024 (Tall Strip)</option>
+            <option value="1080x1080" selected>1080 × 1080 (Social)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#737373;display:block;margin-bottom:6px;">Background</label>
+          <select id="element-bg" style="width:100%;padding:10px;background:#1a1a1a;color:#e5e5e5;border:1px solid #333;border-radius:3px;font-size:14px;">
+            <option value="transparent">Transparent (PNG)</option>
+            <option value="black" selected>Black #0A0A0A</option>
+            <option value="white">Off-White #F5F0E8</option>
+          </select>
+        </div>
+      </div>
+      <div id="element-loading" style="display:none;margin-top:16px;color:#737373;font-size:13px;">
+        <span class="loading-spinner"></span> Generating with Gemini...
+      </div>
+      <div id="element-result" style="display:none;margin-top:16px;">
+        <img id="element-preview" style="max-width:100%;border:1px solid #333;border-radius:4px;" />
+        <div style="margin-top:8px;display:flex;gap:8px;">
+          <button onclick="downloadElement()" style="padding:8px 16px;background:#1a1a1a;color:#e5e5e5;border:1px solid #333;font-size:12px;cursor:pointer;">DOWNLOAD PNG</button>
+          <button onclick="saveToElementLibrary()" style="padding:8px 16px;background:#1a1a1a;color:#e5e5e5;border:1px solid #333;font-size:12px;cursor:pointer;">SAVE TO LIBRARY</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Saved Elements Library -->
+    <div style="margin-top:32px;">
+      <h4 style="margin-bottom:16px;">Saved Elements</h4>
+      <div id="saved-elements-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;"></div>
+      <p id="no-saved-elements" style="color:#525252;font-size:13px;">No saved elements yet. Generate elements above and click "Save to Library".</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     2. MESSAGING & VOICE
+     ═══════════════════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-messaging">
+  <div class="header">
+    <div class="badge">Messaging & Voice</div>
+    <h1>Words That Work</h1>
+    <p>Core messaging, language rules, sourced statistics, and hashtag strategy. Every claim has a source. Every word is intentional.</p>
+  </div>
+
+  <!-- Core Line -->
+  <div class="section">
+    <div class="section-label">Core Line</div>
+    <div class="core-line">One shipping container. Three rooms. Thirty minutes.</div>
+    <p style="color: #737373; font-size: 15px; margin-bottom: 24px;">
+      The reality of youth detention, the evidence for change, and the community-led alternatives already doing the work.
+    </p>
+    <p style="color: #525252; font-size: 14px; font-style: italic; padding-left: 16px; border-left: 2px solid #dc2626;">
+      Secondary: CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
+    </p>
+  </div>
+
+  <!-- Message Pillars -->
+  <div class="section">
+    <div class="section-label">Message Pillars</div>
+    <h2>Three Pillars. Locked.</h2>
+    <div class="pillar-grid" id="pillar-grid"></div>
+  </div>
+
+  <!-- Brand Voice -->
+  <div class="section">
+    <div class="section-label">Brand Voice</div>
+    <h2>Tone & Voice Rules</h2>
+    <div class="style-rules" style="margin-bottom: 24px;">
+      <div class="style-rule">
+        <h4>Community Authority First</h4>
+        <p>Lived-experience advisors shape direction. Community organisations control their data.</p>
+      </div>
+      <div class="style-rule">
+        <h4>Evidence is Story</h4>
+        <p>Research is indexed without profiling individuals. Stories carry context.</p>
+      </div>
+      <div class="style-rule">
+        <h4>Centre Agency, Not Trauma</h4>
+        <p>Lead with what works, not what's broken.</p>
+      </div>
+      <div class="style-rule">
+        <h4>Direct. Urgent. Not Sensational.</h4>
+        <p>Statistics earn their place — every number cited has a source.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Language Do/Don't -->
+  <div class="section">
+    <div class="section-label">Language Rules</div>
+    <h2>Do / Don't</h2>
+    <div class="lang-grid">
+      <div class="lang-col do">
+        <h4>Always Use</h4>
+        <ul>
+          <li>System-impacted young people</li>
+          <li>Community-led alternatives</li>
+          <li>Justice infrastructure</li>
+          <li>What works — lead with solutions</li>
+          <li>Evidence-based — every claim sourced</li>
+          <li>The ask is concrete — back what works</li>
+        </ul>
+      </div>
+      <div class="lang-col dont">
+        <h4>Never Use</h4>
+        <ul>
+          <li>"Offenders" or "juvenile offenders"</li>
+          <li>"At-risk" without qualifying who defined the risk</li>
+          <li>"Tough on crime" framing, even to critique</li>
+          <li>AI-generated photorealistic images of people</li>
+          <li>Sensationalised language about young people</li>
+          <li>"Justice tech" or "justice platform"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Library -->
+  <div class="section">
+    <div class="section-label">Statistics Library</div>
+    <h2>Every Number Sourced</h2>
+    <p>Click to copy the value. "Copy Post" generates a ready-to-share social snippet.</p>
+    <div class="stat-library" id="stat-library"></div>
+  </div>
+
+  <!-- Hashtags -->
+  <div class="section">
+    <div class="section-label">Hashtag Strategy</div>
+    <h2>Tags & Handles</h2>
+    <div id="hashtag-section"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     3. PHOTO LIBRARY
+     ═══════════════════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-photos">
+  <div class="header">
+    <div class="badge">Photo Library</div>
+    <h1>Real Photos Only</h1>
+    <p>168 Empathy Ledger photos + local brand assets. Click any photo to select it for the Tile Composer. AI illustrations are OK. AI photorealism is never OK.</p>
+  </div>
+
+  <div class="section">
+    <div class="photo-count" id="photo-count-display">Loading photos...</div>
+    <div class="photo-filters" id="photo-filters"></div>
+    <div class="photo-grid" id="lib-photo-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     4. SOCIAL TILE COMPOSER
+     ═══════════════════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-composer">
+  <div class="header">
+    <div class="badge">Tile Composer</div>
+    <h1>Build Your Tiles</h1>
+    <p>Select a photo, add your headline and stat, preview live, download as PNG. Four card types, three aspect ratios.</p>
+  </div>
+
+  <div class="section" style="border-bottom: none;">
+    <div class="composer-layout">
+      <!-- LEFT: Mini photo picker -->
+      <div class="composer-left">
+        <div class="section-label">Quick Photo Pick</div>
+        <div class="photo-filters" style="margin-bottom: 8px;">
+          <button class="filter-btn active" onclick="filterComposerPhotos('all', this)">All</button>
+          <button class="filter-btn" onclick="filterComposerPhotos('contained', this)">Brand</button>
+          <button class="filter-btn" onclick="filterComposerPhotos('spain', this)">Spain</button>
+          <button class="filter-btn" onclick="filterComposerPhotos('community', this)">Community</button>
+          <button class="filter-btn" onclick="filterComposerPhotos('places', this)">Places</button>
+          <button class="filter-btn" onclick="filterComposerPhotos('people', this)">People</button>
+          <button class="filter-btn" onclick="filterComposerPhotos('hero', this)">Hero</button>
+          <button class="filter-btn" onclick="filterComposerPhotos('goods', this)">Goods</button>
+        </div>
+        <div class="photo-grid" id="composer-photo-grid" style="max-height: 500px; overflow-y: auto;"></div>
+
+        <!-- Saved tiles -->
+        <div id="saved-tiles-section" style="display: none; margin-top: 32px;">
+          <div class="section-label">Saved Tiles</div>
+          <h2 style="font-family: 'Space Grotesk'; font-size: 20px; color: white; margin-bottom: 12px;">
+            Your Tiles <span style="font-size: 12px; background: #059669; color: white; padding: 2px 8px; border-radius: 3px; margin-left: 8px;" id="saved-count">0</span>
+          </h2>
+          <div id="saved-tiles-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Preview + Controls -->
+      <div class="composer-right">
+        <div class="section-label">Live Preview</div>
+        <div class="preview-container">
+          <div class="preview-canvas" id="preview-canvas">
+            <img id="preview-img" src="/images/contained/contained-brand-square.png" onerror="this.style.display='none'" />
+            <div class="preview-badge"><span id="preview-badge-text">THE CONTAINED</span></div>
+            <div class="preview-overlay">
+              <div class="preview-gradient"></div>
+              <div class="preview-text">
+                <div class="headline" id="preview-headline">$1.55M per child, per year</div>
+                <div class="subline" id="preview-subline">Community alternatives cost $75/day with 88% success</div>
+                <div class="brand" id="preview-brand">THE CONTAINED — AUSTRALIAN TOUR 2026</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="composer-controls">
+            <div class="control-group">
+              <label>Card Type</label>
+              <select id="card-type" onchange="updateCardType()">
+                <option value="stat">Stat Card</option>
+                <option value="quote">Quote Card</option>
+                <option value="story">Story Card</option>
+                <option value="photo">Photo Card</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label>Aspect Ratio</label>
+              <select id="aspect-ratio" onchange="updateAspect()">
+                <option value="1">Square (1080×1080)</option>
+                <option value="16-9">Landscape (1200×630)</option>
+                <option value="9-16">Story (1080×1920)</option>
+              </select>
+            </div>
+            <div class="control-group" id="stat-picker-group">
+              <label>Quick Stats</label>
+              <select id="stat-picker" onchange="applyStatToComposer()">
+                <option value="">Pick a stat...</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label>Headline</label>
+              <input type="text" id="comp-headline" value="$1.55M per child, per year" oninput="updateComposerPreview()" />
+            </div>
+            <div class="control-group">
+              <label>Supporting Text</label>
+              <textarea id="comp-subline" oninput="updateComposerPreview()">Community alternatives cost $75/day with 88% success</textarea>
+            </div>
+            <div class="control-group">
+              <label>Badge</label>
+              <input type="text" id="comp-badge" value="THE CONTAINED" oninput="updateComposerPreview()" />
+            </div>
+            <div class="control-group">
+              <label>Footer</label>
+              <input type="text" id="comp-brand" value="THE CONTAINED — AUSTRALIAN TOUR 2026" oninput="updateComposerPreview()" />
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <button class="btn-primary" onclick="downloadComposerTile()">Download PNG</button>
+              <button class="btn-secondary" onclick="saveComposerTile()">Save Tile</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     5. CONTENT CALENDAR
+     ═══════════════════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-calendar">
+  <div class="header">
+    <div class="badge">Content Calendar</div>
+    <h1>Launch Week</h1>
+    <p>7-day content plan. Two posts per day — Instagram-length and Twitter/X-length. Copy any post with one click.</p>
+  </div>
+
+  <!-- Notion Integration -->
+  <div class="section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div>
+        <div class="section-label">Notion Integration</div>
+        <p style="font-size:13px;color:#737373;">Push posts to your ACT Communications Dashboard. Images are embedded as Supabase CDN URLs.</p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="pushAllToNotion()" id="push-all-btn" style="padding:10px 20px;background:#dc2626;color:white;border:none;font-weight:700;font-size:12px;cursor:pointer;letter-spacing:0.06em;white-space:nowrap;">PUSH ALL TO NOTION</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div>
+        <label style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#737373;display:block;margin-bottom:4px;">Notion API Token</label>
+        <input id="notion-token" type="password" placeholder="ntn_..." value="" style="width:100%;padding:8px;background:#1a1a1a;color:#e5e5e5;border:1px solid #333;border-radius:3px;font-size:13px;font-family:IBM Plex Mono,monospace;" />
+      </div>
+      <div>
+        <label style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#737373;display:block;margin-bottom:4px;">Database ID</label>
+        <input id="notion-db-id" type="text" value="e400e93e-fd9d-4a21-810c-58d67ed9fe97" style="width:100%;padding:8px;background:#1a1a1a;color:#e5e5e5;border:1px solid #333;border-radius:3px;font-size:13px;font-family:IBM Plex Mono,monospace;" />
+      </div>
+    </div>
+    <div id="notion-status" style="font-size:12px;color:#525252;margin-bottom:8px;"></div>
+  </div>
+
+  <div class="section" style="border-bottom: none;">
+    <div id="calendar-container"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     6. AI STUDIO
+     ═══════════════════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-ai">
+  <div class="header">
+    <div class="badge">AI Studio</div>
+    <h1>Gemini-Powered</h1>
+    <p>Rewrite posts for platforms, generate captions, explore stat angles. <strong style="color:#dc2626;">NEVER generate images of people or scenes.</strong> AI is for text content and abstract brand graphics only. Requires dev server at localhost:3004.</p>
+  </div>
+
+  <div class="section" style="border-bottom: none;">
+    <div class="ai-tools">
+      <!-- Platform Rewriter -->
+      <div class="ai-tool">
+        <h3>Rewrite for Platform</h3>
+        <p>Paste a post. Select target platform. Get a brand-consistent rewrite.</p>
+        <textarea id="ai-rewrite-input" placeholder="Paste your post copy here..."></textarea>
+        <select id="ai-rewrite-platform">
+          <option value="instagram">Instagram (long-form, emotional)</option>
+          <option value="twitter">Twitter/X (concise, punchy, &lt;280 chars)</option>
+          <option value="linkedin">LinkedIn (professional, evidence-led)</option>
+          <option value="facebook">Facebook (community-focused, shareable)</option>
+        </select>
+        <button class="btn-primary" onclick="aiRewrite()">Rewrite</button>
+        <div class="ai-loading" id="rewrite-loading"><div class="spinner"></div> Generating...</div>
+        <div class="ai-output" id="rewrite-output"></div>
+      </div>
+
+      <!-- Caption Generator -->
+      <div class="ai-tool">
+        <h3>Caption Generator</h3>
+        <p>Describe a photo or paste its filename. Get 3 caption options with hashtags.</p>
+        <textarea id="ai-caption-input" placeholder="e.g. Real photo of Diagrama youth justice centre in Spain, showing therapeutic common area with natural light"></textarea>
+        <button class="btn-primary" onclick="aiCaption()">Generate Captions</button>
+        <div class="ai-loading" id="caption-loading"><div class="spinner"></div> Generating...</div>
+        <div class="ai-output" id="caption-output"></div>
+      </div>
+
+      <!-- Stats Explainer -->
+      <div class="ai-tool">
+        <h3>Stat Story Angles</h3>
+        <p>Pick a stat. Get 3 different angles for social storytelling.</p>
+        <select id="ai-stat-select"></select>
+        <button class="btn-primary" onclick="aiStatAngles()">Generate Angles</button>
+        <div class="ai-loading" id="stat-angles-loading"><div class="spinner"></div> Generating...</div>
+        <div class="ai-output" id="stat-angles-output"></div>
+      </div>
+
+      <!-- Week Generator -->
+      <div class="ai-tool">
+        <h3>Generate Content Week</h3>
+        <p>Generate a full week of posts (7 days x 2 platforms). Optionally add a theme or focus.</p>
+        <textarea id="ai-week-input" placeholder="Optional: e.g. Focus on the Adelaide Reintegration Conference stop, emphasise policy audience"></textarea>
+        <button class="btn-primary" onclick="aiGenerateWeek()">Generate Week</button>
+        <div class="ai-loading" id="week-loading"><div class="spinner"></div> Generating week...</div>
+        <div class="ai-output" id="week-output"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     7. MOOD & PULSE
+     ═══════════════════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-pulse">
+  <div class="header">
+    <div class="badge">Mood & Pulse</div>
+    <h1>Campaign Health</h1>
+    <p>Paste social comments, email feedback, or audience responses. AI analyses sentiment, extracts themes, and suggests content pivots.</p>
+  </div>
+
+  <div class="section" style="border-bottom: none;">
+    <div class="pulse-input-area">
+      <div class="section-label">Paste Feedback</div>
+      <textarea id="pulse-input" placeholder="Paste social media comments, email responses, or any audience feedback here. One per line or as a block of text."></textarea>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-primary" onclick="analysePulse()">Analyse Sentiment</button>
+        <button class="btn-secondary" onclick="document.getElementById('pulse-input').value = SAMPLE_FEEDBACK; toast('Sample loaded')">Load Sample</button>
+      </div>
+      <div class="ai-loading" id="pulse-loading"><div class="spinner"></div> Analysing...</div>
+    </div>
+
+    <div class="pulse-results" id="pulse-results" style="display: none;">
+      <div class="pulse-card">
+        <h4>Overall Sentiment</h4>
+        <div class="health-gauge"><div class="health-fill" id="sentiment-fill" style="width: 0%; background: #059669;"></div></div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="font-family: 'IBM Plex Mono'; font-size: 12px; color: #404040;">Negative</span>
+          <span style="font-family: 'IBM Plex Mono'; font-size: 14px; font-weight: 600; color: white;" id="sentiment-score">—</span>
+          <span style="font-family: 'IBM Plex Mono'; font-size: 12px; color: #404040;">Positive</span>
+        </div>
+      </div>
+      <div class="pulse-card">
+        <h4>Key Themes</h4>
+        <div id="pulse-themes" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+      </div>
+      <div class="pulse-card">
+        <h4>Suggested Pivots</h4>
+        <div id="pulse-pivots" style="font-size: 13px; color: #a3a3a3; line-height: 1.6;"></div>
+      </div>
+      <div class="pulse-card">
+        <h4>Top Quotes</h4>
+        <div id="pulse-quotes" style="font-size: 13px; color: #a3a3a3; line-height: 1.6;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+// ── Data ─────────────────────────────────────────────────
+
+const COLORS = [
+  { name: 'Primary Black', hex: '#0A0A0A', usage: 'Body text, headings, primary backgrounds', fill: '#0A0A0A', textColor: '#F5F0E8' },
+  { name: 'Off-White', hex: '#F5F0E8', usage: 'Page backgrounds, card surfaces — warmer than pure white', fill: '#F5F0E8', textColor: '#0A0A0A' },
+  { name: 'Urgent Red', hex: '#DC2626', usage: 'CTAs, critical data callouts. One intense moment per section.', fill: '#DC2626', textColor: 'white' },
+  { name: 'Emerald', hex: '#059669', usage: 'Success metrics, positive outcomes, community-led indicators', fill: '#059669', textColor: 'white' },
+];
+
+const STATS = [
+  { value: '$1.55M', label: 'Cost per detained youth per year', source: 'Productivity Commission ROGS 2024-25', category: 'cost', post: '$1.55 million per child per year on youth detention. 84% reoffend. Community programs cost $75/day with 88% success. Same money, 16x more young people helped.' },
+  { value: '84%', label: 'Detention reoffending rate within 2 years', source: 'Queensland Youth Justice Strategy 2023', category: 'outcome', post: '84% of young people who go through detention reoffend within two years. We keep funding what fails. Community alternatives achieve 88% success at a fraction of the cost.' },
+  { value: '3%', label: 'Community program reoffending rate', source: 'Community Accountability Pilot 2024', category: 'outcome', post: '3% reoffending in community-led programs. Compare that to 84% in detention. The evidence is not ambiguous. Fund what works.' },
+  { value: '$75/day', label: 'Daily cost of community alternatives', source: 'Community Services Benchmark Study 2024', category: 'cost', post: '$75 per day for community alternatives that work. $4,250 per day for detention that doesn\'t. This is not a hard decision. This is a political one.' },
+  { value: '88%', label: 'Restorative justice success rate', source: 'Queensland Department of Justice 2024', category: 'outcome', post: '88% success rate for restorative justice programs. Evidence-based. Community-led. Culture-centred. This is what works. Fund it.' },
+  { value: '16x', label: 'More youth helped for same cost', source: 'Queensland Productivity Commission 2024', category: 'cost', post: 'For the cost of detaining ONE child, community programs could support SIXTEEN. $1.55M/year for 84% failure, or 16 young lives changed. The maths is not complicated.' },
+  { value: '23x', label: 'Indigenous overrepresentation in detention', source: 'AIHW Youth Detention Population 2024', category: 'equity', post: 'Indigenous young people are 23x overrepresented in youth detention. This is not a justice system. This is a system that targets communities. Self-determination is the answer.' },
+  { value: '4', label: 'Total youth detained in Finland', source: 'Finnish Ministry of Justice 2024', category: 'intl', post: 'Finland has 4 young people in detention. Total. Australia has hundreds. Same planet, radically different choices about how to treat young people.' },
+  { value: '$4,250', label: 'Daily cost of detention per young person', source: 'Productivity Commission ROGS 2024-25', category: 'cost', post: '$4,250 every single day to lock up a child. That\'s the price of failure. Community alternatives cost $75/day and actually work.' },
+  { value: '73%', label: 'Diagrama Foundation success rate (Spain)', source: 'Diagrama Foundation evaluation', category: 'intl', post: 'Spain\'s Diagrama Foundation: 73% success rate. 1:1 staffing. Family engagement every week. Therapeutic care that treats young people as human beings. Australia can learn from this.' },
+  { value: '€5.64', label: 'Social return per €1 invested (Diagrama)', source: 'Diagrama Foundation impact study', category: 'intl', post: '€5.64 returned for every €1 invested in Spain\'s therapeutic youth justice model. Not just humane — economically superior. THE CONTAINED brings this evidence to Australia.' },
+  { value: '18%', label: 'Education completion rate in detention', source: 'AIHW Youth Justice Report 2024', category: 'outcome', post: '18% education completion rate in youth detention. We are warehousing young people, not educating them. Community programs keep kids connected to school, family, and culture.' },
+];
+
+const PILLARS = [
+  { title: 'Truth Through Experience', desc: 'Immersive storytelling grounded in lived experience turns statistics into undeniable reality.' },
+  { title: 'Evidence-Based Hope', desc: 'International models prove therapeutic approaches work. Queensland can invest in what already succeeds.' },
+  { title: 'Collective Accountability', desc: 'Political change follows public pressure. Every nomination, booking, and story fuels momentum.' },
+];
+
+const HASHTAGS = {
+  Primary: ['#TheContained', '#YouthJustice', '#JusticeHub'],
+  'Tour Stops': ['#MountDruitt', '#WesternSydney', '#MountyYarns', '#Adelaide', '#Reintegration', '#Perth', '#UWA', '#TennantCreek', '#FirstNations', '#CommunityLed'],
+  Thematic: ['#ImmersiveAdvocacy', '#YouthVoice', '#SelfDetermination', '#JusticeReform'],
+  Handle: ['@JusticeHubAU'],
+};
+
+const BRAND_ASSETS = [
+  { src: '/images/contained/logo-contained-square.png', label: 'CONTAINED Tour Logo', desc: 'Primary tour logo. Square format, dark backgrounds only.', type: 'Logo' },
+  { src: '/images/contained/contained-brand-square.png', label: 'CONTAINED Brand Square', desc: 'General brand mark. Use for profile images and avatars.', type: 'Logo' },
+  { src: '/images/contained/contained-story.png', label: 'CONTAINED Story', desc: 'Story format brand asset. 9:16 ratio.', type: 'Logo' },
+  { src: '/images/contained/justicehub-hero-landscape.png', label: 'JusticeHub Hero', desc: 'Landscape hero image. Use for headers and OG images.', type: 'Hero' },
+  { src: '/images/contained/poster-tour.png', label: 'Tour Poster', desc: 'Official Australian Tour 2026 poster.', type: 'Poster' },
+  { src: '/images/contained/poster-brand.png', label: 'Brand Poster', desc: 'General brand poster for print and digital.', type: 'Poster' },
+  { src: '/images/contained/social-stat-cost.png', label: 'Stat Tile: Cost', desc: '$1.55M cost stat tile for social.', type: 'Social Tile' },
+  { src: '/images/contained/social-stat-ratio.png', label: 'Stat Tile: Ratio', desc: 'Comparison ratio stat tile for social.', type: 'Social Tile' },
+  { src: '/images/contained/bespoke-data-viz.png', label: 'Data Viz: 16 Lives', desc: 'Funding disparity visualisation.', type: 'Graphic' },
+];
+
+// Photos loaded dynamically from Empathy Ledger API
+let PHOTOS = [];
+let elGalleries = [];
+
+// When served from JusticeHub dev server, use relative paths (no CORS)
+// When opened as file://, try absolute localhost URLs
+const EL_APIS = window.location.protocol === 'file:'
+  ? ['http://localhost:3004/api/empathy-ledger', 'http://localhost:3000/api/empathy-ledger']
+  : ['/api/empathy-ledger', 'http://localhost:3004/api/empathy-ledger'];
+
+async function loadAllPhotos() {
+  const countEl = document.getElementById('photo-count-display');
+  countEl.textContent = 'Loading photos from Empathy Ledger...';
+
+  for (const apiBase of EL_APIS) {
+    try {
+      // Load galleries first
+      const galRes = await fetch(`${apiBase}/galleries?limit=50`);
+      if (!galRes.ok) continue;
+      const galData = await galRes.json();
+      elGalleries = galData.galleries || [];
+
+      // Paginate media to get ALL photos (API caps at ~100 per page)
+      let media = [];
+      let page = 1;
+      while (true) {
+        const mediaRes = await fetch(`${apiBase}/media?type=image&limit=200&page=${page}`);
+        if (!mediaRes.ok) break;
+        const mediaData = await mediaRes.json();
+        const batch = mediaData.media || [];
+        media = media.concat(batch);
+        if (!mediaData.pagination?.hasMore) break;
+        page++;
+      }
+
+      if (media.length === 0) continue;
+
+      // Map gallery IDs to names for categorization
+      const galMap = {};
+      elGalleries.forEach(g => {
+        galMap[g.id] = (g.title || '').toLowerCase();
+      });
+
+      // Convert to PHOTOS format
+      PHOTOS = media.map(m => {
+        const url = m.url || m.thumbnail || '';
+        const thumb = m.thumbnail || url;
+        const title = m.title || m.filename || 'Untitled';
+        const galName = galMap[m.collection_id] || '';
+
+        // Auto-categorize by gallery name or title keywords
+        let cat = 'community';
+        const t = (title + ' ' + galName).toLowerCase();
+        if (/spain|diagrama|beyond.wall|punishment|control.to.care|comparative|europe/i.test(t)) cat = 'spain';
+        else if (/bimberi|confit|bg.fit|deadlylab|resolution|walking.new|program/i.test(t)) cat = 'programs';
+        else if (/oonchiumpa|mparntwe|jackqwann|central.aus|homestead|drone|aerial|nature.of.power|place/i.test(t)) cat = 'places';
+        else if (/brodie|vic|joe.kwon|hamilton|richard|campfire|changemaker|hero|people|portrait/i.test(t)) cat = 'people';
+        else if (/queensland|spending|funding|road.to.hell|paradox|gold.standard|shadow|data|chart|stat/i.test(t)) cat = 'data';
+        else if (/goods|container.factory|stretch.bed|washing|assembly/i.test(t)) cat = 'goods';
+        else if (/breaking.bread|connecting|community|justice.reinvest/i.test(t)) cat = 'community';
+
+        return { src: thumb, fullSrc: url, label: title.substring(0, 40), cat, elId: m.id };
+      });
+
+      console.log(`Loaded ${PHOTOS.length} photos from ${apiBase}`);
+      libFilter = 'all';  // ensure default
+      renderLibFilters();  // re-render to reset active state
+      renderLibPhotos();
+      renderComposerPhotos();
+      return;
+    } catch (e) {
+      console.log(`EL API at ${apiBase} not available:`, e.message);
+    }
+  }
+
+  // Fallback: no API available
+  countEl.innerHTML = `
+    <span style="color:#dc2626;">Could not connect to Empathy Ledger.</span><br>
+    <span style="font-size:12px;color:#737373;">Start JusticeHub dev server: <code style="background:#1a1a1a;padding:2px 6px;border-radius:3px;">pm2 start ecosystem.config.js</code> (port 3004)</span>
+  `;
+}
+
+const LAUNCH_WEEK = [
+  {
+    day: 'Monday', date: 'April 21', theme: 'Launch — "It Starts Here"',
+    asset: 'poster-tour.png',
+    posts: [
+      { platform: 'Instagram', copy: `One shipping container. Three rooms. Thirty minutes.\n\nTHE CONTAINED launches this Friday at Mounty Yarns in Mount Druitt, Western Sydney.\n\nRoom 1: The reality of youth detention in Australia. Designed by young people who know what it feels like.\nRoom 2: The therapeutic alternative. Spain's Diagrama model — 73% success, not 84% failure.\nRoom 3: The community organisations already doing it. $75/day. 88% success. Culture-centred.\n\nThis isn't a lecture. It's an experience designed to change how you see youth justice.\n\nRegister: justicehub.org.au/contained`, hashtags: '#TheContained #YouthJustice #JusticeHub #MountDruitt #WesternSydney' },
+      { platform: 'Twitter/X', copy: `THE CONTAINED launches Friday in Mount Druitt.\n\nOne shipping container. Three rooms. Thirty minutes inside youth detention reality — then the alternative.\n\nApril 25, Mounty Yarns.\n\n$1.55M per child per year. 84% reoffend. Community programs: $75/day, 88% success.\n\njusticehub.org.au/contained`, hashtags: '#TheContained #YouthJustice #MountDruitt' },
+    ]
+  },
+  {
+    day: 'Tuesday', date: 'April 22', theme: 'The Cost of Detention',
+    asset: 'social-stat-cost.png',
+    posts: [
+      { platform: 'Instagram', copy: `$1.55 million.\n\nThat's what Australia spends on one child in youth detention for one year.\n\n$4,250 every single day. For a system where 84% reoffend within two years.\n\nFor the same cost of detaining one child, community programs could support 16 young people — with an 88% success rate.\n\nThese aren't our numbers. They're the Productivity Commission's.\n\nTHE CONTAINED puts these numbers into physical space. Three rooms. Thirty minutes. The cost becomes real.\n\nRegister: justicehub.org.au/contained`, hashtags: '#TheContained #YouthJustice #JusticeHub #YouthDetention' },
+      { platform: 'Twitter/X', copy: `$1.55M per child per year in youth detention.\n84% reoffend.\n\n$75/day for community alternatives.\n88% success rate.\n\nSame money. 16x more young people helped.\n\nThese are not opinions. They are the Productivity Commission's own numbers.\n\nTHE CONTAINED makes you feel them. Friday.`, hashtags: '#TheContained #YouthJustice' },
+    ]
+  },
+  {
+    day: 'Wednesday', date: 'April 23', theme: 'The Alternative — Spain / Diagrama',
+    asset: 'diagrama-youth-justice-spain.jpg',
+    posts: [
+      { platform: 'Instagram', copy: `This is what youth justice looks like when a country decides to invest in people instead of punishment.\n\nSpain's Diagrama Foundation runs youth detention centres with 1:1 staffing, family engagement every week, and therapeutic programming.\n\n73% success rate. €5.64 returned for every €1 invested.\n\nRoom 2 of THE CONTAINED brings the Diagrama model to Australia — not as theory, but as lived experience documented across our trip to Spain.\n\nThe photo above is real. From inside a Diagrama centre. No bars. No isolation cells. Just people doing the work.\n\nThis is what's possible.`, hashtags: '#TheContained #YouthJustice #Diagrama #Spain' },
+      { platform: 'Twitter/X', copy: `Spain's Diagrama Foundation: 1:1 staffing, weekly family contact, therapeutic care.\n\n73% success rate. €5.64 return per €1 invested.\n\nAustralia: $1.55M per child. 84% failure.\n\nRoom 2 of THE CONTAINED brings this alternative to life.\n\nReal photos. Real programs. Real results.`, hashtags: '#TheContained #YouthJustice #Diagrama' },
+    ]
+  },
+  {
+    day: 'Thursday', date: 'April 24', theme: 'Community Orgs Doing the Work',
+    asset: 'connecting-communities.jpeg',
+    posts: [
+      { platform: 'Instagram', copy: `Room 3 of THE CONTAINED changes every tour stop.\n\nBecause the answer to youth detention isn't one model. It's the hundreds of community organisations across Australia already doing the work — underfunded, underreported, and delivering results the system can't match.\n\nAt Mount Druitt, the local host fills this space with their story.\n\nJusticeHub tracks 876 verified interventions through ALMA. Indigenous-led programs. Restorative justice circles. Mentoring. On-country programs. Family support.\n\n$75 a day. 88% success. Community authority at the centre.\n\nThese organisations don't need permission. They need resources.`, hashtags: '#TheContained #YouthJustice #CommunityLed #JusticeReinvestment' },
+      { platform: 'Twitter/X', copy: `Room 3 of THE CONTAINED celebrates the organisations already doing it.\n\n876 verified programs on ALMA. Community-led. Culture-centred. Evidence-backed.\n\n$75/day vs $4,250/day.\n88% success vs 84% failure.\n\nThey don't need permission. They need resources.\n\nFriday, Mount Druitt.`, hashtags: '#TheContained #YouthJustice #CommunityLed' },
+    ]
+  },
+  {
+    day: 'Friday', date: 'April 25', theme: 'LAUNCH DAY — Young People\'s Voices',
+    asset: 'brodie-germaine.jpg',
+    posts: [
+      { platform: 'Instagram', copy: `Today THE CONTAINED opens its doors for the first time.\n\nRoom 1 was designed by young people. They are the experts. They know what detention feels like. They decided what the public needs to see.\n\nThis campaign exists because of changemakers who turned lived experience into leadership. People who survived the system and now work to transform it.\n\nCONTAINED centres their authority. Not as case studies. Not as cautionary tales. As the people who hold the knowledge the system refuses to hear.\n\nToday, Mount Druitt. Then Adelaide, Perth, Tennant Creek.\n\njusticehub.org.au/contained`, hashtags: '#TheContained #YouthJustice #YouthVoice #MountDruitt #LaunchDay' },
+      { platform: 'Twitter/X', copy: `THE CONTAINED is open.\n\nRoom 1: designed by young people. They're the experts.\n\nThis campaign centres their authority — not as case studies, but as the people who hold the knowledge the system refuses to hear.\n\nMount Druitt. Today.\n\njusticehub.org.au/contained`, hashtags: '#TheContained #YouthJustice #LaunchDay' },
+    ]
+  },
+  {
+    day: 'Saturday', date: 'April 26', theme: 'The Tour Experience',
+    asset: 'container-factory.jpg',
+    posts: [
+      { platform: 'Instagram', copy: `This is where it starts. A shipping container. Built to carry cargo across oceans.\n\nWe're building it to carry truth across Australia.\n\nFour cities. Mount Druitt → Adelaide → Perth → Tennant Creek. Each stop transforms the container — local organisations, local young people, local stories filling the space.\n\nYesterday the doors opened for the first time at Mounty Yarns. The reactions were overwhelming.\n\nThirty minutes. Three rooms. And then you can never unsee what you've seen.\n\nNext stop: Adelaide, May 2026.\n\nBook: justicehub.org.au/contained/tour`, hashtags: '#TheContained #YouthJustice #AustralianTour #ImmersiveAdvocacy' },
+      { platform: 'Twitter/X', copy: `One shipping container. Four cities. One mission.\n\nMount Druitt → Adelaide → Perth → Tennant Creek\n\nThe CONTAINED tour is underway. Thirty minutes that change how you see youth justice.\n\nNext: Adelaide, Reintegration Conference, May 2026.\n\njusticehub.org.au/contained/tour`, hashtags: '#TheContained #YouthJustice #AustralianTour' },
+    ]
+  },
+  {
+    day: 'Sunday', date: 'April 27', theme: 'Call to Action',
+    asset: 'courage-to-connect.jpg',
+    posts: [
+      { platform: 'Instagram', copy: `You've seen the numbers. You've felt the story. Now here's what you can do.\n\nNOMINATE a decision maker. A politician, CEO, editor, or community leader.\n→ justicehub.org.au/contained#nominate\n\nBOOK your experience. 24 slots per day. Pay what you can ($0–$50).\n→ justicehub.org.au/contained/tour\n\nSHARE the evidence. Download stat cards and social templates.\n→ justicehub.org.au/contained/tour/social\n\nWRITE to your MP. Pre-written templates for email, SMS, and social.\n→ justicehub.org.au/contained/act\n\nBACK the tour. Every dollar funds infrastructure for the movement.\n→ justicehub.org.au/back-this\n\nThe evidence is overwhelming. Your action makes it impossible to ignore.`, hashtags: '#TheContained #YouthJustice #TakeAction #NominateNow' },
+      { platform: 'Twitter/X', copy: `One week since CONTAINED launched. Here's what you can do right now:\n\n→ NOMINATE a leader: justicehub.org.au/contained#nominate\n→ BOOK your experience: justicehub.org.au/contained/tour\n→ SHARE the stats: justicehub.org.au/contained/tour/social\n→ WRITE your MP: justicehub.org.au/contained/act\n\nEvery action builds pressure. Decision makers are watching.`, hashtags: '#TheContained #YouthJustice #TakeAction' },
+    ]
+  },
+];
+
+const SAMPLE_FEEDBACK = `This is incredible. I had no idea detention cost $1.55M per child.
+Shared with my whole team at work. Everyone should see this.
+Why isn't this being covered by mainstream media?
+Took my kids through. They were quiet for an hour afterwards.
+The Spain comparison is mind-blowing. Why can't we do that here?
+I'm a social worker and this is the best advocacy tool I've seen in 20 years.
+How do I nominate my local MP? They need to see this.
+Not sure I agree with the stats. Where are they sourced from?
+Brought me to tears. Thank you for making this real.
+As someone who was in detention, this is exactly right. This is what it feels like.
+Can you bring this to Brisbane? We need it here desperately.
+The community programs section gave me hope. First time in a long time.`;
+
+const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3004' : '';
+
+// ── Tab Navigation ──────────────────────────────────────
+
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── Toast ───────────────────────────────────────────────
+
+function toast(msg) {
+  const el = document.getElementById('copy-toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1500);
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => toast('Copied!')).catch(() => toast('Copy failed'));
+}
+
+// ── Brand Identity ──────────────────────────────────────
+
+function renderBrandAssets() {
+  const grid = document.getElementById('brand-assets-grid');
+  const typeColors = { Logo: '#dc2626', Hero: '#3b82f6', Poster: '#059669', 'Social Tile': '#f59e0b', Graphic: '#8b5cf6', Illustration: '#06b6d4', Flagged: '#ef4444' };
+  grid.innerHTML = BRAND_ASSETS.map(a => `
+    <div style="background: #141414; border: 1px solid ${a.type === 'Flagged' ? '#dc262644' : '#1a1a1a'}; border-radius: 8px; overflow: hidden;">
+      <div style="aspect-ratio: 1; background: #0a0a0a; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+        <img src="${a.src}" alt="${a.label}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.parentElement.innerHTML='<span style=color:#333>Image not found</span>'" />
+      </div>
+      <div style="padding: 14px 16px;">
+        <span style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:${typeColors[a.type] || '#525252'}22;color:${typeColors[a.type] || '#525252'};">${a.type}</span>
+        <h4 style="font-family:'Space Grotesk';font-size:14px;color:white;margin:8px 0 4px;">${a.label}</h4>
+        <p style="font-size:12px;color:#737373;margin-bottom:10px;">${a.desc}</p>
+        <a class="btn-secondary" href="${a.src}" download style="font-size:10px;padding:5px 10px;">Download</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderColors() {
+  const grid = document.getElementById('color-grid');
+  grid.innerHTML = COLORS.map(c => `
+    <div class="color-swatch" onclick="copyText('${c.hex}')">
+      <div class="swatch-fill" style="background: ${c.fill};"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">${c.name}</div>
+        <div class="swatch-hex">${c.hex}</div>
+        <div class="swatch-usage">${c.usage}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Messaging ───────────────────────────────────────────
+
+function renderPillars() {
+  document.getElementById('pillar-grid').innerHTML = PILLARS.map(p => `
+    <div class="pillar">
+      <h4>${p.title}</h4>
+      <p>${p.desc}</p>
+    </div>
+  `).join('');
+}
+
+function renderStats() {
+  const lib = document.getElementById('stat-library');
+  lib.innerHTML = STATS.map((s, i) => `
+    <div class="stat-card">
+      <div class="stat-value">${s.value}</div>
+      <div class="stat-details">
+        <div class="stat-label">${s.label}</div>
+        <div class="stat-source">${s.source}</div>
+        <span class="stat-category cat-${s.category}">${s.category}</span>
+      </div>
+      <div class="stat-actions">
+        <button class="stat-copy-btn" onclick="copyText('${s.value}')">Copy</button>
+        <button class="stat-copy-btn" onclick="copyText(STATS[${i}].post)">Post</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderHashtags() {
+  const section = document.getElementById('hashtag-section');
+  section.innerHTML = Object.entries(HASHTAGS).map(([group, tags]) => `
+    <div class="hashtag-group">
+      <h4>${group}</h4>
+      <div class="hashtag-tags">
+        ${tags.map(t => `<span class="hashtag-tag" onclick="copyText('${t}')">${t}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Photo Library ───────────────────────────────────────
+
+let libFilter = 'all';
+let selectedPhotoSrc = null;
+
+const PHOTO_CATEGORIES = ['all', 'spain', 'programs', 'places', 'people', 'community', 'data', 'goods'];
+
+function renderLibFilters() {
+  document.getElementById('photo-filters').innerHTML = PHOTO_CATEGORIES.map(cat => `
+    <button class="filter-btn ${cat === 'all' ? 'active' : ''}" onclick="setLibFilter('${cat}', this)">${cat}</button>
+  `).join('');
+}
+
+function setLibFilter(cat, btn) {
+  libFilter = cat;
+  document.querySelectorAll('#photo-filters .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLibPhotos();
+}
+
+function renderLibPhotos() {
+  const grid = document.getElementById('lib-photo-grid');
+  const filtered = libFilter === 'all' ? PHOTOS : PHOTOS.filter(p => p.cat === libFilter);
+  document.getElementById('photo-count-display').textContent = `${filtered.length} photos${libFilter !== 'all' ? ` in "${libFilter}"` : ''} — ${PHOTOS.length} total`;
+
+  grid.innerHTML = filtered.map(p => `
+    <div class="photo-thumb ${selectedPhotoSrc === p.src ? 'selected' : ''}" onclick="selectLibPhoto('${escAttr(p.src)}')">
+      <img src="${p.src}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%2290%22><rect fill=%22%231a1a1a%22 width=%22120%22 height=%2290%22/><text fill=%22%23525252%22 x=%2260%22 y=%2250%22 text-anchor=%22middle%22 font-size=%2210%22>No preview</text></svg>';this.onerror=null" />
+      <div class="photo-label">${p.label}</div>
+    </div>
+  `).join('');
+}
+
+function selectLibPhoto(src) {
+  selectedPhotoSrc = src;
+  renderLibPhotos();
+  // Also update composer
+  document.getElementById('preview-img').src = src;
+  renderComposerPhotos();
+  toast('Photo selected — switch to Composer tab');
+}
+
+function escAttr(str) { return str.replace(/'/g, "\\'"); }
+
+// ── Tile Composer ───────────────────────────────────────
+
+let composerFilter = 'all';
+let savedTiles = JSON.parse(localStorage.getItem('campaign-hub-tiles') || '[]');
+
+function renderComposerPhotos() {
+  const grid = document.getElementById('composer-photo-grid');
+  const filtered = composerFilter === 'all' ? PHOTOS : PHOTOS.filter(p => p.cat === composerFilter);
+  grid.innerHTML = filtered.map(p => `
+    <div class="photo-thumb ${selectedPhotoSrc === p.src ? 'selected' : ''}" onclick="selectComposerPhoto('${escAttr(p.src)}')">
+      <img src="${p.src}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%2290%22><rect fill=%22%231a1a1a%22 width=%22120%22 height=%2290%22/><text fill=%22%23525252%22 x=%2260%22 y=%2250%22 text-anchor=%22middle%22 font-size=%2210%22>No preview</text></svg>';this.onerror=null" />
+      <div class="photo-label">${p.label}</div>
+    </div>
+  `).join('');
+}
+
+function filterComposerPhotos(cat, btn) {
+  composerFilter = cat;
+  document.querySelectorAll('#tab-composer .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderComposerPhotos();
+}
+
+function selectComposerPhoto(src) {
+  selectedPhotoSrc = src;
+  document.getElementById('preview-img').src = src;
+  document.getElementById('preview-img').style.display = '';
+  renderComposerPhotos();
+}
+
+function updateComposerPreview() {
+  document.getElementById('preview-headline').textContent = document.getElementById('comp-headline').value;
+  document.getElementById('preview-subline').textContent = document.getElementById('comp-subline').value;
+  document.getElementById('preview-badge-text').textContent = document.getElementById('comp-badge').value;
+  document.getElementById('preview-brand').textContent = document.getElementById('comp-brand').value;
+}
+
+function updateAspect() {
+  const canvas = document.getElementById('preview-canvas');
+  const val = document.getElementById('aspect-ratio').value;
+  canvas.classList.remove('ratio-16-9', 'ratio-9-16');
+  if (val === '16-9') canvas.classList.add('ratio-16-9');
+  if (val === '9-16') canvas.classList.add('ratio-9-16');
+}
+
+function updateCardType() {
+  const type = document.getElementById('card-type').value;
+  const statGroup = document.getElementById('stat-picker-group');
+  statGroup.style.display = type === 'stat' ? '' : 'none';
+
+  if (type === 'quote') {
+    document.getElementById('comp-headline').value = '"Quote text here"';
+    document.getElementById('comp-subline').value = '— Speaker Name, Role';
+    document.getElementById('comp-badge').value = 'VOICES';
+  } else if (type === 'story') {
+    document.getElementById('comp-headline').value = 'Story Title';
+    document.getElementById('comp-subline').value = 'Brief description of the story';
+    document.getElementById('comp-badge').value = 'STORIES';
+  } else if (type === 'photo') {
+    document.getElementById('comp-headline').value = '';
+    document.getElementById('comp-subline').value = '';
+    document.getElementById('comp-badge').value = 'THE CONTAINED';
+  }
+  updateComposerPreview();
+}
+
+function populateStatPicker() {
+  const sel = document.getElementById('stat-picker');
+  STATS.forEach((s, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `${s.value} — ${s.label}`;
+    sel.appendChild(opt);
+  });
+
+  // Also populate AI stat select
+  const aiSel = document.getElementById('ai-stat-select');
+  STATS.forEach((s, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `${s.value} — ${s.label}`;
+    aiSel.appendChild(opt);
+  });
+}
+
+function applyStatToComposer() {
+  const idx = document.getElementById('stat-picker').value;
+  if (idx === '') return;
+  const s = STATS[idx];
+  document.getElementById('comp-headline').value = `${s.value} ${s.label.split(' ').slice(0, 4).join(' ')}`;
+  document.getElementById('comp-subline').value = s.source;
+  document.getElementById('comp-badge').value = 'THE EVIDENCE';
+  updateComposerPreview();
+}
+
+function downloadComposerTile() {
+  const canvas = document.createElement('canvas');
+  const aspect = document.getElementById('aspect-ratio').value;
+  canvas.width = aspect === '9-16' ? 1080 : aspect === '16-9' ? 1200 : 1080;
+  canvas.height = aspect === '9-16' ? 1920 : aspect === '16-9' ? 675 : 1080;
+  const ctx = canvas.getContext('2d');
+
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    // Cover
+    const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+    const x = (canvas.width - img.width * scale) / 2;
+    const y = (canvas.height - img.height * scale) / 2;
+    ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+    // Gradient
+    const grad = ctx.createLinearGradient(0, canvas.height, 0, canvas.height * 0.3);
+    grad.addColorStop(0, 'rgba(0,0,0,0.9)');
+    grad.addColorStop(0.5, 'rgba(0,0,0,0.3)');
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Badge
+    const badge = document.getElementById('comp-badge').value;
+    ctx.font = '700 ' + (canvas.width * 0.013) + 'px Inter';
+    const badgeW = ctx.measureText(badge.toUpperCase()).width + 32;
+    ctx.fillStyle = '#dc2626';
+    ctx.fillRect(canvas.width * 0.044, canvas.width * 0.044, badgeW, canvas.width * 0.035);
+    ctx.fillStyle = 'white';
+    ctx.fillText(badge.toUpperCase(), canvas.width * 0.044 + 16, canvas.width * 0.044 + canvas.width * 0.025);
+
+    // Headline
+    const headline = document.getElementById('comp-headline').value;
+    ctx.fillStyle = 'white';
+    ctx.font = '700 ' + (canvas.width * 0.042) + 'px Space Grotesk';
+    const lines = wrapText(ctx, headline, canvas.width * 0.85);
+    let textY = canvas.height - canvas.width * 0.15 - (lines.length * canvas.width * 0.05);
+    lines.forEach(line => { ctx.fillText(line, canvas.width * 0.06, textY); textY += canvas.width * 0.05; });
+
+    // Subline
+    ctx.fillStyle = '#a3a3a3';
+    ctx.font = '400 ' + (canvas.width * 0.018) + 'px Inter';
+    ctx.fillText(document.getElementById('comp-subline').value, canvas.width * 0.06, textY + 8);
+
+    // Brand footer
+    ctx.fillStyle = '#dc2626';
+    ctx.font = '600 ' + (canvas.width * 0.012) + 'px IBM Plex Mono';
+    ctx.fillText(document.getElementById('comp-brand').value.toUpperCase(), canvas.width * 0.06, canvas.height - canvas.width * 0.04);
+
+    // Download
+    const link = document.createElement('a');
+    link.download = `contained-tile-${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+  img.onerror = () => {
+    // Fallback: solid black background
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    img.onload();
+  };
+  img.src = document.getElementById('preview-img').src;
+}
+
+function saveComposerTile() {
+  const tile = {
+    id: Date.now(),
+    photo: selectedPhotoSrc || '/images/contained/contained-brand-square.png',
+    headline: document.getElementById('comp-headline').value,
+    subline: document.getElementById('comp-subline').value,
+    badge: document.getElementById('comp-badge').value,
+    brand: document.getElementById('comp-brand').value,
+    aspect: document.getElementById('aspect-ratio').value,
+    type: document.getElementById('card-type').value,
+    createdAt: new Date().toISOString(),
+  };
+  savedTiles.push(tile);
+  localStorage.setItem('campaign-hub-tiles', JSON.stringify(savedTiles));
+  renderSavedTiles();
+  toast('Tile saved!');
+}
+
+function deleteSavedTile(id) {
+  savedTiles = savedTiles.filter(t => t.id !== id);
+  localStorage.setItem('campaign-hub-tiles', JSON.stringify(savedTiles));
+  renderSavedTiles();
+}
+
+function renderSavedTiles() {
+  const section = document.getElementById('saved-tiles-section');
+  const grid = document.getElementById('saved-tiles-grid');
+  const count = document.getElementById('saved-count');
+  if (savedTiles.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  count.textContent = savedTiles.length;
+
+  grid.innerHTML = savedTiles.map(t => `
+    <div style="background: #141414; border: 1px solid #1a1a1a; border-radius: 8px; overflow: hidden;">
+      <div class="preview-canvas ${t.aspect === '16-9' ? 'ratio-16-9' : t.aspect === '9-16' ? 'ratio-9-16' : ''}" style="position: relative; height: 200px;">
+        <img src="${t.photo}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.8) 0%,transparent 60%);"></div>
+        <div style="position:absolute;bottom:16px;left:16px;right:16px;z-index:1;">
+          <div style="font-family:'Space Grotesk';font-size:18px;font-weight:700;color:white;line-height:1.2;">${t.headline}</div>
+          <div style="font-size:12px;color:#737373;margin-top:4px;">${t.subline}</div>
+        </div>
+      </div>
+      <div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-family:'IBM Plex Mono';font-size:11px;color:#404040;">${new Date(t.createdAt).toLocaleDateString()}</span>
+        <button class="stat-copy-btn" onclick="deleteSavedTile(${t.id})" style="color:#dc2626;border-color:#dc262644;">Remove</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function wrapText(ctx, text, maxWidth) {
+  const words = text.split(' ');
+  const lines = [];
+  let current = '';
+  words.forEach(word => {
+    const test = current ? current + ' ' + word : word;
+    if (ctx.measureText(test).width > maxWidth && current) {
+      lines.push(current);
+      current = word;
+    } else { current = test; }
+  });
+  if (current) lines.push(current);
+  return lines;
+}
+
+// ── Content Calendar ────────────────────────────────────
+
+function renderCalendar() {
+  const container = document.getElementById('calendar-container');
+  container.innerHTML = `
+    <div class="calendar-week">
+      ${LAUNCH_WEEK.map(day => `
+        <div class="calendar-day">
+          <div class="calendar-day-header">${day.day}</div>
+          <div class="calendar-day-date">${day.date}</div>
+          <div style="font-size:11px;color:#dc2626;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">${day.theme}</div>
+          <div style="font-family:'IBM Plex Mono';font-size:10px;color:#333;margin-bottom:8px;">Asset: ${day.asset}</div>
+          ${day.posts.map((post, pi) => `
+            <div class="calendar-post">
+              <div class="post-platform ${post.platform === 'Instagram' ? 'platform-ig' : 'platform-tw'}">${post.platform}</div>
+              <div class="post-copy">${post.copy.substring(0, 120)}...</div>
+              <div class="post-actions">
+                <button class="post-copy-btn" onclick="copyText(LAUNCH_WEEK[${LAUNCH_WEEK.indexOf(day)}].posts[${pi}].copy + '\\n\\n' + LAUNCH_WEEK[${LAUNCH_WEEK.indexOf(day)}].posts[${pi}].hashtags)">Copy</button>
+                <button class="post-copy-btn" onclick="expandPost(this, ${LAUNCH_WEEK.indexOf(day)}, ${pi})">Expand</button>
+                <button class="post-copy-btn" style="color:#dc2626;" onclick="pushOneToNotion(${LAUNCH_WEEK.indexOf(day)}, ${pi}, this)">Push</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function expandPost(btn, dayIdx, postIdx) {
+  const post = LAUNCH_WEEK[dayIdx].posts[postIdx];
+  const copyEl = btn.closest('.calendar-post').querySelector('.post-copy');
+  const isExpanded = copyEl.style.maxHeight === 'none';
+  copyEl.style.maxHeight = isExpanded ? '80px' : 'none';
+  btn.textContent = isExpanded ? 'Expand' : 'Collapse';
+}
+
+// ── Notion Push ──────────────────────────────────────────
+
+// Save/load Notion token from localStorage
+const savedToken = localStorage.getItem('campaign-hub-notion-token');
+if (savedToken) document.getElementById('notion-token').value = savedToken;
+document.getElementById('notion-token').addEventListener('change', e => {
+  localStorage.setItem('campaign-hub-notion-token', e.target.value);
+});
+
+// Find the best matching photo URL from the loaded PHOTOS array
+function findPhotoUrl(assetHint) {
+  if (!assetHint || PHOTOS.length === 0) return null;
+  const hint = assetHint.toLowerCase().replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+  const match = PHOTOS.find(p => {
+    const label = (p.label || '').toLowerCase();
+    // Check if key words from the asset hint appear in the photo label
+    const words = hint.split(' ').filter(w => w.length > 3);
+    return words.some(w => label.includes(w));
+  });
+  return match ? (match.fullSrc || match.src) : null;
+}
+
+async function notionCreatePage(token, dbId, properties, content) {
+  // Build Notion API page creation request
+  const titleProp = 'Content/Communication Name';
+
+  // Build rich_text helper
+  const rt = (text) => [{ type: 'text', text: { content: text } }];
+
+  // Build properties object for Notion API
+  const props = {
+    [titleProp]: { title: rt(properties.title || 'Untitled') },
+  };
+  if (properties.communicationType) {
+    props['Communication Type'] = { select: { name: properties.communicationType } };
+  }
+  if (properties.status) {
+    props['Status'] = { status: { name: properties.status } };
+  }
+  if (properties.format) {
+    props['Format'] = { select: { name: properties.format } };
+  }
+  if (properties.targetAccounts) {
+    props['Target Accounts'] = { multi_select: properties.targetAccounts.map(n => ({ name: n })) };
+  }
+  if (properties.keyMessage) {
+    props['Key Message/Story'] = { rich_text: rt(properties.keyMessage) };
+  }
+  if (properties.notes) {
+    props['Notes'] = { rich_text: rt(properties.notes) };
+  }
+  if (properties.sentDate) {
+    props['Sent date'] = { date: { start: properties.sentDate } };
+  }
+
+  // Build content blocks — paragraphs + optional image
+  const children = [];
+
+  // Add image block if we have a photo URL
+  if (properties.imageUrl) {
+    children.push({
+      object: 'block',
+      type: 'image',
+      image: { type: 'external', external: { url: properties.imageUrl } },
+    });
+  }
+
+  // Split content into paragraphs
+  const paragraphs = content.split('\n\n').filter(Boolean);
+  paragraphs.forEach(p => {
+    children.push({
+      object: 'block',
+      type: 'paragraph',
+      paragraph: { rich_text: rt(p.trim()) },
+    });
+  });
+
+  const body = {
+    parent: { database_id: dbId },
+    properties: props,
+    children,
+  };
+
+  const res = await fetch('https://api.notion.com/v1/pages', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Notion-Version': '2022-06-28',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || `Notion API error: ${res.status}`);
+  }
+  return await res.json();
+}
+
+function buildPostProperties(dayIdx, postIdx) {
+  const day = LAUNCH_WEEK[dayIdx];
+  const post = day.posts[postIdx];
+  const isIg = post.platform === 'Instagram';
+
+  // Find photo URL from loaded EL photos
+  const imageUrl = findPhotoUrl(day.asset);
+
+  return {
+    title: `${day.day} — ${day.theme} (${isIg ? 'IG' : 'X'})`,
+    communicationType: isIg ? 'Instagram' : 'Facebook', // DB uses Facebook for non-IG
+    status: 'Draft',
+    format: isIg ? 'square' : 'landscape',
+    targetAccounts: [isIg ? 'Instagram' : 'Twitter'],
+    keyMessage: post.copy.substring(0, 200),
+    notes: `Asset: ${day.asset}. Hashtags: ${post.hashtags}`,
+    sentDate: day.date,
+    imageUrl,
+  };
+}
+
+async function pushOneToNotion(dayIdx, postIdx, btn) {
+  const token = document.getElementById('notion-token').value.trim();
+  const dbId = document.getElementById('notion-db-id').value.trim();
+  if (!token) return toast('Enter your Notion API token first');
+
+  const origText = btn.textContent;
+  btn.textContent = '...';
+  btn.disabled = true;
+
+  try {
+    const props = buildPostProperties(dayIdx, postIdx);
+    const post = LAUNCH_WEEK[dayIdx].posts[postIdx];
+    const fullCopy = post.copy + '\n\n' + post.hashtags;
+    await notionCreatePage(token, dbId, props, fullCopy);
+    btn.textContent = '\u2713';
+    btn.style.color = '#059669';
+    toast(`Pushed: ${props.title}`);
+  } catch (e) {
+    btn.textContent = '\u2717';
+    btn.style.color = '#dc2626';
+    toast(`Error: ${e.message}`);
+    console.error(e);
+  }
+
+  setTimeout(() => {
+    btn.textContent = origText;
+    btn.disabled = false;
+    btn.style.color = '#dc2626';
+  }, 3000);
+}
+
+async function pushAllToNotion() {
+  const token = document.getElementById('notion-token').value.trim();
+  const dbId = document.getElementById('notion-db-id').value.trim();
+  if (!token) return toast('Enter your Notion API token first');
+
+  const statusEl = document.getElementById('notion-status');
+  const btn = document.getElementById('push-all-btn');
+  btn.disabled = true;
+  btn.textContent = 'PUSHING...';
+
+  let pushed = 0;
+  let errors = 0;
+
+  for (let d = 0; d < LAUNCH_WEEK.length; d++) {
+    for (let p = 0; p < LAUNCH_WEEK[d].posts.length; p++) {
+      try {
+        const props = buildPostProperties(d, p);
+        const post = LAUNCH_WEEK[d].posts[p];
+        const fullCopy = post.copy + '\n\n' + post.hashtags;
+        await notionCreatePage(token, dbId, props, fullCopy);
+        pushed++;
+        statusEl.textContent = `Pushed ${pushed}/${LAUNCH_WEEK.length * 2}...`;
+        statusEl.style.color = '#059669';
+      } catch (e) {
+        errors++;
+        console.error(`Failed to push Day ${d+1} post ${p+1}:`, e);
+      }
+      // Small delay to avoid rate limiting
+      await new Promise(r => setTimeout(r, 350));
+    }
+  }
+
+  statusEl.textContent = `Done! ${pushed} pushed, ${errors} errors.`;
+  statusEl.style.color = errors ? '#dc2626' : '#059669';
+  btn.disabled = false;
+  btn.textContent = 'PUSH ALL TO NOTION';
+  toast(`${pushed} posts pushed to Notion`);
+}
+
+// ── Brand Element Generator ──────────────────────────────
+
+// Show/hide custom description field
+document.getElementById('element-type').addEventListener('change', e => {
+  document.getElementById('custom-element-row').style.display = e.target.value === 'custom' ? 'block' : 'none';
+});
+
+const ELEMENT_PROMPTS = {
+  'red-wedge': 'A bold red wedge shape (#DC2626) in Constructivist/Bauhaus style. Angular, sharp geometric form cutting diagonally across the composition. Flat graphic, no gradients, no 3D.',
+  'angular-divider': 'A horizontal divider/separator line with angular geometric breaks. Constructivist style. Thin lines with sharp angles and small geometric accents. Black and red (#DC2626) only.',
+  'stat-frame': 'A bold geometric frame designed to highlight a statistic number. Angular corners, constructivist style. Asymmetric, with one heavy red (#DC2626) accent edge. Space in center for text overlay.',
+  'quote-marks': 'Large typographic quotation marks in bold Constructivist/Bauhaus style. Angular, geometric interpretation of quote marks. Red (#DC2626) on dark background.',
+  'pattern-tile': 'A seamless repeating geometric pattern tile. Constructivist/Bauhaus inspired. Angular shapes, diagonal lines, circles and triangles. Black, white, and red (#DC2626) only.',
+  'icon-justice': 'A minimal geometric icon representing justice/scales. Constructivist style — angular, flat, no rounded edges. White on transparent or black background.',
+  'icon-community': 'A minimal geometric icon representing community and human connection. Constructivist style — angular, abstract, flat shapes suggesting people together. Not realistic figures.',
+  'icon-container': 'A minimal geometric icon of a shipping container. Constructivist/Bauhaus style — angular, flat, bold lines. Isometric or front-facing view.',
+  'icon-growth': 'A minimal geometric icon representing growth and transformation. Constructivist style — angular arrow or ascending geometric forms. Upward energy.',
+  'corner-element': 'Decorative corner bracket elements for framing content. Constructivist/Bauhaus style. Angular L-shaped brackets with geometric detail. Clean, minimal.',
+  'data-viz-frame': 'A geometric frame designed to contain data visualisations or charts. Constructivist style with angular grid lines, axis markers, and bold section dividers.',
+  'diagonal-stripe': 'Bold diagonal stripe pattern. Constructivist/Bauhaus inspired. Alternating black and red (#DC2626) stripes at 45 degrees. High contrast, graphic.',
+};
+
+const ELEMENT_STYLE_LOCK = `Style: Constructivist/Bauhaus graphic design. ONLY use these colors: Primary Black #0A0A0A, Off-White #F5F0E8, Urgent Red #DC2626, Emerald #059669. Angular compositions, no rounded corners, no gradients, no photorealism, no people, no faces, no illustrations of humans. Flat vector graphic style. Clean and bold.`;
+
+let savedElements = JSON.parse(localStorage.getItem('campaign-hub-elements') || '[]');
+
+function renderSavedElements() {
+  const grid = document.getElementById('saved-elements-grid');
+  const empty = document.getElementById('no-saved-elements');
+  if (savedElements.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = savedElements.map((el, i) => `
+    <div style="position:relative;background:#111;border:1px solid ${el.core ? '#dc262633' : '#1a1a1a'};border-radius:4px;overflow:hidden;">
+      <img src="${el.src}" style="width:100%;aspect-ratio:1;object-fit:contain;background:#0a0a0a;" />
+      <div style="padding:8px;">
+        <div style="font-size:11px;color:#a3a3a3;text-transform:uppercase;letter-spacing:0.06em;">${el.label || el.type}</div>
+        ${el.core ? '<div style="font-size:9px;color:#dc2626;margin-top:2px;">CORE</div>' : ''}
+        <div style="display:flex;gap:4px;margin-top:6px;">
+          <a href="${el.src}" download="contained-${el.type}.svg" style="font-size:10px;color:#525252;text-decoration:underline;cursor:pointer;">Download</a>
+          <span style="color:#333;">|</span>
+          <span onclick="removeSavedElement(${i})" style="font-size:10px;color:#dc2626;cursor:pointer;">Remove</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function removeSavedElement(idx) {
+  savedElements.splice(idx, 1);
+  localStorage.setItem('campaign-hub-elements', JSON.stringify(savedElements));
+  renderSavedElements();
+}
+
+async function generateBrandElement() {
+  const type = document.getElementById('element-type').value;
+  const size = document.getElementById('element-size').value;
+  const bg = document.getElementById('element-bg').value;
+  const loading = document.getElementById('element-loading');
+  const result = document.getElementById('element-result');
+
+  let prompt = ELEMENT_PROMPTS[type] || '';
+  if (type === 'custom') {
+    prompt = document.getElementById('custom-element-desc').value;
+    if (!prompt) { toast('Describe the element first'); return; }
+  }
+
+  const bgDesc = bg === 'transparent' ? 'Transparent background (PNG).' : bg === 'black' ? 'Background: solid black #0A0A0A.' : 'Background: off-white #F5F0E8.';
+  const [w, h] = size.split('x');
+  const fullPrompt = `${prompt}\n\n${ELEMENT_STYLE_LOCK}\n\n${bgDesc}\nDimensions: ${w}×${h} pixels. Output as a clean PNG graphic.`;
+
+  loading.style.display = 'block';
+  result.style.display = 'none';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: fullPrompt }],
+        model: 'gemini-2.0-flash-exp',
+        generateImage: true,
+      }),
+    });
+
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    const data = await res.json();
+
+    // Check for image in response
+    const imgData = data.image || data.imageUrl || (data.images && data.images[0]);
+    if (imgData) {
+      const imgSrc = imgData.startsWith('data:') ? imgData : `data:image/png;base64,${imgData}`;
+      document.getElementById('element-preview').src = imgSrc;
+      document.getElementById('element-preview').dataset.type = type === 'custom' ? 'custom-element' : type;
+      result.style.display = 'block';
+    } else {
+      toast('Gemini returned text, not an image. Try the Gemini image generation API directly.');
+      console.log('Gemini response:', data);
+    }
+  } catch (e) {
+    toast(`Error: ${e.message}`);
+    console.error(e);
+  }
+
+  loading.style.display = 'none';
+}
+
+function downloadElement() {
+  const img = document.getElementById('element-preview');
+  if (!img.src) return;
+  const a = document.createElement('a');
+  a.href = img.src;
+  a.download = `contained-${img.dataset.type || 'element'}-${Date.now()}.png`;
+  a.click();
+}
+
+function saveToElementLibrary() {
+  const img = document.getElementById('element-preview');
+  if (!img.src) return;
+  savedElements.push({ src: img.src, type: img.dataset.type || 'element', created: Date.now() });
+  localStorage.setItem('campaign-hub-elements', JSON.stringify(savedElements));
+  renderSavedElements();
+  toast('Saved to element library');
+}
+
+// ── Core Brand Elements (SVG) ────────────────────────────
+
+function svgToDataUri(svg) {
+  return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+}
+
+const CORE_ELEMENTS = [
+  {
+    type: 'red-wedge',
+    label: 'Red Wedge',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+      <rect fill="#0A0A0A" width="1080" height="1080"/>
+      <polygon points="0,1080 540,200 1080,1080" fill="#DC2626"/>
+      <polygon points="120,1080 540,340 960,1080" fill="#0A0A0A" opacity="0.3"/>
+      <line x1="540" y1="200" x2="540" y2="0" stroke="#DC2626" stroke-width="4"/>
+      <line x1="0" y1="1080" x2="1080" y2="1080" stroke="#F5F0E8" stroke-width="2"/>
+    </svg>`,
+  },
+  {
+    type: 'red-wedge-small',
+    label: 'Red Wedge — Corner',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+      <rect fill="#0A0A0A" width="1080" height="1080"/>
+      <polygon points="0,0 400,0 0,400" fill="#DC2626"/>
+      <polygon points="1080,1080 680,1080 1080,680" fill="#DC2626" opacity="0.4"/>
+    </svg>`,
+  },
+  {
+    type: 'angular-divider',
+    label: 'Angular Divider',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="200" viewBox="0 0 1080 200">
+      <rect fill="#0A0A0A" width="1080" height="200"/>
+      <line x1="0" y1="100" x2="440" y2="100" stroke="#333" stroke-width="2"/>
+      <polygon points="440,80 500,100 440,120" fill="#DC2626"/>
+      <line x1="500" y1="100" x2="580" y2="60" stroke="#DC2626" stroke-width="3"/>
+      <line x1="580" y1="60" x2="660" y2="100" stroke="#DC2626" stroke-width="3"/>
+      <line x1="660" y1="100" x2="1080" y2="100" stroke="#333" stroke-width="2"/>
+    </svg>`,
+  },
+  {
+    type: 'angular-divider-wide',
+    label: 'Divider — Full Width',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="120" viewBox="0 0 1080 120">
+      <rect fill="#0A0A0A" width="1080" height="120"/>
+      <line x1="0" y1="60" x2="200" y2="60" stroke="#F5F0E8" stroke-width="1"/>
+      <rect x="200" y="50" width="80" height="20" fill="#DC2626"/>
+      <line x1="280" y1="40" x2="380" y2="80" stroke="#F5F0E8" stroke-width="1"/>
+      <line x1="380" y1="80" x2="480" y2="40" stroke="#F5F0E8" stroke-width="1"/>
+      <line x1="480" y1="40" x2="1080" y2="40" stroke="#333" stroke-width="1"/>
+      <line x1="480" y1="80" x2="1080" y2="80" stroke="#333" stroke-width="1"/>
+    </svg>`,
+  },
+  {
+    type: 'stat-frame',
+    label: 'Stat Highlight Frame',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+      <rect fill="#0A0A0A" width="1080" height="1080"/>
+      <rect x="80" y="80" width="920" height="920" fill="none" stroke="#333" stroke-width="2"/>
+      <rect x="60" y="60" width="200" height="6" fill="#DC2626"/>
+      <rect x="60" y="60" width="6" height="200" fill="#DC2626"/>
+      <rect x="820" y="1014" width="200" height="6" fill="#DC2626"/>
+      <rect x="1014" y="820" width="6" height="200" fill="#DC2626"/>
+      <text x="540" y="480" fill="#F5F0E8" font-family="Space Grotesk,sans-serif" font-size="180" font-weight="700" text-anchor="middle">$1.55M</text>
+      <text x="540" y="580" fill="#737373" font-family="IBM Plex Mono,monospace" font-size="28" text-anchor="middle" letter-spacing="0.12em">PER CHILD PER YEAR</text>
+      <line x1="400" y1="620" x2="680" y2="620" stroke="#DC2626" stroke-width="3"/>
+      <text x="540" y="700" fill="#525252" font-family="IBM Plex Mono,monospace" font-size="20" text-anchor="middle">PRODUCTIVITY COMMISSION 2024</text>
+    </svg>`,
+  },
+  {
+    type: 'quote-marks',
+    label: 'Typographic Quote Marks',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+      <rect fill="#0A0A0A" width="1080" height="1080"/>
+      <text x="100" y="400" fill="#DC2626" font-family="Georgia,serif" font-size="600" opacity="0.9">\u201C</text>
+      <text x="700" y="1000" fill="#DC2626" font-family="Georgia,serif" font-size="600" opacity="0.4">\u201D</text>
+      <line x1="100" y1="540" x2="980" y2="540" stroke="#1a1a1a" stroke-width="1"/>
+    </svg>`,
+  },
+  {
+    type: 'pattern-tile',
+    label: 'Geometric Pattern Tile',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+      <rect fill="#0A0A0A" width="1080" height="1080"/>
+      <defs><pattern id="p" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
+        <line x1="0" y1="0" x2="120" y2="120" stroke="#1a1a1a" stroke-width="1"/>
+        <line x1="120" y1="0" x2="0" y2="120" stroke="#1a1a1a" stroke-width="1"/>
+        <rect x="50" y="50" width="20" height="20" fill="#DC2626" opacity="0.15"/>
+      </pattern></defs>
+      <rect fill="url(#p)" width="1080" height="1080"/>
+      <polygon points="540,200 640,440 440,440" fill="none" stroke="#DC2626" stroke-width="2"/>
+      <circle cx="540" cy="640" r="100" fill="none" stroke="#333" stroke-width="2"/>
+      <rect x="440" y="740" width="200" height="200" fill="none" stroke="#333" stroke-width="2" transform="rotate(45 540 840)"/>
+    </svg>`,
+  },
+  {
+    type: 'corner-element',
+    label: 'Corner Brackets',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+      <rect fill="#0A0A0A" width="1080" height="1080"/>
+      <path d="M60,200 L60,60 L200,60" fill="none" stroke="#F5F0E8" stroke-width="4"/>
+      <path d="M880,60 L1020,60 L1020,200" fill="none" stroke="#F5F0E8" stroke-width="4"/>
+      <path d="M1020,880 L1020,1020 L880,1020" fill="none" stroke="#F5F0E8" stroke-width="4"/>
+      <path d="M200,1020 L60,1020 L60,880" fill="none" stroke="#F5F0E8" stroke-width="4"/>
+      <rect x="56" y="56" width="16" height="16" fill="#DC2626"/>
+      <rect x="1008" y="56" width="16" height="16" fill="#DC2626"/>
+      <rect x="1008" y="1008" width="16" height="16" fill="#DC2626"/>
+      <rect x="56" y="1008" width="16" height="16" fill="#DC2626"/>
+    </svg>`,
+  },
+  {
+    type: 'diagonal-stripe',
+    label: 'Diagonal Stripes',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+      <rect fill="#0A0A0A" width="1080" height="1080"/>
+      <defs><pattern id="ds" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect width="40" height="80" fill="#DC2626" opacity="0.8"/>
+      </pattern></defs>
+      <rect fill="url(#ds)" width="1080" height="1080"/>
+    </svg>`,
+  },
+  {
+    type: 'icon-container',
+    label: 'Icon — Shipping Container',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+      <rect fill="#0A0A0A" width="1080" height="1080"/>
+      <rect x="200" y="340" width="680" height="400" fill="none" stroke="#F5F0E8" stroke-width="6"/>
+      <line x1="200" y1="340" x2="340" y2="260" stroke="#F5F0E8" stroke-width="4"/>
+      <line x1="880" y1="340" x2="1020" y2="260" stroke="#F5F0E8" stroke-width="4"/>
+      <line x1="340" y1="260" x2="1020" y2="260" stroke="#F5F0E8" stroke-width="4"/>
+      <line x1="880" y1="340" x2="880" y2="740" stroke="#F5F0E8" stroke-width="6"/>
+      <line x1="1020" y1="260" x2="1020" y2="660" stroke="#F5F0E8" stroke-width="4"/>
+      <line x1="880" y1="740" x2="1020" y2="660" stroke="#F5F0E8" stroke-width="4"/>
+      <line x1="360" y1="380" x2="360" y2="700" stroke="#333" stroke-width="2"/>
+      <line x1="440" y1="380" x2="440" y2="700" stroke="#333" stroke-width="2"/>
+      <line x1="520" y1="380" x2="520" y2="700" stroke="#333" stroke-width="2"/>
+      <line x1="600" y1="380" x2="600" y2="700" stroke="#333" stroke-width="2"/>
+      <line x1="680" y1="380" x2="680" y2="700" stroke="#333" stroke-width="2"/>
+      <line x1="760" y1="380" x2="760" y2="700" stroke="#333" stroke-width="2"/>
+      <rect x="200" y="340" width="80" height="400" fill="#DC2626" opacity="0.3"/>
+    </svg>`,
+  },
+  {
+    type: 'icon-justice',
+    label: 'Icon — Justice Scales',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+      <rect fill="#0A0A0A" width="1080" height="1080"/>
+      <line x1="540" y1="200" x2="540" y2="800" stroke="#F5F0E8" stroke-width="6"/>
+      <line x1="280" y1="360" x2="800" y2="360" stroke="#F5F0E8" stroke-width="4"/>
+      <polygon points="540,200 560,240 520,240" fill="#DC2626"/>
+      <line x1="280" y1="360" x2="200" y2="580" stroke="#F5F0E8" stroke-width="3"/>
+      <line x1="280" y1="360" x2="360" y2="580" stroke="#F5F0E8" stroke-width="3"/>
+      <path d="M200,580 Q280,660 360,580" fill="none" stroke="#DC2626" stroke-width="3"/>
+      <line x1="800" y1="360" x2="720" y2="580" stroke="#F5F0E8" stroke-width="3"/>
+      <line x1="800" y1="360" x2="880" y2="580" stroke="#F5F0E8" stroke-width="3"/>
+      <path d="M720,580 Q800,660 880,580" fill="none" stroke="#F5F0E8" stroke-width="3"/>
+      <rect x="440" y="800" width="200" height="12" fill="#F5F0E8"/>
+      <rect x="480" y="812" width="120" height="40" fill="none" stroke="#333" stroke-width="2"/>
+    </svg>`,
+  },
+  {
+    type: 'icon-community',
+    label: 'Icon — Community',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+      <rect fill="#0A0A0A" width="1080" height="1080"/>
+      <circle cx="540" cy="400" r="60" fill="none" stroke="#DC2626" stroke-width="4"/>
+      <circle cx="340" cy="520" r="50" fill="none" stroke="#F5F0E8" stroke-width="3"/>
+      <circle cx="740" cy="520" r="50" fill="none" stroke="#F5F0E8" stroke-width="3"/>
+      <circle cx="280" cy="680" r="40" fill="none" stroke="#F5F0E8" stroke-width="2"/>
+      <circle cx="800" cy="680" r="40" fill="none" stroke="#F5F0E8" stroke-width="2"/>
+      <line x1="540" y1="460" x2="380" y2="490" stroke="#333" stroke-width="2"/>
+      <line x1="540" y1="460" x2="700" y2="490" stroke="#333" stroke-width="2"/>
+      <line x1="340" y1="570" x2="300" y2="650" stroke="#333" stroke-width="2"/>
+      <line x1="740" y1="570" x2="780" y2="650" stroke="#333" stroke-width="2"/>
+      <line x1="340" y1="520" x2="740" y2="520" stroke="#DC2626" stroke-width="1" stroke-dasharray="8,8"/>
+      <circle cx="540" cy="540" r="200" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+    </svg>`,
+  },
+  {
+    type: 'icon-growth',
+    label: 'Icon — Growth Arrow',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+      <rect fill="#0A0A0A" width="1080" height="1080"/>
+      <line x1="200" y1="800" x2="200" y2="200" stroke="#333" stroke-width="2"/>
+      <line x1="200" y1="800" x2="880" y2="800" stroke="#333" stroke-width="2"/>
+      <polyline points="280,700 440,500 600,560 800,280" fill="none" stroke="#DC2626" stroke-width="6"/>
+      <polygon points="800,280 820,340 760,320" fill="#DC2626"/>
+      <rect x="280" y="700" width="60" height="100" fill="#F5F0E8" opacity="0.2"/>
+      <rect x="440" y="500" width="60" height="300" fill="#F5F0E8" opacity="0.2"/>
+      <rect x="600" y="560" width="60" height="240" fill="#F5F0E8" opacity="0.2"/>
+      <rect x="760" y="280" width="60" height="520" fill="#DC2626" opacity="0.15"/>
+    </svg>`,
+  },
+  {
+    type: 'data-viz-frame',
+    label: 'Data Viz Frame',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+      <rect fill="#0A0A0A" width="1080" height="1080"/>
+      <rect x="100" y="100" width="880" height="880" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+      <line x1="100" y1="320" x2="980" y2="320" stroke="#1a1a1a" stroke-width="1"/>
+      <line x1="100" y1="540" x2="980" y2="540" stroke="#1a1a1a" stroke-width="1"/>
+      <line x1="100" y1="760" x2="980" y2="760" stroke="#1a1a1a" stroke-width="1"/>
+      <line x1="320" y1="100" x2="320" y2="980" stroke="#1a1a1a" stroke-width="1"/>
+      <line x1="540" y1="100" x2="540" y2="980" stroke="#1a1a1a" stroke-width="1"/>
+      <line x1="760" y1="100" x2="760" y2="980" stroke="#1a1a1a" stroke-width="1"/>
+      <rect x="96" y="96" width="120" height="6" fill="#DC2626"/>
+      <rect x="96" y="96" width="6" height="120" fill="#DC2626"/>
+      <text x="120" y="80" fill="#525252" font-family="IBM Plex Mono,monospace" font-size="18" letter-spacing="0.1em">DATA SOURCE</text>
+      <text x="860" y="1000" fill="#525252" font-family="IBM Plex Mono,monospace" font-size="14" text-anchor="end">CONTAINED 2026</text>
+    </svg>`,
+  },
+];
+
+function loadCoreElements() {
+  // Check if already loaded
+  const existing = savedElements.map(e => e.type);
+  let added = 0;
+  CORE_ELEMENTS.forEach(el => {
+    if (!existing.includes(el.type)) {
+      savedElements.push({
+        src: svgToDataUri(el.svg),
+        type: el.type,
+        label: el.label,
+        created: Date.now(),
+        core: true,
+      });
+      added++;
+    }
+  });
+  if (added > 0) {
+    localStorage.setItem('campaign-hub-elements', JSON.stringify(savedElements));
+    renderSavedElements();
+    toast(`${added} core brand elements added to library`);
+  } else {
+    toast('Core elements already in library');
+  }
+}
+
+// Auto-load core elements on first visit
+if (savedElements.length === 0) {
+  loadCoreElements();
+}
+
+// ── AI Studio ───────────────────────────────────────────
+
+const BRAND_CONTEXT = `You are writing social media content for THE CONTAINED, an immersive advocacy campaign about youth justice reform in Australia.
+
+Brand voice rules:
+- Direct, evidence-backed, urgent but not sensational
+- Use "system-impacted young people" (NEVER "offenders")
+- Use "community-led alternatives" (NEVER "diversion programs")
+- Every stat must be sourced
+- Centre community authority and agency, not trauma
+- The ask is always concrete: back what works
+
+Key stats: $1.55M/child/year detention cost, 84% reoffending, community programs $75/day with 88% success, 16x more youth helped for same cost, Spain's Diagrama 73% success, Indigenous youth 23x overrepresented.
+
+Hashtags: #TheContained #YouthJustice #JusticeHub`;
+
+async function aiCall(prompt) {
+  try {
+    const res = await fetch(`${API_BASE}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: prompt }],
+        model: 'gemini-2.0-flash',
+      }),
+    });
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    const data = await res.json();
+    return data.content || data.message || data.response || JSON.stringify(data);
+  } catch (e) {
+    return `Error: ${e.message}. Make sure the dev server is running at ${API_BASE}.`;
+  }
+}
+
+async function aiRewrite() {
+  const input = document.getElementById('ai-rewrite-input').value.trim();
+  if (!input) return toast('Paste a post first');
+  const platform = document.getElementById('ai-rewrite-platform').value;
+  const loading = document.getElementById('rewrite-loading');
+  const output = document.getElementById('rewrite-output');
+  loading.classList.add('visible');
+  output.classList.remove('visible');
+
+  const platformGuide = {
+    instagram: 'Write for Instagram: longer form, emotional, story-driven. Can be 200+ words. Use line breaks for readability.',
+    twitter: 'Write for Twitter/X: under 280 characters. Punchy, direct. Every word earns its place.',
+    linkedin: 'Write for LinkedIn: professional tone, evidence-led, policy-relevant. Medium length.',
+    facebook: 'Write for Facebook: community-focused, shareable, conversational. Medium-long form.',
+  };
+
+  const result = await aiCall(`${BRAND_CONTEXT}\n\n${platformGuide[platform]}\n\nRewrite this post for ${platform}. Include relevant hashtags at the end.\n\nOriginal post:\n${input}`);
+  output.textContent = result;
+  output.classList.add('visible');
+  loading.classList.remove('visible');
+}
+
+async function aiCaption() {
+  const input = document.getElementById('ai-caption-input').value.trim();
+  if (!input) return toast('Describe a photo first');
+  const loading = document.getElementById('caption-loading');
+  const output = document.getElementById('caption-output');
+  loading.classList.add('visible');
+  output.classList.remove('visible');
+
+  const result = await aiCall(`${BRAND_CONTEXT}\n\nGenerate 3 different social media captions for this photo. Each caption should:\n- Match THE CONTAINED brand voice (direct, evidence-backed, urgent not sensational)\n- Include 3-5 relevant hashtags\n- Be Instagram-ready\n\nLabel them Option 1, Option 2, Option 3.\n\nPhoto description: ${input}`);
+  output.textContent = result;
+  output.classList.add('visible');
+  loading.classList.remove('visible');
+}
+
+async function aiStatAngles() {
+  const idx = document.getElementById('ai-stat-select').value;
+  const s = STATS[idx];
+  const loading = document.getElementById('stat-angles-loading');
+  const output = document.getElementById('stat-angles-output');
+  loading.classList.add('visible');
+  output.classList.remove('visible');
+
+  const result = await aiCall(`${BRAND_CONTEXT}\n\nGenerate 3 different social media story angles for this statistic. Each angle should tell the stat differently — one emotional, one policy-focused, one comparison-based.\n\nFor each, write a short Twitter-length post (under 280 chars) and a longer Instagram version (100-200 words).\n\nStat: ${s.value}\nMeaning: ${s.label}\nSource: ${s.source}`);
+  output.textContent = result;
+  output.classList.add('visible');
+  loading.classList.remove('visible');
+}
+
+async function aiGenerateWeek() {
+  const focus = document.getElementById('ai-week-input').value.trim();
+  const loading = document.getElementById('week-loading');
+  const output = document.getElementById('week-output');
+  loading.classList.add('visible');
+  output.classList.remove('visible');
+
+  const result = await aiCall(`${BRAND_CONTEXT}\n\nGenerate a 7-day social media content calendar for THE CONTAINED campaign. For each day, provide:\n- Day name and theme\n- Instagram post (150-250 words)\n- Twitter/X post (under 280 characters)\n- Suggested photo asset from: spain, community, programs, people, hero, goods, contained categories\n- Relevant hashtags\n\nFormat each day clearly with headers.\n\n${focus ? 'Special focus: ' + focus : 'General campaign awareness week.'}\n\nKey stats to weave in: $1.55M/child/year, 84% reoffending, $75/day community alternatives, 88% success, 73% Diagrama success, 23x Indigenous overrepresentation, 16x more youth helped.`);
+  output.textContent = result;
+  output.classList.add('visible');
+  loading.classList.remove('visible');
+}
+
+// ── Mood & Pulse ────────────────────────────────────────
+
+async function analysePulse() {
+  const input = document.getElementById('pulse-input').value.trim();
+  if (!input) return toast('Paste some feedback first');
+  const loading = document.getElementById('pulse-loading');
+  const results = document.getElementById('pulse-results');
+  loading.classList.add('visible');
+  results.style.display = 'none';
+
+  const result = await aiCall(`${BRAND_CONTEXT}\n\nAnalyse this audience feedback for THE CONTAINED campaign. Return your analysis in this exact JSON format (no markdown, no code blocks, just raw JSON):\n\n{"sentiment": 0.75, "themes": ["theme1", "theme2", "theme3"], "pivots": ["suggested pivot 1", "suggested pivot 2"], "quotes": ["best quote 1", "best quote 2", "best quote 3"]}\n\nSentiment should be 0-1 (0 = very negative, 1 = very positive).\nThemes: top 3-5 recurring themes.\nPivots: 2-3 content strategy suggestions based on what's resonating.\nQuotes: 2-3 most impactful quotes from the feedback.\n\nFeedback:\n${input}`);
+
+  try {
+    // Try to parse JSON from the response
+    const jsonMatch = result.match(/\{[\s\S]*\}/);
+    const data = JSON.parse(jsonMatch ? jsonMatch[0] : result);
+
+    // Sentiment
+    const score = Math.round(data.sentiment * 100);
+    document.getElementById('sentiment-score').textContent = score + '%';
+    const fill = document.getElementById('sentiment-fill');
+    fill.style.width = score + '%';
+    fill.style.background = score > 60 ? '#059669' : score > 40 ? '#f59e0b' : '#dc2626';
+
+    // Themes
+    document.getElementById('pulse-themes').innerHTML = (data.themes || []).map(t =>
+      `<span style="padding:4px 10px;background:#1a1a1a;border:1px solid #262626;border-radius:4px;font-size:12px;color:#a3a3a3;">${t}</span>`
+    ).join('');
+
+    // Pivots
+    document.getElementById('pulse-pivots').innerHTML = (data.pivots || []).map(p =>
+      `<div style="margin-bottom:8px;padding-left:12px;border-left:2px solid #dc2626;">• ${p}</div>`
+    ).join('');
+
+    // Quotes
+    document.getElementById('pulse-quotes').innerHTML = (data.quotes || []).map(q =>
+      `<div style="margin-bottom:8px;font-style:italic;padding-left:12px;border-left:2px solid #059669;">"${q}"</div>`
+    ).join('');
+
+    results.style.display = 'grid';
+  } catch (e) {
+    // Fallback: show raw output
+    document.getElementById('pulse-themes').innerHTML = `<div style="font-size:13px;color:#a3a3a3;white-space:pre-wrap;">${result}</div>`;
+    results.style.display = 'grid';
+  }
+
+  loading.classList.remove('visible');
+}
+
+// ── Init ────────────────────────────────────────────────
+
+renderBrandAssets();
+renderColors();
+renderPillars();
+renderStats();
+renderHashtags();
+renderLibFilters();
+renderCalendar();
+renderSavedTiles();
+renderSavedElements();
+populateStatPicker();
+// Load photos dynamically from Empathy Ledger API
+loadAllPhotos();
+</script>
+</body>
+</html>
