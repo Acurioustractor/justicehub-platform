@@ -927,7 +927,7 @@ export function TourContent() {
                         </div>
                       </div>
                     )}
-                    <BrandButton href="/contained/register" variant={isFirst ? 'primary' : 'secondary'} className="w-full text-center">
+                    <BrandButton href="/contained/help" variant={isFirst ? 'primary' : 'secondary'} className="w-full text-center">
                       {isFirst ? 'Back This Stop' : 'Support This Stop'}
                     </BrandButton>
                   </div>
@@ -961,7 +961,7 @@ export function TourContent() {
                         </div>
                       </div>
                     )}
-                    <BrandButton href="/contained/register" variant="secondary" className="w-full text-center">Support This Stop</BrandButton>
+                    <BrandButton href="/contained/help" variant="secondary" className="w-full text-center">Support This Stop</BrandButton>
                   </div>
                 ))}
               </div>
