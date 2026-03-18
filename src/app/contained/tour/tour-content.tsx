@@ -877,6 +877,7 @@ export function TourContent() {
         <RedDivider bg="#F5F0E8" />
 
         {/* ==================== SECTION 5: THE TOUR ==================== */}
+        <section id="back-this-tour" />
         <section id="tour" className="relative bg-[#0A0A0A] scanline-overlay concrete-texture overflow-hidden" style={{ padding: 'clamp(60px, 10vw, 120px) 0 clamp(80px, 12vw, 160px)' }}>
           <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16">
             <span className="text-[#DC2626] text-xs font-medium uppercase block mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.3em' }}>The Tour</span>
@@ -926,7 +927,7 @@ export function TourContent() {
                         </div>
                       </div>
                     )}
-                    <BrandButton href={`/events/${stop.eventSlug}`} variant={isFirst ? 'primary' : 'secondary'} className="w-full text-center">
+                    <BrandButton href="/contained/register" variant={isFirst ? 'primary' : 'secondary'} className="w-full text-center">
                       {isFirst ? 'Back This Stop' : 'Support This Stop'}
                     </BrandButton>
                   </div>
@@ -960,7 +961,7 @@ export function TourContent() {
                         </div>
                       </div>
                     )}
-                    <BrandButton href={`/events/${stop.eventSlug}`} variant="secondary" className="w-full text-center">Support This Stop</BrandButton>
+                    <BrandButton href="/contained/register" variant="secondary" className="w-full text-center">Support This Stop</BrandButton>
                   </div>
                 ))}
               </div>
@@ -971,6 +972,7 @@ export function TourContent() {
         <RedDivider />
 
         {/* ==================== SECTION 6: ACTION ==================== */}
+        <section id="nominate" />
         <section id="action" className="relative bg-[#F5F0E8] scanline-overlay-dark overflow-hidden" style={{ padding: 'clamp(60px, 10vw, 120px) 0' }}>
           <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16 text-center">
             <span className="text-[#DC2626] text-xs font-medium uppercase block mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.3em' }}>We Need You</span>
