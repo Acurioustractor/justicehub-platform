@@ -691,14 +691,14 @@ export function TourContent() {
             <span className="text-[#DC2626] text-xs font-medium uppercase block mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.3em' }}>The Evidence</span>
             <h2 className="font-bold text-[#0A0A0A] uppercase text-3xl md:text-5xl lg:text-6xl mb-4" style={{ letterSpacing: '-0.02em' }}>The Evidence</h2>
             <p className="text-[#0A0A0A]/60 text-xs max-w-xl mb-12" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.05em', lineHeight: 1.8 }}>
-              Australia spends $1,550 per child per day on detention. Community programs that actually work cost $75 a day. These are the facts.
+              Australia spends $4,250 per child per day on detention. Community programs that actually work cost $75 a day. These are the facts.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 { label: 'First Nations', value: '65%', color: 'text-[#DC2626]', desc: 'Aboriginal and Torres Strait Islander children make up 65% of those in detention. They are 6% of the population.' },
                 { label: 'Detained Nightly', value: '860', color: 'text-[#F5F0E8]', desc: 'Children are locked up on any given night across Australia. Many are on remand. Not yet convicted of any crime.' },
-                { label: 'Cost Per Day', value: '$1,550', color: 'text-[#059669]', desc: 'Taxpayers spend $565,000 per child per year on detention. Community programs cost $75 a day and work better.' },
+                { label: 'Cost Per Day', value: '$4,250', color: 'text-[#059669]', desc: 'Taxpayers spend $1.55M per child per year on detention. Community programs cost $75 a day and work better.' },
                 { label: 'Recidivism Rate', value: '84%', color: 'text-[#F5F0E8]', desc: 'Of children who go through detention will return. The system does not rehabilitate. It entrenches.' },
               ].map((stat) => (
                 <div key={stat.label} className="bg-[#0A0A0A] p-8 relative scanline-overlay">
