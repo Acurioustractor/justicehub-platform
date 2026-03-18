@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { sendEmail } from '@/lib/email/send';
+import { preEventSequence } from '@/content/newsletter-sequences';
 
 /**
  * POST /api/ghl/register
@@ -124,7 +126,16 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    // 4. Trigger pre-event drip if GHL contact was created
+    // 4. Send event confirmation email immediately via Resend
+    const confirmation = preEventSequence.emails[0];
+    sendEmail({
+      to: email,
+      subject: confirmation.subject,
+      body: confirmation.body,
+      preheader: confirmation.preheader,
+    }).catch(err => console.error('Failed to send event confirmation email:', err));
+
+    // 5. Trigger GHL pre-event workflow if configured (legacy/supplementary)
     if (ghlContactId && ghl.isConfigured()) {
       const preEventWorkflowId = process.env.GHL_PRE_EVENT_WORKFLOW_ID;
       if (preEventWorkflowId) {

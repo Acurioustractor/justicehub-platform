@@ -7,6 +7,7 @@ import {
   containsXssPatterns,
 } from '@/lib/security';
 import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { sendEmail } from '@/lib/email/send';
 
 interface ContactFormData {
   name: string;
@@ -205,6 +206,25 @@ export async function POST(request: NextRequest) {
       console.error('GHL sync failed for contact submission:', data?.id, ghlErr);
       ghlSynced = false;
     }
+
+    // Send thank-you confirmation email
+    sendEmail({
+      to: sanitizedEmail,
+      subject: 'We received your message',
+      preheader: "We'll get back to you within 24-48 hours.",
+      body: `Hi ${sanitizedName},
+
+Thank you for reaching out to JusticeHub.
+
+We've received your message${sanitizedSubject ? ` regarding "${sanitizedSubject}"` : ''} and will get back to you within 24-48 hours.
+
+In the meantime, you might find these resources helpful:
+
+Explore ALMA: https://justicehub.com.au/intelligence/interventions
+THE CONTAINED tour: https://justicehub.com.au/contained
+
+— The JusticeHub Team`,
+    }).catch(err => console.error('Failed to send contact confirmation email:', err));
 
     return NextResponse.json({
       success: true,

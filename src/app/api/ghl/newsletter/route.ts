@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
 import { sanitizeEmail, sanitizeInput } from '@/lib/security';
+import { sendEmail } from '@/lib/email/send';
+import { welcomeSequence } from '@/content/newsletter-sequences';
 
 // Allowed subscription types
 const ALLOWED_SUBSCRIPTION_TYPES = ['general', 'steward', 'researcher', 'organization'];
@@ -112,7 +114,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. Trigger welcome sequence if GHL contact was created
+    // 3. Send welcome email immediately via Resend
+    const welcome = welcomeSequence.emails[0];
+    sendEmail({
+      to: sanitizedEmail,
+      subject: welcome.subject,
+      body: welcome.body,
+      preheader: welcome.preheader,
+    }).catch(err => console.error('Failed to send welcome email:', err));
+
+    // 4. Trigger GHL welcome workflow if configured (legacy/supplementary)
     if (ghlContactId && ghl.isConfigured()) {
       const welcomeWorkflowId = process.env.GHL_WELCOME_WORKFLOW_ID;
       if (welcomeWorkflowId) {
