@@ -27,6 +27,7 @@ const ALLOWED_CATEGORIES = [
   'media',
   'feedback',
   'technical',
+  'contained-help',
   'other',
 ];
 
@@ -35,6 +36,7 @@ const CATEGORY_TAGS: Record<string, string> = {
   partnership: 'Partnership Inquiry',
   media: 'Media Inquiry',
   support: 'Support Request',
+  'contained-help': 'contained-2026-launch',
 };
 
 /**
