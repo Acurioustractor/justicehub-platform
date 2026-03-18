@@ -144,7 +144,7 @@ export default function ForResearchersPage() {
               ALMA Intelligence Platform
             </h2>
             <p className="text-xl text-gray-700 mb-12 max-w-3xl">
-              <strong>Authentic Learning for Meaningful Accountability</strong>—our evidence
+              <strong>Alternative Local Models Australia</strong>—our evidence
               system that maps what works in youth justice while respecting community
               knowledge and consent protocols.
             </p>

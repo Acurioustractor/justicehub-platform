@@ -108,7 +108,7 @@ export default async function IntelligencePage() {
 
           <div className="max-w-4xl mx-auto">
             <p className="text-lg text-gray-800 mb-6">
-              <strong>Authentic Learning for Meaningful Accountability.</strong> Not a product. A practiced method
+              <strong>Alternative Local Models Australia.</strong> Not a product. A practiced method
               for valuing Indigenous and community knowledge while ensuring those knowledge holders control
               access and benefit from its use.
             </p>

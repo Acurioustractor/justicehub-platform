@@ -83,7 +83,7 @@ export default function TransparencyPage() {
               <div className="flex items-center gap-3">
                 <Zap className="h-5 w-5 flex-shrink-0" />
                 <p className="text-sm font-bold">
-                  Search $8.7B+ in real QLD justice funding data — 51,000+ grants across 29,000 organisations.
+                  Search $9B+ in real justice funding data — 52,000+ grants across 29,000 organisations.
                 </p>
               </div>
               <Link
@@ -606,7 +606,7 @@ export default function TransparencyPage() {
                   <li>Police (Table 6A)</li>
                   <li>Courts (Table 7A)</li>
                   <li className="font-bold mt-3">QLD Open Data Portal</li>
-                  <li>51,728 justice grants ($8.7B+)</li>
+                  <li>52,000+ justice grants ($9B+)</li>
                 </ul>
               </div>
 

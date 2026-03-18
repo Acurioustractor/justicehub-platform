@@ -7,6 +7,7 @@ import {
   tourSocialKits,
   generalSocialPosts,
   tourStops,
+  campaignMedia,
   type SocialPlatform,
   type SocialPost,
 } from '@/content/campaign';
@@ -205,7 +206,7 @@ export function SocialKitContent() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="border-2 border-black overflow-hidden">
                   <img
-                    src="/media/contained/container-room.jpg"
+                    src={campaignMedia.containerRoom}
                     alt="THE CONTAINED — two rooms side by side: therapeutic model vs detention reality"
                     className="w-full h-auto"
                   />
@@ -214,7 +215,7 @@ export function SocialKitContent() {
                       <p className="font-bold mb-1">Three rooms. One container. The truth.</p>
                       <p className="text-sm text-gray-400">This image shows two of the three rooms: therapeutic alternative and detention reality. The third room points to what communities are already building.</p>
                     </div>
-                    <DownloadButton url="/media/contained/container-room.jpg" filename="contained-two-rooms.jpg" />
+                    <DownloadButton url={campaignMedia.containerRoom} filename="contained-two-rooms.jpg" />
                   </div>
                 </div>
                 <div className="border-2 border-black bg-black text-white p-8 flex flex-col justify-center">

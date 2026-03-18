@@ -48,7 +48,7 @@ export function useNavigationAuth() {
                         .from('public_profiles')
                         .select('slug, full_name, photo_url')
                         .eq('user_id', user.id)
-                        .single();
+                        .maybeSingle();
 
                     // Fetch admin status from profiles table
                     const { data: authProfile } = await supabase

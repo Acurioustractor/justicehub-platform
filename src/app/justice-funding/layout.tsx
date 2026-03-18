@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Justice Funding Tracker — Where the Money Goes | JusticeHub',
   description:
-    'Search $8.7B+ in QLD justice spending across 29,000 organisations. See who gets funded, who misses out, and the inequality gap facing Indigenous communities.',
+    'Search $9B+ in justice spending across 29,000 organisations. See who gets funded, who misses out, and the inequality gap facing Indigenous communities.',
   openGraph: {
     title: 'Justice Funding Tracker — Where the Money Goes',
     description:

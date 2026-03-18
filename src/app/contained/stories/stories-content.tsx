@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { ArrowLeft, ArrowRight, BookOpen, Play, Users, Video } from 'lucide-react';
+import { NewsletterSignup } from '@/components/contained/NewsletterSignup';
 
 interface Story {
   id: string;
@@ -16,13 +17,14 @@ interface Story {
   story_image_url: string | null;
   video_url: string | null;
   published_at: string;
-  source: 'el' | 'article' | 'tour';
+  source: 'el' | 'article' | 'tour' | 'v2';
   slug: string | null;
   is_featured: boolean;
   series: string | null;
 }
 
 const sourceLabels: Record<string, { label: string; color: string }> = {
+  v2: { label: 'Empathy Ledger', color: 'bg-emerald-100 text-emerald-800 border-emerald-800' },
   el: { label: 'Community Voice', color: 'bg-purple-100 text-purple-800 border-purple-800' },
   article: { label: 'Article', color: 'bg-blue-100 text-blue-800 border-blue-800' },
   tour: { label: 'Tour Story', color: 'bg-red-100 text-red-800 border-red-800' },
@@ -127,18 +129,22 @@ function StoryCard({ story }: { story: Story }) {
 export function ContainedStoriesContent() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'el' | 'article' | 'tour'>('all');
+  const [filter, setFilter] = useState<'all' | 'el' | 'article' | 'tour' | 'v2'>('all');
+  const [theme, setTheme] = useState<string>('');
   const [heroIndex, setHeroIndex] = useState(0);
 
   useEffect(() => {
-    fetch('/api/contained/stories')
+    setLoading(true);
+    const params = new URLSearchParams();
+    if (theme) params.set('theme', theme);
+    fetch(`/api/contained/stories?${params}`)
       .then(res => res.json())
       .then((data: Story[]) => {
         if (Array.isArray(data)) setStories(data);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  }, [theme]);
 
   // Rotate hero quote every 8s
   const featuredStories = useMemo(() => stories.filter(s => s.is_featured), [stories]);
@@ -245,6 +251,7 @@ export function ContainedStoriesContent() {
           <div className="flex flex-wrap gap-2">
             {([
               ['all', 'All Stories'],
+              ['v2', 'Empathy Ledger'],
               ['el', 'Community Voices'],
               ['article', 'Articles'],
               ['tour', 'Tour Stories'],
@@ -256,6 +263,32 @@ export function ContainedStoriesContent() {
                   filter === key
                     ? 'bg-black text-white border-black'
                     : 'border-gray-300 hover:border-black'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Theme Filter */}
+        <section className="container-justice mb-8">
+          <div className="flex flex-wrap gap-2">
+            {[
+              ['', 'All Themes'],
+              ['healing', 'Healing'],
+              ['justice', 'Justice'],
+              ['culture', 'Culture'],
+              ['community', 'Community'],
+              ['detention', 'Detention'],
+            ].map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setTheme(key)}
+                className={`px-3 py-1 text-xs font-bold border-2 transition-colors ${
+                  theme === key
+                    ? 'bg-red-600 text-white border-red-600'
+                    : 'border-gray-300 hover:border-red-600 hover:text-red-600'
                 }`}
               >
                 {label}
@@ -327,7 +360,7 @@ export function ContainedStoriesContent() {
         <section className="container-justice mb-16">
           {filter !== 'all' && (
             <h2 className="text-2xl font-black uppercase tracking-tighter mb-6">
-              {filter === 'el' ? 'Community Voices' : filter === 'article' ? 'Articles' : 'Tour Stories'}
+              {filter === 'v2' ? 'Empathy Ledger' : filter === 'el' ? 'Community Voices' : filter === 'article' ? 'Articles' : 'Tour Stories'}
             </h2>
           )}
           {filter === 'all' && (
@@ -353,7 +386,7 @@ export function ContainedStoriesContent() {
             <div className="text-center py-16 bg-gray-50 border-2 border-dashed border-gray-300">
               <p className="text-gray-500 text-lg mb-4">No stories yet in this category.</p>
               <Link
-                href="/contained/tour#submit-story"
+                href="/contained/share"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-bold hover:bg-red-600 transition-colors"
               >
                 Submit Your Story <ArrowRight className="w-4 h-4" />
@@ -374,7 +407,7 @@ export function ContainedStoriesContent() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/contained/tour#submit-story"
+                href="/contained/share"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-red-600 text-white font-bold uppercase tracking-widest hover:bg-red-700 transition-colors"
               >
                 Submit Your Story <ArrowRight className="w-4 h-4" />
@@ -423,6 +456,19 @@ export function ContainedStoriesContent() {
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Newsletter */}
+        <section className="bg-black text-white py-12 mb-16">
+          <div className="container-justice text-center">
+            <h2 className="text-2xl font-black uppercase tracking-tighter mb-2">
+              Stay in the Fight
+            </h2>
+            <p className="text-gray-300 mb-6">
+              Get story updates, campaign alerts, and be first to know when CONTAINED arrives in your city.
+            </p>
+            <NewsletterSignup source="contained_stories" />
           </div>
         </section>
       </main>

@@ -24,9 +24,9 @@ export function parseJSON<T>(text: string): T {
   // Stage 1: Strip <think>...</think> blocks (reasoning models like DeepSeek)
   cleaned = cleaned.replace(/<think>[\s\S]*?<\/think>/g, '');
 
-  // Stage 2: Strip markdown code fences
-  cleaned = cleaned.replace(/```(?:json|JSON)?\s*\n?/g, '');
-  cleaned = cleaned.replace(/```\s*$/gm, '');
+  // Stage 2: Strip markdown code fences (any language tag, variable backtick count)
+  cleaned = cleaned.replace(/`{3,}[\w]*\s*\n?/gi, '');
+  cleaned = cleaned.replace(/`{3,}\s*$/gm, '');
 
   cleaned = cleaned.trim();
 

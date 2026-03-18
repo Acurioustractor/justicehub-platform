@@ -468,7 +468,7 @@ export default function ForFundersPage() {
                 <DollarSign className="w-8 h-8 text-red-600 mb-3" />
                 <h3 className="font-bold text-lg mb-2 group-hover:text-red-600 transition-colors">Justice Spending Tracker</h3>
                 <p className="text-gray-600 text-sm mb-3">
-                  Search $8.7B+ in QLD justice funding. See who gets funded, who misses out,
+                  Search $9B+ in justice funding. See who gets funded, who misses out,
                   and the inequality gap facing Indigenous communities.
                 </p>
                 <span className="text-sm font-bold text-red-600 flex items-center gap-1">

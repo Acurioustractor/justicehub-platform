@@ -1,8 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import {
-  getStories as v2GetStories,
-  isV2Configured,
-} from '@/lib/empathy-ledger/v2-client';
+import { isV2Configured } from '@/lib/empathy-ledger/v2-client';
 
 /**
  * Empathy Ledger Lite Client
@@ -47,41 +44,3 @@ export const empathyLedgerClient = (configuredEmpathyLedgerClient ??
     }
   )) as EmpathyLedgerLiteClient;
 
-/**
- * Get featured justice stories — now via v2 API
- */
-export async function getFeaturedJusticeStories(limit = 6) {
-  if (isV2Configured) {
-    const result = await v2GetStories({ limit });
-    return result.data.map(s => ({
-      id: s.id,
-      title: s.title,
-      summary: s.excerpt,
-      content: null,
-      story_image_url: s.imageUrl,
-      story_category: null,
-      is_featured: false,
-      published_at: s.publishedAt,
-      themes: s.themes,
-      excerpt: s.excerpt || '',
-    }));
-  }
-
-  // Fallback to direct Supabase
-  const { data, error } = await empathyLedgerClient
-    .from('stories')
-    .select('id, title, summary, content, story_image_url, story_category, is_featured, published_at, themes')
-    .eq('is_public', true)
-    .eq('privacy_level', 'public')
-    .eq('is_featured', true)
-    .or('themes.cs.{youth-justice},themes.cs.{justice},themes.cs.{community}')
-    .order('published_at', { ascending: false })
-    .limit(limit);
-
-  if (error) {
-    console.error('Error fetching featured justice stories:', error);
-    return [];
-  }
-
-  return data || [];
-}

@@ -7,10 +7,6 @@ import { createServiceClient } from '@/lib/supabase/service';
 
 const DEFAULT_TENANT_ID = '8891e1a9-92ae-423f-928b-cec602660011';
 
-// EL Syndication API — used as a profile data source (bio, image, etc.)
-const EL_SYNDICATION_URL = process.env.EMPATHY_LEDGER_SYNDICATION_URL || 'http://localhost:3030';
-const EL_SYNDICATION_KEY = process.env.EMPATHY_LEDGER_SYNDICATION_KEY || '';
-
 export interface SyncPersonResult {
   name: string;
   action: 'linked' | 'created' | 'updated' | 'skipped';
@@ -48,25 +44,51 @@ function generateSlug(name: string): string {
 }
 
 /**
- * Fetch ALL profiles from syndication API as a lookup table.
- * NOTE: The organizationId filter on this API is unreliable,
- * so we fetch all and use service client for org membership.
+ * Fetch ALL JusticeHub-enabled profiles from EL as a lookup table.
+ * Queries the storytellers table directly (replaces broken syndication proxy).
  */
 async function fetchELProfileLookup(): Promise<Map<string, ELSyndicationProfile>> {
   const map = new Map<string, ELSyndicationProfile>();
   try {
-    const res = await fetch(
-      `${EL_SYNDICATION_URL}/api/syndication/justicehub/profiles?limit=500`,
-      { headers: { 'X-API-Key': EL_SYNDICATION_KEY }, cache: 'no-store' },
-    );
-    if (!res.ok) return map;
-    const data = await res.json();
-    for (const p of data.profiles || []) {
-      map.set(p.profile_id, p);
-      map.set(p.id, p); // also index by storyteller ID
+    const elService = empathyLedgerServiceClient;
+    if (!elService) return map;
+
+    // Fetch storytellers with their profile data
+    const { data: storytellers } = await elService
+      .from('storytellers')
+      .select('id, profile_id, display_name, bio, slug')
+      .eq('is_active', true)
+      .limit(500);
+
+    if (!storytellers) return map;
+
+    // Batch-fetch profile avatar URLs for enrichment
+    const profileIds = storytellers.map((s: any) => s.profile_id).filter(Boolean);
+    const avatarMap = new Map<string, string>();
+    if (profileIds.length > 0) {
+      const { data: profiles } = await elService
+        .from('profiles')
+        .select('id, avatar_url')
+        .in('id', profileIds);
+      for (const p of (profiles || []) as any[]) {
+        if (p.avatar_url) avatarMap.set(p.id, p.avatar_url);
+      }
     }
-  } catch {
-    // Syndication API unavailable — proceed without enrichment
+
+    for (const st of storytellers as any[]) {
+      const entry: ELSyndicationProfile = {
+        id: st.id,
+        profile_id: st.profile_id || st.id,
+        slug: st.slug || generateSlug(st.display_name || 'unknown'),
+        display_name: st.display_name || 'Unknown',
+        bio: st.bio || null,
+        profile_image_url: avatarMap.get(st.profile_id) || null,
+      };
+      map.set(entry.profile_id, entry);
+      map.set(entry.id, entry);
+    }
+  } catch (err) {
+    console.error('fetchELProfileLookup error:', err);
   }
   return map;
 }

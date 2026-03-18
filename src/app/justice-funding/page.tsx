@@ -285,50 +285,117 @@ function StatCard({ label, value, sub, icon: Icon }: {
   );
 }
 
+// Consolidate raw DB sectors into 6 meaningful pipeline stages
+const SECTOR_GROUPS: Record<string, { label: string; description: string; color: string; sectors: string[] }> = {
+  prevention: {
+    label: 'Prevention & Early Intervention',
+    description: 'Community programs, family support, education, culture',
+    color: 'bg-emerald-600',
+    sectors: ['community_services', 'community_safety', 'family_violence', 'education', 'culture', 'community'],
+  },
+  youth_justice: {
+    label: 'Youth Justice',
+    description: 'Detention, diversion, supervision, conferencing',
+    color: 'bg-orange-500',
+    sectors: ['youth_justice'],
+  },
+  legal: {
+    label: 'Legal Services',
+    description: 'Legal aid, courts, advocacy, justice services',
+    color: 'bg-purple-600',
+    sectors: ['legal_services', 'justice_services'],
+  },
+  corrections: {
+    label: 'Corrections & Policing',
+    description: 'Adult corrections, policing, enforcement',
+    color: 'bg-red-600',
+    sectors: ['corrections', 'policing'],
+  },
+  indigenous: {
+    label: 'Indigenous-Specific',
+    description: 'Indigenous services, land management, remote services',
+    color: 'bg-amber-500',
+    sectors: ['indigenous_services', 'land-management', 'remote-services'],
+  },
+  other: {
+    label: 'Health, Employment & Federal',
+    description: 'Health, employment programs, federal contracts, research',
+    color: 'bg-slate-500',
+    sectors: ['health', 'employment', 'federal', 'research'],
+  },
+};
+
 function SectorChart({ sectors, total }: { sectors: SectorRow[]; total: number }) {
-  const maxDollars = Math.max(...sectors.map(s => s.total_dollars || 0), 1);
+  // Consolidate into groups
+  const grouped = Object.entries(SECTOR_GROUPS).map(([key, group]) => {
+    const matching = sectors.filter(s => group.sectors.includes(s.sector));
+    return {
+      key,
+      label: group.label,
+      description: group.description,
+      color: group.color,
+      total_dollars: matching.reduce((sum, s) => sum + (s.total_dollars || 0), 0),
+      org_count: matching.reduce((sum, s) => sum + (s.org_count || 0), 0),
+      indigenous_dollars: matching.reduce((sum, s) => sum + (s.indigenous_dollars || 0), 0),
+      record_count: matching.reduce((sum, s) => sum + (s.record_count || 0), 0),
+    };
+  }).filter(g => g.total_dollars > 0).sort((a, b) => b.total_dollars - a.total_dollars);
+
+  const maxDollars = Math.max(...grouped.map(g => g.total_dollars), 1);
+  const totalIndigenous = grouped.reduce((s, g) => s + g.indigenous_dollars, 0);
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-        <BarChart3 className="w-5 h-5" /> Funding by Sector
+      <h3 className="font-bold text-gray-900 mb-1 flex items-center gap-2">
+        <BarChart3 className="w-5 h-5" /> Where the Money Goes
       </h3>
-      <div className="space-y-3">
-        {sectors.map(s => {
-          const indPct = s.total_dollars ? (s.indigenous_dollars || 0) / s.total_dollars : 0;
+      <p className="text-xs text-gray-500 mb-5">
+        {fmt(total)} across {grouped.reduce((s, g) => s + g.org_count, 0).toLocaleString()} organisations.
+        {' '}<span className="text-amber-600 font-medium">{fmt(totalIndigenous)}</span> ({pct(totalIndigenous, total)}) to Indigenous-led.
+      </p>
+      <div className="space-y-4">
+        {grouped.map(g => {
+          const indPct = g.total_dollars ? g.indigenous_dollars / g.total_dollars : 0;
+          const sharePct = total ? (g.total_dollars / total * 100).toFixed(0) : '0';
           return (
-            <div key={s.sector}>
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-700">{sectorLabel(s.sector)}</span>
-                <span className="font-medium text-gray-900">{fmt(s.total_dollars)}</span>
+            <div key={g.key}>
+              <div className="flex justify-between items-baseline mb-1">
+                <div>
+                  <span className="text-sm font-medium text-gray-900">{g.label}</span>
+                  <span className="text-xs text-gray-400 ml-2">{sharePct}%</span>
+                </div>
+                <span className="font-bold text-gray-900 text-sm">{fmt(g.total_dollars)}</span>
               </div>
-              <div className="h-5 bg-gray-100 rounded-full overflow-hidden flex">
+              <div className="h-6 bg-gray-100 rounded overflow-hidden flex">
                 <div
-                  className="h-full bg-gray-800 transition-all"
-                  style={{ width: `${(s.total_dollars / maxDollars) * 100}%` }}
+                  className={`h-full ${g.color} transition-all relative`}
+                  style={{ width: `${(g.total_dollars / maxDollars) * 100}%` }}
                 >
                   {indPct > 0.005 && (
                     <div
-                      className="h-full bg-amber-500 rounded-r-full"
+                      className="absolute right-0 top-0 h-full bg-amber-400"
                       style={{ width: `${indPct * 100}%` }}
-                      title={`Indigenous: ${fmt(s.indigenous_dollars)} (${pct(s.indigenous_dollars, s.total_dollars)})`}
+                      title={`Indigenous-led: ${fmt(g.indigenous_dollars)}`}
                     />
                   )}
                 </div>
               </div>
-              <div className="flex justify-between text-xs text-gray-500 mt-0.5">
-                <span>{s.org_count.toLocaleString()} orgs</span>
-                <span>Indigenous: {pct(s.indigenous_dollars, s.total_dollars)}</span>
+              <div className="flex justify-between text-[11px] text-gray-400 mt-0.5">
+                <span>{g.description}</span>
+                <span className={indPct > 0.1 ? 'text-amber-600 font-medium' : ''}>
+                  {pct(g.indigenous_dollars, g.total_dollars)} Indigenous
+                </span>
               </div>
             </div>
           );
         })}
       </div>
-      <div className="mt-4 flex items-center gap-4 text-xs text-gray-500">
+      <div className="mt-5 pt-4 border-t border-gray-100 flex items-center gap-6 text-xs text-gray-500">
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 bg-gray-800 rounded" /> Total funding
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 bg-amber-500 rounded" /> To Indigenous-led orgs
+          <div className="w-3 h-3 bg-amber-400 rounded" /> To Indigenous-led orgs
         </div>
       </div>
     </div>
@@ -337,44 +404,85 @@ function SectorChart({ sectors, total }: { sectors: SectorRow[]; total: number }
 
 function YearTrend({ years }: { years: YearRow[] }) {
   const validYears = years.filter(y => y.total_dollars != null && y.total_dollars > 0);
-  const maxDollars = Math.max(...validYears.map(y => y.total_dollars), 1);
+  // Split into eras for better storytelling
+  const currentYear = new Date().getFullYear();
+  const currentFY = `${currentYear - 1}-${String(currentYear).slice(2)}`;
+  const isPartial = (fy: string) => {
+    const endYear = parseInt('20' + fy.split('-')[1]);
+    return endYear >= currentYear || fy === '2024-25';
+  };
+  const isGapYear = (fy: string) => {
+    // 2013-2016: QLD historical grant data gap — only QGIP data available
+    return ['2013-14', '2014-15', '2015-16', '2016-17'].includes(fy);
+  };
+
+  // Use consistent scale — exclude partial years from max calculation
+  const completeYears = validYears.filter(y => !isPartial(y.financial_year));
+  const maxDollars = Math.max(...completeYears.map(y => y.total_dollars), 1);
+
+  // Calculate growth from first complete era to latest complete era
+  const recent = completeYears.filter(y => !isGapYear(y.financial_year));
+  const earliest = recent[0];
+  const latest = recent[recent.length - 1];
+  const growthPct = earliest && latest && earliest.total_dollars > 0
+    ? ((latest.total_dollars - earliest.total_dollars) / earliest.total_dollars * 100).toFixed(0)
+    : null;
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-        <TrendingUp className="w-5 h-5" /> Year-over-Year Trend
+      <h3 className="font-bold text-gray-900 mb-1 flex items-center gap-2">
+        <TrendingUp className="w-5 h-5" /> Funding Over Time
       </h3>
-      <div className="space-y-2">
+      <p className="text-xs text-gray-500 mb-4">
+        {growthPct && Number(growthPct) > 0 ? (
+          <><span className="text-emerald-600 font-medium">+{growthPct}%</span> growth from {earliest.financial_year} to {latest.financial_year}. </>
+        ) : null}
+        Bars show total tracked funding per financial year.
+      </p>
+      <div className="space-y-1.5">
         {validYears.map(y => {
           const indPct = (y.indigenous_dollars || 0) / y.total_dollars;
+          const partial = isPartial(y.financial_year);
+          const gap = isGapYear(y.financial_year);
           return (
-            <div key={y.financial_year} className="flex items-center gap-3">
-              <span className="text-xs text-gray-500 w-14 flex-shrink-0">{y.financial_year}</span>
-              <div className="flex-1 h-6 bg-gray-100 rounded overflow-hidden relative">
+            <div key={y.financial_year} className="flex items-center gap-2">
+              <span className={`text-[11px] w-14 flex-shrink-0 ${partial ? 'text-gray-300' : gap ? 'text-gray-400 italic' : 'text-gray-500'}`}>
+                {y.financial_year}
+              </span>
+              <div className="flex-1 h-5 bg-gray-100 rounded overflow-hidden relative">
                 <div
-                  className="h-full bg-gray-800 transition-all"
-                  style={{ width: `${(y.total_dollars / maxDollars) * 100}%` }}
+                  className={`h-full transition-all ${partial ? 'bg-gray-300' : gap ? 'bg-gray-400' : 'bg-gray-800'}`}
+                  style={{ width: `${Math.min((y.total_dollars / maxDollars) * 100, 100)}%` }}
                 />
                 {indPct > 0.005 && (
                   <div
                     className="absolute top-0 left-0 h-full bg-amber-500"
-                    style={{ width: `${(y.indigenous_dollars / maxDollars) * 100}%` }}
+                    style={{ width: `${Math.min((y.indigenous_dollars || 0) / maxDollars * 100, 100)}%` }}
                   />
                 )}
               </div>
-              <span className="text-xs font-medium text-gray-900 w-16 text-right flex-shrink-0">
+              <span className={`text-[11px] font-medium w-14 text-right flex-shrink-0 ${partial ? 'text-gray-300' : 'text-gray-900'}`}>
                 {fmt(y.total_dollars)}
               </span>
             </div>
           );
         })}
       </div>
-      <div className="mt-4 flex items-center gap-4 text-xs text-gray-500">
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 bg-gray-800 rounded" /> Total
+      <div className="mt-3 pt-3 border-t border-gray-100 space-y-1.5">
+        <div className="flex items-center gap-4 text-[11px] text-gray-500">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 bg-gray-800 rounded-sm" /> Total funding
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 bg-amber-500 rounded-sm" /> Indigenous-led
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2.5 h-2.5 bg-gray-300 rounded-sm" /> Partial year
+          </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 bg-amber-500 rounded" /> Indigenous-led
-        </div>
+        <p className="text-[10px] text-gray-400 leading-snug">
+          2014-17 dip reflects a data gap — QLD historical grant data unavailable for those years, not an actual funding cut.
+        </p>
       </div>
     </div>
   );
@@ -403,14 +511,19 @@ function RecipientTable({ recipients, onSearch, onViewProfile }: {
               <tr
                 key={`${r.recipient_name}-${i}`}
                 className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
-                onClick={() => r.alma_linked && r.alma_org_id && onViewProfile
-                  ? onViewProfile(r.alma_org_id)
-                  : onSearch(r.recipient_name)
-                }
+                onClick={() => {
+                  if (r.recipient_abn) {
+                    window.location.href = `/justice-funding/org/${r.recipient_abn}`;
+                  } else if (r.alma_linked && r.alma_org_id && onViewProfile) {
+                    onViewProfile(r.alma_org_id);
+                  } else {
+                    onSearch(r.recipient_name);
+                  }
+                }}
               >
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-900 line-clamp-1">
+                    <span className={`font-medium line-clamp-1 ${r.recipient_abn ? 'text-red-700' : 'text-gray-900'}`}>
                       {r.recipient_name || '(blank)'}
                     </span>
                     {r.is_indigenous && (
@@ -2405,18 +2518,25 @@ export default function JusticeFundingPage() {
                   <div className="bg-white rounded-xl border border-gray-200 p-6">
                     <h3 className="font-bold text-gray-900 mb-4">Top 10 — Who Controls the Money</h3>
                     <div className="space-y-3">
-                      {power.top10_share?.orgs?.map((org: { name: string; dollars: number }, i: number) => {
+                      {power.top10_share?.orgs?.map((org: { name: string; dollars: number; abn: string | null }, i: number) => {
                         const barPct = (org.dollars / (power.top10_share.orgs[0]?.dollars || 1)) * 100;
-                        return (
-                          <div key={i}>
+                        const inner = (
+                          <>
                             <div className="flex justify-between text-sm mb-1">
-                              <span className="text-gray-700 truncate mr-2">{org.name || '(blank)'}</span>
+                              <span className={`truncate mr-2 ${org.abn ? 'text-red-700 hover:text-red-900 font-medium' : 'text-gray-700'}`}>{org.name || '(blank)'}</span>
                               <span className="font-bold text-gray-900 whitespace-nowrap">{fmt(org.dollars)}</span>
                             </div>
                             <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
                               <div className="h-full bg-red-500 rounded-full" style={{ width: `${barPct}%` }} />
                             </div>
-                          </div>
+                          </>
+                        );
+                        return org.abn ? (
+                          <a key={i} href={`/justice-funding/org/${org.abn}`} className="block hover:bg-gray-50 -mx-2 px-2 py-1 rounded transition-colors">
+                            {inner}
+                          </a>
+                        ) : (
+                          <div key={i}>{inner}</div>
                         );
                       })}
                     </div>
@@ -2444,9 +2564,11 @@ export default function JusticeFundingPage() {
                             </tr>
                           </thead>
                           <tbody>
-                            {power.intermediaries.map((org: { recipient_name: string; total_dollars: number; grant_count: number; sectors: string[] }, i: number) => (
-                              <tr key={i} className="border-b border-gray-100">
-                                <td className="px-3 py-2 text-gray-900">{org.recipient_name}</td>
+                            {power.intermediaries.map((org: { recipient_name: string; total_dollars: number; grant_count: number; sectors: string[]; abn: string | null }, i: number) => (
+                              <tr key={i} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onClick={() => org.abn && (window.location.href = `/justice-funding/org/${org.abn}`)}>
+                                <td className="px-3 py-2">
+                                  {org.abn ? <a href={`/justice-funding/org/${org.abn}`} className="text-red-700 hover:text-red-900 font-medium">{org.recipient_name}</a> : <span className="text-gray-900">{org.recipient_name}</span>}
+                                </td>
                                 <td className="px-3 py-2 text-right font-bold text-gray-900">{fmt(org.total_dollars)}</td>
                                 <td className="px-3 py-2 text-right text-gray-600 hidden sm:table-cell">{org.grant_count}</td>
                                 <td className="px-3 py-2 hidden md:table-cell">
@@ -2485,10 +2607,10 @@ export default function JusticeFundingPage() {
                             </tr>
                           </thead>
                           <tbody>
-                            {power.repeat_winners.map((org: { recipient_name: string; total_dollars: number; years_active: number; grant_count: number; is_indigenous: boolean }, i: number) => (
-                              <tr key={i} className="border-b border-gray-100">
+                            {power.repeat_winners.map((org: { recipient_name: string; total_dollars: number; years_active: number; grant_count: number; is_indigenous: boolean; abn: string | null }, i: number) => (
+                              <tr key={i} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onClick={() => org.abn && (window.location.href = `/justice-funding/org/${org.abn}`)}>
                                 <td className="px-3 py-2">
-                                  <span className="text-gray-900">{org.recipient_name}</span>
+                                  {org.abn ? <a href={`/justice-funding/org/${org.abn}`} className="text-red-700 hover:text-red-900 font-medium">{org.recipient_name}</a> : <span className="text-gray-900">{org.recipient_name}</span>}
                                   {org.is_indigenous && (
                                     <span className="ml-2 px-1.5 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded">
                                       Indigenous-led

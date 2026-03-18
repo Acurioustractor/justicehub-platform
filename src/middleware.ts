@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { DEV_ADMIN_BYPASS_COOKIE, hasDevAdminBypass } from '@/lib/dev-admin-bypass';
+import { isContainedPageEnabled } from '@/content/campaign';
 
 // NOTE: Mock session removed for security - use proper auth flow in development
 
@@ -20,7 +21,7 @@ const securityHeaders = {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
-    "media-src 'self' blob:",
+    "media-src 'self' blob: https://*.supabase.co",
     [
       "connect-src 'self'",
       'https://api.openai.com',
@@ -119,6 +120,11 @@ export async function middleware(request: NextRequest) {
     response.headers.set(key, value);
   });
 
+  // Launch gate — block disabled /contained/* pages
+  if (path.startsWith('/contained') && !isContainedPageEnabled(path)) {
+    return new NextResponse('Not Found', { status: 404 });
+  }
+
   // Redirect old blog routes to stories routes (consolidate to one system)
   if (path.startsWith('/admin/blog')) {
     const newPath = path.replace('/admin/blog', '/admin/stories');
@@ -131,6 +137,8 @@ export async function middleware(request: NextRequest) {
     '/about',
     '/community-programs',
     '/contained',
+    '/contained/enroll',
+    '/developer-api',
     '/events',
     '/for-funders',
     '/gallery',
@@ -140,6 +148,7 @@ export async function middleware(request: NextRequest) {
     '/preplanning',
     '/search',
     '/stories',
+    '/transparency',
     '/wiki',
   ];
   const isPublicRoute = publicRoutes.some(route => path === route || path.startsWith(`${route}/`));

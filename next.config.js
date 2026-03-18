@@ -60,6 +60,19 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: '/el-media-picker.html',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+        ],
+      },
+      {
         source: '/(.*)',
         headers: [
           {

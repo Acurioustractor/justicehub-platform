@@ -1,4 +1,3 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import {
   getStories as v2GetStories,
   getStorytellers as v2GetStorytellers,
@@ -7,6 +6,24 @@ import {
   isV2Configured,
   type V2Story,
 } from '@/lib/empathy-ledger/v2-client';
+
+// Import clients from lite (single source of truth — no duplicate Supabase instances)
+import {
+  empathyLedgerClient,
+  empathyLedgerServiceClient,
+  isEmpathyLedgerConfigured,
+  isEmpathyLedgerWriteConfigured,
+  EMPATHY_LEDGER_ENV_ERROR,
+} from '@/lib/supabase/empathy-ledger-lite';
+
+// Re-export for consumers
+export {
+  empathyLedgerClient,
+  empathyLedgerServiceClient,
+  isEmpathyLedgerConfigured,
+  isEmpathyLedgerWriteConfigured,
+  EMPATHY_LEDGER_ENV_ERROR,
+};
 
 /**
  * Empathy Ledger Client
@@ -18,45 +35,6 @@ import {
  * The v2 API enforces consent server-side — only published/public content is returned.
  * Elder approval and cultural sensitivity are preserved in the API layer.
  */
-
-// ─── Supabase Clients (kept for write operations + legacy scripts) ────────────
-
-const empathyLedgerUrl = process.env.EMPATHY_LEDGER_URL;
-const empathyLedgerApiKey = process.env.EMPATHY_LEDGER_API_KEY;
-export const EMPATHY_LEDGER_ENV_ERROR =
-  'Missing required env: EMPATHY_LEDGER_URL and EMPATHY_LEDGER_API_KEY';
-
-type EmpathyLedgerClient = SupabaseClient<any, 'public', any>;
-
-const configuredEmpathyLedgerClient: EmpathyLedgerClient | null =
-  empathyLedgerUrl && empathyLedgerApiKey
-    ? createClient<any>(empathyLedgerUrl, empathyLedgerApiKey)
-    : null;
-
-export const isEmpathyLedgerConfigured = isV2Configured || Boolean(configuredEmpathyLedgerClient);
-
-// Service role client for write operations (push sync to EL)
-const elServiceKey = process.env.EMPATHY_LEDGER_SERVICE_KEY;
-const configuredEmpathyLedgerServiceClient: EmpathyLedgerClient | null =
-  empathyLedgerUrl && elServiceKey
-    ? createClient<any>(empathyLedgerUrl, elServiceKey, {
-        auth: { autoRefreshToken: false, persistSession: false },
-      })
-    : null;
-
-export const empathyLedgerServiceClient = configuredEmpathyLedgerServiceClient;
-export const isEmpathyLedgerWriteConfigured = Boolean(configuredEmpathyLedgerServiceClient);
-
-// Defer config errors to request-time so local dev can run without Empathy Ledger env.
-export const empathyLedgerClient = (configuredEmpathyLedgerClient ??
-  new Proxy(
-    {},
-    {
-      get() {
-        throw new Error(EMPATHY_LEDGER_ENV_ERROR);
-      },
-    }
-  )) as EmpathyLedgerClient;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

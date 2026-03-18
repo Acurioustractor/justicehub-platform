@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import {
   ArrowRight,
-  Check,
   Copy,
   Heart,
   Mail,
@@ -16,6 +15,7 @@ import {
   Smartphone,
   Users,
 } from 'lucide-react';
+import { NewsletterSignup } from '@/components/contained/NewsletterSignup';
 
 const SITE_URL = 'https://justicehub.org.au';
 
@@ -229,6 +229,73 @@ interface CampaignStats {
   donors: number;
 }
 
+interface Foundation {
+  name: string;
+  total_giving_annual: number | null;
+  thematic_focus: string[] | null;
+  geographic_focus: string[] | null;
+  avg_grant_size: number | null;
+  website: string | null;
+}
+
+function FoundationTargets() {
+  const [foundations, setFoundations] = useState<Foundation[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/foundations/youth-justice')
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (data?.foundations) setFoundations(data.foundations);
+      })
+      .catch(() => null)
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return <div className="text-sm text-gray-500">Loading foundation data from GrantScope...</div>;
+  }
+
+  if (foundations.length === 0) {
+    return (
+      <div className="border-2 border-dashed border-gray-300 p-6 text-center">
+        <p className="text-gray-500 mb-3">Use ALMA to find foundations that match your approach.</p>
+        <Link
+          href="/intelligence/chat"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white text-sm font-bold hover:bg-gray-800 transition-colors"
+        >
+          Ask ALMA <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {foundations.slice(0, 6).map((f, i) => (
+        <div key={i} className="border-2 border-black bg-white p-4">
+          <h4 className="font-bold text-sm mb-1 truncate">{f.name}</h4>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {f.thematic_focus?.slice(0, 3).map((t, j) => (
+              <span key={j} className="text-[10px] font-bold uppercase tracking-widest bg-gray-100 px-2 py-0.5">{t}</span>
+            ))}
+          </div>
+          <div className="text-xs text-gray-600 space-y-0.5">
+            {f.total_giving_annual && <p>Annual giving: <strong>${(f.total_giving_annual / 1_000_000).toFixed(1)}M</strong></p>}
+            {f.avg_grant_size && <p>Avg grant: <strong>${Number(f.avg_grant_size).toLocaleString()}</strong></p>}
+            {f.geographic_focus && <p>Focus: {f.geographic_focus.join(', ')}</p>}
+          </div>
+          {f.website && (
+            <a href={f.website} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-2 block">
+              Website &rarr;
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function ActContent() {
   const [stats, setStats] = useState<CampaignStats>({
     nominations: 0,
@@ -262,8 +329,8 @@ export function ActContent() {
           detentionBillions: (detM / 1000).toFixed(1),
           communityMillions: String(s.rogs_youth_community_millions || 520),
           totalPunitiveBillions: String(s.rogs_total_punitive_billions || 26.4),
-          programs: (s.programs_documented || 939).toLocaleString(),
-          orgs: (s.orgs_linked || 527).toLocaleString(),
+          programs: (s.programs_documented || 876).toLocaleString(),
+          orgs: (s.orgs_linked || 615).toLocaleString(),
           indigenousRatio: String(Math.round(s.rogs_indigenous_detention_ratio || 23)),
           costPerChild: `${(detM / 0.734 / 1000).toFixed(1)}M`,
         });
@@ -560,6 +627,49 @@ export function ActContent() {
                   <CopyButton text={item.stat} label="" />
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Newsletter Signup */}
+        <section className="py-12 border-b-2 border-black bg-black text-white">
+          <div className="container-justice">
+            <div className="max-w-2xl mx-auto text-center">
+              <h2 className="text-3xl font-black uppercase tracking-tighter mb-3">
+                Stay in the Fight
+              </h2>
+              <p className="text-gray-300 mb-6">
+                Join the movement. Get evidence updates, campaign alerts, and be first to know when CONTAINED arrives in your city.
+              </p>
+              <NewsletterSignup source="contained_act_page" />
+            </div>
+          </div>
+        </section>
+
+        {/* Target a Funder */}
+        <section className="py-12 border-b-2 border-black">
+          <div className="container-justice">
+            <h2 className="text-2xl font-black uppercase tracking-tighter mb-2">
+              Target a Funder
+            </h2>
+            <p className="text-gray-600 mb-6 max-w-2xl">
+              10,779 Australian foundations tracked by GrantScope. These are the ones most likely to fund youth justice and Indigenous programs.
+              Use the funder email template above, then approach these organisations.
+            </p>
+            <FoundationTargets />
+            <div className="mt-6 flex flex-wrap gap-4">
+              <Link
+                href="/for-funders"
+                className="px-6 py-3 text-sm font-bold uppercase tracking-widest bg-black text-white hover:bg-gray-900 transition-colors flex items-center gap-2"
+              >
+                Full Investment Thesis <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/intelligence/chat"
+                className="px-6 py-3 text-sm font-bold uppercase tracking-widest border-2 border-black hover:bg-black hover:text-white transition-colors flex items-center gap-2"
+              >
+                Ask ALMA About Funders <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </section>

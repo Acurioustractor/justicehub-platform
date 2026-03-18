@@ -38,7 +38,7 @@ export default function ChatPage() {
               </div>
               <div className="hidden md:block">
                 <div className="inline-block bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-widest">
-                  Conversational Interface
+                  Agentic Intelligence
                 </div>
               </div>
             </div>
@@ -68,7 +68,7 @@ export default function ChatPage() {
                   <p>
                     <strong className="text-black">ALMA</strong> = {' '}
                     <strong className="text-orange-600">
-                      Authentic Learning for Meaningful Accountability
+                      Alternative Local Models Australia
                     </strong>
                   </p>
                   <p>
@@ -105,10 +105,10 @@ export default function ChatPage() {
                 </h3>
                 <div className="text-xs space-y-2">
                   <ul className="space-y-0.5 text-gray-800">
-                    <li>&quot;How much does detention cost?&quot;</li>
-                    <li>&quot;What reduces reoffending?&quot;</li>
-                    <li>&quot;Find diversion programs in NT&quot;</li>
-                    <li>&quot;Indigenous-led interventions&quot;</li>
+                    <li>&quot;How much does QLD spend on youth justice?&quot;</li>
+                    <li>&quot;What programs reduce recidivism?&quot;</li>
+                    <li>&quot;Compare detention costs across states&quot;</li>
+                    <li>&quot;What did the Royal Commission into NT detention find?&quot;</li>
                   </ul>
                 </div>
               </div>

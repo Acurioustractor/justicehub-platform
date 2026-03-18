@@ -13,7 +13,10 @@ import {
   MessageSquare,
   Building2,
   User,
-  HelpCircle
+  HelpCircle,
+  Box,
+  Heart,
+  Megaphone
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { trackJourneyEvent } from '@/lib/analytics/journey';
@@ -125,11 +128,14 @@ function ContactPageContent() {
   }, [prefillApplied, searchParams]);
 
   const categories = [
-    { value: 'general', label: 'General Inquiry', icon: MessageSquare },
-    { value: 'support', label: 'Technical Support', icon: HelpCircle },
-    { value: 'partnership', label: 'Partnership Opportunity', icon: Building2 },
-    { value: 'story', label: 'Share a Story', icon: User },
-    { value: 'press', label: 'Media/Press Inquiry', icon: Mail }
+    { value: 'host-container', label: 'I want to host the container in my region', icon: Box },
+    { value: 'fund-stop', label: 'I want to fund a tour stop', icon: Heart },
+    { value: 'young-people', label: 'I know young people who should help design Room 1', icon: User },
+    { value: 'community-org', label: 'I know a community org that should be in Room 3', icon: Building2 },
+    { value: 'spread-word', label: 'I want to spread the word', icon: Megaphone },
+    { value: 'partnership', label: 'Partnership opportunity', icon: Building2 },
+    { value: 'general', label: 'Something else', icon: MessageSquare },
+    { value: 'press', label: 'Media/Press inquiry', icon: Mail }
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

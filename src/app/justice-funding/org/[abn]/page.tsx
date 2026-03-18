@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import {
-  ArrowLeft, DollarSign, Building2, Target, BarChart3,
-  ExternalLink, AlertTriangle, Sparkles,
+  ArrowLeft, ArrowRight, DollarSign, Building2, Target, BarChart3,
+  ExternalLink, AlertTriangle, Sparkles, Network, MapPin,
 } from 'lucide-react';
+import CrossSystemContext from './cross-system-context';
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -77,6 +78,15 @@ interface OrgProfile {
   };
   recipient_abn?: string;
   tender_count?: number;
+  austender_contracts?: Array<{
+    title: string;
+    contract_value: number;
+    buyer_name: string;
+    contract_start: string | null;
+    contract_end: string | null;
+    category: string | null;
+    procurement_method: string | null;
+  }>;
 }
 
 // ── Helpers ────────────────────────────────────────────────
@@ -101,6 +111,9 @@ async function fetchProfile(abn: string): Promise<OrgProfile | null> {
     : 'http://localhost:3004';
   const res = await fetch(`${baseUrl}/api/justice-funding?view=org_profile&abn=${abn}`, {
     next: { revalidate: 3600 },
+    headers: {
+      'x-internal-secret': process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+    },
   });
   if (!res.ok) return null;
   return res.json();
@@ -339,6 +352,34 @@ export default async function OrgProfilePage(
                   ))}
                 </div>
               )}
+
+              {/* Registry links */}
+              {profile.recipient_abn && (
+                <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-gray-200">
+                  <span className="text-xs text-gray-400 self-center">Registries:</span>
+                  <a
+                    href={`https://www.acnc.gov.au/charity?search=${profile.recipient_abn.replace(/\s/g, '')}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="text-xs text-teal-600 hover:text-teal-800 flex items-center gap-1"
+                  >
+                    ACNC <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <a
+                    href={`https://abr.business.gov.au/ABN/View?abn=${profile.recipient_abn.replace(/\s/g, '')}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                  >
+                    ABN Lookup <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <a
+                    href={`https://search.asic.gov.au/cgi-bin/gns030c?acn=&search_name=${encodeURIComponent(org.name)}&state=0&postcode=&search_type=OrgAndBusNm`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="text-xs text-purple-600 hover:text-purple-800 flex items-center gap-1"
+                  >
+                    ASIC <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              )}
             </div>
           </section>
         )}
@@ -516,10 +557,44 @@ export default async function OrgProfilePage(
           </section>
         )}
 
+        {/* ── AUSTENDER CONTRACTS ── */}
+        {profile.austender_contracts && profile.austender_contracts.length > 0 && (
+          <section className="bg-white border border-gray-200 p-6">
+            <h2 className="font-bold text-lg flex items-center gap-2 mb-1">
+              <DollarSign className="w-5 h-5 text-gray-700" />
+              Federal Contracts (AusTender)
+            </h2>
+            <p className="text-xs text-gray-500 mb-4">
+              {profile.austender_contracts.length} contract{profile.austender_contracts.length !== 1 ? 's' : ''} awarded
+              {' '}— {fmt(profile.austender_contracts.reduce((s, c) => s + c.contract_value, 0))} total value
+            </p>
+            <div className="space-y-2">
+              {profile.austender_contracts.map((c, i) => (
+                <div key={i} className="flex items-start justify-between gap-4 p-3 bg-gray-50 border border-gray-100">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-medium text-gray-900 truncate">{c.title}</div>
+                    <div className="text-xs text-gray-500 mt-0.5">
+                      {c.buyer_name}
+                      {c.contract_start && ` · ${c.contract_start.slice(0, 4)}–${c.contract_end?.slice(0, 4) || 'ongoing'}`}
+                    </div>
+                    {c.category && (
+                      <span className="text-[10px] text-gray-400 mt-1 inline-block">{c.category}</span>
+                    )}
+                  </div>
+                  <div className="text-sm font-bold text-gray-900 shrink-0">{fmt(c.contract_value)}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ── CROSS-SYSTEM CONTEXT ── */}
+        <CrossSystemContext abn={abn} orgName={org.name} state={org.state} />
+
         {/* ── PROVENANCE ── */}
         <section className="text-xs text-gray-400 border-t border-gray-200 pt-4">
           <div className="font-medium text-gray-500 mb-1">Provenance</div>
-          <div>Funding data: Queensland Government Investment Portal (QGIP), Brisbane City Council, Ministerial Statements</div>
+          <div>Funding data: Queensland Government Investment Portal (QGIP), Brisbane City Council, Ministerial Statements{profile.austender_contracts?.length ? ', AusTender (federal contracts)' : ''}</div>
           <div>Intervention data: ALMA Evidence Engine (community-endorsed + AI-assisted extraction)</div>
           {profile.acnc && <div>Charity data: Australian Charities and Not-for-profits Commission (ACNC)</div>}
           {profile.financials && <div>Financial data: ACNC Annual Information Statement (AIS) FY{profile.financials.ais_year}</div>}

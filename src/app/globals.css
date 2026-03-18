@@ -1,8 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Import CONTAINED theme styles */
+
+/* CONTAINED Campaign — Visual Effects */
+.scanline-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px);
+  pointer-events: none;
+  z-index: 10;
+}
+.scanline-overlay-dark::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(10,10,10,0.02) 2px, rgba(10,10,10,0.02) 4px);
+  pointer-events: none;
+  z-index: 10;
+}
+.concrete-texture {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+}
+.contained-logo-mark {
+  width: 28px; height: 28px; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; position: relative;
+}
+.contained-logo-mark::after { content: ''; width: 12px; height: 12px; background: currentColor; }
+@keyframes containedRevealUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero-animate { animation: containedRevealUp 0.8s ease forwards; }
+.hero-animate-delay-1 { animation-delay: 0.2s; opacity: 0; }
+.hero-animate-delay-2 { animation-delay: 0.4s; opacity: 0; }
+.hero-animate-delay-3 { animation-delay: 0.6s; opacity: 0; }
+.hero-animate-delay-4 { animation-delay: 0.8s; opacity: 0; }
+.hero-animate-delay-5 { animation-delay: 1.0s; opacity: 0; }
 
 @layer base {
   :root {
@@ -125,14 +162,13 @@
     margin-bottom: 1rem;
   }
 
-  /* Ensure headings on black backgrounds are always white */
-  .bg-black h1,
-  .bg-black h2,
-  .bg-black h3,
-  .bg-black h4,
-  .bg-black h5,
-  .bg-black h6 {
-    color: white !important;
+  /* Ensure headings on dark backgrounds inherit white text */
+  .bg-black h1, .bg-black h2, .bg-black h3, .bg-black h4, .bg-black h5, .bg-black h6,
+  .bg-gray-900 h1, .bg-gray-900 h2, .bg-gray-900 h3, .bg-gray-900 h4, .bg-gray-900 h5, .bg-gray-900 h6,
+  .bg-gray-950 h1, .bg-gray-950 h2, .bg-gray-950 h3, .bg-gray-950 h4, .bg-gray-950 h5, .bg-gray-950 h6,
+  .bg-amber-900 h1, .bg-amber-900 h2, .bg-amber-900 h3, .bg-amber-900 h4, .bg-amber-900 h5, .bg-amber-900 h6,
+  .text-white h1, .text-white h2, .text-white h3, .text-white h4, .text-white h5, .text-white h6 {
+    color: inherit !important;
   }
   
   h2 {

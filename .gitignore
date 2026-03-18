@@ -75,6 +75,18 @@ docs/archive/
 public/*.csv
 
 # Development content
-content/
+/content/
 projects/
 screen*.png
+
+# Claude Code caches
+.claude/tsc-cache/
+.claude/cache/
+
+# Local artifacts and thoughts
+artifacts/
+thoughts/
+
+# Media assets (large)
+public/media/
+.superdesign

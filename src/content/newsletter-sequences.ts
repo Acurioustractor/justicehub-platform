@@ -244,9 +244,79 @@ The most powerful thing you can do today: nominate one decision-maker.
   ],
 };
 
+// ============================================================
+// 4. CAMPAIGN LAUNCH - triggered on campaign_launch
+// ============================================================
+export const launchEmail: EmailSequence = {
+  id: 'campaign-launch',
+  name: 'CONTAINED Campaign Launch',
+  trigger: 'campaign_launch',
+  emails: [
+    {
+      id: 'launch-announce',
+      subject: 'This is CONTAINED',
+      preheader: 'One shipping container. Three rooms. Thirty minutes.',
+      delayDays: 0,
+      body: `One shipping container. Three rooms. Thirty minutes.
+
+THE CONTAINED is an immersive experience that puts Australia's youth justice crisis into physical reality. You walk through it. You feel it. You can never unsee it.
+
+THREE ROOMS
+
+Room 1: CURRENT REALITY
+Designed by young people who know what detention feels like. They are the experts.
+$4,250/day. $1.55M/year per child. 84% reoffend within two years.
+
+Room 2: THE THERAPEUTIC ALTERNATIVE
+Spain's Diagrama Foundation: 1:1 staffing, weekly family engagement, therapeutic care.
+73% success rate. €5.64 returned for every €1 invested.
+
+Room 3: THE ORGANISATIONS ALREADY DOING IT
+At each tour stop, a local community organisation fills this space with their story.
+$75/day. 88% success. Community-led. Culture-centred. Evidence-based.
+
+THE NUMBERS
+
+$1.55M — annual cost per detained child (Productivity Commission ROGS)
+84% — detention reoffending rate (QLD Youth Justice Strategy)
+$75/day — cost of community alternatives (Community Services Benchmark)
+23x — Indigenous overrepresentation in youth detention
+88% — restorative justice success rate (QLD Dept of Justice)
+
+AUSTRALIAN TOUR 2026
+
+Mount Druitt, NSW — April 2026 (Mounty Yarns)
+Adelaide, SA — May 2026 (Reintegration Conference)
+Perth, WA — August 2026 (University of Western Australia)
+Tennant Creek, NT — September 2026 (Community-controlled)
+
+THREE THINGS YOU CAN DO RIGHT NOW
+
+1. NOMINATE A DECISION MAKER
+Politicians, CEOs, editors, community leaders. Create the public pressure that forces participation.
+→ ${SITE}/contained#nominate
+
+2. BOOK YOUR EXPERIENCE
+24 slots daily. Trauma-informed facilitation. Pay what you can ($0-$50).
+→ ${SITE}/contained/tour
+
+3. SHARE THE EVIDENCE
+Download stat cards and social templates. Same message, every platform.
+→ ${SITE}/contained/tour/social
+
+The evidence is overwhelming. Community-led alternatives work better, cost less, and keep young people connected to family and culture.
+
+THE CONTAINED makes you feel it. Your action makes it impossible to ignore.
+
+— The JusticeHub Team`,
+    },
+  ],
+};
+
 // All sequences indexed by ID
 export const allSequences: Record<string, EmailSequence> = {
   welcome: welcomeSequence,
   'pre-event': preEventSequence,
   'monthly-digest': monthlyDigestTemplate,
+  'campaign-launch': launchEmail,
 };

@@ -62,8 +62,13 @@ export async function GET(req: NextRequest) {
   const stateFilter = params.get('state') || 'QLD';
 
   // Views requiring paid access (org-level detail, downloads, narratives)
-  const paidViews = ['org_profile', 'org_map', 'power', 'acnc_profile'];
-  if (view && paidViews.includes(view)) {
+  // Internal server-side requests (from org profile page SSR) bypass the gate
+  const internalSecret = req.headers.get('x-internal-secret');
+  const isInternalRequest = internalSecret === process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  // Only gate individual org-level detail views. Aggregate intelligence (power, org_map) is public.
+  const paidViews = ['org_profile', 'acnc_profile'];
+  if (view && paidViews.includes(view) && !isInternalRequest) {
     try {
       const authClient = await createAuthClient();
       const access = await checkApiFeatureAccess(authClient, 'alma_full_detail');
@@ -161,8 +166,21 @@ export async function GET(req: NextRequest) {
           is_indigenous: /aboriginal|torres strait|indigenous|murri|first nations/i.test(fundingRows[0].recipient_name),
           recipient_abn: abnParam,
         };
-        // Enrich with ACNC
+        // Enrich with ACNC + AusTender
         await enrichWithAcnc(profile, abnParam);
+        try {
+          const { data: contracts } = await supabase
+            .from('austender_contracts')
+            .select('title, contract_value, buyer_name, contract_start, contract_end, category, procurement_method')
+            .eq('supplier_abn', abnParam)
+            .gt('contract_value', 0)
+            .order('contract_value', { ascending: false })
+            .limit(20);
+          if (contracts?.length) {
+            profile.austender_contracts = contracts;
+            profile.tender_count = contracts.length;
+          }
+        } catch { /* best-effort */ }
         return NextResponse.json(profile);
       }
     }
@@ -190,14 +208,23 @@ export async function GET(req: NextRequest) {
       }
     } catch { /* ACNC enrichment is best-effort */ }
 
-    // Enrich with tender count
+    // Enrich with AusTender contracts
     try {
-      const { count } = await supabase
-        .from('state_tenders')
-        .select('id', { count: 'exact', head: true })
-        .or(`supplier_name.ilike.%${profile.organization?.name?.substring(0, 30)}%`);
-      if (count && count > 0) profile.tender_count = count;
-    } catch { /* tender enrichment is best-effort */ }
+      const profileAbn = profile.recipient_abn || resolvedAbn;
+      if (profileAbn) {
+        const { data: contracts } = await supabase
+          .from('austender_contracts')
+          .select('title, contract_value, buyer_name, contract_start, contract_end, category, procurement_method')
+          .eq('supplier_abn', profileAbn)
+          .gt('contract_value', 0)
+          .order('contract_value', { ascending: false })
+          .limit(20);
+        if (contracts?.length) {
+          profile.austender_contracts = contracts;
+          profile.tender_count = contracts.length;
+        }
+      }
+    } catch { /* AusTender enrichment is best-effort */ }
 
     return NextResponse.json(profile);
   }
@@ -269,15 +296,28 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(data ?? []);
   }
 
-  // State tenders
+  // AusTender contracts (replaces state_tenders)
   if (view === 'tenders') {
     const tenderState = params.get('tender_state');
+    const supplierAbn = params.get('supplier_abn');
+    const buyerName = params.get('buyer');
     let query = supabase
-      .from('state_tenders')
-      .select('*')
-      .eq('is_justice_related', true)
-      .order('published_date', { ascending: false, nullsFirst: false });
-    if (tenderState) query = query.eq('state', tenderState.toUpperCase());
+      .from('austender_contracts')
+      .select('title, contract_value, buyer_name, supplier_name, supplier_abn, category, procurement_method, contract_start, contract_end, date_published, source_url')
+      .gt('contract_value', 0)
+      .order('contract_value', { ascending: false });
+    if (supplierAbn) query = query.eq('supplier_abn', supplierAbn);
+    if (buyerName) query = query.ilike('buyer_name', `%${buyerName}%`);
+    if (tenderState) {
+      // Filter by buyer containing state department names
+      const stateNames: Record<string, string> = { NSW: 'NSW', QLD: 'Queensland', VIC: 'Victoria', WA: 'Western Australia', SA: 'South Australia', TAS: 'Tasmania', NT: 'Northern Territory', ACT: 'ACT' };
+      const stateName = stateNames[tenderState.toUpperCase()] || tenderState;
+      query = query.or(`buyer_name.ilike.%${stateName}%,buyer_name.ilike.%${tenderState.toUpperCase()}%`);
+    }
+    // Default: justice-related keywords if no specific filter
+    if (!supplierAbn && !buyerName) {
+      query = query.or('buyer_name.ilike.%justice%,title.ilike.%youth justice%,title.ilike.%detention%,title.ilike.%corrections%,category.ilike.%justice%');
+    }
     const { data, error } = await query.limit(100);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json({ tenders: data || [], total: data?.length || 0 });
@@ -319,7 +359,18 @@ export async function GET(req: NextRequest) {
   }
 
   if (view === 'by_org') {
-    const { data, error } = await supabase.from('v_justice_funding_by_org').select('*').limit(100);
+    // Filter out ROGS aggregate/subcategory rows and garbage data
+    const { data, error } = await supabase.rpc('exec_sql', {
+      query: `
+        SELECT * FROM v_justice_funding_by_org
+        WHERE recipient_name NOT IN ('Total', '2', '')
+          AND recipient_name NOT LIKE 'Youth Justice - %'
+          AND recipient_name NOT LIKE '% - Total%'
+          AND LENGTH(TRIM(recipient_name)) > 2
+        ORDER BY total_funding DESC NULLS LAST
+        LIMIT 100
+      `
+    });
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json(data);
   }

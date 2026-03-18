@@ -46,15 +46,15 @@ export const journeyContainers = [
   {
     id: "therapeutic-model",
     step: 2,
-    title: "Therapeutic Alternative",
-    headline: "Diagrama (Spain)",
+    title: "What Works",
+    headline: "Diagrama Foundation, Spain",
     summary:
-      "Embodied empathy, 1:1 staffing, and family-centred support that rebuilds lives instead of warehousing them.",
+      "We visited Diagrama's youth justice centres in Spain. Kids get education, therapy, and connection instead of concrete walls. 1:1 staffing, family visits every week, and a recidivism rate of just 13.6%. This room recreates what we saw there.",
     stats: [
+      { label: "Recidivism", value: "13.6%" },
       { label: "Staff Ratio", value: "1:1" },
-      { label: "Family Engagement", value: "Weekly" },
       { label: "Social Return", value: "€5.64 per €1" },
-      { label: "Success Rate", value: "73%" },
+      { label: "Family Contact", value: "Weekly" },
     ],
     duration: "10 minutes of possibility",
     tone: "transitional",
@@ -160,13 +160,41 @@ export const evidenceHighlights: EvidenceHighlight[] = [
 // Videos: YouTube, Vimeo, or local files in /public/images/contained/
 // Images: local files in /public/images/contained/ or Supabase storage URLs
 
+const SUPABASE_MEDIA = 'https://tednluwflfhxyucgwigh.supabase.co/storage/v1/object/public/media/contained';
+
 export const campaignMedia = {
   heroVideo: {
-    url: '/media/contained/cell-video.mov',
-    thumbnail: '', // e.g. '/images/contained/hero-thumb.jpg'
+    url: `${SUPABASE_MEDIA}/cell-video.mp4`,
+    thumbnail: `${SUPABASE_MEDIA}/justicehub-hero-landscape.png`,
     title: 'CONTAINED: Australian Tour 2026',
     description: 'One shipping container. Three rooms. Thirty minutes. The reality of youth detention, the therapeutic alternative, and the future we can build.',
   },
+  heroImage: `${SUPABASE_MEDIA}/justicehub-hero-landscape.png`,
+  brandSquare: `${SUPABASE_MEDIA}/contained-brand-square.png`,
+  storyImage: `${SUPABASE_MEDIA}/contained-story.png`,
+  containerRoom: `${SUPABASE_MEDIA}/container-room.jpg`,
+  cellVideoMov: `${SUPABASE_MEDIA}/cell-video.mov`,
+  orgHeros: {
+    oonchiumpa: `${SUPABASE_MEDIA}/gallery/oonchiumpa-hero.jpg`,
+    bgfit: `${SUPABASE_MEDIA}/gallery/bgfit-hero.jpg`,
+  },
+  // Local campaign assets
+  posterBrand: '/images/contained/poster-brand.png',
+  posterTour: '/images/contained/poster-tour.png',
+  // chalkQuestion ARCHIVED — too AI-looking (moved to _archived-ai-photorealistic/)
+  logoSquare: '/images/contained/logo-contained-square.png',
+  logoWhite: '/images/contained/logo-contained-white.png',
+  // Curated real EL container room photos (from d0a162d2 media set)
+  roomPhotos: [
+    { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1773631913022_Contained-4.jpg', caption: 'Room 1: Current Reality' },
+    { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1773631914088_Contained-5.jpg', caption: 'The CONTAINED experience' },
+    { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1773631915230_Contained-7.jpg', caption: 'Inside the container' },
+    { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1773631917162_Contained-9.jpg', caption: 'Room 2: What works' },
+    { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1773631918931_Contained-10.jpg', caption: 'Room 3: What could be' },
+    { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1773631919844_Contained-11.jpg', caption: 'The installation' },
+    { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1773631920999_Contained-23.jpg', caption: 'The container' },
+    { src: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1773632013813_two_rooms.png', caption: 'Two realities, side by side' },
+  ],
   // Gallery images - add as many as needed
   gallery: [] as Array<{
     src: string;
@@ -201,7 +229,7 @@ export const tourStops: TourStop[] = [
     description:
       'First stop, Western Sydney. The CONTAINED experience debuts at Mounty Yarns, a youth-led storytelling space in the heart of Mount Druitt.',
     eventSlug: 'contained-mount-druitt-launch',
-    date: 'TBC 2026',
+    date: 'April 2026',
     status: 'planning',
     lat: -33.74,
     lng: 150.82,
@@ -215,8 +243,8 @@ export const tourStops: TourStop[] = [
     description:
       'Bringing the container to the national Reintegration Conference. Policymakers, practitioners, and people with lived experience together.',
     eventSlug: 'contained-adelaide-reintegration',
-    date: 'TBC 2026',
-    status: 'exploring',
+    date: 'May 2026',
+    status: 'confirmed',
     lat: -34.93,
     lng: 138.60,
     partnerQuote: 'The conference that could change the national conversation on youth justice.',
@@ -229,7 +257,7 @@ export const tourStops: TourStop[] = [
     description:
       'Academic partnership exploring therapeutic alternatives to detention with WA\'s leading youth justice researchers.',
     eventSlug: 'contained-perth-uwa',
-    date: 'TBC 2026',
+    date: 'May 2026',
     status: 'exploring',
     lat: -31.95,
     lng: 115.86,
@@ -242,7 +270,7 @@ export const tourStops: TourStop[] = [
     description:
       'Community-controlled engagement with First Nations families and leaders in the heart of the NT.',
     eventSlug: 'contained-tennant-creek',
-    date: 'TBC 2026',
+    date: 'June 2026',
     status: 'exploring',
     lat: -19.65,
     lng: 134.19,
@@ -665,3 +693,77 @@ export const narrativePillars = [
       "Political change follows public pressure. Every nomination, booking, and story fuels momentum.",
   },
 ];
+
+// ---------------------------------------------------------------------------
+// Launch Gates
+// ---------------------------------------------------------------------------
+// NEXT_PUBLIC_LAUNCH_STAGE controls which /contained/* pages are publicly
+// visible. Each stage is additive — later stages include all earlier pages.
+//
+// 'preview' — core landing + social kit + act (soft launch)
+// 'live'    — everything except deferred pages
+// 'full'    — all pages enabled
+//
+// Default: 'preview' (safest)
+// ---------------------------------------------------------------------------
+
+export type LaunchStage = 'preview' | 'live' | 'full';
+
+export const LAUNCH_STAGE: LaunchStage =
+  (process.env.NEXT_PUBLIC_LAUNCH_STAGE as LaunchStage) || 'preview';
+
+/** Pages enabled per stage (cumulative — each stage adds to the previous) */
+const stagePages: Record<LaunchStage, string[]> = {
+  preview: [
+    '/contained',
+    '/contained/tour',
+    '/contained/tour/social',
+    '/contained/act',
+    '/contained/stories',
+    '/contained/about',
+    '/contained/content',
+    '/contained/share',
+  ],
+  live: [
+    '/contained/launch',
+    '/contained/experience',
+  ],
+  full: [
+    '/contained/nominations',
+    '/contained/vip-dinner',
+    '/contained/register',
+    '/contained/enroll',
+  ],
+};
+
+/** All pages enabled at the current launch stage */
+function getEnabledPages(stage: LaunchStage): Set<string> {
+  const stages: LaunchStage[] = ['preview', 'live', 'full'];
+  const idx = stages.indexOf(stage);
+  const pages = new Set<string>();
+  for (let i = 0; i <= idx; i++) {
+    stagePages[stages[i]].forEach(p => pages.add(p));
+  }
+  return pages;
+}
+
+/**
+ * Check whether a /contained/* path is enabled at the current launch stage.
+ * Dynamic routes like /contained/tour/[slug] are enabled if their parent is.
+ */
+export function isContainedPageEnabled(pathname: string): boolean {
+  const enabled = getEnabledPages(LAUNCH_STAGE);
+
+  // Exact match
+  if (enabled.has(pathname)) return true;
+
+  // Dynamic route — check if the parent is enabled (e.g. /contained/tour/foo → /contained/tour)
+  const segments = pathname.split('/').filter(Boolean);
+  while (segments.length > 1) {
+    segments.pop();
+    const parent = '/' + segments.join('/');
+    if (enabled.has(parent)) return true;
+  }
+
+  return false;
+}

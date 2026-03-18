@@ -112,6 +112,11 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Grants and funding opportunities'
             },
             {
+                label: 'The Case for Change',
+                href: '/analysis',
+                description: 'Data-driven analysis of youth justice'
+            },
+            {
                 label: 'Sector Map',
                 href: '/sector-map',
                 description: 'Full sector landscape and funding flows'
@@ -224,6 +229,11 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Creative solutions'
             },
             {
+                label: 'The Authority',
+                href: '/authority',
+                description: '$97.9B in justice funding, exposed'
+            },
+            {
                 label: 'Transparency',
                 href: '/transparency',
                 description: 'Track funding and outcomes'
@@ -328,7 +338,8 @@ export const footerSections = [
             { label: 'How It Works', href: '/how-it-works', description: 'Platform overview' },
             { label: 'Privacy Policy', href: '/privacy', description: 'Your data protection' },
             { label: 'Terms of Service', href: '/terms', description: 'Usage guidelines' },
-            { label: 'Contact Us', href: '/contact', description: 'Get in touch' }
+            { label: 'Contact Us', href: '/contact', description: 'Get in touch' },
+            { label: 'Developer API', href: '/developer-api', description: 'Empathy Ledger API docs' }
         ]
     }
 ];
