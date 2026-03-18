@@ -33,7 +33,7 @@ export const almaTools = {
       const state = rawState?.toUpperCase();
       let q = supabase
         .from('alma_interventions')
-        .select('id, name, description, type, geography, evidence_level, cost_per_young_person, operating_organization')
+        .select('id, name, description, type, geography, evidence_level, cost_per_young_person, cost_effectiveness_rating, operating_organization')
         .neq('verification_status', 'ai_generated');
 
       if (query) { const s = sanitize(query); q = q.or(`name.ilike.%${s}%,description.ilike.%${s}%`); }
@@ -328,13 +328,21 @@ export const almaTools = {
       if (source) { const s = sanitize(source); q = q.ilike('source', `%${s}%`); }
       if (min_amount != null) q = q.gte('amount_dollars', min_amount);
 
-      const { data, error } = await q.limit(limit);
+      // Parallel: get results + total count with same filters
+      let cq = supabase.from('justice_funding').select('*', { count: 'exact', head: true });
+      if (query) { const s = sanitize(query); cq = cq.or(`recipient_name.ilike.%${s}%,program_name.ilike.%${s}%,project_description.ilike.%${s}%`); }
+      if (rawState) cq = cq.ilike('state', rawState);
+      if (source) { const s = sanitize(source); cq = cq.ilike('source', `%${s}%`); }
+      if (min_amount != null) cq = cq.gte('amount_dollars', min_amount);
+
+      const [{ data, error }, { count: totalMatches }] = await Promise.all([q.limit(limit), cq]);
       if (error) return { error: error.message };
 
       const totalAmount = (data || []).reduce((sum: number, r: Record<string, unknown>) => sum + (Number(r.amount_dollars) || 0), 0);
       return {
         funding: data || [],
-        count: data?.length || 0,
+        showing: data?.length || 0,
+        total_matches: totalMatches || data?.length || 0,
         total_amount_shown: `$${(totalAmount / 1_000_000).toFixed(1)}M`,
         note: 'Sorted by amount descending. Use min_amount to filter small grants.',
       };
@@ -376,12 +384,16 @@ export const almaTools = {
       const s = sanitize(query);
 
       // Search JH orgs first (richer data), then ACNC charities
-      const [orgsResult, acncResult] = await Promise.all([
+      const [orgsResult, orgsCount, acncResult] = await Promise.all([
         supabase
           .from('organizations')
           .select('id, name, slug, description, abn, website')
           .or(`name.ilike.%${s}%,description.ilike.%${s}%`)
           .limit(limit),
+        supabase
+          .from('organizations')
+          .select('*', { count: 'exact', head: true })
+          .or(`name.ilike.%${s}%,description.ilike.%${s}%`),
         supabase
           .from('acnc_charities')
           .select('abn, charity_name, state, charity_size, activities_description')
@@ -392,7 +404,8 @@ export const almaTools = {
       return {
         organizations: orgsResult.data || [],
         charities: acncResult.data || [],
-        total: (orgsResult.data?.length || 0) + (acncResult.data?.length || 0),
+        total_matches: (orgsCount.count || 0) + (acncResult.data?.length || 0),
+        showing: (orgsResult.data?.length || 0) + (acncResult.data?.length || 0),
         note: 'Organizations with a slug have a JusticeHub profile page at /organizations/{slug}',
       };
     },

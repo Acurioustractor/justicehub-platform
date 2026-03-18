@@ -5,7 +5,7 @@
  * MiniMax M2.7 primary, Gemini 2.5 Flash fallback, Groq last resort.
  */
 
-import { streamText, stepCountIs } from 'ai';
+import { streamText } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { almaTools } from '@/lib/ai/alma-tools';
@@ -173,7 +173,40 @@ export async function POST(request: Request) {
       maxSteps: 5,
     });
 
-    return result.toUIMessageStreamResponse();
+    // Pipe through a transform that strips <think>...</think> reasoning tags (MiniMax M2.7)
+    const response = result.toUIMessageStreamResponse();
+    const reader = response.body!.getReader();
+    const decoder = new TextDecoder();
+    const encoder = new TextEncoder();
+    let insideThink = false;
+
+    const stripped = new ReadableStream({
+      async pull(controller) {
+        const { done, value } = await reader.read();
+        if (done) { controller.close(); return; }
+        let text = decoder.decode(value, { stream: true });
+        // Handle <think> tags that may span chunks
+        while (text.includes('<think>')) {
+          const before = text.slice(0, text.indexOf('<think>'));
+          if (before) controller.enqueue(encoder.encode(before));
+          text = text.slice(text.indexOf('<think>') + 7);
+          insideThink = true;
+        }
+        if (insideThink) {
+          if (text.includes('</think>')) {
+            text = text.slice(text.indexOf('</think>') + 8);
+            insideThink = false;
+          } else {
+            return; // swallow chunk inside <think>
+          }
+        }
+        if (text) controller.enqueue(encoder.encode(text));
+      },
+    });
+
+    return new Response(stripped, {
+      headers: response.headers,
+    });
   } catch (error) {
     console.error('[ALMA Stream] Error:', error);
     return new Response(
