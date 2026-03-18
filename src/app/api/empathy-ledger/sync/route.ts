@@ -9,6 +9,12 @@ import { empathyLedgerClient, empathyLedgerServiceClient } from '@/lib/supabase/
  *   2. Admin cookie session
  */
 async function isAuthorized(request: NextRequest): Promise<boolean> {
+  // 0. Vercel cron auth (Vercel sets this header automatically)
+  const vercelCronHeader = request.headers.get('x-vercel-cron');
+  if (vercelCronHeader) {
+    return true;
+  }
+
   // 1. API key auth (cron, scripts, enterprise integrations)
   const authHeader = request.headers.get('authorization') || '';
   if (authHeader.startsWith('Bearer ')) {
