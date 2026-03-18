@@ -40,7 +40,7 @@ export type FormatKey = keyof typeof FORMATS
 // ─── Hashtags ────────────────────────────────────────────────────────────────
 
 export const HASHTAGS = {
-  primary: ['#TheContained', '#YouthJustice', '#JusticeHub'],
+  primary: ['#CONTAINED', '#YouthJustice', '#JusticeHub'],
   tour: ['#MountDruitt', '#WesternSydney', '#Adelaide', '#Perth', '#TennantCreek'],
   thematic: ['#ImmersiveAdvocacy', '#YouthVoice', '#SelfDetermination', '#JusticeReform'],
 } as const

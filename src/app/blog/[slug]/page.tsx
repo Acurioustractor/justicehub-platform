@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       description: post.metaDescription || post.excerpt,
       images: post.featuredImageUrl ? [post.featuredImageUrl] : [],
       type: 'article',
-      url: `https://justicehub.org.au/blog/${params.slug}`,
+      url: `https://justicehub.com.au/blog/${params.slug}`,
     },
     twitter: {
       card: 'summary_large_image',

@@ -121,7 +121,7 @@ export default async function Image() {
             color: '#4b5563',
           }}
         >
-          justicehub.org.au/contained/act
+          justicehub.com.au/contained/act
         </div>
       </div>
     ),

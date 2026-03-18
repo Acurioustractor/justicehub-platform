@@ -356,7 +356,7 @@ export interface TourSocialKit {
   posts: SocialPost[];
 }
 
-const CORE_HASHTAGS = ['#TheContained', '#YouthJustice', '#JusticeHub'];
+const CORE_HASHTAGS = ['#CONTAINED', '#YouthJustice', '#JusticeHub'];
 
 export const tourSocialKits: TourSocialKit[] = [
   {
@@ -407,7 +407,7 @@ Australia spends $1.55 million per child per year on detention. 84% reoffend. Co
 
 Come experience it. Bring someone who needs to see it.
 
-Register: justicehub.org.au/events/contained-mount-druitt-launch`,
+Register: justicehub.com.au/events/contained-mount-druitt-launch`,
         hashtags: [...CORE_HASHTAGS, '#MountDruitt'],
       },
       {
@@ -467,7 +467,7 @@ After the Mount Druitt launch, the tour continues building momentum. Adelaide br
 
 The evidence is clear. Community-led alternatives work better, cost less, and keep young people connected to family and culture.
 
-Register now: justicehub.org.au/events/contained-adelaide-reintegration`,
+Register now: justicehub.com.au/events/contained-adelaide-reintegration`,
         hashtags: [...CORE_HASHTAGS, '#Adelaide', '#SouthAustralia'],
       },
       {
@@ -598,7 +598,7 @@ Mount Druitt → Adelaide → Perth → Tennant Creek
 
 Thirty minutes inside youth detention reality, and the alternative that already works.
 
-justicehub.org.au/contained/tour`,
+justicehub.com.au/contained/tour`,
     hashtags: CORE_HASHTAGS,
   },
   {
@@ -644,7 +644,7 @@ $100K → Full tour + documentation
 
 Every dollar builds the case for change.
 
-justicehub.org.au/contained/tour`,
+justicehub.com.au/contained/tour`,
     hashtags: [...CORE_HASHTAGS, '#FundTheMovement'],
   },
 ];

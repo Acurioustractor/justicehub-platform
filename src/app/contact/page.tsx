@@ -260,10 +260,10 @@ function ContactPageContent() {
                 <Mail className="h-8 w-8 mx-auto mb-3 text-blue-800" />
                 <h3 className="font-bold mb-2">Email Us</h3>
                 <a
-                  href="mailto:hello@justicehub.org.au"
+                  href="mailto:benjamin@act.place"
                   className="text-blue-800 hover:underline"
                 >
-                  hello@justicehub.org.au
+                  benjamin@act.place
                 </a>
                 <p className="text-sm text-gray-600 mt-2">
                   Response within 24-48 hours

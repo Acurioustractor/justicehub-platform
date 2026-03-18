@@ -55,7 +55,7 @@ export const metadata = {
     images: ['/images/og/blog.png'],
   },
   alternates: {
-    canonical: 'https://justicehub.org.au/blog',
+    canonical: 'https://justicehub.com.au/blog',
   },
 };
 

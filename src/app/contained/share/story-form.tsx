@@ -12,7 +12,7 @@ const TOUR_STOPS = [
   'Tennant Creek',
 ];
 
-const SITE_URL = 'https://justicehub.org.au';
+const SITE_URL = 'https://justicehub.com.au';
 
 export function StoryForm() {
   const [form, setForm] = useState({

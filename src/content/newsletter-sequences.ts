@@ -21,7 +21,7 @@ export interface EmailSequence {
   emails: SequenceEmail[];
 }
 
-const SITE = 'https://justicehub.org.au';
+const SITE = 'https://justicehub.com.au';
 
 // ============================================================
 // 1. WELCOME SEQUENCE - triggered on newsletter signup
@@ -193,7 +193,7 @@ DURING:
 
 AFTER:
 - Share your reaction: we'll have QR codes for instant feedback
-- Tag @JusticeHubAU and use #TheContained
+- Tag @JusticeHubAU and use #CONTAINED
 - Download shareable stat cards: ${SITE}/contained/tour/social
 
 Every person who walks through this container strengthens the case for change.

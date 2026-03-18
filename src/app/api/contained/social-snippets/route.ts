@@ -3,7 +3,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 
 export const dynamic = 'force-dynamic';
 
-const SITE_URL = 'https://justicehub.org.au';
+const SITE_URL = 'https://justicehub.com.au';
 
 /**
  * GET /api/contained/social-snippets?id=<synced_story_id>

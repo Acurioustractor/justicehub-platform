@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { NewsletterSignup } from '@/components/contained/NewsletterSignup';
 
-const SITE_URL = 'https://justicehub.org.au';
+const SITE_URL = 'https://justicehub.com.au';
 
 interface LiveStats {
   detentionBillions: string;
@@ -103,7 +103,7 @@ First public stop: Mount Druitt, April 25, 2026
 Tour route: Mount Druitt, Adelaide, Perth, Tennant Creek
 
 Press kit & details: ${SITE_URL}/contained
-Contact: hello@justicehub.org.au`,
+Contact: benjamin@act.place`,
     },
     funder: {
       subject: 'Investment opportunity: CONTAINED national tour',
@@ -115,7 +115,7 @@ We're seeking philanthropic partners at $10K–$250K+ to fund the tour, document
 
 Investment thesis: ${SITE_URL}/for-funders
 Tour details: ${SITE_URL}/contained
-Contact: hello@justicehub.org.au`,
+Contact: benjamin@act.place`,
     },
   };
 }

@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div style={{ display: 'flex', fontSize: fSz, fontFamily: mf, color: BRAND.gray[600], maxWidth: '60%' }}>Source: {stat.source}</div>
-          <div style={{ display: 'flex', fontSize: fSz + 3, fontFamily: mf, color: BRAND.gray[500] }}>justicehub.org.au</div>
+          <div style={{ display: 'flex', fontSize: fSz + 3, fontFamily: mf, color: BRAND.gray[500] }}>justicehub.com.au</div>
         </div>
       </div>,
       { width: format.width, height: format.height, fonts }
@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <div style={{ display: 'flex', fontSize: fSz + 3, fontFamily: mf, color: BRAND.gray[500] }}>justicehub.org.au</div>
+          <div style={{ display: 'flex', fontSize: fSz + 3, fontFamily: mf, color: BRAND.gray[500] }}>justicehub.com.au</div>
         </div>
       </div>,
       { width: format.width, height: format.height, fonts }
@@ -141,7 +141,7 @@ export async function GET(request: NextRequest) {
           {excerpt ? <div style={{ display: 'flex', fontSize: isLand ? 16 : 20, fontFamily: mf, color: BRAND.gray[400], lineHeight: 1.5, marginTop: 16, maxWidth: '75%' }}>{excerpt}</div> : <div style={{ display: 'flex' }} />}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 20 }}>
             {author ? <div style={{ display: 'flex', fontSize: 16, fontFamily: mf, color: BRAND.offWhite }}>By {author}</div> : <div style={{ display: 'flex' }} />}
-            <div style={{ display: 'flex', fontSize: 16, fontFamily: mf, color: BRAND.gray[500] }}>justicehub.org.au</div>
+            <div style={{ display: 'flex', fontSize: 16, fontFamily: mf, color: BRAND.gray[500] }}>justicehub.com.au</div>
           </div>
         </div>
       </div>,
@@ -174,7 +174,7 @@ export async function GET(request: NextRequest) {
             {location ? <div style={{ display: 'flex', fontSize: 12, fontFamily: mf, color: BRAND.gray[400], letterSpacing: 2, marginTop: 4 }}>{location.toUpperCase()}</div> : <div style={{ display: 'flex' }} />}
             {credit ? <div style={{ display: 'flex', fontSize: 11, fontFamily: mf, color: BRAND.gray[600], marginTop: 4 }}>Photo: {credit}</div> : <div style={{ display: 'flex' }} />}
           </div>
-          <div style={{ display: 'flex', fontSize: 14, fontFamily: mf, color: BRAND.gray[500] }}>justicehub.org.au</div>
+          <div style={{ display: 'flex', fontSize: 14, fontFamily: mf, color: BRAND.gray[500] }}>justicehub.com.au</div>
         </div>
       </div>,
       { width: format.width, height: format.height, fonts }

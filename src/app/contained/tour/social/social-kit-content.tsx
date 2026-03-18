@@ -194,7 +194,7 @@ export function SocialKitContent() {
               Share These Images
             </h2>
             <p className="text-gray-600 mb-8 max-w-2xl">
-              Right-click (or long-press on mobile) to save. Tag @JusticeHubAU and use #TheContained.
+              Right-click (or long-press on mobile) to save. Tag @JusticeHubAU and use #CONTAINED.
             </p>
 
             {/* Container Room Photo */}
@@ -224,12 +224,12 @@ export function SocialKitContent() {
                     <div className="border-l-2 border-red-600 pl-4">
                       <p className="text-sm text-gray-300 mb-1">Instagram / Facebook</p>
                       <p className="text-white">&ldquo;This is THE CONTAINED. One shipping container. Three rooms. This image shows two of them: detention reality and the therapeutic alternative. The third room asks what we fund next. Mount Druitt, April 25.&rdquo;</p>
-                      <CopyButton text="This is THE CONTAINED. One shipping container. Three rooms. This image shows two of them: detention reality and the therapeutic alternative. The third room asks what we fund next. Mount Druitt, April 25.\n\n#TheContained #YouthJustice #JusticeHub" />
+                      <CopyButton text="This is THE CONTAINED. One shipping container. Three rooms. This image shows two of them: detention reality and the therapeutic alternative. The third room asks what we fund next. Mount Druitt, April 25.\n\n#CONTAINED #YouthJustice #JusticeHub" />
                     </div>
                     <div className="border-l-2 border-red-600 pl-4">
                       <p className="text-sm text-gray-300 mb-1">X / Twitter</p>
                       <p className="text-white">&ldquo;Left: therapeutic care. Right: detention reality. THE CONTAINED puts both inside one shipping container, then asks what we back next. First public stop: Mount Druitt, April 25.&rdquo;</p>
-                      <CopyButton text="Left: therapeutic care. Right: detention reality. THE CONTAINED puts both inside one shipping container, then asks what we back next. First public stop: Mount Druitt, April 25. #TheContained #YouthJustice" />
+                      <CopyButton text="Left: therapeutic care. Right: detention reality. THE CONTAINED puts both inside one shipping container, then asks what we back next. First public stop: Mount Druitt, April 25. #CONTAINED #YouthJustice" />
                     </div>
                   </div>
                 </div>
@@ -274,7 +274,7 @@ export function SocialKitContent() {
                         <span className="text-xs font-bold text-gray-500 truncate">{voice.name}</span>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <DownloadButton url={voice.image_url} filename={`contained-${voice.name.toLowerCase().replace(/\s+/g, '-')}.jpg`} />
-                          <CopyButton text={`"${voice.quote.substring(0, 150)}${voice.quote.length > 150 ? '...' : ''}" — ${voice.name}\n\nTHE CONTAINED: Australian Tour 2026\njusticehub.org.au/contained\n\n#TheContained #YouthJustice #JusticeHub`} />
+                          <CopyButton text={`"${voice.quote.substring(0, 150)}${voice.quote.length > 150 ? '...' : ''}" — ${voice.name}\n\nTHE CONTAINED: Australian Tour 2026\njusticehub.com.au/contained\n\n#CONTAINED #YouthJustice #JusticeHub`} />
                         </div>
                       </div>
                     </div>
@@ -527,7 +527,7 @@ export function SocialKitContent() {
               <div>
                 <h3 className="font-bold text-black mb-2">Hashtags</h3>
                 <p>
-                  Always include #TheContained and #YouthJustice. Add local
+                  Always include #CONTAINED and #YouthJustice. Add local
                   hashtags for each city. Instagram: use all provided. X: pick 2-3.
                 </p>
               </div>
