@@ -982,7 +982,7 @@ export function TourContent() {
                 {
                   Icon: Heart,
                   title: 'Fund a Stop',
-                  desc: 'Each tour stop costs $15K to stage. Your contribution gets the container to a new community.',
+                  desc: 'Each tour stop costs $30K to stage. Your contribution gets the container to a new community.',
                   cta: 'Back This',
                   href: '/contained/help',
                 },
