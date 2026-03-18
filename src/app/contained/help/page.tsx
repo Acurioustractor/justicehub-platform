@@ -19,6 +19,7 @@ export default function ContainedHelpPage() {
   const [email, setEmail] = useState('');
   const [location, setLocation] = useState('');
   const [message, setMessage] = useState('');
+  const [honeypot, setHoneypot] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +32,7 @@ export default function ContainedHelpPage() {
     e.preventDefault();
     setError(null);
 
+    if (honeypot) return; // bot trap
     if (!name || !email) {
       setError('Please enter your name and email.');
       return;
@@ -189,6 +191,18 @@ export default function ContainedHelpPage() {
             rows={5}
             placeholder="Anything else we should know..."
             style={{ width: '100%', background: '#141414', border: '2px solid #2a2a2a', color: '#F5F0E8', padding: '12px 16px', fontSize: 14, fontFamily: "'IBM Plex Mono', monospace", resize: 'vertical', boxSizing: 'border-box' }}
+          />
+        </div>
+
+        {/* Honeypot — hidden from humans, bots fill it */}
+        <div style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, overflow: 'hidden' }} aria-hidden="true">
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={e => setHoneypot(e.target.value)}
           />
         </div>
 

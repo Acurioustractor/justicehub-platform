@@ -198,11 +198,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Sync contact to GoHighLevel
-    await syncToGHL(sanitizedEmail, sanitizedName, sanitizedOrganization, category);
+    let ghlSynced = true;
+    try {
+      await syncToGHL(sanitizedEmail, sanitizedName, sanitizedOrganization, category);
+    } catch (ghlErr) {
+      console.error('GHL sync failed for contact submission:', data?.id, ghlErr);
+      ghlSynced = false;
+    }
 
     return NextResponse.json({
       success: true,
-      message: 'Thank you for your message. We will get back to you within 24-48 hours.',
+      message: ghlSynced
+        ? 'Thank you for your message. We will get back to you within 24-48 hours.'
+        : 'Thank you for your message. We received it and will get back to you soon.',
       submissionId: data?.id,
     });
 
