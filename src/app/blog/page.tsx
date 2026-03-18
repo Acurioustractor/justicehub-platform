@@ -35,7 +35,17 @@ async function fetchSyncedStories() {
       authorName: null,
       publishedAt: s.source_published_at,
       tags: Array.isArray(s.themes)
-        ? s.themes.map((t: any) => typeof t === 'string' ? t : t?.name || '').filter(Boolean)
+        ? s.themes.map((t: any) => {
+            if (typeof t === 'object' && t?.name) return t.name;
+            if (typeof t === 'string') {
+              // Handle stringified JSON like '{"name":"resilience"}'
+              if (t.startsWith('{')) {
+                try { return JSON.parse(t).name || t; } catch { return t; }
+              }
+              return t;
+            }
+            return '';
+          }).filter(Boolean)
         : [],
       featuredImageUrl: s.story_image_url,
       source: 'synced' as const,

@@ -3,6 +3,21 @@ import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { empathyLedgerClient, empathyLedgerServiceClient } from '@/lib/supabase/empathy-ledger';
 
+/** Normalise themes — handles strings, objects, and stringified JSON */
+function normalizeThemes(themes: unknown): string[] {
+  if (!Array.isArray(themes)) return [];
+  return themes.map((t: any) => {
+    if (typeof t === 'object' && t?.name) return t.name;
+    if (typeof t === 'string') {
+      if (t.startsWith('{')) {
+        try { return JSON.parse(t).name || t; } catch { return t; }
+      }
+      return t;
+    }
+    return '';
+  }).filter(Boolean);
+}
+
 /**
  * Verify request is authorized via:
  *   1. Bearer token matching CRON_SECRET or SUPABASE_SERVICE_ROLE_KEY
@@ -159,7 +174,7 @@ async function runSync(force: boolean): Promise<NextResponse> {
         story_image_url: story.story_image_url,
         story_type: story.story_type,
         story_category: story.story_type ? storyTypeLabels[story.story_type] || story.story_type : null,
-        themes: story.themes,
+        themes: normalizeThemes(story.themes),
         is_featured: story.is_featured || story.justicehub_featured,
         cultural_sensitivity_level: story.cultural_sensitivity_level,
         source: 'empathy_ledger',
@@ -282,7 +297,7 @@ async function syncArticles(supabase: ReturnType<typeof createServiceClient>) {
         : null,
       story_type: 'article',
       story_category: 'Article',
-      themes: a.themes || a.tags || [],
+      themes: normalizeThemes(a.themes?.length ? a.themes : a.tags),
       is_featured: false,
       source: 'empathy_ledger',
       source_published_at: a.published_at,

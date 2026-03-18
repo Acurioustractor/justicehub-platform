@@ -25,6 +25,21 @@ function slugify(title: string): string {
     .replace(/^-|-$/g, '');
 }
 
+/** Normalise themes array — handles strings, objects, and stringified JSON */
+function normalizeThemes(themes: unknown): string[] {
+  if (!Array.isArray(themes)) return [];
+  return themes.map((t: any) => {
+    if (typeof t === 'object' && t?.name) return t.name;
+    if (typeof t === 'string') {
+      if (t.startsWith('{')) {
+        try { return JSON.parse(t).name || t; } catch { return t; }
+      }
+      return t;
+    }
+    return '';
+  }).filter(Boolean);
+}
+
 /**
  * Fetch a synced EL story by slug match (fallback for content hub).
  * Matches against a slugified version of the story title.
@@ -51,7 +66,7 @@ async function fetchSyncedStoryBySlug(slug: string) {
         content: match.content,
         authorName: 'JusticeHub',
         publishedAt: match.source_published_at,
-        tags: match.themes || [],
+        tags: normalizeThemes(match.themes),
         featuredImageUrl: match.story_image_url,
         metaTitle: match.title,
         metaDescription: match.summary,
@@ -82,7 +97,7 @@ async function fetchSyncedStoryBySlug(slug: string) {
       content: match.content,
       authorName: 'JusticeHub',
       publishedAt: match.source_published_at,
-      tags: match.themes || [],
+      tags: normalizeThemes(match.themes),
       featuredImageUrl: match.story_image_url,
       metaTitle: match.title,
       metaDescription: match.summary,
