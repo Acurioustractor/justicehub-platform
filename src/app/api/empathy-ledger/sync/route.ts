@@ -59,19 +59,11 @@ async function isAuthorized(request: NextRequest): Promise<boolean> {
  * Query params:
  *   - force: if 'true', re-syncs all stories (default: only new/updated)
  */
-export async function POST(request: NextRequest) {
+/**
+ * Core sync logic — called by both POST (manual) and GET (cron)
+ */
+async function runSync(force: boolean): Promise<NextResponse> {
   try {
-    if (!(await isAuthorized(request))) {
-      return NextResponse.json(
-        { error: 'Authentication required. Use Bearer token or admin session.' },
-        { status: 401 }
-      );
-    }
-
-    const { searchParams } = new URL(request.url);
-    const force = searchParams.get('force') === 'true';
-
-    // Get JusticeHub service client
     const supabase = createServiceClient();
 
     // Get the last sync timestamp from JusticeHub
@@ -239,6 +231,21 @@ export async function POST(request: NextRequest) {
 }
 
 /**
+ * POST /api/empathy-ledger/sync — manual trigger (requires auth)
+ */
+export async function POST(request: NextRequest) {
+  if (!(await isAuthorized(request))) {
+    return NextResponse.json(
+      { error: 'Authentication required. Use Bearer token or admin session.' },
+      { status: 401 }
+    );
+  }
+  const { searchParams } = new URL(request.url);
+  const force = searchParams.get('force') === 'true';
+  return runSync(force);
+}
+
+/**
  * Sync EL articles into synced_stories so blog works from a single source.
  * This removes the dependency on EMPATHY_LEDGER_SERVICE_KEY at render time.
  */
@@ -317,8 +324,8 @@ export async function GET(request: NextRequest) {
   const hasForce = searchParams.get('force') === 'true';
 
   if (hasCronAuth || hasForce) {
-    // Delegate to the sync logic — reuse POST handler
-    return POST(request);
+    // Run sync directly (no auth check — Vercel cron is trusted)
+    return runSync(true);
   }
 
   // Otherwise return status
