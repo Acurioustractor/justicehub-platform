@@ -2,10 +2,10 @@
  * Streaming ALMA Chat API — Agentic tool-calling endpoint
  *
  * Uses Vercel AI SDK streamText() with tool calling against real Supabase data.
- * Gemini 2.5 Flash primary (paid, reliable tool calling), Groq fallback.
+ * MiniMax M2.7 primary, Gemini 2.5 Flash fallback, Groq last resort.
  */
 
-import { streamText, stepCountIs, convertToModelMessages } from 'ai';
+import { streamText, stepCountIs } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { almaTools } from '@/lib/ai/alma-tools';
@@ -114,7 +114,16 @@ Direct, evidence-based, community-centered. You are revolutionary infrastructure
 Frame as community ownership and system accountability, never poverty tourism.`;
 
 function getModel() {
-  // Gemini primary — paid tier, reliable tool calling, cheapest quality option
+  // MiniMax M2.7 primary — cheap, strong tool calling, OpenAI-compatible
+  if (process.env.MINIMAX_API_KEY) {
+    const minimax = createOpenAI({
+      apiKey: process.env.MINIMAX_API_KEY,
+      baseURL: process.env.MINIMAX_BASE_URL || 'https://api.minimax.io/v1',
+    });
+    return minimax('MiniMax-M2.7');
+  }
+
+  // Gemini fallback — paid tier, reliable tool calling
   if (process.env.GEMINI_API_KEY) {
     const google = createGoogleGenerativeAI({
       apiKey: process.env.GEMINI_API_KEY,
@@ -139,7 +148,7 @@ function getModel() {
     return openai('gpt-4o-mini');
   }
 
-  throw new Error('No AI provider configured. Set GEMINI_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY.');
+  throw new Error('No AI provider configured. Set MINIMAX_API_KEY, GEMINI_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY.');
 }
 
 export async function POST(request: Request) {
@@ -153,16 +162,15 @@ export async function POST(request: Request) {
       });
     }
 
-    // Cap conversation length and convert UIMessages → ModelMessages
+    // Cap conversation length — pass messages directly (AI SDK v6 handles UIMessage format)
     const trimmed = messages.slice(-20);
-    const modelMessages = await convertToModelMessages(trimmed);
 
     const result = streamText({
       model: getModel(),
       system: SYSTEM_PROMPT,
-      messages: modelMessages,
+      messages: trimmed,
       tools: almaTools,
-      stopWhen: stepCountIs(5),
+      maxSteps: 5,
     });
 
     return result.toUIMessageStreamResponse();
