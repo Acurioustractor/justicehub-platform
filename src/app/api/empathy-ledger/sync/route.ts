@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
+import { empathyLedgerClient, empathyLedgerServiceClient } from '@/lib/supabase/empathy-ledger';
 
 /**
  * Verify request is authorized via:
@@ -210,10 +210,14 @@ export async function POST(request: NextRequest) {
         onConflict: 'source'
       });
 
+    // Also sync EL articles into synced_stories
+    const articleCount = await syncArticles(supabase);
+
     return NextResponse.json({
       success: true,
-      message: `Synced ${storiesToSync.length} stories from Empathy Ledger`,
+      message: `Synced ${storiesToSync.length} stories and ${articleCount} articles from Empathy Ledger`,
       synced: storiesToSync.length,
+      articles: articleCount,
       stories: syncedStories,
       syncedAt: now
     });
@@ -229,11 +233,89 @@ export async function POST(request: NextRequest) {
 }
 
 /**
+ * Sync EL articles into synced_stories so blog works from a single source.
+ * This removes the dependency on EMPATHY_LEDGER_SERVICE_KEY at render time.
+ */
+async function syncArticles(supabase: ReturnType<typeof createServiceClient>) {
+  try {
+    // Articles table requires service key (RLS blocks anon)
+    if (!empathyLedgerServiceClient) {
+      console.warn('EL articles sync skipped: EMPATHY_LEDGER_SERVICE_KEY not set');
+      return 0;
+    }
+
+    const { data: articles, error: fetchError } = await empathyLedgerServiceClient
+      .from('articles')
+      .select('id, title, slug, subtitle, excerpt, content, author_name, published_at, tags, themes, visibility, status, featured_image_id')
+      .eq('status', 'published')
+      .eq('visibility', 'public')
+      .order('published_at', { ascending: false })
+      .limit(100);
+
+    if (fetchError || !articles?.length) {
+      console.log('EL articles sync:', fetchError?.message || 'no articles found');
+      return 0;
+    }
+
+    const EL_STORAGE_BASE = 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public';
+
+    const articlesToSync = articles.map((a: any) => ({
+      empathy_ledger_id: a.id,
+      title: a.title,
+      summary: a.excerpt || a.subtitle,
+      content: a.content,
+      story_image_url: a.featured_image_id
+        ? `${EL_STORAGE_BASE}/media/${a.featured_image_id}`
+        : null,
+      story_type: 'article',
+      story_category: 'Article',
+      themes: a.themes || a.tags || [],
+      is_featured: false,
+      source: 'empathy_ledger',
+      source_published_at: a.published_at,
+      synced_at: new Date().toISOString(),
+      // Store slug so blog can match by slug directly
+      slug: a.slug,
+    }));
+
+    const { error: syncError } = await (supabase as any)
+      .from('synced_stories')
+      .upsert(articlesToSync, {
+        onConflict: 'empathy_ledger_id',
+        ignoreDuplicates: false,
+      });
+
+    if (syncError) {
+      console.error('EL articles sync error:', syncError.message);
+      return 0;
+    }
+
+    return articlesToSync.length;
+  } catch (err) {
+    console.error('EL articles sync failed:', err);
+    return 0;
+  }
+}
+
+/**
  * GET /api/empathy-ledger/sync
  *
- * Returns sync status and metadata
+ * Vercel crons send GET — so this handler runs the full sync.
+ * Also returns status when called without auth (e.g. health checks).
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // If called by Vercel cron (has authorization header) or with force param, run sync
+  const authHeader = request.headers.get('authorization') || '';
+  const { searchParams } = new URL(request.url);
+  const hasCronAuth = authHeader.startsWith('Bearer ');
+  const hasForce = searchParams.get('force') === 'true';
+
+  if (hasCronAuth || hasForce) {
+    // Delegate to the sync logic — reuse POST handler
+    return POST(request);
+  }
+
+  // Otherwise return status
   try {
     const supabase = createServiceClient();
 

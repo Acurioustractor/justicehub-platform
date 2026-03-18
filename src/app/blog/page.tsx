@@ -22,7 +22,7 @@ async function fetchSyncedStories() {
     const supabase = createServiceClient();
     const { data } = await (supabase as any)
       .from('synced_stories')
-      .select('id, title, summary, story_image_url, themes, is_featured, source_published_at, story_category')
+      .select('id, title, summary, story_image_url, themes, is_featured, source_published_at, story_category, slug')
       .eq('source', 'empathy_ledger')
       .order('source_published_at', { ascending: false })
       .limit(60);
@@ -30,7 +30,7 @@ async function fetchSyncedStories() {
     return (data || []).map((s: any) => ({
       id: `synced-${s.id}`,
       title: s.title,
-      slug: slugify(s.title || ''),
+      slug: s.slug || slugify(s.title || ''),
       excerpt: s.summary,
       authorName: null,
       publishedAt: s.source_published_at,

@@ -32,6 +32,35 @@ function slugify(title: string): string {
 async function fetchSyncedStoryBySlug(slug: string) {
   try {
     const supabase = createServiceClient();
+
+    // First try exact slug match (EL articles have stored slugs)
+    const { data: exactMatch } = await (supabase as any)
+      .from('synced_stories')
+      .select('id, empathy_ledger_id, title, summary, content, story_image_url, story_type, story_category, themes, is_featured, source_published_at, project_slugs, slug')
+      .eq('source', 'empathy_ledger')
+      .eq('slug', slug)
+      .maybeSingle();
+
+    if (exactMatch) {
+      const match = exactMatch;
+      return {
+        id: match.id,
+        title: match.title,
+        slug,
+        excerpt: match.summary,
+        content: match.content,
+        authorName: 'JusticeHub',
+        publishedAt: match.source_published_at,
+        tags: match.themes || [],
+        featuredImageUrl: match.story_image_url,
+        metaTitle: match.title,
+        metaDescription: match.summary,
+        source: 'synced_story' as const,
+        projectSlugs: match.project_slugs || [],
+      };
+    }
+
+    // Fallback: match by slugified title
     const { data: stories } = await (supabase as any)
       .from('synced_stories')
       .select('id, empathy_ledger_id, title, summary, content, story_image_url, story_type, story_category, themes, is_featured, source_published_at, project_slugs')
@@ -41,7 +70,6 @@ async function fetchSyncedStoryBySlug(slug: string) {
 
     if (!stories) return null;
 
-    // Match by slugified title
     const match = stories.find((s: any) => slugify(s.title || '') === slug);
     if (!match) return null;
 
