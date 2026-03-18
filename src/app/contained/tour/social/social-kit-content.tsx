@@ -38,7 +38,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className={`px-4 py-2 text-sm font-bold uppercase tracking-widest border transition-colors flex items-center gap-2 ${
+      className={`px-4 py-3 md:py-2 text-sm font-bold uppercase tracking-widest border transition-colors flex items-center gap-2 ${
         copied
           ? 'bg-emerald-600 text-white border-emerald-600'
           : 'border-black hover:bg-black hover:text-white'
@@ -82,7 +82,7 @@ function DownloadButton({ url, filename }: { url: string; filename: string }) {
   return (
     <button
       onClick={handleDownload}
-      className="px-4 py-2 text-sm font-bold uppercase tracking-widest border border-black hover:bg-black hover:text-white transition-colors flex items-center gap-2"
+      className="px-4 py-3 md:py-2 text-sm font-bold uppercase tracking-widest border border-black hover:bg-black hover:text-white transition-colors flex items-center gap-2"
     >
       <Download className="w-4 h-4" />
       {downloading ? 'Saving...' : 'Save'}
@@ -161,9 +161,9 @@ export function SocialKitContent() {
           <div className="container-justice">
             <Link
               href="/contained/tour"
-              className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-black mb-6"
+              className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-black mb-6 py-3"
             >
-              <ArrowLeft className="w-4 h-4" /> Back to Tour
+              <ArrowLeft className="w-5 h-5 md:w-4 md:h-4" /> Back to Tour
             </Link>
 
             <div className="inline-block bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-4">
@@ -297,7 +297,7 @@ export function SocialKitContent() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => setActiveStop('general')}
-                    className={`px-3 py-1 text-sm font-bold border transition-colors ${
+                    className={`px-4 py-2.5 md:px-3 md:py-1.5 text-sm font-bold border transition-colors ${
                       activeStop === 'general'
                         ? 'bg-black text-white border-black'
                         : 'border-gray-300 hover:border-black'
@@ -309,7 +309,7 @@ export function SocialKitContent() {
                     <button
                       key={stop.eventSlug}
                       onClick={() => setActiveStop(stop.eventSlug)}
-                      className={`px-3 py-1 text-sm font-bold border transition-colors ${
+                      className={`px-4 py-2.5 md:px-3 md:py-1.5 text-sm font-bold border transition-colors ${
                         activeStop === stop.eventSlug
                           ? 'bg-black text-white border-black'
                           : 'border-gray-300 hover:border-black'
@@ -329,7 +329,7 @@ export function SocialKitContent() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => setActivePlatform('all')}
-                    className={`px-3 py-1 text-sm font-bold border transition-colors ${
+                    className={`px-4 py-2.5 md:px-3 md:py-1.5 text-sm font-bold border transition-colors ${
                       activePlatform === 'all'
                         ? 'bg-black text-white border-black'
                         : 'border-gray-300 hover:border-black'
@@ -341,7 +341,7 @@ export function SocialKitContent() {
                     <button
                       key={p}
                       onClick={() => setActivePlatform(p)}
-                      className={`px-3 py-1 text-sm font-bold border transition-colors ${
+                      className={`px-4 py-2.5 md:px-3 md:py-1.5 text-sm font-bold border transition-colors ${
                         activePlatform === p
                           ? 'bg-black text-white border-black'
                           : 'border-gray-300 hover:border-black'

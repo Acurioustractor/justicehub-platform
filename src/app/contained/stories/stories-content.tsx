@@ -180,9 +180,9 @@ export function ContainedStoriesContent() {
         <div className="container-justice mb-6">
           <Link
             href="/contained/tour"
-            className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-black"
+            className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-black py-3"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to Tour
+            <ArrowLeft className="w-5 h-5 md:w-4 md:h-4" /> Back to Tour
           </Link>
         </div>
 
@@ -259,7 +259,7 @@ export function ContainedStoriesContent() {
               <button
                 key={key}
                 onClick={() => setFilter(key)}
-                className={`px-4 py-2 text-sm font-bold border-2 transition-colors ${
+                className={`px-4 py-2.5 md:py-2 text-sm font-bold border-2 transition-colors ${
                   filter === key
                     ? 'bg-black text-white border-black'
                     : 'border-gray-300 hover:border-black'
@@ -285,7 +285,7 @@ export function ContainedStoriesContent() {
               <button
                 key={key}
                 onClick={() => setTheme(key)}
-                className={`px-3 py-1 text-xs font-bold border-2 transition-colors ${
+                className={`px-4 py-2.5 md:px-3 md:py-1 text-sm md:text-xs font-bold border-2 transition-colors ${
                   theme === key
                     ? 'bg-red-600 text-white border-red-600'
                     : 'border-gray-300 hover:border-red-600 hover:text-red-600'
