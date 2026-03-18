@@ -713,6 +713,22 @@ export function TourContent() {
 
         <RedDivider bg="#F5F0E8" />
 
+        {/* Full-scene two-room hero */}
+        <div className="w-full bg-[#F5F0E8]">
+          <div className="max-w-7xl mx-auto px-6 lg:px-16 py-8">
+            <SwappablePhoto
+              photoKey="three-rooms-hero"
+              src={campaignMedia.roomPhotos[0].src}
+              alt="The CONTAINED installation — two rooms side by side"
+              overrides={overrides}
+              isAdmin={isAdmin}
+              onRequestSwap={(key) => { swapTargetRef.current = key; setPickerOpen(true); }}
+              className="w-full object-cover"
+              style={{ maxHeight: '560px' }}
+            />
+          </div>
+        </div>
+
         {/* ==================== SECTION 3: THREE ROOMS ==================== */}
         <section id="rooms" className="relative bg-[#0A0A0A] scanline-overlay concrete-texture overflow-hidden" style={{ padding: '120px 0 120px' }}>
           <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16">
@@ -1116,10 +1132,14 @@ export function TourContent() {
               <Link href="/contact" className="text-[#F5F0E8]/50 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Contact</Link>
             </div>
           </div>
-          <div className="mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between gap-4">
+          <div className="mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-[#F5F0E8]/20 text-[10px] uppercase tracking-widest" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>© 2026 CONTAINED. Sovereignty never ceded.</p>
-            <div className="flex gap-6">
-              <ShareButtons />
+            <div className="flex items-center gap-6" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+              <Link href="/" className="text-[#F5F0E8]/50 text-xs uppercase hover:text-[#F5F0E8] tracking-widest">JusticeHub</Link>
+              <a href="https://www.linkedin.com/in/benknight" target="_blank" rel="noopener noreferrer" className="text-[#F5F0E8]/50 text-xs uppercase hover:text-[#F5F0E8] tracking-widest">LinkedIn</a>
+              <a href="https://www.empathyledger.com" target="_blank" rel="noopener noreferrer" className="text-[#F5F0E8]/40 text-[10px] uppercase hover:text-[#F5F0E8] tracking-widest border border-[#F5F0E8]/20 px-3 py-1.5 hover:border-[#F5F0E8]/40 transition-colors">
+                Powered by Empathy Ledger
+              </a>
             </div>
           </div>
         </div>
