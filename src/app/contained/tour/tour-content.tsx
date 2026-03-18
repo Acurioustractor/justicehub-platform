@@ -1108,9 +1108,6 @@ export function TourContent() {
               Tour updates, evidence releases, and ways to act.
             </p>
             <NewsletterSignup />
-            <div className="flex justify-center mt-8">
-              <ShareButtons />
-            </div>
           </div>
         </section>
       </main>
