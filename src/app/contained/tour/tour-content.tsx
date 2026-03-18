@@ -150,20 +150,34 @@ function useAdminMode() {
 function usePhotoOverrides() {
   const [overrides, setOverrides] = useState<Record<string, string>>({});
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('contained-photo-overrides');
-      if (saved) setOverrides(JSON.parse(saved));
-    } catch {}
+    // Load from server (persisted for all visitors)
+    fetch('/api/admin/contained/photo-overrides')
+      .then(r => r.json())
+      .then(data => {
+        if (data.overrides && Object.keys(data.overrides).length > 0) {
+          setOverrides(data.overrides);
+        }
+      })
+      .catch(() => {});
   }, []);
   const setOverride = useCallback((key: string, url: string) => {
     setOverrides(prev => {
       const next = { ...prev, [key]: url };
-      localStorage.setItem('contained-photo-overrides', JSON.stringify(next));
+      // Save to server so overrides persist across deployments
+      fetch('/api/admin/contained/photo-overrides', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ overrides: next }),
+      }).catch(() => {});
       return next;
     });
   }, []);
   const clearOverrides = useCallback(() => {
-    localStorage.removeItem('contained-photo-overrides');
+    fetch('/api/admin/contained/photo-overrides', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ overrides: {} }),
+    }).catch(() => {});
     setOverrides({});
   }, []);
   return { overrides, setOverride, clearOverrides };
