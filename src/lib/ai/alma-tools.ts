@@ -33,7 +33,7 @@ export const almaTools = {
       const state = rawState?.toUpperCase();
       let q = supabase
         .from('alma_interventions')
-        .select('id, name, description, type, geography, evidence_level, cost_per_young_person, cost_effectiveness_rating, operating_organization')
+        .select('id, name, description, type, geography, evidence_level, cost_per_young_person, operating_organization')
         .neq('verification_status', 'ai_generated');
 
       if (query) { const s = sanitize(query); q = q.or(`name.ilike.%${s}%,description.ilike.%${s}%`); }
