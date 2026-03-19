@@ -50,14 +50,8 @@ export async function POST(request: NextRequest) {
         tags.push(GHL_TAGS.NEWSLETTER);
       }
 
-      // Map steward commitments to tags
-      if (steward_commitments && Array.isArray(steward_commitments)) {
-        if (steward_commitments.includes('advocate')) tags.push('Steward - Advocate');
-        if (steward_commitments.includes('donate')) tags.push('Steward - Donor');
-        if (steward_commitments.includes('volunteer')) tags.push('Steward - Volunteer');
-        if (steward_commitments.includes('share')) tags.push('Steward - Research');
-        if (steward_commitments.includes('connect')) tags.push('Steward - Connector');
-      }
+      // Steward commitments stored in custom fields (tags consolidated)
+      tags.push(GHL_TAGS.JUSTICEHUB);
 
       // Create/update GHL contact
       ghlContactId = await ghl.upsertContact({

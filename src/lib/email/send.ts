@@ -28,8 +28,16 @@ interface SendBatchOptions {
 /**
  * Send a single branded email via GHL Conversations API.
  * Upserts the contact first (so every email recipient ends up in the CRM).
+ *
+ * KILL SWITCH: Set EMAIL_ENABLED=true in env to allow sending.
+ * Defaults to OFF — no emails send unless explicitly enabled.
  */
 export async function sendEmail(options: SendEmailOptions): Promise<{ id: string } | null> {
+  if (process.env.EMAIL_ENABLED !== 'true') {
+    console.log('[email] EMAIL_ENABLED is not true, skipping send to:', options.to);
+    return null;
+  }
+
   const ghl = getGHLClient();
   if (!ghl.isConfigured()) {
     console.warn('[email] GHL not configured, skipping send to:', options.to);
@@ -66,6 +74,11 @@ export async function sendEmail(options: SendEmailOptions): Promise<{ id: string
  * Returns count of successfully sent emails.
  */
 export async function sendBatchEmail(options: SendBatchOptions): Promise<number> {
+  if (process.env.EMAIL_ENABLED !== 'true') {
+    console.log('[email] EMAIL_ENABLED is not true, skipping batch send');
+    return 0;
+  }
+
   const ghl = getGHLClient();
   if (!ghl.isConfigured()) {
     console.warn('[email] GHL not configured, skipping batch send');

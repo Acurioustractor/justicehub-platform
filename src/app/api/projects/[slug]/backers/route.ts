@@ -148,7 +148,7 @@ export async function POST(
       ghl.upsertContact({
         email: email.trim().toLowerCase(),
         name: name.trim(),
-        tags: [GHL_TAGS.CONTAINED_TOUR_BACKER, GHL_TAGS.CONTAINED_LAUNCH],
+        tags: [GHL_TAGS.PARTNER, GHL_TAGS.CONTAINED, GHL_TAGS.JUSTICEHUB],
         source: `JusticeHub CONTAINED Backer`,
         customFields: {
           backer_message: message?.trim() || '',

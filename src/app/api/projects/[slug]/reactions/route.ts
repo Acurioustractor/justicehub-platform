@@ -151,7 +151,7 @@ export async function POST(
         ghl.upsertContact({
           email: email.trim().toLowerCase(),
           name: name.trim(),
-          tags: [GHL_TAGS.CONTAINED_REACTION, GHL_TAGS.CONTAINED_LAUNCH],
+          tags: [GHL_TAGS.REACTED, GHL_TAGS.CONTAINED, GHL_TAGS.JUSTICEHUB],
           source: 'JusticeHub CONTAINED Reaction',
           customFields: {
             reaction_role: role || 'attendee',

@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       try {
         const tags = [GHL_TAGS.CONTAINED, GHL_TAGS.NEWSLETTER, GHL_TAGS.JUSTICEHUB];
         if ((entity.passion_score || 0) > 70) {
-          tags.push('High Engagement');
+          tags.push(GHL_TAGS.TIER_CHAMPION);
         }
 
         const nameParts = (entity.name || '').split(' ');

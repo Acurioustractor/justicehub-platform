@@ -195,7 +195,7 @@ export async function POST(
         ghl.upsertContact({
           email: nominator_email.trim().toLowerCase(),
           name: nominator_name?.trim() || '',
-          tags: [GHL_TAGS.CONTAINED_NOMINATOR, GHL_TAGS.CONTAINED_LAUNCH],
+          tags: [GHL_TAGS.NOMINATED, GHL_TAGS.CONTAINED, GHL_TAGS.JUSTICEHUB],
           source: 'JusticeHub CONTAINED Nomination',
           customFields: {
             nominated: nominee_name.trim(),
