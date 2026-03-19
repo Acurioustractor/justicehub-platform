@@ -41,19 +41,13 @@ export async function POST(request: NextRequest) {
 
     if (ghl.isConfigured()) {
       const tags: string[] = [
-        GHL_TAGS.EVENT_REGISTRANT,
-        GHL_TAGS.SEEDS_JUSTICEHUB,
-        GHL_TAGS.PROJECT_LINKS_JUSTICEHUB
+        GHL_TAGS.EVENT,
+        GHL_TAGS.JUSTICEHUB,
       ];
 
-      // Add event-specific tag if it's the CONTAINED launch
+      // Add CONTAINED tag if it's a CONTAINED event
       if (event_name?.toUpperCase().includes('CONTAINED')) {
-        tags.push(GHL_TAGS.CONTAINED_LAUNCH);
-      }
-
-      // Add event-specific tag for VIP Dinner
-      if (event_name?.toUpperCase().includes('VIP')) {
-        tags.push(GHL_TAGS.VIP_DINNER_2026);
+        tags.push(GHL_TAGS.CONTAINED);
       }
 
       if (newsletter) {

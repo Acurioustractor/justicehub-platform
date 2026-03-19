@@ -34,32 +34,20 @@ const ALLOWED_CATEGORIES = [
 
 // Map contact categories to GHL tags
 const CATEGORY_TAGS: Record<string, string> = {
-  partnership: 'Partnership Inquiry',
-  media: 'Media Inquiry',
-  support: 'Support Request',
-  'contained-help': 'contained-2026-launch',
-};
-
-// Map help form selections to specific GHL tags
-const HELP_OPTION_TAGS: Record<string, string> = {
-  'host': 'CONTAINED Host Interest',
-  'fund': 'CONTAINED Funder Interest',
-  'young-people': 'CONTAINED Youth Voice Connector',
-  'community-org': 'CONTAINED Org Connector',
-  'spread': 'CONTAINED Amplifier',
-  'partner': 'Partnership Inquiry',
+  partnership: GHL_TAGS.PARTNER,
+  media: GHL_TAGS.MEDIA,
+  'contained-help': GHL_TAGS.WANTS_TO_HELP,
 };
 
 /**
  * Extract help option IDs from the subject line (format: "[CONTAINED] label1, label2")
  */
-function extractHelpTags(subject: string | null): string[] {
+function extractHelpOptions(subject: string | null): string[] {
   if (!subject || !subject.startsWith('[CONTAINED]')) return [];
 
-  const tags: string[] = [];
   const content = subject.replace('[CONTAINED] ', '');
+  const options: string[] = [];
 
-  // Match each help option by its label
   const labelToId: Record<string, string> = {
     'Host the container in my region': 'host',
     'Fund a tour stop': 'fund',
@@ -70,12 +58,12 @@ function extractHelpTags(subject: string | null): string[] {
   };
 
   for (const [label, id] of Object.entries(labelToId)) {
-    if (content.includes(label) && HELP_OPTION_TAGS[id]) {
-      tags.push(HELP_OPTION_TAGS[id]);
+    if (content.includes(label)) {
+      options.push(id);
     }
   }
 
-  return tags;
+  return options;
 }
 
 /**
@@ -92,17 +80,20 @@ async function syncToGHL(
     const ghl = getGHLClient();
     if (!ghl.isConfigured()) return;
 
-    const tags = ['Contact Form', 'JusticeHub'];
+    const tags: string[] = [GHL_TAGS.JUSTICEHUB];
 
     // Add category-specific tag
     if (CATEGORY_TAGS[category]) {
       tags.push(CATEGORY_TAGS[category]);
     }
 
-    // Add help-option-specific tags for contained-help submissions
-    if (category === 'contained-help' && subject) {
-      const helpTags = extractHelpTags(subject);
-      tags.push(...helpTags);
+    // For help form: single tag + details in custom fields
+    const helpOptions = (category === 'contained-help' && subject)
+      ? extractHelpOptions(subject)
+      : [];
+
+    if (category === 'contained-help') {
+      tags.push(GHL_TAGS.WANTS_TO_HELP, GHL_TAGS.CONTAINED);
     }
 
     await ghl.upsertContact({
@@ -113,6 +104,7 @@ async function syncToGHL(
       customFields: {
         organization: organization || '',
         contact_category: category,
+        ...(helpOptions.length > 0 ? { help_options: helpOptions.join(', ') } : {}),
       },
     });
   } catch (err) {

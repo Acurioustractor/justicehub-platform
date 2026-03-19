@@ -396,6 +396,86 @@ export class GHLClient {
       return allContacts;
     }
   }
+  /**
+   * Send an email to a contact via GHL Conversations API
+   * Requires contactId — will upsert contact first if only email is provided
+   */
+  async sendEmail(options: {
+    contactId: string;
+    subject: string;
+    html: string;
+    emailFrom?: string;
+  }): Promise<{ id: string } | null> {
+    if (!this.isConfigured()) {
+      return null;
+    }
+
+    try {
+      const response = await fetch(`${GHL_API_BASE}/conversations/messages`, {
+        method: 'POST',
+        headers: this.headers,
+        body: JSON.stringify({
+          type: 'Email',
+          contactId: options.contactId,
+          subject: options.subject,
+          html: options.html,
+          emailFrom: options.emailFrom || 'JusticeHub <hello@justicehub.com.au>',
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        console.error('[GHL] Email send failed:', error);
+        return null;
+      }
+
+      const data = await response.json();
+      return { id: data.messageId || data.id || 'sent' };
+    } catch (error) {
+      console.error('[GHL] Email send error:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Send email by recipient email address (upserts contact first)
+   */
+  async sendEmailToAddress(options: {
+    to: string;
+    name?: string;
+    subject: string;
+    html: string;
+    tags?: string[];
+    source?: string;
+  }): Promise<{ id: string } | null> {
+    if (!this.isConfigured()) {
+      return null;
+    }
+
+    try {
+      // Ensure contact exists
+      const contactId = await this.upsertContact({
+        email: options.to,
+        name: options.name,
+        tags: options.tags,
+        source: options.source,
+      });
+
+      if (!contactId) {
+        console.error('[GHL] Could not create/find contact for:', options.to);
+        return null;
+      }
+
+      return this.sendEmail({
+        contactId,
+        subject: options.subject,
+        html: options.html,
+      });
+    } catch (error) {
+      console.error('[GHL] sendEmailToAddress error:', error);
+      return null;
+    }
+  }
 }
 
 // Singleton instance
@@ -408,22 +488,36 @@ export function getGHLClient(): GHLClient {
   return ghlClient;
 }
 
-// Pipeline and tag constants
+// Consolidated tag system (12 core tags + 4 role tags + 4 tier tags)
+// See: consolidation done 2026-03-19
 export const GHL_TAGS = {
-  NEWSLETTER: 'JusticeHub Newsletter',
+  // Source
+  JUSTICEHUB: 'JusticeHub',
+
+  // Campaign
+  CONTAINED: 'CONTAINED',
+  NEWSLETTER: 'Newsletter',
+  EVENT: 'Event',
+
+  // Actions taken
+  REACTED: 'Reacted',           // Walked through CONTAINED + shared story
+  NOMINATED: 'Nominated',       // Nominated a decision maker
+  WROTE_MP: 'Wrote MP',         // Sent letter to MP
+  WANTS_TO_HELP: 'Wants to Help', // Help form (details in custom fields)
+  PARTNER: 'Partner',           // Partnership / funder interest
+  MEDIA: 'Media',               // Media inquiry
+
+  // Roles
   STEWARD: 'Steward',
   RESEARCHER: 'Researcher',
   PRACTITIONER: 'Practitioner',
-  EVENT_REGISTRANT: 'Event Registrant',
-  CONTAINED_LAUNCH: 'CONTAINED Launch 2026',
-  CONTAINED_TOUR_BACKER: 'CONTAINED Tour Backer',
-  CONTAINED_NOMINATOR: 'CONTAINED Nominator',
-  CONTAINED_REACTION: 'CONTAINED Reaction',
-  CONTAINED_STORY_SUBMITTER: 'CONTAINED Story Submitter',
-  VIP_DINNER_2026: 'VIP Dinner 2026',
   YOUTH_VOICE: 'Youth Voice',
-  SEEDS_JUSTICEHUB: 'Seeds: JusticeHub',
-  PROJECT_LINKS_JUSTICEHUB: 'Project Links: JusticeHub',
+
+  // Engagement tiers (set by weekly scoring cron)
+  TIER_AWARE: 'Tier: Aware',
+  TIER_ENGAGED: 'Tier: Engaged',
+  TIER_ACTIVE: 'Tier: Active',
+  TIER_CHAMPION: 'Tier: Champion',
 } as const;
 
 export const GHL_PIPELINES = {

@@ -91,9 +91,20 @@ export function wrapInBrandedTemplate(body: string, preheader?: string): string 
             </td>
           </tr>
 
+          <!-- Forwarded banner -->
+          <tr>
+            <td style="padding: 24px 0 0;">
+              <div style="background-color: ${BRAND.black}; padding: 16px 20px; text-align: center;">
+                <p style="margin: 0; font-size: 13px; color: #F5F0E8; opacity: 0.85;">
+                  Someone forwarded this to you? <a href="${BRAND.site}/contained?source=forwarded" style="color: ${BRAND.red}; text-decoration: underline; font-weight: 700;">Join the movement →</a>
+                </p>
+              </div>
+            </td>
+          </tr>
+
           <!-- Footer -->
           <tr>
-            <td style="padding: 32px 0 0; border-top: 1px solid #d1d5db;">
+            <td style="padding: 24px 0 0; border-top: 1px solid #d1d5db;">
               <p style="margin: 0 0 8px; font-size: 13px; color: #6b7280;">
                 <a href="${BRAND.site}" style="color: #6b7280; text-decoration: underline;">JusticeHub</a> · Evidence-driven justice reform
               </p>

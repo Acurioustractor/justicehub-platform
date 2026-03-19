@@ -9,7 +9,7 @@ const SITE = 'https://justicehub.com.au';
  * POST /api/contained/reaction
  * Captures visitor reactions after walking through THE CONTAINED.
  * - Saves to community_reflections
- * - Tags in GHL with CONTAINED_REACTION
+ * - Tags in GHL with Reacted + CONTAINED
  * - Sends follow-up email with action prompts
  */
 export async function POST(request: NextRequest) {
@@ -40,13 +40,19 @@ export async function POST(request: NextRequest) {
 
     const reflectionText = parts.join('\n\n');
 
-    // Save to community_reflections
+    // Save to community_reflections (include email in metadata for post-experience drip)
     const { data, error } = await service
       .from('community_reflections')
       .insert({
         name: name || 'Anonymous Visitor',
         reflection: reflectionText,
         is_approved: false,
+        metadata: {
+          type: 'contained_reaction',
+          email: email || null,
+          feelings: feelings || [],
+          would_nominate: would_nominate || null,
+        },
       })
       .select('id')
       .single();
@@ -65,9 +71,9 @@ export async function POST(request: NextRequest) {
           email,
           name: name || undefined,
           tags: [
-            GHL_TAGS.CONTAINED_REACTION,
-            GHL_TAGS.CONTAINED_LAUNCH,
-            GHL_TAGS.SEEDS_JUSTICEHUB,
+            GHL_TAGS.REACTED,
+            GHL_TAGS.CONTAINED,
+            GHL_TAGS.JUSTICEHUB,
           ],
           source: 'CONTAINED Reaction Form',
           customFields: {

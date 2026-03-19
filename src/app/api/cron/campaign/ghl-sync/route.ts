@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     for (const entity of entities) {
       try {
-        const tags = [GHL_TAGS.CONTAINED_LAUNCH, GHL_TAGS.NEWSLETTER];
+        const tags = [GHL_TAGS.CONTAINED, GHL_TAGS.NEWSLETTER, GHL_TAGS.JUSTICEHUB];
         if ((entity.passion_score || 0) > 70) {
           tags.push('High Engagement');
         }

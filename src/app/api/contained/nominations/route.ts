@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
       ghl.upsertContact({
         email,
         name: sanitizedNominatorName,
-        tags: [GHL_TAGS.CONTAINED_NOMINATOR, GHL_TAGS.SEEDS_JUSTICEHUB],
+        tags: [GHL_TAGS.NOMINATED, GHL_TAGS.CONTAINED, GHL_TAGS.JUSTICEHUB],
         source: 'JusticeHub CONTAINED Nomination',
         customFields: {
           nominated_person: sanitizedNomineeName,
