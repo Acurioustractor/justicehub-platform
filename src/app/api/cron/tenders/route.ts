@@ -106,7 +106,7 @@ Return JSON: { "tenders": [{ "source_id": null, "title": "...", "description": "
 Only include actual tenders. Return {"tenders": []} if none found.`;
 
   try {
-    const raw = await LLMClient.getInstance().call(prompt, { maxTokens: 2000 });
+    const raw = await LLMClient.getBackgroundInstance().call(prompt, { maxTokens: 2000 });
     const parsed = parseJSON(raw) as TenderExtractionResponse | null;
     if (!parsed?.tenders) {
       return NextResponse.json({ success: true, state: target.state, results });

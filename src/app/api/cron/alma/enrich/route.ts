@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
   const batch = Math.min(Math.max(parseInt(url.searchParams.get('batch') || '10'), 1), 30);
 
   const supabase = createServiceClient();
-  const llm = new LLMClient();
+  const llm = LLMClient.getBackgroundInstance();
 
   try {
     switch (mode) {

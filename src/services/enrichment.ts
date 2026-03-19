@@ -8,7 +8,7 @@
  */
 
 import { getExaClient } from '@/lib/exa/client';
-import { callLLM } from '@/lib/ai/model-router';
+import { callBackgroundLLM as callLLM } from '@/lib/ai/model-router';
 import { parseJSON } from '@/lib/ai/parse-json';
 
 interface EnrichedProfile {

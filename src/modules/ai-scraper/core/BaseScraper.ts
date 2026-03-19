@@ -7,7 +7,7 @@
 import { createFirecrawlClient } from '@/lib/api/config';
 import { env } from '@/lib/env';
 import { createSupabaseClient } from '@/lib/supabase/client';
-import { callLLM } from '@/lib/ai/model-router';
+import { callBackgroundLLM as callLLM } from '@/lib/ai/model-router';
 import { parseJSON } from '@/lib/ai/parse-json';
 import { scrapeViaJina, shouldPreferFirecrawl } from '@/lib/scraping/jina-reader';
 import type {

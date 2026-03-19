@@ -172,7 +172,7 @@ async function runDiscovery(batchSize: number, mode: DiscoveryMode) {
         }
 
         const prompt = buildPrompt(newResults, candidate, mode);
-        const raw = await LLMClient.getInstance().call(prompt, { maxTokens: 2000 });
+        const raw = await LLMClient.getBackgroundInstance().call(prompt, { maxTokens: 2000 });
         const parsed = parseJSON<unknown>(raw);
         const validated = validateLLMOutput(parsed, EvidenceDiscoveryResponseSchema);
         if (!validated.success) {

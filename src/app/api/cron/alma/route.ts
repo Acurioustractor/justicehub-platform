@@ -140,7 +140,7 @@ async function runEnrichment(batchSize: number) {
       // Extract structured evidence via LLM
       const prompt = buildDiscoveryPrompt(newResults, intervention);
       try {
-        const raw = await LLMClient.getInstance().call(prompt, { maxTokens: 2000 });
+        const raw = await LLMClient.getBackgroundInstance().call(prompt, { maxTokens: 2000 });
         const parsed = parseJSON(raw);
         const validated = validateLLMOutput(parsed, EvidenceDiscoveryResponseSchema);
         if (!validated.success) {
@@ -215,7 +215,7 @@ async function runEnrichment(batchSize: number) {
         const prompt = buildOutcomesPrompt(chunk);
 
         try {
-          const raw = await LLMClient.getInstance().call(prompt, {
+          const raw = await LLMClient.getBackgroundInstance().call(prompt, {
             maxTokens: 3000,
           });
           const parsed = parseJSON(raw);

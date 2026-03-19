@@ -306,7 +306,7 @@ ${newResults.slice(0, 5).map((r, i) => `${i + 1}. "${r.title}" — ${r.url}\n   
 For relevant results (score >= 0.4), return JSON: { "results": [{ "title": "...", "evidence_type": "Program evaluation|Case study|Policy analysis|Community-led research|Government report|Media coverage", "url": "...", "findings": "...", "methodology": null, "author": null, "year": null, "relevance_score": 0.0 }] }`;
 
           try {
-            const raw = await LLMClient.getInstance().call(prompt, { maxTokens: 2000 });
+            const raw = await LLMClient.getBackgroundInstance().call(prompt, { maxTokens: 2000 });
             const parsed = parseJSON(raw);
             const validated = validateLLMOutput(parsed, EvidenceDiscoveryResponseSchema);
             if (!validated.success) continue;
@@ -364,7 +364,7 @@ For relevant results (score >= 0.4), return JSON: { "results": [{ "title": "..."
           const snippets = searchResults.slice(0, 3).map((r) => `${r.title}: ${r.snippet}`).join('\n');
 
           try {
-            const raw = await LLMClient.getInstance().call(
+            const raw = await LLMClient.getBackgroundInstance().call(
               `From these search results, determine the annual cost per young person/participant for the program "${item.name}" run by "${item.operating_organization}".
 
 Search results:
@@ -400,7 +400,7 @@ If you cannot determine the cost, return: {"cost_per_young_person": null, "cost_
         for (const item of evidence || []) {
           results.discovered++;
           try {
-            const raw = await LLMClient.getInstance().call(
+            const raw = await LLMClient.getBackgroundInstance().call(
               `Analyze this youth justice evidence and extract metadata:\nTitle: ${item.title}\nFindings: ${item.findings || ''}\nType: ${item.evidence_type}\n\nReturn JSON: { "outcome_types": ["..."], "methodology": "qualitative|quantitative|mixed_methods|null", "indigenous_focus": true/false, "evidence_strength": "strong|moderate|emerging|anecdotal", "key_findings": "1-2 sentences" }`,
               { maxTokens: 500 }
             );
@@ -438,7 +438,7 @@ If you cannot determine the cost, return: {"cost_per_young_person": null, "cost_
           results.discovered++;
 
           try {
-            const raw = await LLMClient.getInstance().call(
+            const raw = await LLMClient.getBackgroundInstance().call(
               `Analyze this media article about Australian youth justice:\nTitle: ${r.title}\nURL: ${r.url}\nSnippet: ${r.snippet}\n\nReturn JSON: { "headline": "...", "summary": "2-3 sentences", "sentiment": "positive|negative|mixed|neutral", "topics": ["..."], "state": "QLD|NSW|VIC|WA|SA|NT|ACT|TAS|national" }`,
               { maxTokens: 500 }
             );
@@ -546,7 +546,7 @@ If you cannot determine the cost, return: {"cost_per_young_person": null, "cost_
           if (!r.url || existingDocUrls.has(r.url)) continue;
           results.discovered++;
           try {
-            const raw = await LLMClient.getInstance().call(
+            const raw = await LLMClient.getBackgroundInstance().call(
               `Analyze this search result and extract source document metadata for Australian youth justice research.
 Title: ${r.title}
 URL: ${r.url}
