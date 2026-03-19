@@ -134,8 +134,9 @@ async function main() {
   const { data: interventions, error: intErr } = await supabase
     .from('alma_interventions')
     .select('id, name, type, description, operating_organization, portfolio_score, geography')
-    .order('portfolio_score', { ascending: false })
-    .limit(1000);
+    .neq('verification_status', 'ai_generated')
+    .order('updated_at', { ascending: false })
+    .limit(500);
 
   if (intErr) throw intErr;
 

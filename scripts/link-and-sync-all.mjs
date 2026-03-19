@@ -9,8 +9,6 @@ const jh = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABA
 const el = createClient(process.env.EMPATHY_LEDGER_URL, process.env.EMPATHY_LEDGER_SERVICE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
-const SYN_URL = process.env.EMPATHY_LEDGER_SYNDICATION_URL || 'http://localhost:3030';
-const SYN_KEY = process.env.EMPATHY_LEDGER_SYNDICATION_KEY || '';
 const DEFAULT_TENANT_ID = '8891e1a9-92ae-423f-928b-cec602660011';
 
 function generateSlug(name) {
@@ -18,16 +16,35 @@ function generateSlug(name) {
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+// Fetch EL storyteller profiles as enrichment lookup (direct Supabase query)
 async function fetchProfileLookup() {
   const map = new Map();
   try {
-    const res = await fetch(`${SYN_URL}/api/syndication/justicehub/profiles?limit=500`, {
-      headers: { 'X-API-Key': SYN_KEY }, cache: 'no-store',
-    });
-    if (!res.ok) return map;
-    const data = await res.json();
-    for (const p of data.profiles || []) { map.set(p.profile_id, p); map.set(p.id, p); }
-  } catch {}
+    const { data: storytellers } = await el.from('storytellers')
+      .select('id, profile_id, display_name, bio, slug')
+      .eq('is_active', true).limit(500);
+    if (!storytellers) return map;
+
+    const profileIds = storytellers.map(s => s.profile_id).filter(Boolean);
+    const avatarMap = new Map();
+    if (profileIds.length > 0) {
+      const { data: profiles } = await el.from('profiles').select('id, avatar_url').in('id', profileIds);
+      for (const p of profiles || []) if (p.avatar_url) avatarMap.set(p.id, p.avatar_url);
+    }
+
+    for (const st of storytellers) {
+      const entry = {
+        id: st.id,
+        profile_id: st.profile_id || st.id,
+        slug: st.slug || generateSlug(st.display_name || 'unknown'),
+        display_name: st.display_name || 'Unknown',
+        bio: st.bio || null,
+        profile_image_url: avatarMap.get(st.profile_id) || null,
+      };
+      map.set(entry.profile_id, entry);
+      map.set(entry.id, entry);
+    }
+  } catch (err) { console.error('fetchProfileLookup error:', err.message); }
   return map;
 }
 

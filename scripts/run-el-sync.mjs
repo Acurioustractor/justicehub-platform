@@ -9,23 +9,45 @@ const jh = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABA
 const el = createClient(process.env.EMPATHY_LEDGER_URL, process.env.EMPATHY_LEDGER_SERVICE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
-const SYN_URL = process.env.EMPATHY_LEDGER_SYNDICATION_URL || 'http://localhost:3030';
-const SYN_KEY = process.env.EMPATHY_LEDGER_SYNDICATION_KEY || '';
-
 function generateSlug(name) {
   return name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+// Fetch EL profiles directly from Supabase (replaces broken syndication proxy)
 async function fetchELProfiles(elOrgId) {
-  const params = new URLSearchParams({ limit: '200' });
-  if (elOrgId) params.set('organizationId', elOrgId);
-  const res = await fetch(`${SYN_URL}/api/syndication/justicehub/profiles?${params}`, {
-    headers: { 'X-API-Key': SYN_KEY },
-  });
-  if (!res.ok) throw new Error(`Syndication API: ${res.status}`);
-  const data = await res.json();
-  return data.profiles || [];
+  // Get storytellers linked to this org via storyteller_organizations + stories
+  const memberIds = new Set();
+
+  const [storiesRes, junctionRes] = await Promise.all([
+    el.from('stories').select('storyteller_id').eq('organization_id', elOrgId),
+    el.from('storyteller_organizations').select('storyteller_id').eq('organization_id', elOrgId),
+  ]);
+  for (const r of (storiesRes.data || [])) if (r.storyteller_id) memberIds.add(r.storyteller_id);
+  for (const r of (junctionRes.data || [])) if (r.storyteller_id) memberIds.add(r.storyteller_id);
+
+  if (memberIds.size === 0) return [];
+
+  const { data: storytellers } = await el.from('storytellers')
+    .select('id, profile_id, display_name, bio, slug')
+    .in('id', [...memberIds]);
+
+  // Get avatars
+  const profileIds = (storytellers || []).map(s => s.profile_id).filter(Boolean);
+  const avatarMap = new Map();
+  if (profileIds.length > 0) {
+    const { data: profiles } = await el.from('profiles').select('id, avatar_url').in('id', profileIds);
+    for (const p of profiles || []) if (p.avatar_url) avatarMap.set(p.id, p.avatar_url);
+  }
+
+  return (storytellers || []).map(st => ({
+    id: st.id,
+    profile_id: st.profile_id || st.id,
+    slug: st.slug || generateSlug(st.display_name || 'unknown'),
+    display_name: st.display_name || 'Unknown',
+    bio: st.bio || null,
+    profile_image_url: avatarMap.get(st.profile_id) || null,
+  }));
 }
 
 async function syncOrg(orgId) {

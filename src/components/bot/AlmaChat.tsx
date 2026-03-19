@@ -430,6 +430,7 @@ function hasActiveToolCall(parts: any[]): boolean {
   );
 }
 
+
 const chatTransport = new DefaultChatTransport({ api: '/api/chat/stream' });
 
 export function AlmaChat({

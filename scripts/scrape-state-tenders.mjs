@@ -94,9 +94,9 @@ const STATE_PORTALS = {
     ],
     // Fallback: search via Jina for recent tenders
     jinaQueries: [
-      'site:qtenders.epw.qld.gov.au youth justice 2026',
-      'site:qtenders.epw.qld.gov.au corrections detention 2026',
-      'Queensland government tender youth justice services 2026',
+      'site:qtenders.epw.qld.gov.au youth justice',
+      'site:qld.gov.au tender "youth justice" OR "juvenile justice" 2025 2026',
+      'site:qld.gov.au procurement contract "corrections" OR "detention" services awarded',
     ],
   },
   NSW: {
@@ -107,9 +107,9 @@ const STATE_PORTALS = {
       'https://www.tenders.nsw.gov.au/?event=public.advancedsearch.keyword&keyword=corrections',
     ],
     jinaQueries: [
-      'site:tenders.nsw.gov.au youth justice 2026',
-      'site:tenders.nsw.gov.au corrections juvenile 2026',
-      'NSW government tender justice services 2026',
+      'site:buy.nsw.gov.au youth justice',
+      'site:nsw.gov.au tender "youth justice" OR "juvenile justice" contract 2025 2026',
+      'site:nsw.gov.au procurement "corrections" OR "community corrections" awarded contract',
     ],
   },
   VIC: {
@@ -120,20 +120,22 @@ const STATE_PORTALS = {
       'https://www.buying.vic.gov.au/search?search_api_fulltext=corrections',
     ],
     jinaQueries: [
-      'site:buying.vic.gov.au youth justice 2026',
-      'site:buying.vic.gov.au corrections detention 2026',
-      'Victoria government tender justice services 2026',
+      'site:buying.vic.gov.au youth justice',
+      'site:vic.gov.au tender "youth justice" OR "juvenile justice" contract 2025 2026',
+      'site:vic.gov.au procurement "corrections" OR "community corrections" awarded contract',
     ],
   },
 };
 
-let callLLM, parseJSON;
+let callLLM, parseJSON, searchWeb;
 
 async function loadModules() {
   const { LLMClient } = await import('../src/lib/ai/model-router.ts');
   const parseJsonModule = await import('../src/lib/ai/parse-json.ts');
+  const webSearchModule = await import('../src/lib/scraping/web-search.ts');
   callLLM = (prompt, options) => LLMClient.getInstance().call(prompt, options);
   parseJSON = parseJsonModule.parseJSON;
+  searchWeb = webSearchModule.searchWeb;
 }
 
 async function scrapeViaJina(url) {
@@ -257,10 +259,10 @@ async function scrapeState(config) {
     }
   }
 
-  // Strategy 2: Jina Search for additional results
+  // Strategy 2: Multi-provider web search (Serper → Brave → Jina)
   for (const query of config.jinaQueries) {
     console.log(`  Searching: "${query}"`);
-    const results = await searchJina(query);
+    const results = await searchWeb(query, 10);
     if (results.length === 0) {
       console.log('    → No search results');
       continue;
@@ -339,6 +341,13 @@ async function main() {
     process.exit(1);
   }
 
+  // Load existing URLs to avoid duplicates
+  const { data: existingRows } = await supabase.from('state_tenders').select('source_url');
+  const existingUrls = new Set((existingRows || []).map((r) => r.source_url).filter(Boolean));
+
+  // Aggregator pages to skip (not actual tenders)
+  const AGGREGATOR_DOMAINS = ['australiantenders.com.au', 'tenderhub.com.au', 'govmarket.com.au'];
+
   let totalInserted = 0;
   let totalSkipped = 0;
 
@@ -346,6 +355,18 @@ async function main() {
     const tenders = await scrapeState(config);
 
     for (const tender of tenders) {
+      // Skip aggregator listing pages
+      if (tender.source_url && AGGREGATOR_DOMAINS.some((d) => tender.source_url.includes(d))) {
+        console.log(`  ⊘ Skipping aggregator: ${tender.title?.substring(0, 50)}`);
+        totalSkipped++;
+        continue;
+      }
+
+      // Skip existing URLs
+      if (tender.source_url && existingUrls.has(tender.source_url)) {
+        continue;
+      }
+
       const { isJusticeRelated, keywords } = classifyJusticeRelevance(
         tender.title || '',
         tender.description || ''
@@ -388,6 +409,7 @@ async function main() {
         totalSkipped++;
       } else {
         totalInserted++;
+        if (record.source_url) existingUrls.add(record.source_url);
       }
     }
   }
