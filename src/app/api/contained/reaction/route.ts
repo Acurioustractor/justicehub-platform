@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
+import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { sendEmail } from '@/lib/email/send';
+
+const SITE = 'https://justicehub.com.au';
 
 /**
  * POST /api/contained/reaction
  * Captures visitor reactions after walking through THE CONTAINED.
- * Saves to community_reflections and optionally tags in GHL.
+ * - Saves to community_reflections
+ * - Tags in GHL with CONTAINED_REACTION
+ * - Sends follow-up email with action prompts
  */
 export async function POST(request: NextRequest) {
   try {
@@ -50,23 +56,56 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to save reaction' }, { status: 500 });
     }
 
-    // If email provided, tag in GHL
+    // If email provided, tag in GHL and send follow-up
     if (email) {
-      try {
-        const { GHLClient } = await import('@/lib/ghl/client');
-        const ghl = new GHLClient();
-        if (ghl.isConfigured()) {
-          await ghl.upsertContact({
-            email,
-            name: name || undefined,
-            tags: ['contained-visitor', 'contained-2026-launch'],
-            source: 'CONTAINED Reaction Form',
-          });
-        }
-      } catch (ghlErr) {
-        // Non-blocking — GHL failure shouldn't break the reaction
-        console.error('[Reaction] GHL tag failed:', ghlErr);
+      // GHL sync with proper tags
+      const ghl = getGHLClient();
+      if (ghl.isConfigured()) {
+        ghl.upsertContact({
+          email,
+          name: name || undefined,
+          tags: [
+            GHL_TAGS.CONTAINED_REACTION,
+            GHL_TAGS.CONTAINED_LAUNCH,
+            GHL_TAGS.SEEDS_JUSTICEHUB,
+          ],
+          source: 'CONTAINED Reaction Form',
+          customFields: {
+            contained_feelings: feelings?.join(', ') || '',
+          },
+        }).catch(err => console.error('[Reaction] GHL tag failed:', err));
       }
+
+      // Send follow-up email — strike while the emotion is fresh
+      const visitorName = name || 'there';
+      sendEmail({
+        to: email,
+        subject: 'What you can do with what you just felt',
+        preheader: 'Three actions. Five minutes. Real impact.',
+        body: `Hey ${visitorName},
+
+Thank you for walking through THE CONTAINED. What you felt in there is real.
+
+${response ? `You said: "${response.slice(0, 200)}"` : ''}
+
+That feeling is exactly why we built this. Now here's what you can do with it.
+
+1. NOMINATE A DECISION MAKER
+Know a politician, CEO, or someone who makes decisions about young people? Nominate them. We'll personally invite them to walk through.
+→ ${SITE}/contained#nominate
+
+2. WRITE TO YOUR MP
+Use our templates — email, SMS, or social. Takes 2 minutes.
+→ ${SITE}/contained/act
+
+3. SHARE WHAT YOU FELT
+Download stat cards and share templates. Same evidence, every platform.
+→ ${SITE}/contained/tour/social
+
+876 community programs exist across Australia that work better than detention and cost a fraction. You've now seen the evidence. Help us make it impossible to ignore.
+
+— The JusticeHub Team`,
+      }).catch(err => console.error('[Reaction] Follow-up email failed:', err));
     }
 
     return NextResponse.json({ success: true, id: data?.id });
