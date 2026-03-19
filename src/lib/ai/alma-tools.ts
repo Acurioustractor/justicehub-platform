@@ -1,7 +1,8 @@
 /**
  * ALMA Tool Definitions for Agentic Chat
  *
- * 13 tools the LLM can call to query real data from Supabase.
+ * 17 tools the LLM can call to query real data from Supabase,
+ * GrantScope entity graph, and Empathy Ledger community voices.
  * Used with Vercel AI SDK's streamText() tool calling.
  *
  * Column names verified against actual DB schema 2026-03-13.
@@ -10,6 +11,8 @@
 // AI SDK expects Zod v3 schemas
 import { z } from 'zod/v3';
 import { createServiceClient } from '@/lib/supabase/service-lite';
+import { getEntityEnrichment } from '@/lib/grantscope/entity-enrichment';
+import { getStorytellers, getTranscripts, getMedia, isV2Configured } from '@/lib/empathy-ledger/v2-client';
 
 const STATES = ['nsw', 'vic', 'qld', 'wa', 'sa', 'tas', 'act', 'nt'] as const;
 
@@ -521,6 +524,330 @@ export const almaTools = {
         events: events || 0,
         states_covered: 8,
         source: 'ALMA real-time coverage metrics',
+      };
+    },
+  },
+
+  // ─── Federated Intelligence: GrantScope + Empathy Ledger ──────────────────
+
+  search_entity_relationships: {
+    description:
+      'Search the GrantScope entity relationship graph — who funds whom, contracts, grants, donations. 145K entities with 1M+ funding flows mapped.',
+    inputSchema: z.object({
+      org_name: z.string().describe('Organization name to search for'),
+      relationship_type: z.string().optional().describe('Filter by type (e.g. "funded", "contracted")'),
+      direction: z.enum(['inbound', 'outbound', 'both']).default('both').describe('Funding direction: inbound (who funds them), outbound (who they fund), or both'),
+      limit: z.number().min(1).max(20).default(10),
+    }),
+    execute: async ({ org_name, relationship_type, direction, limit }: { org_name: string; relationship_type?: string; direction: string; limit: number }) => {
+      const supabase = createServiceClient();
+      const s = sanitize(org_name);
+
+      // Find org and its GS entity link
+      const { data: orgs } = await supabase
+        .from('organizations')
+        .select('id, name, gs_entity_id')
+        .ilike('name', `%${s}%`)
+        .limit(3);
+
+      const org = orgs?.find((o: Record<string, unknown>) => o.gs_entity_id) || orgs?.[0];
+      if (!org) return { error: `No organization found matching "${org_name}"` };
+      if (!org.gs_entity_id) return { error: `${org.name} has no GrantScope entity link — no relationship data available`, org_name: org.name };
+
+      const gsId = org.gs_entity_id;
+      const relationships: Array<Record<string, unknown>> = [];
+
+      // Inbound: who funds this org
+      if (direction === 'inbound' || direction === 'both') {
+        let q = supabase
+          .from('gs_relationships')
+          .select('source_entity_id, relationship_type, amount, year, dataset')
+          .eq('target_entity_id', gsId)
+          .not('amount', 'is', null)
+          .order('amount', { ascending: false })
+          .limit(limit);
+        if (relationship_type) q = q.eq('relationship_type', sanitize(relationship_type));
+        const { data: inbound } = await q;
+
+        if (inbound?.length) {
+          const sourceIds = inbound.map((r: Record<string, unknown>) => r.source_entity_id);
+          const { data: entities } = await supabase.from('gs_entities').select('id, canonical_name').in('id', sourceIds);
+          const nameMap: Record<string, string> = {};
+          for (const e of (entities || [])) nameMap[e.id] = e.canonical_name;
+
+          for (const r of inbound) {
+            relationships.push({
+              direction: 'inbound',
+              source: nameMap[r.source_entity_id as string] || 'Unknown',
+              target: org.name,
+              type: r.relationship_type,
+              amount: r.amount ? `$${(Number(r.amount) / 1_000_000).toFixed(2)}M` : null,
+              amount_raw: r.amount,
+              year: r.year,
+              dataset: r.dataset,
+            });
+          }
+        }
+      }
+
+      // Outbound: who this org funds
+      if (direction === 'outbound' || direction === 'both') {
+        let q = supabase
+          .from('gs_relationships')
+          .select('target_entity_id, relationship_type, amount, year, dataset')
+          .eq('source_entity_id', gsId)
+          .not('amount', 'is', null)
+          .order('amount', { ascending: false })
+          .limit(limit);
+        if (relationship_type) q = q.eq('relationship_type', sanitize(relationship_type));
+        const { data: outbound } = await q;
+
+        if (outbound?.length) {
+          const targetIds = outbound.map((r: Record<string, unknown>) => r.target_entity_id);
+          const { data: entities } = await supabase.from('gs_entities').select('id, canonical_name').in('id', targetIds);
+          const nameMap: Record<string, string> = {};
+          for (const e of (entities || [])) nameMap[e.id] = e.canonical_name;
+
+          for (const r of outbound) {
+            relationships.push({
+              direction: 'outbound',
+              source: org.name,
+              target: nameMap[r.target_entity_id as string] || 'Unknown',
+              type: r.relationship_type,
+              amount: r.amount ? `$${(Number(r.amount) / 1_000_000).toFixed(2)}M` : null,
+              amount_raw: r.amount,
+              year: r.year,
+              dataset: r.dataset,
+            });
+          }
+        }
+      }
+
+      const totalAmount = relationships.reduce((sum, r) => sum + (Number(r.amount_raw) || 0), 0);
+      return {
+        org_name: org.name,
+        relationships,
+        count: relationships.length,
+        total_amount: totalAmount ? `$${(totalAmount / 1_000_000).toFixed(1)}M` : '$0',
+        source: 'GrantScope entity relationship graph',
+      };
+    },
+  },
+
+  search_community_voices: {
+    description:
+      'Search community storytellers and their voices from the Empathy Ledger — real people sharing real experiences of the justice system. 226 storytellers with transcripts and quotes.',
+    inputSchema: z.object({
+      query: z.string().optional().describe('Search by name, role, or keyword'),
+      limit: z.number().min(1).max(20).default(10),
+    }),
+    execute: async ({ query, limit }: { query?: string; limit: number }) => {
+      if (!isV2Configured) {
+        return { error: 'Empathy Ledger v2 API not configured', storytellers: [], count: 0 };
+      }
+
+      try {
+        const storytellerRes = await getStorytellers({ limit: 50 });
+        let storytellers = storytellerRes.data || [];
+
+        // Filter by query if provided
+        if (query) {
+          const q = query.toLowerCase();
+          storytellers = storytellers.filter(
+            (st) =>
+              st.displayName?.toLowerCase().includes(q) ||
+              st.role?.toLowerCase().includes(q) ||
+              st.bio?.toLowerCase().includes(q) ||
+              st.culturalBackground?.some((c) => c.toLowerCase().includes(q))
+          );
+        }
+
+        storytellers = storytellers.slice(0, limit);
+
+        // Fetch transcripts for matched storytellers (up to 5 to control response size)
+        const withQuotes = await Promise.all(
+          storytellers.slice(0, 5).map(async (st) => {
+            try {
+              const transcriptRes = await getTranscripts({ storytellerId: st.id, limit: 3 });
+              const quotes = (transcriptRes.data || [])
+                .filter((t) => t.content)
+                .map((t) => ({
+                  title: t.title,
+                  excerpt: t.content ? t.content.slice(0, 300) + (t.content.length > 300 ? '...' : '') : null,
+                  hasVideo: t.hasVideo,
+                }));
+              return {
+                name: st.displayName,
+                role: st.role,
+                bio: st.bio,
+                culturalBackground: st.culturalBackground,
+                location: st.location,
+                isElder: st.isElder,
+                storyCount: st.storyCount,
+                quotes,
+              };
+            } catch {
+              return {
+                name: st.displayName,
+                role: st.role,
+                bio: st.bio,
+                culturalBackground: st.culturalBackground,
+                location: st.location,
+                isElder: st.isElder,
+                storyCount: st.storyCount,
+                quotes: [],
+              };
+            }
+          })
+        );
+
+        return {
+          storytellers: withQuotes,
+          count: withQuotes.length,
+          total_available: storytellerRes.pagination?.total || storytellers.length,
+          note: 'These are real voices from community members. Cite with respect and cultural sensitivity.',
+          source: 'Empathy Ledger Community Voices',
+        };
+      } catch (err) {
+        return { error: `Failed to fetch community voices: ${err instanceof Error ? err.message : String(err)}`, storytellers: [], count: 0 };
+      }
+    },
+  },
+
+  search_real_photos: {
+    description:
+      'Search real photographs from affected communities via the Empathy Ledger — NOT AI-generated. Use for campaigns, content, and visual storytelling.',
+    inputSchema: z.object({
+      query: z.string().optional().describe('Search by caption, description, or cultural tag'),
+      gallery_id: z.string().optional().describe('Filter by gallery ID'),
+      limit: z.number().min(1).max(50).default(20),
+    }),
+    execute: async ({ query, gallery_id, limit }: { query?: string; gallery_id?: string; limit: number }) => {
+      if (!isV2Configured) {
+        return { error: 'Empathy Ledger v2 API not configured', photos: [], count: 0 };
+      }
+
+      try {
+        const mediaRes = await getMedia({
+          limit,
+          galleryId: gallery_id,
+          type: 'image',
+        });
+
+        let photos = (mediaRes.data || []).filter((m) => m.url);
+
+        // Filter by query if provided
+        if (query) {
+          const q = query.toLowerCase();
+          photos = photos.filter(
+            (p) =>
+              p.title?.toLowerCase().includes(q) ||
+              p.description?.toLowerCase().includes(q) ||
+              p.altText?.toLowerCase().includes(q) ||
+              p.culturalTags?.some((t) => t.toLowerCase().includes(q)) ||
+              p.galleryCaption?.toLowerCase().includes(q)
+          );
+        }
+
+        const formatted = photos.map((p) => ({
+          url: p.url,
+          thumbnail: p.thumbnailUrl || p.previewUrl,
+          caption: p.galleryCaption || p.title || p.description,
+          alt_text: p.altText,
+          cultural_tags: p.culturalTags,
+          cultural_level: p.culturalLevel,
+          location: p.location,
+          gallery_id: p.galleryId,
+          dimensions: p.dimensions,
+        }));
+
+        return {
+          photos: formatted,
+          count: formatted.length,
+          total_available: mediaRes.pagination?.total || 0,
+          note: 'These are real photographs from community — not AI-generated. Credit and cultural protocols apply.',
+          source: 'Empathy Ledger Media Library',
+        };
+      } catch (err) {
+        return { error: `Failed to fetch photos: ${err instanceof Error ? err.message : String(err)}`, photos: [], count: 0 };
+      }
+    },
+  },
+
+  search_org_intelligence: {
+    description:
+      'Get deep intelligence on an organization — financials, who funds them, who they fund, SEIFA scores, sector classification. Combines JusticeHub org data with GrantScope entity graph.',
+    inputSchema: z.object({
+      org_name: z.string().describe('Organization name to look up'),
+    }),
+    execute: async ({ org_name }: { org_name: string }) => {
+      const supabase = createServiceClient();
+      const s = sanitize(org_name);
+
+      // Find org
+      const { data: orgs } = await supabase
+        .from('organizations')
+        .select('id, name, slug, description, abn, website, state, is_indigenous_org, gs_entity_id')
+        .ilike('name', `%${s}%`)
+        .limit(3);
+
+      if (!orgs?.length) return { error: `No organization found matching "${org_name}"` };
+      const org = orgs[0];
+
+      // Base profile
+      const profile: Record<string, unknown> = {
+        name: org.name,
+        slug: org.slug,
+        description: org.description,
+        abn: org.abn,
+        website: org.website,
+        state: org.state,
+        is_indigenous_org: org.is_indigenous_org,
+        justicehub_url: org.slug ? `/organizations/${org.slug}` : null,
+      };
+
+      // If GS-linked, get deep enrichment
+      if (org.gs_entity_id) {
+        try {
+          const enrichment = await getEntityEnrichment(org.gs_entity_id);
+          if (enrichment) {
+            profile.entity_type = enrichment.entityType;
+            profile.sector = enrichment.sector;
+            profile.sub_sector = enrichment.subSector;
+            profile.seifa_decile = enrichment.seifaDecile;
+            profile.remoteness = enrichment.remoteness;
+            profile.is_community_controlled = enrichment.isCommunityControlled;
+            profile.latest_revenue = enrichment.latestRevenue ? `$${(enrichment.latestRevenue / 1_000_000).toFixed(1)}M` : null;
+            profile.latest_assets = enrichment.latestAssets ? `$${(enrichment.latestAssets / 1_000_000).toFixed(1)}M` : null;
+            profile.financial_year = enrichment.financialYear;
+            profile.lga = enrichment.lgaName;
+            profile.source_datasets = enrichment.sourceDatasets;
+            profile.relationships = enrichment.relationshipSummary;
+            if (enrichment.relationshipSummary.topFundingSources.length) {
+              profile.top_funding_sources = enrichment.relationshipSummary.topFundingSources.map((f) => ({
+                name: f.name,
+                amount: `$${(f.amount / 1_000_000).toFixed(2)}M`,
+                year: f.year,
+              }));
+            }
+            if (enrichment.relationshipSummary.topFundingTargets.length) {
+              profile.top_funding_targets = enrichment.relationshipSummary.topFundingTargets.map((f) => ({
+                name: f.name,
+                amount: `$${(f.amount / 1_000_000).toFixed(2)}M`,
+                year: f.year,
+              }));
+            }
+          }
+        } catch {
+          profile.enrichment_error = 'Failed to fetch GrantScope enrichment';
+        }
+      } else {
+        profile.note = 'This organization is not linked to the GrantScope entity graph — financial and relationship data unavailable.';
+      }
+
+      return {
+        profile,
+        source: org.gs_entity_id ? 'JusticeHub + GrantScope Entity Graph' : 'JusticeHub',
       };
     },
   },
