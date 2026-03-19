@@ -5,7 +5,7 @@
  * Gemini 2.5 Flash primary, Groq fallback, OpenAI last resort.
  */
 
-import { streamText } from 'ai';
+import { streamText, stepCountIs } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { almaTools } from '@/lib/ai/alma-tools';
@@ -161,7 +161,11 @@ export async function POST(request: Request) {
       system: SYSTEM_PROMPT,
       messages: trimmed,
       tools: almaTools,
-      maxSteps: 5,
+      stopWhen: stepCountIs(5),
+      toolChoice: 'auto',
+      onStepFinish({ stepType, finishReason }) {
+        console.log(`[ALMA] Step: ${stepType}, finish: ${finishReason}`);
+      },
     });
 
     return result.toUIMessageStreamResponse();
