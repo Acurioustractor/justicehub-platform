@@ -2,7 +2,7 @@
  * Streaming ALMA Chat API — Agentic tool-calling endpoint
  *
  * Uses Vercel AI SDK streamText() with tool calling against real Supabase data.
- * MiniMax M2.7 primary, Gemini 2.5 Flash fallback, Groq last resort.
+ * Gemini 2.5 Flash primary, Groq fallback, OpenAI last resort.
  */
 
 import { streamText } from 'ai';
@@ -114,16 +114,7 @@ Direct, evidence-based, community-centered. You are revolutionary infrastructure
 Frame as community ownership and system accountability, never poverty tourism.`;
 
 function getModel() {
-  // MiniMax M2.7 primary — cheap, strong tool calling, OpenAI-compatible
-  if (process.env.MINIMAX_API_KEY) {
-    const minimax = createOpenAI({
-      apiKey: process.env.MINIMAX_API_KEY,
-      baseURL: process.env.MINIMAX_BASE_URL || 'https://api.minimax.io/v1',
-    });
-    return minimax('MiniMax-M2.7');
-  }
-
-  // Gemini fallback — paid tier, reliable tool calling
+  // Gemini primary — paid tier, reliable tool calling
   if (process.env.GEMINI_API_KEY) {
     const google = createGoogleGenerativeAI({
       apiKey: process.env.GEMINI_API_KEY,
@@ -173,40 +164,7 @@ export async function POST(request: Request) {
       maxSteps: 5,
     });
 
-    // Pipe through a transform that strips <think>...</think> reasoning tags (MiniMax M2.7)
-    const response = result.toUIMessageStreamResponse();
-    const reader = response.body!.getReader();
-    const decoder = new TextDecoder();
-    const encoder = new TextEncoder();
-    let insideThink = false;
-
-    const stripped = new ReadableStream({
-      async pull(controller) {
-        const { done, value } = await reader.read();
-        if (done) { controller.close(); return; }
-        let text = decoder.decode(value, { stream: true });
-        // Handle <think> tags that may span chunks
-        while (text.includes('<think>')) {
-          const before = text.slice(0, text.indexOf('<think>'));
-          if (before) controller.enqueue(encoder.encode(before));
-          text = text.slice(text.indexOf('<think>') + 7);
-          insideThink = true;
-        }
-        if (insideThink) {
-          if (text.includes('</think>')) {
-            text = text.slice(text.indexOf('</think>') + 8);
-            insideThink = false;
-          } else {
-            return; // swallow chunk inside <think>
-          }
-        }
-        if (text) controller.enqueue(encoder.encode(text));
-      },
-    });
-
-    return new Response(stripped, {
-      headers: response.headers,
-    });
+    return result.toUIMessageStreamResponse();
   } catch (error) {
     console.error('[ALMA Stream] Error:', error);
     return new Response(
