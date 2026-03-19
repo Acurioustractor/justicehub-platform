@@ -90,3 +90,37 @@ thoughts/
 # Media assets (large)
 public/media/
 .superdesign
+
+# IDE/tool configs (non-project)
+.agent/
+.agents/
+.chrome-debug-profile/
+.context/
+.gstack/
+.junie/
+.kiro/
+.obsidian/
+.pi/
+.playwright-linkedin-session/
+.qwen/
+.tldr/
+.trae/
+.windsurf/
+
+# One-off throwaway scripts (root level)
+check_*.mjs
+check-*.mjs
+debug-*.mjs
+fix-*.mjs
+org-audit*.mjs
+create-mounty-user.mjs
+curate-mounty-photos.mjs
+populate-mounty*.mjs
+setup-mounty-auth.mjs
+upload-mounty-photos.mjs
+query-*.mjs
+--selector
+
+# Build artifacts
+tsconfig.tsbuildinfo
+supabase/.temp/
