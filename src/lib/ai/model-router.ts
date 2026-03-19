@@ -94,13 +94,60 @@ const PROVIDERS: ProviderConfig[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Background providers (MiniMax-preferred for cheap bulk processing)
+// ---------------------------------------------------------------------------
+
+const BACKGROUND_PROVIDERS: ProviderConfig[] = [
+  {
+    name: 'minimax',
+    envKey: 'MINIMAX_API_KEY',
+    baseUrl: 'https://api.minimaxi.chat/v1',
+    model: 'MiniMax-M2.5',
+    maxTokens: 4096,
+    supportsJsonMode: false,
+    isReasoning: true,
+  },
+  {
+    name: 'groq',
+    envKey: 'GROQ_API_KEY',
+    baseUrl: 'https://api.groq.com/openai/v1',
+    model: 'llama-3.3-70b-versatile',
+    maxTokens: 4096,
+    supportsJsonMode: true,
+  },
+  {
+    name: 'deepseek',
+    envKey: 'DEEPSEEK_API_KEY',
+    baseUrl: 'https://api.deepseek.com/v1',
+    model: 'deepseek-chat',
+    maxTokens: 4096,
+    supportsJsonMode: true,
+    isReasoning: true,
+  },
+  {
+    name: 'gemini',
+    envKey: 'GEMINI_API_KEY',
+    baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+    model: 'gemini-2.5-flash',
+    maxTokens: 4096,
+    supportsJsonMode: true,
+  },
+];
+
+// ---------------------------------------------------------------------------
 // LLM Client (singleton)
 // ---------------------------------------------------------------------------
 
 export class LLMClient {
   private static instance: LLMClient;
+  private static bgInstance: LLMClient;
   private callIndex = 0;
   private disabledProviders = new Set<string>();
+  private providers: ProviderConfig[];
+
+  constructor(providers?: ProviderConfig[]) {
+    this.providers = providers || PROVIDERS;
+  }
 
   static getInstance(): LLMClient {
     if (!LLMClient.instance) {
@@ -109,9 +156,16 @@ export class LLMClient {
     return LLMClient.instance;
   }
 
+  static getBackgroundInstance(): LLMClient {
+    if (!LLMClient.bgInstance) {
+      LLMClient.bgInstance = new LLMClient(BACKGROUND_PROVIDERS);
+    }
+    return LLMClient.bgInstance;
+  }
+
   /** Get active providers (have API key + not disabled) */
   private getActiveProviders(): ProviderConfig[] {
-    return PROVIDERS.filter(
+    return this.providers.filter(
       (p) => process.env[p.envKey] && !this.disabledProviders.has(p.name)
     );
   }
@@ -270,11 +324,20 @@ export class LLMClient {
 }
 
 // ---------------------------------------------------------------------------
-// Convenience export
+// Convenience exports
 // ---------------------------------------------------------------------------
 
 /** Call LLM with automatic provider rotation */
 export async function callLLM(prompt: string, options?: CallLLMOptions): Promise<string> {
   return LLMClient.getInstance().call(prompt, options);
+}
+
+/**
+ * Call LLM for background/bulk processing (MiniMax preferred).
+ * Use for: evidence chunking, research summarization, data enrichment,
+ * media classification, cost analysis — NOT user-facing chat.
+ */
+export async function callBackgroundLLM(prompt: string, options?: CallLLMOptions): Promise<string> {
+  return LLMClient.getBackgroundInstance().call(prompt, options);
 }
 
