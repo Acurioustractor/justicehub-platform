@@ -31,20 +31,70 @@ interface DetentionFacility {
   partnership_count?: number;
 }
 
+async function fetchLinkedOrgIds(supabase: ReturnType<typeof createServiceClient>) {
+  // Orgs linked to ALMA interventions or justice funding are always relevant
+  const svc = supabase as any;
+  const [almaRes, fundRes] = await Promise.all([
+    svc
+      .from('alma_interventions')
+      .select('operating_organization_id')
+      .neq('verification_status', 'ai_generated')
+      .not('operating_organization_id', 'is', null),
+    svc
+      .from('justice_funding')
+      .select('alma_organization_id')
+      .not('alma_organization_id', 'is', null),
+  ]);
+
+  const ids = new Set<string>();
+  almaRes.data?.forEach((r: any) => { if (r.operating_organization_id) ids.add(r.operating_organization_id); });
+  fundRes.data?.forEach((r: any) => { if (r.alma_organization_id) ids.add(r.alma_organization_id); });
+  return ids;
+}
+
+async function fetchAllOrgs(supabase: ReturnType<typeof createServiceClient>) {
+  const PAGE_SIZE = 1000;
+  const allOrgs: Organization[] = [];
+  let offset = 0;
+  let hasMore = true;
+
+  while (hasMore) {
+    const { data, error } = await supabase
+      .from('organizations')
+      .select('id, name, slug, type, description, verification_status, city, state, tags')
+      .eq('is_active', true)
+      .order('name')
+      .range(offset, offset + PAGE_SIZE - 1);
+
+    if (error) throw error;
+    if (!data || data.length === 0) break;
+    allOrgs.push(...data);
+    hasMore = data.length === PAGE_SIZE;
+    offset += PAGE_SIZE;
+  }
+
+  // Get orgs linked to ALMA interventions or justice funding
+  const linkedIds = await fetchLinkedOrgIds(supabase);
+
+  // Filter out skeleton orgs that have no meaningful display data,
+  // UNLESS they're linked to ALMA interventions or justice funding.
+  return allOrgs.filter(org =>
+    org.type || org.description || org.city || (org.tags && org.tags.length > 0) || linkedIds.has(org.id)
+  );
+}
+
 async function getOrganizationsData() {
   const supabase = createServiceClient();
 
   try {
-    // Fetch organizations
-    const { data: orgs, error: orgsError } = await supabase
-      .from('organizations')
-      .select('*')
-      .eq('is_active', true)
-      .order('name');
+    // Fetch all organizations (paginated to bypass 1000-row default limit)
+    const orgs = await fetchAllOrgs(supabase).catch(err => {
+      console.error('Error fetching organizations:', err);
+      return [] as Organization[];
+    });
 
-    if (orgsError) {
-      console.error('Error fetching organizations:', orgsError);
-      return { organizations: [], programCounts: {}, serviceCounts: {}, teamCounts: {}, detentionFacilities: [], claimedOrgIds: [] };
+    if (orgs.length === 0) {
+      return { organizations: [], totalOrgCount: 0, programCounts: {}, serviceCounts: {}, teamCounts: {}, detentionFacilities: [], claimedOrgIds: [] };
     }
 
     // Fetch detention facilities
@@ -138,8 +188,15 @@ async function getOrganizationsData() {
       });
     }
 
+    // Get total count of all active orgs in ecosystem (including skeleton)
+    const { count: totalOrgCount } = await supabase
+      .from('organizations')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_active', true);
+
     return {
       organizations: orgs || [],
+      totalOrgCount: totalOrgCount || orgs.length,
       programCounts,
       serviceCounts,
       teamCounts,
@@ -148,12 +205,12 @@ async function getOrganizationsData() {
     };
   } catch (error) {
     console.error('Error fetching organizations data:', error);
-    return { organizations: [], programCounts: {}, serviceCounts: {}, teamCounts: {}, detentionFacilities: [], claimedOrgIds: [] };
+    return { organizations: [], totalOrgCount: 0, programCounts: {}, serviceCounts: {}, teamCounts: {}, detentionFacilities: [], claimedOrgIds: [] };
   }
 }
 
 export default async function OrganizationsPage() {
-  const { organizations, programCounts, serviceCounts, teamCounts, detentionFacilities, claimedOrgIds } = await getOrganizationsData();
+  const { organizations, totalOrgCount, programCounts, serviceCounts, teamCounts, detentionFacilities, claimedOrgIds } = await getOrganizationsData();
 
   const verifiedCount = organizations.filter(
     (org: Organization) => org.verification_status === 'verified'
@@ -181,10 +238,18 @@ export default async function OrganizationsPage() {
             <div className="flex flex-wrap gap-8 pt-6 border-t-2 border-black/10">
               <div>
                 <div className="text-4xl font-bold text-ochre-600 mb-1">
-                  {organizations.length}
+                  {totalOrgCount.toLocaleString()}
                 </div>
                 <p className="text-sm uppercase tracking-wide text-earth-600 font-medium">
-                  Organizations
+                  In Ecosystem
+                </p>
+              </div>
+              <div>
+                <div className="text-4xl font-bold text-ochre-600 mb-1">
+                  {organizations.length.toLocaleString()}
+                </div>
+                <p className="text-sm uppercase tracking-wide text-earth-600 font-medium">
+                  Browsable
                 </p>
               </div>
               <div>

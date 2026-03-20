@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Search,
@@ -80,6 +80,8 @@ export function OrganizationsPageContent({
     return Array.from(set).sort();
   }, [organizations]);
 
+  const [visibleCount, setVisibleCount] = useState(60);
+
   const hasActiveFilters =
     searchQuery || stateFilter !== 'all' || typeFilter !== 'all' || verificationFilter !== 'all';
 
@@ -136,6 +138,12 @@ export function OrganizationsPageContent({
         }
       });
   }, [organizations, searchQuery, stateFilter, typeFilter, verificationFilter, sortBy, programCounts, serviceCounts, claimedSet]);
+
+  // Reset pagination when filters change
+  useEffect(() => { setVisibleCount(60); }, [searchQuery, stateFilter, typeFilter, verificationFilter]);
+
+  const visibleOrgs = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
 
   const clearFilters = () => {
     setSearchQuery('');
@@ -239,8 +247,11 @@ export function OrganizationsPageContent({
           {/* Result Count */}
           <div className="mt-3 text-sm text-earth-600 font-medium">
             Showing{' '}
-            <span className="font-bold text-earth-900">{filtered.length}</span>{' '}
-            of {organizations.length} organizations
+            <span className="font-bold text-earth-900">{Math.min(visibleCount, filtered.length)}</span>{' '}
+            of {filtered.length} organizations
+            {filtered.length < organizations.length && (
+              <span className="text-earth-400"> (filtered from {organizations.length})</span>
+            )}
           </div>
         </div>
       </section>
@@ -249,8 +260,9 @@ export function OrganizationsPageContent({
       <section className="py-12">
         <div className="container-justice">
           {filtered.length > 0 ? (
+            <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((org) => {
+              {visibleOrgs.map((org) => {
                 const isVerified = org.verification_status === 'verified';
                 const hasLinks =
                   programCounts[org.id] || serviceCounts[org.id] || teamCounts[org.id];
@@ -361,6 +373,19 @@ export function OrganizationsPageContent({
                 );
               })}
             </div>
+
+            {/* Load More */}
+            {hasMore && (
+              <div className="mt-8 text-center">
+                <button
+                  onClick={() => setVisibleCount(prev => prev + 60)}
+                  className="px-6 py-3 border-2 border-black bg-ochre-50 text-earth-900 font-bold hover:bg-ochre-100 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+                >
+                  Load more ({filtered.length - visibleCount} remaining)
+                </button>
+              </div>
+            )}
+            </>
           ) : (
             <div className="text-center py-16">
               <p className="text-xl text-earth-600 mb-4">
