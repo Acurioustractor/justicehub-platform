@@ -69,7 +69,7 @@ export default function ForFundersPage() {
 
   const impactMetrics = [
     {
-      stat: "$1.1M",
+      stat: "$1.55M",
       context: "Cost per detained child per year",
       comparison: "vs $50K for community programs",
       icon: DollarSign
@@ -241,8 +241,8 @@ export default function ForFundersPage() {
                   The Contained: Australian Tour 2026
                 </h3>
                 <p className="text-gray-300 mt-2 max-w-xl">
-                  $100K to take an immersive youth justice experience to four cities across Australia.
-                  Three shipping containers that make the case for change.
+                  $200K to take an immersive youth justice experience to four cities across Australia.
+                  One shipping container, three rooms, that make the case for change.
                 </p>
               </div>
               <Link
@@ -582,7 +582,7 @@ export default function ForFundersPage() {
                 <BarChart3 className="w-8 h-8 text-emerald-600 mb-3" />
                 <h3 className="font-bold text-lg mb-2 group-hover:text-emerald-600 transition-colors">ALMA Evidence Engine</h3>
                 <p className="text-gray-600 text-sm mb-3">
-                  939+ interventions catalogued, 330+ evidence items collected.
+                  876 verified interventions, 570+ evidence items collected.
                   AI-powered analysis of what works in youth justice.
                 </p>
                 <span className="text-sm font-bold text-emerald-600 flex items-center gap-1">
