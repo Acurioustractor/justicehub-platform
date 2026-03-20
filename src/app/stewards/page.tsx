@@ -160,88 +160,103 @@ export default async function StewardsPage() {
         </div>
       </section>
 
-      {/* Steward Pathways */}
+      {/* Free vs Paid — The Clear Distinction */}
       <section className="section-padding border-b-2 border-black bg-gray-50">
         <div className="container-justice">
           <h2 className="text-3xl font-black text-black mb-4 text-center">
-            Steward Pathways
+            Free vs Steward Access
           </h2>
-          <p className="text-center text-gray-700 mb-12 max-w-2xl mx-auto">
-            Start where you are. Grow with the movement. Every level deepens your capacity to protect what works.
+          <p className="text-center text-gray-700 mb-4 max-w-2xl mx-auto">
+            JusticeHub&apos;s public data is free forever. Steward access unlocks the tools
+            that turn data into action.
+          </p>
+          <p className="text-center text-sm text-gray-500 mb-12 max-w-2xl mx-auto">
+            Revenue from Steward subscriptions funds the infrastructure and flows back to
+            community knowledge holders. Not to shareholders.
           </p>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {/* Community Steward */}
+            {/* Free — What Everyone Gets */}
             <div className="border-2 border-black bg-white">
-              <div className="bg-green-700 text-white p-4 border-b-2 border-black">
-                <h3 className="text-xl font-bold">Community Steward</h3>
-                <p className="text-green-100 text-sm">Free • Start Here</p>
+              <div className="bg-[#0A0A0A] text-white p-4 border-b-2 border-black">
+                <h3 className="text-xl font-bold">Public Access</h3>
+                <p className="text-gray-400 text-sm">Free forever</p>
               </div>
               <div className="p-6">
+                <p className="text-sm text-gray-600 mb-4">
+                  Browse, search, and explore — no account needed.
+                </p>
                 <ul className="space-y-3 mb-6">
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Browse all {stats.totalPrograms} programs
+                  <li className="flex items-start gap-2 text-sm">
+                    <Shield className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span>Browse all {stats.totalPrograms} programs</span>
                   </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Access public outcome data
+                  <li className="flex items-start gap-2 text-sm">
+                    <Shield className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span>Search by state, type, evidence level</span>
                   </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Join steward community
+                  <li className="flex items-start gap-2 text-sm">
+                    <Shield className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span>View program summaries and evidence ratings</span>
                   </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Monthly intelligence updates
+                  <li className="flex items-start gap-2 text-sm">
+                    <Shield className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span>Chat with ALMA (basic queries)</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Shield className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span>Justice spending transparency</span>
                   </li>
                 </ul>
                 <Link
-                  href="/signup?role=steward&tier=community"
-                  className="block w-full text-center py-3 bg-green-700 text-white font-bold border-2 border-black hover:bg-green-800 transition-colors"
+                  href="/intelligence/interventions"
+                  className="block w-full text-center py-3 border-2 border-black font-bold hover:bg-gray-100 transition-colors"
                 >
-                  Get Started Free
+                  Explore Free Data
                 </Link>
               </div>
             </div>
 
-            {/* Professional Steward */}
+            {/* Professional Steward — What You Get Paid */}
             <div className="border-2 border-black bg-white relative">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-orange-600 text-white text-xs font-bold px-3 py-1 border-2 border-black">
-                  MOST POPULAR
+                <span className="bg-[#DC2626] text-white text-xs font-bold px-3 py-1 border-2 border-black">
+                  FOR PRACTITIONERS
                 </span>
               </div>
-              <div className="bg-orange-600 text-white p-4 border-b-2 border-black">
+              <div className="bg-[#059669] text-white p-4 border-b-2 border-black">
                 <h3 className="text-xl font-bold">Professional Steward</h3>
-                <p className="text-orange-100 text-sm">$29/month • For Practitioners</p>
+                <p className="text-emerald-100 text-sm">$29/month</p>
               </div>
               <div className="p-6">
+                <p className="text-sm text-gray-600 mb-4">
+                  The tools to write funding applications, build evidence cases, and compare programs.
+                </p>
                 <ul className="space-y-3 mb-6">
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Everything in Community
+                  <li className="flex items-start gap-2 text-sm">
+                    <Zap className="w-4 h-4 text-[#059669] mt-0.5 flex-shrink-0" />
+                    <span><strong>Deep outcome data</strong> — full evaluation results, not just summaries</span>
                   </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Full outcomes & evidence data
+                  <li className="flex items-start gap-2 text-sm">
+                    <Zap className="w-4 h-4 text-[#059669] mt-0.5 flex-shrink-0" />
+                    <span><strong>Cost-per-outcome comparisons</strong> — detention vs community, by program type</span>
                   </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Portfolio comparison tools
+                  <li className="flex items-start gap-2 text-sm">
+                    <Zap className="w-4 h-4 text-[#059669] mt-0.5 flex-shrink-0" />
+                    <span><strong>Export-ready policy briefs</strong> — evidence summaries formatted for MPs and funders</span>
                   </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Policy brief templates
+                  <li className="flex items-start gap-2 text-sm">
+                    <Zap className="w-4 h-4 text-[#059669] mt-0.5 flex-shrink-0" />
+                    <span><strong>Portfolio comparison tools</strong> — benchmark your program against peers</span>
                   </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Direct community connections
+                  <li className="flex items-start gap-2 text-sm">
+                    <Zap className="w-4 h-4 text-[#059669] mt-0.5 flex-shrink-0" />
+                    <span><strong>Community introductions</strong> — connect with programs doing similar work</span>
                   </li>
                 </ul>
                 <Link
                   href="/signup?role=steward&tier=professional"
-                  className="block w-full text-center py-3 bg-orange-600 text-white font-bold border-2 border-black hover:bg-orange-700 transition-colors"
+                  className="block w-full text-center py-3 bg-[#059669] text-white font-bold border-2 border-black hover:bg-emerald-700 transition-colors"
                 >
                   Start Free Trial
                 </Link>
@@ -250,36 +265,39 @@ export default async function StewardsPage() {
 
             {/* Organization */}
             <div className="border-2 border-black bg-white">
-              <div className="bg-purple-600 text-white p-4 border-b-2 border-black">
+              <div className="bg-[#0A0A0A] text-white p-4 border-b-2 border-black">
                 <h3 className="text-xl font-bold">Organization</h3>
-                <p className="text-purple-100 text-sm">Custom • For Teams</p>
+                <p className="text-gray-400 text-sm">Custom pricing</p>
               </div>
               <div className="p-6">
+                <p className="text-sm text-gray-600 mb-4">
+                  For departments, foundations, and service providers who need data at scale.
+                </p>
                 <ul className="space-y-3 mb-6">
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Everything in Professional
+                  <li className="flex items-start gap-2 text-sm">
+                    <Zap className="w-4 h-4 text-[#0A0A0A] mt-0.5 flex-shrink-0" />
+                    <span><strong>API access to ALMA</strong> — integrate evidence into your own systems</span>
                   </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Team seats (unlimited)
+                  <li className="flex items-start gap-2 text-sm">
+                    <Zap className="w-4 h-4 text-[#0A0A0A] mt-0.5 flex-shrink-0" />
+                    <span><strong>Unlimited team seats</strong> — your whole department, one subscription</span>
                   </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    API access to ALMA
+                  <li className="flex items-start gap-2 text-sm">
+                    <Zap className="w-4 h-4 text-[#0A0A0A] mt-0.5 flex-shrink-0" />
+                    <span><strong>Custom intelligence reports</strong> — tailored to your region or portfolio</span>
                   </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Custom intelligence reports
+                  <li className="flex items-start gap-2 text-sm">
+                    <Zap className="w-4 h-4 text-[#0A0A0A] mt-0.5 flex-shrink-0" />
+                    <span><strong>Advisory council seat</strong> — input on research priorities</span>
                   </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600" />
-                    Priority support
+                  <li className="flex items-start gap-2 text-sm">
+                    <Zap className="w-4 h-4 text-[#0A0A0A] mt-0.5 flex-shrink-0" />
+                    <span><strong>Priority support</strong> — dedicated contact for your team</span>
                   </li>
                 </ul>
                 <Link
                   href="/contact?subject=organization"
-                  className="block w-full text-center py-3 bg-purple-600 text-white font-bold border-2 border-black hover:bg-purple-700 transition-colors"
+                  className="block w-full text-center py-3 bg-[#0A0A0A] text-white font-bold border-2 border-black hover:bg-gray-800 transition-colors"
                 >
                   Contact Us
                 </Link>

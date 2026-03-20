@@ -182,10 +182,10 @@ export default function ForFundersPage() {
                   Schedule a Briefing
                 </Link>
                 <Link
-                  href="/for-funders/report"
+                  href="/for-funders/calculator"
                   className="border-2 border-black px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors text-center"
                 >
-                  View Foundation Report
+                  Impact Calculator
                 </Link>
               </div>
             </div>
@@ -336,6 +336,108 @@ export default function ForFundersPage() {
                   </div>
                 ))
               )}
+            </div>
+          </div>
+        </section>
+
+        {/* Outcome Stories — Real Results */}
+        <section className="py-16 border-b-2 border-black">
+          <div className="container-justice">
+            <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
+              Proof It Works
+            </h2>
+            <p className="text-xl text-gray-700 mb-12 max-w-3xl">
+              These are not projections. These are measured outcomes from community-led
+              programs already running across Australia.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="bg-white p-8 border-2 border-black">
+                <div className="flex items-center gap-2 mb-2">
+                  <MapPin className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm text-gray-600">Alice Springs, NT</span>
+                </div>
+                <h3 className="font-bold text-xl mb-1">Oonchiumpa</h3>
+                <div className="text-3xl font-black text-emerald-700 mb-3">95% reduction</div>
+                <p className="text-gray-700 mb-4">
+                  Aboriginal-led cultural healing program. Young people who were in and out of
+                  detention are now employed, training, or back in education. 95% reduction in
+                  anti-social behaviour through cultural authority, on-country healing, and
+                  community mentorship.
+                </p>
+                <div className="text-sm text-gray-500 border-t border-gray-200 pt-3">
+                  <strong>Model:</strong> Cultural healing + on-country programs &middot;
+                  <strong> Cost:</strong> Fraction of detention &middot;
+                  <strong> Source:</strong> Community-reported outcomes
+                </div>
+              </div>
+
+              <div className="bg-white p-8 border-2 border-black">
+                <div className="flex items-center gap-2 mb-2">
+                  <MapPin className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm text-gray-600">Armidale, NSW</span>
+                </div>
+                <h3 className="font-bold text-xl mb-1">BackTrack</h3>
+                <div className="text-3xl font-black text-emerald-700 mb-3">87% success rate</div>
+                <p className="text-gray-700 mb-4">
+                  Working with the highest-risk young people — those already deep in the justice
+                  system. 87% of participants don&apos;t reoffend. The program combines practical
+                  skills (welding, construction), mentoring, and youth-led dog training.
+                </p>
+                <div className="text-sm text-gray-500 border-t border-gray-200 pt-3">
+                  <strong>Model:</strong> Skills + mentoring + animal therapy &middot;
+                  <strong> Cost:</strong> ~$50K/year per participant &middot;
+                  <strong> Source:</strong> Independent evaluation
+                </div>
+              </div>
+
+              <div className="bg-white p-8 border-2 border-black">
+                <div className="flex items-center gap-2 mb-2">
+                  <MapPin className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm text-gray-600">Mount Isa, QLD</span>
+                </div>
+                <h3 className="font-bold text-xl mb-1">BG Fit</h3>
+                <div className="text-3xl font-black text-emerald-700 mb-3">400+ young people/year</div>
+                <p className="text-gray-700 mb-4">
+                  Fitness-based mentoring program redirecting young people from the justice system.
+                  Operates in one of Australia&apos;s highest youth offending regions. Young people choose
+                  the gym over the streets — and keep choosing it.
+                </p>
+                <div className="text-sm text-gray-500 border-t border-gray-200 pt-3">
+                  <strong>Model:</strong> Fitness + mentoring + community connection &middot;
+                  <strong> Cost:</strong> ~$1,200/participant &middot;
+                  <strong> Source:</strong> Program data
+                </div>
+              </div>
+
+              <div className="bg-white p-8 border-2 border-black">
+                <div className="flex items-center gap-2 mb-2">
+                  <MapPin className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm text-gray-600">Groote Eylandt, NT</span>
+                </div>
+                <h3 className="font-bold text-xl mb-1">Anindilyakwa Justice Program</h3>
+                <div className="text-3xl font-black text-emerald-700 mb-3">95% crime reduction</div>
+                <p className="text-gray-700 mb-4">
+                  Community-controlled justice program on Groote Eylandt. In three years, crime
+                  dropped 95% — not through policing, but through cultural authority, night patrols
+                  led by elders, and community-designed diversionary programs.
+                </p>
+                <div className="text-sm text-gray-500 border-t border-gray-200 pt-3">
+                  <strong>Model:</strong> Community-controlled justice &middot;
+                  <strong> Cost:</strong> ~$2M/year (whole community) &middot;
+                  <strong> Source:</strong> NT Government evaluation
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 p-6 bg-black text-white text-center">
+              <p className="text-lg font-bold mb-2">
+                876 verified programs. These four are just the beginning.
+              </p>
+              <p className="text-gray-400 text-sm">
+                Every program in our database is verified against published evidence, community
+                endorsement, or independent evaluation. No self-reported claims without corroboration.
+              </p>
             </div>
           </div>
         </section>
