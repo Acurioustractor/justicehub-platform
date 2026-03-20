@@ -152,7 +152,7 @@ export default function ForFundersPage() {
 
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-[#F5F0E8] text-[#0A0A0A]">
       <Navigation />
 
       <main className="pt-40">
@@ -160,7 +160,7 @@ export default function ForFundersPage() {
         <section className="py-16 md:py-24">
           <div className="container-justice">
             <div className="max-w-4xl">
-              <div className="inline-block bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-6">
+              <div className="inline-block bg-[#0A0A0A] text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-6">
                 For Funders & Philanthropists
               </div>
 
@@ -170,20 +170,20 @@ export default function ForFundersPage() {
 
               <p className="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed">
                 Every dollar invested in community-led youth justice programs returns
-                <span className="font-bold text-black"> $5-10 in avoided costs</span>.
+                <span className="font-bold text-[#0A0A0A]"> $5-10 in avoided costs</span>.
                 We connect philanthropic capital with proven, scalable solutions.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   href="/contact?source=funders"
-                  className="bg-black text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-900 transition-colors text-center"
+                  className="bg-[#0A0A0A] text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-900 transition-colors text-center"
                 >
                   Schedule a Briefing
                 </Link>
                 <Link
                   href="/for-funders/calculator"
-                  className="border-2 border-black px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors text-center"
+                  className="border-2 border-[#0A0A0A] px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors text-center"
                 >
                   Impact Calculator
                 </Link>
@@ -193,7 +193,7 @@ export default function ForFundersPage() {
         </section>
 
         {/* The Problem / Opportunity */}
-        <section className="py-16 bg-gray-50 border-y-2 border-black">
+        <section className="py-16 bg-[#F5F0E8] border-y-2 border-[#0A0A0A]">
           <div className="container-justice">
             <h2 className="text-3xl font-black uppercase tracking-tighter mb-12">
               The Case for Investment
@@ -201,7 +201,7 @@ export default function ForFundersPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {impactMetrics.map((metric, i) => (
-                <div key={i} className="bg-white p-6 border-2 border-black">
+                <div key={i} className="bg-white p-6 border-2 border-[#0A0A0A]">
                   <metric.icon className="w-8 h-8 mb-4" />
                   <div className="text-4xl font-black mb-2">{metric.stat}</div>
                   <div className="font-bold text-sm uppercase tracking-widest mb-2">
@@ -212,7 +212,7 @@ export default function ForFundersPage() {
               ))}
             </div>
 
-            <div className="mt-12 p-8 bg-black text-white">
+            <div className="mt-12 p-8 bg-[#0A0A0A] text-white">
               <div className="flex items-start gap-4">
                 <Lightbulb className="w-8 h-8 flex-shrink-0 text-yellow-400" />
                 <div>
@@ -230,11 +230,11 @@ export default function ForFundersPage() {
         </section>
 
         {/* CONTAINED Tour Callout */}
-        <section className="py-12 bg-black text-white border-b-2 border-black">
+        <section className="py-12 bg-[#0A0A0A] text-white border-b-2 border-[#0A0A0A]">
           <div className="container-justice">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               <div>
-                <div className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-2">
+                <div className="text-xs font-bold uppercase tracking-widest text-[#059669] mb-2">
                   Featured Investment Opportunity
                 </div>
                 <h3 className="text-2xl font-black uppercase tracking-tighter">
@@ -247,7 +247,7 @@ export default function ForFundersPage() {
               </div>
               <Link
                 href="/contained/tour"
-                className="flex-shrink-0 bg-white text-black px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
+                className="flex-shrink-0 bg-white text-[#0A0A0A] px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
               >
                 Learn More
               </Link>
@@ -268,8 +268,8 @@ export default function ForFundersPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {investmentOpportunities.map((opp, i) => (
-                <div key={i} className="border-2 border-black">
-                  <div className="p-6 border-b-2 border-black bg-gray-50">
+                <div key={i} className="border-2 border-[#0A0A0A]">
+                  <div className="p-6 border-b-2 border-[#0A0A0A] bg-[#F5F0E8]">
                     <h3 className="font-bold text-xl mb-2">{opp.title}</h3>
                     <p className="text-gray-700">{opp.description}</p>
                   </div>
@@ -280,7 +280,7 @@ export default function ForFundersPage() {
                     <ul className="space-y-2">
                       {opp.examples.map((ex, j) => (
                         <li key={j} className="flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-emerald-600" />
+                          <CheckCircle className="w-4 h-4 text-[#059669]" />
                           <span>{ex}</span>
                         </li>
                       ))}
@@ -298,7 +298,7 @@ export default function ForFundersPage() {
         </section>
 
         {/* Basecamp Results */}
-        <section className="py-16 bg-emerald-50 border-y-2 border-black">
+        <section className="py-16 bg-[#F5F0E8] border-y-2 border-[#0A0A0A]">
           <div className="container-justice">
             <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
               Basecamp Results
@@ -311,18 +311,18 @@ export default function ForFundersPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {basecampsLoading ? (
                 <div className="col-span-4 flex justify-center py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+                  <Loader2 className="w-8 h-8 animate-spin text-[#059669]" />
                 </div>
               ) : (
                 basecamps.map((basecamp) => (
-                  <div key={basecamp.slug} className="bg-white p-6 border-2 border-black">
+                  <div key={basecamp.slug} className="bg-white p-6 border-2 border-[#0A0A0A]">
                     <div className="flex items-center gap-2 mb-4">
                       <MapPin className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-600">{basecamp.region}</span>
                     </div>
                     <h3 className="font-bold text-xl mb-2">{basecamp.name}</h3>
                     {basecamp.stats?.[0] && (
-                      <div className="text-2xl font-black text-emerald-700 mb-3">
+                      <div className="text-2xl font-black text-[#059669] mb-3">
                         {basecamp.stats[0].value}
                       </div>
                     )}
@@ -341,7 +341,7 @@ export default function ForFundersPage() {
         </section>
 
         {/* Outcome Stories — Real Results */}
-        <section className="py-16 border-b-2 border-black">
+        <section className="py-16 border-b-2 border-[#0A0A0A]">
           <div className="container-justice">
             <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
               Proof It Works
@@ -352,13 +352,13 @@ export default function ForFundersPage() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-white p-8 border-2 border-black">
+              <div className="bg-white p-8 border-2 border-[#0A0A0A]">
                 <div className="flex items-center gap-2 mb-2">
                   <MapPin className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-600">Alice Springs, NT</span>
                 </div>
                 <h3 className="font-bold text-xl mb-1">Oonchiumpa</h3>
-                <div className="text-3xl font-black text-emerald-700 mb-3">95% reduction</div>
+                <div className="text-3xl font-black text-[#059669] mb-3">95% reduction</div>
                 <p className="text-gray-700 mb-4">
                   Aboriginal-led cultural healing program. Young people who were in and out of
                   detention are now employed, training, or back in education. 95% reduction in
@@ -372,13 +372,13 @@ export default function ForFundersPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-8 border-2 border-black">
+              <div className="bg-white p-8 border-2 border-[#0A0A0A]">
                 <div className="flex items-center gap-2 mb-2">
                   <MapPin className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-600">Armidale, NSW</span>
                 </div>
                 <h3 className="font-bold text-xl mb-1">BackTrack</h3>
-                <div className="text-3xl font-black text-emerald-700 mb-3">87% success rate</div>
+                <div className="text-3xl font-black text-[#059669] mb-3">87% success rate</div>
                 <p className="text-gray-700 mb-4">
                   Working with the highest-risk young people — those already deep in the justice
                   system. 87% of participants don&apos;t reoffend. The program combines practical
@@ -391,13 +391,13 @@ export default function ForFundersPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-8 border-2 border-black">
+              <div className="bg-white p-8 border-2 border-[#0A0A0A]">
                 <div className="flex items-center gap-2 mb-2">
                   <MapPin className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-600">Mount Isa, QLD</span>
                 </div>
                 <h3 className="font-bold text-xl mb-1">BG Fit</h3>
-                <div className="text-3xl font-black text-emerald-700 mb-3">400+ young people/year</div>
+                <div className="text-3xl font-black text-[#059669] mb-3">400+ young people/year</div>
                 <p className="text-gray-700 mb-4">
                   Fitness-based mentoring program redirecting young people from the justice system.
                   Operates in one of Australia&apos;s highest youth offending regions. Young people choose
@@ -410,13 +410,13 @@ export default function ForFundersPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-8 border-2 border-black">
+              <div className="bg-white p-8 border-2 border-[#0A0A0A]">
                 <div className="flex items-center gap-2 mb-2">
                   <MapPin className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-600">Groote Eylandt, NT</span>
                 </div>
                 <h3 className="font-bold text-xl mb-1">Anindilyakwa Justice Program</h3>
-                <div className="text-3xl font-black text-emerald-700 mb-3">95% crime reduction</div>
+                <div className="text-3xl font-black text-[#059669] mb-3">95% crime reduction</div>
                 <p className="text-gray-700 mb-4">
                   Community-controlled justice program on Groote Eylandt. In three years, crime
                   dropped 95% — not through policing, but through cultural authority, night patrols
@@ -430,7 +430,7 @@ export default function ForFundersPage() {
               </div>
             </div>
 
-            <div className="mt-8 p-6 bg-black text-white text-center">
+            <div className="mt-8 p-6 bg-[#0A0A0A] text-white text-center">
               <p className="text-lg font-bold mb-2">
                 876 verified programs. These four are just the beginning.
               </p>
@@ -457,15 +457,15 @@ export default function ForFundersPage() {
               {partnershipTiers.map((tier, i) => (
                 <div
                   key={i}
-                  className={`border-2 border-black cursor-pointer transition-colors ${
-                    selectedTier === tier.name ? 'bg-black text-white' : 'bg-white hover:bg-gray-50'
+                  className={`border-2 border-[#0A0A0A] cursor-pointer transition-colors ${
+                    selectedTier === tier.name ? 'bg-[#0A0A0A] text-white' : 'bg-white hover:bg-[#F5F0E8]'
                   }`}
                   onClick={() => setSelectedTier(tier.name === selectedTier ? null : tier.name)}
                 >
-                  <div className="p-6 border-b-2 border-black">
+                  <div className="p-6 border-b-2 border-[#0A0A0A]">
                     <h3 className="font-bold text-xl mb-1">{tier.name}</h3>
                     <div className={`text-3xl font-black ${
-                      selectedTier === tier.name ? 'text-emerald-400' : 'text-emerald-700'
+                      selectedTier === tier.name ? 'text-[#059669]' : 'text-[#059669]'
                     }`}>
                       {tier.amount}
                     </div>
@@ -475,7 +475,7 @@ export default function ForFundersPage() {
                       {tier.benefits.map((benefit, j) => (
                         <li key={j} className="flex items-start gap-2">
                           <CheckCircle className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
-                            selectedTier === tier.name ? 'text-emerald-400' : 'text-emerald-600'
+                            selectedTier === tier.name ? 'text-[#059669]' : 'text-[#059669]'
                           }`} />
                           <span className="text-sm">{benefit}</span>
                         </li>
@@ -489,14 +489,14 @@ export default function ForFundersPage() {
         </section>
 
         {/* What We Need */}
-        <section className="py-16 bg-gray-50 border-y-2 border-black">
+        <section className="py-16 bg-[#F5F0E8] border-y-2 border-[#0A0A0A]">
           <div className="container-justice">
             <h2 className="text-3xl font-black uppercase tracking-tighter mb-8">
               What We Need
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-white p-8 border-2 border-black">
+              <div className="bg-white p-8 border-2 border-[#0A0A0A]">
                 <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
                   <Building2 className="w-6 h-6" />
                   Core Operations
@@ -510,7 +510,7 @@ export default function ForFundersPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-8 border-2 border-black">
+              <div className="bg-white p-8 border-2 border-[#0A0A0A]">
                 <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
                   <BarChart3 className="w-6 h-6" />
                   ALMA Intelligence System
@@ -524,7 +524,7 @@ export default function ForFundersPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-8 border-2 border-black">
+              <div className="bg-white p-8 border-2 border-[#0A0A0A]">
                 <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
                   <Globe className="w-6 h-6" />
                   Network Expansion
@@ -538,7 +538,7 @@ export default function ForFundersPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-8 border-2 border-black">
+              <div className="bg-white p-8 border-2 border-[#0A0A0A]">
                 <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
                   <Heart className="w-6 h-6" />
                   Community Program Support
@@ -556,7 +556,7 @@ export default function ForFundersPage() {
         </section>
 
         {/* Due Diligence Tools */}
-        <section className="py-16 border-t-2 border-black">
+        <section className="py-16 border-t-2 border-[#0A0A0A]">
           <div className="container-justice">
             <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
               Due Diligence Tools
@@ -566,38 +566,38 @@ export default function ForFundersPage() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Link href="/justice-funding" className="border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
-                <DollarSign className="w-8 h-8 text-red-600 mb-3" />
-                <h3 className="font-bold text-lg mb-2 group-hover:text-red-600 transition-colors">Justice Spending Tracker</h3>
+              <Link href="/justice-funding" className="border-2 border-[#0A0A0A] p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
+                <DollarSign className="w-8 h-8 text-[#DC2626] mb-3" />
+                <h3 className="font-bold text-lg mb-2 group-hover:text-[#DC2626] transition-colors">Justice Spending Tracker</h3>
                 <p className="text-gray-600 text-sm mb-3">
                   Search $9B+ in justice funding. See who gets funded, who misses out,
                   and the inequality gap facing Indigenous communities.
                 </p>
-                <span className="text-sm font-bold text-red-600 flex items-center gap-1">
+                <span className="text-sm font-bold text-[#DC2626] flex items-center gap-1">
                   Explore the data <ArrowRight className="w-4 h-4" />
                 </span>
               </Link>
 
-              <Link href="/intelligence/dashboard" className="border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
-                <BarChart3 className="w-8 h-8 text-emerald-600 mb-3" />
-                <h3 className="font-bold text-lg mb-2 group-hover:text-emerald-600 transition-colors">ALMA Evidence Engine</h3>
+              <Link href="/intelligence/dashboard" className="border-2 border-[#0A0A0A] p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
+                <BarChart3 className="w-8 h-8 text-[#059669] mb-3" />
+                <h3 className="font-bold text-lg mb-2 group-hover:text-[#059669] transition-colors">ALMA Evidence Engine</h3>
                 <p className="text-gray-600 text-sm mb-3">
                   876 verified interventions, 570+ evidence items collected.
                   AI-powered analysis of what works in youth justice.
                 </p>
-                <span className="text-sm font-bold text-emerald-600 flex items-center gap-1">
+                <span className="text-sm font-bold text-[#059669] flex items-center gap-1">
                   View the evidence <ArrowRight className="w-4 h-4" />
                 </span>
               </Link>
 
-              <Link href="/for-funders/report" className="border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
-                <Scale className="w-8 h-8 text-blue-600 mb-3" />
-                <h3 className="font-bold text-lg mb-2 group-hover:text-blue-600 transition-colors">Foundation Report</h3>
+              <Link href="/for-funders/report" className="border-2 border-[#0A0A0A] p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
+                <Scale className="w-8 h-8 text-[#0A0A0A] mb-3" />
+                <h3 className="font-bold text-lg mb-2 group-hover:text-[#0A0A0A] transition-colors">Foundation Report</h3>
                 <p className="text-gray-600 text-sm mb-3">
                   Detailed impact analysis, financial breakdown, and the case
                   for community-led justice investment.
                 </p>
-                <span className="text-sm font-bold text-blue-600 flex items-center gap-1">
+                <span className="text-sm font-bold text-[#0A0A0A] flex items-center gap-1">
                   Read the report <ArrowRight className="w-4 h-4" />
                 </span>
               </Link>
@@ -606,7 +606,7 @@ export default function ForFundersPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-16 bg-black text-white">
+        <section className="py-16 bg-[#0A0A0A] text-white">
           <div className="container-justice text-center">
             <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-6">
               Ready to Make a Difference?
@@ -619,13 +619,13 @@ export default function ForFundersPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact?source=funders&type=briefing"
-                className="bg-white text-black px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
+                className="bg-white text-[#0A0A0A] px-8 py-4 font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
               >
                 Schedule Briefing
               </Link>
               <Link
                 href="/for-funders/report"
-                className="border-2 border-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+                className="border-2 border-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-[#0A0A0A] transition-colors"
               >
                 View Foundation Report
               </Link>

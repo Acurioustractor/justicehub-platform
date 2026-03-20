@@ -41,13 +41,13 @@ export default async function StewardsPage() {
   const stats = await getImpactStats();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F5F0E8]">
       <Navigation />
       <main className="page-content">
       {/* Hero Section */}
-      <section className="section-padding border-b-2 border-black bg-gradient-to-br from-green-50 to-white">
+      <section className="section-padding border-b-2 border-[#0A0A0A] bg-[#F5F0E8]">
         <div className="container-justice text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 border-2 border-green-700 text-green-800 font-bold text-sm mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#059669]/10 border-2 border-[#059669] text-[#059669] font-bold text-sm mb-8">
             <Leaf className="w-4 h-4" />
             PROTECT WHAT WORKS
           </div>
@@ -65,20 +65,20 @@ export default async function StewardsPage() {
 
           {/* Impact Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-4xl mx-auto">
-            <div className="border-2 border-black p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <div className="text-4xl font-black text-green-700 mb-2">{stats.totalPrograms}</div>
+            <div className="border-2 border-[#0A0A0A] p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="text-4xl font-black text-[#059669] mb-2">{stats.totalPrograms}</div>
               <div className="text-sm uppercase tracking-wider text-gray-700">Programs Documented</div>
             </div>
-            <div className="border-2 border-black p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <div className="text-4xl font-black text-green-600 mb-2">{stats.outcomesRate}%</div>
+            <div className="border-2 border-[#0A0A0A] p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="text-4xl font-black text-[#059669] mb-2">{stats.outcomesRate}%</div>
               <div className="text-sm uppercase tracking-wider text-gray-700">With Outcomes Data</div>
             </div>
-            <div className="border-2 border-black p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <div className="text-4xl font-black text-purple-600 mb-2">{stats.aboriginalLed}</div>
+            <div className="border-2 border-[#0A0A0A] p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="text-4xl font-black text-[#0A0A0A] mb-2">{stats.aboriginalLed}</div>
               <div className="text-sm uppercase tracking-wider text-gray-700">Aboriginal-Led Programs</div>
             </div>
-            <div className="border-2 border-black p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <div className="text-4xl font-black text-blue-600 mb-2">{stats.statesCovered}/8</div>
+            <div className="border-2 border-[#0A0A0A] p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="text-4xl font-black text-[#0A0A0A] mb-2">{stats.statesCovered}/8</div>
               <div className="text-sm uppercase tracking-wider text-gray-700">States Covered</div>
             </div>
           </div>
@@ -95,9 +95,9 @@ export default async function StewardsPage() {
       </section>
 
       {/* What Stewards Do */}
-      <section className="section-padding border-b-2 border-black">
+      <section className="section-padding border-b-2 border-[#0A0A0A]">
         <div className="container-justice">
-          <h2 className="text-3xl font-black text-black mb-4 text-center">
+          <h2 className="text-3xl font-black text-[#0A0A0A] mb-4 text-center">
             What JusticeHub Stewards Do
           </h2>
           <p className="text-center text-gray-700 mb-12 max-w-2xl mx-auto">
@@ -106,9 +106,9 @@ export default async function StewardsPage() {
           </p>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="border-2 border-black p-8 bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-shadow">
-              <div className="inline-flex p-4 bg-blue-50 mb-6">
-                <BookOpen className="w-8 h-8 text-blue-600" />
+            <div className="border-2 border-[#0A0A0A] p-8 bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-shadow">
+              <div className="inline-flex p-4 bg-gray-100 mb-6">
+                <BookOpen className="w-8 h-8 text-[#0A0A0A]" />
               </div>
               <h3 className="text-xl font-bold mb-3">Protect Knowledge</h3>
               <p className="text-gray-700 mb-4">
@@ -123,9 +123,9 @@ export default async function StewardsPage() {
               </ul>
             </div>
 
-            <div className="border-2 border-black p-8 bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-shadow">
-              <div className="inline-flex p-4 bg-green-50 mb-6">
-                <Users className="w-8 h-8 text-green-600" />
+            <div className="border-2 border-[#0A0A0A] p-8 bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-shadow">
+              <div className="inline-flex p-4 bg-[#F5F0E8] mb-6">
+                <Users className="w-8 h-8 text-[#059669]" />
               </div>
               <h3 className="text-xl font-bold mb-3">Nurture Communities</h3>
               <p className="text-gray-700 mb-4">
@@ -140,9 +140,9 @@ export default async function StewardsPage() {
               </ul>
             </div>
 
-            <div className="border-2 border-black p-8 bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-shadow">
-              <div className="inline-flex p-4 bg-orange-50 mb-6">
-                <TrendingUp className="w-8 h-8 text-orange-600" />
+            <div className="border-2 border-[#0A0A0A] p-8 bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-shadow">
+              <div className="inline-flex p-4 bg-gray-100 mb-6">
+                <TrendingUp className="w-8 h-8 text-[#0A0A0A]" />
               </div>
               <h3 className="text-xl font-bold mb-3">Guide Resources</h3>
               <p className="text-gray-700 mb-4">
@@ -161,9 +161,9 @@ export default async function StewardsPage() {
       </section>
 
       {/* Free vs Paid — The Clear Distinction */}
-      <section className="section-padding border-b-2 border-black bg-gray-50">
+      <section className="section-padding border-b-2 border-[#0A0A0A] bg-[#F5F0E8]">
         <div className="container-justice">
-          <h2 className="text-3xl font-black text-black mb-4 text-center">
+          <h2 className="text-3xl font-black text-[#0A0A0A] mb-4 text-center">
             Free vs Steward Access
           </h2>
           <p className="text-center text-gray-700 mb-4 max-w-2xl mx-auto">
@@ -177,8 +177,8 @@ export default async function StewardsPage() {
 
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {/* Free — What Everyone Gets */}
-            <div className="border-2 border-black bg-white">
-              <div className="bg-[#0A0A0A] text-white p-4 border-b-2 border-black">
+            <div className="border-2 border-[#0A0A0A] bg-white">
+              <div className="bg-[#0A0A0A] text-white p-4 border-b-2 border-[#0A0A0A]">
                 <h3 className="text-xl font-bold">Public Access</h3>
                 <p className="text-gray-400 text-sm">Free forever</p>
               </div>
@@ -188,29 +188,29 @@ export default async function StewardsPage() {
                 </p>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-start gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <Shield className="w-4 h-4 text-[#059669] mt-0.5 flex-shrink-0" />
                     <span>Browse all {stats.totalPrograms} programs</span>
                   </li>
                   <li className="flex items-start gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <Shield className="w-4 h-4 text-[#059669] mt-0.5 flex-shrink-0" />
                     <span>Search by state, type, evidence level</span>
                   </li>
                   <li className="flex items-start gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <Shield className="w-4 h-4 text-[#059669] mt-0.5 flex-shrink-0" />
                     <span>View program summaries and evidence ratings</span>
                   </li>
                   <li className="flex items-start gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <Shield className="w-4 h-4 text-[#059669] mt-0.5 flex-shrink-0" />
                     <span>Chat with ALMA (basic queries)</span>
                   </li>
                   <li className="flex items-start gap-2 text-sm">
-                    <Shield className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <Shield className="w-4 h-4 text-[#059669] mt-0.5 flex-shrink-0" />
                     <span>Justice spending transparency</span>
                   </li>
                 </ul>
                 <Link
                   href="/intelligence/interventions"
-                  className="block w-full text-center py-3 border-2 border-black font-bold hover:bg-gray-100 transition-colors"
+                  className="block w-full text-center py-3 border-2 border-[#0A0A0A] font-bold hover:bg-gray-100 transition-colors"
                 >
                   Explore Free Data
                 </Link>
@@ -218,13 +218,13 @@ export default async function StewardsPage() {
             </div>
 
             {/* Professional Steward — What You Get Paid */}
-            <div className="border-2 border-black bg-white relative">
+            <div className="border-2 border-[#0A0A0A] bg-white relative">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-[#DC2626] text-white text-xs font-bold px-3 py-1 border-2 border-black">
+                <span className="bg-[#DC2626] text-white text-xs font-bold px-3 py-1 border-2 border-[#0A0A0A]">
                   FOR PRACTITIONERS
                 </span>
               </div>
-              <div className="bg-[#059669] text-white p-4 border-b-2 border-black">
+              <div className="bg-[#059669] text-white p-4 border-b-2 border-[#0A0A0A]">
                 <h3 className="text-xl font-bold">Professional Steward</h3>
                 <p className="text-emerald-100 text-sm">$29/month</p>
               </div>
@@ -256,7 +256,7 @@ export default async function StewardsPage() {
                 </ul>
                 <Link
                   href="/signup?role=steward&tier=professional"
-                  className="block w-full text-center py-3 bg-[#059669] text-white font-bold border-2 border-black hover:bg-emerald-700 transition-colors"
+                  className="block w-full text-center py-3 bg-[#059669] text-white font-bold border-2 border-[#0A0A0A] hover:bg-emerald-700 transition-colors"
                 >
                   Start Free Trial
                 </Link>
@@ -264,8 +264,8 @@ export default async function StewardsPage() {
             </div>
 
             {/* Organization */}
-            <div className="border-2 border-black bg-white">
-              <div className="bg-[#0A0A0A] text-white p-4 border-b-2 border-black">
+            <div className="border-2 border-[#0A0A0A] bg-white">
+              <div className="bg-[#0A0A0A] text-white p-4 border-b-2 border-[#0A0A0A]">
                 <h3 className="text-xl font-bold">Organization</h3>
                 <p className="text-gray-400 text-sm">Custom pricing</p>
               </div>
@@ -297,7 +297,7 @@ export default async function StewardsPage() {
                 </ul>
                 <Link
                   href="/contact?subject=organization"
-                  className="block w-full text-center py-3 bg-[#0A0A0A] text-white font-bold border-2 border-black hover:bg-gray-800 transition-colors"
+                  className="block w-full text-center py-3 bg-[#0A0A0A] text-white font-bold border-2 border-[#0A0A0A] hover:bg-gray-800 transition-colors"
                 >
                   Contact Us
                 </Link>
@@ -308,9 +308,9 @@ export default async function StewardsPage() {
       </section>
 
       {/* Steward Community */}
-      <section className="section-padding border-b-2 border-black">
+      <section className="section-padding border-b-2 border-[#0A0A0A]">
         <div className="container-justice">
-          <h2 className="text-3xl font-black text-black mb-4 text-center">
+          <h2 className="text-3xl font-black text-[#0A0A0A] mb-4 text-center">
             The Steward Community
           </h2>
           <p className="text-center text-gray-700 mb-12 max-w-2xl mx-auto">
@@ -319,52 +319,52 @@ export default async function StewardsPage() {
           </p>
 
           <div className="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto mb-12">
-            <div className="text-center p-6 border-2 border-black bg-white">
-              <Globe className="w-8 h-8 mx-auto mb-4 text-blue-600" />
-              <div className="text-3xl font-black text-black mb-1">{stats.statesCovered}</div>
+            <div className="text-center p-6 border-2 border-[#0A0A0A] bg-white">
+              <Globe className="w-8 h-8 mx-auto mb-4 text-[#0A0A0A]" />
+              <div className="text-3xl font-black text-[#0A0A0A] mb-1">{stats.statesCovered}</div>
               <div className="text-sm text-gray-600">States Represented</div>
             </div>
-            <div className="text-center p-6 border-2 border-black bg-white">
-              <Users className="w-8 h-8 mx-auto mb-4 text-green-600" />
-              <div className="text-3xl font-black text-black mb-1">50+</div>
+            <div className="text-center p-6 border-2 border-[#0A0A0A] bg-white">
+              <Users className="w-8 h-8 mx-auto mb-4 text-[#059669]" />
+              <div className="text-3xl font-black text-[#0A0A0A] mb-1">50+</div>
               <div className="text-sm text-gray-600">Active Stewards</div>
             </div>
-            <div className="text-center p-6 border-2 border-black bg-white">
-              <Heart className="w-8 h-8 mx-auto mb-4 text-red-600" />
-              <div className="text-3xl font-black text-black mb-1">{stats.aboriginalLed}</div>
+            <div className="text-center p-6 border-2 border-[#0A0A0A] bg-white">
+              <Heart className="w-8 h-8 mx-auto mb-4 text-[#DC2626]" />
+              <div className="text-3xl font-black text-[#0A0A0A] mb-1">{stats.aboriginalLed}</div>
               <div className="text-sm text-gray-600">Aboriginal-Led Programs</div>
             </div>
-            <div className="text-center p-6 border-2 border-black bg-white">
-              <MapPin className="w-8 h-8 mx-auto mb-4 text-purple-600" />
-              <div className="text-3xl font-black text-black mb-1">100+</div>
+            <div className="text-center p-6 border-2 border-[#0A0A0A] bg-white">
+              <MapPin className="w-8 h-8 mx-auto mb-4 text-[#0A0A0A]" />
+              <div className="text-3xl font-black text-[#0A0A0A] mb-1">100+</div>
               <div className="text-sm text-gray-600">Communities Served</div>
             </div>
           </div>
 
           {/* Testimonials */}
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="border-l-4 border-green-700 pl-6 py-4">
+            <div className="border-l-4 border-[#059669] pl-6 py-4">
               <p className="text-gray-700 italic mb-4">
                 "JusticeHub gave us the evidence we needed to secure $2M in funding for our
                 community-led diversion program. The data speaks louder than any pitch deck."
               </p>
-              <p className="font-bold text-black">— Youth Justice Program Director, QLD</p>
+              <p className="font-bold text-[#0A0A0A]">— Youth Justice Program Director, QLD</p>
             </div>
-            <div className="border-l-4 border-blue-600 pl-6 py-4">
+            <div className="border-l-4 border-[#0A0A0A] pl-6 py-4">
               <p className="text-gray-700 italic mb-4">
                 "Being able to compare outcomes across similar programs helped us refine our
                 approach. We're seeing 40% better engagement since joining the network."
               </p>
-              <p className="font-bold text-black">— Community Services Manager, NT</p>
+              <p className="font-bold text-[#0A0A0A]">— Community Services Manager, NT</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Stewardship Principles */}
-      <section className="section-padding border-b-2 border-black bg-green-50">
+      <section className="section-padding border-b-2 border-[#0A0A0A] bg-[#F5F0E8]">
         <div className="container-justice">
-          <h2 className="text-3xl font-black text-black mb-4 text-center">
+          <h2 className="text-3xl font-black text-[#0A0A0A] mb-4 text-center">
             Stewardship Principles
           </h2>
           <p className="text-center text-gray-700 mb-12 max-w-2xl mx-auto">
@@ -372,30 +372,30 @@ export default async function StewardsPage() {
           </p>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            <div className="border-2 border-black bg-white p-6">
+            <div className="border-2 border-[#0A0A0A] bg-white p-6">
               <div className="text-3xl mb-4">🌱</div>
-              <h3 className="font-bold text-black mb-2">Nurture, Don't Extract</h3>
+              <h3 className="font-bold text-[#0A0A0A] mb-2">Nurture, Don't Extract</h3>
               <p className="text-sm text-gray-600">
                 We grow community capacity. We never take knowledge without giving back.
               </p>
             </div>
-            <div className="border-2 border-black bg-white p-6">
+            <div className="border-2 border-[#0A0A0A] bg-white p-6">
               <div className="text-3xl mb-4">🛡️</div>
-              <h3 className="font-bold text-black mb-2">Protect What Works</h3>
+              <h3 className="font-bold text-[#0A0A0A] mb-2">Protect What Works</h3>
               <p className="text-sm text-gray-600">
                 Evidence-based programs deserve protection from political winds and funding cuts.
               </p>
             </div>
-            <div className="border-2 border-black bg-white p-6">
+            <div className="border-2 border-[#0A0A0A] bg-white p-6">
               <div className="text-3xl mb-4">🤝</div>
-              <h3 className="font-bold text-black mb-2">Community First</h3>
+              <h3 className="font-bold text-[#0A0A0A] mb-2">Community First</h3>
               <p className="text-sm text-gray-600">
                 Communities own their data and knowledge. Revenue flows to knowledge holders.
               </p>
             </div>
-            <div className="border-2 border-black bg-white p-6">
+            <div className="border-2 border-[#0A0A0A] bg-white p-6">
               <div className="text-3xl mb-4">🔄</div>
-              <h3 className="font-bold text-black mb-2">Long-Term Thinking</h3>
+              <h3 className="font-bold text-[#0A0A0A] mb-2">Long-Term Thinking</h3>
               <p className="text-sm text-gray-600">
                 We steward for generations, not quarterly reports. Sustainable change takes time.
               </p>
@@ -405,7 +405,7 @@ export default async function StewardsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-black text-white">
+      <section className="section-padding bg-[#0A0A0A] text-white">
         <div className="container-justice text-center">
           <h2 className="text-4xl font-black mb-6">
             Ready to Steward Change?
@@ -417,13 +417,13 @@ export default async function StewardsPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/signup?role=steward"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-700 text-white font-bold border-2 border-white hover:bg-green-800 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#059669] text-white font-bold border-2 border-white hover:bg-emerald-700 transition-colors"
             >
               BECOME A STEWARD <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="/intelligence"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent text-white font-bold border-2 border-white hover:bg-white hover:text-black transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent text-white font-bold border-2 border-white hover:bg-white hover:text-[#0A0A0A] transition-colors"
             >
               EXPLORE ALMA FIRST
             </Link>

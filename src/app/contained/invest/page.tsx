@@ -49,7 +49,7 @@ const WHAT_MONEY_BUYS = [
   { amount: '$25,000', gets: 'Fund the container build — custom three-room fit-out' },
   { amount: '$50,000', gets: 'Fund one complete tour stop — transport, setup, facilitation, documentation' },
   { amount: '$75,000', gets: 'Fund the Tennant Creek community-controlled stop — cultural safety, local facilitation, community authority' },
-  { amount: '$100,000', gets: 'Fund the full national tour — four cities, complete documentation, partner activation' },
+  { amount: '$200,000', gets: 'Fund the full national tour — four cities, complete documentation, partner activation' },
 ];
 
 export default function ContainedInvestPage() {
