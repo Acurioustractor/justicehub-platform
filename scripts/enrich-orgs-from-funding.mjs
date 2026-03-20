@@ -17,15 +17,22 @@ const DRY_RUN = process.argv.includes('--dry-run');
 const limitArg = process.argv.indexOf('--limit');
 const LIMIT = limitArg !== -1 ? parseInt(process.argv[limitArg + 1]) : 99999;
 
-// Infer org type from program names
+// Infer org type from program names.
+// Rules are ordered by specificity — first match wins.
+// The last rule (community-service) requires justice/welfare-adjacent keywords
+// to avoid tagging golf clubs, orchid societies, etc. that receive generic
+// "Community Benefit Fund" grants.
 const TYPE_RULES = [
   { pattern: /aboriginal|indigenous|torres strait|first nations/i, type: 'indigenous-service' },
   { pattern: /youth|young people|juvenile|child protect/i, type: 'youth-service' },
   { pattern: /family|domestic violence|women|child safety/i, type: 'family-service' },
-  { pattern: /health|medical|mental health|drug|alcohol/i, type: 'health-service' },
+  { pattern: /health|medical|mental health|drug|alcohol|disability/i, type: 'health-service' },
   { pattern: /education|school|training|vocational|literacy/i, type: 'education-service' },
   { pattern: /legal|justice|court|law|prison|detention|corrective/i, type: 'service_provider' },
-  { pattern: /community|neighbourhood|regional|housing/i, type: 'community-service' },
+  // community-service: require both "community" AND a justice/welfare signal word
+  { pattern: /community.{0,30}(service|support|care|welfare|housing|homelessness|crisis|counselling|intervention|outreach|rehabilitation|reintegration|restorative)/i, type: 'community-service' },
+  { pattern: /(service|support|care|welfare|housing|homelessness|crisis|counselling|intervention|outreach|rehabilitation|reintegration|restorative).{0,30}community/i, type: 'community-service' },
+  { pattern: /neighbourhood centre|community (centre|center)|settlement service|migrant|refugee/i, type: 'community-service' },
 ];
 
 function inferType(programNames) {

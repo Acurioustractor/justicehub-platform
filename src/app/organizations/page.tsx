@@ -4,7 +4,7 @@ import { Map as MapIcon } from 'lucide-react';
 import { SimpleEcosystemMap } from '@/components/SimpleEcosystemMap';
 import { OrganizationsPageContent } from './page-content';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300; // ISR: regenerate every 5 minutes
 
 interface Organization {
   id: string;
