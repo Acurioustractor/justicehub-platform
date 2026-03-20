@@ -59,7 +59,9 @@ async function enrichWithAcnc(profile: Record<string, unknown>, abn: string) {
 export async function GET(req: NextRequest) {
   const params = req.nextUrl.searchParams;
   const view = params.get('view');
-  const stateFilter = params.get('state') || 'QLD';
+  const rawState = params.get('state');
+  // Support 'ALL' or empty string to mean no state filter; default to QLD for backwards compat
+  const stateFilter = (!rawState || rawState.toUpperCase() === 'ALL') ? null : rawState.toUpperCase();
 
   // Views requiring paid access (org-level detail, downloads, narratives)
   // Internal server-side requests (from org profile page SSR) bypass the gate

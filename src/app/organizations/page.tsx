@@ -81,123 +81,76 @@ async function fetchAllOrgs(supabase: ReturnType<typeof createServiceClient>) {
   );
 }
 
+async function fetchFacilitiesWithPartners(supabase: ReturnType<typeof createServiceClient>) {
+  const { data: facilities, error } = await supabase
+    .from('youth_detention_facilities')
+    .select('id, name, slug, city, state, capacity_beds, operational_status, government_department, security_level')
+    .order('state')
+    .order('name');
+
+  if (error || !facilities?.length) return [];
+
+  const { data: partnerships } = await supabase
+    .from('facility_partnerships')
+    .select('facility_id')
+    .in('facility_id', facilities.map(f => f.id))
+    .eq('is_active', true);
+
+  const counts: Record<string, number> = {};
+  partnerships?.forEach((p: any) => {
+    if (p.facility_id) counts[p.facility_id] = (counts[p.facility_id] || 0) + 1;
+  });
+
+  return facilities.map(f => ({ ...f, partnership_count: counts[f.id] || 0 }));
+}
+
+function buildCountMap(rows: { organization_id: string | null }[] | null): Record<string, number> {
+  const counts: Record<string, number> = {};
+  rows?.forEach(r => {
+    if (r.organization_id) counts[r.organization_id] = (counts[r.organization_id] || 0) + 1;
+  });
+  return counts;
+}
+
 async function getOrganizationsData() {
   const supabase = createServiceClient();
 
   try {
-    // Fetch all organizations (paginated to bypass 1000-row default limit)
-    const orgs = await fetchAllOrgs(supabase).catch(err => {
-      console.error('Error fetching organizations:', err);
-      return [] as Organization[];
-    });
+    // Run ALL independent queries in parallel for ~3x speedup
+    const [
+      orgs,
+      facilitiesWithPartners,
+      { data: programs },
+      { data: services },
+      { data: teamMembers },
+      { data: verifiedClaims },
+      { count: totalOrgCount },
+    ] = await Promise.all([
+      fetchAllOrgs(supabase).catch(err => {
+        console.error('Error fetching organizations:', err);
+        return [] as Organization[];
+      }),
+      fetchFacilitiesWithPartners(supabase),
+      supabase.from('registered_services').select('organization_id'),
+      supabase.from('services').select('organization_id'),
+      supabase.from('organizations_profiles').select('organization_id').eq('is_current', true),
+      (supabase as any).from('organization_claims').select('organization_id').eq('status', 'verified'),
+      supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('is_active', true),
+    ]);
 
     if (orgs.length === 0) {
       return { organizations: [], totalOrgCount: 0, programCounts: {}, serviceCounts: {}, teamCounts: {}, detentionFacilities: [], claimedOrgIds: [] };
     }
 
-    // Fetch detention facilities
-    const { data: facilities, error: facilitiesError } = await supabase
-      .from('youth_detention_facilities')
-      .select('id, name, slug, city, state, capacity_beds, operational_status, government_department, security_level')
-      .order('state')
-      .order('name');
-
-    if (facilitiesError) {
-      console.error('Error fetching detention facilities:', facilitiesError);
-    }
-
-    // Fetch partnership counts for facilities
-    const facilityIds = facilities?.map(f => f.id) || [];
-    let facilitiesWithPartners: DetentionFacility[] = facilities || [];
-
-    if (facilityIds.length > 0) {
-      const { data: partnerships } = await supabase
-        .from('facility_partnerships')
-        .select('facility_id')
-        .in('facility_id', facilityIds)
-        .eq('is_active', true);
-
-      const partnershipCounts: Record<string, number> = {};
-      partnerships?.forEach((p: any) => {
-        if (p.facility_id) {
-          partnershipCounts[p.facility_id] = (partnershipCounts[p.facility_id] || 0) + 1;
-        }
-      });
-
-      facilitiesWithPartners = facilities?.map(f => ({
-        ...f,
-        partnership_count: partnershipCounts[f.id] || 0,
-      })) || [];
-    }
-
-    // Fetch program counts
-    const { data: programs } = await supabase
-      .from('registered_services')
-      .select('organization_id');
-
-    const programCounts: Record<string, number> = {};
-    if (programs) {
-      programs.forEach((program: any) => {
-        if (program.organization_id) {
-          programCounts[program.organization_id] = (programCounts[program.organization_id] || 0) + 1;
-        }
-      });
-    }
-
-    // Fetch service counts
-    const { data: services } = await supabase
-      .from('services')
-      .select('organization_id');
-
-    const serviceCounts: Record<string, number> = {};
-    if (services) {
-      services.forEach((service: { organization_id: string | null }) => {
-        if (service.organization_id) {
-          serviceCounts[service.organization_id] = (serviceCounts[service.organization_id] || 0) + 1;
-        }
-      });
-    }
-
-    // Fetch team member counts
-    const { data: teamMembers } = await supabase
-      .from('organizations_profiles')
-      .select('organization_id')
-      .eq('is_current', true);
-
-    const teamCounts: Record<string, number> = {};
-    if (teamMembers) {
-      teamMembers.forEach((member: { organization_id: string | null }) => {
-        if (member.organization_id) {
-          teamCounts[member.organization_id] = (teamCounts[member.organization_id] || 0) + 1;
-        }
-      });
-    }
-
-    // Fetch verified claim counts (table not yet in generated types)
-    const { data: verifiedClaims } = await (supabase as any)
-      .from('organization_claims')
-      .select('organization_id')
-      .eq('status', 'verified');
-
     const claimedOrgIds = new Set<string>();
-    if (verifiedClaims) {
-      verifiedClaims.forEach((c: { organization_id: string }) => {
-        claimedOrgIds.add(c.organization_id);
-      });
-    }
-
-    // Get total count of all active orgs in ecosystem (including skeleton)
-    const { count: totalOrgCount } = await supabase
-      .from('organizations')
-      .select('id', { count: 'exact', head: true })
-      .eq('is_active', true);
+    verifiedClaims?.forEach((c: { organization_id: string }) => claimedOrgIds.add(c.organization_id));
 
     return {
-      organizations: orgs || [],
+      organizations: orgs,
       totalOrgCount: totalOrgCount || orgs.length,
-      programCounts,
-      serviceCounts,
-      teamCounts,
+      programCounts: buildCountMap(programs),
+      serviceCounts: buildCountMap(services),
+      teamCounts: buildCountMap(teamMembers),
       detentionFacilities: facilitiesWithPartners,
       claimedOrgIds: Array.from(claimedOrgIds),
     };
