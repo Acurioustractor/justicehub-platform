@@ -3,6 +3,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
 import { sendEmail } from '@/lib/email/send';
 import { preEventSequence } from '@/content/newsletter-sequences';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 /**
  * POST /api/ghl/register
@@ -23,7 +24,17 @@ export async function POST(request: NextRequest) {
       how_heard,
       newsletter,
       event_name,
+      turnstile_token,
     } = body;
+
+    // Verify Turnstile token
+    const turnstileValid = await verifyTurnstileToken(turnstile_token);
+    if (!turnstileValid) {
+      return NextResponse.json(
+        { error: 'Bot verification failed. Please try again.' },
+        { status: 403 }
+      );
+    }
 
     // Validate required fields
     if (!email || !full_name) {

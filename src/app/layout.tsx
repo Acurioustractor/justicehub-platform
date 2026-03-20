@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Providers } from '@/components/providers';
 import { ALMAChat } from '@/components/ui/alma-chat';
 import './globals.css';
@@ -37,6 +39,8 @@ export default function RootLayout({
           </div>
           <ALMAChat />
         </Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

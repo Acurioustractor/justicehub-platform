@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
 import { sendEmail } from '@/lib/email/send';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 const SITE = 'https://justicehub.com.au';
 
@@ -15,7 +16,16 @@ const SITE = 'https://justicehub.com.au';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { feelings, response, would_nominate, name, email } = body;
+    const { feelings, response, would_nominate, name, email, turnstile_token } = body;
+
+    // Verify Turnstile token
+    const turnstileValid = await verifyTurnstileToken(turnstile_token);
+    if (!turnstileValid) {
+      return NextResponse.json(
+        { error: 'Bot verification failed. Please try again.' },
+        { status: 403 }
+      );
+    }
 
     if ((!feelings || feelings.length === 0) && !response) {
       return NextResponse.json(

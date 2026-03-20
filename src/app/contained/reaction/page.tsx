@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { Send, CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react';
+import { TurnstileWidget } from '@/components/ui/turnstile-widget';
 
 const FEELINGS = [
   'Angry',
@@ -23,6 +24,7 @@ export default function ReactionPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [honeypot, setHoneypot] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +56,7 @@ export default function ReactionPage() {
           would_nominate: wouldNominate,
           name: name || undefined,
           email: email || undefined,
+          turnstile_token: turnstileToken,
         }),
       });
 
@@ -227,13 +230,15 @@ export default function ReactionPage() {
                 />
               </div>
 
+              <TurnstileWidget onSuccess={setTurnstileToken} theme="light" />
+
               {error && (
                 <p className="text-[#DC2626] text-sm font-bold">{error}</p>
               )}
 
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={submitting || !turnstileToken}
                 className="w-full flex items-center justify-center gap-2 bg-[#DC2626] text-white px-8 py-4 text-sm font-bold uppercase tracking-widest hover:bg-red-700 disabled:opacity-50 transition-colors"
               >
                 {submitting ? (

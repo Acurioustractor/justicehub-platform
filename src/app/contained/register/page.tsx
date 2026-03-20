@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Calendar, MapPin, Clock, Check, Loader2 } from 'lucide-react';
 import { tourStops } from '@/content/campaign';
+import { TurnstileWidget } from '@/components/ui/turnstile-widget';
 
 interface RegistrationData {
   full_name: string;
@@ -21,6 +22,8 @@ export default function ContainedRegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [registrationId, setRegistrationId] = useState('');
+
+  const [turnstileToken, setTurnstileToken] = useState('');
 
   const [formData, setFormData] = useState<RegistrationData>({
     full_name: '',
@@ -75,6 +78,7 @@ export default function ContainedRegisterPage() {
           how_heard: formData.how_heard,
           newsletter: formData.newsletter,
           event_name: eventDetails.title,
+          turnstile_token: turnstileToken,
         }),
       });
 
@@ -316,6 +320,8 @@ export default function ContainedRegisterPage() {
                 </label>
               </div>
 
+              <TurnstileWidget onSuccess={setTurnstileToken} theme="dark" />
+
               {error && (
                 <div className="p-4 bg-red-900/50 border border-red-500 text-red-200 text-sm">
                   {error}
@@ -332,7 +338,7 @@ export default function ContainedRegisterPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !turnstileToken}
                   className="flex-1 py-4 bg-ochre-600 text-white font-bold text-lg hover:bg-ochre-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {loading ? (
