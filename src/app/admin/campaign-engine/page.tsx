@@ -1,7 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import {
+  getNextStatus,
+  OUTREACH_STATUS_OPTIONS,
+  STATUS_TO_STAGE,
+} from '@/lib/campaign/pipeline-stages';
 import {
   ArrowLeft,
   Download,
@@ -25,6 +30,13 @@ import {
   Shield,
   Plus,
   Link as LinkIcon,
+  CheckCircle2,
+  StickyNote,
+  SkipForward,
+  TrendingUp,
+  Mail,
+  MessageSquare,
+  BarChart3,
 } from 'lucide-react';
 
 interface Entity {
@@ -53,6 +65,7 @@ interface Entity {
   engagement_signals?: Array<{ type: string; snippet: string }>;
   political_donations_summary?: Record<string, unknown>;
   conflict_score?: number;
+  recommended_approach?: string | null;
 }
 
 interface Stats {
@@ -94,7 +107,16 @@ const CAMPAIGN_LISTS = [
   { key: 'warm_intros', label: 'Warm Intros', icon: HandshakeIcon, color: 'text-amber-600' },
 ] as const;
 
-type ViewMode = 'lists' | 'social_proof' | 'tracked_posts';
+interface MomentumData {
+  pipeline: Record<string, number>;
+  newsletter: { total: number; last_7_days: number; last_30_days: number };
+  social: { total_scored: number; offers: number };
+  reactions: { total: number; recommend_rate: number };
+  actions: { total_with_action: number; actioned: number; pending: number };
+  follow_ups_needed: number;
+}
+
+type ViewMode = 'lists' | 'actions' | 'social_proof' | 'tracked_posts' | 'momentum';
 
 const CATEGORY_COLORS: Record<string, string> = {
   ally: 'bg-emerald-100 text-emerald-800 border-emerald-300',
@@ -129,6 +151,13 @@ export default function CampaignEnginePage() {
   const [trackedPosts, setTrackedPosts] = useState<TrackedPost[]>([]);
   const [trackedPostsLoading, setTrackedPostsLoading] = useState(false);
   const [newPostUrl, setNewPostUrl] = useState('');
+  const [actionEntities, setActionEntities] = useState<Entity[]>([]);
+  const [actionEntitiesLoading, setActionEntitiesLoading] = useState(false);
+  const [actionFilter, setActionFilter] = useState<string>('');
+  const [actionTypeFilter, setActionTypeFilter] = useState<string>('');
+  const [skippedIds, setSkippedIds] = useState<Set<string>>(new Set());
+  const [momentum, setMomentum] = useState<MomentumData | null>(null);
+  const [momentumLoading, setMomentumLoading] = useState(false);
 
   const fetchStats = async () => {
     const res = await fetch('/api/admin/campaign-alignment/stats');
@@ -170,6 +199,74 @@ export default function CampaignEnginePage() {
       // Silently fail — table may not exist yet
     } finally {
       setTrackedPostsLoading(false);
+    }
+  };
+
+  const fetchActionEntities = async () => {
+    setActionEntitiesLoading(true);
+    try {
+      const params = new URLSearchParams({ limit: '200' });
+      // Fetch all lists to get entities with recommended_approach
+      const res = await fetch(`/api/admin/campaign-alignment/lists?${params}`);
+      if (!res.ok) throw new Error('Failed to fetch');
+      const data = await res.json();
+      const withActions = (data.entities || []).filter((e: Entity) => e.recommended_approach);
+      withActions.sort((a: Entity, b: Entity) => b.composite_score - a.composite_score);
+      setActionEntities(withActions);
+    } catch {
+      // Fallback: fetch from each list
+      try {
+        const allEntities: Entity[] = [];
+        for (const list of CAMPAIGN_LISTS) {
+          const res = await fetch(`/api/admin/campaign-alignment/lists?list=${list.key}&limit=100`);
+          if (res.ok) {
+            const data = await res.json();
+            allEntities.push(...(data.entities || []));
+          }
+        }
+        const withActions = allEntities.filter(e => e.recommended_approach);
+        // Deduplicate by id
+        const seen = new Set<string>();
+        const unique = withActions.filter(e => { if (seen.has(e.id)) return false; seen.add(e.id); return true; });
+        unique.sort((a, b) => b.composite_score - a.composite_score);
+        setActionEntities(unique);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load action entities');
+      }
+    } finally {
+      setActionEntitiesLoading(false);
+    }
+  };
+
+  const fetchMomentum = async () => {
+    setMomentumLoading(true);
+    try {
+      const res = await fetch('/api/admin/campaign-alignment/momentum');
+      if (!res.ok) throw new Error('Failed to fetch momentum');
+      const data = await res.json();
+      setMomentum(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load momentum');
+    } finally {
+      setMomentumLoading(false);
+    }
+  };
+
+  const pipelineAction = async (entityId: string, action: string, data?: Record<string, unknown>) => {
+    try {
+      const res = await fetch('/api/admin/partner-pipeline', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, entity_id: entityId, data }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Action failed');
+      }
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Action failed');
+      return false;
     }
   };
 
@@ -219,6 +316,8 @@ export default function CampaignEnginePage() {
   useEffect(() => {
     if (viewMode === 'social_proof' && !socialProof) fetchSocialProof();
     if (viewMode === 'tracked_posts' && trackedPosts.length === 0) fetchTrackedPosts();
+    if (viewMode === 'actions' && actionEntities.length === 0) fetchActionEntities();
+    if (viewMode === 'momentum' && !momentum) fetchMomentum();
   }, [viewMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const runScoring = async () => {
@@ -386,9 +485,11 @@ export default function CampaignEnginePage() {
         {/* View Mode Tabs */}
         <div className="flex gap-1 mb-6 border-b border-gray-200 pb-2">
           {[
-            { key: 'lists' as ViewMode, label: 'Campaign Lists', icon: Users },
+            { key: 'lists' as ViewMode, label: 'Lists', icon: Users },
+            { key: 'actions' as ViewMode, label: 'Actions', icon: Zap, badge: actionEntities.length > 0 ? actionEntities.filter(e => !skippedIds.has(e.id)).length : undefined },
             { key: 'social_proof' as ViewMode, label: 'Social Proof', icon: Heart },
             { key: 'tracked_posts' as ViewMode, label: 'Tracked Posts', icon: LinkIcon },
+            { key: 'momentum' as ViewMode, label: 'Momentum', icon: TrendingUp },
           ].map(tab => (
             <button
               key={tab.key}
@@ -401,6 +502,11 @@ export default function CampaignEnginePage() {
             >
               <tab.icon className="w-4 h-4" />
               {tab.label}
+              {'badge' in tab && tab.badge != null && (
+                <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-full">
+                  {tab.badge}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -478,7 +584,7 @@ export default function CampaignEnginePage() {
                 </thead>
                 <tbody>
                   {entities.map(entity => (
-                    <EntityRow key={entity.id} entity={entity} expandedRow={expandedRow} setExpandedRow={setExpandedRow} isOpponentView={activeList === 'opponents_to_understand'} />
+                    <EntityRow key={entity.id} entity={entity} expandedRow={expandedRow} setExpandedRow={setExpandedRow} isOpponentView={activeList === 'opponents_to_understand'} onPipelineAction={pipelineAction} onEntityUpdate={(updated) => setEntities(prev => prev.map(e => e.id === updated.id ? updated : e))} />
                   ))}
                   {entities.length === 0 && (
                     <tr>
@@ -491,6 +597,39 @@ export default function CampaignEnginePage() {
               </table>
             </div>
           </>
+        )}
+
+        {/* === ACTIONS VIEW === */}
+        {viewMode === 'actions' && (
+          <ActionsView
+            entities={actionEntities}
+            loading={actionEntitiesLoading}
+            skippedIds={skippedIds}
+            actionFilter={actionFilter}
+            actionTypeFilter={actionTypeFilter}
+            setActionFilter={setActionFilter}
+            setActionTypeFilter={setActionTypeFilter}
+            onDone={async (entity) => {
+              const nextStatus = getNextStatus(entity.outreach_status);
+              const stage = STATUS_TO_STAGE[nextStatus] || 'warm';
+              const ok = await pipelineAction(entity.id, 'advance', { stage });
+              if (ok) {
+                setActionEntities(prev => prev.map(e =>
+                  e.id === entity.id ? { ...e, outreach_status: nextStatus } : e
+                ));
+              }
+            }}
+            onNote={async (entity, note) => {
+              await pipelineAction(entity.id, 'note', { note });
+            }}
+            onSkip={(id) => setSkippedIds(prev => new Set([...prev, id]))}
+            onRefresh={fetchActionEntities}
+          />
+        )}
+
+        {/* === MOMENTUM VIEW === */}
+        {viewMode === 'momentum' && (
+          <MomentumView data={momentum} loading={momentumLoading} onRefresh={fetchMomentum} />
         )}
 
         {/* === SOCIAL PROOF VIEW === */}
@@ -514,11 +653,13 @@ export default function CampaignEnginePage() {
   );
 }
 
-function EntityRow({ entity, expandedRow, setExpandedRow, isOpponentView }: {
+function EntityRow({ entity, expandedRow, setExpandedRow, isOpponentView, onPipelineAction, onEntityUpdate }: {
   entity: Entity;
   expandedRow: string | null;
   setExpandedRow: (id: string | null) => void;
   isOpponentView: boolean;
+  onPipelineAction: (entityId: string, action: string, data?: Record<string, unknown>) => Promise<boolean>;
+  onEntityUpdate: (entity: Entity) => void;
 }) {
   const isExpanded = expandedRow === entity.id;
   return (
@@ -578,12 +719,19 @@ function EntityRow({ entity, expandedRow, setExpandedRow, isOpponentView }: {
             {entity.score_confidence}
           </span>
         </td>
-        <td className="px-4 py-3 text-xs text-gray-500">{entity.outreach_status}</td>
+        <td className="px-4 py-3 text-xs text-gray-500">
+          <div className="flex items-center gap-1.5">
+            {entity.outreach_status}
+            {entity.recommended_approach && (
+              <span className="inline-block w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" title="Has action" />
+            )}
+          </div>
+        </td>
       </tr>
       {isExpanded && (
         <tr className="border-b border-gray-200 bg-gray-50">
           <td colSpan={10} className="px-8 py-4">
-            <ExpandedDetails entity={entity} isOpponentView={isOpponentView} />
+            <ExpandedDetails entity={entity} isOpponentView={isOpponentView} onPipelineAction={onPipelineAction} onEntityUpdate={onEntityUpdate} />
           </td>
         </tr>
       )}
@@ -777,9 +925,119 @@ function ScoreBar({ value, max, color }: { value: number; max: number; color: st
   );
 }
 
-function ExpandedDetails({ entity, isOpponentView }: { entity: Entity; isOpponentView: boolean }) {
+function ExpandedDetails({ entity, isOpponentView, onPipelineAction, onEntityUpdate }: {
+  entity: Entity;
+  isOpponentView: boolean;
+  onPipelineAction: (entityId: string, action: string, data?: Record<string, unknown>) => Promise<boolean>;
+  onEntityUpdate: (entity: Entity) => void;
+}) {
+  const [noteText, setNoteText] = useState('');
+  const [showNote, setShowNote] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [noteSaved, setNoteSaved] = useState(false);
+  const actionLock = useRef(false);
+
+  const handleMarkDone = async () => {
+    if (actionLock.current) return;
+    actionLock.current = true;
+    setSaving(true);
+    const nextStatus = getNextStatus(entity.outreach_status);
+    const stage = STATUS_TO_STAGE[nextStatus] || 'warm';
+    const ok = await onPipelineAction(entity.id, 'advance', { stage });
+    if (ok) onEntityUpdate({ ...entity, outreach_status: nextStatus });
+    setSaving(false);
+    actionLock.current = false;
+  };
+
+  const handleSaveNote = async () => {
+    if (!noteText.trim() || actionLock.current) return;
+    actionLock.current = true;
+    setSaving(true);
+    await onPipelineAction(entity.id, 'note', { note: noteText.trim() });
+    setNoteText('');
+    setShowNote(false);
+    setSaving(false);
+    actionLock.current = false;
+    setNoteSaved(true);
+    setTimeout(() => setNoteSaved(false), 2000);
+  };
+
+  const handleStatusChange = async (newStatus: string) => {
+    if (actionLock.current) return;
+    actionLock.current = true;
+    setSaving(true);
+    // Map outreach_status to stage for the pipeline API
+    const stage = STATUS_TO_STAGE[newStatus] || 'cold';
+    const ok = await onPipelineAction(entity.id, 'advance', { stage });
+    if (ok) onEntityUpdate({ ...entity, outreach_status: newStatus });
+    setSaving(false);
+    actionLock.current = false;
+  };
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+    <div className="space-y-4 text-sm">
+      {/* Recommended Action with inline buttons */}
+      {entity.recommended_approach && (
+        <div className="bg-amber-50 border border-amber-200 p-4">
+          <div className="flex items-start gap-3">
+            <Zap className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="font-bold text-amber-900 text-xs uppercase tracking-wide mb-1">Next Action</h4>
+              <p className="text-amber-800 text-sm">{entity.recommended_approach}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 mt-3 ml-7">
+            <button
+              onClick={handleMarkDone}
+              disabled={saving}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 disabled:opacity-50"
+            >
+              <CheckCircle2 className="w-3 h-3" /> Mark Done
+            </button>
+            <button
+              onClick={() => setShowNote(!showNote)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-50"
+            >
+              <StickyNote className="w-3 h-3" /> Add Note
+            </button>
+            <select
+              value={entity.outreach_status}
+              onChange={e => handleStatusChange(e.target.value)}
+              disabled={saving}
+              className="px-2 py-1.5 border border-gray-300 text-xs bg-white focus:outline-none focus:border-black disabled:opacity-50"
+            >
+              {OUTREACH_STATUS_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            {noteSaved && (
+              <span className="text-xs text-emerald-600 font-medium animate-pulse">Saved</span>
+            )}
+          </div>
+          {showNote && (
+            <div className="flex gap-2 mt-2 ml-7">
+              <input
+                type="text"
+                value={noteText}
+                onChange={e => setNoteText(e.target.value)}
+                placeholder="Add a note..."
+                className="flex-1 px-3 py-1.5 border border-gray-300 text-xs focus:outline-none focus:border-black"
+                onKeyDown={e => e.key === 'Enter' && handleSaveNote()}
+                autoFocus
+              />
+              <button
+                onClick={handleSaveNote}
+                disabled={saving || !noteText.trim()}
+                className="px-3 py-1.5 bg-black text-white text-xs font-bold hover:bg-gray-800 disabled:opacity-50"
+              >
+                Save
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Alignment Signals */}
       <div>
         <h4 className="font-bold text-gray-700 mb-2">Alignment Signals</h4>
@@ -849,6 +1107,393 @@ function ExpandedDetails({ entity, isOpponentView }: { entity: Entity; isOpponen
           {entity.passion_score != null && entity.passion_score > 0 && (
             <p className="text-rose-600 font-medium">Passion Score: {entity.passion_score}</p>
           )}
+        </div>
+      </div>
+      </div>
+    </div>
+  );
+}
+
+const OUTREACH_PILLS: Record<string, string> = {
+  pending: 'bg-gray-100 text-gray-600',
+  not_started: 'bg-gray-100 text-gray-600',
+  contacted: 'bg-blue-100 text-blue-700',
+  nominated: 'bg-blue-100 text-blue-700',
+  responded: 'bg-emerald-100 text-emerald-700',
+  committed: 'bg-purple-100 text-purple-700',
+  active: 'bg-emerald-100 text-emerald-800',
+};
+
+function ActionsView({ entities, loading, skippedIds, actionFilter, actionTypeFilter, setActionFilter, setActionTypeFilter, onDone, onNote, onSkip, onRefresh }: {
+  entities: Entity[];
+  loading: boolean;
+  skippedIds: Set<string>;
+  actionFilter: string;
+  actionTypeFilter: string;
+  setActionFilter: (v: string) => void;
+  setActionTypeFilter: (v: string) => void;
+  onDone: (entity: Entity) => Promise<void>;
+  onNote: (entity: Entity, note: string) => Promise<void>;
+  onSkip: (id: string) => void;
+  onRefresh: () => void;
+}) {
+  const [noteForId, setNoteForId] = useState<string | null>(null);
+  const [noteText, setNoteText] = useState('');
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [savedNoteId, setSavedNoteId] = useState<string | null>(null);
+  const actionLock = useRef(false);
+
+  const filtered = entities.filter(e => {
+    if (skippedIds.has(e.id)) return false;
+    if (actionFilter && e.outreach_status !== actionFilter) return false;
+    if (actionTypeFilter && e.entity_type !== actionTypeFilter) return false;
+    return true;
+  });
+
+  const actionedCount = entities.filter(e => e.outreach_status !== 'pending' && e.outreach_status !== 'not_started').length;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {/* Progress bar */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-bold">{actionedCount} of {entities.length} actioned</span>
+          <div className="w-48 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-emerald-500 rounded-full transition-all"
+              style={{ width: `${entities.length > 0 ? (actionedCount / entities.length) * 100 : 0}%` }}
+            />
+          </div>
+        </div>
+        <button onClick={onRefresh} className="text-sm text-gray-500 hover:text-black flex items-center gap-1">
+          <RefreshCw className="w-3 h-3" /> Refresh
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-white border border-gray-200 p-3 mb-4 flex gap-3">
+        <select
+          value={actionFilter}
+          onChange={e => setActionFilter(e.target.value)}
+          className="px-3 py-1.5 border border-gray-300 text-xs focus:outline-none focus:border-black"
+        >
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="not_started">Not Started</option>
+          <option value="contacted">Contacted</option>
+          <option value="responded">Responded</option>
+          <option value="committed">Committed</option>
+        </select>
+        <select
+          value={actionTypeFilter}
+          onChange={e => setActionTypeFilter(e.target.value)}
+          className="px-3 py-1.5 border border-gray-300 text-xs focus:outline-none focus:border-black"
+        >
+          <option value="">All Types</option>
+          <option value="organization">Organizations</option>
+          <option value="person">Persons</option>
+        </select>
+      </div>
+
+      {/* Action cards */}
+      {filtered.length === 0 ? (
+        <div className="text-center py-16 text-gray-400 text-sm">
+          {entities.length === 0 ? 'No entities with recommended actions found.' : 'All actions filtered out or skipped.'}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {filtered.map(entity => (
+            <div key={entity.id} className="bg-white border border-gray-200 p-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3 flex-1 min-w-0">
+                  {entity.entity_type === 'organization'
+                    ? <Building2 className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                    : <User className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-bold text-sm text-black truncate">{entity.name}</span>
+                      {entity.organization && entity.entity_type === 'person' && (
+                        <span className="text-xs text-gray-500 truncate">{entity.organization}</span>
+                      )}
+                      <span className="flex-shrink-0 inline-flex px-2 py-0.5 text-[10px] font-bold bg-gray-900 text-white">
+                        {entity.composite_score}
+                      </span>
+                      <span className={`flex-shrink-0 inline-flex px-2 py-0.5 text-[10px] font-medium ${OUTREACH_PILLS[entity.outreach_status] || OUTREACH_PILLS.pending}`}>
+                        {entity.outreach_status.replace('_', ' ')}
+                      </span>
+                    </div>
+                    <p className="text-sm text-amber-800 bg-amber-50 border-l-2 border-amber-300 pl-3 py-1">
+                      {entity.recommended_approach}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Quick action buttons */}
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <button
+                    onClick={async () => {
+                      if (actionLock.current) return;
+                      actionLock.current = true;
+                      setSavingId(entity.id);
+                      await onDone(entity);
+                      setSavingId(null);
+                      actionLock.current = false;
+                    }}
+                    disabled={savingId === entity.id}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 disabled:opacity-50"
+                    title="Mark done — advance to next stage"
+                  >
+                    {savingId === entity.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />}
+                    Done
+                  </button>
+                  <button
+                    onClick={() => setNoteForId(noteForId === entity.id ? null : entity.id)}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-white border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-50"
+                    title="Add a note"
+                  >
+                    <StickyNote className="w-3 h-3" />
+                  </button>
+                  <button
+                    onClick={() => onSkip(entity.id)}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-white border border-gray-300 text-xs font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                    title="Skip — move to bottom"
+                  >
+                    <SkipForward className="w-3 h-3" />
+                  </button>
+                  {savedNoteId === entity.id && (
+                    <span className="text-xs text-emerald-600 font-medium animate-pulse">Saved</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Inline note input */}
+              {noteForId === entity.id && (
+                <div className="flex gap-2 mt-3 ml-7">
+                  <input
+                    type="text"
+                    value={noteText}
+                    onChange={e => setNoteText(e.target.value)}
+                    placeholder="Add a note..."
+                    className="flex-1 px-3 py-1.5 border border-gray-300 text-xs focus:outline-none focus:border-black"
+                    onKeyDown={async e => {
+                      if (e.key === 'Enter' && noteText.trim() && !actionLock.current) {
+                        actionLock.current = true;
+                        setSavingId(entity.id);
+                        await onNote(entity, noteText.trim());
+                        setNoteText('');
+                        setNoteForId(null);
+                        setSavingId(null);
+                        actionLock.current = false;
+                        setSavedNoteId(entity.id);
+                        setTimeout(() => setSavedNoteId(null), 2000);
+                      }
+                    }}
+                    autoFocus
+                  />
+                  <button
+                    onClick={async () => {
+                      if (!noteText.trim() || actionLock.current) return;
+                      actionLock.current = true;
+                      setSavingId(entity.id);
+                      await onNote(entity, noteText.trim());
+                      setNoteText('');
+                      setNoteForId(null);
+                      setSavingId(null);
+                      actionLock.current = false;
+                      setSavedNoteId(entity.id);
+                      setTimeout(() => setSavedNoteId(null), 2000);
+                    }}
+                    disabled={!noteText.trim() || savingId === entity.id}
+                    className="px-3 py-1.5 bg-black text-white text-xs font-bold hover:bg-gray-800 disabled:opacity-50"
+                  >
+                    Save
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const FUNNEL_COLORS: Record<string, string> = {
+  cold: 'bg-gray-300',
+  warm: 'bg-blue-400',
+  proposal: 'bg-amber-400',
+  committed: 'bg-purple-500',
+  active: 'bg-emerald-500',
+  stale: 'bg-red-300',
+};
+
+const FUNNEL_LABELS: Record<string, string> = {
+  cold: 'Cold',
+  warm: 'Warm',
+  proposal: 'Proposal',
+  committed: 'Committed',
+  active: 'Active',
+  stale: 'Stale',
+};
+
+function MomentumView({ data, loading, onRefresh }: { data: MomentumData | null; loading: boolean; onRefresh: () => void }) {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="text-center py-20 text-gray-400">
+        <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-30" />
+        <p className="text-lg font-bold">No momentum data</p>
+      </div>
+    );
+  }
+
+  const pipelineTotal = Object.values(data.pipeline).reduce((a, b) => a + b, 0);
+  const maxStage = Math.max(...Object.values(data.pipeline), 1);
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="font-bold">Campaign Momentum</h3>
+        <button onClick={onRefresh} className="text-sm text-gray-500 hover:text-black flex items-center gap-1">
+          <RefreshCw className="w-3 h-3" /> Refresh
+        </button>
+      </div>
+
+      {/* Top-level metric cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-white border border-gray-200 p-5 text-center">
+          <Users className="w-5 h-5 mx-auto mb-2 text-gray-400" />
+          <div className="text-3xl font-black">{pipelineTotal}</div>
+          <div className="text-xs text-gray-500 font-medium">In Pipeline</div>
+        </div>
+        <div className="bg-white border border-gray-200 p-5 text-center">
+          <Mail className="w-5 h-5 mx-auto mb-2 text-blue-400" />
+          <div className="text-3xl font-black">{data.newsletter.total}</div>
+          <div className="text-xs text-gray-500 font-medium">Subscribers</div>
+          {data.newsletter.last_7_days > 0 && (
+            <div className="text-xs text-emerald-600 font-bold mt-1">+{data.newsletter.last_7_days} this week</div>
+          )}
+        </div>
+        <div className="bg-white border border-gray-200 p-5 text-center">
+          <Heart className="w-5 h-5 mx-auto mb-2 text-rose-400" />
+          <div className="text-3xl font-black">{data.social.total_scored}</div>
+          <div className="text-xs text-gray-500 font-medium">Social Engagers</div>
+          {data.social.offers > 0 && (
+            <div className="text-xs text-emerald-600 font-bold mt-1">{data.social.offers} offered help</div>
+          )}
+        </div>
+        <div className="bg-white border border-gray-200 p-5 text-center">
+          <MessageSquare className="w-5 h-5 mx-auto mb-2 text-amber-400" />
+          <div className="text-3xl font-black">{data.reactions.total}</div>
+          <div className="text-xs text-gray-500 font-medium">Tour Reactions</div>
+          {data.reactions.recommend_rate > 0 && (
+            <div className="text-xs text-emerald-600 font-bold mt-1">{data.reactions.recommend_rate}% recommend</div>
+          )}
+        </div>
+      </div>
+
+      {/* Pipeline Funnel */}
+      <div className="bg-white border border-gray-200 p-6 mb-6">
+        <h4 className="font-bold text-sm mb-4 flex items-center gap-2">
+          <BarChart3 className="w-4 h-4 text-gray-400" /> Partner Pipeline
+        </h4>
+        <div className="space-y-3">
+          {['cold', 'warm', 'proposal', 'committed', 'active', 'stale'].map(stage => {
+            const count = data.pipeline[stage] || 0;
+            const pct = maxStage > 0 ? (count / maxStage) * 100 : 0;
+            return (
+              <div key={stage} className="flex items-center gap-3">
+                <span className="text-xs font-bold text-gray-600 w-20 text-right">{FUNNEL_LABELS[stage]}</span>
+                <div className="flex-1 h-6 bg-gray-100 rounded overflow-hidden relative">
+                  <div
+                    className={`h-full ${FUNNEL_COLORS[stage]} rounded transition-all`}
+                    style={{ width: `${pct}%` }}
+                  />
+                  {count > 0 && (
+                    <span className="absolute inset-y-0 left-2 flex items-center text-xs font-bold text-gray-800">
+                      {count}
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Action progress + Follow-ups */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white border border-gray-200 p-5">
+          <h4 className="font-bold text-sm mb-3 flex items-center gap-2">
+            <Zap className="w-4 h-4 text-amber-500" /> Action Progress
+          </h4>
+          <div className="flex items-end gap-4 mb-3">
+            <div>
+              <div className="text-3xl font-black">{data.actions.actioned}</div>
+              <div className="text-xs text-gray-500">Actioned</div>
+            </div>
+            <div className="text-gray-300 text-2xl font-light">/</div>
+            <div>
+              <div className="text-3xl font-black text-gray-400">{data.actions.total_with_action}</div>
+              <div className="text-xs text-gray-500">Total</div>
+            </div>
+          </div>
+          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-emerald-500 rounded-full transition-all"
+              style={{ width: `${data.actions.total_with_action > 0 ? (data.actions.actioned / data.actions.total_with_action) * 100 : 0}%` }}
+            />
+          </div>
+          <div className="text-xs text-gray-500 mt-2">{data.actions.pending} pending</div>
+        </div>
+
+        <div className="bg-white border border-gray-200 p-5">
+          <h4 className="font-bold text-sm mb-3 flex items-center gap-2">
+            <RefreshCw className="w-4 h-4 text-red-400" /> Follow-ups Needed
+          </h4>
+          <div className="text-3xl font-black">{data.follow_ups_needed}</div>
+          <div className="text-xs text-gray-500 mt-1">Contacts overdue for follow-up (7+ days inactive)</div>
+          {data.follow_ups_needed > 0 && (
+            <p className="text-xs text-red-600 font-medium mt-3">
+              Check the Actions tab to work through overdue contacts
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Newsletter detail */}
+      <div className="bg-white border border-gray-200 p-5 mt-4">
+        <h4 className="font-bold text-sm mb-3 flex items-center gap-2">
+          <Mail className="w-4 h-4 text-blue-400" /> Newsletter Growth
+        </h4>
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div>
+            <div className="text-2xl font-black">{data.newsletter.total}</div>
+            <div className="text-xs text-gray-500">Total</div>
+          </div>
+          <div>
+            <div className="text-2xl font-black">{data.newsletter.last_30_days}</div>
+            <div className="text-xs text-gray-500">Last 30 days</div>
+          </div>
+          <div>
+            <div className="text-2xl font-black">{data.newsletter.last_7_days}</div>
+            <div className="text-xs text-gray-500">Last 7 days</div>
+          </div>
         </div>
       </div>
     </div>

@@ -2,20 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
 import { sendEmail } from '@/lib/email/send';
+import {
+  PIPELINE_STAGES,
+  STATUS_TO_STAGE,
+  STAGE_TO_STATUS,
+  type PipelineStage,
+} from '@/lib/campaign/pipeline-stages';
 
 const SITE = 'https://justicehub.com.au';
-
-// Pipeline stages — ordered progression
-const PIPELINE_STAGES = [
-  'cold',       // Identified, no contact yet
-  'warm',       // Expressed interest or nominated
-  'proposal',   // Sent proposal / in discussion
-  'committed',  // Verbally or formally committed
-  'active',     // Actively supporting (funding, hosting, etc.)
-  'stale',      // Was warm/proposal but went quiet (30+ days)
-] as const;
-
-type PipelineStage = typeof PIPELINE_STAGES[number];
 
 // Auto follow-up templates per stage
 const FOLLOW_UP_TEMPLATES: Partial<Record<PipelineStage, { subject: string; body: string; days: number }>> = {
@@ -340,37 +334,10 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/**
- * Map outreach_status values to pipeline stages
- */
 function mapStatusToStage(status: string): PipelineStage {
-  const map: Record<string, PipelineStage> = {
-    'not_started': 'cold',
-    'identified': 'cold',
-    'nominated': 'warm',
-    'contacted': 'warm',
-    'in_discussion': 'proposal',
-    'proposal_sent': 'proposal',
-    'committed': 'committed',
-    'active': 'active',
-    'engaged': 'active',
-    'stale': 'stale',
-    'declined': 'stale',
-  };
-  return map[status] || 'cold';
+  return STATUS_TO_STAGE[status] || 'cold';
 }
 
-/**
- * Map pipeline stage back to outreach_status
- */
 function mapStageToStatus(stage: string): string {
-  const map: Record<string, string> = {
-    cold: 'not_started',
-    warm: 'contacted',
-    proposal: 'proposal_sent',
-    committed: 'committed',
-    active: 'active',
-    stale: 'stale',
-  };
-  return map[stage] || 'not_started';
+  return STAGE_TO_STATUS[stage] || 'not_started';
 }
