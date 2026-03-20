@@ -32,23 +32,17 @@ interface DetentionFacility {
 }
 
 async function fetchLinkedOrgIds(supabase: ReturnType<typeof createServiceClient>) {
-  // Orgs linked to ALMA interventions or justice funding are always relevant
+  // Only ALMA-linked orgs bypass the browse filter — funding linkage alone is too broad
+  // (includes construction companies, catering firms, etc. that receive govt money)
   const svc = supabase as any;
-  const [almaRes, fundRes] = await Promise.all([
-    svc
-      .from('alma_interventions')
-      .select('operating_organization_id')
-      .neq('verification_status', 'ai_generated')
-      .not('operating_organization_id', 'is', null),
-    svc
-      .from('justice_funding')
-      .select('alma_organization_id')
-      .not('alma_organization_id', 'is', null),
-  ]);
+  const { data: almaRes } = await svc
+    .from('alma_interventions')
+    .select('operating_organization_id')
+    .neq('verification_status', 'ai_generated')
+    .not('operating_organization_id', 'is', null);
 
   const ids = new Set<string>();
-  almaRes.data?.forEach((r: any) => { if (r.operating_organization_id) ids.add(r.operating_organization_id); });
-  fundRes.data?.forEach((r: any) => { if (r.alma_organization_id) ids.add(r.alma_organization_id); });
+  almaRes?.forEach((r: any) => { if (r.operating_organization_id) ids.add(r.operating_organization_id); });
   return ids;
 }
 
@@ -76,10 +70,14 @@ async function fetchAllOrgs(supabase: ReturnType<typeof createServiceClient>) {
   // Get orgs linked to ALMA interventions or justice funding
   const linkedIds = await fetchLinkedOrgIds(supabase);
 
-  // Filter out skeleton orgs that have no meaningful display data,
-  // UNLESS they're linked to ALMA interventions or justice funding.
+  // Filter out skeleton orgs. An org is "browsable" if it has:
+  // - A type (even without description), OR
+  // - A description (even without type), OR
+  // - Tags, OR
+  // - Is linked to an ALMA intervention (directly justice-related)
+  // Having only a city or only funding linkage is NOT enough.
   return allOrgs.filter(org =>
-    org.type || org.description || org.city || (org.tags && org.tags.length > 0) || linkedIds.has(org.id)
+    org.type || org.description || (org.tags && org.tags.length > 0) || linkedIds.has(org.id)
   );
 }
 

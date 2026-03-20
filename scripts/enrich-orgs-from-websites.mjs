@@ -90,7 +90,18 @@ function cleanText(text) {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#039;/g, "'")
+    .replace(/&#x27;/g, "'")
+    .replace(/&#x2019;/g, '\u2019')
+    .replace(/&#8217;/g, '\u2019')
+    .replace(/&#8220;/g, '\u201C')
+    .replace(/&#8221;/g, '\u201D')
+    .replace(/&#8211;/g, '\u2013')
+    .replace(/&#124;/g, '|')
+    .replace(/&#xb7;/g, '\u00B7')
+    .replace(/&hellip;/g, '\u2026')
     .replace(/&nbsp;/g, ' ')
+    .replace(/&[a-z]+;/gi, '') // strip remaining HTML entities
+    .replace(/&#x?[0-9a-f]+;/gi, '') // strip remaining numeric entities
     .replace(/\s+/g, ' ')
     .trim();
 }
