@@ -67,7 +67,7 @@ const stats = { inserted: 0, skipped: 0, errors: 0, searches: 0 };
 const PROVIDERS = [
   { name: 'groq', key: env.GROQ_API_KEY, url: 'https://api.groq.com/openai/v1/chat/completions', model: 'llama-3.3-70b-versatile' },
   { name: 'gemini', key: env.GEMINI_API_KEY, url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', model: 'gemini-2.5-flash' },
-  { name: 'cerebras', key: env.CEREBRAS_API_KEY, url: 'https://api.cerebras.ai/v1/chat/completions', model: 'llama-3.3-70b' },
+  { name: 'cerebras', key: env.CEREBRAS_API_KEY, url: 'https://api.cerebras.ai/v1/chat/completions', model: 'qwen-3-235b-a22b-instruct-2507' },
   { name: 'sambanova', key: env.SAMBANOVA_API_KEY, url: 'https://api.sambanova.ai/v1/chat/completions', model: 'Meta-Llama-3.3-70B-Instruct' },
   { name: 'deepseek', key: env.DEEPSEEK_API_KEY, url: 'https://api.deepseek.com/v1/chat/completions', model: 'deepseek-chat' },
   { name: 'openai', key: env.OPENAI_API_KEY, url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini' },
@@ -291,6 +291,17 @@ const SEARCH_TERMS = [
   '"youth detention" reform investment',
   '"youth diversion" program budget',
   '"young offenders" program government',
+  // Broader coverage
+  '"youth justice" reform strategy',
+  '"youth justice" minister announcement',
+  '"youth justice" question time parliament',
+  '"youth justice" media release',
+  '"youth crime" government response plan',
+  '"youth justice" community program grant',
+  '"bail reform" youth juvenile',
+  '"raise the age" criminal responsibility',
+  '"on country" program youth justice',
+  '"justice reinvestment" youth',
 ];
 
 async function scrapeMinisterial() {

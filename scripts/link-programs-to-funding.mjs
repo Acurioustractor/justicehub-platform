@@ -64,7 +64,7 @@ const stats = {
 const PROVIDERS = [
   { name: 'groq', key: env.GROQ_API_KEY, url: 'https://api.groq.com/openai/v1/chat/completions', model: 'llama-3.3-70b-versatile' },
   { name: 'gemini', key: env.GEMINI_API_KEY, url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', model: 'gemini-2.5-flash' },
-  { name: 'cerebras', key: env.CEREBRAS_API_KEY, url: 'https://api.cerebras.ai/v1/chat/completions', model: 'llama-3.3-70b' },
+  { name: 'cerebras', key: env.CEREBRAS_API_KEY, url: 'https://api.cerebras.ai/v1/chat/completions', model: 'qwen-3-235b-a22b-instruct-2507' },
   { name: 'sambanova', key: env.SAMBANOVA_API_KEY, url: 'https://api.sambanova.ai/v1/chat/completions', model: 'Meta-Llama-3.3-70B-Instruct' },
 ];
 
