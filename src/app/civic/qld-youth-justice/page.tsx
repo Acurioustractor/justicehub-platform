@@ -111,6 +111,9 @@ export default async function QldYouthJusticePage() {
             Live tracking of what Queensland ministers promised, what they&apos;re saying, and where the money is going.
             Updated daily from ministerial statements, Hansard, and budget data.
           </p>
+          <Link href="/civic/briefings" className="inline-block mt-4 text-sm font-mono text-[#DC2626] hover:text-white transition-colors">
+            View daily intelligence briefings &rarr;
+          </Link>
 
           {/* Quick stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
