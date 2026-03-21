@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 type SearchableItem = {
   id: string;
@@ -27,7 +28,13 @@ export function CivicSearch({
   yjStatements: any[];
   hansard: any[];
 }) {
-  const [query, setQuery] = useState('');
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get('q') || '');
+
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q) setQuery(q);
+  }, [searchParams]);
 
   if (!query.trim()) return (
     <div className="relative">
