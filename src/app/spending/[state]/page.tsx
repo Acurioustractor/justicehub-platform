@@ -132,6 +132,7 @@ export default function StatSpendingPage() {
       <GovernmentPromises
         programs={data.governmentPrograms || []}
         promiseVsReality={data.promiseVsReality || { totalPromised: 0, totalActualFunding: 0 }}
+        jurisdiction={data.state}
       />
       <FacilityMap facilities={data.facilities} />
 

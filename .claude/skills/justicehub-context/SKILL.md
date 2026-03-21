@@ -63,7 +63,7 @@ pwd  # Should output: /Users/benknight/Code/JusticeHub
 - PM2 (process manager)
 
 ### ALMA Integration:
-JusticeHub uses the ALMA (Adaptive Learning for Meaningful Accountability) system for:
+JusticeHub uses the ALMA (Alternative Local Models Australia) system for:
 - Media sentiment tracking (`alma_media_articles` table)
 - Daily sentiment aggregation (`alma_daily_sentiment` view)
 - Continuous intelligence gathering

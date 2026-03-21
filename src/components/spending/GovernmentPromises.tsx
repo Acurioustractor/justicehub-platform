@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 interface GovernmentProgram {
   id: string;
   name: string;
@@ -48,9 +50,11 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }>
 export default function GovernmentPromises({
   programs,
   promiseVsReality,
+  jurisdiction,
 }: {
   programs: GovernmentProgram[];
   promiseVsReality: PromiseVsReality;
+  jurisdiction?: string;
 }) {
   if (!programs.length) return null;
 
@@ -132,17 +136,24 @@ export default function GovernmentPromises({
               <div key={program.id} className="border border-gray-700 p-4 flex flex-col">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <h3 className="font-bold text-sm text-white leading-tight flex-1">
-                    {program.url ? (
+                    <Link
+                      href={`/spending/programs/${program.id}`}
+                      className="hover:text-[#059669] transition-colors"
+                    >
+                      {program.name}
+                    </Link>
+                    {program.url && (
                       <a
                         href={program.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hover:text-[#059669] transition-colors"
+                        className="inline-block ml-1.5 text-gray-500 hover:text-gray-300 transition-colors"
+                        title="Official source"
                       >
-                        {program.name}
+                        <svg className="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
                       </a>
-                    ) : (
-                      program.name
                     )}
                   </h3>
                   <span
@@ -203,9 +214,14 @@ export default function GovernmentPromises({
         </div>
 
         {programs.length > 12 && (
-          <p className="text-center font-mono text-xs text-gray-500 mt-4">
-            + {programs.length - 12} more programs
-          </p>
+          <div className="text-center mt-6">
+            <Link
+              href={jurisdiction ? `/spending/programs?state=${jurisdiction}` : '/spending/programs'}
+              className="inline-block font-mono text-xs text-gray-400 hover:text-white border border-gray-700 hover:border-gray-500 px-4 py-2 transition-colors"
+            >
+              View all {programs.length} programs →
+            </Link>
+          </div>
         )}
       </div>
     </section>
