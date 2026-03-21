@@ -31,6 +31,8 @@ async function callLLM(prompt: string, systemPrompt: string): Promise<string> {
   const providers = [
     { name: 'groq', key: process.env.GROQ_API_KEY, url: 'https://api.groq.com/openai/v1/chat/completions', model: 'llama-3.3-70b-versatile' },
     { name: 'gemini', key: process.env.GEMINI_API_KEY, url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', model: 'gemini-2.5-flash' },
+    { name: 'cerebras', key: process.env.CEREBRAS_API_KEY, url: 'https://api.cerebras.ai/v1/chat/completions', model: 'llama-3.3-70b' },
+    { name: 'sambanova', key: process.env.SAMBANOVA_API_KEY, url: 'https://api.sambanova.ai/v1/chat/completions', model: 'Meta-Llama-3.3-70B-Instruct' },
   ];
 
   for (const p of providers) {

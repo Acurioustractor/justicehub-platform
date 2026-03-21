@@ -67,6 +67,8 @@ const stats = { inserted: 0, skipped: 0, errors: 0, searches: 0 };
 const PROVIDERS = [
   { name: 'groq', key: env.GROQ_API_KEY, url: 'https://api.groq.com/openai/v1/chat/completions', model: 'llama-3.3-70b-versatile' },
   { name: 'gemini', key: env.GEMINI_API_KEY, url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', model: 'gemini-2.5-flash' },
+  { name: 'cerebras', key: env.CEREBRAS_API_KEY, url: 'https://api.cerebras.ai/v1/chat/completions', model: 'llama-3.3-70b' },
+  { name: 'sambanova', key: env.SAMBANOVA_API_KEY, url: 'https://api.sambanova.ai/v1/chat/completions', model: 'Meta-Llama-3.3-70B-Instruct' },
   { name: 'deepseek', key: env.DEEPSEEK_API_KEY, url: 'https://api.deepseek.com/v1/chat/completions', model: 'deepseek-chat' },
   { name: 'openai', key: env.OPENAI_API_KEY, url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini' },
 ];
@@ -149,6 +151,21 @@ async function searchWeb(query, maxResults = 5) {
         const data = await res.json();
         const results = (data.web?.results || []).slice(0, maxResults).map((r) => ({
           title: r.title || '', url: r.url || '', description: r.description || '',
+        }));
+        if (results.length > 0) return results;
+      }
+    } catch {}
+  }
+
+  // Google Custom Search (100/day free)
+  if (env.GOOGLE_CSE_KEY && env.GOOGLE_CSE_CX) {
+    try {
+      const params = new URLSearchParams({ key: env.GOOGLE_CSE_KEY, cx: env.GOOGLE_CSE_CX, q: query, num: String(Math.min(maxResults, 10)) });
+      const res = await fetch(`https://www.googleapis.com/customsearch/v1?${params}`, { signal: AbortSignal.timeout(10000) });
+      if (res.ok) {
+        const data = await res.json();
+        const results = (data.items || []).slice(0, maxResults).map((r) => ({
+          title: r.title || '', url: r.link || '', description: r.snippet || '',
         }));
         if (results.length > 0) return results;
       }

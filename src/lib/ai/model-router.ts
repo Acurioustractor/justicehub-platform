@@ -58,6 +58,22 @@ const PROVIDERS: ProviderConfig[] = [
     supportsJsonMode: true,
   },
   {
+    name: 'cerebras',
+    envKey: 'CEREBRAS_API_KEY',
+    baseUrl: 'https://api.cerebras.ai/v1',
+    model: 'llama-3.3-70b',
+    maxTokens: 4096,
+    supportsJsonMode: true,
+  },
+  {
+    name: 'sambanova',
+    envKey: 'SAMBANOVA_API_KEY',
+    baseUrl: 'https://api.sambanova.ai/v1',
+    model: 'Meta-Llama-3.3-70B-Instruct',
+    maxTokens: 4096,
+    supportsJsonMode: true,
+  },
+  {
     name: 'minimax',
     envKey: 'MINIMAX_API_KEY',
     baseUrl: 'https://api.minimaxi.chat/v1',
@@ -98,6 +114,22 @@ const PROVIDERS: ProviderConfig[] = [
 // ---------------------------------------------------------------------------
 
 const BACKGROUND_PROVIDERS: ProviderConfig[] = [
+  {
+    name: 'cerebras',
+    envKey: 'CEREBRAS_API_KEY',
+    baseUrl: 'https://api.cerebras.ai/v1',
+    model: 'llama-3.3-70b',
+    maxTokens: 4096,
+    supportsJsonMode: true,
+  },
+  {
+    name: 'sambanova',
+    envKey: 'SAMBANOVA_API_KEY',
+    baseUrl: 'https://api.sambanova.ai/v1',
+    model: 'Meta-Llama-3.3-70B-Instruct',
+    maxTokens: 4096,
+    supportsJsonMode: true,
+  },
   {
     name: 'minimax',
     envKey: 'MINIMAX_API_KEY',

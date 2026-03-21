@@ -1,7 +1,8 @@
 /**
  * Web Search — Multi-provider search with automatic fallback
  *
- * Priority: Serper.dev (2.5K free/month, Google results) → Brave → Jina
+ * Priority: Serper (2.5K/mo) → Brave (2K/mo) → Google CSE (100/day) → Jina (free unlimited)
+ * Total free capacity: ~4,600 searches/month + unlimited Jina fallback
  *
  * Usage:
  *   import { searchWeb } from '@/lib/scraping/web-search';
@@ -16,7 +17,7 @@ export interface SearchResult {
 
 /**
  * Search the web using available providers.
- * Tries Serper (Google results) → Brave → Jina in order.
+ * Tries Serper (2.5K/mo) → Brave (2K/mo) → Google CSE (100/day) → Jina (free) in order.
  */
 export async function searchWeb(
   query: string,
@@ -29,10 +30,18 @@ export async function searchWeb(
     if (results.length > 0) return results;
   }
 
-  // Try Brave Search
+  // Try Brave Search (2K free/month)
   const braveKey = process.env.BRAVE_SEARCH_API_KEY;
   if (braveKey) {
     const results = await searchBrave(query, braveKey, maxResults);
+    if (results.length > 0) return results;
+  }
+
+  // Try Google Custom Search (100 free/day = ~3K/month)
+  const googleKey = process.env.GOOGLE_CSE_KEY;
+  const googleCx = process.env.GOOGLE_CSE_CX;
+  if (googleKey && googleCx) {
+    const results = await searchGoogleCSE(query, googleKey, googleCx, maxResults);
     if (results.length > 0) return results;
   }
 
@@ -127,6 +136,47 @@ async function searchBrave(
   } catch (err) {
     console.warn(
       `[Brave Search] Failed: ${err instanceof Error ? err.message : 'Unknown'}`
+    );
+    return [];
+  }
+}
+
+async function searchGoogleCSE(
+  query: string,
+  apiKey: string,
+  cx: string,
+  maxResults: number
+): Promise<SearchResult[]> {
+  try {
+    const params = new URLSearchParams({
+      key: apiKey,
+      cx,
+      q: query,
+      num: String(Math.min(maxResults, 10)),
+    });
+
+    const response = await fetch(
+      `https://www.googleapis.com/customsearch/v1?${params}`,
+      { signal: AbortSignal.timeout(10_000) }
+    );
+
+    if (!response.ok) {
+      console.warn(`[Google CSE] HTTP ${response.status}`);
+      return [];
+    }
+
+    const data = (await response.json()) as {
+      items?: { title?: string; link?: string; snippet?: string }[];
+    };
+
+    return (data.items || []).slice(0, maxResults).map((r) => ({
+      title: r.title || '',
+      url: r.link || '',
+      description: r.snippet || '',
+    }));
+  } catch (err) {
+    console.warn(
+      `[Google CSE] Failed: ${err instanceof Error ? err.message : 'Unknown'}`
     );
     return [];
   }
