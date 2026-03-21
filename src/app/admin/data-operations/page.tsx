@@ -6,12 +6,12 @@ import { Navigation, Footer } from '@/components/ui/navigation';
 import {
   Database, Activity, AlertTriangle, CheckCircle, Clock, TrendingUp, Users, FileText,
   Building2, MapPin, Microscope, BookOpen, Link2, RefreshCw, ChevronRight, BarChart3,
-  AlertCircle, Info
+  AlertCircle, Info, DollarSign, Library
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 interface Stats {
-  totals: { services: number; organizations: number; registeredServices: number; profiles: number; stories: number; evidence: number; interventions: number; discoveredLinks: number; ingestionJobs: number; scrapedServices: number; dataSources: number; };
+  totals: { services: number; organizations: number; registeredServices: number; profiles: number; stories: number; evidence: number; interventions: number; discoveredLinks: number; ingestionJobs: number; scrapedServices: number; dataSources: number; funding: number; researchFindings: number; mediaArticles: number; matrixCases: number; acncCharities: number; oricCorporations: number; rogsSpending: number; };
   byState: Record<string, number>;
   byOrgType: Record<string, number>;
   byEvidenceType: Record<string, number>;
@@ -92,6 +92,8 @@ export default function DataOperationsPage() {
       programs: <FileText className="w-5 h-5" />,
       alma: <Microscope className="w-5 h-5" />,
       sync: <RefreshCw className="w-5 h-5" />,
+      funding: <DollarSign className="w-5 h-5" />,
+      reference: <Library className="w-5 h-5" />,
     };
     return icons[type] || <Database className="w-5 h-5" />;
   };
@@ -120,12 +122,19 @@ export default function DataOperationsPage() {
           <section className="mb-8">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><BarChart3 className="w-5 h-5" />System Overview</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-blue-600">{stats?.totals.services.toLocaleString()}</div><div className="text-sm font-medium">Services</div><div className="text-xs text-gray-500">Directory entries</div></div>
+              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-blue-600">{stats?.totals.funding.toLocaleString()}</div><div className="text-sm font-medium">Funding Records</div><div className="text-xs text-gray-500">National justice funding</div></div>
               <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-purple-600">{stats?.totals.organizations.toLocaleString()}</div><div className="text-sm font-medium">Organizations</div><div className="text-xs text-gray-500">Partners & groups</div></div>
-              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-green-600">{stats?.totals.registeredServices}</div><div className="text-sm font-medium">Programs</div><div className="text-xs text-gray-500">Curated & verified</div></div>
-              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-ochre-600">{stats?.totals.evidence}</div><div className="text-sm font-medium">Evidence</div><div className="text-xs text-gray-500">Research studies</div></div>
               <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-red-600">{stats?.totals.interventions.toLocaleString()}</div><div className="text-sm font-medium">Interventions</div><div className="text-xs text-gray-500">ALMA library</div></div>
-              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-cyan-600">{stats?.totals.discoveredLinks.toLocaleString()}</div><div className="text-sm font-medium">Links Queue</div><div className="text-xs text-gray-500">Pending scrape</div></div>
+              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-amber-600">{stats?.totals.evidence}</div><div className="text-sm font-medium">Evidence</div><div className="text-xs text-gray-500">Research studies</div></div>
+              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-blue-600">{stats?.totals.services.toLocaleString()}</div><div className="text-sm font-medium">Services</div><div className="text-xs text-gray-500">Directory entries</div></div>
+              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-green-600">{stats?.totals.registeredServices}</div><div className="text-sm font-medium">Programs</div><div className="text-xs text-gray-500">Curated & verified</div></div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
+              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-gray-600">{stats?.totals.acncCharities.toLocaleString()}</div><div className="text-sm font-medium">ACNC Charities</div><div className="text-xs text-gray-500">Reference table</div></div>
+              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-gray-600">{stats?.totals.rogsSpending.toLocaleString()}</div><div className="text-sm font-medium">ROGS Spending</div><div className="text-xs text-gray-500">Reference table</div></div>
+              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-gray-600">{stats?.totals.oricCorporations.toLocaleString()}</div><div className="text-sm font-medium">ORIC Corps</div><div className="text-xs text-gray-500">Reference table</div></div>
+              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-cyan-600">{stats?.totals.mediaArticles}</div><div className="text-sm font-medium">Media Articles</div><div className="text-xs text-gray-500">News & coverage</div></div>
+              <div className="border-2 border-black bg-white p-4"><div className="text-3xl font-black text-cyan-600">{stats?.totals.researchFindings}</div><div className="text-sm font-medium">Research Findings</div><div className="text-xs text-gray-500">ALMA findings</div></div>
             </div>
             <div className="mt-4 p-4 border-2 border-black bg-white">
               <div className="flex items-center justify-between">

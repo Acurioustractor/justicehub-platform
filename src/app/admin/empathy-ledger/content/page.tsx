@@ -357,7 +357,7 @@ export default function ELContentManager() {
                         </span>
                       </div>
                       <p className="text-sm text-earth-600 mb-3">{g.description}</p>
-                      {g.storytellers.length > 0 && (
+                      {g.storytellers?.length > 0 && (
                         <div className="flex items-center gap-2 mb-3">
                           <Users className="h-4 w-4 text-earth-500" />
                           <span className="text-sm text-earth-600">
@@ -439,7 +439,7 @@ export default function ELContentManager() {
                       <span className="px-2 py-1 bg-amber-50 border border-amber-300">
                         cultural: {g.culturalLevel}
                       </span>
-                      {g.projects.map(p => (
+                      {g.projects?.map(p => (
                         <span key={p.id} className="px-2 py-1 bg-green-50 border border-green-300">
                           {p.projectCode || p.name}
                         </span>

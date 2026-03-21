@@ -4,12 +4,12 @@ import { createClient } from '@/lib/supabase/server-lite';
 interface DataSource {
   id: string;
   name: string;
-  type: 'directory' | 'programs' | 'alma' | 'sync'; // Backward-compatible alias for pipeline
-  pipeline: 'directory' | 'programs' | 'alma' | 'sync';
+  type: 'directory' | 'programs' | 'alma' | 'sync' | 'funding' | 'reference';
+  pipeline: 'directory' | 'programs' | 'alma' | 'sync' | 'funding' | 'reference';
   lifecycle: 'canonical' | 'supporting' | 'legacy';
   legacy: boolean;
   compatibilityOnly: boolean;
-  canonicalPipeline: 'directory' | 'programs' | 'alma' | 'sync';
+  canonicalPipeline: 'directory' | 'programs' | 'alma' | 'sync' | 'funding' | 'reference';
   canonicalTable: string | null;
   table: string;
   count: number;
@@ -319,6 +319,174 @@ export async function GET(request: NextRequest) {
       description: 'Legacy staging table retained for compatibility surfaces only',
     });
 
+    // 12. Justice Funding
+    const { count: fundingCount, data: fundingLatest } = await supabase
+      .from('justice_funding')
+      .select('created_at', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    sources.push({
+      id: 'justice_funding',
+      name: 'Justice Funding',
+      type: 'funding',
+      pipeline: 'funding',
+      lifecycle: 'canonical',
+      legacy: false,
+      compatibilityOnly: false,
+      canonicalPipeline: 'funding',
+      canonicalTable: 'justice_funding',
+      table: 'justice_funding',
+      count: fundingCount || 0,
+      lastUpdated: fundingLatest?.[0]?.created_at || null,
+      status: fundingCount && fundingCount > 0 ? 'healthy' : 'empty',
+      description: 'National youth justice funding records from QGIP, AusTender, NIAA, state budgets',
+    });
+
+    // 13. ACNC Charities (reference)
+    const { count: acncCount, data: acncLatest } = await supabase
+      .from('acnc_charities')
+      .select('created_at', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    sources.push({
+      id: 'acnc_charities',
+      name: 'ACNC Charities',
+      type: 'reference',
+      pipeline: 'reference',
+      lifecycle: 'canonical',
+      legacy: false,
+      compatibilityOnly: false,
+      canonicalPipeline: 'reference',
+      canonicalTable: 'acnc_charities',
+      table: 'acnc_charities',
+      count: acncCount || 0,
+      lastUpdated: acncLatest?.[0]?.created_at || null,
+      status: acncCount && acncCount > 0 ? 'healthy' : 'empty',
+      description: 'Australian Charities and Not-for-profits Commission registry',
+    });
+
+    // 14. ROGS Justice Spending (reference)
+    const { count: rogsCount, data: rogsLatest } = await supabase
+      .from('rogs_justice_spending')
+      .select('created_at', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    sources.push({
+      id: 'rogs_justice_spending',
+      name: 'ROGS Justice Spending',
+      type: 'reference',
+      pipeline: 'reference',
+      lifecycle: 'canonical',
+      legacy: false,
+      compatibilityOnly: false,
+      canonicalPipeline: 'reference',
+      canonicalTable: 'rogs_justice_spending',
+      table: 'rogs_justice_spending',
+      count: rogsCount || 0,
+      lastUpdated: rogsLatest?.[0]?.created_at || null,
+      status: rogsCount && rogsCount > 0 ? 'healthy' : 'empty',
+      description: 'Report on Government Services justice expenditure data by state',
+    });
+
+    // 15. ORIC Corporations (reference)
+    const { count: oricCount, data: oricLatest } = await supabase
+      .from('oric_corporations')
+      .select('created_at', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    sources.push({
+      id: 'oric_corporations',
+      name: 'ORIC Corporations',
+      type: 'reference',
+      pipeline: 'reference',
+      lifecycle: 'canonical',
+      legacy: false,
+      compatibilityOnly: false,
+      canonicalPipeline: 'reference',
+      canonicalTable: 'oric_corporations',
+      table: 'oric_corporations',
+      count: oricCount || 0,
+      lastUpdated: oricLatest?.[0]?.created_at || null,
+      status: oricCount && oricCount > 0 ? 'healthy' : 'empty',
+      description: 'Office of the Registrar of Indigenous Corporations registry',
+    });
+
+    // 16. ALMA Research Findings
+    const { count: findingsCount, data: findingsLatest } = await supabase
+      .from('alma_research_findings')
+      .select('created_at', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    sources.push({
+      id: 'alma_research_findings',
+      name: 'Research Findings',
+      type: 'alma',
+      pipeline: 'alma',
+      lifecycle: 'canonical',
+      legacy: false,
+      compatibilityOnly: false,
+      canonicalPipeline: 'alma',
+      canonicalTable: 'alma_research_findings',
+      table: 'alma_research_findings',
+      count: findingsCount || 0,
+      lastUpdated: findingsLatest?.[0]?.created_at || null,
+      status: findingsCount && findingsCount > 0 ? 'healthy' : 'empty',
+      description: 'ALMA research findings with structured content and sources',
+    });
+
+    // 17. ALMA Media Articles
+    const { count: mediaCount, data: mediaLatest } = await supabase
+      .from('alma_media_articles')
+      .select('created_at', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    sources.push({
+      id: 'alma_media_articles',
+      name: 'Media Articles',
+      type: 'alma',
+      pipeline: 'alma',
+      lifecycle: 'canonical',
+      legacy: false,
+      compatibilityOnly: false,
+      canonicalPipeline: 'alma',
+      canonicalTable: 'alma_media_articles',
+      table: 'alma_media_articles',
+      count: mediaCount || 0,
+      lastUpdated: mediaLatest?.[0]?.created_at || null,
+      status: mediaCount && mediaCount > 0 ? 'healthy' : 'empty',
+      description: 'News articles and media coverage related to youth justice',
+    });
+
+    // 18. Justice Matrix Cases
+    const { count: casesCount, data: casesLatest } = await supabase
+      .from('justice_matrix_cases')
+      .select('created_at', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    sources.push({
+      id: 'justice_matrix_cases',
+      name: 'Legal Cases',
+      type: 'alma',
+      pipeline: 'alma',
+      lifecycle: 'canonical',
+      legacy: false,
+      compatibilityOnly: false,
+      canonicalPipeline: 'alma',
+      canonicalTable: 'justice_matrix_cases',
+      table: 'justice_matrix_cases',
+      count: casesCount || 0,
+      lastUpdated: casesLatest?.[0]?.created_at || null,
+      status: casesCount && casesCount > 0 ? 'healthy' : 'empty',
+      description: 'Legal precedents and case law for youth justice advocacy',
+    });
+
     // Filter by type if specified
     let filteredSources = sources;
     if (type) {
@@ -340,7 +508,7 @@ export async function GET(request: NextRequest) {
         total: filteredSources.length,
         hasMore: start + limit < filteredSources.length,
       },
-      types: ['directory', 'programs', 'alma', 'sync'],
+      types: ['directory', 'programs', 'alma', 'sync', 'funding', 'reference'],
       lifecycle: ['canonical', 'supporting', 'legacy'],
     });
   } catch (error) {

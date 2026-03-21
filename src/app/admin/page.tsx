@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server-lite';
 import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink, Mail, Activity, Target, Workflow } from 'lucide-react';
+import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink, Mail, Activity, Target, Workflow, Scale, Shield, UserCheck, Megaphone, Mic } from 'lucide-react';
 import { SystemStatus } from '@/components/admin/SystemStatus';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
@@ -56,6 +56,14 @@ export default async function AdminDashboard() {
     { count: intlProgramsCount },
     { count: inboxCount },
     { count: inboxNewCount },
+    { count: programsWithOrgCount },
+    { count: servicesWithOrgCount },
+    { count: matrixCasesCount },
+    { count: containedNominationsCount },
+    { count: orgClaimsCount },
+    { count: almaVerifiedCount },
+    { count: almaUnverifiedCount },
+    { count: fundingCount },
   ] = await Promise.all([
     supabase.from('public_profiles').select('*', { count: 'exact', head: true }),
     supabase.from('public_profiles').select('*', { count: 'exact', head: true }).eq('is_public', true),
@@ -84,6 +92,14 @@ export default async function AdminDashboard() {
     supabase.from('international_programs').select('*', { count: 'exact', head: true }),
     (supabase as any).from('contact_submissions').select('*', { count: 'exact', head: true }),
     (supabase as any).from('contact_submissions').select('*', { count: 'exact', head: true }).eq('status', 'new'),
+    supabase.from('registered_services').select('*', { count: 'exact', head: true }).not('organization_id', 'is', null),
+    supabase.from('services').select('*', { count: 'exact', head: true }).not('organization_id', 'is', null),
+    supabase.from('justice_matrix_cases').select('*', { count: 'exact', head: true }),
+    (supabase as any).from('campaign_nominations').select('*', { count: 'exact', head: true }),
+    (supabase as any).from('organization_claims').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).eq('verification_status', 'verified'),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'verified').neq('verification_status', 'ai_generated'),
+    supabase.from('justice_funding').select('*', { count: 'exact', head: true }),
   ]);
 
   // Fetch onboarded partner organizations (those with active system accounts)
@@ -93,9 +109,9 @@ export default async function AdminDashboard() {
     .eq('status', 'active')
     .order('created_at', { ascending: true });
 
-  // Calculate connection rates
-  const servicesConnectionRate = servicesCount ? Math.round((serviceLinksCount! / servicesCount) * 100) : 0;
-  const programsConnectionRate = programsCount ? Math.round((programLinksCount! / programsCount) * 100) : 0;
+  // Calculate connection rates (org linkage, not profile linkage)
+  const servicesConnectionRate = servicesCount ? Math.round(((servicesWithOrgCount || 0) / servicesCount) * 100) : 0;
+  const programsConnectionRate = programsCount ? Math.round(((programsWithOrgCount || 0) / programsCount) * 100) : 0;
 
   // Calculate total auto-linked relationships
   const totalAutoLinks = (orgLinksCount || 0) + (blogPostLinksCount || 0);
@@ -105,159 +121,49 @@ export default async function AdminDashboard() {
     .select('*', { count: 'exact', head: true })
     .eq('subject_type', 'place');
 
-  const stats = [
+  const statGroups = [
     {
-      title: 'People',
-      count: profilesCount || 0,
-      subtitle: `${publicProfilesCount || 0} public, ${peopleWithConnectionsCount || 0} connected`,
-      icon: Users,
-      href: '/admin/profiles',
-      color: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-50',
-      textColor: 'text-blue-600',
+      label: 'Content & People',
+      cards: [
+        { title: 'People', count: profilesCount || 0, subtitle: `${publicProfilesCount || 0} public, ${peopleWithConnectionsCount || 0} connected`, icon: Users, href: '/admin/profiles', bgColor: 'bg-blue-50', textColor: 'text-blue-600' },
+        { title: 'Stories', count: storiesCount || 0, subtitle: `${storyLinksCount || 0} profile links`, icon: BookOpen, href: '/admin/stories', bgColor: 'bg-purple-50', textColor: 'text-purple-600' },
+        { title: 'Art & Innovation', count: artCount || 0, subtitle: `${artLinksCount || 0} profile links`, icon: Palette, href: '/admin/art-innovation', bgColor: 'bg-pink-50', textColor: 'text-pink-600' },
+        { title: 'Media', count: (photosCount || 0) + (videosCount || 0), subtitle: `${photosCount || 0} photos, ${videosCount || 0} videos + 261 via EL`, icon: Image, href: '/admin/media', bgColor: 'bg-amber-50', textColor: 'text-amber-600' },
+        { title: 'Blog Posts', count: blogPostsCount || 0, subtitle: `${draftPostsCount || 0} drafts`, icon: FileText, href: '/admin/blog', bgColor: 'bg-emerald-50', textColor: 'text-emerald-600' },
+        { title: 'Storytellers', count: '🎙️', subtitle: 'Tags & management', icon: Mic, href: '/admin/storytellers', bgColor: 'bg-violet-50', textColor: 'text-violet-600' },
+        { title: 'Empathy Ledger', count: empathyTranscriptsCount || 0, subtitle: 'Synced from Empathy Ledger', icon: Database, href: '/admin/empathy-ledger', bgColor: 'bg-violet-50', textColor: 'text-violet-600' },
+        { title: 'Events', count: eventsCount || 0, subtitle: `${upcomingEventsCount || 0} upcoming`, icon: Calendar, href: '/admin/events', bgColor: 'bg-red-50', textColor: 'text-red-600' },
+      ],
     },
     {
-      title: 'Stories',
-      count: storiesCount || 0,
-      subtitle: `${storyLinksCount || 0} profile links`,
-      icon: BookOpen,
-      href: '/admin/stories',
-      color: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-50',
-      textColor: 'text-purple-600',
+      label: 'Directory & Organizations',
+      cards: [
+        { title: 'Organizations', count: organizationsCount || 0, subtitle: `${orgLinksCount || 0} team members`, icon: Building2, href: '/admin/organizations', bgColor: 'bg-cyan-50', textColor: 'text-cyan-600' },
+        { title: 'Programs', count: programsCount || 0, subtitle: `${programsWithOrgCount || 0}/${programsCount || 0} linked to orgs`, icon: Building2, href: '/admin/programs', bgColor: 'bg-green-50', textColor: 'text-green-600', alert: programsConnectionRate < 50 ? 'Low org linkage' : undefined },
+        { title: 'Services', count: servicesCount || 0, subtitle: `${servicesWithOrgCount || 0}/${servicesCount || 0} linked to orgs`, icon: MapPin, href: '/admin/services', bgColor: 'bg-orange-50', textColor: 'text-orange-600', alert: servicesConnectionRate < 50 ? 'Low org linkage' : undefined },
+        { title: 'Auto-Linked', count: totalAutoLinks, subtitle: `${orgLinksCount || 0} orgs + ${blogPostLinksCount || 0} stories`, icon: Network, href: '/admin/auto-linking', bgColor: 'bg-indigo-50', textColor: 'text-indigo-600' },
+        { title: 'Org Claims', count: orgClaimsCount || 0, subtitle: 'Pending partner claims', icon: UserCheck, href: '/admin/org-claims', bgColor: 'bg-teal-50', textColor: 'text-teal-600', alert: (orgClaimsCount || 0) > 0 ? `${orgClaimsCount} pending` : undefined },
+      ],
     },
     {
-      title: 'Art & Innovation',
-      count: artCount || 0,
-      subtitle: `${artLinksCount || 0} profile links`,
-      icon: Palette,
-      href: '/admin/art-innovation',
-      color: 'from-pink-500 to-pink-600',
-      bgColor: 'bg-pink-50',
-      textColor: 'text-pink-600',
+      label: 'Campaign & Outreach',
+      cards: [
+        { title: 'CONTAINED', count: containedNominationsCount || 0, subtitle: 'Campaign nominations & CRM', icon: Megaphone, href: '/admin/contained', bgColor: 'bg-rose-50', textColor: 'text-rose-600' },
+        { title: 'Signal Engine', count: '⚡' as string | number, subtitle: 'Autonomous content pipeline', icon: Zap, href: '/admin/signal-engine', bgColor: 'bg-yellow-50', textColor: 'text-yellow-600' },
+        { title: 'Campaign Engine', count: '🎯' as string | number, subtitle: 'Alignment & tracked posts', icon: Target, href: '/admin/campaign-engine', bgColor: 'bg-rose-50', textColor: 'text-rose-600' },
+        { title: 'Inbox', count: inboxCount || 0, subtitle: `${inboxNewCount || 0} new`, icon: Mail, href: '/admin/inbox', bgColor: 'bg-rose-50', textColor: 'text-rose-600', alert: (inboxNewCount || 0) > 0 ? `${inboxNewCount} unread` : undefined },
+      ],
     },
     {
-      title: 'Programs',
-      count: programsCount || 0,
-      subtitle: `${programsConnectionRate}% connected`,
-      icon: Building2,
-      href: '/admin/programs',
-      color: 'from-green-500 to-green-600',
-      bgColor: 'bg-green-50',
-      textColor: 'text-green-600',
-      alert: programsConnectionRate < 50 ? 'Low connection rate' : undefined,
-    },
-    {
-      title: 'Services',
-      count: servicesCount || 0,
-      subtitle: `${servicesConnectionRate}% connected`,
-      icon: MapPin,
-      href: '/admin/services',
-      color: 'from-orange-500 to-orange-600',
-      bgColor: 'bg-orange-50',
-      textColor: 'text-orange-600',
-      alert: servicesConnectionRate < 50 ? 'Low connection rate' : undefined,
-    },
-    {
-      title: 'Organizations',
-      count: organizationsCount || 0,
-      subtitle: `${orgLinksCount || 0} team members`,
-      icon: Building2,
-      href: '/admin/organizations',
-      color: 'from-cyan-500 to-cyan-600',
-      bgColor: 'bg-cyan-50',
-      textColor: 'text-cyan-600',
-    },
-    {
-      title: 'Auto-Linked',
-      count: totalAutoLinks,
-      subtitle: `${orgLinksCount || 0} orgs + ${blogPostLinksCount || 0} stories`,
-      icon: Network,
-      href: '/admin/auto-linking',
-      color: 'from-indigo-500 to-indigo-600',
-      bgColor: 'bg-indigo-50',
-      textColor: 'text-indigo-600',
-    },
-    {
-      title: 'Empathy Ledger',
-      count: empathyTranscriptsCount || 0,
-      subtitle: 'Synced from Empathy Ledger',
-      icon: Database,
-      href: '/admin/empathy-ledger',
-      color: 'from-violet-500 to-violet-600',
-      bgColor: 'bg-violet-50',
-      textColor: 'text-violet-600',
-    },
-    {
-      title: 'Events',
-      count: eventsCount || 0,
-      subtitle: `${upcomingEventsCount || 0} upcoming`,
-      icon: Calendar,
-      href: '/admin/events',
-      color: 'from-red-500 to-red-600',
-      bgColor: 'bg-red-50',
-      textColor: 'text-red-600',
-    },
-    {
-      title: 'Blog Posts',
-      count: blogPostsCount || 0,
-      subtitle: `${draftPostsCount || 0} drafts`,
-      icon: FileText,
-      href: '/admin/blog',
-      color: 'from-emerald-500 to-emerald-600',
-      bgColor: 'bg-emerald-50',
-      textColor: 'text-emerald-600',
-    },
-    {
-      title: 'Media',
-      count: (photosCount || 0) + (videosCount || 0),
-      subtitle: `${photosCount || 0} photos, ${videosCount || 0} videos`,
-      icon: Image,
-      href: '/admin/media',
-      color: 'from-amber-500 to-amber-600',
-      bgColor: 'bg-amber-50',
-      textColor: 'text-amber-600',
-    },
-    {
-      title: 'Signal Engine',
-      count: '⚡',
-      subtitle: 'Autonomous content pipeline',
-      icon: Zap,
-      href: '/admin/signal-engine',
-      color: 'from-yellow-500 to-yellow-600',
-      bgColor: 'bg-yellow-50',
-      textColor: 'text-yellow-600',
-    },
-    {
-      title: 'Inbox',
-      count: inboxCount || 0,
-      subtitle: `${inboxNewCount || 0} new`,
-      icon: Mail,
-      href: '/admin/inbox',
-      color: 'from-rose-500 to-rose-600',
-      bgColor: 'bg-rose-50',
-      textColor: 'text-rose-600',
-      alert: (inboxNewCount || 0) > 0 ? `${inboxNewCount} unread` : undefined,
-    },
-    {
-      title: 'Data Health',
-      count: '📊',
-      subtitle: 'Tables, APIs, enrichment',
-      icon: Activity,
-      href: '/admin/data-health',
-      color: 'from-slate-500 to-slate-600',
-      bgColor: 'bg-slate-50',
-      textColor: 'text-slate-600',
-    },
-    {
-      title: 'Governed Proof',
-      count: governedProofBundlesCount || 0,
-      subtitle: 'Place bundles in control plane',
-      icon: Workflow,
-      href: '/admin/governed-proof',
-      color: 'from-emerald-500 to-emerald-600',
-      bgColor: 'bg-emerald-50',
-      textColor: 'text-emerald-600',
+      label: 'Data & Intelligence',
+      cards: [
+        { title: 'Justice Funding', count: fundingCount || 0, subtitle: 'National funding records', icon: DollarSign, href: '/admin/funding', bgColor: 'bg-green-50', textColor: 'text-green-600' },
+        { title: 'Justice Matrix', count: matrixCasesCount || 0, subtitle: 'Legal cases & precedents', icon: Scale, href: '/admin/justice-matrix', bgColor: 'bg-indigo-50', textColor: 'text-indigo-600' },
+        { title: 'ALMA Verify', count: almaVerifiedCount || 0, subtitle: `${almaUnverifiedCount || 0} need review`, icon: Shield, href: '/admin/alma/verify', bgColor: 'bg-emerald-50', textColor: 'text-emerald-600', alert: (almaUnverifiedCount || 0) > 20 ? `${almaUnverifiedCount} unverified` : undefined },
+        { title: 'Data Operations', count: '📊' as string | number, subtitle: 'Sources, health, enrichment', icon: Database, href: '/admin/data-operations', bgColor: 'bg-slate-50', textColor: 'text-slate-600' },
+        { title: 'Data Health', count: '📊' as string | number, subtitle: 'Tables, APIs, enrichment', icon: Activity, href: '/admin/data-health', bgColor: 'bg-slate-50', textColor: 'text-slate-600' },
+        { title: 'Governed Proof', count: governedProofBundlesCount || 0, subtitle: 'Place bundles in control plane', icon: Workflow, href: '/admin/governed-proof', bgColor: 'bg-emerald-50', textColor: 'text-emerald-600' },
+      ],
     },
   ];
 
@@ -275,65 +181,48 @@ export default async function AdminDashboard() {
             </p>
           </div>
 
-          {/* Stats Grid - SimCity Style */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {stats.map((stat) => {
-              const Icon = stat.icon;
-              return (
-                <Link
-                  key={stat.title}
-                  href={stat.href}
-                  className="group relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200"
-                >
-                  {/* Alert Badge */}
-                  {stat.alert && (
-                    <div className="absolute -top-2 -right-2 z-10">
-                      <div className="bg-red-600 text-white text-xs font-bold px-2 py-1 border-2 border-black shadow-sm">
-                        !
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="p-6">
-                    {/* Icon */}
-                    <div className={`inline-flex p-3 ${stat.bgColor} mb-4`}>
-                      <Icon className={`w-6 h-6 ${stat.textColor}`} />
-                    </div>
-
-                    {/* Count */}
-                    <div className="text-4xl font-black text-black mb-1">
-                      {stat.count}
-                    </div>
-
-                    {/* Title */}
-                    <div className="text-sm font-bold text-gray-900 mb-2">
-                      {stat.title}
-                    </div>
-
-                    {/* Subtitle */}
-                    <div className="text-xs text-gray-600">
-                      {stat.subtitle}
-                    </div>
-
-                    {/* Alert Message */}
-                    {stat.alert && (
-                      <div className="mt-3 pt-3 border-t border-gray-200">
-                        <div className="flex items-center gap-2 text-xs text-red-600 font-medium">
-                          <AlertCircle className="w-3 h-3" />
-                          {stat.alert}
+          {/* Grouped Stats */}
+          {statGroups.map((group) => (
+            <div key={group.label} className="mb-10">
+              <h2 className="text-lg font-black text-gray-500 uppercase tracking-wide mb-4">{group.label}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {group.cards.map((stat) => {
+                  const Icon = stat.icon;
+                  return (
+                    <Link
+                      key={stat.title}
+                      href={stat.href}
+                      className="group relative bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200"
+                    >
+                      {stat.alert && (
+                        <div className="absolute -top-2 -right-2 z-10">
+                          <div className="bg-red-600 text-white text-xs font-bold px-2 py-1 border-2 border-black shadow-sm">!</div>
                         </div>
+                      )}
+                      <div className="p-6">
+                        <div className={`inline-flex p-3 ${stat.bgColor} mb-4`}>
+                          <Icon className={`w-6 h-6 ${stat.textColor}`} />
+                        </div>
+                        <div className="text-4xl font-black text-black mb-1">{typeof stat.count === 'number' ? stat.count.toLocaleString() : stat.count}</div>
+                        <div className="text-sm font-bold text-gray-900 mb-2">{stat.title}</div>
+                        <div className="text-xs text-gray-600">{stat.subtitle}</div>
+                        {stat.alert && (
+                          <div className="mt-3 pt-3 border-t border-gray-200">
+                            <div className="flex items-center gap-2 text-xs text-red-600 font-medium">
+                              <AlertCircle className="w-3 h-3" />{stat.alert}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-
-                  {/* Hover Arrow */}
-                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="text-gray-400">→</div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+                      <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="text-gray-400">→</div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
 
           {/* Partner Organizations — onboarded with system accounts */}
           {partnerOrgs && partnerOrgs.length > 0 && (
