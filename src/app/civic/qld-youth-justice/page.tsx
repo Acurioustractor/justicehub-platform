@@ -1,5 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import Link from 'next/link';
+import { CivicSearch } from './civic-search';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 1800; // 30 min cache
@@ -12,6 +13,9 @@ type CharterCommitment = {
   commitment_text: string;
   category: string;
   status: string;
+  status_evidence: string | null;
+  linked_statement_ids: string[] | null;
+  linked_funding_ids: string[] | null;
   youth_justice_relevant: boolean;
 };
 
@@ -110,7 +114,7 @@ export default async function QldYouthJusticePage() {
 
           {/* Quick stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            <StatCard label="Charter Commitments" value={charter.length} sub="Youth justice specific" />
+            <StatCard label="Charter Commitments" value={charter.length} sub={`${charter.filter(c => c.status === 'delivered').length} delivered, ${charter.filter(c => c.status === 'in_progress').length} in progress`} />
             <StatCard label="Minister Statements" value={allStatements.length} sub={`${yjStatements.length} YJ relevant`} />
             <StatCard label="Funding Records" value={`${(funding.length)}+`} sub={`$${(totalFunding / 1_000_000).toFixed(0)}M tracked`} />
             <StatCard label="ALMA Programs" value={interventions.length} sub="Evidence-rated" />
@@ -119,6 +123,15 @@ export default async function QldYouthJusticePage() {
       </section>
 
       <div className="max-w-6xl mx-auto px-6 py-12 space-y-16">
+
+        {/* Search */}
+        <CivicSearch
+          statements={allStatements}
+          charter={charter}
+          funding={funding}
+          interventions={interventions}
+          yjStatements={yjStatements}
+        />
 
         {/* Section 1: What They Promised */}
         <section>
@@ -140,19 +153,36 @@ export default async function QldYouthJusticePage() {
                 {commitments.map(c => (
                   <div
                     key={c.id}
-                    className="flex items-start gap-3 p-3 bg-white border border-gray-200 rounded-lg"
+                    className={`flex items-start gap-3 p-3 border rounded-lg ${
+                      c.status === 'delivered' ? 'bg-emerald-50 border-emerald-200'
+                      : c.status === 'in_progress' ? 'bg-amber-50 border-amber-200'
+                      : 'bg-white border-gray-200'
+                    }`}
                   >
                     <StatusBadge status={c.status} />
                     <div className="flex-1">
                       <p className="text-sm text-[#0A0A0A]">{c.commitment_text}</p>
-                      <div className="flex gap-2 mt-1">
+                      <div className="flex gap-2 mt-1 flex-wrap">
                         <span className="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
                           {c.commitment_type}
                         </span>
                         <span className="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
                           {c.category}
                         </span>
+                        {(c.linked_statement_ids?.length || 0) > 0 && (
+                          <span className="text-xs font-mono text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
+                            {c.linked_statement_ids!.length} statement{c.linked_statement_ids!.length !== 1 ? 's' : ''}
+                          </span>
+                        )}
+                        {(c.linked_funding_ids?.length || 0) > 0 && (
+                          <span className="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                            {c.linked_funding_ids!.length} funding
+                          </span>
+                        )}
                       </div>
+                      {c.status_evidence && (
+                        <p className="text-xs text-gray-400 mt-1.5 font-mono">{c.status_evidence}</p>
+                      )}
                     </div>
                   </div>
                 ))}
