@@ -13,11 +13,11 @@
       "schedule": "0 3 * * *"
     },
     {
-      "path": "/api/cron/alma/discover?batch=5&mode=interventions",
+      "path": "/api/cron/alma/discover?batch=3&mode=interventions",
       "schedule": "0 4 * * *"
     },
     {
-      "path": "/api/cron/alma/discover?batch=5&mode=media",
+      "path": "/api/cron/alma/discover?batch=3&mode=media",
       "schedule": "0 5 * * *"
     },
     {
@@ -25,11 +25,11 @@
       "schedule": "0 2 * * 1,4"
     },
     {
-      "path": "/api/cron/alma/enrich?mode=evidence_metadata&batch=15",
+      "path": "/api/cron/alma/enrich?mode=evidence_metadata&batch=8",
       "schedule": "0 6 * * *"
     },
     {
-      "path": "/api/cron/alma/enrich?mode=cost_data&batch=10",
+      "path": "/api/cron/alma/enrich?mode=cost_data&batch=5",
       "schedule": "0 7 * * *"
     },
     {
@@ -37,7 +37,7 @@
       "schedule": "30 7 * * *"
     },
     {
-      "path": "/api/cron/alma/enrich?mode=research&batch=5",
+      "path": "/api/cron/alma/enrich?mode=research&batch=3",
       "schedule": "0 8 * * *"
     },
     {
@@ -45,7 +45,7 @@
       "schedule": "0 9 * * *"
     },
     {
-      "path": "/api/cron/alma/data-sprint?mode=auto&batch=200",
+      "path": "/api/cron/alma/data-sprint?mode=auto&batch=100",
       "schedule": "0 10 * * *"
     },
     {

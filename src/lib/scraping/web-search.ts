@@ -36,7 +36,8 @@ export async function searchWeb(
     if (results.length > 0) return results;
   }
 
-  // Fall back to Jina Search
+  // Fall back to Jina Search (free, always available)
+  console.log('[Search] Using Jina fallback for:', query.slice(0, 60));
   return searchJina(query, maxResults);
 }
 
@@ -57,8 +58,14 @@ async function searchSerper(
     });
 
     if (!response.ok) {
-      console.warn(`[Serper] HTTP ${response.status}`);
+      console.warn(`[Serper] HTTP ${response.status} — quota may be exhausted, falling back`);
       return [];
+    }
+
+    const remaining = response.headers.get('x-ratelimit-remaining');
+    if (remaining) {
+      const n = parseInt(remaining, 10);
+      if (n < 100) console.warn(`[Serper] Only ${n} searches remaining this month`);
     }
 
     const data = (await response.json()) as {
