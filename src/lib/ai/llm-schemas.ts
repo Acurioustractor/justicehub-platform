@@ -115,6 +115,47 @@ export const InterventionClassificationSchema = z.object({
 });
 
 // ---------------------------------------------------------------------------
+// Org website enrichment schema
+// ---------------------------------------------------------------------------
+
+export const PROGRAM_TYPES = [
+  'Diversion',
+  'Therapeutic',
+  'Community-Led',
+  'Education/Employment',
+  'Cultural',
+  'Case Management',
+  'Family Support',
+  'Advocacy',
+  'Residential',
+  'Other',
+] as const;
+
+const ExtractedProgramSchema = z.object({
+  name: z.string().min(3).max(300),
+  type: z.enum(PROGRAM_TYPES).catch('Other'),
+  description: z.string().max(2000).nullable().optional(),
+  target_cohort: z.string().max(300).nullable().optional(),
+  geography: z.string().max(200).nullable().optional(),
+  serves_youth_justice: z.boolean().default(false),
+});
+
+export const OrgWebsiteEnrichmentSchema = z.object({
+  description: z.string().min(20).max(5000).nullable().optional(),
+  services_offered: z.array(z.string().max(200)).default([]),
+  phone: z.string().max(50).nullable().optional(),
+  email: z.string().email().max(200).nullable().optional(),
+  sector: z.string().max(100).nullable().optional(),
+  sub_sector: z.string().max(100).nullable().optional(),
+  programs: z.array(ExtractedProgramSchema).default([]),
+  is_indigenous_led: z.boolean().default(false),
+  is_community_controlled: z.boolean().default(false),
+  target_populations: z.array(z.string().max(200)).default([]),
+});
+
+export type OrgWebsiteEnrichment = z.infer<typeof OrgWebsiteEnrichmentSchema>;
+
+// ---------------------------------------------------------------------------
 // Validated parse helper
 // ---------------------------------------------------------------------------
 

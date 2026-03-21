@@ -33,6 +33,10 @@
       "schedule": "0 7 * * *"
     },
     {
+      "path": "/api/cron/alma/enrich-websites?batch=50",
+      "schedule": "30 7 * * *"
+    },
+    {
       "path": "/api/cron/alma/enrich?mode=research&batch=5",
       "schedule": "0 8 * * *"
     },
