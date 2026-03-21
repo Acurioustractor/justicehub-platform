@@ -32,11 +32,24 @@ type MinisterialStatement = {
   body_text: string;
 };
 
+type HansardSpeech = {
+  id: string;
+  sitting_date: string;
+  speaker_name: string;
+  speaker_party: string | null;
+  speaker_electorate: string | null;
+  speaker_role: string | null;
+  speech_type: string;
+  subject: string | null;
+  body_text: string | null;
+  source_url: string | null;
+};
+
 export default async function QldYouthJusticePage() {
   const supabase = createServiceClient();
 
   // Fetch all data in parallel
-  const [charterRes, statementsRes, fundingRes, interventionsRes] = await Promise.all([
+  const [charterRes, statementsRes, hansardRes, fundingRes, interventionsRes] = await Promise.all([
     // Charter commitments (youth justice relevant)
     supabase
       .from('civic_charter_commitments')
@@ -49,6 +62,13 @@ export default async function QldYouthJusticePage() {
       .from('civic_ministerial_statements')
       .select('id, source_id, headline, minister_name, portfolio, published_at, source_url, mentioned_amounts, mentioned_locations, body_text')
       .order('published_at', { ascending: false })
+      .limit(50),
+
+    // Hansard speeches (justice-relevant, pre-filtered by scraper)
+    supabase
+      .from('civic_hansard')
+      .select('id, sitting_date, speaker_name, speaker_party, speaker_electorate, speaker_role, speech_type, subject, body_text, source_url')
+      .order('sitting_date', { ascending: false })
       .limit(50),
 
     // QLD justice funding summary
@@ -71,6 +91,7 @@ export default async function QldYouthJusticePage() {
 
   const charter = (charterRes.data || []) as CharterCommitment[];
   const statements = (statementsRes.data || []) as MinisterialStatement[];
+  const hansard = (hansardRes.data || []) as HansardSpeech[];
   const funding = fundingRes.data || [];
   const interventions = interventionsRes.data || [];
 
@@ -120,7 +141,7 @@ export default async function QldYouthJusticePage() {
             <StatCard label="Charter Commitments" value={charter.length} sub={`${charter.filter(c => c.status === 'delivered').length} delivered, ${charter.filter(c => c.status === 'in_progress').length} in progress`} />
             <StatCard label="Minister Statements" value={allStatements.length} sub={`${yjStatements.length} YJ relevant`} />
             <StatCard label="Funding Records" value={`${(funding.length)}+`} sub={`$${(totalFunding / 1_000_000).toFixed(0)}M tracked`} />
-            <StatCard label="ALMA Programs" value={interventions.length} sub="Evidence-rated" />
+            <StatCard label="Hansard Speeches" value={hansard.length} sub={`${new Set(hansard.map(h => h.speaker_name)).size} speakers`} />
           </div>
         </div>
       </section>
@@ -134,6 +155,7 @@ export default async function QldYouthJusticePage() {
           funding={funding}
           interventions={interventions}
           yjStatements={yjStatements}
+          hansard={hansard}
         />
 
         {/* Section 1: What They Promised */}
@@ -254,7 +276,98 @@ export default async function QldYouthJusticePage() {
           )}
         </section>
 
-        {/* Section 3: Where the Money Goes */}
+        {/* Section 3: What Parliament Said */}
+        <section>
+          <SectionHeader
+            title="What Parliament Said"
+            subtitle="Hansard speeches on youth justice — questions, answers, and debates from the Queensland Parliament"
+          />
+
+          {/* Group by sitting date */}
+          {(() => {
+            const byDate = hansard.reduce((acc, h) => {
+              const date = h.sitting_date;
+              if (!acc[date]) acc[date] = [];
+              acc[date].push(h);
+              return acc;
+            }, {} as Record<string, HansardSpeech[]>);
+
+            const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
+
+            return (
+              <div className="space-y-6">
+                {dates.slice(0, 5).map(date => (
+                  <div key={date}>
+                    <h3 className="text-sm font-mono text-gray-500 mb-3">
+                      {new Date(date + 'T00:00:00').toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                    </h3>
+                    <div className="space-y-2">
+                      {byDate[date].map(h => (
+                        <div
+                          key={h.id}
+                          className="p-4 bg-white border border-gray-200 rounded-lg hover:border-gray-400 transition-colors"
+                        >
+                          <div className="flex items-start gap-3">
+                            <SpeechTypeBadge type={h.speech_type} />
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-sm font-semibold text-[#0A0A0A]">
+                                {h.subject || 'Untitled speech'}
+                              </h4>
+                              <div className="flex gap-2 mt-1 flex-wrap">
+                                <span className="text-xs font-mono text-gray-600">
+                                  {h.speaker_name}
+                                </span>
+                                {h.speaker_party && (
+                                  <span className="text-xs font-mono text-gray-400">
+                                    {h.speaker_party}
+                                  </span>
+                                )}
+                                {h.speaker_electorate && (
+                                  <span className="text-xs font-mono text-gray-400">
+                                    {h.speaker_electorate}
+                                  </span>
+                                )}
+                                {h.speaker_role && (
+                                  <span className="text-xs font-mono text-[#DC2626] bg-red-50 px-2 py-0.5 rounded">
+                                    {h.speaker_role}
+                                  </span>
+                                )}
+                              </div>
+                              {h.body_text && (
+                                <p className="text-xs text-gray-500 mt-2 line-clamp-2">
+                                  {h.body_text.slice(0, 200)}
+                                  {h.body_text.length > 200 ? '...' : ''}
+                                </p>
+                              )}
+                              {h.source_url && (
+                                <a
+                                  href={h.source_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs font-mono text-[#DC2626] hover:underline mt-1 inline-block"
+                                >
+                                  View in Hansard &#8599;
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+
+                {dates.length > 5 && (
+                  <p className="text-sm text-gray-500 font-mono">
+                    Showing 5 of {dates.length} sitting days ({hansard.length} speeches total). More available via search.
+                  </p>
+                )}
+              </div>
+            );
+          })()}
+        </section>
+
+        {/* Section 4: Where the Money Goes */}
         <section>
           <SectionHeader
             title="Where the Money Goes"
@@ -383,6 +496,22 @@ function StatusBadge({ status }: { status: string }) {
   return (
     <span className={`text-xs font-mono px-2 py-1 rounded shrink-0 ${styles[status] || styles.not_started}`}>
       {labels[status] || 'Pending'}
+    </span>
+  );
+}
+
+function SpeechTypeBadge({ type }: { type: string }) {
+  const styles: Record<string, string> = {
+    speech: 'text-blue-700 bg-blue-100',
+    question: 'text-amber-700 bg-amber-100',
+    answer: 'text-emerald-700 bg-emerald-100',
+    interjection: 'text-red-700 bg-red-100',
+    transcript: 'text-gray-600 bg-gray-100',
+  };
+
+  return (
+    <span className={`text-xs font-mono px-2 py-1 rounded shrink-0 capitalize ${styles[type] || styles.transcript}`}>
+      {type}
     </span>
   );
 }

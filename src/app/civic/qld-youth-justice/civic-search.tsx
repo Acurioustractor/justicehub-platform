@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 type SearchableItem = {
   id: string;
-  type: 'statement' | 'commitment' | 'funding' | 'program';
+  type: 'statement' | 'commitment' | 'funding' | 'program' | 'hansard';
   title: string;
   subtitle: string;
   tags: string[];
@@ -18,12 +18,14 @@ export function CivicSearch({
   funding,
   interventions,
   yjStatements,
+  hansard,
 }: {
   statements: any[];
   charter: any[];
   funding: any[];
   interventions: any[];
   yjStatements: any[];
+  hansard: any[];
 }) {
   const [query, setQuery] = useState('');
 
@@ -33,7 +35,7 @@ export function CivicSearch({
         type="text"
         value={query}
         onChange={e => setQuery(e.target.value)}
-        placeholder="Search statements, commitments, funding, programs..."
+        placeholder="Search statements, Hansard, commitments, funding, programs..."
         className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-sm text-[#0A0A0A] placeholder:text-gray-400 font-mono focus:outline-none focus:border-[#DC2626] focus:ring-1 focus:ring-[#DC2626]"
       />
     </div>
@@ -98,11 +100,26 @@ export function CivicSearch({
     }
   }
 
+  for (const h of hansard) {
+    const text = `${h.subject || ''} ${h.speaker_name || ''} ${h.body_text || ''} ${h.speaker_party || ''}`.toLowerCase();
+    if (text.includes(q)) {
+      items.push({
+        id: h.id,
+        type: 'hansard',
+        title: h.subject || 'Untitled speech',
+        subtitle: `${h.speaker_name}${h.speaker_party ? ` (${h.speaker_party})` : ''} — ${h.sitting_date ? new Date(h.sitting_date + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : 'undated'}`,
+        tags: [h.speech_type, h.speaker_role].filter(Boolean),
+        url: h.source_url || undefined,
+      });
+    }
+  }
+
   const typeColors: Record<string, string> = {
     statement: 'text-blue-700 bg-blue-100',
     commitment: 'text-amber-700 bg-amber-100',
     funding: 'text-emerald-700 bg-emerald-100',
     program: 'text-purple-700 bg-purple-100',
+    hansard: 'text-indigo-700 bg-indigo-100',
   };
 
   return (
@@ -111,7 +128,7 @@ export function CivicSearch({
         type="text"
         value={query}
         onChange={e => setQuery(e.target.value)}
-        placeholder="Search statements, commitments, funding, programs..."
+        placeholder="Search statements, Hansard, commitments, funding, programs..."
         className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-sm text-[#0A0A0A] placeholder:text-gray-400 font-mono focus:outline-none focus:border-[#DC2626] focus:ring-1 focus:ring-[#DC2626]"
       />
 
