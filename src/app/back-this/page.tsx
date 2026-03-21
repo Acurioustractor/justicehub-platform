@@ -83,10 +83,16 @@ export default function BackThisPage() {
             <h1 className="text-3xl md:text-5xl font-black tracking-tighter uppercase mb-4">
               Back This
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl leading-relaxed">
+            <p className="text-lg text-gray-600 max-w-2xl leading-relaxed mb-8">
               Every dollar funds infrastructure that makes it impossible to ignore
               what works. Pick your level — from $25 to backing the national tour.
             </p>
+            <div className="flex flex-wrap gap-6 text-sm font-mono uppercase tracking-widest text-gray-500">
+              <span><strong className="text-[#0A0A0A] text-lg">876</strong> verified programs</span>
+              <span><strong className="text-[#0A0A0A] text-lg">$72B</strong> funding tracked</span>
+              <span><strong className="text-[#0A0A0A] text-lg">18K+</strong> organisations</span>
+              <span><strong className="text-[#0A0A0A] text-lg">8</strong> states &amp; territories</span>
+            </div>
           </div>
         </section>
 
@@ -143,6 +149,9 @@ export default function BackThisPage() {
                       <span className="text-2xl font-black font-mono">$25–$250</span>
                     </div>
                   </div>
+                  <p className="text-sm font-bold text-[#059669] mb-2">
+                    → Keeps ALMA running for 10,000+ monthly users
+                  </p>
                   <p className="text-sm text-gray-600 mb-4">
                     Servers, data pipelines, and the team that maintains them. Direct support
                     for community intelligence infrastructure.
@@ -170,6 +179,9 @@ export default function BackThisPage() {
                       <span className="text-2xl font-black font-mono">$5K–$200K</span>
                     </div>
                   </div>
+                  <p className="text-sm font-bold text-[#059669] mb-2">
+                    → 4 cities, 50,000 people face-to-face with the evidence
+                  </p>
                   <p className="text-sm text-gray-600 mb-3">
                     One shipping container, three rooms, four cities. Fund documentation ($5K),
                     a single stop ($50K), or the full national tour ($200K).
@@ -216,6 +228,9 @@ export default function BackThisPage() {
                       <span className="text-2xl font-black font-mono">$29/mo+</span>
                     </div>
                   </div>
+                  <p className="text-sm font-bold text-[#059669] mb-2">
+                    → Professional tools: comparisons, exports, portfolio tracking
+                  </p>
                   <p className="text-sm text-gray-600 mb-4">
                     Monthly subscription keeps the evidence infrastructure running permanently.
                     Stewards get priority data access, basecamp network membership, and input
@@ -244,6 +259,9 @@ export default function BackThisPage() {
                       <span className="text-2xl font-black font-mono">$100K+</span>
                     </div>
                   </div>
+                  <p className="text-sm font-bold text-[#059669] mb-2">
+                    → Fund permanent national evidence infrastructure
+                  </p>
                   <p className="text-sm text-gray-600 mb-4">
                     Fund the development of JusticeHub as permanent national infrastructure.
                     876 verified programs, $72B funding tracked, 20K+ organisations linked.

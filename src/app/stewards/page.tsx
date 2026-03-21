@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service';
-import { ArrowRight, Users, Heart, TrendingUp, MapPin, BookOpen, Zap, Shield, Globe, Leaf } from 'lucide-react';
+import { ArrowRight, Users, TrendingUp, BookOpen, Zap, Shield, Leaf } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 
 export const dynamic = 'force-dynamic';
@@ -307,55 +307,91 @@ export default async function StewardsPage() {
         </div>
       </section>
 
-      {/* Steward Community */}
+      {/* See What Stewards See */}
       <section className="section-padding border-b-2 border-[#0A0A0A]">
         <div className="container-justice">
           <h2 className="text-3xl font-black text-[#0A0A0A] mb-4 text-center">
-            The Steward Community
+            See What Stewards See
           </h2>
           <p className="text-center text-gray-700 mb-12 max-w-2xl mx-auto">
-            Join a growing network of practitioners, researchers, policy makers, and community
-            leaders committed to protecting and nurturing youth justice reform.
+            Free users browse programs. Stewards turn that data into action.
           </p>
 
-          <div className="grid md:grid-cols-4 gap-6 max-w-5xl mx-auto mb-12">
-            <div className="text-center p-6 border-2 border-[#0A0A0A] bg-white">
-              <Globe className="w-8 h-8 mx-auto mb-4 text-[#0A0A0A]" />
-              <div className="text-3xl font-black text-[#0A0A0A] mb-1">{stats.statesCovered}</div>
-              <div className="text-sm text-gray-600">States Represented</div>
+          {/* Feature previews */}
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-16">
+            <div className="border-2 border-[#0A0A0A] bg-white overflow-hidden">
+              <div className="bg-[#059669] text-white px-4 py-2 text-xs font-bold uppercase tracking-widest">
+                Steward Tool
+              </div>
+              <div className="p-6">
+                <h3 className="font-black text-lg mb-2">Cost-per-Outcome Comparisons</h3>
+                <div className="bg-[#F5F0E8] border border-gray-200 p-4 font-mono text-xs mb-3">
+                  <div className="flex justify-between mb-1"><span>Detention (QLD)</span><span className="text-[#DC2626]">$1,458/day</span></div>
+                  <div className="flex justify-between mb-1"><span>BackTrack (NSW)</span><span className="text-[#059669]">$89/day</span></div>
+                  <div className="flex justify-between"><span>PCYC Diversion</span><span className="text-[#059669]">$42/day</span></div>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Compare detention costs against community alternatives. Export as a policy brief.
+                </p>
+              </div>
             </div>
-            <div className="text-center p-6 border-2 border-[#0A0A0A] bg-white">
-              <Users className="w-8 h-8 mx-auto mb-4 text-[#059669]" />
-              <div className="text-3xl font-black text-[#0A0A0A] mb-1">50+</div>
-              <div className="text-sm text-gray-600">Active Stewards</div>
+
+            <div className="border-2 border-[#0A0A0A] bg-white overflow-hidden">
+              <div className="bg-[#059669] text-white px-4 py-2 text-xs font-bold uppercase tracking-widest">
+                Steward Tool
+              </div>
+              <div className="p-6">
+                <h3 className="font-black text-lg mb-2">Portfolio Benchmarking</h3>
+                <div className="bg-[#F5F0E8] border border-gray-200 p-4 font-mono text-xs mb-3">
+                  <div className="mb-1">Your program: <strong>72%</strong> engagement</div>
+                  <div className="mb-1">Peer avg (NT): <strong>58%</strong> engagement</div>
+                  <div>Top performer: <strong>91%</strong> engagement</div>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Benchmark your program against similar interventions by state, type, and evidence level.
+                </p>
+              </div>
             </div>
-            <div className="text-center p-6 border-2 border-[#0A0A0A] bg-white">
-              <Heart className="w-8 h-8 mx-auto mb-4 text-[#DC2626]" />
-              <div className="text-3xl font-black text-[#0A0A0A] mb-1">{stats.aboriginalLed}</div>
-              <div className="text-sm text-gray-600">Aboriginal-Led Programs</div>
-            </div>
-            <div className="text-center p-6 border-2 border-[#0A0A0A] bg-white">
-              <MapPin className="w-8 h-8 mx-auto mb-4 text-[#0A0A0A]" />
-              <div className="text-3xl font-black text-[#0A0A0A] mb-1">100+</div>
-              <div className="text-sm text-gray-600">Communities Served</div>
+
+            <div className="border-2 border-[#0A0A0A] bg-white overflow-hidden">
+              <div className="bg-[#059669] text-white px-4 py-2 text-xs font-bold uppercase tracking-widest">
+                Steward Tool
+              </div>
+              <div className="p-6">
+                <h3 className="font-black text-lg mb-2">Export-Ready Policy Briefs</h3>
+                <div className="bg-[#F5F0E8] border border-gray-200 p-4 font-mono text-xs mb-3">
+                  <div className="mb-1">Format: PDF / DOCX / Slides</div>
+                  <div className="mb-1">Audience: MPs, funders, boards</div>
+                  <div>Includes: evidence, costs, outcomes</div>
+                </div>
+                <p className="text-sm text-gray-600">
+                  One click from data to a formatted brief ready to send to your funder or MP.
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Testimonials */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="border-l-4 border-[#059669] pl-6 py-4">
-              <p className="text-gray-700 italic mb-4">
-                "JusticeHub gave us the evidence we needed to secure $2M in funding for our
-                community-led diversion program. The data speaks louder than any pitch deck."
-              </p>
-              <p className="font-bold text-[#0A0A0A]">— Youth Justice Program Director, QLD</p>
+          {/* Persona vignette */}
+          <div className="max-w-3xl mx-auto border-2 border-[#0A0A0A] bg-white p-8">
+            <div className="text-xs font-bold uppercase tracking-widest text-[#059669] mb-3 font-mono">
+              How Stewards Use JusticeHub
             </div>
-            <div className="border-l-4 border-[#0A0A0A] pl-6 py-4">
-              <p className="text-gray-700 italic mb-4">
-                "Being able to compare outcomes across similar programs helped us refine our
-                approach. We're seeing 40% better engagement since joining the network."
+            <h3 className="text-xl font-black mb-4">
+              Sarah, Youth Justice Policy Officer — SA Government
+            </h3>
+            <div className="space-y-3 text-gray-700 text-sm leading-relaxed">
+              <p>
+                Sarah&apos;s department needed to justify $4.2M in community diversion funding to Treasury.
+                With free ALMA access, she could see program names and basic evidence ratings.
               </p>
-              <p className="font-bold text-[#0A0A0A]">— Community Services Manager, NT</p>
+              <p>
+                As a Steward, she pulled cost-per-outcome comparisons across 12 programs in three states,
+                exported a formatted policy brief with recidivism data, and benchmarked SA programs against
+                national peers — all in one afternoon.
+              </p>
+              <p className="font-bold text-[#0A0A0A]">
+                The funding was approved. The evidence was undeniable.
+              </p>
             </div>
           </div>
         </div>
