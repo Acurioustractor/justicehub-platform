@@ -156,6 +156,38 @@ export const OrgWebsiteEnrichmentSchema = z.object({
 export type OrgWebsiteEnrichment = z.infer<typeof OrgWebsiteEnrichmentSchema>;
 
 // ---------------------------------------------------------------------------
+// Government program extraction schema
+// ---------------------------------------------------------------------------
+
+export const JURISDICTIONS = [
+  'QLD', 'NSW', 'VIC', 'WA', 'SA', 'TAS', 'ACT', 'NT', 'Federal',
+] as const;
+
+export const PROGRAM_STATUSES = [
+  'announced', 'in_progress', 'implemented', 'abandoned',
+] as const;
+
+export const GovernmentProgramSchema = z.object({
+  name: z.string().min(3).max(300),
+  jurisdiction: z.enum(JURISDICTIONS),
+  program_type: z.string().max(100).nullable().optional(),
+  announced_date: z.string().nullable().optional(), // ISO date or "YYYY-MM-DD"
+  budget_amount: z.number().nullable().optional(),
+  description: z.string().min(10).max(5000),
+  minister: z.string().max(200).nullable().optional(),
+  department: z.string().max(300).nullable().optional(),
+  target_cohort: z.array(z.string().max(200)).nullable().optional(),
+  status: z.enum(PROGRAM_STATUSES).nullable().optional(),
+  source_url: z.string().url(),
+});
+
+export const GovernmentProgramsResponseSchema = z.object({
+  programs: z.array(GovernmentProgramSchema),
+});
+
+export type GovernmentProgram = z.infer<typeof GovernmentProgramSchema>;
+
+// ---------------------------------------------------------------------------
 // Validated parse helper
 // ---------------------------------------------------------------------------
 
