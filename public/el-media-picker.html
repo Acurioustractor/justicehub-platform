@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empathy Ledger Media Picker</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0A0A; --surface: #111; --card: #161616;
+    --border: #252525; --border-hover: #3a3a3a;
+    --text: #e5e5e5; --muted: #666; --dim: #444;
+    --red: #DC2626; --green: #059669; --amber: #d97706;
+    --offwhite: #F5F0E8; --purple: #7c3aed;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+    min-height: 100vh; overflow-x: hidden;
+  }
+
+  /* ── Header ─────────────────────────────────────────── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    padding: 10px 16px; display: flex; align-items: center; gap: 12px;
+  }
+  .topbar .logo {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    white-space: nowrap; color: var(--offwhite);
+  }
+  .topbar .logo span { color: var(--green); }
+  .topbar .search {
+    flex: 1; max-width: 300px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); padding: 6px 10px; font-family: inherit; font-size: 11px;
+  }
+  .topbar .search::placeholder { color: var(--dim); }
+  .topbar .stats { color: var(--muted); font-size: 10px; margin-left: auto; white-space: nowrap; }
+
+  /* ── Sidebar Tabs ───────────────────────────────────── */
+  .layout { display: flex; height: calc(100vh - 45px); }
+  .sidebar {
+    width: 200px; flex-shrink: 0; border-right: 1px solid var(--border);
+    background: var(--surface); overflow-y: auto;
+  }
+  .sidebar .section-label {
+    font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--dim); padding: 12px 14px 4px; font-weight: 600;
+  }
+  .sidebar button {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    background: none; border: none; color: var(--muted);
+    padding: 8px 14px; font-family: inherit; font-size: 11px;
+    cursor: pointer; text-align: left; transition: all 0.1s;
+  }
+  .sidebar button:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .sidebar button.active { color: var(--green); background: rgba(5,150,105,0.08); border-right: 2px solid var(--green); }
+  .sidebar button .icon { font-size: 14px; width: 20px; text-align: center; }
+  .sidebar button .badge {
+    margin-left: auto; background: var(--border); color: var(--muted);
+    padding: 1px 6px; font-size: 9px; border-radius: 8px;
+  }
+
+  /* ── Sub-nav (galleries, storytellers) ──────────────── */
+  .subnav {
+    border-bottom: 1px solid var(--border); padding: 6px 12px;
+    display: flex; gap: 4px; flex-wrap: wrap; background: var(--surface);
+  }
+  .subnav .chip {
+    background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+    padding: 4px 10px; font-family: inherit; font-size: 10px; cursor: pointer;
+    transition: all 0.1s;
+  }
+  .subnav .chip:hover { border-color: var(--border-hover); color: var(--text); }
+  .subnav .chip.active { border-color: var(--green); color: var(--green); background: rgba(5,150,105,0.08); }
+  .subnav .chip img {
+    width: 14px; height: 14px; border-radius: 50%; object-fit: cover;
+    vertical-align: middle; margin-right: 4px;
+  }
+
+  /* ── Content Area ───────────────────────────────────── */
+  .content { flex: 1; overflow-y: auto; padding: 8px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 6px;
+  }
+
+  /* ── Media Card ─────────────────────────────────────── */
+  .card {
+    position: relative; cursor: pointer; background: var(--card);
+    border: 2px solid transparent; transition: all 0.15s; overflow: hidden;
+  }
+  .card:hover { border-color: var(--border-hover); }
+  .card.selected { border-color: var(--green); }
+  .card.selected::before {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(5,150,105,0.15); z-index: 1; pointer-events: none;
+  }
+  .card.selected::after {
+    content: '✓'; position: absolute; top: 6px; right: 6px; z-index: 2;
+    background: var(--green); color: white; width: 20px; height: 20px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: bold;
+  }
+  .card .thumb {
+    width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block;
+    background: #1a1a1a;
+  }
+  .card .thumb.video { position: relative; }
+  .card .play-badge {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.7); color: white; width: 32px; height: 32px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .card .type-badge {
+    position: absolute; top: 6px; left: 6px;
+    padding: 2px 6px; font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .card .type-badge.photo { background: var(--green); color: white; }
+  .card .type-badge.video { background: var(--purple); color: white; }
+  .card .type-badge.story { background: var(--amber); color: black; }
+  .card .info { padding: 6px 8px; }
+  .card .name {
+    font-size: 10px; color: var(--text); white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .card .meta { font-size: 9px; color: var(--dim); margin-top: 2px; }
+  .card .storyteller-tag {
+    font-size: 9px; color: var(--green); margin-top: 2px;
+  }
+
+  /* ── Storyteller Card ───────────────────────────────── */
+  .storyteller-card {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 10px 14px; cursor: pointer; transition: all 0.1s;
+  }
+  .storyteller-card:hover { border-color: var(--green); }
+  .storyteller-card img {
+    width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+  }
+  .storyteller-card .avatar-placeholder {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--dim); flex-shrink: 0;
+  }
+  .storyteller-card .name { font-size: 12px; font-weight: 600; }
+  .storyteller-card .role { font-size: 10px; color: var(--muted); }
+  .storyteller-card .bio { font-size: 10px; color: var(--dim); margin-top: 2px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ── Selection Bar ──────────────────────────────────── */
+  .selection-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    background: var(--green); color: white;
+    padding: 10px 16px; display: none; align-items: center; gap: 10px;
+    font-size: 12px; font-weight: 600;
+  }
+  .selection-bar.active { display: flex; }
+  .selection-bar button {
+    background: rgba(255,255,255,0.2); border: none; color: white;
+    padding: 5px 14px; cursor: pointer; font-family: inherit; font-size: 10px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+    transition: background 0.1s;
+  }
+  .selection-bar button:hover { background: rgba(255,255,255,0.3); }
+  .selection-bar button.red { background: rgba(220,38,38,0.5); }
+  .selection-bar .spacer { flex: 1; }
+
+  /* ── Output Panel ───────────────────────────────────── */
+  .output-panel {
+    position: fixed; bottom: 44px; left: 0; right: 0; z-index: 90;
+    background: var(--surface); border-top: 2px solid var(--green);
+    max-height: 35vh; overflow-y: auto; display: none; padding: 14px 16px;
+  }
+  .output-panel.active { display: block; }
+  .output-panel h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; color: var(--muted); }
+  .output-panel .formats { display: flex; gap: 6px; margin-bottom: 8px; }
+  .output-panel .formats button {
+    background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+    padding: 3px 10px; cursor: pointer; font-family: inherit; font-size: 10px;
+  }
+  .output-panel .formats button.active { border-color: var(--green); color: var(--green); }
+  .output-panel pre {
+    background: var(--bg); border: 1px solid var(--border);
+    padding: 10px; font-size: 10px; overflow-x: auto; white-space: pre-wrap; word-break: break-all;
+    max-height: 20vh;
+  }
+
+  /* ── Loading ────────────────────────────────────────── */
+  .loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--muted); }
+  .spin { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.5s linear infinite; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .empty { text-align: center; padding: 60px 20px; color: var(--dim); }
+  .empty .icon { font-size: 32px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+  <div class="logo">Empathy Ledger <span>Media</span></div>
+  <input type="text" class="search" id="searchInput" placeholder="Search media, stories, people..." />
+  <div class="stats" id="stats">Loading...</div>
+</div>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="section-label">Browse</div>
+    <button class="active" data-view="all" onclick="switchView('all')">
+      <span class="icon">🖼</span> All Media <span class="badge" id="mediaCount">—</span>
+    </button>
+    <button data-view="galleries" onclick="switchView('galleries')">
+      <span class="icon">📁</span> Galleries <span class="badge" id="galleryCount">—</span>
+    </button>
+    <button data-view="stories" onclick="switchView('stories')">
+      <span class="icon">📖</span> Stories <span class="badge" id="storyCount">—</span>
+    </button>
+
+    <div class="section-label">People</div>
+    <button data-view="storytellers" onclick="switchView('storytellers')">
+      <span class="icon">👤</span> Storytellers <span class="badge" id="storytellerCount">—</span>
+    </button>
+
+    <div class="section-label">Storage</div>
+    <button data-view="storage" onclick="switchView('storage')">
+      <span class="icon">💾</span> EL Buckets
+    </button>
+    <button data-view="jh-storage" onclick="switchView('jh-storage')">
+      <span class="icon">📦</span> JH Buckets
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="content" id="content">
+    <div class="loading"><div class="spin"></div> Loading media...</div>
+  </div>
+</div>
+
+<!-- Sub-nav for galleries/storytellers (inserted dynamically) -->
+
+<!-- Selection Bar -->
+<div class="selection-bar" id="selectionBar">
+  <span id="selectionCount">0 selected</span>
+  <div class="spacer"></div>
+  <button onclick="copyAs('urls')">Copy URLs</button>
+  <button onclick="copyAs('json')">Copy JSON</button>
+  <button onclick="copyAs('jsx')">Copy JSX</button>
+  <button onclick="toggleOutput()">View Code</button>
+  <button class="red" onclick="clearSelection()">Clear</button>
+</div>
+
+<!-- Output Panel -->
+<div class="output-panel" id="outputPanel">
+  <h3>Selected Media</h3>
+  <div class="formats">
+    <button class="active" onclick="setOutputFormat('urls', this)">URLs</button>
+    <button onclick="setOutputFormat('json', this)">JSON</button>
+    <button onclick="setOutputFormat('jsx', this)">JSX</button>
+    <button onclick="setOutputFormat('ts-array', this)">TS Array</button>
+    <button onclick="setOutputFormat('markdown', this)">Markdown</button>
+  </div>
+  <pre id="outputCode"></pre>
+  <button onclick="copyOutput()" style="margin-top:6px;background:var(--green);border:none;color:white;padding:5px 14px;cursor:pointer;font-family:inherit;font-size:10px;font-weight:600;text-transform:uppercase;">
+    Copy to clipboard
+  </button>
+</div>
+
+<script>
+// ── Config ──────────────────────────────────────────────
+const API_BASE = '/api/empathy-ledger/media-browser';
+
+// JH Supabase (for JH storage tab)
+const JH_SUPABASE_URL = 'https://tednluwflfhxyucgwigh.supabase.co';
+const JH_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlZG5sdXdmbGZoeHl1Y2d3aWdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNDYyMjksImV4cCI6MjA2NzkyMjIyOX0.PG0iGZQR2d8yo4y3q1e2tEIMa3J0AdFkI1Q6P7IDgrg';
+
+const IMAGE_EXTS = new Set(['jpg','jpeg','png','gif','webp','svg','avif']);
+
+// ── State ───────────────────────────────────────────────
+let currentView = 'all';
+let selected = new Map(); // url -> { name, type, storyteller, ... }
+let outputFormat = 'urls';
+let galleries = [];
+let storytellers = [];
+let currentGalleryId = null;
+let currentStorytellerId = null;
+let storageBucket = '';
+let storagePrefix = '';
+let storageSource = 'el'; // 'el' or 'jh'
+
+// ── API ─────────────────────────────────────────────────
+async function apiFetch(params) {
+  const sp = new URLSearchParams(params);
+  const res = await fetch(`${API_BASE}?${sp}`);
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  return res.json();
+}
+
+async function jhStorageList(bucket, prefix = '') {
+  const res = await fetch(`${JH_SUPABASE_URL}/storage/v1/object/list/${bucket}`, {
+    method: 'POST',
+    headers: {
+      'apikey': JH_SUPABASE_KEY,
+      'Authorization': `Bearer ${JH_SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ prefix, limit: 200, sortBy: { column: 'name', order: 'asc' } }),
+  });
+  return res.json();
+}
+
+async function jhBuckets() {
+  // Hardcoded public buckets (anon can't list buckets)
+  return ['media','images','photos','videos','profile-images','avatars','portraits',
+          'photo-wall','story-images','storyteller-media','storyteller-photos',
+          'empathy-ledger-media','media-uploads','audio'];
+}
+
+function jhPublicUrl(bucket, path) {
+  return `${JH_SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
+}
+
+function isImage(name) {
+  return IMAGE_EXTS.has((name || '').split('.').pop()?.toLowerCase() || '');
+}
+
+function isVideo(contentType) {
+  return (contentType || '').startsWith('video/');
+}
+
+function fmtSize(bytes) {
+  if (!bytes) return '';
+  if (bytes < 1024) return bytes + 'B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(0) + 'KB';
+  return (bytes / 1048576).toFixed(1) + 'MB';
+}
+
+// ── Views ───────────────────────────────────────────────
+function switchView(view) {
+  currentView = view;
+  currentGalleryId = null;
+  currentStorytellerId = null;
+  document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.sidebar button[data-view="${view}"]`)?.classList.add('active');
+  loadView();
+}
+
+async function loadView() {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="loading"><div class="spin"></div> Loading...</div>';
+
+  try {
+    switch (currentView) {
+      case 'all': return await renderMedia();
+      case 'galleries': return await renderGalleries();
+      case 'stories': return await renderStories();
+      case 'storytellers': return await renderStorytellers();
+      case 'storage': return await renderStorage('el');
+      case 'jh-storage': return await renderStorage('jh');
+      case 'gallery-media': return await renderGalleryMedia();
+      case 'storyteller-media': return await renderStorytellerMedia();
+    }
+  } catch (err) {
+    content.innerHTML = `<div class="empty"><div class="icon">⚠️</div>${err.message}</div>`;
+  }
+}
+
+// ── Render: All Media ───────────────────────────────────
+async function renderMedia() {
+  const search = document.getElementById('searchInput').value;
+  const { data } = await apiFetch({ type: 'media', limit: 200, search });
+
+  document.getElementById('mediaCount').textContent = data.length;
+  const content = document.getElementById('content');
+
+  if (!data.length) {
+    content.innerHTML = '<div class="empty"><div class="icon">📭</div>No media found</div>';
+    return;
+  }
+
+  content.innerHTML = `<div class="grid">${data.map(m => mediaCard(m)).join('')}</div>`;
+}
+
+function mediaCard(m) {
+  const url = m.url || m.thumbnail_url || m.preview_url || '';
+  const isVid = isVideo(m.content_type);
+  const name = m.title || m.filename || 'Untitled';
+  const isSelected = selected.has(url);
+  const altText = m.alt_text || name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+
+  return `
+    <div class="card ${isSelected ? 'selected' : ''}"
+         data-url="${esc(url)}"
+         onclick="toggleSelect('${esc(url)}', ${JSON.stringify({ name: altText, type: isVid ? 'video' : 'photo', contentType: m.content_type, size: m.file_size }).replace(/"/g, '&quot;')})">
+      ${isVid
+        ? `<div class="thumb video" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;">
+             <div class="play-badge">▶</div>
+           </div>`
+        : `<img class="thumb" src="${esc(url)}" alt="${esc(altText)}" loading="lazy" onerror="this.style.display='none'" />`
+      }
+      <span class="type-badge ${isVid ? 'video' : 'photo'}">${isVid ? 'Video' : 'Photo'}</span>
+      <div class="info">
+        <div class="name" title="${esc(name)}">${esc(name)}</div>
+        <div class="meta">${fmtSize(m.file_size)} ${m.dimensions ? `${m.dimensions.width}×${m.dimensions.height}` : ''}</div>
+      </div>
+    </div>`;
+}
+
+// ── Render: Galleries ───────────────────────────────────
+async function renderGalleries() {
+  const { data } = await apiFetch({ type: 'galleries', limit: 100 });
+  galleries = data;
+  document.getElementById('galleryCount').textContent = data.length;
+  const content = document.getElementById('content');
+
+  if (!data.length) {
+    content.innerHTML = '<div class="empty"><div class="icon">📁</div>No galleries found</div>';
+    return;
+  }
+
+  content.innerHTML = `<div class="grid">${data.map(g => `
+    <div class="card" onclick="openGallery('${g.id}', '${esc(g.title)}')" style="cursor:pointer;">
+      ${g.coverImage
+        ? `<img class="thumb" src="${esc(g.coverImage)}" loading="lazy" />`
+        : `<div class="thumb" style="background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:28px;">📁</div>`}
+      <div class="info">
+        <div class="name">${esc(g.title)}</div>
+        <div class="meta">${g.mediaCount} items</div>
+      </div>
+    </div>
+  `).join('')}</div>`;
+}
+
+async function openGallery(id, title) {
+  currentGalleryId = id;
+  currentView = 'gallery-media';
+  await loadView();
+}
+
+async function renderGalleryMedia() {
+  const { data } = await apiFetch({ type: 'media', galleryId: currentGalleryId, limit: 200 });
+  const content = document.getElementById('content');
+
+  const backBtn = `<button onclick="switchView('galleries')" style="background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;cursor:pointer;font-family:inherit;font-size:10px;margin-bottom:8px;">← Back to galleries</button>`;
+
+  if (!data.length) {
+    content.innerHTML = `${backBtn}<div class="empty"><div class="icon">📭</div>No media in this gallery</div>`;
+    return;
+  }
+
+  content.innerHTML = `${backBtn}<div class="grid">${data.map(m => mediaCard(m)).join('')}</div>`;
+}
+
+// ── Render: Stories ─────────────────────────────────────
+async function renderStories() {
+  const search = document.getElementById('searchInput').value;
+  const { data } = await apiFetch({ type: 'stories', limit: 100, search });
+  document.getElementById('storyCount').textContent = data.length;
+  const content = document.getElementById('content');
+
+  if (!data.length) {
+    content.innerHTML = '<div class="empty"><div class="icon">📖</div>No stories found</div>';
+    return;
+  }
+
+  content.innerHTML = `<div class="grid">${data.map(s => {
+    const url = s.imageUrl || '';
+    const isSelected = url && selected.has(url);
+
+    return `
+      <div class="card ${isSelected ? 'selected' : ''}"
+           ${url ? `data-url="${esc(url)}" onclick="toggleSelect('${esc(url)}', ${JSON.stringify({ name: s.title, type: 'story-image' }).replace(/"/g, '&quot;')})"` : ''}
+           style="${url ? '' : 'opacity:0.5;pointer-events:none;'}">
+        ${url
+          ? `<img class="thumb" src="${esc(url)}" alt="${esc(s.title)}" loading="lazy" />`
+          : `<div class="thumb" style="background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:20px;">📖</div>`}
+        <span class="type-badge story">Story</span>
+        <div class="info">
+          <div class="name" title="${esc(s.title)}">${esc(s.title)}</div>
+          <div class="meta">${s.storytellerName || ''} · ${s.storyType || ''}</div>
+          ${s.themes?.length ? `<div class="meta">${s.themes.slice(0, 3).join(', ')}</div>` : ''}
+        </div>
+      </div>`;
+  }).join('')}</div>`;
+}
+
+// ── Render: Storytellers ────────────────────────────────
+async function renderStorytellers() {
+  const search = document.getElementById('searchInput').value;
+  const { data } = await apiFetch({ type: 'storytellers', limit: 100, search });
+  storytellers = data;
+  document.getElementById('storytellerCount').textContent = data.length;
+  const content = document.getElementById('content');
+
+  if (!data.length) {
+    content.innerHTML = '<div class="empty"><div class="icon">👤</div>No storytellers found</div>';
+    return;
+  }
+
+  content.innerHTML = `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));">
+    ${data.map(s => `
+      <div class="storyteller-card" onclick="openStoryteller('${s.id}', '${esc(s.displayName)}')">
+        ${s.avatarUrl
+          ? `<img src="${esc(s.avatarUrl)}" alt="${esc(s.displayName)}" />`
+          : `<div class="avatar-placeholder">${(s.displayName || '?')[0]}</div>`}
+        <div>
+          <div class="name">${esc(s.displayName)}</div>
+          <div class="role">${esc(s.role || 'Storyteller')}</div>
+          ${s.location ? `<div class="bio">${esc(s.location)}</div>` : ''}
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+async function openStoryteller(id, name) {
+  currentStorytellerId = id;
+  currentView = 'storyteller-media';
+  await loadView();
+}
+
+async function renderStorytellerMedia() {
+  const [mediaRes, storyRes] = await Promise.all([
+    apiFetch({ type: 'media', storytellerId: currentStorytellerId, limit: 100 }).catch(() => ({ data: [] })),
+    apiFetch({ type: 'stories', storytellerId: currentStorytellerId, limit: 50 }),
+  ]);
+
+  const content = document.getElementById('content');
+  const backBtn = `<button onclick="switchView('storytellers')" style="background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;cursor:pointer;font-family:inherit;font-size:10px;margin-bottom:8px;">← Back to storytellers</button>`;
+
+  const allCards = [
+    ...mediaRes.data.map(m => mediaCard(m)),
+    ...storyRes.data.filter(s => s.imageUrl).map(s => {
+      const isSelected = selected.has(s.imageUrl);
+      return `
+        <div class="card ${isSelected ? 'selected' : ''}"
+             data-url="${esc(s.imageUrl)}"
+             onclick="toggleSelect('${esc(s.imageUrl)}', ${JSON.stringify({ name: s.title, type: 'story-image' }).replace(/"/g, '&quot;')})">
+          <img class="thumb" src="${esc(s.imageUrl)}" alt="${esc(s.title)}" loading="lazy" />
+          <span class="type-badge story">Story</span>
+          <div class="info">
+            <div class="name">${esc(s.title)}</div>
+          </div>
+        </div>`;
+    }),
+  ];
+
+  content.innerHTML = allCards.length
+    ? `${backBtn}<div class="grid">${allCards.join('')}</div>`
+    : `${backBtn}<div class="empty"><div class="icon">📭</div>No media for this storyteller</div>`;
+}
+
+// ── Render: Storage Browser ─────────────────────────────
+async function renderStorage(source) {
+  storageSource = source;
+  const content = document.getElementById('content');
+
+  if (!storageBucket) {
+    // Show bucket list
+    let buckets;
+    if (source === 'jh') {
+      buckets = (await jhBuckets()).map(b => ({ name: b }));
+    } else {
+      const res = await apiFetch({ type: 'buckets' });
+      buckets = res.data;
+    }
+
+    content.innerHTML = `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));">
+      ${buckets.map(b => `
+        <div class="card" onclick="openBucket('${b.name}')" style="cursor:pointer;padding:16px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">🗂</span>
+          <div>
+            <div class="name" style="font-size:12px;font-weight:600;">${b.name}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+    return;
+  }
+
+  // Browse files in bucket
+  let items;
+  if (source === 'jh') {
+    const raw = await jhStorageList(storageBucket, storagePrefix);
+    items = (raw || []).map(i => ({
+      name: i.name,
+      isFolder: !i.metadata,
+      size: i.metadata?.size || null,
+      contentType: i.metadata?.mimetype || null,
+      url: i.metadata ? jhPublicUrl(storageBucket, storagePrefix + i.name) : null,
+    }));
+  } else {
+    const res = await apiFetch({ type: 'storage', bucket: storageBucket, prefix: storagePrefix });
+    items = res.data;
+  }
+
+  const folders = items.filter(i => i.isFolder && i.name !== '.emptyFolderPlaceholder');
+  const files = items.filter(i => !i.isFolder && isImage(i.name));
+
+  // Breadcrumb
+  const parts = storagePrefix.split('/').filter(Boolean);
+  let breadcrumb = `<div style="display:flex;gap:4px;align-items:center;margin-bottom:8px;font-size:11px;">
+    <button onclick="storageBucket='';storagePrefix='';loadView()" style="background:none;border:1px solid var(--border);color:var(--muted);padding:3px 8px;cursor:pointer;font-family:inherit;font-size:10px;">← Buckets</button>
+    <button onclick="storagePrefix='';loadView()" style="background:none;border:none;color:var(--green);cursor:pointer;font-family:inherit;font-size:11px;">${storageBucket}</button>`;
+  let accum = '';
+  for (const p of parts) {
+    accum += p + '/';
+    const path = accum;
+    breadcrumb += ` <span style="color:var(--dim)">/</span>
+      <button onclick="storagePrefix='${path}';loadView()" style="background:none;border:none;color:var(--green);cursor:pointer;font-family:inherit;font-size:11px;">${p}</button>`;
+  }
+  breadcrumb += '</div>';
+
+  let html = breadcrumb + '<div class="grid">';
+
+  for (const f of folders) {
+    html += `<div class="card" onclick="storagePrefix='${storagePrefix}${f.name}/';loadView()" style="cursor:pointer;padding:14px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:20px;">📁</span>
+      <div class="name" style="font-size:11px;">${f.name}</div>
+    </div>`;
+  }
+
+  for (const f of files) {
+    const isSelected = selected.has(f.url);
+    html += `<div class="card ${isSelected ? 'selected' : ''}"
+       data-url="${esc(f.url)}"
+       onclick="toggleSelect('${esc(f.url)}', ${JSON.stringify({ name: f.name, type: 'photo', size: f.size }).replace(/"/g, '&quot;')})">
+      <img class="thumb" src="${esc(f.url)}" alt="${esc(f.name)}" loading="lazy" onerror="this.style.display='none'" />
+      <div class="info">
+        <div class="name">${esc(f.name)}</div>
+        <div class="meta">${fmtSize(f.size)}</div>
+      </div>
+    </div>`;
+  }
+
+  html += '</div>';
+  content.innerHTML = html || breadcrumb + '<div class="empty"><div class="icon">📭</div>Empty folder</div>';
+}
+
+function openBucket(name) {
+  storageBucket = name;
+  storagePrefix = '';
+  loadView();
+}
+
+// ── Selection ───────────────────────────────────────────
+// ── Pick Mode (for iframe embedding) ─────────────────
+const PICK_MODE = new URLSearchParams(location.search).get('pick') === 'true';
+if (PICK_MODE) {
+  document.querySelector('.selection-bar')?.remove();
+  document.querySelector('.output-panel')?.remove();
+  document.title = 'Pick a Photo';
+}
+
+function toggleSelect(url, meta) {
+  if (!url) return;
+  if (typeof meta === 'string') meta = JSON.parse(meta);
+
+  // In pick mode, immediately post the URL to parent and done
+  if (PICK_MODE) {
+    window.parent.postMessage({ type: 'el-photo-picked', url, meta }, '*');
+    return;
+  }
+
+  if (selected.has(url)) {
+    selected.delete(url);
+  } else {
+    selected.set(url, meta);
+  }
+
+  // Update visual
+  document.querySelectorAll(`.card[data-url="${CSS.escape(url)}"]`).forEach(c =>
+    c.classList.toggle('selected')
+  );
+  updateSelectionBar();
+}
+
+function clearSelection() {
+  selected.clear();
+  document.querySelectorAll('.card.selected').forEach(c => c.classList.remove('selected'));
+  updateSelectionBar();
+  document.getElementById('outputPanel').classList.remove('active');
+}
+
+function updateSelectionBar() {
+  const bar = document.getElementById('selectionBar');
+  document.getElementById('selectionCount').textContent = `${selected.size} selected`;
+  bar.classList.toggle('active', selected.size > 0);
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('stats').textContent = `${selected.size} selected`;
+}
+
+// ── Output ──────────────────────────────────────────────
+function formatOutput(format) {
+  const entries = [...selected.entries()].map(([url, meta]) => ({ url, ...meta }));
+  const urls = entries.map(e => e.url);
+
+  switch (format) {
+    case 'urls': return urls.join('\n');
+
+    case 'json': return JSON.stringify(entries.map(e => ({
+      src: e.url,
+      alt: (e.name || '').replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
+    })), null, 2);
+
+    case 'jsx': return entries.map(e => {
+      const alt = (e.name || '').replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+      return `<Image\n  src="${e.url}"\n  alt="${alt}"\n  fill\n  className="object-cover"\n  sizes="(max-width: 768px) 50vw, 33vw"\n/>`;
+    }).join('\n\n');
+
+    case 'ts-array': return `const IMAGES = [\n${entries.map(e => {
+      const alt = (e.name || '').replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+      return `  { src: '${e.url}', alt: '${alt}' },`;
+    }).join('\n')}\n];`;
+
+    case 'markdown': return entries.map(e => {
+      const alt = (e.name || '').replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+      return `![${alt}](${e.url})`;
+    }).join('\n\n');
+
+    default: return urls.join('\n');
+  }
+}
+
+function copyAs(format) {
+  navigator.clipboard.writeText(formatOutput(format)).then(() => {
+    const bar = document.getElementById('selectionBar');
+    bar.style.background = '#065f46';
+    setTimeout(() => bar.style.background = '', 500);
+  });
+}
+
+function toggleOutput() {
+  const panel = document.getElementById('outputPanel');
+  panel.classList.toggle('active');
+  document.getElementById('outputCode').textContent = formatOutput(outputFormat);
+}
+
+function setOutputFormat(fmt, btn) {
+  outputFormat = fmt;
+  document.querySelectorAll('.formats button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('outputCode').textContent = formatOutput(fmt);
+}
+
+function copyOutput() {
+  navigator.clipboard.writeText(document.getElementById('outputCode').textContent);
+}
+
+// ── Utilities ───────────────────────────────────────────
+function esc(s) { return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;'); }
+
+// ── Search ──────────────────────────────────────────────
+let searchTimer;
+document.getElementById('searchInput').addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => loadView(), 300);
+});
+
+// ── Boot ────────────────────────────────────────────────
+const initView = new URLSearchParams(location.search).get('view');
+if (initView && ['all','galleries','stories','storytellers','storage','jh-storage'].includes(initView)) {
+  switchView(initView);
+} else {
+  loadView();
+}
+</script>
+</body>
+</html>

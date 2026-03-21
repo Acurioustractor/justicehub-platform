@@ -15,7 +15,7 @@ Communities have always known the way. For decades, grassroots organisations, Ab
 
 JusticeHub is Australia's first community intelligence platform bringing together evidence, stories, and resources that demonstrate what communities have long understood: community-based approaches produce better outcomes than custody. With detention costing $3,320 per day compared to $150 for community programs, and rates of return to custody sitting at 84.5% for detention versus 20-40% for community-based support, the data confirms what families and communities experience daily.
 
-At the heart of JusticeHub is ALMA (Authentic Learning for Meaningful Accountability), an intelligence system designed with and for communities. ALMA collects and connects fragmented evidence across jurisdictions, translates between the language of lived experience and policy, and surfaces patterns that support advocacy efforts. Critically, ALMA operates within strict cultural protocols, adhering to OCAP (Ownership, Control, Access, Possession) principles and ensuring communities maintain sovereignty over their knowledge.
+At the heart of JusticeHub is ALMA (Alternative Local Models Australia), an intelligence system designed with and for communities. ALMA collects and connects fragmented evidence across jurisdictions, translates between the language of lived experience and policy, and surfaces patterns that support advocacy efforts. Critically, ALMA operates within strict cultural protocols, adhering to OCAP (Ownership, Control, Access, Possession) principles and ensuring communities maintain sovereignty over their knowledge.
 
 JusticeHub addresses digital inclusion by creating accessible pathways for communities to contribute their stories, evidence, and program outcomes. The platform centres storytelling as a form of evidence, recognising that healing narratives and community voices carry weight alongside traditional research.
 
@@ -57,7 +57,7 @@ Through her work, Tanya has witnessed young people who were defined by systems a
 
 ### Ben Knight – A Curious Tractor (248 words)
 
-Ben Knight is the founder of A Curious Tractor (ACT), a regenerative innovation organisation working at the intersection of technology, community development, and social change. Through ACT, Ben leads the development of JusticeHub and ALMA (Authentic Learning for Meaningful Accountability), platforms designed to support communities advocating for young people who have experienced contact with the criminal legal system.
+Ben Knight is the founder of A Curious Tractor (ACT), a regenerative innovation organisation working at the intersection of technology, community development, and social change. Through ACT, Ben leads the development of JusticeHub and ALMA (Alternative Local Models Australia), platforms designed to support communities advocating for young people who have experienced contact with the criminal legal system.
 
 Ben's approach centres on listening first and building second. His methodology, LCAA (Listen, Curiosity, Action, Art), reflects a commitment to ensuring technology serves community needs rather than extracting from them. This philosophy shapes JusticeHub's design for obsolescence model, where the ultimate goal is community ownership and self-determination.
 

@@ -4,7 +4,7 @@ A Next.js platform for Australian youth justice — connecting system-impacted y
 
 ## Core Systems
 
-### ALMA (Authentic Learning for Meaningful Accountability)
+### ALMA (Alternative Local Models Australia)
 The evidence intelligence engine. 1,112 youth justice interventions from 507+ organisations across Australia, each scored on 5 signals:
 - **Evidence Strength** (25%) — from Untested to Proven (RCT-validated)
 - **Community Authority** (30%) — highest weight, prioritises Indigenous-led programs

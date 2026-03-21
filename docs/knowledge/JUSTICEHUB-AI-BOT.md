@@ -6,7 +6,7 @@
 
 ## Overview
 
-The JusticeHub AI Bot is a conversational interface powered by ALMA (Authentic Learning for Meaningful Accountability). It enables users to ask questions about youth justice, get evidence-based answers, explore interventions, and access the knowledge commons - all while respecting cultural protocols and data sovereignty.
+The JusticeHub AI Bot is a conversational interface powered by ALMA (Alternative Local Models Australia). It enables users to ask questions about youth justice, get evidence-based answers, explore interventions, and access the knowledge commons - all while respecting cultural protocols and data sovereignty.
 
 ---
 
@@ -31,8 +31,8 @@ Boundaries: Never profiles individuals, never ranks communities
 ```
 G'day! I'm ALMA - your guide to Australia's youth justice evidence.
 
-ALMA means "soul" in Spanish, and stands for Authentic Learning
-for Meaningful Accountability.
+ALMA means "soul" in Spanish, and stands for Alternative Local
+Models Australia.
 
 I can help you:
 • Find what works in youth justice

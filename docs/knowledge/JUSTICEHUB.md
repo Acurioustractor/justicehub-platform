@@ -10,7 +10,7 @@
 |------|-------|
 | **Platform** | JusticeHub - justicehub.org.au |
 | **Mission** | Prove community-based youth justice works better than detention |
-| **Intelligence System** | ALMA (Authentic Learning for Meaningful Accountability) |
+| **Intelligence System** | ALMA (Alternative Local Models Australia) |
 | **Parent Organization** | A Curious Tractor (ACT) |
 | **Database** | Supabase (PostgreSQL) |
 | **Frontend** | Next.js 14 + TypeScript |
@@ -345,7 +345,7 @@ get_jurisdiction_stats(jurisdiction)
 
 | Term | Definition |
 |------|------------|
-| **ALMA** | Authentic Learning for Meaningful Accountability. Also "soul" in Spanish. |
+| **ALMA** | Alternative Local Models Australia. Also "soul" in Spanish. |
 | **ACT** | A Curious Tractor - parent regenerative innovation organization |
 | **LCAA** | Listen, Curiosity, Action, Art - ACT methodology |
 | **OCAP** | Ownership, Control, Access, Possession - Indigenous data sovereignty |

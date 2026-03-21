@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "data": {
+    "colors": {
+      "background": "#ffffff",
+      "foreground": "#000000",
+      "primary": "#dc2626",
+      "secondary": "#e6752c",
+      "accent": "#059669",
+      "neutral": "#9ca3af"
+    },
+    "fonts": [
+      "Inter",
+      "IBM Plex Mono",
+      "Helvetica Neue"
+    ],
+    "logo": {
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-layout-grid h-4 w-4\" aria-hidden=\"true\"><rect width=\"7\" height=\"7\" x=\"3\" y=\"3\" rx=\"1\"></rect><rect width=\"7\" height=\"7\" x=\"14\" y=\"3\" rx=\"1\"></rect><rect width=\"7\" height=\"7\" x=\"14\" y=\"14\" rx=\"1\"></rect><rect width=\"7\" height=\"7\" x=\"3\" y=\"14\" rx=\"1\"></rect></svg>",
+      "needsDarkBackground": false
+    },
+    "screenshot": {
+      "url": "https://pquxfbbxflqvtidtlrhl.supabase.co/storage/v1/object/public/hmac-uploads/brand/8bd0c493-7f2c-4d2e-a65c-b39e95ed6fcd/screenshot.png",
+      "width": 1920,
+      "height": 1080,
+      "sizeBytes": 85384,
+      "uploadedAt": "2026-03-14T21:25:12.153Z"
+    }
+  }
+}

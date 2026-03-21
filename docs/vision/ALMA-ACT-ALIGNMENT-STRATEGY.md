@@ -15,7 +15,7 @@ This document defines how ALMA (Australian Justice Intelligence) operates within
 The name also comes from the Spanish/Latin word **"alma"** meaning **"soul"** - reflecting ACT's belief that true impact measurement must capture the human spirit, not just numbers. This dual meaning is intentional: ALMA brings soul to accountability.
 
 **Simple Explanation:**
-> "ALMA means 'soul' in Spanish. It also stands for Authentic Learning for Meaningful Accountability. We chose this name because measuring what matters in justice reform requires seeing the whole person - their story, their community, their potential - not just statistics."
+> "ALMA means 'soul' in Spanish. It also stands for Alternative Local Models Australia. We chose this name because the alternatives already exist — local, community-led programs that work. ALMA maps them, verifies them, and makes them impossible to ignore."
 
 ---
 

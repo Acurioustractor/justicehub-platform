@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONTAINED — Brand Guide &amp; Visual Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0A0A0A;
+    --off-white: #F5F0E8;
+    --red: #DC2626;
+    --emerald: #059669;
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --dim: rgba(245,240,232,0.35);
+    --dimmer: rgba(245,240,232,0.15);
+    --dimmest: rgba(245,240,232,0.06);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--off-white); font-family: var(--display); line-height: 1.5; }
+
+  /* ── NAV ── */
+  .nav { position: sticky; top: 0; z-index: 50; background: rgba(10,10,10,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--dimmest); padding: 0 40px; display: flex; gap: 0; overflow-x: auto; }
+  .nav a { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); text-decoration: none; padding: 14px 16px; white-space: nowrap; transition: color 0.2s; border-bottom: 2px solid transparent; }
+  .nav a:hover, .nav a.active { color: var(--off-white); border-bottom-color: var(--red); }
+
+  /* ── HERO ── */
+  .hero { padding: 80px 40px 60px; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; top: 0; right: -60px; width: 300px; height: 300px; background: var(--red); clip-path: polygon(100% 0, 0 0, 100% 100%); opacity: 0.08; }
+  .hero h1 { font-size: 72px; font-weight: 700; letter-spacing: -0.04em; line-height: 0.95; }
+  .hero h1 span { display: block; font-size: 18px; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); margin-top: 12px; }
+  .hero .core-line { font-size: 22px; font-weight: 300; margin-top: 24px; max-width: 600px; color: rgba(245,240,232,0.7); }
+  .hero .core-line strong { color: var(--off-white); font-weight: 500; }
+
+  /* ── SECTIONS ── */
+  .section { padding: 60px 40px; }
+  .section + .section { border-top: 1px solid var(--dimmest); }
+  .section-label { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.25em; color: var(--dim); margin-bottom: 32px; display: flex; align-items: center; gap: 12px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--dimmest); }
+  .section-title { font-size: 36px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 16px; }
+  .section-desc { font-size: 16px; color: rgba(245,240,232,0.55); max-width: 640px; margin-bottom: 40px; }
+
+  /* ── COLOR PALETTE ── */
+  .palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
+  .swatch { border: 1px solid var(--dimmest); overflow: hidden; }
+  .swatch-color { height: 120px; display: flex; align-items: flex-end; padding: 12px; }
+  .swatch-info { padding: 12px; background: rgba(10,10,10,0.8); }
+  .swatch-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .swatch-hex { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+  .swatch-usage { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-top: 6px; line-height: 1.6; }
+
+  /* ── TYPOGRAPHY ── */
+  .type-specimen { margin-bottom: 48px; }
+  .type-sample { margin-bottom: 24px; padding: 24px; border: 1px solid var(--dimmest); }
+  .type-sample-display { font-family: var(--display); font-weight: 700; font-size: 48px; letter-spacing: -0.05em; line-height: 1; margin-bottom: 8px; }
+  .type-sample-data { font-family: var(--mono); font-weight: 500; font-size: 32px; letter-spacing: 0; line-height: 1.2; }
+  .type-meta { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 8px; }
+  .type-scale { display: grid; grid-template-columns: 120px 1fr; gap: 0; }
+  .type-scale-row { display: contents; }
+  .type-scale-row > * { padding: 10px 0; border-bottom: 1px solid var(--dimmest); }
+  .type-scale-label { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+
+  /* ── SHAPES / VISUAL LANGUAGE ── */
+  .shapes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 40px; }
+  .shape-card { border: 1px solid var(--dimmest); padding: 32px; text-align: center; }
+  .shape-demo { height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; position: relative; }
+  .shape-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .shape-card p { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+
+  /* ── VOICE ── */
+  .voice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
+  .voice-card { padding: 24px; border: 1px solid var(--dimmest); }
+  .voice-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .voice-card p { font-size: 14px; color: rgba(245,240,232,0.6); line-height: 1.6; }
+  .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
+  .do-col, .dont-col { padding: 24px; }
+  .do-col { border: 1px solid var(--emerald); background: rgba(5,150,105,0.05); }
+  .dont-col { border: 1px solid var(--red); background: rgba(220,38,38,0.05); }
+  .do-col h4 { color: var(--emerald); font-family: var(--mono); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px; }
+  .dont-col h4 { color: var(--red); font-family: var(--mono); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px; }
+  .do-col li, .dont-col li { font-size: 14px; color: rgba(245,240,232,0.65); margin-bottom: 6px; list-style: none; padding-left: 16px; position: relative; }
+  .do-col li::before { content: '+'; position: absolute; left: 0; color: var(--emerald); font-weight: 700; }
+  .dont-col li::before { content: '\2013'; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+
+  /* ── PHOTO RULES ── */
+  .photo-rules { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
+  .photo-rule { padding: 24px; border: 1px solid var(--dimmest); }
+  .photo-rule h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .photo-rule p { font-size: 13px; color: rgba(245,240,232,0.55); line-height: 1.6; }
+  .badge { display: inline-block; font-family: var(--mono); font-size: 10px; padding: 2px 8px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .badge-yes { background: rgba(5,150,105,0.15); color: var(--emerald); border: 1px solid rgba(5,150,105,0.3); }
+  .badge-no { background: rgba(220,38,38,0.15); color: var(--red); border: 1px solid rgba(220,38,38,0.3); }
+  .badge-lock { background: rgba(245,240,232,0.08); color: var(--off-white); border: 1px solid var(--dimmer); }
+
+  /* ── IMAGE GRID ── */
+  .img-grid { display: grid; gap: 16px; margin-bottom: 40px; }
+  .img-grid-2 { grid-template-columns: 1fr 1fr; }
+  .img-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .img-grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .img-grid-5 { grid-template-columns: repeat(5, 1fr); }
+  .img-card { position: relative; overflow: hidden; border: 1px solid var(--dimmest); cursor: pointer; transition: border-color 0.2s; }
+  .img-card:hover { border-color: rgba(220,38,38,0.4); }
+  a.img-card { text-decoration: none; color: inherit; }
+  .img-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+  .img-card-info { padding: 10px 12px; }
+  .img-card-title { font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .img-card-meta { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-top: 2px; }
+  .img-card .badge { position: absolute; top: 8px; right: 8px; }
+  .img-card-hero img { aspect-ratio: 16/9; }
+
+  /* ── FLAGGED OVERLAY ── */
+  .flagged { position: relative; }
+  .flagged::after { content: 'REPLACE WITH REAL PHOTO'; position: absolute; inset: 0; background: rgba(220,38,38,0.7); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; font-weight: 600; }
+
+  /* ── LAUNCH WEEK ── */
+  .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; margin-bottom: 40px; }
+  .day-card { border: 1px solid var(--dimmest); overflow: hidden; transition: border-color 0.2s; }
+  .day-card:hover { border-color: rgba(220,38,38,0.4); }
+  .day-header { padding: 10px 12px; border-bottom: 1px solid var(--dimmest); display: flex; justify-content: space-between; align-items: center; }
+  .day-num { font-family: var(--mono); font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; }
+  .day-theme { font-size: 11px; font-weight: 700; color: var(--red); }
+  .day-card img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+  .day-caption { padding: 10px 12px; }
+  .day-caption p { font-size: 11px; color: rgba(245,240,232,0.55); line-height: 1.5; }
+  .day-caption .day-story { font-size: 12px; font-weight: 500; color: var(--off-white); margin-bottom: 4px; }
+  .day-platforms { display: flex; gap: 6px; margin-top: 6px; }
+  .day-platforms span { font-family: var(--mono); font-size: 9px; padding: 2px 6px; background: var(--dimmest); color: var(--dim); }
+
+  /* ── STATS ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
+  .stat-card { padding: 20px; border: 1px solid var(--dimmest); }
+  .stat-value { font-family: var(--mono); font-size: 36px; font-weight: 600; color: var(--red); line-height: 1; }
+  .stat-label { font-size: 13px; color: rgba(245,240,232,0.55); margin-top: 6px; }
+  .stat-source { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-top: 8px; }
+
+  /* ── EL PHOTO LIBRARY ── */
+  .el-category { margin-bottom: 40px; }
+  .el-category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .el-category-header h4 { font-size: 16px; font-weight: 700; text-transform: capitalize; }
+  .el-category-header .count { font-family: var(--mono); font-size: 12px; color: var(--red); }
+
+  /* ── ALMA REFERENCE ── */
+  .alma-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 40px; }
+  .alma-stat { padding: 16px; border: 1px solid var(--dimmest); text-align: center; }
+  .alma-stat .num { font-family: var(--mono); font-size: 24px; font-weight: 600; color: var(--emerald); }
+  .alma-stat .lbl { font-size: 11px; color: var(--dim); margin-top: 4px; }
+
+  /* ── LIGHTBOX ── */
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; justify-content: center; align-items: center; cursor: zoom-out; }
+  .lightbox.active { display: flex; }
+  .lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .week-grid { grid-template-columns: repeat(4, 1fr); }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .alma-bar { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 48px; }
+    .palette { grid-template-columns: 1fr 1fr; }
+    .week-grid { grid-template-columns: 1fr 1fr; }
+    .voice-grid, .photo-rules, .do-dont { grid-template-columns: 1fr; }
+    .img-grid-3, .img-grid-4, .img-grid-5 { grid-template-columns: 1fr 1fr; }
+    .shapes-grid { grid-template-columns: 1fr; }
+    .section { padding: 40px 20px; }
+    .nav { padding: 0 20px; }
+    .hero { padding: 60px 20px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     NAV
+     ════════════════════════════════════════════ -->
+<nav class="nav">
+  <a href="#brand">Brand</a>
+  <a href="#colors">Colors</a>
+  <a href="#typography">Type</a>
+  <a href="#shapes">Shapes</a>
+  <a href="#voice">Voice</a>
+  <a href="#photos">Photos</a>
+  <a href="#assets">Assets</a>
+  <a href="#week">Launch Week</a>
+  <a href="#stats">Stats</a>
+  <a href="#alma">ALMA</a>
+  <a href="#library">Library</a>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     HERO
+     ════════════════════════════════════════════ -->
+<div class="hero" id="brand">
+  <h1>CONTAINED<span>Brand Guide &amp; Visual Reference</span></h1>
+  <p class="core-line"><strong>One shipping container. Three rooms. Thirty minutes.</strong> The reality of youth detention, the evidence for change, and the community-led alternatives already doing the work.</p>
+</div>
+
+<!-- ════════════════════════════════════════════
+     01 — COLOR PALETTE
+     ════════════════════════════════════════════ -->
+<div class="section" id="colors">
+  <div class="section-label">01 Color Palette</div>
+  <div class="section-title">Four colors. Used with restraint.</div>
+  <div class="section-desc">One intense color moment per section is stronger than five. Red is earned — reserved for CTAs and critical data only.</div>
+
+  <div class="palette">
+    <div class="swatch">
+      <div class="swatch-color" style="background: #0A0A0A; border: 1px solid rgba(245,240,232,0.1);">
+        <span style="font-family: var(--mono); font-size: 10px; color: rgba(245,240,232,0.3);">ON DARK</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Primary Black</div>
+        <div class="swatch-hex">#0A0A0A</div>
+        <div class="swatch-usage">Body text, headings, primary backgrounds. Warmer than pure black.</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #F5F0E8;">
+        <span style="font-family: var(--mono); font-size: 10px; color: rgba(10,10,10,0.3);">ON LIGHT</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Off-White</div>
+        <div class="swatch-hex">#F5F0E8</div>
+        <div class="swatch-usage">Page backgrounds, card surfaces. Never pure white.</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #DC2626;">
+        <span style="font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.5);">URGENT</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Urgent Red</div>
+        <div class="swatch-hex">#DC2626</div>
+        <div class="swatch-usage">CTAs + critical data ONLY. Never decorative. One red moment per section.</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background: #059669;">
+        <span style="font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.5);">SUCCESS</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Emerald</div>
+        <div class="swatch-hex">#059669</div>
+        <div class="swatch-usage">Success metrics, positive outcomes, community-led indicators.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     02 — TYPOGRAPHY
+     ════════════════════════════════════════════ -->
+<div class="section" id="typography">
+  <div class="section-label">02 Typography</div>
+  <div class="section-title">Two families. Maximum contrast.</div>
+  <div class="section-desc">Heavy display type next to light data labels. Swiss editorial hierarchy. Tighter tracking on large type, open tracking on small caps.</div>
+
+  <div class="type-specimen">
+    <div class="type-sample">
+      <div class="type-sample-display">$1.55M per child per year</div>
+      <div class="type-meta">Space Grotesk Bold &middot; 48px &middot; -0.05em tracking</div>
+    </div>
+    <div class="type-sample">
+      <div class="type-sample-data">84% reoffend &middot; $75/day alternative</div>
+      <div class="type-meta">IBM Plex Mono Medium &middot; 32px &middot; data callouts</div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+    <div style="padding: 24px; border: 1px solid var(--dimmest);">
+      <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 16px;">Space Grotesk</h4>
+      <div style="font-size: 48px; font-weight: 700; letter-spacing: -0.04em; line-height: 1;">Hero 48-72px</div>
+      <div style="font-size: 32px; font-weight: 700; letter-spacing: -0.03em; margin-top: 8px;">Section 32-40px</div>
+      <div style="font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin-top: 8px;">Sub-head 22-28px</div>
+      <div style="font-size: 16px; font-weight: 400; margin-top: 8px; color: rgba(245,240,232,0.6);">Body 16px regular</div>
+    </div>
+    <div style="padding: 24px; border: 1px solid var(--dimmest);">
+      <h4 style="font-family: var(--mono); font-size: 14px; font-weight: 600; margin-bottom: 16px;">IBM Plex Mono</h4>
+      <div style="font-family: var(--mono); font-size: 32px; font-weight: 600;">$4,250/day</div>
+      <div style="font-family: var(--mono); font-size: 18px; font-weight: 500; margin-top: 8px;">Data label 18px</div>
+      <div style="font-family: var(--mono); font-size: 13px; font-weight: 400; margin-top: 8px; color: rgba(245,240,232,0.5);">Caption 13px</div>
+      <div style="font-family: var(--mono); font-size: 11px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 8px; color: var(--dim);">Section Label 11px</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     03 — SHAPES & VISUAL LANGUAGE
+     ════════════════════════════════════════════ -->
+<div class="section" id="shapes">
+  <div class="section-label">03 Shapes &amp; Visual Language</div>
+  <div class="section-title">Bauhaus. Constructivist. Brutalist grid.</div>
+  <div class="section-desc">Angular compositions, high contrast, generous whitespace. The red wedge is our signature accent — used once per surface, never repeated.</div>
+
+  <div class="shapes-grid">
+    <div class="shape-card">
+      <div class="shape-demo">
+        <div style="width: 0; height: 0; border-left: 80px solid var(--red); border-top: 40px solid transparent; border-bottom: 40px solid transparent;"></div>
+      </div>
+      <h4>Red Wedge</h4>
+      <p>Constructivist heritage. Diagonal energy. One per composition. Never fill, never rounded.</p>
+    </div>
+    <div class="shape-card">
+      <div class="shape-demo">
+        <div style="width: 200px; height: 80px; background: var(--off-white); clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);"></div>
+      </div>
+      <h4>Angular Clip-Path</h4>
+      <p>Container edges, section dividers, image masks. Always diagonal, never curved.</p>
+    </div>
+    <div class="shape-card">
+      <div class="shape-demo">
+        <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 4px; width: 180px;">
+          <div style="height: 60px; background: rgba(245,240,232,0.08);"></div>
+          <div style="height: 60px; background: var(--red); opacity: 0.2;"></div>
+          <div style="height: 30px; background: rgba(245,240,232,0.04);"></div>
+          <div style="height: 30px; background: rgba(245,240,232,0.08);"></div>
+        </div>
+      </div>
+      <h4>Brutalist Grid</h4>
+      <p>Asymmetric. Information on surfaces, not in cards. Scale contrast over symmetry.</p>
+    </div>
+  </div>
+
+  <div style="padding: 24px; border: 1px solid var(--dimmest); margin-bottom: 40px;">
+    <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">Layout Rules</h4>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; font-size: 13px; color: rgba(245,240,232,0.55);">
+      <div><strong style="color: var(--off-white);">Asymmetry over grids</strong><br>Large headline next to small muted data. Vary scale deliberately.</div>
+      <div><strong style="color: var(--off-white);">Whitespace is a feature</strong><br>Generous space around hero content. Tight grouping for related elements.</div>
+      <div><strong style="color: var(--off-white);">One color moment</strong><br>One red accent per section maximum. Restraint communicates authority.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     04 — VOICE & LANGUAGE
+     ════════════════════════════════════════════ -->
+<div class="section" id="voice">
+  <div class="section-label">04 Voice &amp; Language</div>
+  <div class="section-title">How we speak.</div>
+  <div class="section-desc">Direct. Evidence-backed. Urgent but never sensational. Every statistic has a source. The ask is never abstract — the ask is to back what works.</div>
+
+  <div class="voice-grid">
+    <div class="voice-card">
+      <h4><span style="color: var(--emerald);">&#9679;</span> Community authority first</h4>
+      <p>The communities most affected deserve the biggest say. We centre their knowledge, not our analysis of it. Community organisations control their data.</p>
+    </div>
+    <div class="voice-card">
+      <h4><span style="color: var(--emerald);">&#9679;</span> Evidence is story, not surveillance</h4>
+      <p>Research is indexed without profiling individuals. Numbers earn their place by being sourced. Stories carry context that data alone cannot.</p>
+    </div>
+    <div class="voice-card">
+      <h4><span style="color: var(--emerald);">&#9679;</span> Centre agency, not trauma</h4>
+      <p>Lead with what works, not what's broken. Young people are experts in their own experience. Their authority drives the campaign.</p>
+    </div>
+    <div class="voice-card">
+      <h4><span style="color: var(--emerald);">&#9679;</span> The ask is concrete</h4>
+      <p>Not "reform the system." Instead: nominate a decision maker, book an experience, back the tour. Every call to action has a URL.</p>
+    </div>
+  </div>
+
+  <div class="do-dont">
+    <div class="do-col">
+      <h4>Always</h4>
+      <ul>
+        <li>System-impacted young people</li>
+        <li>Community-led alternatives</li>
+        <li>Justice infrastructure</li>
+        <li>Lead with what works</li>
+        <li>Every claim backed by a named source</li>
+        <li>This isn't a lecture, it's an experience</li>
+        <li>Real photos of real people</li>
+      </ul>
+    </div>
+    <div class="dont-col">
+      <h4>Never</h4>
+      <ul>
+        <li>"Offenders" or "juvenile delinquents"</li>
+        <li>"At-risk" without qualifying who defined risk</li>
+        <li>"Tough on crime" framing (even to critique)</li>
+        <li>AI-generated photorealistic images</li>
+        <li>Sensationalised language about young people</li>
+        <li>Unsourced statistics</li>
+        <li>Framing communities as broken or needing rescue</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="padding: 24px; border: 1px solid var(--dimmest);">
+    <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">ALMA-Friendly Checklist</h4>
+    <div style="font-size: 13px; color: rgba(245,240,232,0.55); line-height: 1.8;">
+      Every post, email, or page should pass these checks:<br>
+      <span style="color: var(--emerald);">&#10003;</span> Does every statistic have a named source?<br>
+      <span style="color: var(--emerald);">&#10003;</span> Are community voices centred before policy analysis?<br>
+      <span style="color: var(--emerald);">&#10003;</span> Does it lead with what works, not what's broken?<br>
+      <span style="color: var(--emerald);">&#10003;</span> Is the call to action concrete (URL, not platitude)?<br>
+      <span style="color: var(--emerald);">&#10003;</span> Are all photos real (not AI-generated photorealism)?<br>
+      <span style="color: var(--emerald);">&#10003;</span> Would the community being described approve this framing?<br>
+      <span style="color: var(--emerald);">&#10003;</span> Does it use "system-impacted" not "offenders"?
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     05 — PHOTOGRAPHY RULES
+     ════════════════════════════════════════════ -->
+<div class="section" id="photos">
+  <div class="section-label">05 Photography Rules</div>
+  <div class="section-title">Real photos only. Non-negotiable.</div>
+  <div class="section-desc">Every person, place, and program shown must be real. AI-generated illustrations, posters, and data visualisations are approved. AI-generated photorealistic images of people or places are never acceptable.</div>
+
+  <div class="photo-rules">
+    <div class="photo-rule">
+      <span class="badge badge-yes">Approved for AI</span>
+      <h4>Illustrations &amp; Graphics</h4>
+      <p>Watercolor, constructivist, abstract illustrations. Campaign posters. Data visualisations. Stat tiles. Logo and brand marks. These communicate ideas, not pretend to be reality.</p>
+    </div>
+    <div class="photo-rule">
+      <span class="badge badge-no">Real Photos Only</span>
+      <h4>People, Places &amp; Programs</h4>
+      <p>Every face, every landscape, every program photo must be from the Empathy Ledger or credited original photography. 168 real photos available across 9 categories. No exceptions.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════════
+     06 — LOCKED CAMPAIGN ASSETS
+     ════════════════════════════════════════════ -->
+<div class="section" id="assets">
+  <div class="section-label">06 Locked Campaign Assets</div>
+  <div class="section-title">Approved for immediate use.</div>
+  <div class="section-desc">These assets are brand-locked and ready for social, email, print, and web.</div>
+
+  <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 16px;">Logo &amp; Posters</h4>
+  <div class="img-grid img-grid-3" style="margin-bottom: 32px;">
+    <div class="img-card" onclick="openLightbox(this)">
+      <span class="badge badge-lock">Locked</span>
+      <img src="/images/contained/logo-contained-square.png" alt="CONTAINED Logo">
+      <div class="img-card-info">
+        <div class="img-card-title">CONTAINED Logo</div>
+        <div class="img-card-meta">1:1 &middot; Container silhouette wordmark</div>
+      </div>
+    </div>
+    <div class="img-card" onclick="openLightbox(this)">
+      <span class="badge badge-lock">Locked</span>
+      <img src="/images/contained/poster-tour.png" alt="Tour Poster">
+      <div class="img-card-info">
+        <div class="img-card-title">Tour Poster</div>
+        <div class="img-card-meta">2:3 &middot; Constructivist, tour stops</div>
+      </div>
+    </div>
+    <div class="img-card" onclick="openLightbox(this)">
+      <span class="badge badge-lock">Locked</span>
+      <img src="/images/contained/poster-brand.png" alt="Brand Poster">
+      <div class="img-card-info">
+        <div class="img-card-title">3 Rooms. 30 Minutes.</div>
+        <div class="img-card-meta">1:1 &middot; Bauhaus brand tile</div>
+      </div>
+    </div>
+  </div>
+
+  <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 16px;">Social Stat Tiles</h4>
+  <div class="img-grid img-grid-4">
+    <div class="img-card" onclick="openLightbox(this)">
+      <span class="badge badge-lock">Locked</span>
+      <img src="/images/contained/social-stat-cost.png" alt="Cost Stat">
+      <div class="img-card-info">
+        <div class="img-card-title">$1.55M Per Child</div>
+        <div class="img-card-meta">1:1 &middot; Cost + reoffending</div>
+      </div>
+    </div>
+    <div class="img-card" onclick="openLightbox(this)">
+      <span class="badge badge-lock">Locked</span>
+      <img src="/images/contained/social-stat-ratio.png" alt="Ratio Stat">
+      <div class="img-card-info">
+        <div class="img-card-title">Detention vs Community</div>
+        <div class="img-card-meta">1:1 &middot; Bar comparison</div>
+      </div>
+    </div>
+    <div class="img-card" onclick="openLightbox(this)">
+      <span class="badge badge-lock">Locked</span>
+      <img src="/images/contained/contained-brand-square.png" alt="Brand Square">
+      <div class="img-card-info">
+        <div class="img-card-title">Brand Square</div>
+        <div class="img-card-meta">1:1 &middot; Social profile image</div>
+      </div>
+    </div>
+    <div class="img-card" onclick="openLightbox(this)">
+      <span class="badge badge-lock">Locked</span>
+      <img src="/images/contained/justicehub-hero-landscape.png" alt="JusticeHub Hero">
+      <div class="img-card-info">
+        <div class="img-card-title">JusticeHub Platform</div>
+        <div class="img-card-meta">16:9 &middot; Platform credibility</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     07 — LAUNCH WEEK
+     ════════════════════════════════════════════ -->
+<div class="section" id="week">
+  <div class="section-label">07 Launch Week — Stories We Tell</div>
+  <div class="section-title">7 days. 14 posts. One arc.</div>
+  <div class="section-desc">Each day builds on the last. Monday sets the stage, Friday is launch day, Sunday is the call to action. Every post has a specific real photo or approved illustration assigned.</div>
+
+  <div class="week-grid">
+    <!-- MON -->
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-num">Mon</span>
+        <span class="day-theme">Launch</span>
+      </div>
+      <img src="/images/contained/poster-tour.png" alt="Day 1" loading="lazy">
+      <div class="day-caption">
+        <div class="day-story">"It starts here"</div>
+        <p>Announce the campaign. Core line. Three rooms. Mount Druitt, April 25.</p>
+        <div class="day-platforms"><span>IG</span><span>X</span></div>
+      </div>
+    </div>
+    <!-- TUE -->
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-num">Tue</span>
+        <span class="day-theme">Cost</span>
+      </div>
+      <img src="/images/contained/social-stat-cost.png" alt="Day 2" loading="lazy">
+      <div class="day-caption">
+        <div class="day-story">The cost of detention</div>
+        <p>$1.55M/child. 84% reoffend. The numbers that justify everything.</p>
+        <div class="day-platforms"><span>IG</span><span>X</span></div>
+      </div>
+    </div>
+    <!-- WED -->
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-num">Wed</span>
+        <span class="day-theme">Spain</span>
+      </div>
+      <img src="https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/gallery-photos/justicehub/spain/diagrama-youth-justice-spain.jpg" alt="Day 3 — Diagrama" loading="lazy">
+      <div class="day-caption">
+        <div class="day-story">The alternative exists</div>
+        <p>Diagrama Foundation. 73% success. Real photos from Spain.</p>
+        <div class="day-platforms"><span>IG</span><span>X</span></div>
+      </div>
+    </div>
+    <!-- THU -->
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-num">Thu</span>
+        <span class="day-theme">Community</span>
+      </div>
+      <img src="https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/gallery-photos/justicehub/community/connecting-communities-a-network-for-justice-reinvestment.jpeg" alt="Day 4 — Community" loading="lazy">
+      <div class="day-caption">
+        <div class="day-story">Orgs doing the work</div>
+        <p>876 verified programs. $75/day. 88% success. Community authority.</p>
+        <div class="day-platforms"><span>IG</span><span>X</span></div>
+      </div>
+    </div>
+    <!-- FRI -->
+    <div class="day-card" style="border-color: rgba(220,38,38,0.3);">
+      <div class="day-header" style="background: rgba(220,38,38,0.08);">
+        <span class="day-num" style="color: var(--red);">Fri</span>
+        <span class="day-theme">LAUNCH</span>
+      </div>
+      <img src="https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/gallery-photos/justicehub/people/spotlight-on-changemaker-brodie-germaine.jpg" alt="Day 5 — Launch Day" loading="lazy">
+      <div class="day-caption">
+        <div class="day-story">Young people's voices</div>
+        <p>Launch day. Room 1 designed by young people. They are the experts.</p>
+        <div class="day-platforms"><span>IG</span><span>X</span></div>
+      </div>
+    </div>
+    <!-- SAT -->
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-num">Sat</span>
+        <span class="day-theme">Tour</span>
+      </div>
+      <img src="https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/gallery-photos/justicehub/goods/container-factory.jpg" alt="Day 6 — Tour" loading="lazy">
+      <div class="day-caption">
+        <div class="day-story">The tour experience</div>
+        <p>The container. Four cities. Reactions from Day 1. Next stop Adelaide.</p>
+        <div class="day-platforms"><span>IG</span><span>X</span></div>
+      </div>
+    </div>
+    <!-- SUN -->
+    <div class="day-card">
+      <div class="day-header">
+        <span class="day-num">Sun</span>
+        <span class="day-theme">CTA</span>
+      </div>
+      <img src="https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/gallery-photos/justicehub/hero/the-courage-to-connect-how-authentic-relationships-transform-youth-in-detention.jpg" alt="Day 7 — CTA" loading="lazy">
+      <div class="day-caption">
+        <div class="day-story">Nominate. Book. Share.</div>
+        <p>The ask. Five concrete actions with URLs. Decision makers are watching.</p>
+        <div class="day-platforms"><span>IG</span><span>X</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding: 20px 24px; border: 1px solid var(--dimmest); font-size: 13px; color: rgba(245,240,232,0.45);">
+    <strong style="color: var(--off-white);">Arc:</strong> Announce &rarr; Shock (cost) &rarr; Hope (Spain) &rarr; Proof (community) &rarr; <span style="color: var(--red);">LAUNCH</span> &rarr; Momentum (tour) &rarr; Action (CTA). Full post copy in <code>compendium/launch-week-posts.md</code>.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     08 — KEY STATISTICS
+     ════════════════════════════════════════════ -->
+<div class="section" id="stats">
+  <div class="section-label">08 Key Campaign Statistics</div>
+  <div class="section-title">Every number has a name.</div>
+  <div class="section-desc">These are the statistics we cite. All sourced. Never use a number without its source.</div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value">$1.55M</div>
+      <div class="stat-label">Cost per detained child per year</div>
+      <div class="stat-source">Productivity Commission ROGS 2024-25</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">84%</div>
+      <div class="stat-label">Detention reoffending rate</div>
+      <div class="stat-source">QLD Youth Justice Strategy 2023</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">$75<span style="font-size: 18px;">/day</span></div>
+      <div class="stat-label">Cost of community alternatives</div>
+      <div class="stat-source">Community Services Benchmark 2024</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">88%</div>
+      <div class="stat-label">Restorative justice success rate</div>
+      <div class="stat-source">QLD Dept of Justice 2024</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">23x</div>
+      <div class="stat-label">Indigenous overrepresentation</div>
+      <div class="stat-source">National youth detention statistics</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">16x</div>
+      <div class="stat-label">More youth helped for same cost</div>
+      <div class="stat-source">QLD Productivity Commission 2024</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">73%</div>
+      <div class="stat-label">Diagrama (Spain) success rate</div>
+      <div class="stat-source">Diagrama Foundation evaluation</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" style="color: var(--emerald);">3%</div>
+      <div class="stat-label">Best community reoffending rate</div>
+      <div class="stat-source">Community Accountability Pilot 2024</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     09 — ALMA CONNECTION
+     ════════════════════════════════════════════ -->
+<div class="section" id="alma">
+  <div class="section-label">09 ALMA Evidence Base</div>
+  <div class="section-title">Every claim backed by the database.</div>
+  <div class="section-desc">ALMA (Alternative Local Models Australia) is the evidence engine behind every campaign statistic. When you cite a number, it traces back here.</div>
+
+  <div class="alma-bar">
+    <div class="alma-stat">
+      <div class="num">876</div>
+      <div class="lbl">Verified Interventions</div>
+    </div>
+    <div class="alma-stat">
+      <div class="num">570</div>
+      <div class="lbl">Evidence Items</div>
+    </div>
+    <div class="alma-stat">
+      <div class="num">533</div>
+      <div class="lbl">Research Findings</div>
+    </div>
+    <div class="alma-stat">
+      <div class="num">377</div>
+      <div class="lbl">Media Articles</div>
+    </div>
+    <div class="alma-stat">
+      <div class="num">98</div>
+      <div class="lbl">Legal Cases</div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+    <div style="padding: 24px; border: 1px solid var(--dimmest);">
+      <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">Evidence Strength Distribution</h4>
+      <div style="font-family: var(--mono); font-size: 13px; line-height: 2;">
+        <div style="display: flex; justify-content: space-between;"><span>Proven (RCT/replicated)</span><span style="color: var(--emerald);">5</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Effective (strong eval)</span><span style="color: var(--emerald);">31</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Promising (emerging)</span><span style="color: var(--emerald);">429</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Indigenous-led</span><span style="color: var(--emerald);">16</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Untested (pilot stage)</span><span style="color: var(--dim);">395</span></div>
+      </div>
+      <div style="font-family: var(--mono); font-size: 11px; color: var(--red); margin-top: 8px;">54.9% evidence-backed</div>
+    </div>
+    <div style="padding: 24px; border: 1px solid var(--dimmest);">
+      <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">Using ALMA in Campaign Content</h4>
+      <div style="font-size: 13px; color: rgba(245,240,232,0.55); line-height: 1.8;">
+        <strong style="color: var(--off-white);">When citing a statistic:</strong> trace it to an ALMA evidence item or published source.<br>
+        <strong style="color: var(--off-white);">When naming a program:</strong> link to its ALMA intervention page.<br>
+        <strong style="color: var(--off-white);">When telling a story:</strong> verify consent through Empathy Ledger.<br>
+        <strong style="color: var(--off-white);">Browse:</strong> <a href="/intelligence/interventions" style="color: var(--red);">justicehub.org.au/intelligence/interventions</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     10 — EL PHOTO LIBRARY
+     ════════════════════════════════════════════ -->
+<div class="section" id="library">
+  <div class="section-label">10 Empathy Ledger Photo Library</div>
+  <div class="section-title">Real photos. Live from Empathy Ledger.</div>
+  <div class="section-desc">Every real photo available for campaign use, fetched live from the API. When photos are added to the Empathy Ledger JusticeHub gallery, they appear here automatically. Click any photo to preview.</div>
+
+  <div id="el-photo-library">
+    <div style="padding: 40px; text-align: center; font-family: var(--mono); font-size: 13px; color: var(--dim);">Loading photos from Empathy Ledger...</div>
+  </div>
+</div>
+
+<script id="photo-data" type="application/json">
+[
+  {"cat":"hero","fn":"brodie.jpg","title":"Brodie","meta":"BG Fit hero"},
+  {"cat":"hero","fn":"hero.jpg","fp":"/images/orgs/bg-fit/hero.jpg","title":"BG Fit Hero","meta":"BG Fit"},
+  {"cat":"hero","fn":"hero.jpg","fp":"/images/orgs/oonchiumpa/hero.jpg","title":"Oonchiumpa Hero","meta":"Oonchiumpa"},
+  {"cat":"hero","fn":"homestead.jpg","title":"Homestead","meta":"Oonchiumpa station"},
+  {"cat":"hero","fn":"mentoring.jpg","title":"Mentoring","meta":"Oonchiumpa"},
+  {"cat":"hero","fn":"the-courage-to-connect-how-authentic-relationships-transform-youth-in-detention-1-7d4d3325.jpg","title":"Courage to Connect 1","meta":"Youth detention"},
+  {"cat":"hero","fn":"the-courage-to-connect-how-authentic-relationships-transform-youth-in-detention-2-a8bc2091.jpg","title":"Courage to Connect 2","meta":"Youth detention"},
+  {"cat":"hero","fn":"the-courage-to-connect-how-authentic-relationships-transform-youth-in-detention.jpg","title":"Courage to Connect","meta":"Youth detention"},
+
+  {"cat":"spain","fn":"a-comparative-analysis-of-youth-justice-systems-in-spain-and-australia-1-d80542ff.jpg","title":"Comparative Analysis 1","meta":"Spain vs Australia"},
+  {"cat":"spain","fn":"a-comparative-analysis-of-youth-justice-systems-in-spain-and-australia-2-e0df02e3.png","title":"Comparative Analysis 2","meta":"Spain vs Australia"},
+  {"cat":"spain","fn":"a-comparative-analysis-of-youth-justice-systems-in-spain-and-australia.jpg","title":"Comparative Analysis","meta":"Spain vs Australia"},
+  {"cat":"spain","fn":"beyond-walls-what-spanish-youth-detention-centers-taught-me-about-seeing-humanity-first.jpg","title":"Beyond Walls","meta":"Spanish centres"},
+  {"cat":"spain","fn":"diagrama-foundations-impact-on-spains-youth-detention-system-1-81044f0a.jpg","title":"Diagrama Impact 1","meta":"Diagrama Foundation"},
+  {"cat":"spain","fn":"diagrama-foundations-impact-on-spains-youth-detention-system-2-0a85306d.png","title":"Diagrama Impact 2","meta":"Diagrama Foundation"},
+  {"cat":"spain","fn":"diagrama-foundations-impact-on-spains-youth-detention-system.jpg","title":"Diagrama Impact","meta":"Diagrama Foundation"},
+  {"cat":"spain","fn":"diagrama-youth-justice-spain-1-e034920e.jpg","title":"Diagrama YJ 1","meta":"Spain visit"},
+  {"cat":"spain","fn":"diagrama-youth-justice-spain-2-e00356dc.jpg","title":"Diagrama YJ 2","meta":"Spain visit"},
+  {"cat":"spain","fn":"diagrama-youth-justice-spain-3-4bd0f399.jpeg","title":"Diagrama YJ 3","meta":"Spain visit"},
+  {"cat":"spain","fn":"diagrama-youth-justice-spain-4-caa09f83.jpg","title":"Diagrama YJ 4","meta":"Spain visit"},
+  {"cat":"spain","fn":"diagrama-youth-justice-spain-5-3620b6f1.jpeg","title":"Diagrama YJ 5","meta":"Spain visit"},
+  {"cat":"spain","fn":"diagrama-youth-justice-spain.jpg","title":"Diagrama YJ Spain","meta":"Spain visit"},
+  {"cat":"spain","fn":"from-control-to-care-reimagining-staff-roles-in-youth-justice.jpg","title":"Control to Care","meta":"Staff roles"},
+  {"cat":"spain","fn":"from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama-1-c55fb2c2.jpg","title":"Punishment to Potential 1","meta":"Day 1 Diagrama"},
+  {"cat":"spain","fn":"from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama-2-24907f21.jpg","title":"Punishment to Potential 2","meta":"Day 1 Diagrama"},
+  {"cat":"spain","fn":"from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama-3-4bd0f399.jpeg","title":"Punishment to Potential 3","meta":"Day 1 Diagrama"},
+  {"cat":"spain","fn":"from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama-4-68c91d3d.jpg","title":"Punishment to Potential 4","meta":"Day 1 Diagrama"},
+  {"cat":"spain","fn":"from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama-5-4d3f1579.jpg","title":"Punishment to Potential 5","meta":"Day 1 Diagrama"},
+  {"cat":"spain","fn":"from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama-6-b4826fd7.jpg","title":"Punishment to Potential 6","meta":"Day 1 Diagrama"},
+  {"cat":"spain","fn":"from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama.jpg","title":"Punishment to Potential","meta":"Day 1 Diagrama"},
+  {"cat":"spain","fn":"the-diagrama-model-a-transformative-approach-to-youth-justice.jpg","title":"Diagrama Model","meta":"Transformative approach"},
+  {"cat":"spain","fn":"the-nature-of-power-how-control-shapes-youth-justice-1-f4c81925.jpg","title":"Nature of Power 1","meta":"Control & YJ"},
+  {"cat":"spain","fn":"the-nature-of-power-how-control-shapes-youth-justice-2-d4b9ff5c.jpg","title":"Nature of Power 2","meta":"Control & YJ"},
+  {"cat":"spain","fn":"the-nature-of-power-how-control-shapes-youth-justice.jpg","title":"Nature of Power","meta":"Control & YJ"},
+  {"cat":"spain","fn":"youth-detention-and-youth-justice-models-in-europe-a-comparative-overview-1-491688d5.jpg","title":"European Models 1","meta":"EU comparison"},
+  {"cat":"spain","fn":"youth-detention-and-youth-justice-models-in-europe-a-comparative-overview.jpg","title":"European Models","meta":"EU comparison"},
+
+  {"cat":"people","fn":"a-heros-journey-from-addiction-to-inspiration-the-life-of-vic.jpg","title":"Vic's Journey","meta":"Hero's journey"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-1-c27572b5.jpg","title":"Joe Kwon 1","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-10-292fd101.jpeg","title":"Joe Kwon 10","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-11-64acf59e.jpeg","title":"Joe Kwon 11","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-12-3406881e.jpeg","title":"Joe Kwon 12","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-13-a1192623.jpeg","title":"Joe Kwon 13","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-2-f8d0ea22.jpeg","title":"Joe Kwon 2","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-3-bdde51f3.jpeg","title":"Joe Kwon 3","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-4-35ef3cfa.jpeg","title":"Joe Kwon 4","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-5-d02041aa.jpeg","title":"Joe Kwon 5","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-6-5a2a70a5.jpeg","title":"Joe Kwon 6","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-7-88a1e068.png","title":"Joe Kwon 7","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-8-97235de7.jpeg","title":"Joe Kwon 8","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit-9-4820a20b.png","title":"Joe Kwon 9","meta":"Confit Pathways"},
+  {"cat":"people","fn":"from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit.jpg","title":"Joe Kwon","meta":"Confit Pathways"},
+  {"cat":"people","fn":"hamiltons-odyssey-igniting-transformation-through-confit-pathways.png","title":"Hamilton's Odyssey","meta":"Confit Pathways"},
+  {"cat":"people","fn":"kristy.jpg","title":"Kristy","meta":"Oonchiumpa team"},
+  {"cat":"people","fn":"law-students.jpg","title":"Law Students","meta":"Oonchiumpa"},
+  {"cat":"people","fn":"richard-cassidy---our-story.png","title":"Richard Cassidy","meta":"Our Story"},
+  {"cat":"people","fn":"spotlight-on-changemaker-brodie-germaine.jpg","title":"Brodie Germaine","meta":"Changemaker"},
+  {"cat":"people","fn":"tanya.jpg","title":"Tanya","meta":"Oonchiumpa team"},
+
+  {"cat":"programs","fn":"community-at-the-core-empowering-local-solutions-in-youth-justice-1-cc21348d.jpg","title":"Community at the Core 1","meta":"Local solutions"},
+  {"cat":"programs","fn":"community-at-the-core-empowering-local-solutions-in-youth-justice-2-4da62f9d.jpeg","title":"Community at the Core 2","meta":"Local solutions"},
+  {"cat":"programs","fn":"community-at-the-core-empowering-local-solutions-in-youth-justice-3-f689074e.jpeg","title":"Community at the Core 3","meta":"Local solutions"},
+  {"cat":"programs","fn":"community-at-the-core-empowering-local-solutions-in-youth-justice.jpg","title":"Community at the Core","meta":"Local solutions"},
+  {"cat":"programs","fn":"confit-pathways-1-be51a184.jpg","title":"Confit Pathways 1","meta":"Confit program"},
+  {"cat":"programs","fn":"confit-pathways.jpg","title":"Confit Pathways","meta":"Confit program"},
+  {"cat":"programs","fn":"creating-spaces-for-growth-the-physical-and-emotional-environment-of-transformation.jpg","title":"Spaces for Growth","meta":"Environment of transformation"},
+  {"cat":"programs","fn":"from-trouble-to-transformation-the-campfire-journey.jpg","title":"Campfire Journey","meta":"Transformation"},
+  {"cat":"programs","fn":"gallery-1.jpg","title":"BG Fit Gallery 1","meta":"BG Fit program"},
+  {"cat":"programs","fn":"gallery-2.jpg","title":"BG Fit Gallery 2","meta":"BG Fit program"},
+  {"cat":"programs","fn":"gallery-3.jpg","title":"BG Fit Gallery 3","meta":"BG Fit program"},
+  {"cat":"programs","fn":"gallery-4.jpg","title":"BG Fit Gallery 4","meta":"BG Fit program"},
+  {"cat":"programs","fn":"gallery-5.jpg","title":"BG Fit Gallery 5","meta":"BG Fit program"},
+  {"cat":"programs","fn":"gallery-6.jpg","title":"BG Fit Gallery 6","meta":"BG Fit program"},
+  {"cat":"programs","fn":"kickin-it-with-deadlylabs-igniting-stem-passions-in-youth-detention-1-2cc67fb4.jpeg","title":"DeadlyLabs 1","meta":"STEM in detention"},
+  {"cat":"programs","fn":"kickin-it-with-deadlylabs-igniting-stem-passions-in-youth-detention.png","title":"DeadlyLabs","meta":"STEM in detention"},
+  {"cat":"programs","fn":"resoleution-at-bimberi-youth-justice-centre.png","title":"Resoleution at Bimberi","meta":"Bimberi YJC"},
+  {"cat":"programs","fn":"resoleution.jpeg","title":"Resoleution","meta":"Program"},
+  {"cat":"programs","fn":"walking-new-paths-reflections-from-bimberi-1-6a15f199.jpg","title":"Bimberi 1","meta":"New paths"},
+  {"cat":"programs","fn":"walking-new-paths-reflections-from-bimberi-2-a4fabe63.jpeg","title":"Bimberi 2","meta":"New paths"},
+  {"cat":"programs","fn":"walking-new-paths-reflections-from-bimberi-3-4ac8eb32.jpeg","title":"Bimberi 3","meta":"New paths"},
+  {"cat":"programs","fn":"walking-new-paths-reflections-from-bimberi-4-c8ee4bb0.jpeg","title":"Bimberi 4","meta":"New paths"},
+  {"cat":"programs","fn":"walking-new-paths-reflections-from-bimberi-5-cada0877.jpeg","title":"Bimberi 5","meta":"New paths"},
+  {"cat":"programs","fn":"walking-new-paths-reflections-from-bimberi-6-f0e12925.jpeg","title":"Bimberi 6","meta":"New paths"},
+  {"cat":"programs","fn":"walking-new-paths-reflections-from-bimberi-7-1551313f.jpeg","title":"Bimberi 7","meta":"New paths"},
+  {"cat":"programs","fn":"walking-new-paths-reflections-from-bimberi-8-21f2ed77.jpeg","title":"Bimberi 8","meta":"New paths"},
+  {"cat":"programs","fn":"walking-new-paths-reflections-from-bimberi-9-a738e241.jpeg","title":"Bimberi 9","meta":"New paths"},
+  {"cat":"programs","fn":"walking-new-paths-reflections-from-bimberi.jpg","title":"Bimberi Reflections","meta":"New paths"},
+
+  {"cat":"community","fn":"beyond-cases-and-problems-relationship-based-justice-in-central-australia-1-e75838d3.jpg","title":"Relationship Justice 1","meta":"Central Australia"},
+  {"cat":"community","fn":"beyond-cases-and-problems-relationship-based-justice-in-central-australia-2-e00356dc.jpg","title":"Relationship Justice 2","meta":"Central Australia"},
+  {"cat":"community","fn":"beyond-cases-and-problems-relationship-based-justice-in-central-australia.jpg","title":"Relationship Justice","meta":"Central Australia"},
+  {"cat":"community","fn":"beyond-systems-a-day-with-jackqwann-in-the-heart-of-australia-1-2e3627eb.jpg","title":"Jackqwann 1","meta":"Heart of Australia"},
+  {"cat":"community","fn":"beyond-systems-a-day-with-jackqwann-in-the-heart-of-australia-2-e00356dc.jpg","title":"Jackqwann 2","meta":"Heart of Australia"},
+  {"cat":"community","fn":"beyond-systems-a-day-with-jackqwann-in-the-heart-of-australia.jpg","title":"A Day with Jackqwann","meta":"Heart of Australia"},
+  {"cat":"community","fn":"breaking-bread-breaking-chains-when-two-worlds-collide-1-5392a6eb.jpg","title":"Breaking Bread 1","meta":"Two worlds"},
+  {"cat":"community","fn":"breaking-bread-breaking-chains-when-two-worlds-collide-2-a2092535.jpeg","title":"Breaking Bread 2","meta":"Two worlds"},
+  {"cat":"community","fn":"breaking-bread-breaking-chains-when-two-worlds-collide-3-559bf363.jpeg","title":"Breaking Bread 3","meta":"Two worlds"},
+  {"cat":"community","fn":"breaking-bread-breaking-chains-when-two-worlds-collide-4-83361661.jpeg","title":"Breaking Bread 4","meta":"Two worlds"},
+  {"cat":"community","fn":"breaking-bread-breaking-chains-when-two-worlds-collide-5-cc372182.jpeg","title":"Breaking Bread 5","meta":"Two worlds"},
+  {"cat":"community","fn":"breaking-bread-breaking-chains-when-two-worlds-collide-6-e811e06f.jpeg","title":"Breaking Bread 6","meta":"Two worlds"},
+  {"cat":"community","fn":"breaking-bread-breaking-chains-when-two-worlds-collide-7-f5d4cb4f.jpeg","title":"Breaking Bread 7","meta":"Two worlds"},
+  {"cat":"community","fn":"breaking-bread-breaking-chains-when-two-worlds-collide.jpg","title":"Breaking Bread","meta":"Two worlds"},
+  {"cat":"community","fn":"connecting-communities-a-network-for-justice-reinvestment-1-824611e5.jpeg","title":"Justice Reinvestment 1","meta":"Network"},
+  {"cat":"community","fn":"connecting-communities-a-network-for-justice-reinvestment-2-e00356dc.jpg","title":"Justice Reinvestment 2","meta":"Network"},
+  {"cat":"community","fn":"connecting-communities-a-network-for-justice-reinvestment.jpeg","title":"Justice Reinvestment","meta":"Network"},
+  {"cat":"community","fn":"navigating-two-worlds-cultural-authority-and-youth-empowerment-in-mparntwe-1-4db1db3a.jpg","title":"Two Worlds 1","meta":"Mparntwe"},
+  {"cat":"community","fn":"navigating-two-worlds-cultural-authority-and-youth-empowerment-in-mparntwe-2-e00356dc.jpg","title":"Two Worlds 2","meta":"Mparntwe"},
+  {"cat":"community","fn":"navigating-two-worlds-cultural-authority-and-youth-empowerment-in-mparntwe.jpg","title":"Two Worlds","meta":"Mparntwe"},
+
+  {"cat":"places","fn":"20251103-1E5A4798.jpg","title":"Atnarpa Camp 1","meta":"Campsite"},
+  {"cat":"places","fn":"20251103-1E5A4803.jpg","title":"Atnarpa Camp 2","meta":"Campsite"},
+  {"cat":"places","fn":"20251103-1E5A4816.jpg","title":"Atnarpa Camp 3","meta":"Campsite"},
+  {"cat":"places","fn":"20251103-1E5A4819.jpg","title":"Atnarpa Camp 4","meta":"Campsite"},
+  {"cat":"places","fn":"20251103-DJI_0271.jpg","title":"Atnarpa Drone","meta":"Aerial"},
+  {"cat":"places","fn":"camp-cut-20s-light.jpg","title":"Camp Cut","meta":"Video poster"},
+  {"cat":"places","fn":"camp-to-house-drone-follow-light.jpg","title":"Camp to House Drone","meta":"Aerial follow"},
+  {"cat":"places","fn":"header-dji-0323-light.jpg","title":"Oonchiumpa Aerial","meta":"Header drone"},
+  {"cat":"places","fn":"homestead-additional-map.jpg","title":"Homestead Map","meta":"Atnarpa"},
+  {"cat":"places","fn":"IMG_9412.jpg","title":"Camp Photo","meta":"Atnarpa"},
+  {"cat":"places","fn":"img-001.jpg","title":"Atnarpa 001","meta":"Original"},
+  {"cat":"places","fn":"img-004.jpg","title":"Atnarpa 004","meta":"Original"},
+  {"cat":"places","fn":"img-009.jpg","title":"Atnarpa 009","meta":"Original"},
+  {"cat":"places","fn":"img-013.jpg","title":"Atnarpa 013","meta":"Original"},
+  {"cat":"places","fn":"img-018.jpg","title":"Atnarpa 018","meta":"Original"},
+  {"cat":"places","fn":"img-023.jpg","title":"Atnarpa 023","meta":"Original"},
+  {"cat":"places","fn":"img-030.jpg","title":"Atnarpa 030","meta":"Original"},
+  {"cat":"places","fn":"work-on-station-01-light.jpg","title":"Station Work 1","meta":"Video poster"},
+  {"cat":"places","fn":"work-on-station-02-light.jpg","title":"Station Work 2","meta":"Video poster"},
+  {"cat":"places","fn":"work-on-station-03-light.jpg","title":"Station Work 3","meta":"Video poster"},
+  {"cat":"places","fn":"work-on-station-04-light.jpg","title":"Station Work 4","meta":"Video poster"},
+  {"cat":"places","fn":"work-on-station-05-light.jpg","title":"Station Work 5","meta":"Video poster"},
+
+  {"cat":"data","fn":"achieving-gold-standard-youth-crime-prevention-designing-programs-that-transform-lives.png","title":"Gold Standard Prevention","meta":"Program design"},
+  {"cat":"data","fn":"beyond-shadows-platos-cave-and-the-reimagining-of-youth-justice-in-australia.png","title":"Plato's Cave","meta":"Reimagining YJ"},
+  {"cat":"data","fn":"inquiry-into-the-making-queensland-safer-bill-2024---submission.jpg","title":"QLD Safer Bill","meta":"Submission"},
+  {"cat":"data","fn":"queensland-government-spending-on-youth-justice-and-community-safety-2-b9ff82f9.png","title":"QLD Spending 2","meta":"Budget analysis"},
+  {"cat":"data","fn":"queensland-government-spending-on-youth-justice-and-community-safety-3-174a26fc.png","title":"QLD Spending 3","meta":"Budget analysis"},
+  {"cat":"data","fn":"queensland-government-spending-on-youth-justice-and-community-safety-4-2ce443fc.png","title":"QLD Spending 4","meta":"Budget analysis"},
+  {"cat":"data","fn":"queensland-government-spending-on-youth-justice-and-community-safety-5-f1510e49.png","title":"QLD Spending 5","meta":"Budget analysis"},
+  {"cat":"data","fn":"queensland-government-spending-on-youth-justice-and-community-safety-6-ba818c88.png","title":"QLD Spending 6","meta":"Budget analysis"},
+  {"cat":"data","fn":"queensland-government-spending-on-youth-justice-and-community-safety-7-dca5e921.png","title":"QLD Spending 7","meta":"Budget analysis"},
+  {"cat":"data","fn":"rethinking-youth-justice-funding-in-queensland-prioritising-grassroots-solutions-over-bureaucracy-1-ed41542b.png","title":"Rethinking Funding 1","meta":"Grassroots"},
+  {"cat":"data","fn":"rethinking-youth-justice-funding-in-queensland-prioritising-grassroots-solutions-over-bureaucracy.png","title":"Rethinking Funding","meta":"Grassroots"},
+  {"cat":"data","fn":"the-necessity-of-state-government-in-australia-a-queensland-perspective-1-6a093cdc.png","title":"State Government 1","meta":"QLD perspective"},
+  {"cat":"data","fn":"the-necessity-of-state-government-in-australia-a-queensland-perspective.png","title":"State Government","meta":"QLD perspective"},
+  {"cat":"data","fn":"the-paradox-of-youth-justice-and-entropy-navigating-the-chaos-towards-hope-1-a9bc7c03.png","title":"YJ Paradox 1","meta":"Entropy & hope"},
+  {"cat":"data","fn":"the-paradox-of-youth-justice-and-entropy-navigating-the-chaos-towards-hope-2-e00356dc.jpg","title":"YJ Paradox 2","meta":"Entropy & hope"},
+  {"cat":"data","fn":"the-paradox-of-youth-justice-and-entropy-navigating-the-chaos-towards-hope.png","title":"YJ Paradox","meta":"Entropy & hope"},
+  {"cat":"data","fn":"the-road-to-hell-when-youth-justice-efforts-backfire-1-dbe3528f.png","title":"Road to Hell 1","meta":"Backfire"},
+  {"cat":"data","fn":"the-road-to-hell-when-youth-justice-efforts-backfire-2-8e740a2b.png","title":"Road to Hell 2","meta":"Backfire"},
+  {"cat":"data","fn":"the-road-to-hell-when-youth-justice-efforts-backfire-3-c1d7873f.png","title":"Road to Hell 3","meta":"Backfire"},
+  {"cat":"data","fn":"the-road-to-hell-when-youth-justice-efforts-backfire-4-02bce5b4.png","title":"Road to Hell 4","meta":"Backfire"},
+  {"cat":"data","fn":"the-road-to-hell-when-youth-justice-efforts-backfire.png","title":"Road to Hell","meta":"Backfire"},
+
+  {"cat":"goods","fn":"community-bed-assembly.jpg","title":"Community Build","meta":"Bed assembly"},
+  {"cat":"goods","fn":"container-factory.jpg","title":"Container Factory","meta":"Build"},
+  {"cat":"goods","fn":"stretch-bed-hero.jpg","title":"Stretch Bed Hero","meta":"Product"},
+  {"cat":"goods","fn":"stretch-bed-kids-building.jpg","title":"Kids Building Beds","meta":"Community"},
+  {"cat":"goods","fn":"washing-machine-name.jpg","title":"Washing Machine","meta":"Goods"},
+  {"cat":"goods","fn":"woman-on-red-stretch-bed.jpg","title":"Red Stretch Bed","meta":"Product"}
+]
+</script>
+
+<!-- ════════════════════════════════════════════
+     FOOTER
+     ════════════════════════════════════════════ -->
+<div style="padding: 40px; border-top: 1px solid var(--dimmest); font-family: var(--mono); font-size: 11px; color: var(--dim); display: flex; justify-content: space-between;">
+  <span>CONTAINED Brand Guide &middot; March 2026 &middot; Internal Reference</span>
+  <span>Full post copy: <code>compendium/launch-week-posts.md</code> &middot; Brand doc: <code>compendium/brand-guide.md</code></span>
+</div>
+
+<!-- ════════════════════════════════════════════
+     LIGHTBOX
+     ════════════════════════════════════════════ -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+const EL_BASE = 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/gallery-photos/justicehub';
+
+function openLightbox(card) {
+  const img = card.querySelector('img');
+  document.getElementById('lightbox-img').src = img.src;
+  document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+// Sticky nav active state
+const sections = document.querySelectorAll('.section[id], .hero[id]');
+const navLinks = document.querySelectorAll('.nav a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const id = entry.target.id;
+      const link = document.querySelector(`.nav a[href="#${id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-40% 0px -60% 0px' });
+sections.forEach(s => observer.observe(s));
+
+// ── Build EL Photo Library ──
+const categoryLabels = {
+  hero: 'Hero',
+  spain: 'Spain / Diagrama',
+  people: 'People',
+  programs: 'Programs',
+  community: 'Community',
+  places: 'Places',
+  data: 'Data & Analysis',
+  goods: 'Goods',
+  contained: 'Campaign Assets',
+  general: 'JusticeHub — General Gallery',
+  image: 'Images',
+  audio: 'Audio',
+  video: 'Video'
+};
+const categoryOrder = ['general','hero','spain','people','programs','community','places','data','goods','contained','image','video','audio'];
+const container = document.getElementById('el-photo-library');
+
+function renderPhotos(photos) {
+  container.innerHTML = '';
+
+  // Group photos by category
+  const grouped = {};
+  photos.forEach(p => {
+    const cat = p.cat || p.category || 'uncategorized';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(p);
+  });
+
+  // Render known categories first, then any extras
+  const allCats = [...new Set([...categoryOrder, ...Object.keys(grouped)])];
+
+  allCats.forEach(cat => {
+    const items = grouped[cat];
+    if (!items || !items.length) return;
+
+    const section = document.createElement('div');
+    section.className = 'el-category';
+
+    const header = document.createElement('div');
+    header.className = 'el-category-header';
+    header.innerHTML = `<h4>${categoryLabels[cat] || cat}</h4><span class="count">${items.length} photos</span>`;
+    section.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.className = 'img-grid img-grid-5';
+
+    items.forEach(p => {
+      const url = p.url || `${EL_BASE}/${p.cat || p.category}/${p.fn || p.filename}`;
+      const title = p.title || p.fn || p.filename || 'Photo';
+      const meta = p.meta || p.category || '';
+      const card = document.createElement('a');
+      card.className = 'img-card';
+      card.href = url;
+      card.target = '_blank';
+      card.rel = 'noopener';
+      card.title = 'Open full image in new tab';
+      card.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('lightbox-img').src = url;
+        document.getElementById('lightbox').classList.add('active');
+      };
+      card.innerHTML = `
+        <img src="${url}" alt="${title}" loading="lazy" onerror="this.parentElement.style.display='none'">
+        <div class="img-card-info">
+          <div class="img-card-title">${title}</div>
+          <div class="img-card-meta">${meta}</div>
+        </div>`;
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    container.appendChild(section);
+  });
+
+  // Total count
+  const total = photos.length;
+  const totalEl = document.createElement('div');
+  totalEl.style.cssText = 'padding: 16px 0; font-family: var(--mono); font-size: 12px; color: rgba(245,240,232,0.3); text-align: center;';
+  totalEl.textContent = `${total} real photos from Empathy Ledger — click to preview, right-click to open direct link`;
+  container.appendChild(totalEl);
+
+  // Update section title
+  const titleEl = container.closest('.section').querySelector('.section-title');
+  if (titleEl) {
+    const catCount = Object.keys(grouped).length;
+    titleEl.textContent = `${total} real photos. ${catCount} categories.`;
+  }
+}
+
+// Fetch from both JH media_assets AND EL media — merge and deduplicate
+async function loadPhotos() {
+  const allPhotos = [];
+  const seen = new Set();
+
+  // 1. Try JH /api/photos (categorized import)
+  try {
+    const res = await fetch('/api/photos?limit=200');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.photos) {
+        data.photos.forEach(p => {
+          const key = `${p.category}/${p.filename}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            allPhotos.push({
+              cat: p.category,
+              fn: p.filename,
+              title: (p.metadata && p.metadata.title) || p.filename.replace(/[-_]/g, ' ').replace(/\.\w+$/, ''),
+              meta: p.category,
+              url: `${EL_BASE}/${p.category}/${p.filename}`
+            });
+          }
+        });
+      }
+    }
+  } catch (e) {
+    console.warn('JH photos API failed:', e);
+  }
+
+  // 2. Try EL /api/empathy-ledger/media (direct from EL DB — includes General gallery)
+  // Paginate through all results
+  try {
+    let elPage = 1;
+    let hasMore = true;
+    while (hasMore) {
+      const res = await fetch(`/api/empathy-ledger/media?limit=500&page=${elPage}`);
+      if (!res.ok) break;
+      const data = await res.json();
+      if (data.media && data.media.length > 0) {
+        data.media.forEach(p => {
+          const key = `${p.category}/${p.filename}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            allPhotos.push({
+              cat: p.category || 'general',
+              fn: p.filename,
+              title: p.title || p.filename.replace(/[-_]/g, ' ').replace(/\.\w+$/, ''),
+              meta: p.category || 'EL General',
+              url: p.url || `${EL_BASE}/${p.category}/${p.filename}`
+            });
+          }
+        });
+        hasMore = data.pagination?.hasMore || false;
+        elPage++;
+      } else {
+        hasMore = false;
+      }
+    }
+  } catch (e) {
+    console.warn('EL media API failed:', e);
+  }
+
+  // 3. If both APIs failed, fall back to embedded JSON
+  if (allPhotos.length === 0) {
+    try {
+      const fallback = JSON.parse(document.getElementById('photo-data').textContent);
+      renderPhotos(fallback);
+      return;
+    } catch (e) {
+      container.innerHTML = '<div style="padding: 40px; text-align: center; font-family: var(--mono); font-size: 13px; color: var(--red);">Failed to load photos. Check API connection.</div>';
+      return;
+    }
+  }
+
+  renderPhotos(allPhotos);
+}
+
+loadPhotos();
+</script>
+
+</body>
+</html>

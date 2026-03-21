@@ -119,7 +119,49 @@ populate-mounty*.mjs
 setup-mounty-auth.mjs
 upload-mounty-photos.mjs
 query-*.mjs
+parse-linkedin.mjs
 --selector
+
+# One-off/completed scripts (ran once, data already in DB)
+scripts/insert-*.mjs
+scripts/audit-*.mjs
+scripts/data-audit*.mjs
+scripts/data-quality-*.mjs
+scripts/comprehensive-*.mjs
+scripts/remaining-tables.mjs
+scripts/investigate-*.mjs
+scripts/cleanup-*.mjs
+scripts/test-*.mjs
+scripts/qld-funding-matches.json
+scripts/apply-qld-matches.mjs
+
+# Generated output (not source code)
+output/linkedin-*.json
+output/linkedin-*.png
+output/justicehub-civicgraph-entity-prompt.md
+
+# Data files
+data/quality-audit-report.md
+data/quality-loop-report.json
+
+# Lane-specific tsconfigs (typecheck tooling, not build)
+tsconfig.admin-*.json
+tsconfig.alma.json
+tsconfig.api-*.json
+tsconfig.content-and-media.json
+tsconfig.funding.json
+tsconfig.governed-proof.json
+tsconfig.integrations-and-sync.json
+tsconfig.intelligence.json
+tsconfig.misc-shell-components.json
+tsconfig.org-hub.json
+tsconfig.public-site.json
+tsconfig.residual-*.json
+tsconfig.search-and-chat.json
+
+# Skills tooling (local dev only)
+skills-lock.json
+skills/
 
 # Build artifacts
 tsconfig.tsbuildinfo

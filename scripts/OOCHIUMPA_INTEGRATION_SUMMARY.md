@@ -406,7 +406,7 @@ From `/Users/benknight/act-global-infrastructure/act-personal-ai/ACT_DEVELOPMENT
 ---
 
 **Generated**: January 4, 2026
-**Platform**: ALMA (Adaptive Learning for Meaningful Accountability)
+**Platform**: ALMA (Alternative Local Models Australia)
 **Database**: JusticeHub Supabase
 **Foundation**: Oochiumpa Youth Services - Aboriginal-owned intelligence
 

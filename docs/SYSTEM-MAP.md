@@ -5,7 +5,7 @@
 ## Overview
 
 JusticeHub is a youth justice transformation platform with three interconnected systems:
-1. **ALMA** - Intelligence/Evidence System ("Authentic Learning for Meaningful Accountability")
+1. **ALMA** - Intelligence/Evidence System ("Alternative Local Models Australia")
 2. **Centre of Excellence** - Network of community organizations and best practices
 3. **Empathy Ledger** - Storytelling and consent management system
 

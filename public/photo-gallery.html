@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONTAINED — Real Photo Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0A0A0A; color: #F5F0E8; font-family: 'Space Grotesk', sans-serif; }
+  .header { padding: 60px 40px 20px; }
+  .header h1 { font-size: 42px; font-weight: 700; letter-spacing: -0.03em; }
+  .header p { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: rgba(245,240,232,0.4); margin-top: 8px; }
+  .brand-rule { margin: 20px 40px; padding: 16px 20px; background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.3); border-radius: 4px; }
+  .brand-rule strong { color: #DC2626; }
+  .brand-rule p { font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.6; }
+  .stats-bar { display: flex; gap: 40px; padding: 20px 40px; background: rgba(245,240,232,0.03); font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: rgba(245,240,232,0.4); flex-wrap: wrap; }
+  .stats-bar strong { color: #DC2626; }
+  .filter-bar { padding: 20px 40px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(245,240,232,0.05); border: 1px solid rgba(245,240,232,0.1); color: rgba(245,240,232,0.5); cursor: pointer; transition: all 0.2s; }
+  .filter-btn:hover, .filter-btn.active { background: rgba(220,38,38,0.15); border-color: #DC2626; color: #F5F0E8; }
+  .section { padding: 30px 40px; }
+  .section-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(245,240,232,0.3); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .section-label span { background: #DC2626; color: white; padding: 2px 8px; font-size: 10px; letter-spacing: 0; text-transform: none; border-radius: 2px; }
+  .grid { display: grid; gap: 12px; margin-bottom: 40px; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .grid-5 { grid-template-columns: repeat(5, 1fr); }
+  .card { position: relative; overflow: hidden; border: 1px solid rgba(245,240,232,0.06); transition: all 0.3s; cursor: pointer; }
+  .card:hover { border-color: rgba(220,38,38,0.5); transform: translateY(-2px); }
+  .card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+  .card-info { padding: 10px 12px; background: rgba(10,10,10,0.95); }
+  .card-title { font-size: 12px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: rgba(245,240,232,0.3); }
+  .card-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 1px 6px; margin-top: 4px; border-radius: 2px; }
+  .tag-people { background: rgba(59,130,246,0.2); color: #60A5FA; }
+  .tag-place { background: rgba(16,185,129,0.2); color: #34D399; }
+  .tag-program { background: rgba(245,158,11,0.2); color: #FBBF24; }
+  .tag-hero { background: rgba(220,38,38,0.2); color: #F87171; }
+  .tag-data { background: rgba(139,92,246,0.2); color: #A78BFA; }
+  .tag-spain { background: rgba(236,72,153,0.2); color: #F472B6; }
+  .divider { border: none; border-top: 1px solid rgba(245,240,232,0.06); margin: 0 40px; }
+  .replace-warning { position: absolute; top: 8px; right: 8px; background: #DC2626; color: white; font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 2px; z-index: 2; }
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; justify-content: center; align-items: center; cursor: zoom-out; flex-direction: column; }
+  .lightbox.active { display: flex; }
+  .lightbox img { max-width: 90vw; max-height: 80vh; object-fit: contain; }
+  .lightbox-caption { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: rgba(245,240,232,0.5); margin-top: 16px; text-align: center; max-width: 600px; }
+  @media (max-width: 768px) { .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr 1fr; } .header h1 { font-size: 28px; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Real Photo Library</h1>
+  <p>CONTAINED Campaign &mdash; Every photo is real &mdash; Real people, real programs, real places</p>
+</div>
+
+<div class="brand-rule">
+  <p><strong>BRAND RULE (LOCKED):</strong> Photos are ALWAYS real &mdash; from Empathy Ledger, on-location shoots, and partner organizations. AI-generated illustrations, posters, and data viz are approved. AI-generated photorealistic images are NEVER used.</p>
+</div>
+
+<div class="stats-bar">
+  <span><strong>150+</strong> real photos</span>
+  <span><strong>36</strong> org photos (BG-FIT + Oonchiumpa)</span>
+  <span><strong>113</strong> article photos</span>
+  <span><strong>7</strong> categories</span>
+  <span><strong>3</strong> AI photos to replace</span>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterAll()">All</button>
+  <button class="filter-btn" onclick="filterCategory('hero')">Hero Shots</button>
+  <button class="filter-btn" onclick="filterCategory('people')">People</button>
+  <button class="filter-btn" onclick="filterCategory('place')">Places &amp; Country</button>
+  <button class="filter-btn" onclick="filterCategory('program')">Programs</button>
+  <button class="filter-btn" onclick="filterCategory('spain')">Spain / Diagrama</button>
+  <button class="filter-btn" onclick="filterCategory('data')">Data &amp; Analysis</button>
+</div>
+
+<!-- SECTION: Hero / Campaign-Ready -->
+<div class="section" data-section="hero">
+  <div class="section-label">Hero &amp; Campaign-Ready <span>Best for email banners, social headers, website heroes</span></div>
+  <div class="grid grid-3">
+    <div class="card" data-cat="hero people" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/hero.jpg" alt="Oonchiumpa Hero" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Oonchiumpa — Hero</div>
+        <div class="card-meta">On-country, Indigenous program</div>
+        <span class="card-tag tag-hero">HERO</span> <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="hero place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/homestead.jpg" alt="Homestead" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Atnarpa Homestead</div>
+        <div class="card-meta">On-country healing facility, Central Australia</div>
+        <span class="card-tag tag-hero">HERO</span> <span class="card-tag tag-place">PLACE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="hero people program" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/mentoring.jpg" alt="Mentoring" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Youth Mentoring on Country</div>
+        <div class="card-meta">Real mentoring, real connection</div>
+        <span class="card-tag tag-hero">HERO</span> <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+    <div class="card" data-cat="hero people" onclick="openLightbox(this)">
+      <img src="/images/orgs/bg-fit/hero.jpg" alt="BG-FIT Hero" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">BG-FIT — Community Fitness</div>
+        <div class="card-meta">Brodie Germaine's transformative program</div>
+        <span class="card-tag tag-hero">HERO</span> <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="hero people" onclick="openLightbox(this)">
+      <img src="/images/orgs/bg-fit/brodie.jpg" alt="Brodie" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Brodie Germaine — Changemaker</div>
+        <div class="card-meta">Portrait, founder of BG-FIT</div>
+        <span class="card-tag tag-hero">HERO</span> <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="hero people spain" onclick="openLightbox(this)">
+      <img src="/images/articles/the-courage-to-connect-how-authentic-relationships-transform-youth-in-detention.jpg" alt="Courage to Connect" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Authentic Relationships in Detention</div>
+        <div class="card-meta">Spain — real connection, real transformation</div>
+        <span class="card-tag tag-hero">HERO</span> <span class="card-tag tag-spain">SPAIN</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SECTION: People & Portraits -->
+<div class="section" data-section="people">
+  <div class="section-label">People &amp; Portraits <span>Changemakers, community leaders, youth</span></div>
+  <div class="grid grid-4">
+    <div class="card" data-cat="people" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/team/kristy.jpg" alt="Kristy" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Kristy — Oonchiumpa</div>
+        <div class="card-meta">Team member</div>
+        <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="people" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/team/tanya.jpg" alt="Tanya" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Tanya — Oonchiumpa</div>
+        <div class="card-meta">Team member</div>
+        <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="people" onclick="openLightbox(this)">
+      <img src="/images/articles/spotlight-on-changemaker-brodie-germaine.jpg" alt="Brodie Spotlight" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Brodie Germaine Spotlight</div>
+        <div class="card-meta">Community changemaker portrait</div>
+        <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="people" onclick="openLightbox(this)">
+      <img src="/images/articles/a-heros-journey-from-addiction-to-inspiration-the-life-of-vic.jpg" alt="Vic" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Vic — A Hero's Journey</div>
+        <div class="card-meta">From addiction to inspiration</div>
+        <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="people" onclick="openLightbox(this)">
+      <img src="/images/articles/richard-cassidy---our-story.png" alt="Richard Cassidy" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Richard Cassidy — Our Story</div>
+        <div class="card-meta">Community leader</div>
+        <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="people program" onclick="openLightbox(this)">
+      <img src="/images/articles/from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit.jpg" alt="Joe Kwon" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Joe Kwon — Confit Pathways</div>
+        <div class="card-meta">Redemption story, program founder</div>
+        <span class="card-tag tag-people">PEOPLE</span> <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+    <div class="card" data-cat="people program" onclick="openLightbox(this)">
+      <img src="/images/articles/hamiltons-odyssey-igniting-transformation-through-confit-pathways.png" alt="Hamilton" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Hamilton's Odyssey — Confit</div>
+        <div class="card-meta">Transformation through pathways</div>
+        <span class="card-tag tag-people">PEOPLE</span> <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+    <div class="card" data-cat="people" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/law-students.jpg" alt="Law Students" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Law Students on Country</div>
+        <div class="card-meta">Cross-cultural legal learning</div>
+        <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SECTION: Places & Country -->
+<div class="section" data-section="place">
+  <div class="section-label">Places &amp; Country <span>Campsite, station, outback — the real setting</span></div>
+  <div class="grid grid-4">
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/atnarpa/campsite/20251103-1E5A4798.jpg" alt="Atnarpa Camp 1" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Atnarpa Campsite — Morning</div>
+        <div class="card-meta">Central Australia, on-country</div>
+        <span class="card-tag tag-place">PLACE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/atnarpa/campsite/20251103-1E5A4803.jpg" alt="Atnarpa Camp 2" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Atnarpa — Camp Setting</div>
+        <div class="card-meta">Healing through country</div>
+        <span class="card-tag tag-place">PLACE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/atnarpa/campsite/20251103-1E5A4816.jpg" alt="Atnarpa Camp 3" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Atnarpa — Wide View</div>
+        <div class="card-meta">Country as classroom</div>
+        <span class="card-tag tag-place">PLACE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/atnarpa/campsite/20251103-1E5A4819.jpg" alt="Atnarpa Camp 4" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Atnarpa — Dusk</div>
+        <div class="card-meta">Golden hour on country</div>
+        <span class="card-tag tag-place">PLACE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/atnarpa/campsite/IMG_9412.jpg" alt="Campsite Detail" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Camp Detail</div>
+        <div class="card-meta">Setup and infrastructure</div>
+        <span class="card-tag tag-place">PLACE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/atnarpa/originals/20251103-DJI_0271.jpg" alt="Drone" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Aerial — Drone Shot</div>
+        <div class="card-meta">DJI aerial of country</div>
+        <span class="card-tag tag-place">PLACE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/atnarpa/originals/img-001.jpg" alt="Country 1" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Country — Original</div>
+        <div class="card-meta">On-country landscape</div>
+        <span class="card-tag tag-place">PLACE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/atnarpa/originals/img-004.jpg" alt="Country 4" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Country — Landscape</div>
+        <div class="card-meta">Central Australia</div>
+        <span class="card-tag tag-place">PLACE</span>
+      </div>
+    </div>
+  </div>
+  <div class="grid grid-5">
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/video-posters/header-dji-0323-light.jpg" alt="DJI Header" loading="lazy">
+      <div class="card-info"><div class="card-title">Drone Header</div><span class="card-tag tag-place">PLACE</span></div>
+    </div>
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/video-posters/camp-cut-20s-light.jpg" alt="Camp Cut" loading="lazy">
+      <div class="card-info"><div class="card-title">Camp Cut</div><span class="card-tag tag-place">PLACE</span></div>
+    </div>
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/video-posters/camp-to-house-drone-follow-light.jpg" alt="Drone Follow" loading="lazy">
+      <div class="card-info"><div class="card-title">Drone Follow</div><span class="card-tag tag-place">PLACE</span></div>
+    </div>
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/video-posters/work-on-station-01-light.jpg" alt="Station 1" loading="lazy">
+      <div class="card-info"><div class="card-title">Work on Station 1</div><span class="card-tag tag-place">PLACE</span></div>
+    </div>
+    <div class="card" data-cat="place" onclick="openLightbox(this)">
+      <img src="/images/orgs/oonchiumpa/video-posters/work-on-station-02-light.jpg" alt="Station 2" loading="lazy">
+      <div class="card-info"><div class="card-title">Work on Station 2</div><span class="card-tag tag-place">PLACE</span></div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SECTION: Programs in Action -->
+<div class="section" data-section="program">
+  <div class="section-label">Programs in Action <span>What works — real programs, real outcomes</span></div>
+  <div class="grid grid-4">
+    <div class="card" data-cat="program people" onclick="openLightbox(this)">
+      <img src="/images/articles/from-trouble-to-transformation-the-campfire-journey.jpg" alt="Campfire Journey" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Campfire Journey — Transformation</div>
+        <div class="card-meta">Community program</div>
+        <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+    <div class="card" data-cat="program" onclick="openLightbox(this)">
+      <img src="/images/articles/kickin-it-with-deadlylabs-igniting-stem-passions-in-youth-detention.png" alt="DeadlyLabs" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">DeadlyLabs — STEM in Detention</div>
+        <div class="card-meta">Science education behind bars</div>
+        <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+    <div class="card" data-cat="program" onclick="openLightbox(this)">
+      <img src="/images/articles/confit-pathways.jpg" alt="Confit Pathways" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Confit Pathways</div>
+        <div class="card-meta">Youth re-engagement program</div>
+        <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+    <div class="card" data-cat="program" onclick="openLightbox(this)">
+      <img src="/images/articles/creating-spaces-for-growth-the-physical-and-emotional-environment-of-transformation.jpg" alt="Spaces for Growth" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Spaces for Growth</div>
+        <div class="card-meta">Environment of transformation</div>
+        <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+    <div class="card" data-cat="program" onclick="openLightbox(this)">
+      <img src="/images/articles/resoleution-at-bimberi-youth-justice-centre.png" alt="Bimberi" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Bimberi Youth Justice Centre</div>
+        <div class="card-meta">Resolution program, ACT</div>
+        <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+    <div class="card" data-cat="program" onclick="openLightbox(this)">
+      <img src="/images/articles/resoleution.jpeg" alt="Resolution" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Resolution</div>
+        <div class="card-meta">In-detention program</div>
+        <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+    <div class="card" data-cat="program people" onclick="openLightbox(this)">
+      <img src="/images/orgs/bg-fit/gallery-1.jpg" alt="BG-FIT 1" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">BG-FIT — In Action 1</div>
+        <div class="card-meta">Community fitness program</div>
+        <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+    <div class="card" data-cat="program people" onclick="openLightbox(this)">
+      <img src="/images/orgs/bg-fit/gallery-2.jpg" alt="BG-FIT 2" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">BG-FIT — In Action 2</div>
+        <div class="card-meta">Youth engagement</div>
+        <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+  </div>
+  <div class="grid grid-4">
+    <div class="card" data-cat="program" onclick="openLightbox(this)">
+      <img src="/images/orgs/bg-fit/gallery-3.jpg" alt="BG-FIT 3" loading="lazy">
+      <div class="card-info"><div class="card-title">BG-FIT — Gallery 3</div><span class="card-tag tag-program">PROGRAM</span></div>
+    </div>
+    <div class="card" data-cat="program" onclick="openLightbox(this)">
+      <img src="/images/orgs/bg-fit/gallery-4.jpg" alt="BG-FIT 4" loading="lazy">
+      <div class="card-info"><div class="card-title">BG-FIT — Gallery 4</div><span class="card-tag tag-program">PROGRAM</span></div>
+    </div>
+    <div class="card" data-cat="program" onclick="openLightbox(this)">
+      <img src="/images/orgs/bg-fit/gallery-5.jpg" alt="BG-FIT 5" loading="lazy">
+      <div class="card-info"><div class="card-title">BG-FIT — Gallery 5</div><span class="card-tag tag-program">PROGRAM</span></div>
+    </div>
+    <div class="card" data-cat="program" onclick="openLightbox(this)">
+      <img src="/images/orgs/bg-fit/gallery-6.jpg" alt="BG-FIT 6" loading="lazy">
+      <div class="card-info"><div class="card-title">BG-FIT — Gallery 6</div><span class="card-tag tag-program">PROGRAM</span></div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SECTION: Spain / Diagrama -->
+<div class="section" data-section="spain">
+  <div class="section-label">Spain / Diagrama Foundation <span>International comparison — what works overseas</span></div>
+  <div class="grid grid-4">
+    <div class="card" data-cat="spain people" onclick="openLightbox(this)">
+      <img src="/images/articles/diagrama-foundations-impact-on-spains-youth-detention-system.jpg" alt="Diagrama" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Diagrama Foundation Impact</div>
+        <div class="card-meta">Spain's youth detention model</div>
+        <span class="card-tag tag-spain">SPAIN</span>
+      </div>
+    </div>
+    <div class="card" data-cat="spain" onclick="openLightbox(this)">
+      <img src="/images/articles/diagrama-youth-justice-spain.jpg" alt="Diagrama YJ" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Diagrama Youth Justice</div>
+        <div class="card-meta">Spain model — overview</div>
+        <span class="card-tag tag-spain">SPAIN</span>
+      </div>
+    </div>
+    <div class="card" data-cat="spain" onclick="openLightbox(this)">
+      <img src="/images/articles/from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama.jpg" alt="Day 1" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Punishment to Potential — Day 1</div>
+        <div class="card-meta">Spain's innovative approach</div>
+        <span class="card-tag tag-spain">SPAIN</span>
+      </div>
+    </div>
+    <div class="card" data-cat="spain" onclick="openLightbox(this)">
+      <img src="/images/articles/beyond-walls-what-spanish-youth-detention-centers-taught-me-about-seeing-humanity-first.jpg" alt="Beyond Walls" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Beyond Walls — Seeing Humanity</div>
+        <div class="card-meta">Spanish detention centres</div>
+        <span class="card-tag tag-spain">SPAIN</span>
+      </div>
+    </div>
+    <div class="card" data-cat="spain" onclick="openLightbox(this)">
+      <img src="/images/articles/the-diagrama-model-a-transformative-approach-to-youth-justice.jpg" alt="Diagrama Model" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">The Diagrama Model</div>
+        <div class="card-meta">Transformative approach</div>
+        <span class="card-tag tag-spain">SPAIN</span>
+      </div>
+    </div>
+    <div class="card" data-cat="spain" onclick="openLightbox(this)">
+      <img src="/images/articles/a-comparative-analysis-of-youth-justice-systems-in-spain-and-australia.jpg" alt="Comparative Analysis" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Spain vs Australia</div>
+        <div class="card-meta">Comparative analysis</div>
+        <span class="card-tag tag-spain">SPAIN</span>
+      </div>
+    </div>
+    <div class="card" data-cat="spain people" onclick="openLightbox(this)">
+      <img src="/images/articles/from-control-to-care-reimagining-staff-roles-in-youth-justice.jpg" alt="Control to Care" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Control to Care — Staff Roles</div>
+        <div class="card-meta">Reimagining detention staff</div>
+        <span class="card-tag tag-spain">SPAIN</span> <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="spain" onclick="openLightbox(this)">
+      <img src="/images/articles/the-nature-of-power-how-control-shapes-youth-justice.jpg" alt="Nature of Power" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Nature of Power</div>
+        <div class="card-meta">Control vs care in detention</div>
+        <span class="card-tag tag-spain">SPAIN</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SECTION: Community & Indigenous -->
+<div class="section" data-section="community">
+  <div class="section-label">Community &amp; Indigenous Justice <span>Cultural authority, community-led solutions</span></div>
+  <div class="grid grid-3">
+    <div class="card" data-cat="people program" onclick="openLightbox(this)">
+      <img src="/images/articles/beyond-cases-and-problems-relationship-based-justice-in-central-australia.jpg" alt="Relationship Justice" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Relationship-Based Justice</div>
+        <div class="card-meta">Central Australia</div>
+        <span class="card-tag tag-people">PEOPLE</span> <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+    <div class="card" data-cat="people program" onclick="openLightbox(this)">
+      <img src="/images/articles/beyond-systems-a-day-with-jackqwann-in-the-heart-of-australia.jpg" alt="Jackqwann" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">A Day with Jackqwann</div>
+        <div class="card-meta">Heart of Australia</div>
+        <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="people program" onclick="openLightbox(this)">
+      <img src="/images/articles/navigating-two-worlds-cultural-authority-and-youth-empowerment-in-mparntwe.jpg" alt="Mparntwe" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Two Worlds — Mparntwe</div>
+        <div class="card-meta">Cultural authority, youth empowerment</div>
+        <span class="card-tag tag-people">PEOPLE</span> <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+    <div class="card" data-cat="people program" onclick="openLightbox(this)">
+      <img src="/images/articles/community-at-the-core-empowering-local-solutions-in-youth-justice.jpg" alt="Community Core" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Community at the Core</div>
+        <div class="card-meta">Local solutions, youth justice</div>
+        <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="people" onclick="openLightbox(this)">
+      <img src="/images/articles/breaking-bread-breaking-chains-when-two-worlds-collide.jpg" alt="Breaking Bread" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Breaking Bread, Breaking Chains</div>
+        <div class="card-meta">When two worlds collide</div>
+        <span class="card-tag tag-people">PEOPLE</span>
+      </div>
+    </div>
+    <div class="card" data-cat="program" onclick="openLightbox(this)">
+      <img src="/images/articles/connecting-communities-a-network-for-justice-reinvestment.jpeg" alt="Justice Reinvestment" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Network for Justice Reinvestment</div>
+        <div class="card-meta">Connecting communities</div>
+        <span class="card-tag tag-program">PROGRAM</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SECTION: Data & Analysis -->
+<div class="section" data-section="data">
+  <div class="section-label">Data &amp; Analysis <span>Charts, reports, government spending</span></div>
+  <div class="grid grid-4">
+    <div class="card" data-cat="data" onclick="openLightbox(this)">
+      <img src="/images/articles/queensland-government-spending-on-youth-justice-and-community-safety-2-b9ff82f9.png" alt="QLD Spending 2" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">QLD Spending Chart 1</div>
+        <div class="card-meta">Government budget analysis</div>
+        <span class="card-tag tag-data">DATA</span>
+      </div>
+    </div>
+    <div class="card" data-cat="data" onclick="openLightbox(this)">
+      <img src="/images/articles/queensland-government-spending-on-youth-justice-and-community-safety-3-174a26fc.png" alt="QLD Spending 3" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">QLD Spending Chart 2</div>
+        <div class="card-meta">Budget breakdown</div>
+        <span class="card-tag tag-data">DATA</span>
+      </div>
+    </div>
+    <div class="card" data-cat="data" onclick="openLightbox(this)">
+      <img src="/images/articles/rethinking-youth-justice-funding-in-queensland-prioritising-grassroots-solutions-over-bureaucracy.png" alt="Rethinking Funding" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Rethinking YJ Funding</div>
+        <div class="card-meta">Grassroots vs bureaucracy</div>
+        <span class="card-tag tag-data">DATA</span>
+      </div>
+    </div>
+    <div class="card" data-cat="data" onclick="openLightbox(this)">
+      <img src="/images/articles/the-road-to-hell-when-youth-justice-efforts-backfire.png" alt="Road to Hell" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">When YJ Efforts Backfire</div>
+        <div class="card-meta">Data-driven analysis</div>
+        <span class="card-tag tag-data">DATA</span>
+      </div>
+    </div>
+    <div class="card" data-cat="data" onclick="openLightbox(this)">
+      <img src="/images/articles/inquiry-into-the-making-queensland-safer-bill-2024---submission.jpg" alt="QLD Submission" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">QLD Safer Bill Submission</div>
+        <div class="card-meta">Parliamentary inquiry</div>
+        <span class="card-tag tag-data">DATA</span>
+      </div>
+    </div>
+    <div class="card" data-cat="data" onclick="openLightbox(this)">
+      <img src="/images/articles/the-necessity-of-state-government-in-australia-a-queensland-perspective.png" alt="State Govt" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">State Government Necessity</div>
+        <div class="card-meta">QLD perspective</div>
+        <span class="card-tag tag-data">DATA</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SECTION: AI-Generated to REPLACE -->
+<div class="section">
+  <div class="section-label" style="color: #DC2626;">AI-Generated Photos &mdash; MUST REPLACE WITH REAL <span style="background: #DC2626;">ACTION NEEDED</span></div>
+  <div class="grid grid-3">
+    <div class="card" onclick="openLightbox(this)">
+      <div class="replace-warning">REPLACE</div>
+      <img src="/images/contained/bespoke-two-realities.png" alt="Two Realities" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Two Realities (AI-GENERATED)</div>
+        <div class="card-meta">Replace with: Real detention vs community split photo</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <div class="replace-warning">REPLACE</div>
+      <img src="/images/contained/hero-container-landscape.png" alt="Container Landscape" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Container Landscape (AI-GENERATED)</div>
+        <div class="card-meta">Replace with: Real shipping container photo or Atnarpa landscape</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <div class="replace-warning">REPLACE</div>
+      <img src="/images/contained/bespoke-story-container.png" alt="Story Container" loading="lazy">
+      <div class="card-info">
+        <div class="card-title">Story Container (AI-GENERATED)</div>
+        <div class="card-meta">Replace with: Real photo — mentoring, on-country, or program shot</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- SECTION: Approved AI Illustrations -->
+<div class="section">
+  <div class="section-label" style="color: #34D399;">Approved AI Illustrations &amp; Brand Assets <span style="background: #059669;">LOCKED</span></div>
+  <div class="grid grid-4">
+    <div class="card" onclick="openLightbox(this)">
+      <img src="/images/contained/logo-contained-square.png" alt="Logo" loading="lazy">
+      <div class="card-info"><div class="card-title">CONTAINED Logo</div><div class="card-meta">Approved — brand mark</div></div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="/images/contained/poster-tour.png" alt="Tour Poster" loading="lazy">
+      <div class="card-info"><div class="card-title">Tour Poster</div><div class="card-meta">Approved — constructivist style</div></div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="/images/contained/poster-brand.png" alt="Brand Poster" loading="lazy">
+      <div class="card-info"><div class="card-title">Brand Poster</div><div class="card-meta">Approved — Bauhaus tile</div></div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="/images/contained/bespoke-reach.png" alt="Reach" loading="lazy">
+      <div class="card-info"><div class="card-title">Reach — Watercolor</div><div class="card-meta">Approved — illustration</div></div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="/images/contained/bespoke-chalk-question.png" alt="Chalk" loading="lazy">
+      <div class="card-info"><div class="card-title">The Question — Chalk</div><div class="card-meta">Approved — street art style</div></div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="/images/contained/bespoke-community-connection.png" alt="Community" loading="lazy">
+      <div class="card-info"><div class="card-title">Community Connection</div><div class="card-meta">Approved — watercolor</div></div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="/images/contained/bespoke-data-viz.png" alt="Data Viz" loading="lazy">
+      <div class="card-info"><div class="card-title">16 Lives Changed</div><div class="card-meta">Approved — data viz</div></div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="/images/contained/social-stat-cost.png" alt="Cost Stat" loading="lazy">
+      <div class="card-info"><div class="card-title">$2.6M Per Child</div><div class="card-meta">Approved — stat tile</div></div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="/images/contained/social-stat-ratio.png" alt="Ratio Stat" loading="lazy">
+      <div class="card-info"><div class="card-title">$23 to $1 Ratio</div><div class="card-meta">Approved — stat tile</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+  <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+
+<script>
+function openLightbox(card) {
+  const img = card.querySelector('img');
+  const title = card.querySelector('.card-title');
+  const meta = card.querySelector('.card-meta');
+  document.getElementById('lightbox-img').src = img.src;
+  document.getElementById('lightbox-caption').textContent = (title?.textContent || '') + ' — ' + (meta?.textContent || '');
+  document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+function filterCategory(cat) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.card').forEach(card => {
+    const cats = card.dataset.cat || '';
+    card.style.display = cats.includes(cat) ? '' : 'none';
+  });
+}
+function filterAll() {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.card').forEach(card => card.style.display = '');
+}
+</script>
+
+</body>
+</html>

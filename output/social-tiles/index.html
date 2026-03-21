@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE CONTAINED — Social Tile Kit & Composer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e5e5e5; line-height: 1.6; }
+
+  /* ── NAV ── */
+  .top-nav { position: sticky; top: 0; z-index: 100; background: #0a0a0aee; backdrop-filter: blur(12px); border-bottom: 1px solid #1a1a1a; padding: 12px 48px; display: flex; gap: 24px; align-items: center; }
+  .top-nav a { font-size: 13px; font-weight: 600; color: #737373; text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; }
+  .top-nav a:hover, .top-nav a.active { color: #dc2626; }
+  .top-nav .logo { font-family: 'Space Grotesk'; font-weight: 700; font-size: 16px; color: white; margin-right: auto; }
+
+  /* ── SHARED ── */
+  .header { padding: 80px 48px 48px; max-width: 1400px; margin: 0 auto; border-bottom: 1px solid #262626; }
+  .header .badge { display: inline-block; background: #dc2626; color: white; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; padding: 6px 14px; margin-bottom: 24px; }
+  .header h1 { font-family: 'Space Grotesk'; font-size: 48px; font-weight: 700; letter-spacing: -0.03em; color: white; margin-bottom: 12px; }
+  .header p { font-size: 18px; color: #737373; max-width: 640px; }
+  .section { max-width: 1400px; margin: 0 auto; padding: 64px 48px; border-bottom: 1px solid #1a1a1a; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #dc2626; margin-bottom: 8px; }
+  .section h2 { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 700; color: white; letter-spacing: -0.02em; margin-bottom: 12px; }
+  .section h2 + p { color: #737373; font-size: 15px; margin-bottom: 32px; max-width: 640px; }
+
+  /* ── TILE GRID ── */
+  .tile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 32px; }
+  .tile-card { background: #141414; border: 1px solid #262626; border-radius: 8px; overflow: hidden; transition: border-color 0.2s; }
+  .tile-card:hover { border-color: #404040; }
+  .tile-card img { width: 100%; height: auto; display: block; }
+  .tile-card.story img { max-height: 600px; object-fit: contain; background: #0a0a0a; }
+  .tile-info { padding: 20px 24px; }
+  .tile-info h3 { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 600; color: white; margin-bottom: 6px; }
+  .platforms { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .platform-tag { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; background: #1f1f1f; color: #a3a3a3; }
+  .platform-tag.best { background: #dc262622; color: #dc2626; }
+  .description { font-size: 14px; color: #737373; margin-bottom: 16px; }
+  .strategy { font-size: 13px; color: #525252; font-style: italic; margin-bottom: 16px; padding-left: 12px; border-left: 2px solid #dc2626; }
+  .sources { padding: 16px 24px; background: #0f0f0f; border-top: 1px solid #1a1a1a; }
+  .sources h4 { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #525252; margin-bottom: 8px; }
+  .sources ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .sources li { font-size: 12px; color: #525252; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .sources .stat-ref { font-weight: 600; color: #737373; white-space: nowrap; }
+  .sources a { color: #3b82f6; text-decoration: none; }
+  .sources a:hover { color: #60a5fa; text-decoration: underline; }
+  .download-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: transparent; border: 1px solid #333; color: #a3a3a3; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; border-radius: 4px; transition: all 0.2s; cursor: pointer; margin-top: 8px; }
+  .download-btn:hover { border-color: #dc2626; color: #dc2626; }
+
+  /* ── COMPOSER ── */
+  #composer { max-width: 1400px; margin: 0 auto; padding: 64px 48px; border-bottom: 1px solid #1a1a1a; }
+  .composer-layout { display: flex; gap: 32px; }
+  .composer-left { flex: 1; min-width: 0; }
+  .composer-right { width: 440px; flex-shrink: 0; position: sticky; top: 72px; align-self: flex-start; }
+
+  /* Photo Library */
+  .photo-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 14px; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border: 1px solid #262626; background: transparent; color: #737373; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+  .filter-btn:hover { border-color: #525252; color: #a3a3a3; }
+  .filter-btn.active { background: #dc2626; border-color: #dc2626; color: white; }
+  .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; max-height: 600px; overflow-y: auto; border: 1px solid #1a1a1a; border-radius: 6px; padding: 8px; background: #0f0f0f; }
+  .photo-thumb { aspect-ratio: 1; overflow: hidden; border-radius: 4px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; position: relative; }
+  .photo-thumb:hover { border-color: #525252; }
+  .photo-thumb.selected { border-color: #dc2626; }
+  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-thumb .photo-label { position: absolute; bottom: 0; left: 0; right: 0; padding: 4px 6px; background: #000000cc; font-size: 9px; color: #a3a3a3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Upload */
+  .upload-zone { border: 2px dashed #262626; border-radius: 8px; padding: 32px; text-align: center; cursor: pointer; transition: border-color 0.2s; margin-bottom: 16px; }
+  .upload-zone:hover { border-color: #dc2626; }
+  .upload-zone p { color: #525252; font-size: 14px; }
+  .upload-zone .upload-icon { font-size: 32px; margin-bottom: 8px; color: #333; }
+
+  /* Preview */
+  .preview-container { background: #141414; border: 1px solid #262626; border-radius: 8px; overflow: hidden; }
+  .preview-canvas { position: relative; width: 100%; aspect-ratio: 1; background: #000; overflow: hidden; }
+  .preview-canvas.ratio-16-9 { aspect-ratio: 16/9; }
+  .preview-canvas.ratio-9-16 { aspect-ratio: 9/16; max-height: 600px; }
+  .preview-canvas img { width: 100%; height: 100%; object-fit: cover; }
+  .preview-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; pointer-events: none; }
+  .preview-gradient { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 40%, transparent 70%); }
+  .preview-text { position: relative; z-index: 1; padding: 32px; }
+  .preview-text .headline { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 700; color: white; line-height: 1.15; margin-bottom: 8px; }
+  .preview-text .subline { font-family: 'Inter'; font-size: 14px; color: #a3a3a3; margin-bottom: 12px; }
+  .preview-text .brand { font-family: 'Inter'; font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #dc2626; }
+  .preview-badge { position: absolute; top: 24px; left: 24px; background: #dc2626; padding: 5px 12px; z-index: 2; }
+  .preview-badge span { font-family: 'Inter'; font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: white; }
+
+  .composer-controls { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .control-group { display: flex; flex-direction: column; gap: 4px; }
+  .control-group label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #525252; }
+  .control-group input, .control-group textarea, .control-group select { background: #1a1a1a; border: 1px solid #262626; border-radius: 4px; padding: 8px 12px; color: #e5e5e5; font-family: 'Inter'; font-size: 14px; }
+  .control-group textarea { resize: vertical; min-height: 60px; }
+  .control-group select { cursor: pointer; }
+
+  .btn-generate { padding: 12px 24px; background: #dc2626; border: none; color: white; font-family: 'Inter'; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
+  .btn-generate:hover { background: #b91c1c; }
+  .btn-secondary { padding: 10px 20px; background: transparent; border: 1px solid #333; color: #a3a3a3; font-family: 'Inter'; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+  .btn-secondary:hover { border-color: white; color: white; }
+
+  /* ── CUSTOM TILES (user-created) ── */
+  #custom-tiles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 32px; margin-top: 32px; }
+  .custom-badge { display: inline-block; background: #16a34a; color: white; font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; margin-left: 8px; }
+
+  /* ── POSTING ORDER ── */
+  .posting-order { display: flex; flex-direction: column; gap: 16px; max-width: 800px; }
+  .posting-step { display: flex; gap: 16px; align-items: flex-start; padding: 16px 20px; background: #141414; border: 1px solid #262626; border-radius: 6px; }
+  .posting-step .step-num { font-family: 'Space Grotesk'; font-size: 32px; font-weight: 700; color: #dc2626; line-height: 1; min-width: 40px; }
+  .posting-step .step-content h4 { font-size: 15px; font-weight: 600; color: white; margin-bottom: 4px; }
+  .posting-step .step-content p { font-size: 13px; color: #737373; }
+  .posting-step .step-content .when { font-size: 11px; color: #525252; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0a0a; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <span class="logo">CONTAINED</span>
+  <a href="#composer" class="active">Composer</a>
+  <a href="#generated">Generated Tiles</a>
+  <a href="#playbook">Playbook</a>
+  <a href="#sources-master">Sources</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- TILE COMPOSER                                              -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<div class="header">
+  <div class="badge">Tile Composer</div>
+  <h1>Build Your Tiles</h1>
+  <p>Pick a real photo, add your headline and stats, preview it live. As the tour happens, drop new photos here and create tiles on the spot.</p>
+</div>
+
+<div id="composer">
+  <div class="composer-layout">
+
+    <!-- LEFT: Photo Library -->
+    <div class="composer-left">
+      <div class="section-label">Photo Library</div>
+      <h2 style="font-family: 'Space Grotesk'; font-size: 22px; font-weight: 700; color: white; margin-bottom: 16px;">Choose a Background</h2>
+
+      <!-- Upload zone -->
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+        <div class="upload-icon">+</div>
+        <p><strong style="color: #a3a3a3;">Drop tour photos here</strong> or click to upload</p>
+        <p style="font-size: 12px; margin-top: 4px;">Add real photos as the tour happens</p>
+        <input type="file" id="file-input" accept="image/*" multiple style="display:none" onchange="handleUpload(event)" />
+      </div>
+
+      <!-- Filters -->
+      <div class="photo-filters">
+        <button class="filter-btn active" onclick="filterPhotos('all', this)">All</button>
+        <button class="filter-btn" onclick="filterPhotos('empathy-ledger', this)" id="el-filter-btn" style="display:none;">Empathy Ledger</button>
+        <button class="filter-btn" onclick="filterPhotos('contained', this)">Contained</button>
+        <button class="filter-btn" onclick="filterPhotos('diagrama', this)">Diagrama / Spain</button>
+        <button class="filter-btn" onclick="filterPhotos('community', this)">Community</button>
+        <button class="filter-btn" onclick="filterPhotos('oonchiumpa', this)">Oonchiumpa</button>
+        <button class="filter-btn" onclick="filterPhotos('bgfit', this)">BG-FIT</button>
+        <button class="filter-btn" onclick="filterPhotos('uploaded', this)">Uploaded</button>
+      </div>
+
+      <!-- EL Gallery Selector (shown when EL galleries loaded) -->
+      <div id="el-gallery-selector" style="display:none; margin-bottom: 12px;">
+        <label style="font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #525252; margin-bottom: 4px; display: block;">Empathy Ledger Gallery</label>
+        <select id="el-gallery-select" onchange="loadELGalleryMedia(this.value)" style="background: #1a1a1a; border: 1px solid #262626; border-radius: 4px; padding: 8px 12px; color: #e5e5e5; font-family: 'Inter'; font-size: 13px; width: 100%; cursor: pointer;">
+          <option value="">All galleries</option>
+        </select>
+        <p style="font-size: 11px; color: #404040; margin-top: 4px;">Consent-verified media from Empathy Ledger. Ownership & cultural protocols tracked.</p>
+      </div>
+
+      <!-- Photo Grid -->
+      <div class="photo-grid" id="photo-grid"></div>
+    </div>
+
+    <!-- RIGHT: Preview + Controls -->
+    <div class="composer-right">
+      <div class="section-label">Live Preview</div>
+
+      <div class="preview-container">
+        <div class="preview-canvas" id="preview-canvas">
+          <img id="preview-img" src="bespoke-story-container.png" />
+          <div class="preview-badge" id="preview-badge-el"><span id="preview-badge-text">THE CONTAINED</span></div>
+          <div class="preview-overlay">
+            <div class="preview-gradient"></div>
+            <div class="preview-text">
+              <div class="headline" id="preview-headline">Your headline here</div>
+              <div class="subline" id="preview-subline">Supporting text goes here</div>
+              <div class="brand" id="preview-brand">THE CONTAINED — AUSTRALIAN TOUR 2026</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer-controls">
+          <div class="control-group">
+            <label>Aspect Ratio</label>
+            <select id="aspect-ratio" onchange="updateAspect()">
+              <option value="1">Instagram Post (1:1)</option>
+              <option value="16-9">Twitter / LinkedIn (16:9)</option>
+              <option value="9-16">IG Story (9:16)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label>Headline</label>
+            <input type="text" id="headline-input" value="Your headline here" oninput="updatePreview()" placeholder="e.g. $1.55M per child, per year" />
+          </div>
+
+          <div class="control-group">
+            <label>Supporting Text</label>
+            <textarea id="subline-input" oninput="updatePreview()" placeholder="e.g. Community alternatives cost $75/day">Supporting text goes here</textarea>
+          </div>
+
+          <div class="control-group">
+            <label>Badge Text</label>
+            <input type="text" id="badge-input" value="THE CONTAINED" oninput="updatePreview()" placeholder="e.g. MOUNT DRUITT" />
+          </div>
+
+          <div class="control-group">
+            <label>Footer</label>
+            <input type="text" id="brand-input" value="THE CONTAINED — AUSTRALIAN TOUR 2026" oninput="updatePreview()" />
+          </div>
+
+          <div class="control-group">
+            <label>Source / Citation</label>
+            <input type="text" id="source-input" placeholder="e.g. Productivity Commission ROGS 2025" />
+          </div>
+
+          <div class="control-group">
+            <label>Source URL</label>
+            <input type="text" id="source-url-input" placeholder="https://..." />
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button class="btn-generate" onclick="saveTile()">Save Tile</button>
+            <button class="btn-secondary" onclick="downloadPreview()">Download PNG</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Saved custom tiles -->
+  <div id="custom-tiles-section" style="display: none; margin-top: 48px;">
+    <div class="section-label">Your Custom Tiles</div>
+    <h2 style="font-family: 'Space Grotesk'; font-size: 22px; font-weight: 700; color: white; margin-bottom: 4px;">Saved Tiles <span class="custom-badge" id="custom-count">0</span></h2>
+    <p style="color: #737373; font-size: 14px; margin-bottom: 16px;">These are saved in your browser. Download them to keep forever.</p>
+    <div id="custom-tiles-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- GENERATED TILES                                            -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<div class="section" id="generated">
+  <div class="section-label">Data-Driven</div>
+  <h2>Stat Tiles</h2>
+  <p>Every number sourced. Every claim traceable.</p>
+  <div class="tile-grid">
+
+    <div class="tile-card">
+      <img src="stat-155m.png" alt="$1.55M per child per year" />
+      <div class="tile-info">
+        <h3>The Cost of Detention</h3>
+        <div class="platforms"><span class="platform-tag best">Instagram</span><span class="platform-tag best">Facebook</span><span class="platform-tag">LinkedIn</span><span class="platform-tag">X</span></div>
+        <p class="description">The number that stops scrolling.</p>
+        <a class="download-btn" href="stat-155m.png" download="contained-stat-155m.png">Download</a>
+      </div>
+      <div class="sources"><h4>Data Sources</h4><ul>
+        <li><span class="stat-ref">$1.55M/year:</span> <a href="https://www.pc.gov.au/ongoing/report-on-government-services/2025/community-services/youth-justice" target="_blank">Productivity Commission ROGS 2025, Table 17A.1</a></li>
+      </ul></div>
+    </div>
+
+    <div class="tile-card">
+      <img src="stat-comparison.png" alt="84% vs 88%" />
+      <div class="tile-info">
+        <h3>Detention vs Community</h3>
+        <div class="platforms"><span class="platform-tag best">All Platforms</span></div>
+        <p class="description">The single image that makes the entire case.</p>
+        <a class="download-btn" href="stat-comparison.png" download="contained-comparison.png">Download</a>
+      </div>
+      <div class="sources"><h4>Data Sources</h4><ul>
+        <li><span class="stat-ref">84%:</span> <a href="https://www.publications.qld.gov.au/ckan-publications-attachments-prod/resources/d7e0e91e-4e57-4e2a-b51c-2e9da38a1e5a/working-together-changing-the-story-youth-justice-strategy.pdf" target="_blank">QLD Youth Justice Strategy — "Working Together Changing the Story"</a></li>
+        <li><span class="stat-ref">88%:</span> <a href="https://www.pc.gov.au/ongoing/report-on-government-services/2025/community-services/youth-justice" target="_blank">ROGS 2025 Table 17A.19 — community supervision outcomes</a></li>
+      </ul></div>
+    </div>
+
+    <div class="tile-card">
+      <img src="bespoke-data-viz.png" alt="16 lives changed" />
+      <div class="tile-info">
+        <h3>Same Money. 16 Lives.</h3>
+        <div class="platforms"><span class="platform-tag best">LinkedIn</span><span class="platform-tag best">X</span></div>
+        <p class="description">The funding disparity made visceral.</p>
+        <a class="download-btn" href="bespoke-data-viz.png" download="contained-data-viz.png">Download</a>
+      </div>
+      <div class="sources"><h4>Data Sources</h4><ul>
+        <li><span class="stat-ref">$1.55M:</span> <a href="https://www.pc.gov.au/ongoing/report-on-government-services/2025/community-services/youth-justice" target="_blank">ROGS 2025 Table 17A.1</a></li>
+        <li><span class="stat-ref">$75/day:</span> <a href="https://www.qpc.qld.gov.au/inquiries/service-delivery-in-queenslands-youth-justice-system/" target="_blank">QLD Productivity Commission 2024</a></li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Bespoke Imagery</div>
+  <h2>Emotional & Atmospheric</h2>
+  <p>AI-generated concept art. Replace with real photography as the tour progresses.</p>
+  <div class="tile-grid">
+
+    <div class="tile-card">
+      <img src="container-hero.png" alt="Container hero" />
+      <div class="tile-info">
+        <h3>The Container — Hero</h3>
+        <div class="platforms"><span class="platform-tag best">Twitter/X</span><span class="platform-tag best">LinkedIn</span></div>
+        <p class="description">Cinematic hero. Replace with real container photo when built.</p>
+        <a class="download-btn" href="container-hero.png" download>Download 16:9</a>
+      </div>
+      <div class="sources"><h4>Note</h4><ul><li>AI concept art (Gemini). Replace with real photography.</li></ul></div>
+    </div>
+
+    <div class="tile-card">
+      <img src="bespoke-reach.png" alt="Watercolor reach" />
+      <div class="tile-info">
+        <h3>Reaching — Illustration</h3>
+        <div class="platforms"><span class="platform-tag best">Instagram</span></div>
+        <p class="description">Editorial watercolor. Pair with personal stories.</p>
+        <a class="download-btn" href="bespoke-reach.png" download>Download 1:1</a>
+      </div>
+      <div class="sources"><h4>Note</h4><ul><li>AI illustration (Gemini). Consider commissioning a First Nations artist for final version.</li></ul></div>
+    </div>
+
+    <div class="tile-card">
+      <img src="bespoke-chalk-question.png" alt="Chalk question" />
+      <div class="tile-info">
+        <h3>The Question — Chalk</h3>
+        <div class="platforms"><span class="platform-tag best">Facebook</span><span class="platform-tag best">Instagram</span></div>
+        <p class="description">Most shareable. Questions drive engagement.</p>
+        <a class="download-btn" href="bespoke-chalk-question.png" download>Download 1:1</a>
+      </div>
+      <div class="sources"><h4>Data</h4><ul>
+        <li><span class="stat-ref">$1.55M:</span> <a href="https://www.pc.gov.au/ongoing/report-on-government-services/2025/community-services/youth-justice" target="_blank">ROGS 2025</a></li>
+      </ul></div>
+    </div>
+
+    <div class="tile-card story">
+      <img src="bespoke-story-container.png" alt="3-room container story" />
+      <div class="tile-info">
+        <h3>Three Rooms — Story</h3>
+        <div class="platforms"><span class="platform-tag best">IG Stories</span><span class="platform-tag best">Reels</span></div>
+        <p class="description">The hero visual. Three rooms through the container doors.</p>
+        <a class="download-btn" href="bespoke-story-container.png" download>Download 9:16</a>
+      </div>
+      <div class="sources"><h4>Note</h4><ul><li>AI concept (Gemini). Rooms reference: <a href="https://www.diagrama.org/" target="_blank">Diagrama Foundation</a> therapeutic model.</li></ul></div>
+    </div>
+
+    <div class="tile-card">
+      <img src="tour-mount-druitt.png" alt="Mount Druitt launch" />
+      <div class="tile-info">
+        <h3>Mount Druitt Launch</h3>
+        <div class="platforms"><span class="platform-tag best">Instagram</span><span class="platform-tag best">Facebook</span></div>
+        <p class="description">Event announcement. Deploy 2-3 weeks before.</p>
+        <a class="download-btn" href="tour-mount-druitt.png" download>Download 1:1</a>
+      </div>
+      <div class="sources"><h4>Event</h4><ul><li><span class="stat-ref">Venue:</span> Mounty Yarns, Mount Druitt, Western Sydney</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PLAYBOOK                                                   -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<div class="section" id="playbook">
+  <div class="section-label">Campaign Playbook</div>
+  <h2>Strategic Posting Order</h2>
+  <div class="posting-order">
+    <div class="posting-step"><div class="step-num">1</div><div class="step-content"><h4>Chalk Question</h4><p>Lead with provocation. Questions drive shares.</p><div class="when">Day 1 — Launch</div></div></div>
+    <div class="posting-step"><div class="step-num">2</div><div class="step-content"><h4>3-Room Container (Story)</h4><p>The visual hero. Post as IG Story same day.</p><div class="when">Day 1 — Stories</div></div></div>
+    <div class="posting-step"><div class="step-num">3</div><div class="step-content"><h4>$1.55M Stat Card</h4><p>The shock number. They've seen the question — now the data.</p><div class="when">Day 2</div></div></div>
+    <div class="posting-step"><div class="step-num">4</div><div class="step-content"><h4>Data Viz: 16 Lives</h4><p>Policy audience on LinkedIn. The reframe.</p><div class="when">Day 3 — LinkedIn</div></div></div>
+    <div class="posting-step"><div class="step-num">5</div><div class="step-content"><h4>84% vs 88%</h4><p>The answer. Detention fails, community works.</p><div class="when">Day 4</div></div></div>
+    <div class="posting-step"><div class="step-num">6</div><div class="step-content"><h4>Real Tour Photo Tile</h4><p>Use the Composer with actual tour photos. Real people, real moments.</p><div class="when">Day 5+ — As tour happens</div></div></div>
+    <div class="posting-step"><div class="step-num">7</div><div class="step-content"><h4>City-Specific Launch</h4><p>Mount Druitt, Adelaide, Perth, Tennant Creek — deploy per stop.</p><div class="when">T-14 days per city</div></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- MASTER SOURCES                                             -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<div class="section" id="sources-master" style="border-top: 1px solid #262626;">
+  <div class="section-label">Accountability</div>
+  <h2>All Data Sources</h2>
+  <p>Every number traceable. If it can't be sourced, it doesn't get shared.</p>
+  <div style="display: flex; flex-direction: column; gap: 12px; max-width: 900px; margin-top: 24px;">
+    <div style="display: flex; gap: 16px; padding: 16px; background: #141414; border: 1px solid #1a1a1a; border-radius: 6px; align-items: baseline;">
+      <span style="font-family: 'Space Grotesk'; font-size: 24px; font-weight: 700; color: white; min-width: 120px;">$1.55M</span>
+      <div><p style="font-size: 14px; color: #a3a3a3; margin-bottom: 4px;">Annual cost per young person in detention</p><a href="https://www.pc.gov.au/ongoing/report-on-government-services/2025/community-services/youth-justice" target="_blank" style="font-size: 13px; color: #3b82f6; text-decoration: none;">ROGS 2025, Chapter 17, Table 17A.1</a></div>
+    </div>
+    <div style="display: flex; gap: 16px; padding: 16px; background: #141414; border: 1px solid #1a1a1a; border-radius: 6px; align-items: baseline;">
+      <span style="font-family: 'Space Grotesk'; font-size: 24px; font-weight: 700; color: white; min-width: 120px;">$4,250/day</span>
+      <div><p style="font-size: 14px; color: #a3a3a3; margin-bottom: 4px;">Real recurrent expenditure per detention day</p><a href="https://www.pc.gov.au/ongoing/report-on-government-services/2025/community-services/youth-justice" target="_blank" style="font-size: 13px; color: #3b82f6; text-decoration: none;">ROGS 2025, Table 17A.1 — derived</a></div>
+    </div>
+    <div style="display: flex; gap: 16px; padding: 16px; background: #141414; border: 1px solid #1a1a1a; border-radius: 6px; align-items: baseline;">
+      <span style="font-family: 'Space Grotesk'; font-size: 24px; font-weight: 700; color: white; min-width: 120px;">84%</span>
+      <div><p style="font-size: 14px; color: #a3a3a3; margin-bottom: 4px;">Reoffend within 2 years of detention</p><a href="https://www.publications.qld.gov.au/ckan-publications-attachments-prod/resources/d7e0e91e-4e57-4e2a-b51c-2e9da38a1e5a/working-together-changing-the-story-youth-justice-strategy.pdf" target="_blank" style="font-size: 13px; color: #3b82f6; text-decoration: none;">QLD Youth Justice Strategy</a></div>
+    </div>
+    <div style="display: flex; gap: 16px; padding: 16px; background: #141414; border: 1px solid #1a1a1a; border-radius: 6px; align-items: baseline;">
+      <span style="font-family: 'Space Grotesk'; font-size: 24px; font-weight: 700; color: white; min-width: 120px;">88%</span>
+      <div><p style="font-size: 14px; color: #a3a3a3; margin-bottom: 4px;">Community-based program success rate</p><a href="https://www.pc.gov.au/ongoing/report-on-government-services/2025/community-services/youth-justice" target="_blank" style="font-size: 13px; color: #3b82f6; text-decoration: none;">ROGS 2025, Table 17A.19</a></div>
+    </div>
+    <div style="display: flex; gap: 16px; padding: 16px; background: #141414; border: 1px solid #1a1a1a; border-radius: 6px; align-items: baseline;">
+      <span style="font-family: 'Space Grotesk'; font-size: 24px; font-weight: 700; color: white; min-width: 120px;">$75/day</span>
+      <div><p style="font-size: 14px; color: #a3a3a3; margin-bottom: 4px;">Community supervision daily cost</p><a href="https://www.qpc.qld.gov.au/inquiries/service-delivery-in-queenslands-youth-justice-system/" target="_blank" style="font-size: 13px; color: #3b82f6; text-decoration: none;">QLD Productivity Commission 2024</a></div>
+    </div>
+    <div style="display: flex; gap: 16px; padding: 16px; background: #141414; border: 1px solid #1a1a1a; border-radius: 6px; align-items: baseline;">
+      <span style="font-family: 'Space Grotesk'; font-size: 24px; font-weight: 700; color: white; min-width: 120px;">23.1x</span>
+      <div><p style="font-size: 14px; color: #a3a3a3; margin-bottom: 4px;">Indigenous overrepresentation rate ratio</p><a href="https://www.aihw.gov.au/reports/youth-justice/youth-detention-population-in-australia/contents/summary" target="_blank" style="font-size: 13px; color: #3b82f6; text-decoration: none;">AIHW Youth Detention Population 2024</a></div>
+    </div>
+    <div style="display: flex; gap: 16px; padding: 16px; background: #141414; border: 1px solid #1a1a1a; border-radius: 6px; align-items: baseline;">
+      <span style="font-family: 'Space Grotesk'; font-size: 24px; font-weight: 700; color: white; min-width: 120px;">73%</span>
+      <div><p style="font-size: 14px; color: #a3a3a3; margin-bottom: 4px;">Diagrama Foundation therapeutic model success</p><a href="https://www.diagrama.org/" target="_blank" style="font-size: 13px; color: #3b82f6; text-decoration: none;">Fundacion Diagrama annual impact reports</a></div>
+    </div>
+  </div>
+</div>
+
+<div style="padding: 40px 48px; max-width: 1400px; margin: 0 auto;">
+  <p style="font-size: 12px; color: #333; text-align: center;">
+    JusticeHub Social Tile Kit &mdash; March 2026<br/>
+    AI imagery is concept art for planning. Replace with original photography before publication.
+  </p>
+</div>
+
+<script>
+// ── Empathy Ledger Integration ─────────────────────────
+const EL_API_BASE = '/api/empathy-ledger';
+let elPhotos = [];
+let elGalleries = [];
+
+async function loadELGalleries() {
+  try {
+    const res = await fetch(`${EL_API_BASE}/galleries`);
+    const data = await res.json();
+    if (data.unavailable_reason || data.error) return;
+    elGalleries = data.galleries || [];
+    if (elGalleries.length === 0) return;
+
+    // Show the EL filter button and gallery selector
+    document.getElementById('el-filter-btn').style.display = '';
+    document.getElementById('el-gallery-selector').style.display = 'block';
+
+    // Populate gallery dropdown
+    const select = document.getElementById('el-gallery-select');
+    elGalleries.forEach(g => {
+      const opt = document.createElement('option');
+      opt.value = g.id;
+      opt.textContent = `${g.title} (${g.photoCount || 0} photos)`;
+      select.appendChild(opt);
+    });
+
+    // Load all EL media
+    await loadELGalleryMedia('');
+  } catch (e) {
+    console.log('EL galleries not available:', e.message);
+  }
+}
+
+async function loadELGalleryMedia(galleryId) {
+  try {
+    const params = new URLSearchParams({ type: 'image', limit: '100' });
+    if (galleryId) params.set('galleryId', galleryId);
+    const res = await fetch(`${EL_API_BASE}/media?${params}`);
+    const data = await res.json();
+    if (data.error || data.unavailable_reason) return;
+
+    elPhotos = (data.media || []).map(m => ({
+      src: m.thumbnailUrl || m.url,
+      fullSrc: m.url,
+      label: m.title || m.altText || 'Untitled',
+      cat: 'empathy-ledger',
+      elId: m.id,
+      elGalleryId: m.galleryId,
+      elProjectId: m.projectId,
+      altText: m.altText,
+      culturalLevel: m.culturalLevel,
+      location: m.location,
+      galleryCaption: m.galleryCaption,
+    }));
+    renderPhotos();
+  } catch (e) {
+    console.log('EL media not available:', e.message);
+  }
+}
+
+async function trackELEngagement(mediaItem) {
+  if (!mediaItem?.elId) return;
+  try {
+    await fetch(`${EL_API_BASE}/engagement`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_type: 'content_shared',
+        entity_type: 'gallery',
+        entity_id: mediaItem.elGalleryId,
+        metadata: {
+          media_asset_id: mediaItem.elId,
+          source: 'social-tile-composer',
+          tile_type: document.getElementById('aspect-ratio').value === '9-16' ? 'ig-story' : 'instagram',
+        },
+      }),
+    });
+  } catch (e) {
+    // Engagement tracking is best-effort
+  }
+}
+
+// ── Photo Library ──────────────────────────────────────
+const PHOTOS = [
+  // Contained brand
+  { src: '/images/contained/contained-brand-square.png', label: 'Brand Square', cat: 'contained' },
+  { src: '/images/contained/justicehub-hero-landscape.png', label: 'Hero Landscape', cat: 'contained' },
+  { src: '/images/contained/contained-story.png', label: 'Story', cat: 'contained' },
+
+  // Diagrama / Spain
+  { src: '/images/articles/diagrama-youth-justice-spain.jpg', label: 'Diagrama Centre', cat: 'diagrama' },
+  { src: '/images/articles/diagrama-youth-justice-spain-1-e034920e.jpg', label: 'Diagrama Interior', cat: 'diagrama' },
+  { src: '/images/articles/diagrama-youth-justice-spain-3-4bd0f399.jpeg', label: 'Diagrama Grounds', cat: 'diagrama' },
+  { src: '/images/articles/diagrama-youth-justice-spain-4-caa09f83.jpg', label: 'Diagrama Workshop', cat: 'diagrama' },
+  { src: '/images/articles/diagrama-foundations-impact-on-spains-youth-detention-system.jpg', label: 'Diagrama Impact', cat: 'diagrama' },
+  { src: '/images/articles/beyond-walls-what-spanish-youth-detention-centers-taught-me-about-seeing-humanity-first.jpg', label: 'Beyond Walls', cat: 'diagrama' },
+  { src: '/images/articles/from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama.jpg', label: 'Punishment to Potential', cat: 'diagrama' },
+  { src: '/images/articles/from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama-2-24907f21.jpg', label: 'Day 1 Diagrama', cat: 'diagrama' },
+  { src: '/images/articles/creating-spaces-for-growth-the-physical-and-emotional-environment-of-transformation.jpg', label: 'Spaces for Growth', cat: 'diagrama' },
+  { src: '/images/articles/the-courage-to-connect-how-authentic-relationships-transform-youth-in-detention.jpg', label: 'Courage to Connect', cat: 'diagrama' },
+  { src: '/images/articles/from-control-to-care-reimagining-staff-roles-in-youth-justice.jpg', label: 'Control to Care', cat: 'diagrama' },
+  { src: '/images/articles/a-comparative-analysis-of-youth-justice-systems-in-spain-and-australia.jpg', label: 'Spain vs Australia', cat: 'diagrama' },
+
+  // Community / People
+  { src: '/images/articles/community-at-the-core-empowering-local-solutions-in-youth-justice.jpg', label: 'Community at the Core', cat: 'community' },
+  { src: '/images/articles/community-at-the-core-empowering-local-solutions-in-youth-justice-1-cc21348d.jpg', label: 'Community Solutions', cat: 'community' },
+  { src: '/images/articles/connecting-communities-a-network-for-justice-reinvestment.jpeg', label: 'Justice Reinvestment', cat: 'community' },
+  { src: '/images/articles/from-trouble-to-transformation-the-campfire-journey.jpg', label: 'Campfire Journey', cat: 'community' },
+  { src: '/images/articles/a-heros-journey-from-addiction-to-inspiration-the-life-of-vic.jpg', label: 'Vic\'s Journey', cat: 'community' },
+  { src: '/images/articles/spotlight-on-changemaker-brodie-germaine.jpg', label: 'Brodie Germaine', cat: 'community' },
+  { src: '/images/articles/breaking-bread-breaking-chains-when-two-worlds-collide.jpg', label: 'Breaking Bread', cat: 'community' },
+  { src: '/images/articles/breaking-bread-breaking-chains-when-two-worlds-collide-1-5392a6eb.jpg', label: 'Two Worlds', cat: 'community' },
+  { src: '/images/articles/from-shadows-to-spotlight-joe-kwons-redemption-and-the-rise-of-confit.jpg', label: 'Joe Kwon', cat: 'community' },
+  { src: '/images/articles/confit-pathways.jpg', label: 'Confit Pathways', cat: 'community' },
+
+  // Oonchiumpa / Central Australia
+  { src: '/images/orgs/oonchiumpa/hero.jpg', label: 'Oonchiumpa Hero', cat: 'oonchiumpa' },
+  { src: '/images/orgs/oonchiumpa/homestead.jpg', label: 'Homestead', cat: 'oonchiumpa' },
+  { src: '/images/orgs/oonchiumpa/mentoring.jpg', label: 'Mentoring', cat: 'oonchiumpa' },
+  { src: '/images/orgs/oonchiumpa/law-students.jpg', label: 'Law Students', cat: 'oonchiumpa' },
+  { src: '/images/articles/beyond-systems-a-day-with-jackqwann-in-the-heart-of-australia.jpg', label: 'Jackqwann', cat: 'oonchiumpa' },
+  { src: '/images/articles/navigating-two-worlds-cultural-authority-and-youth-empowerment-in-mparntwe.jpg', label: 'Two Worlds Mparntwe', cat: 'oonchiumpa' },
+  { src: '/images/articles/beyond-cases-and-problems-relationship-based-justice-in-central-australia.jpg', label: 'Central Australia', cat: 'oonchiumpa' },
+
+  // BG-FIT
+  { src: '/images/orgs/bg-fit/hero.jpg', label: 'BG-FIT Hero', cat: 'bgfit' },
+  { src: '/images/orgs/bg-fit/brodie.jpg', label: 'Brodie', cat: 'bgfit' },
+  { src: '/images/orgs/bg-fit/gallery-1.jpg', label: 'Gallery 1', cat: 'bgfit' },
+  { src: '/images/orgs/bg-fit/gallery-2.jpg', label: 'Gallery 2', cat: 'bgfit' },
+  { src: '/images/orgs/bg-fit/gallery-3.jpg', label: 'Gallery 3', cat: 'bgfit' },
+  { src: '/images/orgs/bg-fit/gallery-4.jpg', label: 'Gallery 4', cat: 'bgfit' },
+
+  // Generated tiles (for remixing)
+  { src: 'stat-155m.png', label: '$1.55M Stat', cat: 'contained' },
+  { src: 'stat-comparison.png', label: '84% vs 88%', cat: 'contained' },
+  { src: 'bespoke-chalk-question.png', label: 'Chalk Question', cat: 'contained' },
+  { src: 'bespoke-reach.png', label: 'Watercolor Reach', cat: 'contained' },
+  { src: 'container-hero.png', label: 'Container Hero', cat: 'contained' },
+  { src: 'bespoke-story-container.png', label: '3-Room Container', cat: 'contained' },
+  { src: 'bespoke-data-viz.png', label: 'Data Viz 16 Lives', cat: 'contained' },
+  { src: 'tour-mount-druitt.png', label: 'Mount Druitt', cat: 'contained' },
+];
+
+let currentFilter = 'all';
+let selectedPhoto = null;
+let uploadedPhotos = [];
+let savedTiles = JSON.parse(localStorage.getItem('contained-tiles') || '[]');
+
+function renderPhotos() {
+  const grid = document.getElementById('photo-grid');
+  const allPhotos = [...PHOTOS, ...elPhotos, ...uploadedPhotos];
+  const filtered = currentFilter === 'all' ? allPhotos : allPhotos.filter(p => p.cat === currentFilter);
+
+  // Show/hide EL gallery selector based on filter
+  const galSel = document.getElementById('el-gallery-selector');
+  if (galSel) galSel.style.display = (currentFilter === 'empathy-ledger' && elGalleries.length > 0) ? 'block' : 'none';
+
+  grid.innerHTML = filtered.map((p, i) => {
+    const srcAttr = p.src.replace(/'/g, "\\'");
+    const isEL = p.cat === 'empathy-ledger';
+    return `
+      <div class="photo-thumb ${selectedPhoto === p.src ? 'selected' : ''}" onclick="selectPhoto('${srcAttr}', ${i})" data-idx="${i}">
+        <img src="${p.src}" loading="lazy" onerror="this.parentElement.style.display='none'" />
+        <div class="photo-label">${isEL ? '🔒 ' : ''}${p.label}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterPhotos(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPhotos();
+}
+
+let selectedPhotoMeta = null;
+
+function selectPhoto(src, idx) {
+  selectedPhoto = src;
+  const allPhotos = [...PHOTOS, ...elPhotos, ...uploadedPhotos];
+  const filtered = currentFilter === 'all' ? allPhotos : allPhotos.filter(p => p.cat === currentFilter);
+  selectedPhotoMeta = filtered[idx] || null;
+
+  // Use full-res URL for EL photos in preview
+  const previewSrc = selectedPhotoMeta?.fullSrc || src;
+  document.getElementById('preview-img').src = previewSrc;
+
+  // Auto-fill caption from EL metadata
+  if (selectedPhotoMeta?.galleryCaption) {
+    document.getElementById('subline-input').value = selectedPhotoMeta.galleryCaption;
+    updatePreview();
+  }
+  renderPhotos();
+}
+
+function updatePreview() {
+  document.getElementById('preview-headline').textContent = document.getElementById('headline-input').value;
+  document.getElementById('preview-subline').textContent = document.getElementById('subline-input').value;
+  document.getElementById('preview-badge-text').textContent = document.getElementById('badge-input').value;
+  document.getElementById('preview-brand').textContent = document.getElementById('brand-input').value;
+}
+
+function updateAspect() {
+  const canvas = document.getElementById('preview-canvas');
+  const val = document.getElementById('aspect-ratio').value;
+  canvas.classList.remove('ratio-16-9', 'ratio-9-16');
+  if (val === '16-9') canvas.classList.add('ratio-16-9');
+  if (val === '9-16') canvas.classList.add('ratio-9-16');
+}
+
+function handleUpload(e) {
+  const files = e.target.files;
+  for (const file of files) {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const name = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+      uploadedPhotos.push({ src: ev.target.result, label: name, cat: 'uploaded' });
+      renderPhotos();
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+// Drag and drop
+const uploadZone = document.getElementById('upload-zone');
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.borderColor = '#dc2626'; });
+uploadZone.addEventListener('dragleave', () => { uploadZone.style.borderColor = '#262626'; });
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.style.borderColor = '#262626';
+  const files = e.dataTransfer.files;
+  for (const file of files) {
+    if (!file.type.startsWith('image/')) continue;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const name = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+      uploadedPhotos.push({ src: ev.target.result, label: name, cat: 'uploaded' });
+      renderPhotos();
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+function saveTile() {
+  const tile = {
+    id: Date.now(),
+    photo: selectedPhoto || 'bespoke-story-container.png',
+    headline: document.getElementById('headline-input').value,
+    subline: document.getElementById('subline-input').value,
+    badge: document.getElementById('badge-input').value,
+    brand: document.getElementById('brand-input').value,
+    source: document.getElementById('source-input').value,
+    sourceUrl: document.getElementById('source-url-input').value,
+    aspect: document.getElementById('aspect-ratio').value,
+    createdAt: new Date().toISOString(),
+  };
+  savedTiles.push(tile);
+  localStorage.setItem('contained-tiles', JSON.stringify(savedTiles));
+  renderSavedTiles();
+}
+
+function deleteTile(id) {
+  savedTiles = savedTiles.filter(t => t.id !== id);
+  localStorage.setItem('contained-tiles', JSON.stringify(savedTiles));
+  renderSavedTiles();
+}
+
+function renderSavedTiles() {
+  const section = document.getElementById('custom-tiles-section');
+  const grid = document.getElementById('custom-tiles-grid');
+  const count = document.getElementById('custom-count');
+
+  if (savedTiles.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  count.textContent = savedTiles.length;
+
+  grid.innerHTML = savedTiles.map(t => `
+    <div class="tile-card">
+      <div class="preview-canvas ${t.aspect === '16-9' ? 'ratio-16-9' : t.aspect === '9-16' ? 'ratio-9-16' : ''}" style="position: relative;">
+        <img src="${t.photo}" style="width:100%;height:100%;object-fit:cover;" />
+        <div style="position:absolute;top:24px;left:24px;background:#dc2626;padding:5px 12px;">
+          <span style="font-family:'Inter';font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:white;">${t.badge}</span>
+        </div>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.3) 40%,transparent 70%);"></div>
+          <div style="position:relative;z-index:1;padding:32px;">
+            <div style="font-family:'Space Grotesk';font-size:28px;font-weight:700;color:white;line-height:1.15;margin-bottom:8px;">${t.headline}</div>
+            <div style="font-family:'Inter';font-size:14px;color:#a3a3a3;margin-bottom:12px;">${t.subline}</div>
+            <div style="font-family:'Inter';font-size:10px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#dc2626;">${t.brand}</div>
+          </div>
+        </div>
+      </div>
+      <div class="tile-info">
+        <h3>${t.headline}</h3>
+        <p class="description">Created ${new Date(t.createdAt).toLocaleDateString()}</p>
+        <button class="btn-secondary" onclick="deleteTile(${t.id})" style="font-size:11px;padding:6px 12px;color:#dc2626;border-color:#dc262644;">Remove</button>
+      </div>
+      ${t.source ? `<div class="sources"><h4>Source</h4><ul><li>${t.sourceUrl ? `<a href="${t.sourceUrl}" target="_blank">${t.source}</a>` : t.source}</li></ul></div>` : ''}
+    </div>
+  `).join('');
+}
+
+function downloadPreview() {
+  // Create a canvas and render the preview
+  const canvas = document.createElement('canvas');
+  const aspect = document.getElementById('aspect-ratio').value;
+  canvas.width = aspect === '9-16' ? 1080 : aspect === '16-9' ? 1200 : 1080;
+  canvas.height = aspect === '9-16' ? 1920 : aspect === '16-9' ? 675 : 1080;
+  const ctx = canvas.getContext('2d');
+
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    // Draw image covering canvas
+    const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+    const x = (canvas.width - img.width * scale) / 2;
+    const y = (canvas.height - img.height * scale) / 2;
+    ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+    // Gradient overlay
+    const grad = ctx.createLinearGradient(0, canvas.height, 0, canvas.height * 0.3);
+    grad.addColorStop(0, 'rgba(0,0,0,0.9)');
+    grad.addColorStop(0.5, 'rgba(0,0,0,0.3)');
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Badge
+    const badge = document.getElementById('badge-input').value;
+    ctx.fillStyle = '#dc2626';
+    const bw = ctx.measureText(badge).width + 40;
+    ctx.font = '600 ' + (canvas.width * 0.013) + 'px Inter';
+    const badgeWidth = ctx.measureText(badge).width + 32;
+    ctx.fillRect(canvas.width * 0.044, canvas.width * 0.044, badgeWidth, canvas.width * 0.035);
+    ctx.fillStyle = 'white';
+    ctx.font = '700 ' + (canvas.width * 0.013) + 'px Inter';
+    ctx.letterSpacing = '3px';
+    ctx.fillText(badge.toUpperCase(), canvas.width * 0.044 + 16, canvas.width * 0.044 + canvas.width * 0.025);
+
+    // Headline
+    const headline = document.getElementById('headline-input').value;
+    ctx.fillStyle = 'white';
+    ctx.font = '700 ' + (canvas.width * 0.042) + 'px Space Grotesk';
+    ctx.letterSpacing = '-1px';
+    const lines = wrapText(ctx, headline, canvas.width * 0.85);
+    let textY = canvas.height - canvas.width * 0.15 - (lines.length * canvas.width * 0.05);
+    lines.forEach(line => { ctx.fillText(line, canvas.width * 0.06, textY); textY += canvas.width * 0.05; });
+
+    // Subline
+    const subline = document.getElementById('subline-input').value;
+    ctx.fillStyle = '#a3a3a3';
+    ctx.font = '400 ' + (canvas.width * 0.018) + 'px Inter';
+    ctx.letterSpacing = '0px';
+    ctx.fillText(subline, canvas.width * 0.06, textY + 8);
+
+    // Brand
+    const brand = document.getElementById('brand-input').value;
+    ctx.fillStyle = '#dc2626';
+    ctx.font = '600 ' + (canvas.width * 0.012) + 'px Inter';
+    ctx.fillText(brand.toUpperCase(), canvas.width * 0.06, canvas.height - canvas.width * 0.04);
+
+    // Download
+    const link = document.createElement('a');
+    link.download = `contained-tile-${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+
+    // Track engagement with Empathy Ledger if using EL media
+    if (selectedPhotoMeta?.elId) {
+      trackELEngagement(selectedPhotoMeta);
+    }
+  };
+  img.src = document.getElementById('preview-img').src;
+}
+
+function wrapText(ctx, text, maxWidth) {
+  const words = text.split(' ');
+  const lines = [];
+  let current = '';
+  words.forEach(word => {
+    const test = current ? current + ' ' + word : word;
+    if (ctx.measureText(test).width > maxWidth && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = test;
+    }
+  });
+  if (current) lines.push(current);
+  return lines;
+}
+
+// Init
+renderPhotos();
+renderSavedTiles();
+loadELGalleries(); // Fetch consent-verified media from Empathy Ledger
+</script>
+</body>
+</html>

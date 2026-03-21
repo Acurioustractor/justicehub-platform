@@ -397,17 +397,65 @@ Lead In → Personal Email Sent → Responded → Meeting Booked → Committed �
 
 ---
 
-## 12. Immediate Action Items
+## 12. GHL Data Audit (Updated 2026-03-19)
 
-- [ ] **TODAY:** Send remaining 10 personal emails (Ludmila, Nicole, Sal, Sharon, George, Katie, Anne, David, William, Anika) — use 4-day schedule from Section 5
+### Contact Universe: 2,000 total
+| Segment | Count | Notes |
+|---------|-------|-------|
+| Storytellers (EL import) | 1,699 | Community voices — different funnel |
+| JusticeHub tagged | 607 | Broad base |
+| Container requests | 11 | **Warmest leads** |
+| goods-hot | 14 | High GrantScope engagement |
+| goods-warm | 50 | Medium engagement |
+| goods-nurture | 136 | Early stage |
+| Newsletter subscribers | 10 | Not yet CONTAINED-engaged |
+
+### Tag Taxonomy (GHL)
+| Tag | Meaning | Applied to |
+|-----|---------|------------|
+| `contained-hot-lead` | Container requesters + highest-value contacts | 8 uncontacted requesters |
+| `contained-personal-outreach` | Personal email sent by Ben | 5 sent contacts |
+| `contained-2026-launch` | Part of 2026 launch campaign | All engaged contacts |
+| `contained-needs-followup` | Contacted but no response yet | 5 sent contacts |
+| `contained-responded` | Replied to outreach | Apply when they respond |
+| `contained-visitor` | Walked through the container | Apply at tour stops |
+| `contained-amplifier` | Shared on social media | Track post-tour |
+| `container request` | Originally requested experience (GHL form) | 11 people |
+| `container - contacted` | Marked as contacted | 3 people |
+
+### Pipeline Status (as of 2026-03-19)
+```
+Container Requesters (11 total):
+  ✓ Contacted (5): Lucy, Alice, Delilah, Jess, Daniel
+  ⚠ NOT contacted (8): Penny, Irene, Lewina, Loic, Toby, Baressa, Michael, Romina
+  ⚠ No real email (2): Daniel Daylight, Joe Kwon
+
+Personal Emails:
+  ✓ Sent: 5
+  ✓ Drafted (existing contacts): 10
+  ✓ Drafted (container requesters): 8  → output/container-requester-emails.md
+  ⬜ Responded: 1 (Joe Kwon — placeholder email though)
+```
+
+---
+
+## 13. Immediate Action Items
+
+- [ ] **TODAY:** Send 3 container-requester emails (Lewina, Penny, Toby) — see `output/container-requester-emails.md`
+- [ ] **TOMORROW:** Send 3 more (Irene, Michael, Loic)
+- [ ] **DAY 3:** Send final 2 (Baressa, Romina)
+- [ ] **THIS WEEK:** Send remaining 10 personal emails (Ludmila, Nicole, Sal, Sharon, George, Katie, Anne, David, William, Anika) — see `output/contained-personal-emails.md`
+- [ ] **DAY 5:** Follow up on Day 1 non-responders (7-word bump)
 - [ ] **THIS WEEK:** Set up GHL pipeline stages (Lead In → ... → Active Partner)
-- [ ] **THIS WEEK:** Apply `contained-personal-outreach` tag to the 5 already sent
-- [ ] **THIS WEEK:** Build `/contained/tour/social` sharing kit page
+- [x] **DONE:** Apply `contained-personal-outreach` tag to 5 already sent
+- [x] **DONE:** Apply `contained-hot-lead` tag to 8 uncontacted requesters
+- [x] **DONE:** Apply `contained-needs-followup` tag to 5 sent contacts
+- [x] **DONE:** Build `/contained/tour/social` sharing kit page (already existed)
+- [x] **DONE:** Build funder one-pager at `/contained/invest`
+- [x] **DONE:** Build decision-maker brief at `/contained/brief`
+- [x] **DONE:** Build post-visit reaction form at `/contained/reaction`
 - [ ] **NEXT WEEK:** Send warm broadcast to top 200 Tier 2 contacts via GHL
 - [ ] **NEXT WEEK:** First LinkedIn post (pre-launch teaser)
-- [ ] **NEXT WEEK:** Create funder one-pager PDF
-- [ ] **BEFORE LAUNCH:** Build post-visit reaction capture form
-- [ ] **BEFORE LAUNCH:** Create decision-maker brief template
 - [ ] **LAUNCH WEEK:** Execute 7-day social calendar
 - [ ] **LAUNCH DAY +1:** Mass GHL broadcast
 
@@ -422,6 +470,8 @@ Lead In → Personal Email Sent → Responded → Meeting Booked → Committed �
 | `launch-week-posts.md` | 7-day social calendar |
 | `partner-outreach-emails.md` | 4 tour partner emails |
 | `output/contained-personal-emails.md` | 15 bespoke personal emails |
+| `output/container-requester-emails.md` | 8 container requester emails (NEW) |
 | `output/email-contained-launch-ghl.html` | GHL broadcast template |
 | `output/email-contained-launch-march-2026.html` | Ben's personal broadcast |
 | `compendium/brand-guide.md` | Visual + verbal brand rules |
+| `scripts/refine-ghl-contacts.mjs` | GHL tagging automation script |

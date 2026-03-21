@@ -6,7 +6,7 @@
 
 ## What Just Happened
 
-The ALMA (Adaptive Learning for Meaningful Accountability) system is now running **fully automated** on GitHub Actions! 🎉
+The ALMA (Alternative Local Models Australia) system is now running **fully automated** on GitHub Actions! 🎉
 
 ### Successful Test Run
 
