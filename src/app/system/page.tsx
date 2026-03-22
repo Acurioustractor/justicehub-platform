@@ -608,6 +608,7 @@ export default async function SystemTerminalDashboard() {
                   <span className="font-mono text-xs text-gray-400 tracking-widest uppercase">State Comparison</span>
                 </div>
                 <div className="flex items-center gap-3">
+                  <button id="compare-btn" className="font-mono text-[10px] text-gray-600 hover:text-[#DC2626] transition-colors cursor-pointer bg-transparent border border-gray-700 hover:border-[#DC2626] px-2 py-0.5 rounded-sm">COMPARE</button>
                   <ConfBadge level="verified" />
                   <span className="font-mono text-xs text-gray-600">ROGS 2024-25</span>
                 </div>
@@ -1031,6 +1032,19 @@ export default async function SystemTerminalDashboard() {
         </div>
       </main>
 
+      {/* State data for comparison mode */}
+      <script
+        id="state-data"
+        type="application/json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(states.map(s => ({
+          slug: s.slug, state: s.state, stateFull: s.stateFull,
+          det: s.detentionCostPerDay, comm: s.communityCostPerDay, ratio: s.ratio,
+          kids: s.avgKids, annual: s.detentionAnnual, intv: s.interventionCount,
+          orgs: s.orgCount, verify: s.verificationScore, conf: s.dataConfidence,
+          fundRec: s.liveFundingRecords, fundTotal: s.liveFundingTotal,
+        }))) }}
+      />
+
       {/* Footer */}
       <footer className="bg-[#0A0A0A] border-t border-gray-800 px-6 py-4">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between font-mono text-xs text-gray-600">
@@ -1231,6 +1245,122 @@ export default async function SystemTerminalDashboard() {
               setTimeout(function() { help.remove(); }, 5000);
             }
           });
+          // ── 5. State comparison mode ──
+          var compareBtn = document.getElementById('compare-btn');
+          var stateData = [];
+          try { stateData = JSON.parse(document.getElementById('state-data').textContent); } catch(e) {}
+          var compareMode = false;
+          var selected = [];
+
+          if (compareBtn && stateData.length > 0) {
+            compareBtn.addEventListener('click', function() {
+              compareMode = !compareMode;
+              selected = [];
+              compareBtn.textContent = compareMode ? 'SELECT 2 STATES' : 'COMPARE';
+              compareBtn.style.color = compareMode ? '#DC2626' : '';
+              compareBtn.style.borderColor = compareMode ? '#DC2626' : '';
+              // Remove any existing comparison panel
+              var existing = document.getElementById('compare-panel');
+              if (existing) existing.remove();
+              // Add click handlers to state table rows
+              var stateRows = document.querySelectorAll('#state-table a');
+              stateRows.forEach(function(row) {
+                if (compareMode) {
+                  row.dataset.compareListener = 'true';
+                  row.addEventListener('click', stateClickHandler);
+                } else {
+                  row.removeEventListener('click', stateClickHandler);
+                  row.style.background = '';
+                }
+              });
+            });
+          }
+
+          function stateClickHandler(e) {
+            if (!compareMode) return;
+            e.preventDefault();
+            e.stopPropagation();
+            var row = e.currentTarget;
+            var stateCode = row.querySelector('.font-mono.text-sm.font-bold')?.textContent?.trim();
+            if (!stateCode) return;
+            // Toggle selection
+            var idx = selected.indexOf(stateCode);
+            if (idx >= 0) {
+              selected.splice(idx, 1);
+              row.style.background = '';
+            } else if (selected.length < 2) {
+              selected.push(stateCode);
+              row.style.background = 'rgba(220,38,38,0.15)';
+            }
+            compareBtn.textContent = selected.length === 0 ? 'SELECT 2 STATES' : selected.length === 1 ? selected[0] + ' vs ?' : selected[0] + ' vs ' + selected[1];
+            if (selected.length === 2) {
+              showComparison(selected[0], selected[1]);
+            }
+          }
+
+          function fmtMoney(n) { return n >= 1e9 ? '$'+(n/1e9).toFixed(1)+'B' : n >= 1e6 ? '$'+(n/1e6).toFixed(0)+'M' : n >= 1e3 ? '$'+(n/1e3).toFixed(0)+'K' : '$'+n; }
+          function fmtN(n) { return n.toLocaleString(); }
+
+          function showComparison(a, b) {
+            var sa = stateData.find(function(s) { return s.state === a; });
+            var sb = stateData.find(function(s) { return s.state === b; });
+            if (!sa || !sb) return;
+
+            var existing = document.getElementById('compare-panel');
+            if (existing) existing.remove();
+
+            var metrics = [
+              { label: 'Detention cost/day', a: sa.det, b: sb.det, fmt: fmtMoney, worse: 'higher' },
+              { label: 'Community cost/day', a: sa.comm, b: sb.comm, fmt: fmtMoney, worse: 'higher' },
+              { label: 'Cost ratio', a: sa.ratio, b: sb.ratio, fmt: function(v){return v+'x'}, worse: 'higher' },
+              { label: 'Avg kids detained', a: sa.kids, b: sb.kids, fmt: fmtN, worse: 'higher' },
+              { label: 'Annual detention cost', a: sa.annual, b: sb.annual, fmt: fmtMoney, worse: 'higher' },
+              { label: 'Interventions', a: sa.intv, b: sb.intv, fmt: fmtN, worse: 'lower' },
+              { label: 'Organisations', a: sa.orgs, b: sb.orgs, fmt: fmtN, worse: 'lower' },
+              { label: 'Funding records', a: sa.fundRec, b: sb.fundRec, fmt: fmtN, worse: 'lower' },
+              { label: 'Verification', a: sa.verify, b: sb.verify, fmt: function(v){return v+'%'}, worse: 'lower' },
+            ];
+
+            var html = '<div id="compare-panel" style="border:1px solid #DC2626;border-radius:2px;margin-top:12px;background:#0A0A0A">';
+            html += '<div style="border-bottom:1px solid #333;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">';
+            html += '<div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:#DC2626;display:inline-block"></span><span style="font-family:monospace;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.1em">State Comparison</span></div>';
+            html += '<button onclick="this.closest(\\x27#compare-panel\\x27).remove()" style="font-family:monospace;font-size:11px;color:#888;background:none;border:none;cursor:pointer">[CLOSE]</button>';
+            html += '</div>';
+            html += '<div style="display:grid;grid-template-columns:1fr 100px 60px 100px;gap:4px;padding:8px 16px;font-family:monospace;font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid #1a1a1a">';
+            html += '<span>Metric</span><span style="text-align:right">' + a + '</span><span style="text-align:center">vs</span><span style="text-align:right">' + b + '</span>';
+            html += '</div>';
+
+            metrics.forEach(function(m) {
+              var aWorse = m.worse === 'higher' ? m.a > m.b : m.a < m.b;
+              var bWorse = m.worse === 'higher' ? m.b > m.a : m.b < m.a;
+              var aColor = m.a === m.b ? '#F5F0E8' : aWorse ? '#DC2626' : '#059669';
+              var bColor = m.a === m.b ? '#F5F0E8' : bWorse ? '#DC2626' : '#059669';
+              var delta = m.a !== 0 ? Math.round(((m.b - m.a) / m.a) * 100) : 0;
+              var deltaStr = delta > 0 ? '+' + delta + '%' : delta + '%';
+              html += '<div style="display:grid;grid-template-columns:1fr 100px 60px 100px;gap:4px;padding:8px 16px;border-bottom:1px solid #111;align-items:center">';
+              html += '<span style="font-family:monospace;font-size:12px;color:#888">' + m.label + '</span>';
+              html += '<span style="font-family:monospace;font-size:13px;font-weight:bold;color:' + aColor + ';text-align:right">' + m.fmt(m.a) + '</span>';
+              html += '<span style="font-family:monospace;font-size:10px;color:#555;text-align:center">' + (m.a === m.b ? '=' : deltaStr) + '</span>';
+              html += '<span style="font-family:monospace;font-size:13px;font-weight:bold;color:' + bColor + ';text-align:right">' + m.fmt(m.b) + '</span>';
+              html += '</div>';
+            });
+
+            html += '<div style="padding:12px 16px;font-family:monospace;font-size:10px;color:#555">';
+            html += 'Red = worse outcome · Green = better outcome · Source: ROGS 2024-25, Live DB';
+            html += '</div></div>';
+
+            var table = document.querySelector('#state-table')?.parentElement;
+            if (table) table.insertAdjacentHTML('beforeend', html);
+
+            // Reset compare mode
+            compareMode = false;
+            compareBtn.textContent = 'COMPARE';
+            compareBtn.style.color = '';
+            compareBtn.style.borderColor = '';
+            document.querySelectorAll('#state-table a').forEach(function(row) {
+              row.removeEventListener('click', stateClickHandler);
+            });
+          }
         })();
       `}} />
     </div>
