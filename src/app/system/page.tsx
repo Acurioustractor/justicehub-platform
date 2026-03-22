@@ -37,6 +37,9 @@ type LiveCounts = {
   // Sparkline data: per-org funding by FY
   orgSparklines: Record<string, { fy: string; total: number }[]>;
   nationalSparkline: { fy: string; total: number }[];
+  // Alerts
+  alerts: { id: string; alert_type: string; severity: string; title: string; summary: string; jurisdiction: string | null; source_url: string | null; created_at: string }[];
+  alertsCount: number;
 };
 
 type MinisterProfile = {
@@ -117,6 +120,8 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
     hansardCountRes,
     commitmentsCountRes,
     storytellerCountRes,
+    alertsRes,
+    alertsCountRes,
     diariesRes,
     charterRes,
     statementsPerMinisterRes,
@@ -158,6 +163,14 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
     supabase.from('civic_hansard').select('id', { count: 'exact', head: true }),
     supabase.from('civic_charter_commitments').select('id', { count: 'exact', head: true }).eq('youth_justice_relevant', true),
     supabase.from('alma_stories').select('id', { count: 'exact', head: true }),
+
+    // Alerts
+    supabase
+      .from('civic_alerts')
+      .select('id, alert_type, severity, title, summary, jurisdiction, source_url, created_at')
+      .order('created_at', { ascending: false })
+      .limit(10),
+    supabase.from('civic_alerts').select('id', { count: 'exact', head: true }),
 
     // Minister leaderboard: diaries + charter commitments
     supabase
@@ -353,6 +366,8 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
     commitments: charter.map(c => ({ minister_name: c.minister_name, status: c.status, commitment_text: c.commitment_text })),
     orgSparklines,
     nationalSparkline,
+    alerts: (alertsRes.data || []) as LiveCounts['alerts'],
+    alertsCount: alertsCountRes.count || 0,
   };
 }
 
@@ -1006,6 +1021,60 @@ export default async function SystemTerminalDashboard() {
               </div>
             </div>
 
+            {/* Alerts Ticker */}
+            {live.alerts.length > 0 && (
+            <div className="border border-amber-500/30 rounded-sm">
+              <div className="border-b border-amber-500/20 px-4 py-2 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  <span className="font-mono text-xs text-amber-400 tracking-widest uppercase">Alerts</span>
+                </div>
+                <span className="font-mono text-xs text-gray-600">{fmtNum(live.alertsCount)} total</span>
+              </div>
+              <div className="divide-y divide-gray-800/50 max-h-[300px] overflow-y-auto">
+                {live.alerts.map((a) => (
+                  <div key={a.id} className="px-4 py-2.5 hover:bg-gray-900/30 transition-colors">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className={`font-mono text-[10px] px-1 py-0.5 rounded-sm ${
+                        a.severity === 'high' ? 'bg-[#DC2626]/20 text-[#DC2626]' :
+                        a.severity === 'medium' ? 'bg-amber-500/20 text-amber-400' :
+                        'bg-gray-800 text-gray-500'
+                      }`}>{a.severity}</span>
+                      <span className="font-mono text-[10px] text-gray-600">{fmtDate(a.created_at)}</span>
+                      {a.jurisdiction && <span className="font-mono text-[10px] text-gray-700">{a.jurisdiction}</span>}
+                    </div>
+                    <p className="text-xs text-[#F5F0E8] leading-snug">
+                      {a.source_url ? (
+                        <a href={a.source_url} target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors">
+                          {a.title}
+                        </a>
+                      ) : a.title}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div className="border-t border-amber-500/20 px-4 py-3 bg-gray-900/30">
+                <div className="flex items-center gap-2">
+                  <input
+                    id="alert-email"
+                    type="email"
+                    placeholder="your@email.com"
+                    className="flex-1 bg-gray-900 border border-gray-700 rounded-sm px-3 py-1.5 font-mono text-xs text-[#F5F0E8] placeholder-gray-600 focus:border-amber-500 focus:outline-none"
+                  />
+                  <button
+                    id="alert-subscribe"
+                    className="bg-amber-500/20 border border-amber-500/40 text-amber-400 font-mono text-xs px-3 py-1.5 rounded-sm hover:bg-amber-500/30 transition-colors cursor-pointer"
+                  >
+                    Subscribe
+                  </button>
+                </div>
+                <p className="font-mono text-[10px] text-gray-700 mt-1.5">
+                  Get notified when new youth justice statements or funding announcements are detected
+                </p>
+              </div>
+            </div>
+            )}
+
             {/* Source Registry */}
             <div className="border border-gray-700 rounded-sm">
               <div className="border-b border-gray-700 px-4 py-2 flex items-center gap-2">
@@ -1245,7 +1314,46 @@ export default async function SystemTerminalDashboard() {
               setTimeout(function() { help.remove(); }, 5000);
             }
           });
-          // ── 5. State comparison mode ──
+          // ── 5. Alert subscribe ──
+          var subBtn = document.getElementById('alert-subscribe');
+          var emailInput = document.getElementById('alert-email');
+          if (subBtn && emailInput) {
+            subBtn.addEventListener('click', function() {
+              var email = emailInput.value.trim();
+              if (!email || !email.includes('@')) {
+                emailInput.style.borderColor = '#DC2626';
+                return;
+              }
+              subBtn.textContent = '...';
+              subBtn.disabled = true;
+              fetch('/api/system/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, states: ['QLD','NSW','VIC','NT'], keywords: ['youth justice'] })
+              })
+              .then(function(r) { return r.json(); })
+              .then(function(data) {
+                if (data.ok) {
+                  subBtn.textContent = 'Subscribed';
+                  subBtn.style.background = 'rgba(5,150,105,0.2)';
+                  subBtn.style.borderColor = 'rgba(5,150,105,0.4)';
+                  subBtn.style.color = '#059669';
+                  emailInput.value = '';
+                  emailInput.style.borderColor = '#059669';
+                } else {
+                  subBtn.textContent = data.error || 'Error';
+                  subBtn.style.borderColor = '#DC2626';
+                  setTimeout(function() { subBtn.textContent = 'Subscribe'; subBtn.disabled = false; }, 2000);
+                }
+              })
+              .catch(function() {
+                subBtn.textContent = 'Error';
+                setTimeout(function() { subBtn.textContent = 'Subscribe'; subBtn.disabled = false; }, 2000);
+              });
+            });
+          }
+
+          // ── 6. State comparison mode ──
           var compareBtn = document.getElementById('compare-btn');
           var stateData = [];
           try { stateData = JSON.parse(document.getElementById('state-data').textContent); } catch(e) {}
