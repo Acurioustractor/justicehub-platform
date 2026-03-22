@@ -10,8 +10,10 @@ export const vicConfig: SystemConfig = {
     { name: 'Youth Justice (within DJCS)', shortName: 'YJ VIC', contracts: 0, totalValue: 438001000, period: 'ROGS 2024-25', category: 'youth_justice' },
   ],
 
+  // ESTIMATES: No state procurement data available for VIC. Values based on annual reports + public announcements.
+  // To verify: scrape DJCS budget papers, GrantConnect, org annual reports.
   topSuppliers: [
-    { name: 'Victorian Aboriginal Legal Service (VALS)', totalValue: 18000000, contracts: 8, departments: ['DJCS'], note: 'Indigenous-controlled legal aid — Koori Youth Justice' },
+    { name: 'Victorian Aboriginal Legal Service (VALS)', totalValue: 18000000, contracts: 8, departments: ['DJCS'], note: 'Indigenous-controlled legal aid — Koori Youth Justice (estimate)' },
     { name: 'Jesuit Social Services', totalValue: 32000000, contracts: 14, departments: ['DJCS'], note: 'Youth justice programs — Effective evidence rating' },
     { name: 'Berry Street', totalValue: 45000000, contracts: 18, departments: ['DJCS'], note: 'Child/family welfare, out-of-home care' },
     { name: 'Brotherhood of St Laurence', totalValue: 28000000, contracts: 10, departments: ['DJCS'], note: 'Education & employment pathways — Effective evidence rating' },

@@ -10,8 +10,10 @@ export const ntConfig: SystemConfig = {
     { name: 'Youth Justice (within TFHC)', shortName: 'YJ NT', contracts: 0, totalValue: 102441000, period: 'ROGS 2024-25', category: 'youth_justice' },
   ],
 
+  // ESTIMATES: No state procurement data available for NT. Values based on annual reports + public announcements.
+  // To verify: scrape NT Budget papers, GrantConnect, NAAJA/CAALAS annual reports.
   topSuppliers: [
-    { name: 'North Australian Aboriginal Justice Agency (NAAJA)', totalValue: 12000000, contracts: 6, departments: ['TFHC'], note: 'Indigenous-controlled legal aid — Top End & Central' },
+    { name: 'North Australian Aboriginal Justice Agency (NAAJA)', totalValue: 12000000, contracts: 6, departments: ['TFHC'], note: 'Indigenous-controlled legal aid — Top End & Central (estimate)' },
     { name: 'Kalano Community Association', totalValue: 8000000, contracts: 5, departments: ['TFHC'], note: 'Indigenous community org — Katherine region' },
     { name: 'CatholicCare NT', totalValue: 6000000, contracts: 7, departments: ['TFHC'], note: 'Family hubs, early intervention, parenting programs' },
     { name: 'Kurdiji Aboriginal Corporation', totalValue: 3000000, contracts: 2, departments: ['TFHC'], note: 'Lajamanu Justice Reinvestment — Indigenous-led' },
