@@ -34,6 +34,9 @@ type LiveCounts = {
   // Minister leaderboard data
   ministers: MinisterProfile[];
   commitments: { minister_name: string; status: string; commitment_text: string }[];
+  // Sparkline data: per-org funding by FY
+  orgSparklines: Record<string, { fy: string; total: number }[]>;
+  nationalSparkline: { fy: string; total: number }[];
 };
 
 type MinisterProfile = {
@@ -268,6 +271,71 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
     })
     .sort((a, b) => b.totalMeetings - a.totalMeetings);
 
+  // Fetch sparkline data (per-org funding by FY)
+  // Step 1: get org IDs for suppliers we care about
+  const allOrgNames = getAllStateSlugs().flatMap(slug =>
+    STATE_CONFIGS[slug]!.topSuppliers.map(s => s.name)
+  );
+  const uniqueOrgNames = [...new Set(allOrgNames)];
+
+  const { data: orgIdRows } = await supabase
+    .from('organizations')
+    .select('id, name')
+    .in('name', uniqueOrgNames);
+
+  const orgIdMap = new Map((orgIdRows || []).map((r: any) => [r.id, r.name]));
+  const orgIds = (orgIdRows || []).map((r: any) => r.id);
+
+  // Step 2: fetch funding only for those orgs in the FY range
+  const [sparklineRes, nationalSparkRes] = await Promise.all([
+    orgIds.length > 0
+      ? supabase
+          .from('justice_funding')
+          .select('alma_organization_id, financial_year, amount_dollars')
+          .in('alma_organization_id', orgIds)
+          .not('financial_year', 'is', null)
+          .gte('financial_year', '2017-18')
+          .lte('financial_year', '2023-24')
+          .limit(10000)
+      : Promise.resolve({ data: [] }),
+    supabase
+      .from('justice_funding')
+      .select('financial_year, amount_dollars, state')
+      .not('financial_year', 'is', null)
+      .gte('financial_year', '2017-18')
+      .lte('financial_year', '2023-24')
+      .in('state', stateKeys)
+      .limit(50000),
+  ]);
+
+  // Aggregate per-org sparkline data
+  const orgFyMap: Record<string, Record<string, number>> = {};
+  for (const row of (sparklineRes.data || [])) {
+    const orgName = orgIdMap.get(row.alma_organization_id);
+    if (!orgName) continue;
+    const fy = row.financial_year as string;
+    if (!orgFyMap[orgName]) orgFyMap[orgName] = {};
+    orgFyMap[orgName][fy] = (orgFyMap[orgName][fy] || 0) + (Number(row.amount_dollars) || 0);
+  }
+
+  const FY_ORDER = ['2017-18', '2018-19', '2019-20', '2020-21', '2021-22', '2022-23', '2023-24'];
+  const orgSparklines: Record<string, { fy: string; total: number }[]> = {};
+  for (const [name, fyData] of Object.entries(orgFyMap)) {
+    orgSparklines[name] = FY_ORDER
+      .filter(fy => fyData[fy] != null)
+      .map(fy => ({ fy, total: fyData[fy] }));
+  }
+
+  // National sparkline
+  const natFyMap: Record<string, number> = {};
+  for (const row of (nationalSparkRes.data || [])) {
+    const fy = row.financial_year as string;
+    natFyMap[fy] = (natFyMap[fy] || 0) + (Number(row.amount_dollars) || 0);
+  }
+  const nationalSparkline = FY_ORDER
+    .filter(fy => natFyMap[fy] != null)
+    .map(fy => ({ fy, total: natFyMap[fy] }));
+
   return {
     interventionsByState,
     fundingByState,
@@ -283,7 +351,61 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
     storytellerCount: storytellerCountRes.count || 0,
     ministers,
     commitments: charter.map(c => ({ minister_name: c.minister_name, status: c.status, commitment_text: c.commitment_text })),
+    orgSparklines,
+    nationalSparkline,
   };
+}
+
+// ── SVG Sparkline renderer ──
+
+function Sparkline({ data, width = 80, height = 20, color = '#DC2626' }: {
+  data: { fy: string; total: number }[];
+  width?: number;
+  height?: number;
+  color?: string;
+}) {
+  if (data.length < 2) return null;
+  const vals = data.map(d => d.total);
+  const min = Math.min(...vals);
+  const max = Math.max(...vals);
+  const range = max - min || 1;
+
+  const points = vals.map((v, i) => {
+    const x = (i / (vals.length - 1)) * width;
+    const y = height - ((v - min) / range) * (height - 2) - 1;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+
+  // Trend: compare last value to first
+  const trend = vals[vals.length - 1] > vals[0] ? 'up' : vals[vals.length - 1] < vals[0] ? 'down' : 'flat';
+  const trendColor = trend === 'up' ? '#DC2626' : trend === 'down' ? '#059669' : '#888';
+  const arrow = trend === 'up' ? '\u2191' : trend === 'down' ? '\u2193' : '\u2192';
+
+  // Last FY label
+  const lastFy = data[data.length - 1].fy.split('-')[0].slice(2);
+
+  return (
+    <span className="inline-flex items-center gap-1">
+      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="opacity-70">
+        <polyline
+          points={points}
+          fill="none"
+          stroke={color}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {/* Dot on last point */}
+        <circle
+          cx={(vals.length - 1) / (vals.length - 1) * width}
+          cy={height - ((vals[vals.length - 1] - min) / range) * (height - 2) - 1}
+          r="2"
+          fill={color}
+        />
+      </svg>
+      <span className="font-mono text-[10px]" style={{ color: trendColor }}>{arrow}</span>
+    </span>
+  );
 }
 
 // ── Build state rows with live + config data ──
@@ -568,19 +690,22 @@ export default async function SystemTerminalDashboard() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-[32px_1fr_60px_100px_80px] gap-1 px-4 py-2 border-b border-gray-800 font-mono text-[10px] text-gray-500 uppercase tracking-wider">
+              <div className="grid grid-cols-[32px_1fr_60px_100px_100px_80px] gap-1 px-4 py-2 border-b border-gray-800 font-mono text-[10px] text-gray-500 uppercase tracking-wider">
                 <span>#</span>
                 <span>Organisation</span>
                 <span>State</span>
                 <span className="text-right">Value</span>
+                <span className="text-center">Trend</span>
                 <span className="text-right">Contracts</span>
               </div>
 
               <div className="divide-y divide-gray-800 max-h-[600px] overflow-y-auto" id="org-table">
-                {orgs.map((o, i) => (
+                {orgs.map((o, i) => {
+                  const spark = live.orgSparklines[o.name];
+                  return (
                   <div
                     key={`${o.name}-${o.state}`}
-                    className="grid grid-cols-[32px_1fr_60px_100px_80px] gap-1 px-4 py-2.5 hover:bg-gray-900/50 transition-colors items-center"
+                    className="grid grid-cols-[32px_1fr_60px_100px_100px_80px] gap-1 px-4 py-2.5 hover:bg-gray-900/50 transition-colors items-center"
                     data-org-row
                     data-value={o.totalValue}
                     data-contracts={o.contracts}
@@ -597,9 +722,17 @@ export default async function SystemTerminalDashboard() {
                     </div>
                     <Link href={`/system/${o.slug}`} className="font-mono text-xs text-gray-400 hover:text-[#DC2626] transition-colors">{o.state}</Link>
                     <span className="font-mono text-sm text-[#DC2626] font-bold text-right">{fmtCompact(o.totalValue)}</span>
+                    <span className="text-center">
+                      {spark && spark.length >= 2 ? (
+                        <Sparkline data={spark} />
+                      ) : (
+                        <span className="font-mono text-[10px] text-gray-700">—</span>
+                      )}
+                    </span>
                     <span className="font-mono text-xs text-gray-500 text-right">{fmtNum(o.contracts)}</span>
                   </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="border-t border-gray-600 px-4 py-3 bg-gray-900/30">
