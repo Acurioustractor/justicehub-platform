@@ -31,6 +31,20 @@ type LiveCounts = {
   hansardCount: number;
   commitmentsCount: number;
   storytellerCount: number;
+  // Minister leaderboard data
+  ministers: MinisterProfile[];
+  commitments: { minister_name: string; status: string; commitment_text: string }[];
+};
+
+type MinisterProfile = {
+  name: string;
+  totalMeetings: number;
+  externalMeetings: number;
+  uniqueOrgs: number;
+  topOrgs: string[];
+  statements: number;
+  commitments: number;
+  delivered: number;
 };
 
 type StateRow = {
@@ -100,6 +114,9 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
     hansardCountRes,
     commitmentsCountRes,
     storytellerCountRes,
+    diariesRes,
+    charterRes,
+    statementsPerMinisterRes,
     ...fundingCountResults
   ] = await Promise.all([
     // Interventions with geography for per-state breakdown
@@ -138,6 +155,21 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
     supabase.from('civic_hansard').select('id', { count: 'exact', head: true }),
     supabase.from('civic_charter_commitments').select('id', { count: 'exact', head: true }).eq('youth_justice_relevant', true),
     supabase.from('alma_stories').select('id', { count: 'exact', head: true }),
+
+    // Minister leaderboard: diaries + charter commitments
+    supabase
+      .from('civic_ministerial_diaries')
+      .select('minister_name, organisation, meeting_type')
+      .limit(5000),
+    supabase
+      .from('civic_charter_commitments')
+      .select('minister_name, status, commitment_text')
+      .eq('youth_justice_relevant', true),
+    // Statements per minister (for leaderboard)
+    supabase
+      .from('civic_ministerial_statements')
+      .select('minister_name')
+      .limit(5000),
 
     // Per-state funding counts (no row data transferred — just counts)
     ...fundingCountQueries,
@@ -178,6 +210,64 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
     orgsByState[s] = (orgsByState[s] || 0) + 1;
   }
 
+  // Process minister leaderboard
+  const INTERNAL_KEYWORDS = ['ministerial staff', 'cabinet minister', 'government minister', 'director-general', 'director -general', 'commissioner,', 'assistant minister', 'departmental staff', 'd-g,'];
+  const diaries = (diariesRes.data || []) as { minister_name: string; organisation: string | null; meeting_type: string | null }[];
+  const charter = (charterRes.data || []) as { minister_name: string; status: string; commitment_text: string }[];
+  const stmtsByMinister = (statementsPerMinisterRes.data || []) as { minister_name: string }[];
+
+  // Build per-minister profiles
+  const ministerMap: Record<string, { total: number; external: number; orgs: Set<string>; topOrgCounts: Record<string, number> }> = {};
+  for (const d of diaries) {
+    if (!ministerMap[d.minister_name]) ministerMap[d.minister_name] = { total: 0, external: 0, orgs: new Set(), topOrgCounts: {} };
+    const m = ministerMap[d.minister_name];
+    m.total++;
+    if (d.organisation) {
+      const lower = d.organisation.toLowerCase();
+      const isInternal = INTERNAL_KEYWORDS.some(kw => lower.includes(kw)) || lower.startsWith('hon ');
+      if (!isInternal) {
+        m.external++;
+        m.orgs.add(d.organisation);
+        m.topOrgCounts[d.organisation] = (m.topOrgCounts[d.organisation] || 0) + 1;
+      }
+    }
+  }
+
+  // Statement counts per minister
+  const stmtCounts: Record<string, number> = {};
+  for (const s of stmtsByMinister) {
+    stmtCounts[s.minister_name] = (stmtCounts[s.minister_name] || 0) + 1;
+  }
+
+  // Charter commitments per minister
+  const charterByMinister: Record<string, { total: number; delivered: number }> = {};
+  for (const c of charter) {
+    if (!charterByMinister[c.minister_name]) charterByMinister[c.minister_name] = { total: 0, delivered: 0 };
+    charterByMinister[c.minister_name].total++;
+    if (c.status === 'delivered') charterByMinister[c.minister_name].delivered++;
+  }
+
+  // Build sorted minister profiles
+  const ministers: MinisterProfile[] = Object.entries(ministerMap)
+    .map(([name, data]) => {
+      const topOrgs = Object.entries(data.topOrgCounts)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 3)
+        .map(([org]) => org);
+      const ch = charterByMinister[name];
+      return {
+        name,
+        totalMeetings: data.total,
+        externalMeetings: data.external,
+        uniqueOrgs: data.orgs.size,
+        topOrgs,
+        statements: stmtCounts[name] || 0,
+        commitments: ch?.total || 0,
+        delivered: ch?.delivered || 0,
+      };
+    })
+    .sort((a, b) => b.totalMeetings - a.totalMeetings);
+
   return {
     interventionsByState,
     fundingByState,
@@ -191,6 +281,8 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
     hansardCount: hansardCountRes.count || 0,
     commitmentsCount: commitmentsCountRes.count || 0,
     storytellerCount: storytellerCountRes.count || 0,
+    ministers,
+    commitments: charter.map(c => ({ minister_name: c.minister_name, status: c.status, commitment_text: c.commitment_text })),
   };
 }
 
@@ -523,6 +615,91 @@ export default async function SystemTerminalDashboard() {
                 </div>
               </div>
             </div>
+
+            {/* Minister Leaderboard */}
+            {live.ministers.length > 0 && (
+            <div className="border border-gray-700 rounded-sm">
+              <div className="border-b border-gray-700 px-4 py-2 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#DC2626]" />
+                  <span className="font-mono text-xs text-gray-400 tracking-widest uppercase">Minister Leaderboard</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <ConfBadge level="cross-referenced" />
+                  <span className="font-mono text-xs text-gray-600">{live.ministers.reduce((s, m) => s + m.totalMeetings, 0)} meetings</span>
+                </div>
+              </div>
+
+              {/* Header */}
+              <div className="grid grid-cols-[1fr_65px_65px_55px_55px_80px] gap-1 px-4 py-2 border-b border-gray-800 font-mono text-[10px] text-gray-500 uppercase tracking-wider">
+                <span>Minister</span>
+                <span className="text-right">Meetings</span>
+                <span className="text-right">External</span>
+                <span className="text-right">Orgs</span>
+                <span className="text-right">Stmts</span>
+                <span className="text-center">Delivery</span>
+              </div>
+
+              <div className="divide-y divide-gray-800">
+                {live.ministers.slice(0, 10).map((m) => {
+                  const deliveryRate = m.commitments > 0 ? Math.round((m.delivered / m.commitments) * 100) : null;
+                  return (
+                    <div key={m.name} className="grid grid-cols-[1fr_65px_65px_55px_55px_80px] gap-1 px-4 py-2.5 hover:bg-gray-900/50 transition-colors items-center">
+                      <div className="min-w-0">
+                        <span className="text-sm text-[#F5F0E8] block truncate">{m.name}</span>
+                        {m.topOrgs.length > 0 && (
+                          <span className="font-mono text-[10px] text-gray-600 block truncate">
+                            Top: {m.topOrgs.slice(0, 2).join(', ')}
+                          </span>
+                        )}
+                      </div>
+                      <span className="font-mono text-sm text-[#F5F0E8] font-bold text-right">{fmtNum(m.totalMeetings)}</span>
+                      <span className="font-mono text-xs text-gray-400 text-right">{fmtNum(m.externalMeetings)}</span>
+                      <span className="font-mono text-xs text-gray-400 text-right">{fmtNum(m.uniqueOrgs)}</span>
+                      <span className="font-mono text-xs text-gray-400 text-right">{fmtNum(m.statements)}</span>
+                      <span className="text-center">
+                        {deliveryRate !== null ? (
+                          <span className={`font-mono text-[10px] px-1.5 py-0.5 rounded-sm ${
+                            deliveryRate >= 50 ? 'bg-[#059669]/20 text-[#059669]' :
+                            deliveryRate >= 25 ? 'bg-amber-500/20 text-amber-400' :
+                            'bg-[#DC2626]/20 text-[#DC2626]'
+                          }`}>
+                            {m.delivered}/{m.commitments} ({deliveryRate}%)
+                          </span>
+                        ) : (
+                          <span className="font-mono text-[10px] text-gray-700">—</span>
+                        )}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="border-t border-gray-600 px-4 py-3 bg-gray-900/30">
+                <div className="flex items-center justify-between">
+                  <div className="font-mono text-[10px] text-gray-700">
+                    Source: QLD Ministerial Diaries + Charter Letter Commitments · Who do ministers meet? Who gets access?
+                  </div>
+                </div>
+                {/* Commitment delivery summary */}
+                {live.commitments.length > 0 && (() => {
+                  const totalCommitments = live.commitments.length;
+                  const deliveredCount = live.commitments.filter(c => c.status === 'delivered').length;
+                  const rate = Math.round((deliveredCount / totalCommitments) * 100);
+                  return (
+                    <div className="flex items-center gap-3 mt-2">
+                      <div className="flex-1 h-1.5 bg-gray-800 rounded-sm overflow-hidden">
+                        <div className={`h-full rounded-sm ${rate >= 50 ? 'bg-[#059669]' : rate >= 25 ? 'bg-amber-500' : 'bg-[#DC2626]'}`} style={{ width: `${rate}%` }} />
+                      </div>
+                      <span className="font-mono text-[10px] text-gray-500">
+                        {deliveredCount}/{totalCommitments} YJ commitments delivered ({rate}%)
+                      </span>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+            )}
 
             {/* Live Feed — Recent Ministerial Statements */}
             <div className="border border-gray-700 rounded-sm">
