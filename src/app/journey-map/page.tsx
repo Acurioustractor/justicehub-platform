@@ -235,7 +235,7 @@ export default async function JourneyMapPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
             <StatCard label="NQ Programs" value={totalNqPrograms} />
             <StatCard label="Funding Tracked" value={formatCurrency(totalNqFunding + totalNqTenderValue)} />
-            <StatCard label="NQ Voices" value={4} />
+            <StatCard label="NQ Voices" value={new Set(Object.values(STAGE_QUOTES).map(q => q.name)).size} />
             <StatCard label="Commitments" value={totalCommitments} />
           </div>
 
@@ -322,7 +322,8 @@ export default async function JourneyMapPage() {
                       </blockquote>
                       <p className="text-sm text-gray-400 mt-3 font-mono">
                         &mdash; {quote.name}, {quote.location}
-                        <span className="text-gray-600 ml-2">{quote.role}</span>
+                        <br />
+                        <span className="text-gray-500">{quote.role}</span>
                       </p>
                     </div>
 

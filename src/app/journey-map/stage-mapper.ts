@@ -70,7 +70,8 @@ export const STAGE_KEYWORDS: Record<StageKey, string[]> = {
   child_protection: [
     'child protection', 'child safety', 'out of home care', 'foster',
     'kinship', 'family support', 'placement', 'family services',
-    'child and family', 'family intervention',
+    'child and family', 'family intervention', 'domestic and family violence',
+    'family violence',
   ],
   education: [
     'education', 'school', 'attendance', 'training', 'learning',
@@ -79,7 +80,8 @@ export const STAGE_KEYWORDS: Record<StageKey, string[]> = {
   first_contact: [
     'diversion', 'caution', 'early intervention', 'prevention',
     'police', 'first contact', 'community program', 'restorative',
-    'youth program', 'community safety',
+    'youth program', 'community safety', 'youth support', 'young offender',
+    'youth service', 'decision making', 'making decisions',
   ],
   bail_courts: [
     'bail', 'court', 'legal', 'sentencing', 'justice group',
@@ -92,6 +94,7 @@ export const STAGE_KEYWORDS: Record<StageKey, string[]> = {
   post_detention: [
     'reintegration', 'transition', 'aftercare', 'post-release',
     'supervision', 'parole', 'probation', 'community service order',
+    'foyer', 'housing', 'reset',
   ],
   employment_healing: [
     'employment', 'job', 'healing', 'cultural', 'wellbeing',
