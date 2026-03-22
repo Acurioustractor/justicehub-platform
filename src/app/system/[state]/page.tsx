@@ -5,7 +5,6 @@ import { notFound } from 'next/navigation';
 import { getStateConfig, getAllStateSlugs } from '../configs';
 import { fmt, fmtCompact, fmtNum, fmtDate, truncate } from '../types';
 import type { SystemConfig } from '../types';
-
 export const dynamic = 'force-dynamic';
 export const revalidate = 1800;
 
@@ -382,7 +381,9 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
                       </div>
                     </div>
                     <div className="flex items-center gap-4 font-mono text-sm shrink-0">
-                      <span className="text-[#DC2626] font-bold">{fmtCompact(s.totalValue)}</span>
+                      <span data-drill="top-suppliers" data-state={config.state} data-title="Top Suppliers" className="cursor-pointer border-b border-dashed border-current/30 hover:border-current/60">
+                        <span className="text-[#DC2626] font-bold">{fmtCompact(s.totalValue)}</span>
+                      </span>
                       <span className="text-gray-600 text-xs">{s.contracts}c</span>
                     </div>
                   </div>
@@ -401,7 +402,9 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
             <div className="px-4 py-4">
               <div className="flex flex-wrap gap-6 font-mono text-sm mb-4">
                 <span>
-                  <span className="text-[#059669] text-xl font-bold">{fmtCompact(config.spotlight.totalFunding)}</span>
+                  <span data-drill="spotlight-funding" data-state={config.state} data-title={config.spotlight.title} className="cursor-pointer border-b border-dashed border-current/30 hover:border-current/60">
+                    <span className="text-[#059669] text-xl font-bold">{fmtCompact(config.spotlight.totalFunding)}</span>
+                  </span>
                   <span className="text-gray-400 ml-2">total funding</span>
                 </span>
                 <span className="text-gray-600">|</span>
@@ -439,7 +442,9 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
                 {fundingBySource.map((item) => (
                     <div key={item.source} className="bg-gray-900/50 border border-gray-800 rounded-sm px-3 py-3">
                       <div className="font-mono text-xs text-gray-400 uppercase tracking-wide mb-1 truncate" title={item.source}>{item.source}</div>
-                      <div className="font-mono text-lg text-[#DC2626] font-bold">{fmtCompact(item.total)}</div>
+                      <span data-drill="funding-by-source" data-state={config.state} data-title={`Funding: ${item.source}`} className="cursor-pointer border-b border-dashed border-current/30 hover:border-current/60">
+                        <div className="font-mono text-lg text-[#DC2626] font-bold">{fmtCompact(item.total)}</div>
+                      </span>
                       <div className="font-mono text-xs text-gray-500">{fmtNum(item.count)} records</div>
                     </div>
                   ))}
@@ -524,8 +529,10 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
                 {totalSpending != null ? (
                   <>
                     <div className="flex items-baseline gap-4 mb-4">
-                      <span className="font-mono text-3xl font-bold text-[#0A0A0A]">
-                        {fmtCompact(totalSpending * 1000)}
+                      <span data-drill="rogs-expenditure" data-state={config.state} data-title="YJ Total Expenditure" className="cursor-pointer border-b border-dashed border-current/30 hover:border-current/60">
+                        <span className="font-mono text-3xl font-bold text-[#0A0A0A]">
+                          {fmtCompact(totalSpending * 1000)}
+                        </span>
                       </span>
                       <span className="text-sm text-gray-500">total YJ expenditure</span>
                     </div>
@@ -805,18 +812,24 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
                       <p className="text-sm text-[#0A0A0A] font-bold">Detention</p>
                       <p className="font-mono text-xs text-gray-400">per young person per day</p>
                     </div>
-                    <span className="font-mono text-2xl text-[#DC2626] font-bold">{fmt(DETENTION_COST_PER_DAY)}</span>
+                    <span data-drill="rogs-detention-cost" data-state={config.state} data-title="Detention Cost Per Day" className="cursor-pointer border-b border-dashed border-current/30 hover:border-current/60">
+                      <span className="font-mono text-2xl text-[#DC2626] font-bold">{fmt(DETENTION_COST_PER_DAY)}</span>
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-sm text-[#0A0A0A] font-bold">Community-based</p>
                       <p className="font-mono text-xs text-gray-400">per young person per day</p>
                     </div>
-                    <span className="font-mono text-2xl text-[#059669] font-bold">~{fmt(COMMUNITY_COST_PER_DAY)}</span>
+                    <span data-drill="rogs-community-cost" data-state={config.state} data-title="Community Cost Per Day" className="cursor-pointer border-b border-dashed border-current/30 hover:border-current/60">
+                      <span className="font-mono text-2xl text-[#059669] font-bold">~{fmt(COMMUNITY_COST_PER_DAY)}</span>
+                    </span>
                   </div>
                   <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
                     <p className="text-sm text-gray-500">Cost ratio</p>
-                    <span className="font-mono text-3xl text-[#DC2626] font-bold">{DETENTION_COMMUNITY_RATIO}x</span>
+                    <span data-drill="rogs-detention-cost" data-state={config.state} data-title="Cost Ratio Detail" className="cursor-pointer border-b border-dashed border-current/30 hover:border-current/60">
+                      <span className="font-mono text-3xl text-[#DC2626] font-bold">{DETENTION_COMMUNITY_RATIO}x</span>
+                    </span>
                   </div>
                 </div>
 
@@ -918,9 +931,11 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
             {/* Child Protection → Youth Justice */}
             <div className="border border-gray-700 rounded-sm p-6">
               <div className="font-mono text-xs text-[#DC2626] tracking-widest uppercase mb-3">Child Protection → Youth Justice</div>
-              <div className="font-mono text-5xl font-bold text-[#DC2626] mb-2">
-                {getCrossover('crossover_rate') ?? '72.9'}%
-              </div>
+              <span data-drill="crossover-stats" data-state={config.state} data-title="Cross-System Statistics" className="cursor-pointer border-b border-dashed border-current/30 hover:border-current/60">
+                <div className="font-mono text-5xl font-bold text-[#DC2626] mb-2">
+                  {getCrossover('crossover_rate') ?? '72.9'}%
+                </div>
+              </span>
               <p className="text-sm text-gray-400 mb-4">
                 of {config.state} youth justice kids had child protection contact in the prior 10 years
               </p>
@@ -1312,6 +1327,88 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
           Generated from justicehub.org.au/system/{config.slug} — Data: QLD Open Data, AIHW, ROGS, Empathy Ledger
         </div>
       </footer>
+
+      {/* Drill-down inline script — avoids Next.js 14 HMR crash with client components */}
+      <script dangerouslySetInnerHTML={{ __html: `
+        (function() {
+          var panel = null;
+          document.addEventListener('click', function(e) {
+            var el = e.target.closest('[data-drill]');
+            if (!el) return;
+            e.preventDefault();
+            var id = el.dataset.drill;
+            var state = el.dataset.state;
+            var title = el.dataset.title || id;
+            showDrillDown(id, state, title);
+          });
+          function showDrillDown(id, state, title) {
+            if (panel) panel.remove();
+            var overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;justify-content:flex-end;';
+            overlay.innerHTML = '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.6)" data-close></div>'
+              + '<div style="position:relative;width:100%;max-width:640px;background:#0A0A0A;border-left:1px solid #333;overflow-y:auto;box-shadow:0 0 40px rgba(0,0,0,0.5)">'
+              + '<div style="position:sticky;top:0;background:#0A0A0A;border-bottom:1px solid #333;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;z-index:1">'
+              + '<div><h3 style="font-family:Space Grotesk,sans-serif;font-size:18px;font-weight:700;color:#F5F0E8;margin:0">' + title + '</h3></div>'
+              + '<button data-close style="color:#888;font-family:monospace;font-size:13px;background:none;border:none;cursor:pointer;padding:4px 8px">[ESC]</button>'
+              + '</div>'
+              + '<div id="drill-body" style="padding:24px"><div style="display:flex;align-items:center;gap:12px;justify-content:center;padding:48px 0"><div style="width:16px;height:16px;border:2px solid #333;border-top-color:#DC2626;border-radius:50%;animation:spin 1s linear infinite"></div><span style="font-family:monospace;font-size:13px;color:#888">Loading data...</span></div></div>'
+              + '</div>';
+            var style = document.createElement('style');
+            style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+            overlay.appendChild(style);
+            document.body.appendChild(overlay);
+            document.body.style.overflow = 'hidden';
+            panel = overlay;
+            overlay.addEventListener('click', function(ev) {
+              if (ev.target.hasAttribute('data-close')) closeDrill();
+            });
+            document.addEventListener('keydown', escHandler);
+            fetch('/api/system/drill-down?id=' + encodeURIComponent(id) + '&state=' + encodeURIComponent(state))
+              .then(function(r) { return r.json(); })
+              .then(function(data) { renderData(data); })
+              .catch(function(err) {
+                document.getElementById('drill-body').innerHTML = '<p style="font-family:monospace;font-size:13px;color:#DC2626;text-align:center;padding:48px 0">Error: ' + err.message + '</p>';
+              });
+          }
+          function renderData(data) {
+            var body = document.getElementById('drill-body');
+            if (!body) return;
+            var conf = data.confidence || 'estimate';
+            var dot = conf === 'verified' ? '#059669' : conf === 'cross-referenced' ? '#D97706' : '#DC2626';
+            var html = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">'
+              + '<span style="display:inline-flex;align-items:center;gap:4px;font-family:monospace;font-size:11px;color:#888"><span style="width:6px;height:6px;border-radius:50%;background:' + dot + ';display:inline-block"></span>' + conf.charAt(0).toUpperCase() + conf.slice(1) + '</span>'
+              + '<span style="font-family:monospace;font-size:10px;color:#555">' + (data.total || 0).toLocaleString() + ' records</span>'
+              + '</div>';
+            html += '<div style="overflow-x:auto"><table style="width:100%;font-family:monospace;font-size:13px;border-collapse:collapse">';
+            html += '<thead><tr style="border-bottom:1px solid #333">';
+            (data.columns || []).forEach(function(col) {
+              html += '<th style="padding:8px 12px;font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.05em;font-weight:500;text-align:' + (col.align === 'right' ? 'right' : 'left') + '">' + col.label + '</th>';
+            });
+            html += '</tr></thead><tbody>';
+            (data.rows || []).forEach(function(row) {
+              html += '<tr style="border-bottom:1px solid #1a1a1a">';
+              (data.columns || []).forEach(function(col) {
+                var val = row[col.key];
+                var display = val == null ? '--' : typeof val === 'number' ? (Math.abs(val) >= 1e6 ? '$' + (val/1e6).toFixed(1) + 'M' : Math.abs(val) >= 1e3 ? '$' + (val/1e3).toFixed(0) + 'K' : Number.isInteger(val) ? val.toLocaleString() : val.toFixed(2)) : String(val);
+                html += '<td style="padding:8px 12px;color:#F5F0E8;text-align:' + (col.align === 'right' ? 'right' : 'left') + '">' + display + '</td>';
+              });
+              html += '</tr>';
+            });
+            html += '</tbody></table></div>';
+            html += '<div style="border-top:1px solid #333;margin-top:16px;padding-top:16px;display:flex;justify-content:space-between">'
+              + '<span style="font-family:monospace;font-size:10px;color:#555">Source: ' + (data.source || 'Unknown') + '</span>'
+              + '<span style="font-family:monospace;font-size:10px;color:#444">Updated: ' + (data.lastUpdated || 'Unknown') + '</span>'
+              + '</div>';
+            body.innerHTML = html;
+          }
+          function escHandler(e) { if (e.key === 'Escape') closeDrill(); }
+          function closeDrill() {
+            if (panel) { panel.remove(); panel = null; }
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', escHandler);
+          }
+        })();
+      `}} />
     </div>
   );
 }
