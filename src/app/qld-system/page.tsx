@@ -1144,6 +1144,82 @@ export default async function QldSystemPage() {
               Every point of intervention that fails pushes them further down the pipeline.
             </p>
           </div>
+
+          {/* QLD Detention Detail from AIHW */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <div className="border border-gray-700 rounded-sm p-6">
+              <div className="font-mono text-xs text-gray-400 tracking-widest uppercase mb-3">QLD Youth Justice Supervision 2023-24</div>
+              <div className="space-y-3">
+                {[
+                  { label: 'Total under supervision', val: getCrossover('total_supervision') ?? 4134, color: 'text-[#F5F0E8]' },
+                  { label: 'Community supervision', val: getCrossover('community_supervision') ?? 3768, color: 'text-[#059669]' },
+                  { label: 'Detention', val: getCrossover('detention_supervision') ?? 918, color: 'text-[#DC2626]' },
+                  { label: 'Avg daily in detention', val: getCrossover('avg_daily_detention') ?? 282, color: 'text-[#DC2626]' },
+                ].map(r => (
+                  <div key={r.label} className="flex justify-between text-sm">
+                    <span className="text-gray-400">{r.label}</span>
+                    <span className={`font-mono font-bold ${r.color}`}>{fmtNum(r.val)}</span>
+                  </div>
+                ))}
+                <div className="border-t border-gray-700 pt-3 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">On remand (not sentenced)</span>
+                    <span className="font-mono text-[#DC2626] font-bold">71%</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Indigenous proportion</span>
+                    <span className="font-mono text-[#DC2626] font-bold">62%</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Male</span>
+                    <span className="font-mono text-[#F5F0E8]">79%</span>
+                  </div>
+                </div>
+              </div>
+              <p className="font-mono text-xs text-gray-600 mt-3">Source: AIHW Youth Justice 2023-24</p>
+            </div>
+
+            <div className="border border-gray-700 rounded-sm p-6">
+              <div className="font-mono text-xs text-gray-400 tracking-widest uppercase mb-3">QFCC Crossover Detail</div>
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">QLD crossover cohort</span>
+                  <span className="font-mono text-[#DC2626] font-bold">{fmtNum(getCrossover('crossover_count') ?? 1863)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">First Nations females crossover</span>
+                  <span className="font-mono text-[#DC2626] font-bold">89.6%</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">First Nations males crossover</span>
+                  <span className="font-mono text-[#DC2626] font-bold">78.1%</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Non-Indigenous females crossover</span>
+                  <span className="font-mono text-[#F5F0E8]">75.3%</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Non-Indigenous males crossover</span>
+                  <span className="font-mono text-[#F5F0E8]">57.9%</span>
+                </div>
+                <div className="border-t border-gray-700 pt-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Had OOHC placement</span>
+                    <span className="font-mono text-[#DC2626] font-bold">61%</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Had care orders</span>
+                    <span className="font-mono text-[#F5F0E8]">52%</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">First supervised aged 10</span>
+                    <span className="font-mono text-[#DC2626] font-bold">94%</span>
+                  </div>
+                </div>
+              </div>
+              <p className="font-mono text-xs text-gray-600 mt-3">Source: QFCC Crossover Cohort Data Insights 2024</p>
+            </div>
+          </div>
         </div>
       </section>
 
