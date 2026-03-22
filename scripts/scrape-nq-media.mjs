@@ -69,6 +69,16 @@ const SEARCH_QUERIES = [
   '"North Queensland" "youth justice" OR "young offenders"',
   'Townsville watch house children',
   'QLD youth detention Indigenous overrepresentation north',
+  'Cleveland Youth Detention Centre overcrowding',
+  'Townsville watch house children sleeping on floor',
+  '"youth justice" Queensland inquiry recommendations',
+  'Mount Isa youth crime community response elders',
+  'Palm Island community justice group',
+  'North Queensland youth recidivism rates',
+  '"child protection" "youth justice" Queensland crossover',
+  'Townsville youth housing homelessness',
+  'QLD youth justice budget detention costs',
+  'Aboriginal Torres Strait Islander youth justice Queensland report',
 ];
 
 const NQ_LOCATION_TAGS = [
