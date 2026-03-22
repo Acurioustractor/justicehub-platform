@@ -1039,29 +1039,197 @@ export default async function SystemTerminalDashboard() {
         </div>
       </footer>
 
-      {/* Inline sort script */}
+      {/* Inline interactive script — sort, drill-down, copy, keyboard nav */}
       <script dangerouslySetInnerHTML={{ __html: `
         (function() {
+          // ── 1. Sort table ──
           var sortBtns = { value: document.getElementById('sort-value'), contracts: document.getElementById('sort-contracts'), name: document.getElementById('sort-name') };
           var container = document.getElementById('org-table');
-          if (!container) return;
-          function sortTable(key) {
-            var rows = Array.from(container.querySelectorAll('[data-org-row]'));
-            rows.sort(function(a, b) {
-              if (key === 'value') return Number(b.dataset.value) - Number(a.dataset.value);
-              if (key === 'contracts') return Number(b.dataset.contracts) - Number(a.dataset.contracts);
-              return a.dataset.name.localeCompare(b.dataset.name);
-            });
-            rows.forEach(function(row, i) {
-              row.querySelector('span').textContent = String(i + 1).padStart(2, '0');
-              container.appendChild(row);
-            });
+          if (container) {
+            function sortTable(key) {
+              var rows = Array.from(container.querySelectorAll('[data-org-row]'));
+              rows.sort(function(a, b) {
+                if (key === 'value') return Number(b.dataset.value) - Number(a.dataset.value);
+                if (key === 'contracts') return Number(b.dataset.contracts) - Number(a.dataset.contracts);
+                return a.dataset.name.localeCompare(b.dataset.name);
+              });
+              rows.forEach(function(row, i) {
+                row.querySelector('span').textContent = String(i + 1).padStart(2, '0');
+                container.appendChild(row);
+              });
+              Object.entries(sortBtns).forEach(function(entry) {
+                if (entry[1]) entry[1].style.color = entry[0] === key ? '#DC2626' : '#555';
+              });
+            }
             Object.entries(sortBtns).forEach(function(entry) {
-              if (entry[1]) entry[1].style.color = entry[0] === key ? '#DC2626' : '#555';
+              if (entry[1]) entry[1].addEventListener('click', function() { sortTable(entry[0]); });
             });
           }
-          Object.entries(sortBtns).forEach(function(entry) {
-            if (entry[1]) entry[1].addEventListener('click', function() { sortTable(entry[0]); });
+
+          // ── 2. Org drill-down panel ──
+          var panel = null;
+          function escHandler(e) { if (e.key === 'Escape') closeDrill(); }
+          function closeDrill() {
+            if (panel) { panel.remove(); panel = null; }
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', escHandler);
+          }
+
+          // Click org name → drill-down
+          if (container) {
+            container.addEventListener('click', function(e) {
+              var row = e.target.closest('[data-org-row]');
+              if (!row) return;
+              // Don't trigger on state link clicks
+              if (e.target.closest('a')) return;
+              var orgName = row.dataset.name;
+              var stateEl = row.querySelector('a');
+              var state = stateEl ? stateEl.textContent.trim() : 'QLD';
+              showOrgDrill(orgName, state);
+            });
+          }
+
+          function showOrgDrill(orgName, state) {
+            closeDrill();
+            var overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;justify-content:flex-end;';
+            overlay.innerHTML = '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.6)" data-close></div>'
+              + '<div style="position:relative;width:100%;max-width:640px;background:#0A0A0A;border-left:1px solid #333;overflow-y:auto;box-shadow:0 0 40px rgba(0,0,0,0.5)">'
+              + '<div style="position:sticky;top:0;background:#0A0A0A;border-bottom:1px solid #333;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;z-index:1">'
+              + '<div><h3 style="font-family:Space Grotesk,sans-serif;font-size:18px;font-weight:700;color:#F5F0E8;margin:0">' + orgName + '</h3>'
+              + '<p style="font-family:monospace;font-size:11px;color:#888;margin:4px 0 0">' + state + ' · Funding History + Programs</p></div>'
+              + '<button data-close style="color:#888;font-family:monospace;font-size:13px;background:none;border:none;cursor:pointer;padding:4px 8px">[ESC]</button>'
+              + '</div>'
+              + '<div id="drill-body" style="padding:24px"><div style="display:flex;align-items:center;gap:12px;justify-content:center;padding:48px 0"><div style="width:16px;height:16px;border:2px solid #333;border-top-color:#DC2626;border-radius:50%;animation:spin 1s linear infinite"></div><span style="font-family:monospace;font-size:13px;color:#888">Loading...</span></div></div>'
+              + '</div>';
+            var style = document.createElement('style');
+            style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+            overlay.appendChild(style);
+            document.body.appendChild(overlay);
+            document.body.style.overflow = 'hidden';
+            panel = overlay;
+            overlay.addEventListener('click', function(ev) {
+              if (ev.target.hasAttribute('data-close')) closeDrill();
+            });
+            document.addEventListener('keydown', escHandler);
+
+            fetch('/api/system/drill-down?id=org-detail&state=' + encodeURIComponent(state) + '&org=' + encodeURIComponent(orgName))
+              .then(function(r) { return r.json(); })
+              .then(function(data) { renderDrill(data); })
+              .catch(function(err) {
+                document.getElementById('drill-body').innerHTML = '<p style="font-family:monospace;font-size:13px;color:#DC2626;text-align:center;padding:48px 0">Error: ' + err.message + '</p>';
+              });
+          }
+
+          function renderDrill(data) {
+            var body = document.getElementById('drill-body');
+            if (!body) return;
+            var conf = data.confidence || 'estimate';
+            var dot = conf === 'verified' ? '#059669' : conf === 'cross-referenced' ? '#D97706' : '#DC2626';
+            var html = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">'
+              + '<span style="display:inline-flex;align-items:center;gap:4px;font-family:monospace;font-size:11px;color:#888"><span style="width:6px;height:6px;border-radius:50%;background:' + dot + ';display:inline-block"></span>' + conf.charAt(0).toUpperCase() + conf.slice(1) + '</span>'
+              + '<span style="font-family:monospace;font-size:10px;color:#555">' + (data.total || 0).toLocaleString() + ' records</span>'
+              + '</div>';
+            html += '<div style="overflow-x:auto"><table style="width:100%;font-family:monospace;font-size:13px;border-collapse:collapse">';
+            html += '<thead><tr style="border-bottom:1px solid #333">';
+            (data.columns || []).forEach(function(col) {
+              html += '<th style="padding:8px 12px;font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.05em;font-weight:500;text-align:' + (col.align === 'right' ? 'right' : 'left') + '">' + col.label + '</th>';
+            });
+            html += '</tr></thead><tbody>';
+            (data.rows || []).forEach(function(row) {
+              var isSection = String(row[data.columns[0].key] || '').startsWith('──');
+              html += '<tr style="border-bottom:1px solid ' + (isSection ? '#333' : '#1a1a1a') + ';' + (isSection ? 'background:#111' : '') + '">';
+              (data.columns || []).forEach(function(col) {
+                var val = row[col.key];
+                var style = 'padding:8px 12px;text-align:' + (col.align === 'right' ? 'right' : 'left') + ';';
+                if (isSection) style += 'color:#DC2626;font-weight:bold;font-size:11px;';
+                else style += 'color:#F5F0E8;';
+                var display = val == null ? '' : typeof val === 'number' ? (Math.abs(val) >= 1e6 ? '$' + (val/1e6).toFixed(1) + 'M' : Math.abs(val) >= 1e3 ? '$' + (val/1e3).toFixed(0) + 'K' : Number.isInteger(val) ? val.toLocaleString() : String(val)) : String(val);
+                html += '<td style="' + style + '">' + display + '</td>';
+              });
+              html += '</tr>';
+            });
+            html += '</tbody></table></div>';
+            html += '<div style="border-top:1px solid #333;margin-top:16px;padding-top:16px;display:flex;justify-content:space-between">'
+              + '<span style="font-family:monospace;font-size:10px;color:#555">Source: ' + (data.source || 'Unknown') + '</span>'
+              + '<span style="font-family:monospace;font-size:10px;color:#444">Updated: ' + (data.lastUpdated || 'Unknown') + '</span>'
+              + '</div>';
+            body.innerHTML = html;
+          }
+
+          // ── 3. Click-to-copy with source ──
+          document.addEventListener('dblclick', function(e) {
+            var el = e.target.closest('[class*="font-mono"][class*="font-bold"]');
+            if (!el) return;
+            var text = el.textContent.trim();
+            if (!text || text.length > 30) return;
+            // Find nearest source attribution
+            var parent = el.closest('div[class*="border"]') || el.parentElement;
+            var sourceEl = parent ? parent.querySelector('[class*="text-gray-700"], [class*="text-gray-600"]') : null;
+            var source = sourceEl ? sourceEl.textContent.trim() : 'JusticeHub System Terminal';
+            var copyText = text + ' (Source: ' + source + ' — justicehub.org.au/system)';
+            navigator.clipboard.writeText(copyText).then(function() {
+              // Show toast
+              var toast = document.createElement('div');
+              toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#059669;color:#F5F0E8;font-family:monospace;font-size:13px;padding:8px 16px;border-radius:4px;z-index:99999;';
+              toast.textContent = 'Copied: ' + text;
+              document.body.appendChild(toast);
+              setTimeout(function() { toast.remove(); }, 2000);
+            });
+          });
+
+          // ── 4. Keyboard navigation ──
+          var focusedRow = -1;
+          var allRows = [];
+          function refreshRows() {
+            allRows = Array.from(document.querySelectorAll('[data-org-row], #state-table a'));
+          }
+          function highlightRow(idx) {
+            allRows.forEach(function(r) { r.style.background = ''; });
+            if (idx >= 0 && idx < allRows.length) {
+              allRows[idx].style.background = 'rgba(220,38,38,0.1)';
+              allRows[idx].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+          }
+          document.addEventListener('keydown', function(e) {
+            if (panel) return; // don't nav while drill-down is open
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'j' || e.key === 'ArrowDown') {
+              e.preventDefault();
+              refreshRows();
+              focusedRow = Math.min(focusedRow + 1, allRows.length - 1);
+              highlightRow(focusedRow);
+            } else if (e.key === 'k' || e.key === 'ArrowUp') {
+              e.preventDefault();
+              refreshRows();
+              focusedRow = Math.max(focusedRow - 1, 0);
+              highlightRow(focusedRow);
+            } else if (e.key === 'Enter' && focusedRow >= 0) {
+              refreshRows();
+              var row = allRows[focusedRow];
+              if (row && row.dataset && row.dataset.name) {
+                var stateEl = row.querySelector('a');
+                showOrgDrill(row.dataset.name, stateEl ? stateEl.textContent.trim() : 'QLD');
+              } else if (row && row.href) {
+                window.location.href = row.href;
+              }
+            } else if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+              // Show keyboard shortcuts help
+              var existing = document.getElementById('kb-help');
+              if (existing) { existing.remove(); return; }
+              var help = document.createElement('div');
+              help.id = 'kb-help';
+              help.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#0A0A0A;border:1px solid #333;padding:16px;border-radius:4px;z-index:99999;font-family:monospace;font-size:12px;color:#888;min-width:200px;';
+              help.innerHTML = '<div style="color:#F5F0E8;font-weight:bold;margin-bottom:8px">Keyboard Shortcuts</div>'
+                + '<div><span style="color:#DC2626">j/↓</span> Next row</div>'
+                + '<div><span style="color:#DC2626">k/↑</span> Previous row</div>'
+                + '<div><span style="color:#DC2626">Enter</span> Open detail</div>'
+                + '<div><span style="color:#DC2626">Esc</span> Close panel</div>'
+                + '<div><span style="color:#DC2626">dbl-click</span> Copy number + source</div>'
+                + '<div style="margin-top:8px"><span style="color:#DC2626">?</span> Toggle this help</div>';
+              document.body.appendChild(help);
+              setTimeout(function() { help.remove(); }, 5000);
+            }
           });
         })();
       `}} />
