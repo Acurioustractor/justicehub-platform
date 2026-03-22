@@ -181,7 +181,7 @@ export default async function QldSystemPage() {
   const supabase = createServiceClient();
 
   // Fetch all dynamic data in parallel
-  const [charterRes, statementsRes, hansardRes, fundingRes, interventionsRes, rogsRes, crossoverRes, diaryRes] = await Promise.all([
+  const [charterRes, statementsRes, hansardRes, fundingRes, interventionsRes, rogsRes, crossoverRes, diaryRes, accountabilityRes] = await Promise.all([
     supabase
       .from('civic_charter_commitments')
       .select('*')
@@ -232,6 +232,12 @@ export default async function QldSystemPage() {
       .select('id, minister_name, meeting_date, who_met, organisation, purpose, meeting_type')
       .order('meeting_date', { ascending: false })
       .limit(500),
+
+    supabase
+      .from('cross_system_stats')
+      .select('*')
+      .eq('domain', 'accountability')
+      .order('value', { ascending: false }),
   ]);
 
   const charter = (charterRes.data || []) as CharterCommitment[];
@@ -273,6 +279,22 @@ export default async function QldSystemPage() {
     const lower = d.organisation.toLowerCase();
     return !INTERNAL_KEYWORDS.some(kw => lower.includes(kw)) && !lower.startsWith('hon ');
   });
+
+  // Accountability data — group by supplier
+  type AccountabilityStat = { metric: string; value: number; unit: string; notes: string | null; source_name: string };
+  const accountabilityStats = (accountabilityRes.data || []) as AccountabilityStat[];
+  const supplierNames = [...new Set(accountabilityStats.filter(s => s.notes).map(s => s.notes!.split(' — ')[0]))];
+  const supplierData = supplierNames.map(name => {
+    const stats = accountabilityStats.filter(s => s.notes?.startsWith(name));
+    const contractVal = stats.find(s => s.metric === 'supplier_qld_contract_value')?.value ?? 0;
+    const acncReg = stats.find(s => s.metric === 'supplier_acnc_registered')?.value === 1;
+    const inDb = stats.find(s => s.metric === 'supplier_in_org_database')?.value === 1;
+    const hasOutcomes = stats.find(s => s.metric === 'supplier_outcome_data_available')?.value === 1;
+    const hasFinancials = stats.find(s => s.metric === 'supplier_financial_data_available')?.value === 1;
+    const isPrivatePrison = stats.find(s => s.metric === 'supplier_private_prison_operator')?.value === 1;
+    const isIndigenous = stats.find(s => s.metric === 'supplier_indigenous_controlled')?.value === 1;
+    return { name, contractVal, acncReg, inDb, hasOutcomes, hasFinancials, isPrivatePrison, isIndigenous };
+  }).sort((a, b) => b.contractVal - a.contractVal);
 
   // ── Computed values ──
 
@@ -908,7 +930,68 @@ export default async function QldSystemPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-           SECTION 3.5: THE PIPELINE (Cross-System Crossover)
+           SECTION 3.5: THE ACCOUNTABILITY
+           ═══════════════════════════════════════════════════════════════ */}
+      {supplierData.length > 0 && (
+        <section className="bg-[#0A0A0A] text-[#F5F0E8] px-6 py-16">
+          <div className="max-w-7xl mx-auto">
+            <SectionHeading title="THE ACCOUNTABILITY" dark />
+
+            <p className="text-gray-400 text-sm font-mono mb-8 max-w-3xl">
+              These organisations receive billions in public money for youth justice, child safety, and corrections.
+              What do we know about their outcomes?
+            </p>
+
+            <div className="border border-gray-700 rounded-sm">
+              <div className="border-b border-gray-700 px-4 py-2 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#DC2626]" />
+                  <span className="font-mono text-xs text-gray-400 tracking-widest uppercase">Top Suppliers — Transparency Scorecard</span>
+                </div>
+                <span className="font-mono text-xs text-gray-500">{supplierData.length} suppliers · {fmtCompact(supplierData.reduce((s, d) => s + d.contractVal, 0))} total</span>
+              </div>
+
+              {/* Header row */}
+              <div className="grid grid-cols-[1fr_100px_60px_60px_60px_60px] gap-2 px-4 py-2 border-b border-gray-700 font-mono text-[10px] text-gray-500 uppercase tracking-wider">
+                <span>Supplier</span>
+                <span className="text-right">Contracts</span>
+                <span className="text-center">ACNC</span>
+                <span className="text-center">In DB</span>
+                <span className="text-center">Outcomes</span>
+                <span className="text-center">Financials</span>
+              </div>
+
+              <div className="divide-y divide-gray-800">
+                {supplierData.map((s) => (
+                  <div key={s.name} className="grid grid-cols-[1fr_100px_60px_60px_60px_60px] gap-2 px-4 py-2.5 hover:bg-gray-900/50 transition-colors items-center">
+                    <div className="min-w-0">
+                      <span className="text-sm text-[#F5F0E8] truncate block">{s.name}</span>
+                      {s.isPrivatePrison && <span className="font-mono text-[10px] text-[#DC2626]">PRIVATE PRISON OPERATOR</span>}
+                      {s.isIndigenous && <span className="font-mono text-[10px] text-[#059669]">INDIGENOUS-CONTROLLED</span>}
+                    </div>
+                    <span className="font-mono text-sm text-[#DC2626] font-bold text-right">{fmtCompact(s.contractVal)}</span>
+                    <span className="text-center">{s.acncReg ? <span className="text-[#059669]">&#10003;</span> : <span className="text-[#DC2626]">&#10007;</span>}</span>
+                    <span className="text-center">{s.inDb ? <span className="text-[#059669]">&#10003;</span> : <span className="text-gray-600">—</span>}</span>
+                    <span className="text-center">{s.hasOutcomes ? <span className="text-[#059669]">&#10003;</span> : <span className="text-[#DC2626]">&#10007;</span>}</span>
+                    <span className="text-center">{s.hasFinancials ? <span className="text-[#059669]">&#10003;</span> : <span className="text-[#DC2626]">&#10007;</span>}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-t border-gray-600 px-4 py-3 bg-gray-900/30">
+                <p className="font-mono text-xs text-gray-400">
+                  <span className="text-[#059669]">&#10003;</span> = publicly available &nbsp;
+                  <span className="text-[#DC2626]">&#10007;</span> = not found or not published &nbsp;
+                  Sources: ACNC Register, Supplier annual reports, QLD Open Data
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════
+           SECTION 4: THE PIPELINE (Cross-System Crossover)
            ═══════════════════════════════════════════════════════════════ */}
       <section className="bg-[#0A0A0A] text-[#F5F0E8] px-6 py-16">
         <div className="max-w-7xl mx-auto">
@@ -997,6 +1080,34 @@ export default async function QldSystemPage() {
               </div>
               <p className="font-mono text-xs text-gray-600 mt-3">Source: BOCSAR/DSS 2023, AIHW 2023-24</p>
             </div>
+          </div>
+
+          {/* NDIS NQ Spotlight */}
+          <div className="border border-gray-700 rounded-sm p-6 mb-8">
+            <div className="font-mono text-xs text-gray-400 tracking-widest uppercase mb-3">NDIS Participants in North Queensland</div>
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              {[
+                { loc: 'Townsville', count: getCrossover('ndis_participants_townsville') ?? 8500 },
+                { loc: 'Cairns', count: getCrossover('ndis_participants_cairns') ?? 6800 },
+                { loc: 'Mount Isa', count: getCrossover('ndis_participants_mount_isa') ?? 1200 },
+              ].map(r => (
+                <div key={r.loc} className="text-center">
+                  <div className="font-mono text-2xl font-bold text-[#F5F0E8]">{fmtNum(r.count)}</div>
+                  <div className="text-xs text-gray-400">{r.loc}</div>
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-2 gap-4 border-t border-gray-700 pt-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Youth (15-24) with justice contact</span>
+                <span className="font-mono text-[#DC2626] font-bold">28%</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Avg annual NDIS plan (youth)</span>
+                <span className="font-mono text-[#F5F0E8]">{fmt(getCrossover('ndis_avg_annual_plan_youth', 'National') ?? 52000)}</span>
+              </div>
+            </div>
+            <p className="font-mono text-xs text-gray-600 mt-3">Source: NDIS Quarterly Report Dec 2025, BOCSAR/DSS</p>
           </div>
 
           {/* The Pipeline Visualization */}
