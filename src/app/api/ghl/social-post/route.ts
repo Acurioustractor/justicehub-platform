@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 const GHL_API_BASE = 'https://services.leadconnectorhq.com'
 const GHL_API_KEY = process.env.GHL_API_KEY || ''
 const GHL_LOCATION_ID = process.env.GHL_LOCATION_ID || ''
-const NOTION_DB_ID = 'e400e93e-fd9d-4a21-810c-58d67ed9fe97'
+const NOTION_DB_ID = '7005d0d1-41d3-436c-9f86-526d275c2f10'
 
 // GHL Social Planner: Create Post
 // POST /social-media-posting/:locationId/posts

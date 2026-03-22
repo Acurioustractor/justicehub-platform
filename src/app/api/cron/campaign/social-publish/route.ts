@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
-const NOTION_DB_ID = 'e400e93e-fd9d-4a21-810c-58d67ed9fe97';
+const NOTION_DB_ID = '7005d0d1-41d3-436c-9f86-526d275c2f10';
 const GHL_API_BASE = 'https://services.leadconnectorhq.com';
 
 // Map Notion "Target Accounts" values to GHL platform account IDs
