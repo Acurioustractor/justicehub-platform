@@ -42,7 +42,8 @@ export default async function VerifyPage({ params }: { params: Promise<{ state: 
 
     // Interventions
     supabase.from('alma_interventions').select('id, name, evidence_level, operating_organization_id, portfolio_score, cost_per_young_person, verification_status')
-      .neq('verification_status', 'ai_generated'),
+      .neq('verification_status', 'ai_generated')
+      .contains('geography', [stateUpper]),
 
     // Funding
     supabase.from('justice_funding').select('id', { count: 'exact', head: true }).eq('state', stateUpper),

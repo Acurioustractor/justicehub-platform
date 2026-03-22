@@ -127,6 +127,7 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
       .select('id, name, evidence_level, cost_per_young_person, portfolio_score, operating_organization_id, organizations(name, state)')
       .neq('verification_status', 'ai_generated')
       .not('portfolio_score', 'is', null)
+      .contains('geography', [config.state])
       .order('portfolio_score', { ascending: false })
       .limit(50),
 
@@ -232,10 +233,8 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
   // Justice funding by source (from config)
   const fundingBySource = config.fundingBySource;
 
-  // Filter state interventions (via org state join — strict match only)
-  const stateInterventions = interventions.filter(
-    (i) => i.organizations?.state?.toLowerCase() === config.state.toLowerCase()
-  );
+  // Interventions already filtered by geography in DB query
+  const stateInterventions = interventions;
 
   // Evidence level counts (QLD only)
   const evidenceCounts = stateInterventions.reduce((acc, i) => {
