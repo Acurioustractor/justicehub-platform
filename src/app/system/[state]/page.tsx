@@ -6,9 +6,6 @@ import { getStateConfig, getAllStateSlugs } from '../configs';
 import { fmt, fmtCompact, fmtNum, fmtDate, truncate } from '../types';
 import type { SystemConfig } from '../types';
 
-import nextDynamic from 'next/dynamic';
-const PrintButton = nextDynamic(() => import('./print-button').then(m => ({ default: m.PrintButton })), { ssr: false });
-
 export const dynamic = 'force-dynamic';
 export const revalidate = 1800;
 
@@ -284,7 +281,8 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
               Funding
             </Link>
             <span className="text-gray-700">|</span>
-            <PrintButton />
+            <button id="print-btn" className="text-gray-400 hover:text-[#F5F0E8] transition-colors print:hidden">Export PDF</button>
+            <script dangerouslySetInnerHTML={{ __html: 'document.getElementById("print-btn").onclick=function(){window.print()}' }} />
           </div>
         </div>
       </nav>
