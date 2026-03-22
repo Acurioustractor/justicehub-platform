@@ -67,16 +67,16 @@ const STAGE_QUOTES: Record<StageKey, VoiceQuote> = {
     role: 'Youth Services Worker',
   },
   post_detention: {
-    quote: "The hardship and the struggles and the choices that I've made has made me who I am today. I sit here with a lot of regret, but I don't, because it's what's shaped me.",
-    name: 'Brodie Germaine',
-    location: 'Mount Isa',
-    role: 'Founder, BG Fit',
+    quote: "I was looking at North East Bay, and I was going to make it a little camping place for young kids. It brings you back to reality with culture that you want to do. And it's what you want to do to help you go forward, to help you be more a person.",
+    name: 'Uncle Alan Palm Island',
+    location: 'Palm Island',
+    role: 'Manbarra Elder, Traditional Owner',
   },
   employment_healing: {
-    quote: "I moved back to my community because I want to give back and that's something I thrive by. From 5.30 to 7.30, I work on my business. 8.30 to 4.30, I work full-time at the AMS. Then 5.30 to 7.30, I'm back in the gym.",
-    name: 'Brodie Germaine',
-    location: 'Mount Isa',
-    role: 'Founder, BG Fit',
+    quote: "I love working with the youth. They grown up with me. Sometimes the children, they just want attention. At the moment, we don't have any kind of support for young kids who want to be better.",
+    name: 'Ade Rizer',
+    location: 'Palm Island',
+    role: 'Youth Centre Coordinator',
   },
 };
 
