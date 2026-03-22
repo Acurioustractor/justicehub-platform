@@ -33,16 +33,17 @@ export const qldConfig: SystemConfig = {
     { name: 'Palm Island Community Company', totalValue: 12339633, contracts: 10, departments: ['DCYJMA'], note: 'Indigenous-controlled — Palm Island' },
   ],
 
+  // VERIFIED: YJ-filtered funding by NQ location (2026-03-22)
   spotlight: {
     title: 'North Queensland Spotlight',
-    totalFunding: 350204557,
-    records: 1900,
-    orgs: 691,
+    totalFunding: 327710034,
+    records: 596,
+    orgs: 92,
     locations: [
-      { name: 'Townsville', funding: 182500000, programs: 47 },
-      { name: 'Mount Isa', funding: 89400000, programs: 23 },
-      { name: 'Cairns', funding: 61304557, programs: 31 },
-      { name: 'Palm Island', funding: 17000000, programs: 8 },
+      { name: 'Townsville', funding: 158728904, programs: 44 },
+      { name: 'Cairns', funding: 103918436, programs: 31 },
+      { name: 'Mount Isa', funding: 36224457, programs: 12 },
+      { name: 'Palm Island', funding: 28838237, programs: 5 },
     ],
   },
 
@@ -88,22 +89,22 @@ export const qldConfig: SystemConfig = {
 
   alternativeModel: {
     title: 'The Townsville Model',
-    description: 'A community-controlled hub on the centre block. Built by the community, for the community. Not another government program — a genuine transfer of power and resources.',
+    description: 'A community-controlled hub built by the community, for the community. Townsville already has $159M in YJ funding across 44 orgs — but most goes to placement services, not prevention. Redirecting detention spending ($48M/year for 40 kids) into proven community programs would fund every alternative below.',
     pillars: [
-      { tag: 'Housing', description: 'Safe housing for young people exiting the system' },
-      { tag: 'Employment', description: 'Employment pathways (BG Fit model, real jobs)' },
+      { tag: 'TAIHS', description: 'Indigenous health & cultural connection ($241K/yp, 200 capacity)' },
+      { tag: 'Youth Foyer', description: 'Safe housing for young people exiting the system ($270K/yp)' },
+      { tag: 'PICC', description: 'Palm Island Community Company — 7 community-led programs' },
+      { tag: 'Justice Group', description: 'Townsville Community Justice Group — cultural authority ($198K/yp)' },
+      { tag: 'Employment', description: 'BG Fit model — real jobs, real purpose' },
       { tag: 'Elders', description: 'Elder connection (Uncle George, Kalkadoon knowledge)' },
-      { tag: 'Education', description: 'Flexible education and training support' },
-      { tag: 'Culture', description: 'Cultural healing and identity programs' },
-      { tag: 'Health', description: 'Trauma-informed health and wellbeing' },
     ],
     alternatives: [
-      { name: 'Community-controlled youth hubs', cost: 8000000, count: 6, unit: 'hubs across NQ' },
+      { name: 'TAIHS Youth Support (cultural connection)', cost: 241133, count: 200, unit: 'young people/year' },
+      { name: 'Townsville Youth Foyer (safe housing)', cost: 270011, count: 100, unit: 'young people/year' },
+      { name: 'PICC Palm Island programs (7 programs)', cost: 4777023, count: 1, unit: 'community (NIAA funded)' },
+      { name: 'Community Justice Group (cultural authority)', cost: 198008, count: 150, unit: 'young people/year' },
+      { name: 'Employment pathways (BG Fit model)', cost: 200000, count: 48, unit: 'programs across NQ' },
       { name: 'Full-time youth workers', cost: 80000, count: 120, unit: 'workers for 5 years' },
-      { name: 'Housing packages for young people', cost: 150000, count: 80, unit: 'supported homes' },
-      { name: 'Cultural healing programs', cost: 500000, count: 20, unit: 'programs state-wide' },
-      { name: 'Employment pathways (BG Fit model)', cost: 200000, count: 48, unit: 'programs' },
-      { name: 'Elder-led mentoring programs', cost: 300000, count: 32, unit: 'programs' },
     ],
   },
 
