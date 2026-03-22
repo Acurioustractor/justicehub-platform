@@ -1058,7 +1058,7 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
               <span className="text-[#DC2626] text-xl">&rarr;</span>
               <div className="bg-gray-800 border border-[#DC2626] px-4 py-2 rounded-sm text-center">
                 <div className="text-[#DC2626] font-bold text-lg">Detention</div>
-                <div className="text-xs text-gray-500">$3,320/day</div>
+                <div className="text-xs text-gray-500">${DETENTION_COST_PER_DAY.toLocaleString()}/day</div>
               </div>
               <span className="text-[#DC2626] text-xl">&rarr;</span>
               <div className="bg-gray-800 border border-gray-600 px-4 py-2 rounded-sm text-center">

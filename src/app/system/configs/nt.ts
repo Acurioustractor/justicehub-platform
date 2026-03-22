@@ -10,17 +10,17 @@ export const ntConfig: SystemConfig = {
     { name: 'Youth Justice (within TFHC)', shortName: 'YJ NT', contracts: 0, totalValue: 102441000, period: 'ROGS 2024-25', category: 'youth_justice' },
   ],
 
-  // ESTIMATES: No state procurement data available for NT. Values based on annual reports + public announcements.
-  // To verify: scrape NT Budget papers, GrantConnect, NAAJA/CAALAS annual reports.
+  // Evidence levels verified via ALMA interventions DB. Cost data verified via ROGS 2024-25.
+  // NIAA Senate Order 16 provides verified federal funding for NT Aboriginal orgs.
   topSuppliers: [
-    { name: 'North Australian Aboriginal Justice Agency (NAAJA)', totalValue: 12000000, contracts: 6, departments: ['TFHC'], note: 'Indigenous-controlled legal aid — Top End & Central (estimate)' },
-    { name: 'Kalano Community Association', totalValue: 8000000, contracts: 5, departments: ['TFHC'], note: 'Indigenous community org — Katherine region' },
-    { name: 'CatholicCare NT', totalValue: 6000000, contracts: 7, departments: ['TFHC'], note: 'Family hubs, early intervention, parenting programs' },
-    { name: 'Kurdiji Aboriginal Corporation', totalValue: 3000000, contracts: 2, departments: ['TFHC'], note: 'Lajamanu Justice Reinvestment — Indigenous-led' },
-    { name: 'Central Australian Aboriginal Legal Aid Service (CAALAS)', totalValue: 5000000, contracts: 4, departments: ['TFHC'], note: 'Indigenous-controlled legal aid — Central Australia' },
-    { name: 'Danila Dilba Health Service', totalValue: 4000000, contracts: 3, departments: ['TFHC'], note: 'Indigenous ACCHO — Darwin/Palmerston' },
-    { name: 'Mission Australia', totalValue: 3500000, contracts: 3, departments: ['TFHC'] },
-    { name: 'Don Dale Youth Detention (Operations)', totalValue: 58657000, contracts: 1, departments: ['YJ NT'], note: 'Detention operations (ROGS) — subject of 2017 Royal Commission' },
+    { name: 'North Australian Aboriginal Justice Agency (NAAJA)', totalValue: 12000000, contracts: 6, departments: ['TFHC'], note: 'Indigenous-controlled legal aid — Top End & Central · 1 intervention (ALMA) · $2.1M NIAA verified · total estimate' },
+    { name: 'Kalano Community Association', totalValue: 8000000, contracts: 5, departments: ['TFHC'], note: 'Indigenous community org — Katherine · 6 interventions (ALMA) · $4.3M NIAA verified · total estimate' },
+    { name: 'CatholicCare NT', totalValue: 6000000, contracts: 7, departments: ['TFHC'], note: 'Family hubs, early intervention · 7 interventions (ALMA) · $3.6M NIAA verified · total estimate' },
+    { name: 'Kurdiji Aboriginal Corporation', totalValue: 3000000, contracts: 2, departments: ['TFHC'], note: 'Lajamanu Justice Reinvestment — Indigenous-led · 1 intervention (ALMA) · estimate' },
+    { name: 'Central Australian Aboriginal Legal Aid Service (CAALAS)', totalValue: 5000000, contracts: 4, departments: ['TFHC'], note: 'Indigenous-controlled legal aid — Central Australia · estimate' },
+    { name: 'Danila Dilba Health Service', totalValue: 4000000, contracts: 3, departments: ['TFHC'], note: 'Indigenous ACCHO — Darwin/Palmerston · $2.2M NIAA verified · total estimate' },
+    { name: 'Tangentyere Council', totalValue: 11000000, contracts: 4, departments: ['TFHC'], note: 'Alice Springs Aboriginal org · $11.1M NIAA verified' },
+    { name: 'Don Dale Youth Detention (Operations)', totalValue: 58657000, contracts: 1, departments: ['YJ NT'], note: 'Detention-based supervision — ROGS 2024-25 verified · subject of 2017 Royal Commission' },
   ],
 
   spotlight: {
@@ -45,9 +45,9 @@ export const ntConfig: SystemConfig = {
   ],
 
   costComparison: {
-    detentionCostPerDay: 3452,
-    communityCostPerDay: 280,
-    avgKidsInDetention: 47,
+    detentionCostPerDay: 3452, // ROGS 2024-25 Table 17A.20 (verified)
+    communityCostPerDay: 280,  // Estimate — ROGS 2024-25 Table 17A.21 shows 'not published' for NT
+    avgKidsInDetention: 47,    // ROGS 2024-25 Table 17A.20 avg daily population (verified)
   },
 
   voices: [

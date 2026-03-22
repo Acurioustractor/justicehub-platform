@@ -54,7 +54,7 @@ export function StateComparisonTable({ states }: { states: StateRow[] }) {
             {/* Desktop row */}
             <div className="hidden md:grid grid-cols-[1fr_80px_80px_55px_55px_80px_55px_65px] gap-1 px-4 py-3 hover:bg-gray-900/50 transition-colors items-center">
               <div className="flex items-center gap-2">
-                <span className={`w-1.5 h-1.5 rounded-full ${s.dataConfidence === 'HIGH' ? 'bg-[#059669]' : 'bg-gray-600'}`} />
+                <span className={`w-1.5 h-1.5 rounded-full ${s.dataConfidence === 'HIGH' ? 'bg-[#059669]' : s.dataConfidence === 'MEDIUM' ? 'bg-amber-500' : 'bg-gray-600'}`} />
                 <span className="font-mono text-sm font-bold text-[#F5F0E8]">{s.state}</span>
                 <span className="text-xs text-gray-600 hidden lg:inline">{s.stateFull}</span>
               </div>
@@ -78,7 +78,7 @@ export function StateComparisonTable({ states }: { states: StateRow[] }) {
             {/* Mobile row */}
             <div className="grid md:hidden grid-cols-[1fr_80px_55px_65px] gap-1 px-4 py-3 hover:bg-gray-900/50 transition-colors items-center">
               <div className="flex items-center gap-2">
-                <span className={`w-1.5 h-1.5 rounded-full ${s.dataConfidence === 'HIGH' ? 'bg-[#059669]' : 'bg-gray-600'}`} />
+                <span className={`w-1.5 h-1.5 rounded-full ${s.dataConfidence === 'HIGH' ? 'bg-[#059669]' : s.dataConfidence === 'MEDIUM' ? 'bg-amber-500' : 'bg-gray-600'}`} />
                 <span className="font-mono text-sm font-bold text-[#F5F0E8]">{s.state}</span>
               </div>
               <span className="font-mono text-sm text-[#DC2626] font-bold text-right">{fmt(s.detentionCostPerDay)}</span>

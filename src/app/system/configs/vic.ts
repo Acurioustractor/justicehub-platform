@@ -10,18 +10,18 @@ export const vicConfig: SystemConfig = {
     { name: 'Youth Justice (within DJCS)', shortName: 'YJ VIC', contracts: 0, totalValue: 438001000, period: 'ROGS 2024-25', category: 'youth_justice' },
   ],
 
-  // ESTIMATES: No state procurement data available for VIC. Values based on annual reports + public announcements.
-  // To verify: scrape DJCS budget papers, GrantConnect, org annual reports.
+  // ESTIMATES: No state procurement data available for VIC. Dollar values from annual reports + public announcements.
+  // Evidence levels verified via ALMA interventions DB. Cost data verified via ROGS 2024-25.
   topSuppliers: [
-    { name: 'Victorian Aboriginal Legal Service (VALS)', totalValue: 18000000, contracts: 8, departments: ['DJCS'], note: 'Indigenous-controlled legal aid — Koori Youth Justice (estimate)' },
-    { name: 'Jesuit Social Services', totalValue: 32000000, contracts: 14, departments: ['DJCS'], note: 'Youth justice programs — Effective evidence rating' },
-    { name: 'Berry Street', totalValue: 45000000, contracts: 18, departments: ['DJCS'], note: 'Child/family welfare, out-of-home care' },
-    { name: 'Brotherhood of St Laurence', totalValue: 28000000, contracts: 10, departments: ['DJCS'], note: 'Education & employment pathways — Effective evidence rating' },
-    { name: 'Save the Children (54 Reasons)', totalValue: 15000000, contracts: 8, departments: ['DJCS'], note: 'Bail support programs' },
-    { name: 'Odyssey House Victoria', totalValue: 12000000, contracts: 5, departments: ['DJCS'], note: 'Youth AOD therapeutic services' },
-    { name: 'Rumbalara Aboriginal Co-operative', totalValue: 8000000, contracts: 4, departments: ['DJCS'], note: 'Indigenous community-led — Shepparton' },
-    { name: 'Mallee District Aboriginal Services', totalValue: 6000000, contracts: 3, departments: ['DJCS'], note: 'Indigenous community-led — Mildura' },
-    { name: 'Detention Operations (Cherry Creek)', totalValue: 343112000, contracts: 1, departments: ['YJ VIC'], note: 'New facility — $1.8B capital cost (ROGS)' },
+    { name: 'Victorian Aboriginal Legal Service (VALS)', totalValue: 18000000, contracts: 8, departments: ['DJCS'], note: 'Indigenous-controlled legal aid — Koori Youth Justice · Promising evidence (ALMA) · estimate' },
+    { name: 'Jesuit Social Services', totalValue: 32000000, contracts: 14, departments: ['DJCS'], note: 'Youth justice programs · Effective evidence (ALMA) · estimate' },
+    { name: 'Berry Street', totalValue: 45000000, contracts: 18, departments: ['DJCS'], note: 'Child/family welfare, out-of-home care · 1 intervention (ALMA) · estimate' },
+    { name: 'Brotherhood of St Laurence', totalValue: 28000000, contracts: 10, departments: ['DJCS'], note: 'Education & employment pathways · Effective evidence (ALMA) · estimate' },
+    { name: 'Save the Children (54 Reasons)', totalValue: 15000000, contracts: 8, departments: ['DJCS'], note: 'Bail support programs · 3 interventions (ALMA) · estimate' },
+    { name: 'Odyssey House Victoria', totalValue: 12000000, contracts: 5, departments: ['DJCS'], note: 'Youth AOD therapeutic services · Promising evidence (ALMA) · estimate' },
+    { name: 'Rumbalara Aboriginal Co-operative', totalValue: 8000000, contracts: 4, departments: ['DJCS'], note: 'Indigenous community-led — Shepparton · 1 intervention (ALMA) · estimate' },
+    { name: 'Mallee District Aboriginal Services', totalValue: 6000000, contracts: 3, departments: ['DJCS'], note: 'Indigenous community-led — Mildura · 1 intervention (ALMA) · estimate' },
+    { name: 'Detention Operations (Cherry Creek)', totalValue: 343112000, contracts: 1, departments: ['YJ VIC'], note: 'Detention-based supervision — ROGS 2024-25 verified' },
   ],
 
   spotlight: {
@@ -46,9 +46,9 @@ export const vicConfig: SystemConfig = {
   ],
 
   costComparison: {
-    detentionCostPerDay: 7304,
-    communityCostPerDay: 601,
-    avgKidsInDetention: 129,
+    detentionCostPerDay: 7304, // ROGS 2024-25 Table 17A.20 (verified)
+    communityCostPerDay: 601,  // ROGS 2024-25 Table 17A.21 (verified)
+    avgKidsInDetention: 129,   // ROGS 2024-25 Table 17A.20 avg daily population (verified)
   },
 
   voices: [

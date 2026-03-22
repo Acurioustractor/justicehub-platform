@@ -335,20 +335,23 @@ export function buildStateRows(live: LiveCounts): StateRow[] {
     const ratio = Math.round(c.costComparison.detentionCostPerDay / c.costComparison.communityCostPerDay * 10) / 10;
     const detentionAnnual = c.costComparison.avgKidsInDetention * c.costComparison.detentionCostPerDay * 365;
 
-    const confidence: 'HIGH' | 'MEDIUM' | 'LOW' = slug === 'qld' ? 'HIGH' : 'LOW';
-    const procSource = slug === 'qld' ? 'QGIP + Historical + DYJVS' : 'AusTender only';
-
     const liveFunding = live.fundingByState[c.state];
     const interventionCount = live.interventionsByState[c.state] || 0;
     const orgCount = live.orgsByState[c.state] || 0;
 
-    const hasStateProcurement = slug === 'qld';
+    // Verification checks — weighted by data source quality
+    const hasStateProcurement = slug === 'qld'; // State-level procurement portal
+    const hasROGS = c.fundingBySource.some(f => f.source.startsWith('ROGS')); // Productivity Commission verified data
     const hasFunding = (liveFunding?.count || 0) > 100;
     const hasInterventions = interventionCount > 10;
     const hasOrgs = orgCount > 50;
-    const hasCivic = slug === 'qld';
-    const checks = [hasStateProcurement, hasFunding, hasInterventions, hasOrgs, hasCivic];
+    const hasCivic = slug === 'qld'; // CivicScope parliamentary data
+    const checks = [hasStateProcurement, hasROGS, hasFunding, hasInterventions, hasOrgs, hasCivic];
     const verificationScore = Math.round((checks.filter(Boolean).length / checks.length) * 100);
+
+    // Confidence: HIGH = state procurement + civic, MEDIUM = ROGS + AusTender verified, LOW = estimates only
+    const confidence: 'HIGH' | 'MEDIUM' | 'LOW' = slug === 'qld' ? 'HIGH' : (hasROGS && hasFunding) ? 'MEDIUM' : 'LOW';
+    const procSource = slug === 'qld' ? 'QGIP + Historical + DYJVS' : 'ROGS + AusTender + AIHW';
 
     return {
       slug,

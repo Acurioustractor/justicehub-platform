@@ -61,9 +61,9 @@ export const qldConfig: SystemConfig = {
   ],
 
   costComparison: {
-    detentionCostPerDay: 3320,
-    communityCostPerDay: 200,
-    avgKidsInDetention: 40,
+    detentionCostPerDay: 2714, // ROGS 2024-25 Table 17A.20 (verified)
+    communityCostPerDay: 493,  // ROGS 2024-25 Table 17A.21 (verified)
+    avgKidsInDetention: 301,   // ROGS 2024-25 Table 17A.20 avg daily population (verified)
   },
 
   voices: [

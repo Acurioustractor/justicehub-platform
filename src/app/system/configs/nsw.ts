@@ -10,16 +10,18 @@ export const nswConfig: SystemConfig = {
     { name: 'Youth Justice NSW (within DCJ)', shortName: 'YJ NSW', contracts: 0, totalValue: 327107000, period: 'ROGS 2024-25', category: 'youth_justice' },
   ],
 
+  // Evidence levels verified via ALMA interventions DB. Cost data verified via ROGS 2024-25.
+  // Dollar values are estimates unless marked as ROGS/AusTender verified.
   topSuppliers: [
-    { name: 'Just Reinvest NSW', totalValue: 15000000, contracts: 6, departments: ['DCJ'], note: 'Justice reinvestment — Bourke, Moree, Mt Druitt' },
-    { name: 'Life Without Barriers', totalValue: 45000000, contracts: 12, departments: ['DCJ'] },
-    { name: 'Ted Noffs Foundation', totalValue: 22000000, contracts: 8, departments: ['DCJ'], note: 'PALM + Street University' },
-    { name: 'BackTrack Youth Works', totalValue: 8500000, contracts: 3, departments: ['DCJ'], note: 'Armidale — Indigenous-led' },
-    { name: 'Mission Australia', totalValue: 35000000, contracts: 15, departments: ['DCJ'] },
-    { name: 'Salvation Army', totalValue: 28000000, contracts: 10, departments: ['DCJ'] },
-    { name: 'Aboriginal Legal Service NSW/ACT', totalValue: 12000000, contracts: 5, departments: ['DCJ'], note: 'Indigenous-controlled legal aid' },
-    { name: 'Youth Off The Streets', totalValue: 9000000, contracts: 4, departments: ['DCJ'] },
-    { name: 'Juvenile Justice', totalValue: 217414000, contracts: 1, departments: ['YJ NSW'], note: 'Detention-based services (ROGS)' },
+    { name: 'Just Reinvest NSW', totalValue: 15000000, contracts: 6, departments: ['DCJ'], note: 'Justice reinvestment — Bourke, Moree, Mt Druitt · Effective evidence, 9 interventions (ALMA) · estimate' },
+    { name: 'Life Without Barriers', totalValue: 45000000, contracts: 12, departments: ['DCJ'], note: '2 interventions (ALMA) · estimate' },
+    { name: 'Ted Noffs Foundation', totalValue: 22000000, contracts: 8, departments: ['DCJ'], note: 'PALM + Street University · Promising evidence, 14 interventions (ALMA) · estimate' },
+    { name: 'BackTrack Youth Works', totalValue: 8500000, contracts: 3, departments: ['DCJ'], note: 'Armidale · Indigenous-led evidence (ALMA) · estimate' },
+    { name: 'Mission Australia', totalValue: 35000000, contracts: 15, departments: ['DCJ'], note: 'Promising evidence, 3 interventions (ALMA) · estimate' },
+    { name: 'Salvation Army', totalValue: 28000000, contracts: 10, departments: ['DCJ'], note: 'estimate' },
+    { name: 'Aboriginal Legal Service NSW/ACT', totalValue: 12000000, contracts: 5, departments: ['DCJ'], note: 'Indigenous-controlled legal aid · Promising evidence (ALMA) · $586K AusTender verified' },
+    { name: 'Youth Off The Streets', totalValue: 9000000, contracts: 4, departments: ['DCJ'], note: '2 interventions (ALMA) · estimate' },
+    { name: 'Juvenile Justice', totalValue: 217414000, contracts: 1, departments: ['YJ NSW'], note: 'Detention-based supervision — ROGS 2024-25 verified' },
   ],
 
   spotlight: {
@@ -44,9 +46,9 @@ export const nswConfig: SystemConfig = {
   ],
 
   costComparison: {
-    detentionCostPerDay: 2670,
-    communityCostPerDay: 170,
-    avgKidsInDetention: 220,
+    detentionCostPerDay: 2573, // ROGS 2024-25 Table 17A.20 (verified)
+    communityCostPerDay: 368,  // ROGS 2024-25 Table 17A.21 (verified)
+    avgKidsInDetention: 231,   // ROGS 2024-25 Table 17A.20 avg daily population (verified)
   },
 
   voices: [
