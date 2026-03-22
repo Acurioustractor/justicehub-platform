@@ -397,6 +397,63 @@ export class GHLClient {
     }
   }
   /**
+   * Get conversation history for a contact
+   */
+  async getContactConversations(contactId: string): Promise<any[]> {
+    if (!this.isConfigured()) return [];
+    try {
+      const response = await fetch(
+        `${GHL_API_BASE}/conversations/search?locationId=${this.locationId}&contactId=${contactId}`,
+        { method: 'GET', headers: this.headers }
+      );
+      if (!response.ok) return [];
+      const data = await response.json();
+      return data.conversations || [];
+    } catch (error) {
+      console.error('GHL getContactConversations error:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get messages in a conversation
+   */
+  async getConversationMessages(conversationId: string, limit = 20): Promise<any[]> {
+    if (!this.isConfigured()) return [];
+    try {
+      const response = await fetch(
+        `${GHL_API_BASE}/conversations/${conversationId}/messages?limit=${limit}`,
+        { method: 'GET', headers: this.headers }
+      );
+      if (!response.ok) return [];
+      const data = await response.json();
+      return data.messages?.messages || data.messages || [];
+    } catch (error) {
+      console.error('GHL getConversationMessages error:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get a contact's full details including tags and custom fields
+   */
+  async getContact(contactId: string): Promise<any | null> {
+    if (!this.isConfigured()) return null;
+    try {
+      const response = await fetch(`${GHL_API_BASE}/contacts/${contactId}`, {
+        method: 'GET',
+        headers: this.headers,
+      });
+      if (!response.ok) return null;
+      const data = await response.json();
+      return data.contact || null;
+    } catch (error) {
+      console.error('GHL getContact error:', error);
+      return null;
+    }
+  }
+
+  /**
    * Send an email to a contact via GHL Conversations API
    * Requires contactId — will upsert contact first if only email is provided
    */

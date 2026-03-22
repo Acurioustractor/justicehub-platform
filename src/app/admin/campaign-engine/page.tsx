@@ -37,7 +37,13 @@ import {
   Mail,
   MessageSquare,
   BarChart3,
+  CalendarDays,
+  PenLine,
+  ListChecks,
 } from 'lucide-react';
+import Pipeline from '@/app/admin/comms/pipeline';
+import Calendar from '@/app/admin/comms/calendar';
+import Compose from '@/app/admin/comms/compose';
 
 interface Entity {
   id: string;
@@ -116,7 +122,7 @@ interface MomentumData {
   follow_ups_needed: number;
 }
 
-type ViewMode = 'lists' | 'actions' | 'social_proof' | 'tracked_posts' | 'momentum';
+type ViewMode = 'lists' | 'actions' | 'social_proof' | 'tracked_posts' | 'momentum' | 'pipeline' | 'calendar' | 'compose';
 
 const CATEGORY_COLORS: Record<string, string> = {
   ally: 'bg-emerald-100 text-emerald-800 border-emerald-300',
@@ -156,6 +162,8 @@ export default function CampaignEnginePage() {
   const [actionFilter, setActionFilter] = useState<string>('');
   const [actionTypeFilter, setActionTypeFilter] = useState<string>('');
   const [skippedIds, setSkippedIds] = useState<Set<string>>(new Set());
+  const [ghlSyncing, setGhlSyncing] = useState(false);
+  const [ghlSyncResult, setGhlSyncResult] = useState<string | null>(null);
   const [momentum, setMomentum] = useState<MomentumData | null>(null);
   const [momentumLoading, setMomentumLoading] = useState(false);
 
@@ -357,6 +365,30 @@ export default function CampaignEnginePage() {
     }
   };
 
+  const syncGHL = async () => {
+    if (ghlSyncing) return;
+    setGhlSyncing(true);
+    setGhlSyncResult(null);
+    try {
+      const res = await fetch('/api/admin/campaign-alignment/ghl-sync', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Sync failed');
+      setGhlSyncResult(
+        `Synced ${data.synced}/${data.total} contacts — ${data.advanced} statuses advanced`
+      );
+      // Refresh the current list to show updated statuses
+      if (viewMode === 'lists') {
+        const listData = await fetchList(activeList, search, entityType);
+        setEntities(listData.entities);
+        setTotalEntities(listData.total);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'GHL sync failed');
+    } finally {
+      setGhlSyncing(false);
+    }
+  };
+
   const exportCSV = () => {
     const headers = ['Name', 'Type', 'Organization', 'Position', 'Email', 'Category', 'List', 'Alignment', 'Influence', 'Accessibility', 'Composite', 'Passion', 'Confidence', 'Outreach'];
     const rows = entities.map(e => [
@@ -413,6 +445,14 @@ export default function CampaignEnginePage() {
               <Download className="w-4 h-4" /> Export CSV
             </button>
             <button
+              onClick={syncGHL}
+              disabled={ghlSyncing}
+              className="flex items-center gap-2 px-4 py-2 border border-blue-300 bg-blue-50 text-blue-800 font-bold text-sm hover:bg-blue-100 disabled:opacity-50"
+            >
+              {ghlSyncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
+              {ghlSyncing ? 'Syncing...' : 'Sync GHL'}
+            </button>
+            <button
               onClick={runEnrichment}
               disabled={enriching}
               className="flex items-center gap-2 px-4 py-2 border border-purple-300 bg-purple-50 text-purple-800 font-bold text-sm hover:bg-purple-100 disabled:opacity-50"
@@ -445,6 +485,16 @@ export default function CampaignEnginePage() {
           <div className="bg-purple-50 border border-purple-200 px-4 py-3 mb-4 text-sm text-purple-800 flex items-center justify-between">
             <span>{enrichResult}</span>
             <button onClick={() => setEnrichResult(null)} className="text-purple-400 hover:text-purple-600 ml-4">
+              <XCircle className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* GHL sync result */}
+        {ghlSyncResult && (
+          <div className="bg-blue-50 border border-blue-200 px-4 py-3 mb-4 text-sm text-blue-800 flex items-center justify-between">
+            <span>{ghlSyncResult}</span>
+            <button onClick={() => setGhlSyncResult(null)} className="text-blue-400 hover:text-blue-600 ml-4">
               <XCircle className="w-4 h-4" />
             </button>
           </div>
@@ -483,13 +533,16 @@ export default function CampaignEnginePage() {
         )}
 
         {/* View Mode Tabs */}
-        <div className="flex gap-1 mb-6 border-b border-gray-200 pb-2">
+        <div className="flex gap-1 mb-6 border-b border-gray-200 pb-2 overflow-x-auto">
           {[
             { key: 'lists' as ViewMode, label: 'Lists', icon: Users },
             { key: 'actions' as ViewMode, label: 'Actions', icon: Zap, badge: actionEntities.length > 0 ? actionEntities.filter(e => !skippedIds.has(e.id)).length : undefined },
             { key: 'social_proof' as ViewMode, label: 'Social Proof', icon: Heart },
             { key: 'tracked_posts' as ViewMode, label: 'Tracked Posts', icon: LinkIcon },
             { key: 'momentum' as ViewMode, label: 'Momentum', icon: TrendingUp },
+            { key: 'pipeline' as ViewMode, label: 'Pipeline', icon: ListChecks },
+            { key: 'calendar' as ViewMode, label: 'Calendar', icon: CalendarDays },
+            { key: 'compose' as ViewMode, label: 'Compose', icon: PenLine },
           ].map(tab => (
             <button
               key={tab.key}
@@ -648,6 +701,15 @@ export default function CampaignEnginePage() {
             onRefresh={fetchTrackedPosts}
           />
         )}
+
+        {/* === COMMS: PIPELINE === */}
+        {viewMode === 'pipeline' && <Pipeline />}
+
+        {/* === COMMS: CALENDAR === */}
+        {viewMode === 'calendar' && <Calendar />}
+
+        {/* === COMMS: COMPOSE === */}
+        {viewMode === 'compose' && <Compose />}
       </div>
     </div>
   );
@@ -925,6 +987,24 @@ function ScoreBar({ value, max, color }: { value: number; max: number; color: st
   );
 }
 
+interface GHLActivity {
+  contact: { name: string; email: string; tags: string[]; lastActivity: string; dateAdded: string } | null;
+  activity: Array<{
+    id: string;
+    type: string;
+    lastMessageDate: string;
+    messages: Array<{
+      id: string;
+      type: string;
+      direction: string;
+      status: string;
+      body: string;
+      subject: string;
+      dateAdded: string;
+    }>;
+  }>;
+}
+
 function ExpandedDetails({ entity, isOpponentView, onPipelineAction, onEntityUpdate }: {
   entity: Entity;
   isOpponentView: boolean;
@@ -936,6 +1016,31 @@ function ExpandedDetails({ entity, isOpponentView, onPipelineAction, onEntityUpd
   const [saving, setSaving] = useState(false);
   const [noteSaved, setNoteSaved] = useState(false);
   const actionLock = useRef(false);
+  const [ghlActivity, setGhlActivity] = useState<GHLActivity | null>(null);
+  const [ghlLoading, setGhlLoading] = useState(false);
+  const [ghlLoaded, setGhlLoaded] = useState(false);
+
+  const loadGHLActivity = async () => {
+    if (ghlLoaded || !entity.ghl_contact_id) return;
+    setGhlLoading(true);
+    try {
+      const res = await fetch(`/api/admin/campaign-alignment/ghl-activity?entityId=${entity.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setGhlActivity(data);
+      }
+    } catch (err) {
+      console.error('GHL activity fetch error:', err);
+    } finally {
+      setGhlLoading(false);
+      setGhlLoaded(true);
+    }
+  };
+
+  // Auto-load GHL activity when expanded
+  useEffect(() => {
+    if (entity.ghl_contact_id) loadGHLActivity();
+  }, [entity.id]);
 
   const handleMarkDone = async () => {
     if (actionLock.current) return;
@@ -1110,6 +1215,78 @@ function ExpandedDetails({ entity, isOpponentView, onPipelineAction, onEntityUpd
         </div>
       </div>
       </div>
+
+      {/* GHL Activity */}
+      {entity.ghl_contact_id && (
+        <div className="mt-4 border-t border-gray-200 pt-4">
+          <h4 className="font-bold text-gray-700 mb-2 flex items-center gap-2">
+            <MessageSquare className="w-4 h-4" /> GHL Activity
+          </h4>
+          {ghlLoading && (
+            <div className="flex items-center gap-2 text-xs text-gray-400 py-2">
+              <Loader2 className="w-3 h-3 animate-spin" /> Loading GHL data...
+            </div>
+          )}
+          {ghlLoaded && ghlActivity && (
+            <div className="space-y-3">
+              {/* Contact tags */}
+              {ghlActivity.contact && (
+                <div className="flex flex-wrap gap-1.5">
+                  {ghlActivity.contact.tags.map(tag => (
+                    <span key={tag} className="px-2 py-0.5 text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 rounded">
+                      {tag}
+                    </span>
+                  ))}
+                  {ghlActivity.contact.tags.length === 0 && (
+                    <span className="text-xs text-gray-400">No tags</span>
+                  )}
+                </div>
+              )}
+
+              {/* Messages */}
+              {ghlActivity.activity.length > 0 ? (
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {ghlActivity.activity.flatMap(convo =>
+                    convo.messages.map(msg => (
+                      <div
+                        key={msg.id}
+                        className={`p-2 rounded text-xs ${
+                          msg.direction === 'inbound'
+                            ? 'bg-emerald-50 border border-emerald-200 ml-0 mr-8'
+                            : 'bg-gray-50 border border-gray-200 ml-8 mr-0'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-bold text-[10px] uppercase text-gray-400">
+                            {msg.direction === 'inbound' ? 'Received' : 'Sent'} — {msg.type}
+                          </span>
+                          <span className="text-[10px] text-gray-400" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                            {msg.dateAdded ? new Date(msg.dateAdded).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : ''}
+                          </span>
+                        </div>
+                        {msg.subject && <p className="font-bold text-gray-700 mb-0.5">{msg.subject}</p>}
+                        <p className="text-gray-600 line-clamp-3">{msg.body || '(no content)'}</p>
+                        <span className={`inline-block mt-1 px-1.5 py-0.5 text-[9px] font-bold rounded ${
+                          msg.status === 'delivered' || msg.status === 'read' ? 'bg-emerald-100 text-emerald-700' :
+                          msg.status === 'failed' ? 'bg-red-100 text-red-700' :
+                          'bg-gray-100 text-gray-500'
+                        }`}>
+                          {msg.status || 'sent'}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              ) : (
+                <p className="text-xs text-gray-400">No conversations in GHL yet</p>
+              )}
+            </div>
+          )}
+          {ghlLoaded && !ghlActivity && (
+            <p className="text-xs text-gray-400">Could not load GHL activity</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

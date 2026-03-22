@@ -24,7 +24,6 @@ export default function Compose({ onInsertStat }: { onInsertStat?: string }) {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
 
-  // Handle stat insertion from brand sidebar
   useEffect(() => {
     if (onInsertStat) {
       setContent(prev => prev ? `${prev}\n\n${onInsertStat}` : onInsertStat);
@@ -106,49 +105,47 @@ export default function Compose({ onInsertStat }: { onInsertStat?: string }) {
       <div className="space-y-4">
         {/* Target label */}
         <div className="flex items-center gap-2 text-xs">
-          <Linkedin size={14} style={{ color: '#0A66C2' }} />
-          <span className="font-medium" style={{ color: '#F5F0E8' }}>LinkedIn (Personal)</span>
-          <span className="opacity-40">- Only distribution channel</span>
+          <Linkedin size={14} className="text-blue-600" />
+          <span className="font-bold text-gray-900">LinkedIn (Personal)</span>
+          <span className="text-gray-400">- Only distribution channel</span>
         </div>
 
         {/* Title */}
         <div>
-          <label className="text-[10px] font-medium opacity-50 uppercase tracking-wider mb-1 block">Post Title</label>
+          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">Post Title</label>
           <input
             type="text"
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="Post title for Notion..."
-            className="w-full px-3 py-2 rounded border border-white/20 bg-transparent text-sm focus:outline-none focus:border-white/40"
-            style={{ color: '#F5F0E8' }}
+            className="w-full px-3 py-2 rounded border border-gray-300 bg-white text-sm text-gray-900 focus:outline-none focus:border-black"
           />
         </div>
 
         {/* Content textarea */}
         <div>
-          <label className="text-[10px] font-medium opacity-50 uppercase tracking-wider mb-1 block">Post Content</label>
+          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">Post Content</label>
           <textarea
             value={content}
             onChange={e => setContent(e.target.value)}
             placeholder="Write your LinkedIn post here..."
             rows={12}
-            className="w-full px-3 py-2 rounded border border-white/20 bg-transparent text-sm leading-relaxed resize-y focus:outline-none focus:border-white/40"
-            style={{ color: '#F5F0E8' }}
+            className="w-full px-3 py-2 rounded border border-gray-300 bg-white text-sm text-gray-900 leading-relaxed resize-y focus:outline-none focus:border-black"
           />
           <div className="flex justify-between mt-1">
-            <div className="text-[10px] opacity-40">
-              {content.length} chars {content.length > 3000 && <span style={{ color: '#DC2626' }}>(LinkedIn limit ~3000)</span>}
+            <div className="text-[10px] text-gray-400">
+              {content.length} chars {content.length > 3000 && <span className="text-red-600">(LinkedIn limit ~3000)</span>}
             </div>
             <div className="flex gap-2">
               <button
                 onClick={fetchPhotos}
-                className="text-[10px] px-2 py-1 rounded border border-white/20 hover:bg-white/10 transition-colors flex items-center gap-1"
+                className="text-[10px] px-2 py-1 rounded border border-gray-300 hover:bg-gray-100 transition-colors flex items-center gap-1 text-gray-600"
               >
                 <ImageIcon size={10} /> Photo
               </button>
               <button
                 onClick={() => setShowStatsPicker(!showStatsPicker)}
-                className="text-[10px] px-2 py-1 rounded border border-white/20 hover:bg-white/10 transition-colors flex items-center gap-1"
+                className="text-[10px] px-2 py-1 rounded border border-gray-300 hover:bg-gray-100 transition-colors flex items-center gap-1 text-gray-600"
               >
                 <BarChart3 size={10} /> Stat
               </button>
@@ -158,10 +155,10 @@ export default function Compose({ onInsertStat }: { onInsertStat?: string }) {
 
         {/* Stats picker */}
         {showStatsPicker && (
-          <div className="border border-white/10 rounded-lg p-3" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
+          <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-medium opacity-60 uppercase tracking-wider">Insert Stat</span>
-              <button onClick={() => setShowStatsPicker(false)} className="p-0.5 hover:bg-white/10 rounded">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Insert Stat</span>
+              <button onClick={() => setShowStatsPicker(false)} className="p-0.5 hover:bg-gray-200 rounded text-gray-500">
                 <X size={12} />
               </button>
             </div>
@@ -170,12 +167,12 @@ export default function Compose({ onInsertStat }: { onInsertStat?: string }) {
                 <button
                   key={key}
                   onClick={() => insertStat(key)}
-                  className="text-left p-2 rounded hover:bg-white/10 transition-colors"
+                  className="text-left p-2 rounded hover:bg-gray-100 transition-colors"
                 >
-                  <span className="text-xs font-bold" style={{ fontFamily: 'IBM Plex Mono, monospace', color: '#DC2626' }}>
+                  <span className="text-xs font-bold text-red-600" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
                     {stat.value}
                   </span>
-                  <span className="text-[10px] opacity-60 ml-1">{stat.label}</span>
+                  <span className="text-[10px] text-gray-500 ml-1">{stat.label}</span>
                 </button>
               ))}
             </div>
@@ -184,18 +181,18 @@ export default function Compose({ onInsertStat }: { onInsertStat?: string }) {
 
         {/* Photo picker */}
         {showPhotoPicker && (
-          <div className="border border-white/10 rounded-lg p-3" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
+          <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-medium opacity-60 uppercase tracking-wider">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                 Select Photo (Empathy Ledger)
               </span>
-              <button onClick={() => setShowPhotoPicker(false)} className="p-0.5 hover:bg-white/10 rounded">
+              <button onClick={() => setShowPhotoPicker(false)} className="p-0.5 hover:bg-gray-200 rounded text-gray-500">
                 <X size={12} />
               </button>
             </div>
             {loadingPhotos ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="animate-spin" size={16} />
+                <Loader2 className="animate-spin text-gray-400" size={16} />
               </div>
             ) : (
               <div className="grid grid-cols-5 gap-1.5 max-h-48 overflow-y-auto">
@@ -204,7 +201,7 @@ export default function Compose({ onInsertStat }: { onInsertStat?: string }) {
                     key={photo.id}
                     onClick={() => { setSelectedImage(photo); setShowPhotoPicker(false); }}
                     className={`relative aspect-square rounded overflow-hidden border-2 transition-colors ${
-                      selectedImage?.id === photo.id ? 'border-red-500' : 'border-transparent hover:border-white/30'
+                      selectedImage?.id === photo.id ? 'border-red-500' : 'border-transparent hover:border-gray-400'
                     }`}
                   >
                     <img
@@ -215,7 +212,7 @@ export default function Compose({ onInsertStat }: { onInsertStat?: string }) {
                   </button>
                 ))}
                 {photos.length === 0 && (
-                  <div className="col-span-5 text-center py-4 text-xs opacity-40">
+                  <div className="col-span-5 text-center py-4 text-xs text-gray-400">
                     No photos available from Empathy Ledger.
                   </div>
                 )}
@@ -226,22 +223,21 @@ export default function Compose({ onInsertStat }: { onInsertStat?: string }) {
 
         {/* Date picker */}
         <div>
-          <label className="text-[10px] font-medium opacity-50 uppercase tracking-wider mb-1 block">Sent Date</label>
+          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1 block">Sent Date</label>
           <input
             type="date"
             value={sentDate}
             onChange={e => setSentDate(e.target.value)}
-            className="px-3 py-2 rounded border border-white/20 bg-transparent text-sm focus:outline-none focus:border-white/40"
-            style={{ color: '#F5F0E8', colorScheme: 'dark' }}
+            className="px-3 py-2 rounded border border-gray-300 bg-white text-sm text-gray-900 focus:outline-none focus:border-black"
           />
         </div>
 
         {/* Selected image */}
         {selectedImage && (
-          <div className="flex items-center gap-3 p-2 rounded border border-white/10">
+          <div className="flex items-center gap-3 p-2 rounded border border-gray-200 bg-white">
             <img src={selectedImage.thumbnail || selectedImage.url} alt="" className="w-12 h-12 rounded object-cover" />
-            <div className="flex-1 text-xs opacity-70 truncate">{selectedImage.title}</div>
-            <button onClick={() => setSelectedImage(null)} className="p-1 hover:bg-white/10 rounded">
+            <div className="flex-1 text-xs text-gray-600 truncate">{selectedImage.title}</div>
+            <button onClick={() => setSelectedImage(null)} className="p-1 hover:bg-gray-100 rounded text-gray-500">
               <X size={12} />
             </button>
           </div>
@@ -249,7 +245,7 @@ export default function Compose({ onInsertStat }: { onInsertStat?: string }) {
 
         {/* Error */}
         {error && (
-          <div className="text-xs p-2 rounded" style={{ backgroundColor: 'rgba(220,38,38,0.1)', color: '#DC2626' }}>
+          <div className="text-xs p-2 rounded bg-red-50 text-red-700 border border-red-200">
             {error}
           </div>
         )}
@@ -258,11 +254,9 @@ export default function Compose({ onInsertStat }: { onInsertStat?: string }) {
         <button
           onClick={saveToNotion}
           disabled={saving || saved}
-          className="w-full py-2.5 rounded font-bold text-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-          style={{
-            backgroundColor: saved ? '#059669' : '#DC2626',
-            color: '#fff',
-          }}
+          className={`w-full py-2.5 rounded font-bold text-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-50 text-white ${
+            saved ? 'bg-emerald-600' : 'bg-black hover:bg-gray-800'
+          }`}
         >
           {saving ? (
             <><Loader2 size={14} className="animate-spin" /> Saving to Notion...</>
@@ -276,8 +270,8 @@ export default function Compose({ onInsertStat }: { onInsertStat?: string }) {
 
       {/* Preview */}
       <div>
-        <label className="text-[10px] font-medium opacity-50 uppercase tracking-wider mb-2 block">LinkedIn Preview</label>
-        <div className="border border-white/10 rounded-lg overflow-hidden" style={{ backgroundColor: '#fff' }}>
+        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">LinkedIn Preview</label>
+        <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
           {/* LinkedIn header */}
           <div className="p-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold text-sm">
