@@ -401,6 +401,12 @@ body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e5e5e5; li
 /* ═══════════════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   DASHBOARD
+   ═══════════════════════════════════════════════════════════ */
+#dash-posts-grid > div:hover { border-color: #333 !important; }
+#system-health .style-rule { border-left: 3px solid #262626; transition: border-color 0.3s; }
+
 @media (max-width: 900px) {
   .top-nav { padding: 0 16px; }
   .header { padding: 40px 16px 24px; }
@@ -411,6 +417,8 @@ body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e5e5e5; li
   .calendar-week { grid-template-columns: 1fr; }
   .lang-grid { grid-template-columns: 1fr; }
   .color-grid { grid-template-columns: 1fr 1fr; }
+  #dash-posts-grid { grid-template-columns: 1fr !important; }
+  #dash-summary { grid-template-columns: repeat(3, 1fr) !important; }
 }
 </style>
 </head>
@@ -422,6 +430,7 @@ body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e5e5e5; li
 <nav class="top-nav">
   <span class="logo">CONTAINED</span>
   <div class="nav-tabs">
+    <button class="nav-tab" onclick="switchTab('dashboard', this)">Dashboard</button>
     <button class="nav-tab active" onclick="switchTab('brand', this)">Brand</button>
     <button class="nav-tab" onclick="switchTab('messaging', this)">Messaging</button>
     <button class="nav-tab" onclick="switchTab('photos', this)">Photos</button>
@@ -434,6 +443,90 @@ body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e5e5e5; li
 
 <!-- Copy toast -->
 <div class="copy-toast" id="copy-toast">Copied!</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     0. SOCIAL DASHBOARD
+     ═══════════════════════════════════════════════════════════ -->
+<div class="tab-content" id="tab-dashboard">
+  <div class="header">
+    <div class="badge">Social Dashboard</div>
+    <h1>Comms Pipeline</h1>
+    <p>Manage all posts from the ACT Communications Dashboard. Assign images, update status, and monitor the publishing pipeline — all from one place.</p>
+  </div>
+
+  <!-- System Health -->
+  <div class="section">
+    <div class="section-label">System Health</div>
+    <h2>Infrastructure Status</h2>
+    <div id="system-health" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:16px;">
+      <div class="style-rule" id="health-notion">
+        <h4>Notion API</h4>
+        <p id="health-notion-status" style="color:#525252;">Not checked</p>
+      </div>
+      <div class="style-rule" id="health-ghl">
+        <h4>GHL Social Planner</h4>
+        <p id="health-ghl-status" style="color:#525252;">Not checked</p>
+      </div>
+      <div class="style-rule" id="health-cron">
+        <h4>Auto-Publish Cron</h4>
+        <p style="color:#737373;">Daily 21:00 UTC (7am AEST)</p>
+      </div>
+      <div class="style-rule" id="health-env">
+        <h4>Environment</h4>
+        <p id="health-env-status" style="color:#525252;">Check via dev server</p>
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <button class="btn-secondary" onclick="checkSystemHealth()">Check Health</button>
+    </div>
+  </div>
+
+  <!-- Notion Connection -->
+  <div class="section">
+    <div class="section-label">Connection</div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end;">
+      <div>
+        <label style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#737373;display:block;margin-bottom:4px;">Notion API Token</label>
+        <input id="dash-notion-token" type="password" placeholder="ntn_..." style="width:100%;padding:8px;background:#1a1a1a;color:#e5e5e5;border:1px solid #333;border-radius:3px;font-size:13px;font-family:'IBM Plex Mono',monospace;" />
+      </div>
+      <button class="btn-primary" onclick="loadDashboard()" id="dash-load-btn">Load Posts</button>
+    </div>
+    <div id="dash-status" style="font-size:12px;color:#525252;margin-top:8px;"></div>
+  </div>
+
+  <!-- Pipeline Summary -->
+  <div class="section" id="dash-summary-section" style="display:none;">
+    <div class="section-label">Pipeline Summary</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;" id="dash-summary">
+    </div>
+  </div>
+
+  <!-- Posts Table -->
+  <div class="section" id="dash-posts-section" style="display:none;border-bottom:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div>
+        <div class="section-label">All Posts</div>
+        <p style="font-size:13px;color:#737373;">Click an image slot to assign from photo library. Status changes update Notion directly.</p>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <select id="dash-filter-status" onchange="filterDashPosts()" style="padding:6px 10px;background:#1a1a1a;color:#e5e5e5;border:1px solid #333;border-radius:3px;font-size:12px;">
+          <option value="all">All Status</option>
+          <option value="Draft">Draft</option>
+          <option value="Scheduled">Scheduled</option>
+          <option value="Published">Published</option>
+          <option value="no-image">Missing Image</option>
+        </select>
+        <select id="dash-filter-project" onchange="filterDashPosts()" style="padding:6px 10px;background:#1a1a1a;color:#e5e5e5;border:1px solid #333;border-radius:3px;font-size:12px;">
+          <option value="all">All Projects</option>
+          <option value="CONTAINED">CONTAINED</option>
+          <option value="Harvest">Harvest</option>
+          <option value="JusticeHub">JusticeHub</option>
+        </select>
+      </div>
+    </div>
+    <div id="dash-posts-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;"></div>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════════════════════
      1. BRAND IDENTITY
@@ -1033,7 +1126,7 @@ const COLORS = [
 ];
 
 const STATS = [
-  { value: '$1.55M', label: 'Cost per detained youth per year', source: 'Productivity Commission ROGS 2024-25', category: 'cost', post: '$1.55 million per child per year on youth detention. 84% reoffend. Community programs cost $75/day with 88% success. Same money, 16x more young people helped.' },
+  { value: '$1.55M', label: 'Cost per detained youth per year', source: 'Productivity Commission ROGS 2024-25 Table 17A.21', category: 'cost', post: '$1.55 million per child per year on youth detention. 84% reoffend. Community programs cost $75/day with 88% success. Same money, 16x more young people helped.' },
   { value: '84%', label: 'Detention reoffending rate within 2 years', source: 'Queensland Youth Justice Strategy 2023', category: 'outcome', post: '84% of young people who go through detention reoffend within two years. We keep funding what fails. Community alternatives achieve 88% success at a fraction of the cost.' },
   { value: '3%', label: 'Community program reoffending rate', source: 'Community Accountability Pilot 2024', category: 'outcome', post: '3% reoffending in community-led programs. Compare that to 84% in detention. The evidence is not ambiguous. Fund what works.' },
   { value: '$75/day', label: 'Daily cost of community alternatives', source: 'Community Services Benchmark Study 2024', category: 'cost', post: '$75 per day for community alternatives that work. $4,250 per day for detention that doesn\'t. This is not a hard decision. This is a political one.' },
@@ -1041,7 +1134,7 @@ const STATS = [
   { value: '16x', label: 'More youth helped for same cost', source: 'Queensland Productivity Commission 2024', category: 'cost', post: 'For the cost of detaining ONE child, community programs could support SIXTEEN. $1.55M/year for 84% failure, or 16 young lives changed. The maths is not complicated.' },
   { value: '23x', label: 'Indigenous overrepresentation in detention', source: 'AIHW Youth Detention Population 2024', category: 'equity', post: 'Indigenous young people are 23x overrepresented in youth detention. This is not a justice system. This is a system that targets communities. Self-determination is the answer.' },
   { value: '4', label: 'Total youth detained in Finland', source: 'Finnish Ministry of Justice 2024', category: 'intl', post: 'Finland has 4 young people in detention. Total. Australia has hundreds. Same planet, radically different choices about how to treat young people.' },
-  { value: '$4,250', label: 'Daily cost of detention per young person', source: 'Productivity Commission ROGS 2024-25', category: 'cost', post: '$4,250 every single day to lock up a child. That\'s the price of failure. Community alternatives cost $75/day and actually work.' },
+  { value: '$4,250', label: 'Daily cost of detention per young person', source: 'Productivity Commission ROGS 2024-25 Table 17A.21', category: 'cost', post: '$4,250 every single day to lock up a child. That\'s the price of failure. Community alternatives cost $75/day and actually work.' },
   { value: '73%', label: 'Diagrama Foundation success rate (Spain)', source: 'Diagrama Foundation evaluation', category: 'intl', post: 'Spain\'s Diagrama Foundation: 73% success rate. 1:1 staffing. Family engagement every week. Therapeutic care that treats young people as human beings. Australia can learn from this.' },
   { value: '€5.64', label: 'Social return per €1 invested (Diagrama)', source: 'Diagrama Foundation impact study', category: 'intl', post: '€5.64 returned for every €1 invested in Spain\'s therapeutic youth justice model. Not just humane — economically superior. THE CONTAINED brings this evidence to Australia.' },
   { value: '18%', label: 'Education completion rate in detention', source: 'AIHW Youth Justice Report 2024', category: 'outcome', post: '18% education completion rate in youth detention. We are warehousing young people, not educating them. Community programs keep kids connected to school, family, and culture.' },
@@ -4017,8 +4110,8 @@ const LAUNCH_WEEK = [
     day: 'Thursday', date: 'April 24', theme: 'Community Orgs Doing the Work',
     asset: 'connecting-communities.jpeg',
     posts: [
-      { platform: 'Instagram', copy: `Room 3 of THE CONTAINED changes every tour stop.\n\nBecause the answer to youth detention isn't one model. It's the hundreds of community organisations across Australia already doing the work — underfunded, underreported, and delivering results the system can't match.\n\nAt Mount Druitt, the local host fills this space with their story.\n\nJusticeHub tracks 876 verified interventions through ALMA. Indigenous-led programs. Restorative justice circles. Mentoring. On-country programs. Family support.\n\n$75 a day. 88% success. Community authority at the centre.\n\nThese organisations don't need permission. They need resources.`, hashtags: '#TheContained #YouthJustice #CommunityLed #JusticeReinvestment' },
-      { platform: 'Twitter/X', copy: `Room 3 of THE CONTAINED celebrates the organisations already doing it.\n\n876 verified programs on ALMA. Community-led. Culture-centred. Evidence-backed.\n\n$75/day vs $4,250/day.\n88% success vs 84% failure.\n\nThey don't need permission. They need resources.\n\nFriday, Mount Druitt.`, hashtags: '#TheContained #YouthJustice #CommunityLed' },
+      { platform: 'Instagram', copy: `Room 3 of THE CONTAINED changes every tour stop.\n\nBecause the answer to youth detention isn't one model. It's the hundreds of community organisations across Australia already doing the work — underfunded, underreported, and delivering results the system can't match.\n\nAt Mount Druitt, the local host fills this space with their story.\n\nJusticeHub tracks 981 verified interventions through ALMA. Indigenous-led programs. Restorative justice circles. Mentoring. On-country programs. Family support.\n\n$75 a day. 88% success. Community authority at the centre.\n\nThese organisations don't need permission. They need resources.`, hashtags: '#TheContained #YouthJustice #CommunityLed #JusticeReinvestment' },
+      { platform: 'Twitter/X', copy: `Room 3 of THE CONTAINED celebrates the organisations already doing it.\n\n981 verified programs on ALMA. Community-led. Culture-centred. Evidence-backed.\n\n$75/day vs $4,250/day.\n88% success vs 84% failure.\n\nThey don't need permission. They need resources.\n\nFriday, Mount Druitt.`, hashtags: '#TheContained #YouthJustice #CommunityLed' },
     ]
   },
   {
@@ -4273,7 +4366,7 @@ function selectLibPhoto(src) {
   toast('Photo selected — switch to Composer tab');
 }
 
-function escAttr(str) { return str.replace(/'/g, "\\'"); }
+function escAttr(str) { return str.replace(/\\/g,'\\\\').replace(/'/g, "\\'").replace(/\n/g,'\\n'); }
 
 // ── Tile Composer ───────────────────────────────────────
 
@@ -5245,6 +5338,330 @@ async function analysePulse() {
   loading.classList.remove('visible');
 }
 
+// ── Dashboard ────────────────────────────────────────────
+
+let dashPosts = [];
+const DASH_DB_ID = 'e400e93e-fd9d-4a21-810c-58d67ed9fe97';
+
+function getDashToken() {
+  // Share token between Calendar and Dashboard tabs
+  const t = document.getElementById('dash-notion-token')?.value?.trim();
+  if (t) return t;
+  return document.getElementById('notion-token')?.value?.trim() || '';
+}
+
+async function loadDashboard() {
+  const token = getDashToken();
+  if (!token) return toast('Enter your Notion API token first');
+
+  const statusEl = document.getElementById('dash-status');
+  const btn = document.getElementById('dash-load-btn');
+  btn.disabled = true;
+  btn.textContent = 'LOADING...';
+  statusEl.textContent = 'Fetching posts from Notion...';
+  statusEl.style.color = '#737373';
+
+  try {
+    let allPages = [];
+    let hasMore = true;
+    let startCursor = undefined;
+
+    while (hasMore) {
+      const body = { page_size: 100 };
+      if (startCursor) body.start_cursor = startCursor;
+
+      const res = await fetch(`https://api.notion.com/v1/databases/${DASH_DB_ID}/query`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Notion-Version': '2022-06-28',
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`Notion API error: ${res.status} — ${err}`);
+      }
+
+      const data = await res.json();
+      allPages = allPages.concat(data.results || []);
+      hasMore = data.has_more;
+      startCursor = data.next_cursor;
+    }
+
+    dashPosts = allPages.map(page => {
+      const p = page.properties;
+      const title = p['Content/Communication Name']?.title?.[0]?.plain_text || 'Untitled';
+      const status = p['Status']?.status?.name || 'No status';
+      const type = p['Communication Type']?.select?.name || '';
+      const project = p['Project']?.select?.name || '';
+      const keyMessage = p['Key Message/Story']?.rich_text?.[0]?.plain_text || '';
+      const notes = p['Notes']?.rich_text?.[0]?.plain_text || '';
+      const sentDate = p['Sent date']?.date?.start || '';
+      const targets = (p['Target Accounts']?.multi_select || []).map(s => s.name);
+      const imageFiles = p['Image']?.files || [];
+      const imageUrl = imageFiles[0]?.external?.url || imageFiles[0]?.file?.url || '';
+      const ghlPostId = p['GHL Post ID']?.rich_text?.[0]?.plain_text || '';
+
+      return { id: page.id, title, status, type, project, keyMessage, notes, sentDate, targets, imageUrl, ghlPostId };
+    });
+
+    // Sort: Draft first, then Scheduled, then Published
+    const statusOrder = { 'Draft': 0, 'Scheduled': 1, 'In progress': 2, 'Published': 3, 'Done': 4 };
+    dashPosts.sort((a, b) => (statusOrder[a.status] ?? 5) - (statusOrder[b.status] ?? 5));
+
+    statusEl.textContent = `Loaded ${dashPosts.length} posts`;
+    statusEl.style.color = '#059669';
+    renderDashSummary();
+    renderDashPosts();
+    document.getElementById('dash-summary-section').style.display = '';
+    document.getElementById('dash-posts-section').style.display = '';
+
+  } catch (e) {
+    statusEl.textContent = `Error: ${e.message}`;
+    statusEl.style.color = '#dc2626';
+    console.error(e);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Load Posts';
+}
+
+function renderDashSummary() {
+  const counts = { Draft: 0, Scheduled: 0, Published: 0, 'Missing Image': 0, Total: dashPosts.length };
+  dashPosts.forEach(p => {
+    if (counts[p.status] !== undefined) counts[p.status]++;
+    if (!p.imageUrl) counts['Missing Image']++;
+  });
+
+  const colors = { Draft: '#f59e0b', Scheduled: '#3b82f6', Published: '#059669', 'Missing Image': '#dc2626', Total: '#737373' };
+  document.getElementById('dash-summary').innerHTML = Object.entries(counts).map(([label, count]) => `
+    <div style="background:#141414;border:1px solid #1a1a1a;border-radius:8px;padding:16px;text-align:center;">
+      <div style="font-family:'Space Grotesk';font-size:32px;font-weight:700;color:${colors[label] || 'white'};">${count}</div>
+      <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#737373;margin-top:4px;">${label}</div>
+    </div>
+  `).join('');
+}
+
+function getFilteredDashPosts() {
+  const statusFilter = document.getElementById('dash-filter-status')?.value || 'all';
+  const projectFilter = document.getElementById('dash-filter-project')?.value || 'all';
+
+  return dashPosts.filter(p => {
+    if (statusFilter === 'no-image') { if (p.imageUrl) return false; }
+    else if (statusFilter !== 'all' && p.status !== statusFilter) return false;
+    if (projectFilter !== 'all' && p.project !== projectFilter) return false;
+    return true;
+  });
+}
+
+function filterDashPosts() { renderDashPosts(); }
+
+function renderDashPosts() {
+  const filtered = getFilteredDashPosts();
+  const grid = document.getElementById('dash-posts-grid');
+
+  const statusColors = { Draft: '#f59e0b', Scheduled: '#3b82f6', Published: '#059669', 'In progress': '#8b5cf6', Done: '#059669' };
+  const platformIcons = { Instagram: 'IG', 'LinkedIn (Personal)': 'LI', 'LinkedIn (Company)': 'LI', Facebook: 'FB', YouTube: 'YT', Twitter: 'X', Bluesky: 'BS', 'Google Business': 'GB' };
+
+  grid.innerHTML = filtered.map((p, i) => {
+    const realIdx = dashPosts.indexOf(p);
+    const sc = statusColors[p.status] || '#525252';
+    const targets = p.targets.map(t => `<span style="font-size:9px;padding:2px 5px;background:${sc}22;color:${sc};border-radius:2px;font-weight:600;">${platformIcons[t] || t}</span>`).join(' ');
+    const preview = p.keyMessage ? p.keyMessage.substring(0, 120) + (p.keyMessage.length > 120 ? '...' : '') : '<span style="color:#404040;">No content</span>';
+
+    return `
+    <div style="background:#141414;border:1px solid #1a1a1a;border-radius:8px;overflow:hidden;" data-dash-idx="${realIdx}">
+      <!-- Image slot -->
+      <div style="height:160px;background:#0a0a0a;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;" onclick="assignDashImage(${realIdx})">
+        ${p.imageUrl
+          ? `<img src="${p.imageUrl}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div style="display:none;flex-direction:column;align-items:center;gap:4px;color:#404040;"><span style="font-size:24px;">+</span><span style="font-size:10px;">Click to assign</span></div>`
+          : `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:#404040;"><span style="font-size:24px;">+</span><span style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;">Click to assign image</span></div>`
+        }
+        <div style="position:absolute;top:8px;right:8px;background:${sc};color:white;font-size:9px;font-weight:700;padding:3px 8px;border-radius:3px;letter-spacing:0.05em;text-transform:uppercase;">${p.status}</div>
+      </div>
+      <!-- Info -->
+      <div style="padding:12px 14px;">
+        <div style="font-family:'Space Grotesk';font-size:13px;font-weight:600;color:white;margin-bottom:6px;line-height:1.3;">${escHtml(p.title)}</div>
+        <div style="font-size:12px;color:#737373;margin-bottom:8px;line-height:1.4;">${preview}</div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+          ${targets}
+          ${p.sentDate ? `<span style="font-family:'IBM Plex Mono';font-size:10px;color:#404040;">${p.sentDate}</span>` : ''}
+          ${p.project ? `<span style="font-size:9px;padding:2px 5px;background:#52525222;color:#525252;border-radius:2px;">${p.project}</span>` : ''}
+        </div>
+        <div style="display:flex;gap:6px;">
+          <select onchange="updateDashStatus(${realIdx}, this.value)" style="padding:4px 8px;background:#0a0a0a;color:#e5e5e5;border:1px solid #262626;border-radius:3px;font-size:11px;flex:1;">
+            ${['Draft','Scheduled','In progress','Published','Done'].map(s => `<option value="${s}" ${s === p.status ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+          <button class="post-copy-btn" onclick="copyText('${escAttr(p.keyMessage)}')" style="font-size:10px;">Copy</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function updateDashStatus(idx, newStatus) {
+  const token = getDashToken();
+  if (!token) return toast('No Notion token');
+  const post = dashPosts[idx];
+  if (!post) return;
+
+  try {
+    const res = await fetch(`https://api.notion.com/v1/pages/${post.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Notion-Version': '2022-06-28',
+      },
+      body: JSON.stringify({
+        properties: { Status: { status: { name: newStatus } } },
+      }),
+    });
+
+    if (!res.ok) throw new Error(`${res.status}`);
+    post.status = newStatus;
+    renderDashSummary();
+    toast(`Status → ${newStatus}`);
+  } catch (e) {
+    toast(`Error: ${e.message}`);
+  }
+}
+
+// Image assignment — opens photo picker then updates Notion
+let dashAssignIdx = null;
+
+function assignDashImage(idx) {
+  dashAssignIdx = idx;
+  // Reuse the existing photo picker modal
+  openDashPhotoPicker();
+}
+
+function openDashPhotoPicker() {
+  const modal = document.getElementById('photo-picker-modal');
+  modal.style.display = 'flex';
+  // Override the pickPhoto to route to dashboard assignment
+  window._origPickPhoto = window.pickPhoto;
+  window.pickPhoto = function(src) {
+    if (dashAssignIdx !== null) {
+      applyDashImage(dashAssignIdx, src);
+      dashAssignIdx = null;
+    }
+    closePhotoPicker();
+  };
+  pickerPage = 0;
+  renderPickerGrid();
+}
+
+async function applyDashImage(idx, imageUrl) {
+  const token = getDashToken();
+  const post = dashPosts[idx];
+  if (!token || !post) return;
+
+  post.imageUrl = imageUrl;
+  renderDashPosts();
+  toast('Updating Notion...');
+
+  try {
+    const res = await fetch(`https://api.notion.com/v1/pages/${post.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Notion-Version': '2022-06-28',
+      },
+      body: JSON.stringify({
+        properties: {
+          Image: { files: [{ type: 'external', name: 'social-image', external: { url: imageUrl } }] },
+        },
+      }),
+    });
+
+    if (!res.ok) throw new Error(`${res.status}`);
+    renderDashSummary();
+    toast('Image assigned in Notion');
+  } catch (e) {
+    toast(`Notion error: ${e.message}`);
+    console.error(e);
+  }
+}
+
+// Restore original pickPhoto when closing modal from dashboard context
+const _origClosePhotoPicker = typeof closePhotoPicker === 'function' ? closePhotoPicker : null;
+
+async function checkSystemHealth() {
+  const notionEl = document.getElementById('health-notion-status');
+  const ghlEl = document.getElementById('health-ghl-status');
+  const envEl = document.getElementById('health-env-status');
+
+  // Check Notion
+  const token = getDashToken();
+  if (token) {
+    try {
+      const res = await fetch(`https://api.notion.com/v1/databases/${DASH_DB_ID}`, {
+        headers: { 'Authorization': `Bearer ${token}`, 'Notion-Version': '2022-06-28' },
+      });
+      if (res.ok) {
+        notionEl.textContent = 'Connected';
+        notionEl.style.color = '#059669';
+        document.getElementById('health-notion').style.borderColor = '#059669';
+      } else {
+        notionEl.textContent = `Error: ${res.status}`;
+        notionEl.style.color = '#dc2626';
+      }
+    } catch (e) {
+      notionEl.textContent = 'Network error';
+      notionEl.style.color = '#dc2626';
+    }
+  } else {
+    notionEl.textContent = 'No token entered';
+    notionEl.style.color = '#f59e0b';
+  }
+
+  // Check GHL + Env via dev server
+  try {
+    const res = await fetch(`${API_BASE}/api/ghl/social-post`);
+    if (res.ok) {
+      const data = await res.json();
+      const count = data.accounts?.length || 0;
+      ghlEl.textContent = `Connected — ${count} accounts`;
+      ghlEl.style.color = '#059669';
+      document.getElementById('health-ghl').style.borderColor = '#059669';
+    } else {
+      const err = await res.json().catch(() => ({}));
+      ghlEl.textContent = err.error || `Error: ${res.status}`;
+      ghlEl.style.color = '#dc2626';
+    }
+  } catch (e) {
+    ghlEl.textContent = 'Dev server not running';
+    ghlEl.style.color = '#f59e0b';
+  }
+
+  // Check env vars via a lightweight endpoint
+  try {
+    const res = await fetch(`${API_BASE}/api/cron/campaign/social-publish`, {
+      headers: { 'Authorization': 'Bearer check' }, // Will fail auth but response tells us if configured
+    });
+    if (res.status === 401) {
+      envEl.textContent = 'Cron endpoint active (auth required)';
+      envEl.style.color = '#059669';
+    } else if (res.status === 500) {
+      const data = await res.json().catch(() => ({}));
+      envEl.textContent = data.error || 'Missing config';
+      envEl.style.color = '#dc2626';
+    }
+  } catch (e) {
+    envEl.textContent = 'Dev server not running';
+    envEl.style.color = '#f59e0b';
+  }
+}
+
 // ── Init ────────────────────────────────────────────────
 
 renderBrandAssets();
@@ -5259,6 +5676,15 @@ renderSavedElements();
 populateStatPicker();
 // Load photos dynamically from Empathy Ledger API
 loadAllPhotos();
+
+// Sync Notion token between Dashboard and Calendar tabs
+['dash-notion-token', 'notion-token'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => {
+    const other = document.getElementById(id === 'dash-notion-token' ? 'notion-token' : 'dash-notion-token');
+    if (other && other.value !== el.value) other.value = el.value;
+  });
+});
 
 // ── Storytellers ───────────────────────────────────────
 let storytellerFilter = 'all';
@@ -5371,6 +5797,12 @@ function openPhotoPicker(origSrc, idx) {
 function closePhotoPicker() {
   document.getElementById('photo-picker-modal').style.display = 'none';
   pickerTarget = null;
+  // Restore original pickPhoto if dashboard overrode it
+  if (window._origPickPhoto) {
+    window.pickPhoto = window._origPickPhoto;
+    window._origPickPhoto = null;
+  }
+  dashAssignIdx = null;
 }
 
 function setPickerFilter(cat, btn) {
