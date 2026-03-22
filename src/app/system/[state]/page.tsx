@@ -5,6 +5,9 @@ import { notFound } from 'next/navigation';
 import { getStateConfig, getAllStateSlugs } from '../configs';
 import { fmt, fmtCompact, fmtNum, fmtDate, truncate } from '../types';
 import type { SystemConfig } from '../types';
+import { TerminalNav } from '../components/terminal-nav';
+import { TerminalFooter } from '../components/terminal-footer';
+import { SectionHeading } from '../components/section-heading';
 export const dynamic = 'force-dynamic';
 export const revalidate = 1800;
 
@@ -258,33 +261,16 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
 
   return (
     <div className="min-h-screen" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-      {/* ═══ NAVIGATION BAR ═══ */}
-      <nav className="bg-[#0A0A0A] border-b border-gray-800 px-6 py-3">
-        <div className="max-w-7xl mx-auto flex items-center gap-6 text-sm font-mono">
-          <Link href="/" className="text-[#F5F0E8] hover:text-[#DC2626] transition-colors">
-            JusticeHub
-          </Link>
-          <span className="text-gray-600">/</span>
-          <span className="text-[#DC2626]">{config.state} System Map</span>
-          <div className="ml-auto flex gap-4 print:hidden">
-            <Link href="/journey-map" className="text-gray-400 hover:text-[#F5F0E8] transition-colors">
-              Journey Map
-            </Link>
-            <Link href="/civic/qld-youth-justice" className="text-gray-400 hover:text-[#F5F0E8] transition-colors">
-              Civic Intel
-            </Link>
-            <Link href="/spending" className="text-gray-400 hover:text-[#F5F0E8] transition-colors">
-              National Spending
-            </Link>
-            <Link href="/justice-funding" className="text-gray-400 hover:text-[#F5F0E8] transition-colors">
-              Funding
-            </Link>
-            <span className="text-gray-700">|</span>
+      <TerminalNav
+        current={`${config.state} System Map`}
+        extraLinks={[{ href: '/civic/qld-youth-justice', label: 'Civic Intel' }]}
+        trailing={
+          <>
             <button id="print-btn" className="text-gray-400 hover:text-[#F5F0E8] transition-colors print:hidden">Export PDF</button>
             <script dangerouslySetInnerHTML={{ __html: 'document.getElementById("print-btn").onclick=function(){window.print()}' }} />
-          </div>
-        </div>
-      </nav>
+          </>
+        }
+      />
 
       {/* ═══ HERO / HEADER ═══ */}
       <header className="bg-[#0A0A0A] text-[#F5F0E8] px-6 py-16">
@@ -1318,15 +1304,10 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
       </section>
 
       {/* Footer timestamp */}
-      <footer className="bg-[#0A0A0A] border-t border-gray-800 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between font-mono text-xs text-gray-600">
-          <span>JusticeHub / {config.state} System Map</span>
-          <span>Last updated: {new Date().toISOString().split('T')[0]}</span>
-        </div>
-        <div className="hidden print:block max-w-7xl mx-auto mt-2 font-mono text-xs text-gray-500">
-          Generated from justicehub.org.au/system/{config.slug} — Data: QLD Open Data, AIHW, ROGS, Empathy Ledger
-        </div>
-      </footer>
+      <TerminalFooter
+        label={`JusticeHub / ${config.state} System Map`}
+        printLine={`Generated from justicehub.org.au/system/${config.slug} — Data: QLD Open Data, AIHW, ROGS, Empathy Ledger`}
+      />
 
       {/* Drill-down inline script — avoids Next.js 14 HMR crash with client components */}
       <script dangerouslySetInnerHTML={{ __html: `
@@ -1415,18 +1396,3 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
 
 // ── Reusable Components ──
 
-function SectionHeading({ title, dark = false }: { title: string; dark?: boolean }) {
-  return (
-    <div className="mb-8">
-      <div className="flex items-center gap-4">
-        <h2
-          className={`text-xl font-bold tracking-[0.2em] uppercase ${dark ? 'text-[#F5F0E8]' : 'text-[#0A0A0A]'}`}
-          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-        >
-          {title}
-        </h2>
-        <div className={`flex-1 h-px ${dark ? 'bg-gray-700' : 'bg-gray-300'}`} />
-      </div>
-    </div>
-  );
-}

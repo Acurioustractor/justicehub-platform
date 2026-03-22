@@ -9,6 +9,8 @@ import { MinisterLeaderboard } from './components/minister-leaderboard';
 import { LiveFeed } from './components/live-feed';
 import { VerificationScores, DetentionCostIndex, DataInventory, TheEquation, AlertsTicker, SourceRegistry } from './components/sidebar';
 import { InlineScript } from './components/inline-script';
+import { TerminalNav } from './components/terminal-nav';
+import { TerminalFooter } from './components/terminal-footer';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 1800;
@@ -33,19 +35,7 @@ export default async function SystemTerminalDashboard() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-      {/* ═══ TOP BAR ═══ */}
-      <nav className="bg-[#0A0A0A] border-b border-gray-800 px-4 sm:px-6 py-3">
-        <div className="max-w-[1400px] mx-auto flex items-center gap-4 sm:gap-6 text-sm font-mono">
-          <Link href="/" className="text-[#F5F0E8] hover:text-[#DC2626] transition-colors">JusticeHub</Link>
-          <span className="text-gray-600">/</span>
-          <span className="text-[#DC2626]">System Terminal</span>
-          <div className="ml-auto flex gap-4 hidden sm:flex">
-            <Link href="/journey-map" className="text-gray-400 hover:text-[#F5F0E8] transition-colors">Journey Map</Link>
-            <Link href="/spending" className="text-gray-400 hover:text-[#F5F0E8] transition-colors">National Spending</Link>
-            <Link href="/justice-funding" className="text-gray-400 hover:text-[#F5F0E8] transition-colors">Funding</Link>
-          </div>
-        </div>
-      </nav>
+      <TerminalNav current="System Terminal" />
 
       {/* ═══ HEADER ═══ */}
       <header className="bg-[#0A0A0A] text-[#F5F0E8] px-4 sm:px-6 pt-8 sm:pt-12 pb-6 sm:pb-8">
@@ -142,13 +132,7 @@ export default async function SystemTerminalDashboard() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#0A0A0A] border-t border-gray-800 px-4 sm:px-6 py-4">
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between font-mono text-xs text-gray-600">
-          <span>JusticeHub / System Terminal</span>
-          <span suppressHydrationWarning>Last updated: {new Date().toISOString().split('T')[0]}</span>
-        </div>
-      </footer>
+      <TerminalFooter label="JusticeHub / System Terminal" />
 
       <InlineScript states={states} />
     </div>
