@@ -61,16 +61,22 @@ function extractMultiSelect(prop: unknown): string[] {
   return p?.multi_select?.map((s) => s.name) || [];
 }
 
+function extractFiles(prop: unknown): string {
+  const p = prop as { files?: Array<{ external?: { url: string }; file?: { url: string } }> };
+  const f = p?.files?.[0];
+  return f?.external?.url || f?.file?.url || '';
+}
+
 function mapPage(page: NotionPage) {
   const props = page.properties;
   return {
     id: page.id,
-    title: extractText(props['Name'] || props['Title'] || props['Post Title']),
-    status: extractSelect(props['Status']),
-    targets: extractMultiSelect(props['Target Accounts'] || props['Targets'] || props['Platform']),
-    sentDate: extractDate(props['Sent Date'] || props['Date'] || props['Published Date']),
-    keyMessage: extractText(props['Key Message'] || props['Message'] || props['Content']),
-    imageUrl: extractUrl(props['Image URL'] || props['Image']) ||
+    title: extractText(props['Content/Communication Name']),
+    status: (props['Status'] as { status?: { name: string } })?.status?.name || '',
+    targets: extractMultiSelect(props['Target Accounts']),
+    sentDate: extractDate(props['Sent date']),
+    keyMessage: extractText(props['Key Message/Story']),
+    imageUrl: extractFiles(props['Image']) ||
       page.cover?.external?.url || page.cover?.file?.url || '',
     lastEdited: page.last_edited_time,
   };
@@ -92,7 +98,7 @@ export async function GET(request: NextRequest) {
     if (status) {
       filter.filter = {
         property: 'Status',
-        select: { equals: status },
+        status: { equals: status },
       };
     }
 
@@ -101,7 +107,7 @@ export async function GET(request: NextRequest) {
       headers: notionHeaders(),
       body: JSON.stringify({
         ...filter,
-        sorts: [{ property: 'Sent Date', direction: 'descending' }],
+        sorts: [{ property: 'Sent date', direction: 'descending' }],
         page_size: 100,
       }),
     });
@@ -146,24 +152,19 @@ export async function PATCH(request: NextRequest) {
 
     const properties: Record<string, unknown> = {};
     if (status) {
-      properties['Status'] = { select: { name: status } };
+      properties['Status'] = { status: { name: status } };
     }
     if (sentDate) {
-      properties['Sent Date'] = { date: { start: sentDate } };
+      properties['Sent date'] = { date: { start: sentDate } };
     }
     if (imageUrl) {
-      properties['Image URL'] = { url: imageUrl };
-    }
-
-    const payload: Record<string, unknown> = { properties };
-    if (imageUrl) {
-      payload.cover = { type: 'external', external: { url: imageUrl } };
+      properties['Image'] = { files: [{ type: 'external', name: 'image', external: { url: imageUrl } }] };
     }
 
     const res = await fetch(`${NOTION_API}/pages/${pageId}`, {
       method: 'PATCH',
       headers: notionHeaders(),
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ properties }),
     });
 
     if (!res.ok) {
@@ -194,11 +195,12 @@ export async function POST(request: NextRequest) {
     if (!title) return NextResponse.json({ error: 'title required' }, { status: 400 });
 
     const properties: Record<string, unknown> = {
-      'Name': { title: [{ text: { content: title } }] },
+      'Content/Communication Name': { title: [{ text: { content: title } }] },
+      'Communication Type': { select: { name: 'LinkedIn Post' } },
     };
-    if (status) properties['Status'] = { select: { name: status } };
-    if (sentDate) properties['Sent Date'] = { date: { start: sentDate } };
-    if (imageUrl) properties['Image URL'] = { url: imageUrl };
+    if (status) properties['Status'] = { status: { name: status } };
+    if (sentDate) properties['Sent date'] = { date: { start: sentDate } };
+    if (imageUrl) properties['Image'] = { files: [{ type: 'external', name: 'image', external: { url: imageUrl } }] };
     if (targets?.length) {
       properties['Target Accounts'] = {
         multi_select: targets.map((t: string) => ({ name: t })),
@@ -213,19 +215,10 @@ export async function POST(request: NextRequest) {
       },
     }] : [];
 
-    const payload: Record<string, unknown> = {
-      parent: { database_id: DB_ID },
-      properties,
-      children,
-    };
-    if (imageUrl) {
-      payload.cover = { type: 'external', external: { url: imageUrl } };
-    }
-
     const res = await fetch(`${NOTION_API}/pages`, {
       method: 'POST',
       headers: notionHeaders(),
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ parent: { database_id: DB_ID }, properties, children }),
     });
 
     if (!res.ok) {
