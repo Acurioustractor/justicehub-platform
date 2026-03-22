@@ -640,16 +640,62 @@ nav a:focus {
 
 /* Print styles */
 @media print {
-  .no-print {
+  .no-print, .print\:hidden {
     display: none !important;
   }
-  
+
   .print-break-before {
     page-break-before: always;
   }
-  
+
   .print-break-after {
     page-break-after: always;
+  }
+
+  /* System terminal print optimization */
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Keep dark backgrounds for brand consistency */
+  .bg-\[\#0A0A0A\] {
+    background-color: #0A0A0A !important;
+    color: #F5F0E8 !important;
+  }
+
+  /* Prevent page breaks inside cards and tables */
+  section {
+    page-break-inside: avoid;
+  }
+
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  /* Tighten spacing for print */
+  .py-16 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+  .pb-16 { padding-bottom: 2rem !important; }
+  .mb-8 { margin-bottom: 1rem !important; }
+  .gap-6 { gap: 0.75rem !important; }
+
+  /* Ensure grids don't split across pages */
+  .grid {
+    page-break-inside: avoid;
+  }
+
+  /* Add page URL to footer */
+  @page {
+    margin: 1.5cm;
+    @bottom-center {
+      content: "JusticeHub System Terminal — justicehub.org.au";
+      font-size: 8pt;
+      color: #666;
+    }
   }
 }
 

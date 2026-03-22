@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { getStateConfig, getAllStateSlugs } from '../configs';
 import { fmt, fmtCompact, fmtNum, fmtDate, truncate } from '../types';
 import type { SystemConfig } from '../types';
+import { PrintButton } from './print-button';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 1800;
@@ -267,7 +268,7 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
           </Link>
           <span className="text-gray-600">/</span>
           <span className="text-[#DC2626]">{config.state} System Map</span>
-          <div className="ml-auto flex gap-4">
+          <div className="ml-auto flex gap-4 print:hidden">
             <Link href="/journey-map" className="text-gray-400 hover:text-[#F5F0E8] transition-colors">
               Journey Map
             </Link>
@@ -280,6 +281,8 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
             <Link href="/justice-funding" className="text-gray-400 hover:text-[#F5F0E8] transition-colors">
               Funding
             </Link>
+            <span className="text-gray-700">|</span>
+            <PrintButton />
           </div>
         </div>
       </nav>
@@ -1304,6 +1307,9 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
         <div className="max-w-7xl mx-auto flex items-center justify-between font-mono text-xs text-gray-600">
           <span>JusticeHub / {config.state} System Map</span>
           <span>Last updated: {new Date().toISOString().split('T')[0]}</span>
+        </div>
+        <div className="hidden print:block max-w-7xl mx-auto mt-2 font-mono text-xs text-gray-500">
+          Generated from justicehub.org.au/system/{config.slug} — Data: QLD Open Data, AIHW, ROGS, Empathy Ledger
         </div>
       </footer>
     </div>
