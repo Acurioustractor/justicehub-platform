@@ -31,23 +31,24 @@ export default async function VerifyPage({ params }: { params: Promise<{ state: 
 
   // ── Run all verification queries in parallel ──
   const [
-    orgCountRes, orgQualityRes, interventionRes, fundingRes, tenderRes,
+    _orgPlaceholder, orgQualityRes, interventionRes, fundingRes, tenderRes,
     civicRes, crossoverRes, rogsRes, mediaRes, evidenceRes,
-    mistaggedRes, topOrgsRes
+    mistaggedRes, topOrgsRes,
+    fundingLinkedRes, tenderLinkedRes
   ] = await Promise.all([
     // Org counts
-    Promise.resolve(null), // placeholder
-    supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('state', stateUpper),
+    Promise.resolve(null), // placeholder — orgQualityRes provides the count
+    supabase.from('organizations').select('*', { count: 'exact', head: true }).eq('state', stateUpper),
 
     // Interventions
     supabase.from('alma_interventions').select('id, name, evidence_level, operating_organization_id, portfolio_score, cost_per_young_person, verification_status')
       .neq('verification_status', 'ai_generated'),
 
     // Funding
-    supabase.from('justice_funding').select('id, alma_organization_id, amount_dollars, source', { count: 'exact', head: true }).eq('state', stateUpper),
+    supabase.from('justice_funding').select('id', { count: 'exact', head: true }).eq('state', stateUpper),
 
     // Tenders
-    supabase.from('state_tenders').select('id, alma_organization_id', { count: 'exact', head: true }).eq('state', stateUpper),
+    supabase.from('state_tenders').select('id', { count: 'exact', head: true }).eq('state', stateUpper),
 
     // Civic data
     Promise.all([
@@ -77,6 +78,10 @@ export default async function VerifyPage({ params }: { params: Promise<{ state: 
     // Top orgs with most tender connections
     supabase.from('organizations').select('id, name, abn, is_indigenous_org, website')
       .eq('state', stateUpper).not('abn', 'is', null).limit(1), // just to verify orgs exist
+
+    // Linked counts for funding and tenders
+    supabase.from('justice_funding').select('id', { count: 'exact', head: true }).eq('state', stateUpper).not('alma_organization_id', 'is', null),
+    supabase.from('state_tenders').select('id', { count: 'exact', head: true }).eq('state', stateUpper).not('alma_organization_id', 'is', null),
   ]);
 
   // ── Process intervention data ──
@@ -107,7 +112,11 @@ export default async function VerifyPage({ params }: { params: Promise<{ state: 
   // ── Build verification checks ──
   const orgCount = orgQualityRes.count || 0;
   const fundingCount = fundingRes.count || 0;
+  const fundingLinked = fundingLinkedRes.count || 0;
   const tenderCount = tenderRes.count || 0;
+  const tenderLinked = tenderLinkedRes.count || 0;
+  const tenderLinkPct = tenderCount > 0 ? Math.round(tenderLinked / tenderCount * 100) : 0;
+  const fundingLinkPct = fundingCount > 0 ? Math.round(fundingLinked / fundingCount * 100) : 0;
 
   const checks: { domain: string; checks: CheckResult[] }[] = [
     {
@@ -140,9 +149,9 @@ export default async function VerifyPage({ params }: { params: Promise<{ state: 
         },
         {
           name: 'Tender → org linkage rate',
-          status: tenderCount > 0 && (tenderCount - (tenderCount - (tenderCount > 0 ? 101885 : 0))) / tenderCount > 0.6 ? 'warn' : 'fail',
-          value: tenderCount > 0 ? `${Math.round(101885 / tenderCount * 100)}%` : '0%',
-          detail: `${fmtNum(tenderCount - 101885)} tenders not linked to any organization — mostly education/IT suppliers`,
+          status: tenderLinkPct >= 80 ? 'pass' : tenderLinkPct >= 60 ? 'warn' : 'fail',
+          value: `${tenderLinkPct}%`,
+          detail: `${fmtNum(tenderLinked)} linked, ${fmtNum(tenderCount - tenderLinked)} unlinked — remaining are mostly education/IT suppliers`,
         },
       ],
     },
@@ -157,9 +166,9 @@ export default async function VerifyPage({ params }: { params: Promise<{ state: 
         },
         {
           name: 'Funding → org linkage rate',
-          status: fundingCount > 0 && (fundingCount - 4030) / fundingCount > 0.9 ? 'pass' : 'warn',
-          value: fundingCount > 0 ? `${Math.round((fundingCount - 4030) / fundingCount * 100)}%` : '0%',
-          detail: `${fmtNum(4030)} records missing org link — mostly ROGS aggregate state-level data (no individual recipient)`,
+          status: fundingLinkPct >= 90 ? 'pass' : fundingLinkPct >= 70 ? 'warn' : 'fail',
+          value: `${fundingLinkPct}%`,
+          detail: `${fmtNum(fundingLinked)} linked, ${fmtNum(fundingCount - fundingLinked)} unlinked — mostly ROGS aggregate state-level data (no individual recipient)`,
         },
         {
           name: 'Funding sources diversity',
@@ -425,7 +434,7 @@ export default async function VerifyPage({ params }: { params: Promise<{ state: 
                 { task: 'Community voices have consent and attribution', done: config.voices.length >= 3, critical: true },
                 { task: 'Crossover statistics sourced and cited', done: crossover.length > 50, critical: true },
                 { task: 'Cost comparison figures from ROGS/AIHW', done: true, critical: true },
-                { task: 'Tender → org linkage above 60%', done: false, critical: false },
+                { task: 'Tender → org linkage above 60%', done: tenderLinkPct >= 60, critical: false },
                 { task: 'All intervention evidence levels verified', done: interventionsNoEvidence === 0, critical: false },
                 { task: 'Media articles QLD-tagged', done: true, critical: false },
               ].map((item) => (
