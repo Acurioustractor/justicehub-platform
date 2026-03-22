@@ -450,9 +450,9 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-           SECTION 2: THE WORDS
+           SECTION 2: THE WORDS (QLD only — civic data is QLD-specific)
            ═══════════════════════════════════════════════════════════════ */}
-      <section className="bg-[#F5F0E8] px-6 py-16">
+      {config.slug === 'qld' && <section className="bg-[#F5F0E8] px-6 py-16">
         <div className="max-w-7xl mx-auto">
           <SectionHeading title="THE WORDS" />
 
@@ -728,7 +728,7 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
             </div>
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* ═══════════════════════════════════════════════════════════════
            SECTION 3: THE EVIDENCE
@@ -844,7 +844,7 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
       {/* ═══════════════════════════════════════════════════════════════
            SECTION 3.5: THE ACCOUNTABILITY
            ═══════════════════════════════════════════════════════════════ */}
-      {supplierData.length > 0 && (
+      {config.slug === 'qld' && supplierData.length > 0 && (
         <section className="bg-[#0A0A0A] text-[#F5F0E8] px-6 py-16">
           <div className="max-w-7xl mx-auto">
             <SectionHeading title="THE ACCOUNTABILITY" dark />
@@ -994,8 +994,8 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
             </div>
           </div>
 
-          {/* NDIS NQ Spotlight */}
-          <div className="border border-gray-700 rounded-sm p-6 mb-8">
+          {/* NDIS NQ Spotlight (QLD-only data) */}
+          {config.slug === 'qld' && <div className="border border-gray-700 rounded-sm p-6 mb-8">
             <div className="font-mono text-xs text-gray-400 tracking-widest uppercase mb-3">NDIS Participants in {config.spotlight?.title?.replace(' Spotlight', '') || config.stateFull}</div>
             <div className="grid grid-cols-3 gap-4 mb-4">
               {[
@@ -1020,7 +1020,7 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
               </div>
             </div>
             <p className="font-mono text-xs text-gray-600 mt-3">Source: NDIS Quarterly Report Dec 2025, BOCSAR/DSS</p>
-          </div>
+          </div>}
 
           {/* The Pipeline Visualization */}
           <div className="border border-gray-700 rounded-sm p-6">
@@ -1091,7 +1091,7 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
               <p className="font-mono text-xs text-gray-600 mt-3">Source: AIHW Youth Justice 2023-24</p>
             </div>
 
-            <div className="border border-gray-700 rounded-sm p-6">
+            {config.slug === 'qld' && <div className="border border-gray-700 rounded-sm p-6">
               <div className="font-mono text-xs text-gray-400 tracking-widest uppercase mb-3">QFCC Crossover Detail</div>
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
@@ -1130,7 +1130,7 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
                 </div>
               </div>
               <p className="font-mono text-xs text-gray-600 mt-3">Source: QFCC Crossover Cohort Data Insights 2024</p>
-            </div>
+            </div>}
           </div>
         </div>
       </section>
