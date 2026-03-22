@@ -33,13 +33,21 @@ export default function Pipeline() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPosts = async () => {
+    setError(null);
     try {
       const url = filterStatus
         ? `/api/admin/comms/notion?status=${encodeURIComponent(filterStatus)}`
         : '/api/admin/comms/notion';
       const res = await fetch(url);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setError(body.error || `API returned ${res.status}`);
+        setLoading(false);
+        return;
+      }
       const data = await res.json();
       if (data.posts) {
         setPosts(data.posts);
@@ -48,6 +56,7 @@ export default function Pipeline() {
       }
     } catch (err) {
       console.error('Failed to fetch posts:', err);
+      setError('Network error — could not reach API');
     } finally {
       setLoading(false);
     }
@@ -82,6 +91,23 @@ export default function Pipeline() {
       <div className="flex items-center justify-center py-20">
         <Loader2 className="animate-spin mr-2" size={20} />
         <span className="text-sm opacity-60">Loading pipeline...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="border border-red-500/30 rounded-lg p-6 text-center">
+        <p className="text-sm text-red-400 mb-2">{error}</p>
+        <p className="text-xs opacity-50">
+          {error === 'Unauthorized' ? 'You must be logged in as an admin.' : 'Check the browser console for details.'}
+        </p>
+        <button
+          onClick={() => { setLoading(true); fetchPosts(); }}
+          className="mt-3 px-3 py-1 text-xs rounded border border-white/20 hover:bg-white/10 transition-colors"
+        >
+          Retry
+        </button>
       </div>
     );
   }
