@@ -101,16 +101,7 @@ export async function POST(request: NextRequest) {
         return { url, type: mimeMap[ext] || 'image/jpeg' }
       })
     } else {
-      // Instagram requires an image — use default brand poster as fallback
-      const hasInstagram = postData.platformAccountIds.some(id => id.includes('instagram') || id.includes('17841'))
-      if (hasInstagram) {
-        ghlBody.media = [{
-          url: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/contained/poster-tour.png',
-          type: 'image/png',
-        }]
-      } else {
-        ghlBody.media = []
-      }
+      ghlBody.media = []
     }
 
     if (postData.scheduledAt) {

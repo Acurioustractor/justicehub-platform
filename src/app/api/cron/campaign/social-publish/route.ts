@@ -169,16 +169,7 @@ export async function GET(request: NextRequest) {
             return { url, type: mimeMap[ext] || 'image/jpeg' };
           });
         } else {
-          // Instagram requires an image — fallback to brand poster
-          const hasInstagram = platformAccountIds.some(id => id.includes('17841'));
-          if (hasInstagram) {
-            ghlBody.media = [{
-              url: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/contained/poster-tour.png',
-              type: 'image/png',
-            }];
-          } else {
-            ghlBody.media = [];
-          }
+          ghlBody.media = [];
         }
 
         // 3. POST to GHL Social Planner
