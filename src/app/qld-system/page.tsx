@@ -78,6 +78,21 @@ const VOICES = [
   },
 ];
 
+// ── Hardcoded funding by source (computed from justice_funding WHERE state='QLD', updated periodically) ──
+
+const FUNDING_BY_SOURCE = [
+  { source: 'QLD Historical Grants', count: 12141, total: 16131548884 },
+  { source: 'ROGS YJ Expenditure', count: 63, total: 10811723000 },
+  { source: 'QGIP', count: 51209, total: 8731682550 },
+  { source: 'ROGS 2026', count: 40, total: 6952482000 },
+  { source: 'QLD Budget (SDS)', count: 18, total: 1264133333 },
+  { source: 'AusTender', count: 654, total: 449041904 },
+  { source: 'NIAA Senate Order', count: 416, total: 405217914 },
+  { source: 'AIHW YJ', count: 3, total: 243102690 },
+  { source: 'DYJVS Contracts', count: 555, total: 181246833 },
+  { source: 'Brisbane Council', count: 507, total: 3408711 },
+];
+
 // ── Cost comparison constants ──
 
 const DETENTION_COST_PER_DAY = 3320;
@@ -200,17 +215,14 @@ export default async function QldSystemPage() {
       .order('sitting_date', { ascending: false })
       .limit(100),
 
-    supabase
-      .from('justice_funding')
-      .select('id, program_name, recipient_name, amount_dollars, financial_year, source, state')
-      .eq('state', 'QLD')
-      .order('amount_dollars', { ascending: false })
-      .limit(500),
+    // Funding aggregation placeholder — replaced by hardcoded FUNDING_BY_SOURCE below
+    Promise.resolve({ data: null }),
 
     supabase
       .from('alma_interventions')
       .select('id, name, evidence_level, cost_per_young_person, portfolio_score, operating_organization_id, organizations(name, state)')
       .neq('verification_status', 'ai_generated')
+      .not('portfolio_score', 'is', null)
       .order('portfolio_score', { ascending: false })
       .limit(50),
 
@@ -220,6 +232,7 @@ export default async function QldSystemPage() {
       .eq('rogs_section', 'youth_justice')
       .in('rogs_table', ['17A.10', '17A.1', '17A.7'])
       .eq('financial_year', '2024-25')
+      .is('description2', null)
       .limit(50),
 
     supabase
@@ -243,7 +256,6 @@ export default async function QldSystemPage() {
   const charter = (charterRes.data || []) as CharterCommitment[];
   const statements = (statementsRes.data || []) as MinisterialStatement[];
   const hansard = (hansardRes.data || []) as HansardSpeech[];
-  const funding = fundingRes.data || [];
   const interventions = ((interventionsRes.data || []) as any[]).map((row) => ({
     ...row,
     organizations: Array.isArray(row.organizations) ? row.organizations[0] ?? null : row.organizations,
@@ -313,22 +325,16 @@ export default async function QldSystemPage() {
     return acc;
   }, {} as Record<string, CharterCommitment[]>);
 
-  // Justice funding by source
-  const fundingBySource = funding.reduce((acc, f) => {
-    const src = f.source || 'Unknown';
-    if (!acc[src]) acc[src] = { count: 0, total: 0 };
-    acc[src].count++;
-    acc[src].total += f.amount_dollars || 0;
-    return acc;
-  }, {} as Record<string, { count: number; total: number }>);
+  // Justice funding by source (hardcoded — see FUNDING_BY_SOURCE constant)
+  const fundingBySource = FUNDING_BY_SOURCE;
 
-  // Filter QLD interventions (via org state join)
+  // Filter QLD interventions (via org state join — strict QLD only)
   const qldInterventions = interventions.filter(
-    (i) => i.organizations?.state?.toLowerCase() === 'qld' || !i.organizations?.state
+    (i) => i.organizations?.state?.toLowerCase() === 'qld'
   );
 
-  // Evidence level counts
-  const evidenceCounts = interventions.reduce((acc, i) => {
+  // Evidence level counts (QLD only)
+  const evidenceCounts = qldInterventions.reduce((acc, i) => {
     const level = i.evidence_level || 'Untested';
     const shortLevel = level.split('(')[0].trim();
     acc[shortLevel] = (acc[shortLevel] || 0) + 1;
@@ -515,20 +521,18 @@ export default async function QldSystemPage() {
           </div>
 
           {/* Justice Funding by Source */}
-          {Object.keys(fundingBySource).length > 0 && (
+          {fundingBySource.length > 0 && (
             <div className="mt-6 border border-gray-700 rounded-sm">
               <div className="border-b border-gray-700 px-4 py-2 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#DC2626]" />
                 <span className="font-mono text-xs text-gray-400 tracking-widest uppercase">Justice Funding by Source</span>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
-                {Object.entries(fundingBySource)
-                  .sort(([, a], [, b]) => b.total - a.total)
-                  .map(([source, data]) => (
-                    <div key={source} className="bg-gray-900/50 border border-gray-800 rounded-sm px-3 py-3">
-                      <div className="font-mono text-xs text-gray-400 uppercase tracking-wide mb-1 truncate" title={source}>{source}</div>
-                      <div className="font-mono text-lg text-[#DC2626] font-bold">{fmtCompact(data.total)}</div>
-                      <div className="font-mono text-xs text-gray-500">{fmtNum(data.count)} records</div>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 p-4">
+                {fundingBySource.map((item) => (
+                    <div key={item.source} className="bg-gray-900/50 border border-gray-800 rounded-sm px-3 py-3">
+                      <div className="font-mono text-xs text-gray-400 uppercase tracking-wide mb-1 truncate" title={item.source}>{item.source}</div>
+                      <div className="font-mono text-lg text-[#DC2626] font-bold">{fmtCompact(item.total)}</div>
+                      <div className="font-mono text-xs text-gray-500">{fmtNum(item.count)} records</div>
                     </div>
                   ))}
               </div>
