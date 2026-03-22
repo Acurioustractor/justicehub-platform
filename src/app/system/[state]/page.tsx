@@ -5,7 +5,9 @@ import { notFound } from 'next/navigation';
 import { getStateConfig, getAllStateSlugs } from '../configs';
 import { fmt, fmtCompact, fmtNum, fmtDate, truncate } from '../types';
 import type { SystemConfig } from '../types';
-import { PrintButton } from './print-button';
+
+import nextDynamic from 'next/dynamic';
+const PrintButton = nextDynamic(() => import('./print-button').then(m => ({ default: m.PrintButton })), { ssr: false });
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 1800;
