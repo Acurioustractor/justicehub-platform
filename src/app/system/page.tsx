@@ -85,17 +85,22 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
   const supabase = createServiceClient();
   const stateKeys = getAllStateSlugs().map(s => STATE_CONFIGS[s]!.state);
 
+  // Per-state funding count queries (avoids 50K row truncation problem)
+  const fundingCountQueries = stateKeys.map(state =>
+    supabase.from('justice_funding').select('id', { count: 'exact', head: true }).eq('state', state)
+  );
+
   const [
     interventionsRes,
     interventionsCountRes,
-    fundingRes,
-    fundingCountRes,
     orgsRes,
+    fundingTotalCountRes,
     statementsRes,
     statementsCountRes,
     hansardCountRes,
     commitmentsCountRes,
     storytellerCountRes,
+    ...fundingCountResults
   ] = await Promise.all([
     // Interventions with geography for per-state breakdown
     supabase
@@ -110,23 +115,16 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
       .select('id', { count: 'exact', head: true })
       .neq('verification_status', 'ai_generated'),
 
-    // Funding by state for aggregation (large dataset — limit high)
-    supabase
-      .from('justice_funding')
-      .select('state, amount_dollars')
-      .in('state', stateKeys)
-      .limit(50000),
-
-    // Exact funding count
-    supabase
-      .from('justice_funding')
-      .select('id', { count: 'exact', head: true }),
-
     // Org counts by state
     supabase
       .from('organizations')
       .select('state', { count: 'exact' })
       .in('state', stateKeys),
+
+    // Total funding count (all states)
+    supabase
+      .from('justice_funding')
+      .select('id', { count: 'exact', head: true }),
 
     // Recent statements for live feed
     supabase
@@ -140,6 +138,9 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
     supabase.from('civic_hansard').select('id', { count: 'exact', head: true }),
     supabase.from('civic_charter_commitments').select('id', { count: 'exact', head: true }).eq('youth_justice_relevant', true),
     supabase.from('alma_stories').select('id', { count: 'exact', head: true }),
+
+    // Per-state funding counts (no row data transferred — just counts)
+    ...fundingCountQueries,
   ]);
 
   // Process interventions by state
@@ -157,18 +158,18 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
     }
   }
 
-  // Process funding by state
+  // Build per-state funding from count queries + config totals (verified for QLD, estimates for others)
   const fundingByState: Record<string, { count: number; total: number }> = {};
   let totalFunding = 0;
-  let totalFundingRecords = 0;
-  for (const row of (fundingRes.data || [])) {
-    const s = row.state as string;
-    if (!fundingByState[s]) fundingByState[s] = { count: 0, total: 0 };
-    fundingByState[s].count++;
-    fundingByState[s].total += Number(row.amount_dollars) || 0;
-    totalFunding += Number(row.amount_dollars) || 0;
-    totalFundingRecords++;
-  }
+  stateKeys.forEach((state, i) => {
+    const slug = getAllStateSlugs().find(s => STATE_CONFIGS[s]!.state === state)!;
+    const config = STATE_CONFIGS[slug]!;
+    const count = fundingCountResults[i]?.count || 0;
+    // Use config fundingBySource totals (verified for QLD via QGIP, estimates for others)
+    const total = config.fundingBySource.reduce((s, f) => s + f.total, 0);
+    fundingByState[state] = { count, total };
+    totalFunding += total;
+  });
 
   // Process orgs by state
   const orgsByState: Record<string, number> = {};
@@ -184,7 +185,7 @@ async function fetchLiveCounts(): Promise<LiveCounts> {
     totalOrgs: orgsRes.count || 0,
     totalInterventions: interventionsCountRes.count || totalInterventions,
     totalFunding,
-    totalFundingRecords: fundingCountRes.count || totalFundingRecords,
+    totalFundingRecords: fundingTotalCountRes.count || 0,
     statements: (statementsRes.data || []) as LiveCounts['statements'],
     statementsCount: statementsCountRes.count || 0,
     hansardCount: hansardCountRes.count || 0,
