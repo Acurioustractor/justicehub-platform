@@ -1,11 +1,12 @@
 import type { SystemConfig } from '../types';
 import { qldConfig } from './qld';
+import { nswConfig } from './nsw';
 
 // Registry of all state configs
 // Add new states here as they're built
 export const STATE_CONFIGS: Record<string, SystemConfig> = {
   qld: qldConfig,
-  // nsw: nswConfig,
+  nsw: nswConfig,
   // vic: vicConfig,
   // nt: ntConfig,
   // wa: waConfig,
