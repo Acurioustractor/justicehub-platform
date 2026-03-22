@@ -95,6 +95,10 @@
     {
       "path": "/api/system/alerts/deliver",
       "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/campaign/social-publish",
+      "schedule": "0 21 * * *"
     }
   ]
 }
