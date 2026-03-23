@@ -1279,44 +1279,50 @@ function ExpandedDetails({ entity, isOpponentView, onPipelineAction, onEntityUpd
                 </div>
               )}
 
-              {/* Messages */}
-              {ghlActivity.activity.length > 0 ? (
-                <div className="space-y-2 max-h-60 overflow-y-auto">
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Emails</div>
-                  {ghlActivity.activity.flatMap(convo =>
-                    convo.messages.map(msg => (
-                      <div
-                        key={msg.id}
-                        className={`p-2 rounded text-xs ${
-                          msg.direction === 'inbound'
-                            ? 'bg-emerald-50 border border-emerald-200 ml-0 mr-8'
-                            : 'bg-gray-50 border border-gray-200 ml-8 mr-0'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-bold text-[10px] uppercase text-gray-400">
-                            {msg.direction === 'inbound' ? 'Received' : 'Sent'} — {msg.type}
-                          </span>
-                          <span className="text-[10px] text-gray-400" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
-                            {msg.dateAdded ? new Date(msg.dateAdded).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : ''}
+              {/* Messages — filter out empty ones */}
+              {(() => {
+                const allMessages = ghlActivity.activity.flatMap(convo =>
+                  convo.messages.filter(msg => msg.body && msg.body.trim().length > 0)
+                );
+                if (allMessages.length > 0) {
+                  return (
+                    <div className="space-y-2 max-h-60 overflow-y-auto">
+                      <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                        Emails ({allMessages.length})
+                      </div>
+                      {allMessages.map(msg => (
+                        <div
+                          key={msg.id}
+                          className={`p-2 rounded text-xs ${
+                            msg.direction === 'inbound'
+                              ? 'bg-emerald-50 border border-emerald-200 ml-0 mr-8'
+                              : 'bg-gray-50 border border-gray-200 ml-8 mr-0'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-bold text-[10px] uppercase text-gray-400">
+                              {msg.direction === 'inbound' ? 'Received' : 'Sent'} — {msg.type}
+                            </span>
+                            <span className="text-[10px] text-gray-400" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                              {msg.dateAdded ? new Date(msg.dateAdded).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : ''}
+                            </span>
+                          </div>
+                          {msg.subject && <p className="font-bold text-gray-700 mb-0.5">{msg.subject}</p>}
+                          <p className="text-gray-600 line-clamp-3">{msg.body}</p>
+                          <span className={`inline-block mt-1 px-1.5 py-0.5 text-[9px] font-bold rounded ${
+                            msg.status === 'delivered' || msg.status === 'read' ? 'bg-emerald-100 text-emerald-700' :
+                            msg.status === 'failed' ? 'bg-red-100 text-red-700' :
+                            'bg-gray-100 text-gray-500'
+                          }`}>
+                            {msg.status || 'sent'}
                           </span>
                         </div>
-                        {msg.subject && <p className="font-bold text-gray-700 mb-0.5">{msg.subject}</p>}
-                        <p className="text-gray-600 line-clamp-3">{msg.body || '(no content)'}</p>
-                        <span className={`inline-block mt-1 px-1.5 py-0.5 text-[9px] font-bold rounded ${
-                          msg.status === 'delivered' || msg.status === 'read' ? 'bg-emerald-100 text-emerald-700' :
-                          msg.status === 'failed' ? 'bg-red-100 text-red-700' :
-                          'bg-gray-100 text-gray-500'
-                        }`}>
-                          {msg.status || 'sent'}
-                        </span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              ) : (
-                !ghlActivity.notes?.length && <p className="text-xs text-gray-400">No activity in GHL yet</p>
-              )}
+                      ))}
+                    </div>
+                  );
+                }
+                return !ghlActivity.notes?.length ? <p className="text-xs text-gray-400">No activity in GHL yet</p> : null;
+              })()}
             </div>
           )}
           {ghlLoaded && !ghlActivity && (
