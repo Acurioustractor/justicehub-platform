@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   description: 'A digital platform that transforms how grassroots organizations support young people by providing tools and human support that help youth understand their own stories and connect them to opportunities.',
   keywords: ['youth', 'storytelling', 'mentorship', 'opportunities', 'social impact'],
   authors: [{ name: 'JusticeHub Team' }],
+  manifest: '/manifest.json',
   openGraph: {
     title: 'JusticeHub - Empowering Youth Through Storytelling',
     description: 'Transform your journey into opportunities with JusticeHub',
