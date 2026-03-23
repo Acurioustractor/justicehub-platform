@@ -57,7 +57,7 @@ export async function GET() {
         .from('alma_interventions')
         .select('id', { count: 'exact', head: true })
         .neq('verification_status', 'ai_generated')
-        .then(r => r.count || 876),
+        .then(r => r.count || 981),
 
       // Evidence-backed count
       supabase
@@ -415,7 +415,7 @@ export async function GET() {
         { name: 'Njamarleya', programs: 6, evidenceLevels: ['Promising (community-endorsed, emerging evidence)'] },
       ],
       indigenous: { fundingSharePct: 10.8, fundingAmount: 10550000000, overrepresentationRatio: 23.1 },
-      interventions: { total: 876, evidenceBackedPct: 54.9, evidenceBackedCount: 481 },
+      interventions: { total: 981, evidenceBackedPct: 54.9, evidenceBackedCount: 481 },
       totalFunding: 97900000000,
       passion: {
         supporters: 230,

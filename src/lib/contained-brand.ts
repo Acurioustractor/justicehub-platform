@@ -40,8 +40,8 @@ export type FormatKey = keyof typeof FORMATS
 // ─── Hashtags ────────────────────────────────────────────────────────────────
 
 export const HASHTAGS = {
-  primary: ['#CONTAINED', '#YouthJustice', '#JusticeHub'],
-  tour: ['#MountDruitt', '#WesternSydney', '#Adelaide', '#Perth', '#TennantCreek'],
+  primary: ['#TheContained', '#YouthJustice', '#JusticeHub'],
+  tour: ['#MountDruitt', '#WesternSydney', '#Adelaide', '#Perth', '#TennantCreek', '#Brisbane'],
   thematic: ['#ImmersiveAdvocacy', '#YouthVoice', '#SelfDetermination', '#JusticeReform'],
 } as const
 
@@ -78,7 +78,7 @@ export const STATS: Record<string, {
   alternatives: {
     value: '$520M',
     label: 'community programs',
-    subtext: '$520M on community youth justice vs $1.14B on detention. 939 alternatives catalogued on ALMA.',
+    subtext: '$520M on community youth justice vs $1.14B on detention. 981 alternatives catalogued on ALMA.',
     source: 'ROGS 2024-25 + ALMA Database',
     category: 'alternative',
   },
@@ -125,17 +125,31 @@ export const STATS: Record<string, {
     category: 'inequality',
   },
   what_works: {
-    value: '876',
+    value: '981',
     label: 'alternatives catalogued',
-    subtext: '876 community-led alternatives. 54.9% evidence-backed. They work. They\'re not funded.',
+    subtext: '981 community-led alternatives. 54.9% evidence-backed. They work. They\'re not funded.',
     source: 'ALMA Evidence Database — JusticeHub',
     category: 'alternative',
   },
   tour_demand: {
     value: '230',
     label: 'people said bring it here',
-    subtext: 'Perth. Melbourne. Canberra. Sydney. 230 Australians said bring the container to their city.',
+    subtext: 'Perth. Melbourne. Canberra. Sydney. Brisbane. 230 Australians said bring the container to their city.',
     source: 'CONTAINED Campaign — JusticeHub',
+    category: 'campaign',
+  },
+  tour_stop_cost: {
+    value: '$30K',
+    label: 'per tour stop',
+    subtext: '$30K to bring CONTAINED to a city. That\'s the cost of locking up one child for 7 days.',
+    source: 'CONTAINED Campaign Budget',
+    category: 'campaign',
+  },
+  new_container: {
+    value: '$50–70K',
+    label: 'to build a new container',
+    subtext: 'Build a second CONTAINED unit for $50–70K. More containers, more cities, more pressure.',
+    source: 'CONTAINED Campaign Budget',
     category: 'campaign',
   },
 }

@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   // Extract counts with fallbacks
   const counts = countResults.status === 'fulfilled' ? countResults.value : [];
   const totalGrants = counts[0]?.count || 71087;
-  const totalInterventions = counts[1]?.count || 876;
+  const totalInterventions = counts[1]?.count || 981;
   const totalEvidence = counts[2]?.count || 570;
   const totalOrgs = counts[3]?.count || 18304;
   const indigenousOrgs = counts[4]?.count || 1853;

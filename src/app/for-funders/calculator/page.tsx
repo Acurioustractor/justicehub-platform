@@ -221,7 +221,7 @@ export default function ImpactCalculatorPage() {
                     Months of ALMA Intelligence
                   </div>
                   <p className="text-sm text-gray-600 mt-2">
-                    Keeping 876 programs verified, evidence current, and data accessible.
+                    Keeping 981 programs verified, evidence current, and data accessible.
                   </p>
                 </div>
                 <div className="border-2 border-[#0A0A0A] bg-white p-6">

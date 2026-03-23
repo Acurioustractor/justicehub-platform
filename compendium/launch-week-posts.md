@@ -19,14 +19,14 @@ One shipping container. Three rooms. Thirty minutes.
 THE CONTAINED launches this Friday at Mounty Yarns in Mount Druitt, Western Sydney.
 
 Room 1: The reality of youth detention in Australia. Designed by young people who know what it feels like.
-Room 2: The therapeutic alternative. Spain's Diagrama model — 73% success, not 84% failure.
+Room 2: The therapeutic alternative. Spain's Diagrama model — 86% success (13.6% reoffending), not 84% failure.
 Room 3: The community organisations already doing it. $75/day. 88% success. Culture-centred.
 
 This isn't a lecture. It's an experience designed to change how you see youth justice.
 
-Register: justicehub.org.au/contained
+Back this stop: justicehub.org.au/contained
 
-`#TheContained #YouthJustice #JusticeHub #MountDruitt #WesternSydney`
+`#TheContained #YouthJustice #JusticeHub #MountDruitt #WesternSydney #Brisbane`
 
 ### Twitter/X
 
@@ -58,11 +58,11 @@ $4,250 every single day. For a system where 84% reoffend within two years.
 
 For the same cost of detaining one child, community programs could support 16 young people — with an 88% success rate.
 
-These aren't our numbers. They're the Productivity Commission's. The Queensland Government's. The evidence base that ALMA tracks across 876 verified programs.
+These aren't our numbers. They're the Productivity Commission's. The Queensland Government's. The evidence base that ALMA tracks across 981 verified programs.
 
 THE CONTAINED puts these numbers into physical space. Three rooms. Thirty minutes. The cost becomes real.
 
-Register: justicehub.org.au/contained
+Back this stop: justicehub.org.au/contained
 
 `#TheContained #YouthJustice #JusticeHub #YouthDetention`
 
@@ -97,7 +97,7 @@ This is what youth justice looks like when a country decides to invest in people
 
 Spain's Diagrama Foundation runs youth detention centres with 1:1 staffing, family engagement every week, and therapeutic programming that treats young people as human beings with potential.
 
-73% success rate. €5.64 returned for every €1 invested.
+86% success rate (13.6% reoffending). €5.64 returned for every €1 invested.
 
 Room 2 of THE CONTAINED brings the Diagrama model to Australia — not as theory, but as lived experience documented across our trip to Spain.
 
@@ -111,7 +111,7 @@ This is what's possible.
 
 Spain's Diagrama Foundation: 1:1 staffing, weekly family contact, therapeutic care.
 
-73% success rate. €5.64 return per €1 invested.
+86% success rate (13.6% reoffending). €5.64 return per €1 invested.
 
 Australia: $1.55M per child. 84% failure.
 
@@ -139,7 +139,7 @@ Because the answer to youth detention isn't one model. It's the hundreds of comm
 
 At Mount Druitt, the local host fills this space with their story.
 
-JusticeHub tracks 876 verified interventions through ALMA. Indigenous-led programs. Restorative justice circles. Mentoring. On-country programs. Family support.
+JusticeHub tracks 981 verified interventions through ALMA. Indigenous-led programs. Restorative justice circles. Mentoring. On-country programs. Family support.
 
 $75 a day. 88% success. Community authority at the centre.
 
@@ -151,7 +151,7 @@ These organisations don't need permission. They need resources.
 
 Room 3 of THE CONTAINED celebrates the organisations already doing it.
 
-876 verified programs on ALMA. Community-led. Culture-centred. Evidence-backed.
+981 verified programs on ALMA. Community-led. Culture-centred. Evidence-backed.
 
 $75/day vs $4,250/day.
 88% success vs 84% failure.
@@ -169,7 +169,7 @@ Friday, Mount Druitt.
 **Asset (real photo):** `spotlight-on-changemaker-brodie-germaine.jpg` (people)
 Path: `/images/articles/spotlight-on-changemaker-brodie-germaine.jpg`
 
-**Graphic:** `bespoke-chalk-question.png` (local: `/images/contained/bespoke-chalk-question.png`)
+**Note:** Do NOT use `bespoke-chalk-question.png` — archived as AI-looking. Use real EL photo only.
 
 ### Instagram
 
@@ -216,7 +216,7 @@ This is where it starts. A shipping container. Built to carry cargo across ocean
 
 We're building it to carry truth across Australia.
 
-Four cities. Mount Druitt → Adelaide → Perth → Tennant Creek. Each stop transforms the container — local organisations, local young people, local stories filling the space.
+Five cities. Mount Druitt → Adelaide → Perth → Tennant Creek → Brisbane. Each stop transforms the container — local organisations, local young people, local stories filling the space.
 
 Yesterday the doors opened for the first time at Mounty Yarns. The reactions were overwhelming.
 
@@ -224,13 +224,13 @@ Thirty minutes. Three rooms. And then you can never unsee what you've seen.
 
 Next stop: Adelaide, May 2026 — the national Reintegration Conference.
 
-Book your experience: justicehub.org.au/contained/tour
+Back the tour: justicehub.org.au/contained/tour
 
 `#TheContained #YouthJustice #JusticeHub #AustralianTour #ImmersiveAdvocacy`
 
 ### Twitter/X
 
-One shipping container. Four cities. One mission.
+One shipping container. Five cities. One mission.
 
 Mount Druitt → Adelaide → Perth → Tennant Creek
 
@@ -295,7 +295,7 @@ Every action builds pressure. Decision makers are watching.
 | Tue | Cost of detention | Social stat tile | `social-stat-cost.png` |
 | Wed | Spain / Diagrama | Real photo (spain) | `diagrama-youth-justice-spain.jpg` |
 | Thu | Community orgs | Real photos (community + programs) | `connecting-communities-a-network-for-justice-reinvestment.jpeg` + `confit-pathways.jpg` |
-| Fri | Young people's voices | Real photo (people) + graphic | `spotlight-on-changemaker-brodie-germaine.jpg` + `bespoke-chalk-question.png` |
+| Fri | Young people's voices | Real photo (people) | `spotlight-on-changemaker-brodie-germaine.jpg` |
 | Sat | Tour experience | Real photo (goods) + poster | `container-factory.jpg` + `poster-brand.png` |
 | Sun | Call to action | Real photo (hero) | `the-courage-to-connect-how-authentic-relationships-transform-youth-in-detention.jpg` |
 

@@ -356,7 +356,7 @@ export interface TourSocialKit {
   posts: SocialPost[];
 }
 
-const CORE_HASHTAGS = ['#CONTAINED', '#YouthJustice', '#JusticeHub'];
+const CORE_HASHTAGS = ['#TheContained', '#YouthJustice', '#JusticeHub'];
 
 export const tourSocialKits: TourSocialKit[] = [
   {
@@ -592,9 +592,9 @@ export const generalSocialPosts: SocialPost[] = [
     label: 'Tour Overview',
     content: `THE CONTAINED: Australian Tour 2026.
 
-Four cities. One shipping container, three rooms. One mission.
+Five cities. One shipping container, three rooms. One mission.
 
-Mount Druitt → Adelaide → Perth → Tennant Creek
+Mount Druitt → Adelaide → Perth → Tennant Creek → Brisbane
 
 Thirty minutes inside youth detention reality, and the alternative that already works.
 
@@ -606,7 +606,7 @@ justicehub.com.au/contained/tour`,
     label: 'Tour Overview',
     content: `THE CONTAINED is going national.
 
-Four cities across Australia in 2026. One shipping container, three rooms that make the case for transforming youth justice.
+Five cities across Australia in 2026. One shipping container, three rooms that make the case for transforming youth justice.
 
 🔴 Mount Druitt, April 25 (Confirmed)
 🔴 Adelaide, June 15 (Confirmed)

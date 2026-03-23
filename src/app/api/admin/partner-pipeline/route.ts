@@ -20,7 +20,7 @@ const FOLLOW_UP_TEMPLATES: Partial<Record<PipelineStage, { subject: string; body
 
 Just a quick follow-up on THE CONTAINED. I know you expressed interest and wanted to make sure you had everything you needed.
 
-Quick recap: THE CONTAINED is a shipping container experience that shows what youth detention looks like in Australia — and what 876 verified community programs can do instead. Three rooms. Thirty minutes. Evidence you can feel.
+Quick recap: THE CONTAINED is a shipping container experience that shows what youth detention looks like in Australia — and what 981 verified community programs can do instead. Three rooms. Thirty minutes. Evidence you can feel.
 
 We're currently booking tour stops and looking for hosting partners, funders, and community connectors.
 

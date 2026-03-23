@@ -171,7 +171,9 @@ All statistics have named sources and are maintained in `src/content/campaign.ts
 | Indigenous overrepresentation | **23x** | National youth detention statistics |
 | Youth detained in Finland | **4** | Finnish Ministry of Justice 2024 |
 | Daily cost of detention | **$4,250** | Productivity Commission ROGS 2024-25 |
-| Diagrama (Spain) success | **73%** | Diagrama Foundation evaluation |
+| Tour stop cost | **$30K** | CONTAINED Campaign Budget |
+| New container build | **$50–70K** | CONTAINED Campaign Budget |
+| Diagrama (Spain) reoffending | **13.6%** | Diagrama Foundation evaluation |
 | Diagrama social return | **€5.64 per €1** | Diagrama Foundation impact study |
 
 ---
@@ -188,6 +190,7 @@ All statistics have named sources and are maintained in `src/content/campaign.ts
 - `#Adelaide` `#Reintegration`
 - `#Perth` `#UWA`
 - `#TennantCreek` `#FirstNations` `#CommunityLed`
+- `#Brisbane`
 
 ### Thematic
 - `#ImmersiveAdvocacy`
@@ -239,7 +242,7 @@ CTAs and language should always frame CONTAINED as a movement that needs backing
 | What You Can Do | **How You Can Help** |
 
 **Three action pillars:**
-1. **Fund a Stop** — each tour stop costs ~$15K to stage
+1. **Fund a Stop** — each tour stop costs ~$30K to stage
 2. **Spread the Word** — share evidence, contact your MP
 3. **Host the Container** — offer a venue, festival, or community space
 
@@ -254,6 +257,11 @@ CTAs and language should always frame CONTAINED as a movement that needs backing
 | **Room 3** | The Organisations Already Doing It | 10 min | Celebrates the grassroots orgs doing the work — Indigenous-led and community orgs that aren't being valued, reported on, or funded the way they should be. Changes each tour stop to feature the local host organisation. |
 
 **Room 2 key stats:** Recidivism 13.6% · Staff ratio 1:1 · Social return €5.64 per €1 · Weekly family contact
+
+**Tour economics:**
+- **$30K per tour stop** — equivalent to locking up one child for 7 days
+- **$50–70K to build a new container** — enables parallel tours across Australia
+- **5 cities confirmed:** Sydney (Mount Druitt) → Adelaide → Perth → Tennant Creek → Brisbane
 
 ---
 

@@ -241,7 +241,7 @@ export default function ForFundersPage() {
                   The Contained: Australian Tour 2026
                 </h3>
                 <p className="text-gray-300 mt-2 max-w-xl">
-                  $200K to take an immersive youth justice experience to four cities across Australia.
+                  $200K to take an immersive youth justice experience to five cities across Australia.
                   One shipping container, three rooms, that make the case for change.
                 </p>
               </div>
@@ -432,7 +432,7 @@ export default function ForFundersPage() {
 
             <div className="mt-8 p-6 bg-[#0A0A0A] text-white text-center">
               <p className="text-lg font-bold mb-2">
-                876 verified programs. These four are just the beginning.
+                981 verified programs. These four are just the beginning.
               </p>
               <p className="text-gray-400 text-sm">
                 Every program in our database is verified against published evidence, community
@@ -582,7 +582,7 @@ export default function ForFundersPage() {
                 <BarChart3 className="w-8 h-8 text-[#059669] mb-3" />
                 <h3 className="font-bold text-lg mb-2 group-hover:text-[#059669] transition-colors">ALMA Evidence Engine</h3>
                 <p className="text-gray-600 text-sm mb-3">
-                  876 verified interventions, 570+ evidence items collected.
+                  981 verified interventions, 570+ evidence items collected.
                   AI-powered analysis of what works in youth justice.
                 </p>
                 <span className="text-sm font-bold text-[#059669] flex items-center gap-1">

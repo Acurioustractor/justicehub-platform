@@ -438,7 +438,7 @@ export default function AuthorityPage() {
             {[
               { label: 'Funding Records', value: '71,087', color: 'text-[#F5F0E8]' },
               { label: 'Organisations', value: '18,304', color: 'text-[#F5F0E8]' },
-              { label: 'Interventions Rated', value: '876', color: 'text-red-500' },
+              { label: 'Interventions Rated', value: '981', color: 'text-red-500' },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -460,7 +460,7 @@ export default function AuthorityPage() {
             {[
               { label: 'Records', value: '71K' },
               { label: 'Orgs', value: '18K' },
-              { label: 'Rated', value: '876' },
+              { label: 'Rated', value: '981' },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -583,7 +583,7 @@ export default function AuthorityPage() {
           ]} />
           <div className="container-justice px-5 md:px-8">
             <Takeaway>
-              876 community-based alternatives exist. 54.9% have evidence they work.
+              981 community-based alternatives exist. 54.9% have evidence they work.
               Many run on volunteer time and donations. The solutions are here.
               The funding isn&apos;t.
             </Takeaway>
@@ -900,8 +900,8 @@ export default function AuthorityPage() {
                 <div className="space-y-3 md:space-y-4">
                   {[
                     "For every $23 spent locking kids up, $1 goes to community programs that work. We tracked $97.9 billion. justicehub.org.au/authority",
-                    "Victoria spends $7,304 PER DAY to cage one child. Community supervision costs $351. 84% of detained kids reoffend. The numbers don't lie. #CONTAINED #YouthJustice",
-                    "Just Reinvest NSW runs 9 evidence-rated programs with $0 government funding. 876 alternatives exist. 54.9% are evidence-backed. They work. They're just not funded.",
+                    "Victoria spends $7,304 PER DAY to cage one child. Community supervision costs $351. 84% of detained kids reoffend. The numbers don't lie. #TheContained #YouthJustice",
+                    "Just Reinvest NSW runs 9 evidence-rated programs with $0 government funding. 981 alternatives exist. 54.9% are evidence-backed. They work. They're just not funded.",
                     "Indigenous organisations receive 10.8% of justice funding. Indigenous youth are 23x overrepresented in detention. This is not a coincidence. It's a policy choice.",
                   ].map((post, i) => (
                     <div key={i} className="flex items-start gap-3 md:gap-4 p-3 md:p-4 bg-gray-950 border border-gray-900">

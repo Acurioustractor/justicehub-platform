@@ -128,7 +128,7 @@ $${s.totalPunitiveBillions}B/year on the punitive system. ${s.programs} proven a
 
 First public stop: Mount Druitt, April 25. Nominate a leader: ${SITE_URL}/contained#nominate
 
-#CONTAINED #YouthJustice`,
+#TheContained #YouthJustice`,
     facebook: `Just learned about CONTAINED — a shipping container touring Australia that lets you experience 30 minutes of what youth detention is actually like.
 
 The stats are staggering (Productivity Commission data):
@@ -152,7 +152,7 @@ CONTAINED shows what youth detention feels like. JusticeHub shows what works ins
 
 First public stop: Mount Druitt, April 25, 2026. Nominate a leader: ${SITE_URL}/contained
 
-#YouthJustice #CONTAINED #SocialImpact #PolicyReform`,
+#YouthJustice #TheContained #SocialImpact #PolicyReform`,
   };
 }
 
@@ -329,7 +329,7 @@ export function ActContent() {
           detentionBillions: (detM / 1000).toFixed(1),
           communityMillions: String(s.rogs_youth_community_millions || 520),
           totalPunitiveBillions: String(s.rogs_total_punitive_billions || 26.4),
-          programs: (s.programs_documented || 876).toLocaleString(),
+          programs: (s.programs_documented || 981).toLocaleString(),
           orgs: (s.orgs_linked || 615).toLocaleString(),
           indigenousRatio: String(Math.round(s.rogs_indigenous_detention_ratio || 23)),
           costPerChild: `${(detM / 0.734 / 1000).toFixed(1)}M`,

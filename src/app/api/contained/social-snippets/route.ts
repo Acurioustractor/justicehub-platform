@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
       .map(t => '#' + t.replace(/[^a-zA-Z0-9]/g, ''))
       .join(' ');
 
-    const containedHashtags = '#CONTAINED #YouthJustice #JusticeHub';
+    const containedHashtags = '#TheContained #YouthJustice #JusticeHub';
 
     // Generate snippets
     const snippets = {
@@ -141,7 +141,7 @@ function generateLinkedIn(
     '',
     `Read more: ${url}`,
     '',
-    '#CONTAINED #YouthJustice #JusticeHub #JusticeReform',
+    '#TheContained #YouthJustice #JusticeHub #JusticeReform',
   ].filter(line => line !== undefined).join('\n');
 }
 

@@ -171,7 +171,7 @@ export default function DecisionMakerBriefPage() {
                 </div>
                 <div className="flex justify-between border-b border-gray-200 py-1">
                   <span className="text-gray-600">Verified interventions on ALMA</span>
-                  <span className="font-bold">876</span>
+                  <span className="font-bold">981</span>
                 </div>
                 <div className="flex justify-between border-b border-gray-200 py-1">
                   <span className="text-gray-600">Restorative justice success rate</span>

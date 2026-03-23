@@ -20,7 +20,7 @@ I recently walked through THE CONTAINED — a travelling exhibition that present
 - 85% reoffending rate within 12 months of release
 - First Nations children are 17x more likely to be detained
 
-Meanwhile, 876 verified community programs exist across Australia that achieve dramatically better outcomes at a fraction of the cost. Programs like Diagrama's therapeutic approach see reoffending rates below 14%.
+Meanwhile, 981 verified community programs exist across Australia that achieve dramatically better outcomes at a fraction of the cost. Programs like Diagrama's therapeutic approach see reoffending rates below 14%.
 
 This is not an ideological argument. It is an economic and evidence-based one.
 
@@ -37,13 +37,13 @@ Sincerely,
   },
   sms: {
     subject: 'SMS to MP',
-    body: `Hi {{mp_name}}, I'm a constituent writing about youth justice. Australia spends $4,250/day to detain one child with 85% reoffending. 876 community programs work better at a fraction of the cost. I'd love you to see the evidence: justicehub.com.au/contained — {{sender_name}}`,
+    body: `Hi {{mp_name}}, I'm a constituent writing about youth justice. Australia spends $4,250/day to detain one child with 85% reoffending. 981 community programs work better at a fraction of the cost. I'd love you to see the evidence: justicehub.com.au/contained — {{sender_name}}`,
   },
   social: {
     subject: 'Social Media Post',
     body: `.@{{mp_handle}} Did you know Australia spends $4,250/day to detain one child — with 85% reoffending?
 
-876 community programs work better. For less.
+981 community programs work better. For less.
 
 I just walked through @JusticeHubAU's THE CONTAINED. The evidence is impossible to ignore.
 

@@ -193,7 +193,7 @@ DURING:
 
 AFTER:
 - Share your reaction: we'll have QR codes for instant feedback
-- Tag @JusticeHubAU and use #CONTAINED
+- Tag @JusticeHubAU and use #TheContained
 - Download shareable stat cards: ${SITE}/contained/tour/social
 
 Every person who walks through this container strengthens the case for change.

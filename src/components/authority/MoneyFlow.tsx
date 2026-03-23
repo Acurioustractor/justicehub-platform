@@ -66,7 +66,7 @@ export default function MoneyFlow({ data, totalFunding = 97_900_000_000 }: Money
       pct: ((communitySpend / total) * 100).toFixed(0),
       color: 'bg-emerald-600',
       barColor: '#059669',
-      sublabel: '876 alternatives exist. $351/day. They work.',
+      sublabel: '981 alternatives exist. $351/day. They work.',
     },
   ];
 

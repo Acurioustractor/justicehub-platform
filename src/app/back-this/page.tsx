@@ -88,7 +88,7 @@ export default function BackThisPage() {
               what works. Pick your level — from $25 to backing the national tour.
             </p>
             <div className="flex flex-wrap gap-6 text-sm font-mono uppercase tracking-widest text-gray-500">
-              <span><strong className="text-[#0A0A0A] text-lg">876</strong> verified programs</span>
+              <span><strong className="text-[#0A0A0A] text-lg">981</strong> verified programs</span>
               <span><strong className="text-[#0A0A0A] text-lg">$72B</strong> funding tracked</span>
               <span><strong className="text-[#0A0A0A] text-lg">18K+</strong> organisations</span>
               <span><strong className="text-[#0A0A0A] text-lg">8</strong> states &amp; territories</span>
@@ -103,7 +103,7 @@ export default function BackThisPage() {
               What Your Money Powers
             </h2>
             <p className="text-gray-400 mb-8 max-w-2xl">
-              876 verified community programs. $72B in funding tracked. 20,000+ organisations
+              981 verified community programs. $72B in funding tracked. 20,000+ organisations
               linked. No marketing decks. No gala dinners.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -183,15 +183,16 @@ export default function BackThisPage() {
                     → 4 cities, 50,000 people face-to-face with the evidence
                   </p>
                   <p className="text-sm text-gray-600 mb-3">
-                    One shipping container, three rooms, four cities. Fund documentation ($5K),
-                    a single stop ($50K), or the full national tour ($200K).
+                    One shipping container, three rooms, five cities. Fund documentation ($5K),
+                    a single stop ($30K), or the full national tour ($200K).
                   </p>
                   <div className="flex flex-wrap gap-3 mb-4">
                     {[
-                      { city: 'Mt Druitt', cost: '$25K', status: 'Planning' },
-                      { city: 'Adelaide', cost: '$50K', status: 'Confirmed' },
-                      { city: 'Perth', cost: '$50K', status: 'Exploring' },
-                      { city: 'Tennant Creek', cost: '$75K', status: 'Exploring' },
+                      { city: 'Mt Druitt', cost: '$30K', status: 'Planning' },
+                      { city: 'Adelaide', cost: '$30K', status: 'Confirmed' },
+                      { city: 'Perth', cost: '$30K', status: 'Exploring' },
+                      { city: 'Tennant Creek', cost: '$30K', status: 'Exploring' },
+                      { city: 'Brisbane', cost: '$30K', status: 'Exploring' },
                     ].map((s) => (
                       <span
                         key={s.city}
@@ -264,7 +265,7 @@ export default function BackThisPage() {
                   </p>
                   <p className="text-sm text-gray-600 mb-4">
                     Fund the development of JusticeHub as permanent national infrastructure.
-                    876 verified programs, $72B funding tracked, 20K+ organisations linked.
+                    981 verified programs, $72B funding tracked, 20K+ organisations linked.
                     The evidence base Australia needs.
                   </p>
                   <div className="flex flex-wrap gap-3">

@@ -47,9 +47,10 @@ const WHAT_MONEY_BUYS = [
   { amount: '$5,000', gets: 'Documentation and professional photography at one tour stop' },
   { amount: '$15,000', gets: 'Full video documentation — shareable for your advocacy and ours' },
   { amount: '$25,000', gets: 'Fund the container build — custom three-room fit-out' },
-  { amount: '$50,000', gets: 'Fund one complete tour stop — transport, setup, facilitation, documentation' },
+  { amount: '$30,000', gets: 'Fund one complete tour stop — transport, setup, facilitation, documentation' },
+  { amount: '$50,000', gets: 'Build a second CONTAINED unit — more containers, more cities, more pressure across Australia' },
   { amount: '$75,000', gets: 'Fund the Tennant Creek community-controlled stop — cultural safety, local facilitation, community authority' },
-  { amount: '$200,000', gets: 'Fund the full national tour — four cities, complete documentation, partner activation' },
+  { amount: '$200,000', gets: 'Fund the full national tour — five cities, complete documentation, partner activation' },
 ];
 
 export default function ContainedInvestPage() {
@@ -78,7 +79,7 @@ export default function ContainedInvestPage() {
 
             <p className="text-lg text-gray-600 max-w-2xl leading-relaxed">
               CONTAINED is evidence-led immersive advocacy. One shipping container, three rooms,
-              four cities. Every dollar funds infrastructure for community-led justice reform.
+              five cities. Every dollar funds infrastructure for community-led justice reform.
             </p>
           </div>
         </section>
@@ -166,7 +167,7 @@ export default function ContainedInvestPage() {
               <div className="text-3xl font-black font-mono mb-2">$200,000</div>
               <div className="text-sm text-gray-400 uppercase tracking-widest mb-4">Full National Tour</div>
               <p className="text-gray-300 max-w-lg mx-auto">
-                Fund all four cities including transport, documentation, community engagement,
+                Fund all five cities including transport, documentation, community engagement,
                 and partner activation. Your name on the movement.
               </p>
             </div>
@@ -208,7 +209,7 @@ export default function ContainedInvestPage() {
               </div>
               <div className="border-2 border-[#0A0A0A] p-6">
                 <h3 className="font-black text-lg mb-2">JusticeHub</h3>
-                <p className="text-sm text-gray-600 mb-3">The public evidence layer. 876 verified programs, $72B funding tracked.</p>
+                <p className="text-sm text-gray-600 mb-3">The public evidence layer. 981 verified programs, $72B funding tracked.</p>
                 <p className="text-xs text-gray-400">Permanent infrastructure — open access</p>
               </div>
               <div className="border-2 border-[#0A0A0A] p-6">

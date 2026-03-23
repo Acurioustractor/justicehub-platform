@@ -95,7 +95,7 @@ export function StoryForm() {
                   <div className="flex flex-wrap gap-3 justify-center">
                     <a
                       href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                        `I just shared my experience with THE CONTAINED — an immersive tour showing what youth detention is really like. Share yours: ${SITE_URL}/contained/share #CONTAINED #YouthJustice`
+                        `I just shared my experience with THE CONTAINED — an immersive tour showing what youth detention is really like. Share yours: ${SITE_URL}/contained/share #TheContained #YouthJustice`
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"

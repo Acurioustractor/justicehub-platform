@@ -179,7 +179,7 @@ I know Paul Ramsay Foundation has been thinking deeply about systems change in A
 
 CONTAINED is a shipping container touring the country with three rooms. Not a lecture. An experience. Decision-makers, funders, and the public walk through youth detention reality, see a proven international alternative, and meet the local organisations already doing the work.
 
-Behind it sits ALMA, an evidence intelligence engine with 876 verified interventions and 570 evidence sources. Every claim has a named source. Every program has been verified.
+Behind it sits ALMA, an evidence intelligence engine with 981 verified interventions and 570 evidence sources. Every claim has a named source. Every program has been verified.
 
 We are looking for foundation partners to fund specific tour stops. Adelaide is confirmed for May. Would a brief call make sense to explore alignment?
 
@@ -230,7 +230,7 @@ Hi Collis,
 
 This is not a startup pitch. Nic and I are touring a shipping container around Australia that shows people what youth detention looks like, what actually works, and the community organisations already doing it.
 
-We are using tech to make the evidence accessible (876 verified interventions, open evidence engine) but the front door is physical. A container. Three rooms. Thirty minutes.
+We are using tech to make the evidence accessible (981 verified interventions, open evidence engine) but the front door is physical. A container. Three rooms. Thirty minutes.
 
 I think you would find it interesting. And I think you might know the right people to put in front of it. Can I send you the tour plan?
 

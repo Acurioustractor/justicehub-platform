@@ -118,7 +118,7 @@ Use our templates — email, SMS, or social. Takes 2 minutes.
 Download stat cards and share templates. Same evidence, every platform.
 → ${SITE}/contained/tour/social
 
-876 community programs exist across Australia that work better than detention and cost a fraction. You've now seen the evidence. Help us make it impossible to ignore.
+981 community programs exist across Australia that work better than detention and cost a fraction. You've now seen the evidence. Help us make it impossible to ignore.
 
 — The JusticeHub Team`,
       }).catch(err => console.error('[Reaction] Follow-up email failed:', err));

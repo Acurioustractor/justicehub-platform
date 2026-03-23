@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
         const result = await sendEmail({
           to: email,
           subject: 'The evidence behind what you felt',
-          preheader: '876 programs. Exposed in three rooms.',
+          preheader: '981 programs. Exposed in three rooms.',
           body: `Hey ${visitorName},
 
 Yesterday you walked through THE CONTAINED. We wanted to follow up with something concrete.
@@ -73,7 +73,7 @@ WHAT ACTUALLY WORKS
 
 Room 2 showed you the alternative. Here's the data behind it:
 
-→ 876 verified community programs across Australia
+→ 981 verified community programs across Australia
 → Programs like Diagrama achieve reoffending rates below 14%
 → Cost per young person: a fraction of detention
 
@@ -184,7 +184,7 @@ We wanted you to know: it's working.
 SINCE YOU WALKED THROUGH
 
 → ${totalReflections || 0} people have shared their reflections
-→ The evidence database has grown — 876+ verified programs and counting
+→ The evidence database has grown — 981+ verified programs and counting
 → Decision makers are being nominated and invited across Australia
 
 Your visit was part of something bigger. The data doesn't change. The evidence doesn't go away. And the more people who see it, the harder it is for anyone to pretend they didn't know.

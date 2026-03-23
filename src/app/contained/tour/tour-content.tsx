@@ -36,7 +36,7 @@ const TourMap = dynamic(() => import('@/components/contained/TourMap'), {
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-const SHARE_TEXT = 'CONTAINED: One shipping container. Three rooms. Thirty minutes. Touring Australia. #CONTAINED #YouthJustice #JusticeHub';
+const SHARE_TEXT = 'CONTAINED: One shipping container. Three rooms. Thirty minutes. Touring Australia. #TheContained #YouthJustice #JusticeHub';
 const SHARE_URL = 'https://justicehub.com.au/contained';
 
 const PROOF_ORGS = [

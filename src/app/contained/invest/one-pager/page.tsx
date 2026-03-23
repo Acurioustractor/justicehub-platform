@@ -96,7 +96,7 @@ export default function FunderOnePager() {
                 </div>
               </div>
               <div className="border-l-4 border-[#059669] pl-3">
-                <div className="text-2xl font-black font-mono text-[#059669]">876</div>
+                <div className="text-2xl font-black font-mono text-[#059669]">981</div>
                 <div className="text-[11px] text-gray-600 leading-tight">
                   Verified community programs already running across Australia. Mapped by JusticeHub.
                 </div>
@@ -113,7 +113,7 @@ export default function FunderOnePager() {
               A touring immersive exhibition inside a shipping container. Three rooms: the reality
               of youth detention, the evidence for change, and the community-led alternatives already
               doing the work. Decision-makers walk through in 30 minutes and leave with evidence they
-              can act on. Powered by JusticeHub — 876 verified programs, $72B funding tracked,
+              can act on. Powered by JusticeHub — 981 verified programs, $72B funding tracked,
               20,000+ organisations linked.
             </p>
           </div>
@@ -179,7 +179,7 @@ export default function FunderOnePager() {
                 </div>
                 <div>
                   <span className="font-black">JusticeHub</span>
-                  <span className="text-gray-600"> — Public evidence layer. 876 programs, $72B tracked.</span>
+                  <span className="text-gray-600"> — Public evidence layer. 981 programs, $72B tracked.</span>
                 </div>
                 <div>
                   <span className="font-black">ALMA</span>

@@ -621,7 +621,7 @@ export default function FoundationReportPage() {
                 <div className="p-6">
                   <p className="text-gray-700 mb-4">
                     Sponsor the national tour that makes the evidence impossible to ignore.
-                    Four cities, three containers, thousands of people experiencing the case for change.
+                    Five cities, three containers, thousands of people experiencing the case for change.
                   </p>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-start gap-2">
