@@ -35,12 +35,43 @@ export async function GET(request: NextRequest) {
     }
 
     const ghl = getGHLClient();
+    const GHL_API_BASE = 'https://services.leadconnectorhq.com';
+    const apiKey = process.env.GHL_API_KEY || '';
 
-    // Pull contact details + conversations in parallel
-    const [contact, conversations] = await Promise.all([
+    // Pull contact details, conversations, notes, and tasks in parallel
+    const [contact, conversations, notesRes, tasksRes] = await Promise.all([
       ghl.getContact(entity.ghl_contact_id),
       ghl.getContactConversations(entity.ghl_contact_id),
+      fetch(`${GHL_API_BASE}/contacts/${entity.ghl_contact_id}/notes`, {
+        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json', Version: '2021-07-28' },
+      }).catch(() => null),
+      fetch(`${GHL_API_BASE}/contacts/${entity.ghl_contact_id}/tasks`, {
+        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json', Version: '2021-07-28' },
+      }).catch(() => null),
     ]);
+
+    // Parse notes
+    let notes: Array<{ id: string; body: string; dateAdded: string }> = [];
+    if (notesRes?.ok) {
+      const notesData = await notesRes.json();
+      notes = (notesData.notes || []).map((n: any) => ({
+        id: n.id,
+        body: n.body || '',
+        dateAdded: n.dateAdded || '',
+      }));
+    }
+
+    // Parse tasks
+    let tasks: Array<{ id: string; title: string; dueDate: string; completed: boolean }> = [];
+    if (tasksRes?.ok) {
+      const tasksData = await tasksRes.json();
+      tasks = (tasksData.tasks || []).map((t: any) => ({
+        id: t.id,
+        title: t.title || '',
+        dueDate: t.dueDate || '',
+        completed: t.completed || false,
+      }));
+    }
 
     // Pull messages from the most recent conversations (max 3)
     const recentConvos = conversations.slice(0, 3);
@@ -74,6 +105,8 @@ export async function GET(request: NextRequest) {
         dateAdded: contact.dateAdded,
       } : null,
       activity: messagesPerConvo,
+      notes,
+      tasks,
     });
   } catch (error) {
     console.error('GHL activity error:', error);

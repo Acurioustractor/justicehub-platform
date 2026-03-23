@@ -1003,6 +1003,8 @@ interface GHLActivity {
       dateAdded: string;
     }>;
   }>;
+  notes?: Array<{ id: string; body: string; dateAdded: string }>;
+  tasks?: Array<{ id: string; title: string; dueDate: string; completed: boolean }>;
 }
 
 function ExpandedDetails({ entity, isOpponentView, onPipelineAction, onEntityUpdate }: {
@@ -1243,9 +1245,44 @@ function ExpandedDetails({ entity, isOpponentView, onPipelineAction, onEntityUpd
                 </div>
               )}
 
+              {/* Meeting Notes */}
+              {ghlActivity.notes && ghlActivity.notes.length > 0 && (
+                <div className="space-y-2 mb-3">
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Meeting Notes</div>
+                  {ghlActivity.notes.map(note => (
+                    <div key={note.id} className="p-2.5 rounded bg-amber-50 border border-amber-200 text-xs">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-bold text-[10px] uppercase text-amber-600">Note</span>
+                        <span className="text-[10px] text-gray-400" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                          {note.dateAdded ? new Date(note.dateAdded).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : ''}
+                        </span>
+                      </div>
+                      <p className="text-gray-700 whitespace-pre-wrap">{note.body}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Follow-up Tasks */}
+              {ghlActivity.tasks && ghlActivity.tasks.length > 0 && (
+                <div className="space-y-1 mb-3">
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Follow-up Tasks</div>
+                  {ghlActivity.tasks.map(task => (
+                    <div key={task.id} className={`p-2 rounded text-xs flex items-center gap-2 ${task.completed ? 'bg-emerald-50 border border-emerald-200' : 'bg-blue-50 border border-blue-200'}`}>
+                      <span className={`inline-block w-3 h-3 rounded-full flex-shrink-0 ${task.completed ? 'bg-emerald-500' : 'bg-blue-500'}`} />
+                      <span className="text-gray-700 flex-1">{task.title}</span>
+                      <span className="text-[10px] text-gray-400" style={{ fontFamily: 'IBM Plex Mono, monospace' }}>
+                        {task.dueDate ? new Date(task.dueDate).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : ''}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {/* Messages */}
               {ghlActivity.activity.length > 0 ? (
                 <div className="space-y-2 max-h-60 overflow-y-auto">
+                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Emails</div>
                   {ghlActivity.activity.flatMap(convo =>
                     convo.messages.map(msg => (
                       <div
@@ -1278,7 +1315,7 @@ function ExpandedDetails({ entity, isOpponentView, onPipelineAction, onEntityUpd
                   )}
                 </div>
               ) : (
-                <p className="text-xs text-gray-400">No conversations in GHL yet</p>
+                !ghlActivity.notes?.length && <p className="text-xs text-gray-400">No activity in GHL yet</p>
               )}
             </div>
           )}
