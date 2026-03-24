@@ -42,7 +42,7 @@ export default async function Image() {
           fontFamily: 'system-ui, sans-serif',
         }}
       >
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '6px', background: '#DC2626' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '6px', background: '#DC2626', display: 'flex' }} />
 
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', gap: '32px' }}>
           <div style={{ fontSize: '14px', color: '#DC2626', textTransform: 'uppercase', letterSpacing: '3px' }}>
