@@ -1,770 +1,512 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { ArrowRight, ArrowDown, Target, Award, DollarSign, TrendingUp, Users, Sparkles, Loader2 } from 'lucide-react';
+import { createServiceClient } from '@/lib/supabase/service';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
-
-import HomepageNetworkMap from '@/components/HomepageNetworkMap';
+import {
+  ArrowRight,
+  Shield,
+  Heart,
+  DollarSign,
+  TrendingUp,
+  Users,
+  MapPin,
+  Mic,
+  Calendar,
+  Sparkles,
+} from 'lucide-react';
 import EmpathyLedgerStories from '@/components/EmpathyLedgerStories';
 import { ActivityFeed } from '@/components/activity-feed';
-import { ThematicSection } from '@/components/thematic-section';
-import { basecampLocations } from '@/content/excellence-map-locations';
-import { MapPin, Building2 } from 'lucide-react';
-import { trackJourneyEvent } from '@/lib/analytics/journey';
 
-interface HomepageStats {
-  programs_documented: number;
-  programs_verified: number;
-  programs_under_review: number;
-  total_services: number;
-  youth_services: number;
-  total_people: number;
-  total_organizations: number;
-  states_covered: number;
-  total_evidence: number;
+export const dynamic = 'force-dynamic';
+
+function fmt(n: number): string {
+  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
+  return `$${n.toLocaleString()}`;
 }
 
-interface TopRecipient {
-  recipient_name: string;
-  recipient_abn: string | null;
-  grant_count: number;
-  total_dollars: number;
-  years_funded: number;
-  is_indigenous: boolean;
-  alma_linked: boolean;
-  charity_size?: string | null;
-}
+export default async function HomePage() {
+  const supabase = createServiceClient() as any;
 
-export default function HomePage() {
-  const [currentStatIndex, setCurrentStatIndex] = useState(0);
-  const [mounted, setMounted] = useState(false);
-  const [stats, setStats] = useState<HomepageStats | null>(null);
-  const [statsLoading, setStatsLoading] = useState(true);
-  const [isStatsFallback, setIsStatsFallback] = useState(false);
-  const [topRecipients, setTopRecipients] = useState<TopRecipient[]>([]);
-  const [recipientsLoading, setRecipientsLoading] = useState(true);
+  const [
+    interventionsRes,
+    costDataRes,
+    fundingRes,
+    orgRes,
+    basecampsRes,
+    evidenceRes,
+    storiesRes,
+    youthOppsRes,
+  ] = await Promise.all([
+    supabase
+      .from('alma_interventions')
+      .select('id, evidence_level', { count: 'exact' })
+      .neq('verification_status', 'ai_generated'),
+    supabase
+      .from('alma_interventions')
+      .select('cost_per_young_person')
+      .neq('verification_status', 'ai_generated')
+      .not('cost_per_young_person', 'is', null)
+      .gt('cost_per_young_person', 0)
+      .lt('cost_per_young_person', 500000),
+    supabase
+      .from('justice_funding')
+      .select('amount_dollars')
+      .gt('amount_dollars', 0),
+    supabase
+      .from('organizations')
+      .select('id', { count: 'exact', head: true }),
+    supabase
+      .from('organizations')
+      .select('id, name, slug, state, is_indigenous_org')
+      .or('partner_tier.eq.basecamp,type.eq.basecamp')
+      .order('state'),
+    supabase
+      .from('alma_evidence')
+      .select('id', { count: 'exact', head: true }),
+    supabase
+      .from('alma_stories')
+      .select('id, title, excerpt, story_type, organizations(name, state)')
+      .order('created_at', { ascending: false })
+      .limit(3),
+    supabase
+      .from('youth_opportunities')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'open'),
+  ]);
 
-  // Fetch live stats from database
-  useEffect(() => {
-    fetch('/api/homepage-stats')
-      .then(res => res.json())
-      .then(data => {
-        if (data.stats) {
-          setStats(data.stats);
-        }
-        if (data.is_fallback) {
-          setIsStatsFallback(true);
-        }
-      })
-      .catch(console.error)
-      .finally(() => setStatsLoading(false));
+  const interventions = interventionsRes.data || [];
+  const costData = (costDataRes.data || []).map((r: any) => Number(r.cost_per_young_person)).filter((n: number) => n > 0);
+  const funding = fundingRes.data || [];
+  const basecamps = basecampsRes.data || [];
+  const stories = storiesRes.data || [];
 
-    fetch('/api/justice-funding?view=top_recipients&state=QLD&limit=10')
-      .then(res => res.json())
-      .then(data => { if (Array.isArray(data)) setTopRecipients(data); })
-      .catch(console.error)
-      .finally(() => setRecipientsLoading(false));
-  }, []);
-
-  // Only start rotation after mounting to prevent hydration issues
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Rotate through impact stats
-  useEffect(() => {
-    if (!mounted) return;
-
-    const interval = setInterval(() => {
-      setCurrentStatIndex((prev) => (prev + 1) % 3);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [mounted]);
-
-  const impactStats = [
-    { number: "24x", context: "Indigenous kids locked up vs non-Indigenous" },
-    { number: "95%", context: "Crime drop on Groote Eylandt in 3 years" },
-    { number: "$1.1M", context: "Per child, per year. To make things worse." }
-  ];
+  const totalFunding = funding.reduce((sum: number, f: any) => sum + (Number(f.amount_dollars) || 0), 0);
+  const avgCost = costData.length ? Math.round(costData.reduce((a: number, b: number) => a + b, 0) / costData.length) : 8500;
+  const detentionCost = 1500 * 365;
+  const ratio = Math.round(detentionCost / avgCost);
+  const evidenceBacked = interventions.filter((i: any) => i.evidence_level && !i.evidence_level.startsWith('Untested')).length;
 
   return (
-    <div className="min-h-screen bg-white text-black">
-      {/* Skip to main content link for accessibility */}
-      <a href="#main-content" className="skip-link">
-        Skip to main content
-      </a>
-      
-      {/* Unified Navigation */}
+    <div className="min-h-screen bg-[#F5F0E8] text-[#0A0A0A]">
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <Navigation />
 
-      {/* Hero - One powerful truth */}
       <main id="main-content">
-        <section className="min-h-screen flex items-center justify-center header-offset">
-          <div className="container-justice text-center">
-          <div className="max-w-5xl mx-auto">
-            {/* Rotating impact stat */}
-            <div className="mb-12 impact-number">
-              <div className="hero-stat">{impactStats[currentStatIndex].number}</div>
-              <p className="text-xl md:text-2xl mt-4 font-medium">
-                {impactStats[currentStatIndex].context}
-              </p>
-            </div>
-
-            <h1 className="headline-truth mb-8">
-              Australia locks up children.<br />
-              Communities have the cure.<br />
-              We connect them.
+        {/* Hero — The one line that stops people */}
+        <section className="bg-[#0A0A0A] text-white header-offset">
+          <div className="max-w-6xl mx-auto px-6 sm:px-12 py-24 md:py-32">
+            <p
+              className="text-sm uppercase tracking-[0.3em] text-[#DC2626] mb-6"
+              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+            >
+              {interventions.length.toLocaleString()} alternative models. {evidenceBacked} with evidence. {ratio}x cheaper than detention.
+            </p>
+            <h1
+              className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.05]"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              Australia locks up children.
+              <br />
+              <span className="text-[#059669]">The alternative exists.</span>
             </h1>
-
-            <p className="body-truth mx-auto mb-12">
-              No inspirational quotes. No poverty tourism. Just proven solutions 
-              from communities already doing the work. This is infrastructure for revolution.
+            <p className="text-lg md:text-xl text-white/60 max-w-2xl mb-10">
+              {interventions.length.toLocaleString()} community models proving it works better and costs
+              less. {fmt(totalFunding)} in funding tracked. {(orgRes.count || 0).toLocaleString()} organisations
+              mapped. This is the transparency engine for youth justice in Australia.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/services" className="cta-primary">
-                FIND HELP NOW
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/proof"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#0A0A0A] font-semibold rounded-lg hover:bg-white/90 transition-colors text-sm"
+              >
+                See the Proof <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="#truth" className="cta-secondary">
-                SEE THE DATA
+              <Link
+                href="/follow-the-money"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#DC2626] text-white font-semibold rounded-lg hover:bg-[#DC2626]/90 transition-colors text-sm"
+              >
+                Follow the Money
+              </Link>
+              <Link
+                href="/join"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm"
+              >
+                Join the Network
               </Link>
             </div>
           </div>
+        </section>
 
-          <div className="mt-20">
-            <ArrowDown className="w-8 h-8 mx-auto animate-bounce" />
+        {/* The Cost Argument — Visceral, immediate */}
+        <section className="bg-[#0A0A0A] border-t border-white/10">
+          <div className="max-w-6xl mx-auto px-6 sm:px-12 py-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-[#DC2626]/10 rounded-xl p-6 border border-[#DC2626]/20">
+                <p
+                  className="text-xs uppercase tracking-wider text-[#DC2626] mb-1"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
+                  Detention
+                </p>
+                <p
+                  className="text-4xl font-bold text-[#DC2626]"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
+                  {fmt(detentionCost)}
+                </p>
+                <p className="text-sm text-white/50 mt-1">per young person per year</p>
+                <p className="text-xs text-white/30 mt-2">$1,500/day national average. NT: $4,217/day.</p>
+              </div>
+              <div className="bg-[#059669]/10 rounded-xl p-6 border border-[#059669]/20">
+                <p
+                  className="text-xs uppercase tracking-wider text-[#059669] mb-1"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
+                  Community Models
+                </p>
+                <p
+                  className="text-4xl font-bold text-[#059669]"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
+                  {fmt(avgCost)}
+                </p>
+                <p className="text-sm text-white/50 mt-1">per young person (average)</p>
+                <p className="text-xs text-white/30 mt-2">Across {costData.length} models with cost data.</p>
+              </div>
+              <div className="bg-white/5 rounded-xl p-6 border border-white/10 flex flex-col justify-center">
+                <p
+                  className="text-5xl font-bold text-white"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
+                  {ratio}x
+                </p>
+                <p className="text-sm text-white/50 mt-1">cheaper. Better outcomes. Proven.</p>
+                <Link
+                  href="/calculator"
+                  className="text-sm font-semibold text-[#059669] mt-3 flex items-center gap-1 hover:underline"
+                >
+                  Try the calculator <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Start Here - Intent Router */}
-      <section id="start-here" className="section-padding border-t-2 border-black bg-gray-50">
-        <div className="container-justice">
-          <div className="text-center mb-10">
-            <h2 className="headline-truth mb-4">
-              Start here in under 60 seconds
-            </h2>
-            <p className="text-xl max-w-3xl mx-auto">
-              Pick what you need right now and we'll route you to the fastest next step.
-            </p>
-          </div>
+        {/* Three Paths — Who are you? */}
+        <section className="max-w-6xl mx-auto px-6 sm:px-12 py-20">
+          <h2
+            className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-center"
+            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+          >
+            What do you need?
+          </h2>
+          <p className="text-center text-[#0A0A0A]/60 mb-12 max-w-xl mx-auto">
+            Three doors. Pick yours.
+          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Link
-              href="/services?intent=support&source=home&type=support"
-              onClick={() => {
-                void trackJourneyEvent({
-                  eventName: 'journey_path_selected',
-                  properties: {
-                    intent: 'support',
-                    source: 'home',
-                    type: 'support',
-                  },
-                });
-              }}
-              className="border-2 border-black bg-white p-6 hover:bg-black hover:text-white transition-all"
+              href="/services"
+              className="bg-white rounded-xl border-2 border-[#0A0A0A]/10 p-8 hover:border-[#0A0A0A]/40 transition-all group"
             >
-              <div className="text-xs font-bold uppercase tracking-widest mb-3">Support Pathway</div>
-              <h3 className="text-2xl font-black mb-3">I need help now</h3>
-              <p className="text-sm mb-4">
-                Find verified services by urgency, location, and need.
+              <Heart className="w-8 h-8 text-[#DC2626] mb-4" />
+              <h3
+                className="text-xl font-bold mb-2"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              >
+                I need help
+              </h3>
+              <p className="text-sm text-[#0A0A0A]/60 mb-4">
+                Find services near you. Crisis support, legal help, mentorship, housing.
+                No judgment, just options.
               </p>
-              <span className="inline-flex items-center gap-2 font-bold text-sm uppercase tracking-wider">
+              <span className="inline-flex items-center gap-2 font-semibold text-sm text-[#DC2626] group-hover:underline">
                 Find support <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
 
             <Link
-              href="/for-community-leaders?intent=partner&source=home&type=partnership"
-              onClick={() => {
-                void trackJourneyEvent({
-                  eventName: 'journey_path_selected',
-                  properties: {
-                    intent: 'partner',
-                    source: 'home',
-                    type: 'partnership',
-                  },
-                });
-              }}
-              className="border-2 border-black bg-white p-6 hover:bg-black hover:text-white transition-all"
+              href="/join"
+              className="bg-white rounded-xl border-2 border-[#0A0A0A]/10 p-8 hover:border-[#0A0A0A]/40 transition-all group"
             >
-              <div className="text-xs font-bold uppercase tracking-widest mb-3">Partner Pathway</div>
-              <h3 className="text-2xl font-black mb-3">I run a community organization</h3>
-              <p className="text-sm mb-4">
-                Join the network, share your impact, and access practical support.
+              <Users className="w-8 h-8 text-[#059669] mb-4" />
+              <h3
+                className="text-xl font-bold mb-2"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              >
+                I do the work
+              </h3>
+              <p className="text-sm text-[#0A0A0A]/60 mb-4">
+                Join the ALMA Network. Get your model on the map, access matched grants,
+                connect with peers doing the same work.
               </p>
-              <span className="inline-flex items-center gap-2 font-bold text-sm uppercase tracking-wider">
+              <span className="inline-flex items-center gap-2 font-semibold text-sm text-[#059669] group-hover:underline">
                 Join the network <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
 
             <Link
-              href="/for-funders?intent=funding&source=home&type=briefing"
-              onClick={() => {
-                void trackJourneyEvent({
-                  eventName: 'journey_path_selected',
-                  properties: {
-                    intent: 'funding',
-                    source: 'home',
-                    type: 'briefing',
-                  },
-                });
-              }}
-              className="border-2 border-black bg-white p-6 hover:bg-black hover:text-white transition-all"
+              href="/proof"
+              className="bg-white rounded-xl border-2 border-[#0A0A0A]/10 p-8 hover:border-[#0A0A0A]/40 transition-all group"
             >
-              <div className="text-xs font-bold uppercase tracking-widest mb-3">Decision Pathway</div>
-              <h3 className="text-2xl font-black mb-3">I fund or shape policy</h3>
-              <p className="text-sm mb-4">
-                Move from evidence to action with fund-ready community pathways.
+              <DollarSign className="w-8 h-8 text-[#0A0A0A] mb-4" />
+              <h3
+                className="text-xl font-bold mb-2"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              >
+                I fund or shape policy
+              </h3>
+              <p className="text-sm text-[#0A0A0A]/60 mb-4">
+                See the evidence. {interventions.length} models, {evidenceBacked} proven. Follow the
+                money. Make decisions based on data, not lobby groups.
               </p>
-              <span className="inline-flex items-center gap-2 font-bold text-sm uppercase tracking-wider">
-                View investment pathways <ArrowRight className="w-4 h-4" />
+              <span className="inline-flex items-center gap-2 font-semibold text-sm text-[#0A0A0A]/60 group-hover:underline">
+                See the proof <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* The Truth Section */}
-      <section id="truth" className="section-padding border-t-2 border-black">
-        <div className="container-justice">
-          <h2 className="headline-truth mb-16 text-center">
-            The truth about youth justice
-          </h2>
-
-          {/* Primary Success Rate Comparison */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-            <div className="data-card bg-orange-50 border-l-8 border-orange-600 text-center">
-              <div className="font-mono text-6xl font-bold text-orange-600 mb-4">15.5%</div>
-              <h3 className="text-xl font-bold mb-2">DETENTION SUCCESS RATE</h3>
-              <p className="text-gray-700">84.5% reoffend within 12 months</p>
-              <div className="mt-4 bg-orange-600 text-white py-2 px-4 font-bold">
-                SYSTEM FAILURE
-              </div>
-            </div>
-            <div className="data-card bg-blue-50 border-l-8 border-blue-800 text-center">
-              <div className="font-mono text-6xl font-bold text-blue-800 mb-4">78%</div>
-              <h3 className="text-xl font-bold mb-2">COMMUNITY PROGRAMS</h3>
-              <p className="text-gray-700">22% reoffend - and that's the average</p>
-              <div className="mt-4 bg-blue-800 text-white py-2 px-4 font-bold">
-                PROVEN SOLUTION
-              </div>
-            </div>
-          </div>
-
-          {/* Cost Comparison */}
-          <div className="mb-16">
-            <h3 className="text-2xl font-bold mb-8 text-center">COST REALITY</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              <div className="data-card bg-blue-50 border-l-8 border-blue-800 text-center">
-                <h4 className="font-bold text-lg mb-4">COMMUNITY PROGRAMS</h4>
-                <div className="font-mono text-5xl font-bold text-blue-800 mb-2">$58,000</div>
-                <p className="text-sm text-gray-600 mb-4">per young person annually</p>
-                <div className="bg-blue-800 h-4 rounded mb-2" style={{width: '5.3%'}}></div>
-                <div className="bg-blue-800 text-white py-2 px-4 font-bold text-sm">
-                  INVESTMENT IN SOLUTION
-                </div>
-              </div>
-              
-              <div className="data-card bg-orange-50 border-l-8 border-orange-600 text-center">
-                <h4 className="font-bold text-lg mb-4">DETENTION</h4>
-                <div className="font-mono text-5xl font-bold text-orange-600 mb-2">$1.1M</div>
-                <p className="text-sm text-gray-600 mb-4">per young person annually</p>
-                <div className="bg-orange-600 h-4 rounded mb-2" style={{width: '100%'}}></div>
-                <div className="bg-orange-600 text-white py-2 px-4 font-bold text-sm">
-                  WASTE OF RESOURCES
-                </div>
-              </div>
-            </div>
-            
-            <div className="text-center mt-8 p-6 bg-black">
-              <p className="text-2xl font-bold text-white">
-                SAVINGS: $1,042,000 per young person per year
-              </p>
-              <p className="text-lg mt-2 text-white">19 times more cost-effective. And it actually works.</p>
-            </div>
-          </div>
-
-          {/* Platform Impact Metrics - Live from Database */}
-          <div className="mb-16">
-            <h3 className="text-2xl font-bold mb-2 text-center">JUSTICEHUB IMPACT</h3>
-            {isStatsFallback && (
-              <p className="text-sm text-gray-500 text-center mb-6">
-                (using cached data)
-              </p>
-            )}
-            {!isStatsFallback && <div className="mb-8" />}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="data-card text-center">
-                <div className="flex justify-center mb-4">
-                  <Target className="h-8 w-8 text-black" />
-                </div>
-                {statsLoading ? (
-                  <div className="font-mono text-4xl font-bold mb-2 flex justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-                  </div>
-                ) : (
-                  <div className="font-mono text-4xl font-bold mb-2">
-                    {stats?.programs_documented.toLocaleString() || '939'}
-                  </div>
-                )}
-                <p className="text-lg font-bold mb-1">Programs Catalogued</p>
-                <p className="text-sm text-blue-800 font-medium">
-                  {stats?.total_evidence || 334} evidence items
+        {/* The Network — Basecamps */}
+        <section className="bg-[#0A0A0A] text-white py-20">
+          <div className="max-w-6xl mx-auto px-6 sm:px-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+              <div>
+                <p
+                  className="text-sm uppercase tracking-[0.3em] text-[#059669] mb-4"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
+                  ALMA Network
                 </p>
-              </div>
-
-              <div className="data-card text-center">
-                <div className="flex justify-center mb-4">
-                  <Users className="h-8 w-8 text-black" />
-                </div>
-                {statsLoading ? (
-                  <div className="font-mono text-4xl font-bold mb-2 flex justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-                  </div>
-                ) : (
-                  <div className="font-mono text-4xl font-bold mb-2">
-                    {stats?.total_services.toLocaleString() || '150'}
-                  </div>
-                )}
-                <p className="text-lg font-bold mb-1">Active Services</p>
-                <p className="text-sm text-blue-800 font-medium">
-                  {stats?.states_covered || 7} states & territories
+                <h2
+                  className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-4"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
+                  Community organisations in every state
+                </h2>
+                <p className="text-white/60 mb-8">
+                  Basecamps coordinate the network. Miners do the work. Validators confirm
+                  it&apos;s real. Together, they&apos;re building the alternative to a system
+                  that spends billions failing kids.
                 </p>
-              </div>
 
-              <div className="data-card text-center">
-                <div className="flex justify-center mb-4">
-                  <Award className="h-8 w-8 text-black" />
-                </div>
-                <div className="font-mono text-4xl font-bold mb-2">78%</div>
-                <p className="text-lg font-bold mb-1">Average Success Rate</p>
-                <p className="text-sm text-gray-600">vs 15.5% in detention</p>
-              </div>
-
-              <div className="data-card text-center">
-                <div className="flex justify-center mb-4">
-                  <DollarSign className="h-8 w-8 text-black" />
-                </div>
-                {statsLoading ? (
-                  <div className="font-mono text-4xl font-bold mb-2 flex justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-                  </div>
-                ) : (
-                  <div className="font-mono text-4xl font-bold mb-2">
-                    {stats?.total_organizations?.toLocaleString() || '67'}
-                  </div>
-                )}
-                <p className="text-lg font-bold mb-1">Organisations</p>
-                <p className="text-sm text-gray-600">In the network</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Where QLD Justice Money Goes */}
-          <div className="mb-16">
-            <h3 className="text-2xl font-bold mb-2 text-center">WHERE QLD JUSTICE MONEY GOES</h3>
-            <p className="text-sm text-gray-500 text-center mb-6">
-              {topRecipients.length > 0
-                ? `Top 10 of ${stats?.total_organizations?.toLocaleString() || 'hundreds of'} funded organisations`
-                : 'Loading funding data...'}
-            </p>
-
-            {recipientsLoading ? (
-              <div className="flex justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-              </div>
-            ) : (
-              <div className="border-2 border-black">
-                {topRecipients.map((r, i) => (
-                  <Link
-                    key={r.recipient_abn || r.recipient_name}
-                    href={r.recipient_abn ? `/justice-funding/org/${r.recipient_abn}` : '/justice-funding?tab=organizations'}
-                    className={`flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors ${i < topRecipients.length - 1 ? 'border-b-2 border-black' : ''}`}
-                  >
-                    <div className="font-mono text-2xl font-bold text-gray-400 w-8 text-right flex-shrink-0">
-                      {i + 1}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-gray-900 truncate">{r.recipient_name}</span>
-                        {r.is_indigenous && (
-                          <span className="px-1.5 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold flex-shrink-0">
-                            Indigenous-led
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-xs text-gray-500 mt-0.5">
-                        {r.grant_count} grants · {r.years_funded} years
-                      </div>
-                    </div>
-                    <div className="font-mono text-xl font-bold text-gray-900 flex-shrink-0">
-                      {r.total_dollars >= 1_000_000_000
-                        ? `$${(r.total_dollars / 1_000_000_000).toFixed(2)}B`
-                        : r.total_dollars >= 1_000_000
-                        ? `$${(r.total_dollars / 1_000_000).toFixed(0)}M`
-                        : `$${(r.total_dollars / 1_000).toFixed(0)}K`}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
-              <Link href="/justice-funding?tab=organizations" className="cta-secondary inline-flex items-center gap-2 justify-center">
-                VIEW ALL ORGANISATIONS <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link href="/follow-the-money" className="cta-secondary inline-flex items-center gap-2 justify-center">
-                EXPLORE THE MONEY TRAIL <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-
-          <div className="text-center">
-            <p className="text-2xl font-bold mb-4">
-              Every dollar spent on detention is a dollar stolen from solutions that work.
-            </p>
-            <Link href="/follow-the-money" className="cta-primary inline-block">
-              FOLLOW THE MONEY
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Founding Network - Basecamps */}
-      <section className="section-padding bg-gradient-to-br from-ochre-50 to-orange-50 border-t-2 border-b-2 border-black">
-        <div className="container-justice">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-ochre-600 text-white font-bold text-sm uppercase tracking-wider mb-4">
-              <MapPin className="h-4 w-4" />
-              Founding Network
-            </div>
-            <h2 className="headline-truth mb-4">
-              4 basecamps. 4 regions. One mission.
-            </h2>
-            <p className="text-xl max-w-3xl mx-auto">
-              These founding organizations anchor the JusticeHub network—proving that
-              community-led solutions work from the red centre to urban Sydney.
-            </p>
-          </div>
-
-          {/* Basecamp Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {basecampLocations.map((basecamp) => (
-              <Link
-                key={basecamp.id}
-                href={basecamp.detailUrl}
-                className="bg-white border-2 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-y-1"
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-3 h-3 bg-ochre-600 rounded-full"></div>
-                  <span className="text-sm font-bold text-gray-600 uppercase tracking-wider">
-                    {basecamp.city}, {basecamp.state}
-                  </span>
-                </div>
-                <h3 className="text-xl font-black mb-2">{basecamp.name}</h3>
-                <p className="text-sm text-gray-700 mb-4 line-clamp-2">
-                  {basecamp.description}
-                </p>
-                <div className="space-y-1">
-                  {basecamp.keyStats.slice(0, 2).map((stat, i) => (
-                    <div key={i} className="text-sm font-bold text-ochre-700 flex items-center gap-1">
-                      <span className="text-green-600">✓</span> {stat}
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  {[
+                    { value: basecamps.length, label: 'Basecamps' },
+                    { value: interventions.length.toLocaleString(), label: 'ALMA Models' },
+                    { value: (evidenceRes.count || 0).toLocaleString(), label: 'Evidence Items' },
+                    { value: youthOppsRes.count || 0, label: 'Open Opportunities' },
+                  ].map((s) => (
+                    <div key={s.label}>
+                      <p
+                        className="text-2xl font-bold text-white"
+                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                      >
+                        {s.value}
+                      </p>
+                      <p
+                        className="text-xs text-white/40"
+                        style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                      >
+                        {s.label}
+                      </p>
                     </div>
                   ))}
                 </div>
+
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="/network/alma"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#0A0A0A] font-semibold rounded-lg hover:bg-white/90 transition-colors text-sm"
+                  >
+                    Explore the Network <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    href="/basecamps"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm"
+                  >
+                    See Basecamps
+                  </Link>
+                </div>
+              </div>
+
+              {/* Basecamp cards */}
+              <div className="space-y-3">
+                {basecamps.slice(0, 6).map((bc: any) => (
+                  <Link
+                    key={bc.id}
+                    href={`/sites/${bc.slug}`}
+                    className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#059669]/20">
+                      <Shield className="w-4 h-4 text-[#059669]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-white group-hover:underline truncate">
+                        {bc.name}
+                      </p>
+                      <p className="text-xs text-white/40 flex items-center gap-1">
+                        <MapPin className="w-3 h-3" /> {bc.state}
+                        {bc.is_indigenous_org && ' · Indigenous-led'}
+                      </p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors shrink-0" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* The Proof Row */}
+        <section className="max-w-6xl mx-auto px-6 sm:px-12 py-20">
+          <h2
+            className="text-3xl font-bold tracking-tight mb-4 text-center"
+            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+          >
+            The intelligence
+          </h2>
+          <p className="text-center text-[#0A0A0A]/60 mb-12 max-w-xl mx-auto">
+            Data that exposes, proves, and equips. Every number is live from the platform.
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Link href="/proof" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+              <Shield className="w-5 h-5 text-[#059669] mb-2" />
+              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{interventions.length}</p>
+              <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>verified models</p>
+              <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">Wall of Proof <ArrowRight className="w-3 h-3" /></span>
+            </Link>
+            <Link href="/follow-the-money" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+              <DollarSign className="w-5 h-5 text-[#DC2626] mb-2" />
+              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{fmt(totalFunding)}</p>
+              <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>funding tracked</p>
+              <span className="text-xs font-semibold text-[#DC2626] mt-2 flex items-center gap-1 group-hover:underline">Follow the Money <ArrowRight className="w-3 h-3" /></span>
+            </Link>
+            <Link href="/funders" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+              <Users className="w-5 h-5 text-[#0A0A0A]/60 mb-2" />
+              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{(orgRes.count || 0).toLocaleString()}</p>
+              <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>organisations</p>
+              <span className="text-xs font-semibold text-[#0A0A0A]/60 mt-2 flex items-center gap-1 group-hover:underline">Funders <ArrowRight className="w-3 h-3" /></span>
+            </Link>
+            <Link href="/intelligence/chat" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+              <Sparkles className="w-5 h-5 text-[#059669] mb-2" />
+              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>ALMA</p>
+              <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>AI chat</p>
+              <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">Ask ALMA <ArrowRight className="w-3 h-3" /></span>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+            <Link href="/calculator" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+              <TrendingUp className="w-5 h-5 text-[#0A0A0A]/60 mb-2" />
+              <p className="font-bold text-sm">Cost Calculator</p>
+              <p className="text-xs text-[#0A0A0A]/40 mt-0.5">Detention vs alternatives</p>
+            </Link>
+            <Link href="/follow-the-money/big-vs-small" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+              <TrendingUp className="w-5 h-5 text-[#DC2626] mb-2" />
+              <p className="font-bold text-sm">Big vs Small</p>
+              <p className="text-xs text-[#0A0A0A]/40 mt-0.5">Corporate vs community</p>
+            </Link>
+            <Link href="/voices" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+              <Mic className="w-5 h-5 text-[#059669] mb-2" />
+              <p className="font-bold text-sm">Community Voices</p>
+              <p className="text-xs text-[#0A0A0A]/40 mt-0.5">Real stories</p>
+            </Link>
+            <Link href="/trips" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+              <Calendar className="w-5 h-5 text-[#059669] mb-2" />
+              <p className="font-bold text-sm">Learning Trips</p>
+              <p className="text-xs text-[#0A0A0A]/40 mt-0.5">Visit each other&apos;s Country</p>
+            </Link>
+          </div>
+        </section>
+
+        {/* Stories from the community */}
+        {stories.length > 0 && (
+          <section className="max-w-6xl mx-auto px-6 sm:px-12 pb-16">
+            <div className="flex items-baseline justify-between mb-6">
+              <h2
+                className="text-2xl font-bold tracking-tight"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              >
+                From the community
+              </h2>
+              <Link href="/voices" className="text-sm font-semibold text-[#059669] hover:underline flex items-center gap-1">
+                All voices <ArrowRight className="w-3 h-3" />
               </Link>
-            ))}
-          </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {stories.map((story: any) => (
+                <div key={story.id} className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5">
+                  <p className="font-semibold text-sm mb-1">{story.title}</p>
+                  {story.organizations && (
+                    <p className="text-xs text-[#0A0A0A]/40 mb-2">
+                      {story.organizations.name} · {story.organizations.state}
+                    </p>
+                  )}
+                  {story.excerpt && (
+                    <p className="text-xs text-[#0A0A0A]/60 line-clamp-3">{story.excerpt}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
-          {/* CTA to see full network */}
-          <div className="text-center flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/centre-of-excellence/map?category=basecamp"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-black text-white font-bold uppercase tracking-wider hover:bg-gray-800 transition-colors"
+        {/* Empathy Ledger Stories */}
+        <section className="max-w-6xl mx-auto px-6 sm:px-12 pb-16">
+          <EmpathyLedgerStories />
+        </section>
+
+        {/* Activity Feed */}
+        <ActivityFeed />
+
+        {/* Final CTA — The line */}
+        <section className="bg-[#0A0A0A] text-white py-20">
+          <div className="max-w-4xl mx-auto px-6 sm:px-12 text-center">
+            <p
+              className="text-sm uppercase tracking-[0.3em] text-[#059669] mb-6"
+              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
             >
-              <MapPin className="h-5 w-5" />
-              VIEW NETWORK MAP
-            </Link>
-            <Link
-              href="/people"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-black font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
-            >
-              <Users className="h-5 w-5" />
-              MEET THE MOVEMENT
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* National Network Map */}
-      <HomepageNetworkMap />
-
-      {/* ALMA Network */}
-      <section className="section-padding bg-[#0A0A0A] border-t-2 border-b-2 border-black">
-        <div className="container-justice">
-          <div className="max-w-4xl mx-auto text-center">
-            <p className="text-sm uppercase tracking-[0.3em] text-[#059669] mb-4 font-mono">
               ALMA Network
             </p>
-            <h2 className="text-3xl md:text-4xl font-black text-white mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              The Alternative Exists
+            <h2
+              className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-6"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              This is time for alternative models of Australia to rise up, support our
+              young kids, and build a safer community.
             </h2>
-            <p className="text-lg text-white/70 max-w-2xl mx-auto mb-10">
-              Community organisations across Australia are proving that local
-              models work better, cost less, and keep young people safe.
-              The ALMA Network connects them, funds them, and makes their
-              work impossible to ignore.
+            <p className="text-white/60 mb-10 max-w-2xl mx-auto">
+              The evidence is clear. The solutions exist. The network is growing. The only
+              question is whether we fund what works — or keep paying for what doesn&apos;t.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/network/alma" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#0A0A0A] font-bold uppercase tracking-wider hover:bg-white/90 transition-colors">
-                EXPLORE THE NETWORK <ArrowRight className="w-4 h-4" />
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link
+                href="/join"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#0A0A0A] font-semibold rounded-lg hover:bg-white/90 transition-colors text-sm"
+              >
+                Join the Network <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/follow-the-money" className="inline-flex items-center gap-2 px-6 py-3 border-2 border-white text-white font-bold uppercase tracking-wider hover:bg-white/10 transition-colors">
-                FOLLOW THE MONEY
+              <Link
+                href="/proof"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#DC2626] text-white font-semibold rounded-lg hover:bg-[#DC2626]/90 transition-colors text-sm"
+              >
+                See the Proof
               </Link>
-              <Link href="/join" className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#059669] text-[#059669] font-bold uppercase tracking-wider hover:bg-[#059669]/10 transition-colors">
-                JOIN THE NETWORK
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* What We Build */}
-      <section className="section-padding bg-black">
-        <div className="container-justice">
-          <h2 className="headline-truth mb-4 text-white">
-            We don't decorate injustice.
-          </h2>
-          <p className="text-2xl mb-16 text-white">We dismantle it.</p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-2 border-white">
-            <div className="p-8 border-b-2 md:border-b-0 md:border-r-2 border-white">
-              <h3 className="text-xl font-bold mb-4 uppercase tracking-wider text-white">
-                For Young People
-              </h3>
-              <p className="mb-6 text-white">
-                No lectures. No judgment. Just tools that work. 
-                Built by people who've been where you are.
-              </p>
-              <Link href="/services" className="text-white underline font-bold hover:text-gray-300">
-                Start here →
-              </Link>
-            </div>
-
-            <div className="p-8 border-b-2 md:border-b-0 md:border-r-2 border-white">
-              <h3 className="text-xl font-bold mb-4 uppercase tracking-wider text-white">
-                For Communities
-              </h3>
-              <p className="mb-6 text-white">
-                You already have the answers. Your programs work. 
-                We're here to amplify them.
-              </p>
-              <Link href="/grassroots" className="text-white underline font-bold hover:text-gray-300">
-                Share your solution →
-              </Link>
-            </div>
-
-            <div className="p-8">
-              <h3 className="text-xl font-bold mb-4 uppercase tracking-wider text-white">
-                For Decision Makers
-              </h3>
-              <p className="mb-6 text-white">
-                The evidence is unanimous. The community is ready. 
-                Your move.
-              </p>
-              <Link href="/follow-the-money" className="text-white underline font-bold hover:text-gray-300">
-                See the evidence →
+              <Link
+                href="/contained"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm"
+              >
+                Experience CONTAINED
               </Link>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Thematic Areas - Cross-cutting issues */}
-      <ThematicSection variant="full" featuredTheme="disability" />
-
-      {/* Programs That Work - Grid Layout */}
-      <section className="section-padding">
-        <div className="container-justice">
-          <h2 className="headline-truth mb-16">
-            Communities already solving this
-          </h2>
-
-          <div className="justice-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {/* Groote Eylandt */}
-            <div className="p-8">
-              <div className="font-mono text-5xl font-bold mb-4">95%</div>
-              <h3 className="text-xl font-bold mb-2">Groote Eylandt</h3>
-              <p className="mb-4">
-                Elders + culture + young people = 95% less crime in 3 years. 
-                No new theory. Ancient wisdom.
-              </p>
-              <Link href="/stories" className="font-bold underline">
-                Full story →
-              </Link>
-            </div>
-
-            {/* BackTrack */}
-            <div className="p-8">
-              <div className="font-mono text-5xl font-bold mb-4">87%</div>
-              <h3 className="text-xl font-bold mb-2">BackTrack Youth Works</h3>
-              <p className="mb-4">
-                Dogs, welding, and mentorship. Turns "problem kids" into 
-                qualified workers. 87% never reoffend.
-              </p>
-              <Link href="/grassroots" className="font-bold underline">
-                Learn more →
-              </Link>
-            </div>
-
-            {/* Transition 2 Success */}
-            <div className="p-8">
-              <div className="font-mono text-5xl font-bold mb-4">67%</div>
-              <h3 className="text-xl font-bold mb-2">Transition 2 Success</h3>
-              <p className="mb-4">
-                Costs 95% less than detention. Three times better outcomes. 
-                Operating in Queensland right now.
-              </p>
-              <Link href="/services" className="font-bold underline">
-                Find services →
-              </Link>
-            </div>
-
-            {/* More programs */}
-            <div className="p-8 bg-black md:col-span-2 lg:col-span-3">
-              <p className="text-2xl font-bold mb-4 text-white">
-                {stats?.programs_documented?.toLocaleString() || '939'}+ programs across Australia. Working. Right now.
-              </p>
-              <p className="text-xl mb-6 text-white">
-                The solutions exist. They're just invisible, underfunded, and 
-                disconnected. That's what we're here to fix.
-              </p>
-              <Link href="/grassroots" className="inline-block bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-100">
-                EXPLORE ALL PROGRAMS
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* The Platform */}
-      <section className="section-padding border-t-2 border-black">
-        <div className="container-justice">
-          <h2 className="headline-truth mb-16">
-            JusticeHub: Infrastructure for revolution
-          </h2>
-
-          {/* ALMA Chat Feature - Full Width */}
-          <div className="mb-12 border-2 border-black bg-gradient-to-r from-green-50 to-blue-50 p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-            <div className="flex flex-col md:flex-row items-center gap-8">
-              <div className="flex-shrink-0">
-                <div className="w-20 h-20 bg-black flex items-center justify-center">
-                  <Sparkles className="w-10 h-10 text-green-400" />
-                </div>
-              </div>
-              <div className="flex-1 text-center md:text-left">
-                <h3 className="text-2xl font-black mb-2">ASK ALMA</h3>
-                <p className="text-lg mb-4">
-                  AI-powered guide to {stats?.programs_documented?.toLocaleString() || '939'}+ youth justice programs across Australia.
-                  Find services, explore evidence, connect with communities.
-                </p>
-                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                  <span className="px-3 py-1 bg-green-100 border border-green-600 text-green-800 text-sm font-bold">{stats?.programs_documented?.toLocaleString() || '939'} Programs</span>
-                  <span className="px-3 py-1 bg-blue-100 border border-blue-600 text-blue-800 text-sm font-bold">7 States</span>
-                  <span className="px-3 py-1 bg-purple-100 border border-purple-600 text-purple-800 text-sm font-bold">Real-time Data</span>
-                </div>
-              </div>
-              <div className="flex-shrink-0">
-                <Link
-                  href="/intelligence/chat"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-black text-white font-bold border-2 border-black hover:bg-green-700 transition-colors"
-                >
-                  <Sparkles className="w-5 h-5" />
-                  ASK NOW
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="data-card">
-              <h3 className="text-xl font-bold mb-4">GRASSROOTS DATABASE</h3>
-              <p className="mb-4">
-                Every community program. Searchable. Shareable.
-                No more reinventing wheels.
-              </p>
-              <Link href="/intelligence/interventions" className="font-bold underline">
-                Search programs →
-              </Link>
-            </div>
-
-            <div className="data-card">
-              <h3 className="text-xl font-bold mb-4">TALENT SCOUT</h3>
-              <p className="mb-4">
-                Match young people with mentors based on dreams,
-                not risk factors. Human connection that works.
-              </p>
-              <Link href="/talent-scout" className="font-bold underline">
-                Find mentors →
-              </Link>
-            </div>
-
-            <div className="data-card">
-              <h3 className="text-xl font-bold mb-4">MONEY TRAIL</h3>
-              <p className="mb-4">
-                Every dollar. Every decision. Every outcome.
-                Transparency as a weapon for change.
-              </p>
-              <Link href="/transparency" className="font-bold underline">
-                Follow money →
-              </Link>
-            </div>
-
-            <div className="data-card">
-              <h3 className="text-xl font-bold mb-4">STEWARDS</h3>
-              <p className="mb-4">
-                Protect what works. Join the community nurturing
-                evidence-based youth justice reform.
-              </p>
-              <Link href="/stewards" className="font-bold underline">
-                Become a steward →
-              </Link>
-            </div>
-          </div>
-          
-          {/* Empathy Ledger Stories - Real stories from the community */}
-          <EmpathyLedgerStories />
-        </div>
-      </section>
-
-      {/* Live Activity Feed */}
-      <ActivityFeed />
-
-      {/* Final CTA */}
-      <section className="section-padding bg-black">
-        <div className="container-justice text-center">
-          <h2 className="headline-truth mb-8 text-white">
-            The evidence is clear.<br />
-            The solutions exist.<br />
-            The time is now.
-          </h2>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/services" className="inline-block bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-100">
-              I NEED HELP
-            </Link>
-            <Link href="/grassroots" className="inline-block border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-all">
-              I HAVE SOLUTIONS
-            </Link>
-          </div>
-        </div>
-      </section>
+        </section>
       </main>
 
-      {/* Unified Footer */}
       <Footer />
     </div>
   );
