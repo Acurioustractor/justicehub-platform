@@ -255,6 +255,11 @@ export const navigationItems: NavigationItem[] = [
         type: 'dropdown',
         items: [
             {
+                label: 'Our Vision',
+                href: '/vision',
+                description: 'The future of youth justice'
+            },
+            {
                 label: 'Our Mission',
                 href: '/about',
                 description: 'Why JusticeHub exists'
