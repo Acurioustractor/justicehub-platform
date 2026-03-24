@@ -239,6 +239,11 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Creative solutions'
             },
             {
+                label: 'Follow the Money',
+                href: '/follow-the-money',
+                description: 'Where youth justice funding actually goes'
+            },
+            {
                 label: 'The Authority',
                 href: '/authority',
                 description: '$97.9B in justice funding, exposed'
