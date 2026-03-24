@@ -178,6 +178,31 @@ export const navigationItems: NavigationItem[] = [
                 description: '16+ international models'
             },
             {
+                label: 'ALMA Network',
+                href: '/network/alma',
+                description: 'The alternative — community-led youth justice'
+            },
+            {
+                label: 'Network Impact',
+                href: '/network/alma/impact',
+                description: 'Collective proof that alternatives work'
+            },
+            {
+                label: 'Learning Trips',
+                href: '/trips',
+                description: 'Immersive exchanges between community orgs'
+            },
+            {
+                label: 'National Gathering',
+                href: '/network/alma/gathering',
+                description: 'First national gathering — July 2026'
+            },
+            {
+                label: 'Services',
+                href: '/network/alma/services',
+                description: 'Reports, consulting, and intelligence'
+            },
+            {
                 label: 'International Exchange',
                 href: '/international-exchange',
                 description: 'June 2026 learning mission'
@@ -234,6 +259,16 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Protect what works'
             },
             {
+                label: 'Art Competitions',
+                href: '/competitions',
+                description: 'Monthly art competitions for young people'
+            },
+            {
+                label: 'Gig Guide',
+                href: '/gig-guide',
+                description: 'Youth-friendly events near basecamps'
+            },
+            {
                 label: 'Art & Innovation',
                 href: '/art-innovation',
                 description: 'Creative solutions'
@@ -242,6 +277,16 @@ export const navigationItems: NavigationItem[] = [
                 label: 'Follow the Money',
                 href: '/follow-the-money',
                 description: 'Where youth justice funding actually goes'
+            },
+            {
+                label: 'Funders',
+                href: '/funders',
+                description: 'Who funds what — 200+ foundations profiled'
+            },
+            {
+                label: 'State Scorecards',
+                href: '/states/qld',
+                description: 'Per-state youth justice intelligence'
             },
             {
                 label: 'The Authority',
@@ -334,8 +379,14 @@ export const footerSections = [
     {
         title: 'Network',
         links: [
-            { label: 'Centre of Excellence', href: '/centre-of-excellence', description: 'Proving what works' },
+            { label: 'ALMA Network', href: '/network/alma', description: 'Community-led youth justice' },
             { label: 'Basecamps', href: '/basecamps', description: 'ALMA Network coordinators' },
+            { label: 'Network Impact', href: '/network/alma/impact', description: 'Collective proof' },
+            { label: 'Learning Trips', href: '/trips', description: 'Immersive exchanges' },
+            { label: 'National Gathering', href: '/network/alma/gathering', description: 'July 2026' },
+            { label: 'Services', href: '/network/alma/services', description: 'Reports & consulting' },
+            { label: 'Funders', href: '/funders', description: '200+ foundations profiled' },
+            { label: 'Centre of Excellence', href: '/centre-of-excellence', description: 'Proving what works' },
             { label: 'Global Map', href: '/centre-of-excellence/map', description: 'International models' },
             { label: 'International Exchange', href: '/international-exchange', description: 'June 2026 mission' }
         ]
