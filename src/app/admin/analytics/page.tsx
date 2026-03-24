@@ -43,6 +43,14 @@ interface AnalyticsData {
     entity_type: string;
     warm_paths: Array<{ via: string; comment_snippet?: string; profile_url?: string }>;
   }>;
+  page_analytics: {
+    total_tracked: number;
+    today: number;
+    this_week: number;
+    top_pages: Array<{ path: string; views: number }>;
+    top_referrers: Array<{ referrer: string; views: number }>;
+    campaigns: Array<{ campaign: string; views: number }>;
+  };
   top_contained_articles: Array<{
     title: string;
     slug: string;
@@ -107,7 +115,7 @@ export default function AnalyticsDashboard() {
 
   if (!data) return null;
 
-  const { summary, site, top_linkedin_engagers, top_contained_articles, top_viewed_articles } = data;
+  const { summary, site, page_analytics, top_linkedin_engagers, top_contained_articles, top_viewed_articles } = data;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -148,6 +156,79 @@ export default function AnalyticsDashboard() {
           <SummaryCard icon={BarChart3} label="CONTAINED Articles" value={site.contained_articles} color="text-red-600" />
           <SummaryCard icon={ExternalLink} label="Total Shares" value={site.total_shares} color="text-emerald-600" />
         </div>
+
+        {/* Page Analytics */}
+        {page_analytics && (
+          <>
+            <div className="grid grid-cols-3 gap-4 mb-8">
+              <SummaryCard icon={Eye} label="Page Views Today" value={page_analytics.today} color="text-emerald-600" />
+              <SummaryCard icon={TrendingUp} label="Page Views This Week" value={page_analytics.this_week} color="text-blue-600" />
+              <SummaryCard icon={BarChart3} label="Total Tracked" value={page_analytics.total_tracked} />
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              {/* Top Pages */}
+              <div className="bg-white border-2 border-black p-6">
+                <h2 className="text-lg font-black mb-4 flex items-center gap-2">
+                  <Eye className="w-5 h-5 text-blue-600" />
+                  Top Pages
+                </h2>
+                <div className="space-y-2">
+                  {page_analytics.top_pages.map((p, i) => (
+                    <div key={p.path} className="flex items-center justify-between py-1.5 border-b border-gray-100 last:border-0">
+                      <span className="text-xs font-mono text-gray-700 truncate max-w-[70%]" title={p.path}>
+                        <span className="text-gray-300 mr-1">{i + 1}.</span>
+                        {p.path}
+                      </span>
+                      <span className="text-sm font-bold">{p.views}</span>
+                    </div>
+                  ))}
+                  {page_analytics.top_pages.length === 0 && (
+                    <p className="text-gray-400 text-sm">No page views tracked yet. Views will appear as visitors browse the site.</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Top Referrers */}
+              <div className="bg-white border-2 border-black p-6">
+                <h2 className="text-lg font-black mb-4 flex items-center gap-2">
+                  <ExternalLink className="w-5 h-5 text-emerald-600" />
+                  Top Referrers
+                </h2>
+                <div className="space-y-2">
+                  {page_analytics.top_referrers.map(r => (
+                    <div key={r.referrer} className="flex items-center justify-between py-1.5 border-b border-gray-100 last:border-0">
+                      <span className="text-xs font-mono text-gray-700 truncate max-w-[70%]">{r.referrer}</span>
+                      <span className="text-sm font-bold">{r.views}</span>
+                    </div>
+                  ))}
+                  {page_analytics.top_referrers.length === 0 && (
+                    <p className="text-gray-400 text-sm">No referrer data yet. This shows where visitors come from (LinkedIn, Google, direct).</p>
+                  )}
+                </div>
+              </div>
+
+              {/* UTM Campaigns */}
+              <div className="bg-white border-2 border-black p-6">
+                <h2 className="text-lg font-black mb-4 flex items-center gap-2">
+                  <Target className="w-5 h-5 text-red-600" />
+                  UTM Campaigns
+                </h2>
+                <div className="space-y-2">
+                  {page_analytics.campaigns.map(c => (
+                    <div key={c.campaign} className="flex items-center justify-between py-1.5 border-b border-gray-100 last:border-0">
+                      <span className="text-xs font-mono text-gray-700">{c.campaign}</span>
+                      <span className="text-sm font-bold">{c.views}</span>
+                    </div>
+                  ))}
+                  {page_analytics.campaigns.length === 0 && (
+                    <p className="text-gray-400 text-sm">No UTM campaigns tracked yet. Use UTM-tagged URLs in LinkedIn posts to track campaign performance.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Two Column Layout */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">

@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Providers } from '@/components/providers';
 import { ALMAChat } from '@/components/ui/alma-chat';
+import { PageTracker } from '@/components/ui/page-tracker';
 import './globals.css';
 
 const metadataBaseUrl =
@@ -40,6 +41,7 @@ export default function RootLayout({
           </div>
           <ALMAChat />
         </Providers>
+        <PageTracker />
         <Analytics />
         <SpeedInsights />
       </body>
