@@ -60,19 +60,27 @@ function getEvidenceKey(level: string): string {
 export default async function WallOfProofPage() {
   const supabase = createServiceClient() as any;
 
-  // Fetch all verified interventions with org data
-  const { data: interventions } = await supabase
-    .from('alma_interventions')
-    .select(`
-      id, name, type, description, evidence_level, cost_per_young_person,
-      operating_organization_id,
-      organizations!alma_interventions_operating_organization_id_fkey(name, slug, state, is_indigenous_org)
-    `)
-    .neq('verification_status', 'ai_generated')
-    .order('evidence_level', { ascending: true })
-    .order('name');
+  // Fetch all verified interventions with org data (raise limit above Supabase default 1000)
+  const [{ data: interventions }, { count: totalCount }] = await Promise.all([
+    supabase
+      .from('alma_interventions')
+      .select(`
+        id, name, type, description, evidence_level, cost_per_young_person,
+        operating_organization_id,
+        organizations!alma_interventions_operating_organization_id_fkey(name, slug, state, is_indigenous_org)
+      `)
+      .neq('verification_status', 'ai_generated')
+      .order('evidence_level', { ascending: true })
+      .order('name')
+      .limit(2000),
+    supabase
+      .from('alma_interventions')
+      .select('id', { count: 'exact', head: true })
+      .neq('verification_status', 'ai_generated'),
+  ]);
 
   const allModels = interventions || [];
+  const modelCount = totalCount || allModels.length;
 
   // Stats
   const withCost = allModels.filter((m: any) => m.cost_per_young_person && m.cost_per_young_person > 0 && m.cost_per_young_person < 500000);
@@ -129,7 +137,7 @@ export default async function WallOfProofPage() {
               className="text-sm uppercase tracking-[0.3em] text-[#DC2626] mb-4"
               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
             >
-              {allModels.length.toLocaleString()} Verified Models
+              {modelCount.toLocaleString()} Verified Models
             </p>
             <h1
               className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-4"
@@ -147,7 +155,7 @@ export default async function WallOfProofPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                 <p className="text-3xl font-bold text-white" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  {allModels.length}
+                  {modelCount}
                 </p>
                 <p className="text-xs text-white/40 mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                   verified models
@@ -192,7 +200,7 @@ export default async function WallOfProofPage() {
                 const style = EVIDENCE_COLORS[level];
                 const Icon = style.icon;
                 const count = evidenceCounts[level] || 0;
-                const pct = allModels.length ? Math.round((count / allModels.length) * 100) : 0;
+                const pct = modelCount ? Math.round((count / modelCount) * 100) : 0;
                 return (
                   <div key={level} className="bg-white rounded-xl border border-[#0A0A0A]/10 p-4">
                     <div className="flex items-center gap-2 mb-2">
@@ -392,12 +400,12 @@ export default async function WallOfProofPage() {
                 className="text-2xl md:text-3xl font-bold text-white mb-6"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
-                {allModels.length} alternatives exist. The average costs {fmt(avgCost)} per young
+                {modelCount} alternatives exist. The average costs {fmt(avgCost)} per young
                 person. Detention costs {fmt(detentionCost)}. That&apos;s {Math.round(detentionCost / avgCost)}x
                 more expensive — for worse outcomes.
               </h2>
               <p className="text-white/60 mb-8">
-                This isn&apos;t opinion. This is {allModels.length} verified models, {withCost.length} with cost
+                This isn&apos;t opinion. This is {modelCount} verified models, {withCost.length} with cost
                 data, {(evidenceCounts['Proven'] || 0) + (evidenceCounts['Effective'] || 0)} proven or effective.
                 The alternative exists. It works. It costs less. The only question is whether we fund it.
               </p>
