@@ -72,6 +72,11 @@ export const navigationItems: NavigationItem[] = [
         type: 'dropdown',
         items: [
             {
+                label: 'State Leaderboard',
+                href: '/leaderboard',
+                description: 'Which states lead on community youth justice'
+            },
+            {
                 label: 'This Week',
                 href: '/this-week',
                 description: 'What changed on JusticeHub this week'
