@@ -72,6 +72,11 @@ export const navigationItems: NavigationItem[] = [
         type: 'dropdown',
         items: [
             {
+                label: 'The Pulse',
+                href: '/pulse',
+                description: 'Live youth justice intelligence'
+            },
+            {
                 label: 'ALMA Dashboard',
                 href: '/intelligence/dashboard',
                 description: 'AI-powered evidence engine'
