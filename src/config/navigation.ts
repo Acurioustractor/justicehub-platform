@@ -203,6 +203,21 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Reports, consulting, and intelligence'
             },
             {
+                label: 'Wall of Proof',
+                href: '/proof',
+                description: 'Every verified alternative model in Australia'
+            },
+            {
+                label: 'Cost Calculator',
+                href: '/calculator',
+                description: 'Detention vs community — interactive tool'
+            },
+            {
+                label: 'Community Voices',
+                href: '/voices',
+                description: 'Real stories from real people'
+            },
+            {
                 label: 'International Exchange',
                 href: '/international-exchange',
                 description: 'June 2026 learning mission'

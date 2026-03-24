@@ -194,26 +194,75 @@ export default async function ALMANetworkPage() {
             </div>
           </section>
 
-          {/* Key pages */}
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Link href="/follow-the-money" className="bg-[#0A0A0A] text-white rounded-xl p-6 hover:bg-[#0A0A0A]/90 transition-colors group">
-              <TrendingUp className="w-6 h-6 text-[#DC2626] mb-3" />
-              <h3 className="font-bold text-lg text-white mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Follow the Money</h3>
-              <p className="text-sm text-white/60">State-by-state breakdown of where youth justice funding actually goes.</p>
-              <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#DC2626] mt-3 group-hover:underline">Explore <ArrowRight className="w-3 h-3" /></span>
-            </Link>
-            <Link href="/whats-on" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-6 hover:border-[#0A0A0A]/30 transition-colors group">
-              <Calendar className="w-6 h-6 text-[#059669] mb-3" />
-              <h3 className="font-bold text-lg mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>What&apos;s On</h3>
-              <p className="text-sm text-[#0A0A0A]/60">Events, tour stops, open grants, and youth opportunities.</p>
-              <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#0A0A0A]/60 mt-3 group-hover:underline">See events <ArrowRight className="w-3 h-3" /></span>
-            </Link>
-            <Link href="/join" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-6 hover:border-[#0A0A0A]/30 transition-colors group">
-              <Users className="w-6 h-6 text-[#059669] mb-3" />
-              <h3 className="font-bold text-lg mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Join the Network</h3>
-              <p className="text-sm text-[#0A0A0A]/60">Two minutes to join. Matched grants, peer network, free forever.</p>
-              <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#059669] mt-3 group-hover:underline">Join now <ArrowRight className="w-3 h-3" /></span>
-            </Link>
+          {/* Network Hub — All Pages */}
+          <section>
+            <h2 className="text-2xl font-bold tracking-tight mb-6" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              The Network
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Link href="/proof" className="bg-[#0A0A0A] text-white rounded-xl p-6 hover:bg-[#0A0A0A]/90 transition-colors group">
+                <Shield className="w-6 h-6 text-[#059669] mb-3" />
+                <h3 className="font-bold text-lg text-white mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Wall of Proof</h3>
+                <p className="text-sm text-white/60">{interventionCount.toLocaleString()} verified models with evidence and cost data.</p>
+                <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#059669] mt-3 group-hover:underline">See proof <ArrowRight className="w-3 h-3" /></span>
+              </Link>
+              <Link href="/follow-the-money" className="bg-[#0A0A0A] text-white rounded-xl p-6 hover:bg-[#0A0A0A]/90 transition-colors group">
+                <TrendingUp className="w-6 h-6 text-[#DC2626] mb-3" />
+                <h3 className="font-bold text-lg text-white mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Follow the Money</h3>
+                <p className="text-sm text-white/60">State-by-state breakdown of where youth justice funding goes.</p>
+                <span className="inline-flex items-center gap-1 text-sm font-semibold text-[#DC2626] mt-3 group-hover:underline">Explore <ArrowRight className="w-3 h-3" /></span>
+              </Link>
+              <Link href="/calculator" className="bg-[#0A0A0A] text-white rounded-xl p-6 hover:bg-[#0A0A0A]/90 transition-colors group">
+                <TrendingUp className="w-6 h-6 text-white mb-3" />
+                <h3 className="font-bold text-lg text-white mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Cost Calculator</h3>
+                <p className="text-sm text-white/60">Interactive: what if we redirected detention spending?</p>
+                <span className="inline-flex items-center gap-1 text-sm font-semibold text-white/70 mt-3 group-hover:underline">Calculate <ArrowRight className="w-3 h-3" /></span>
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+              <Link href="/network/alma/impact" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+                <h3 className="font-bold text-sm mb-1">Network Impact</h3>
+                <p className="text-xs text-[#0A0A0A]/50">Collective proof in numbers</p>
+                <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">View <ArrowRight className="w-3 h-3" /></span>
+              </Link>
+              <Link href="/trips" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+                <h3 className="font-bold text-sm mb-1">Learning Trips</h3>
+                <p className="text-xs text-[#0A0A0A]/50">Visit each other&apos;s Country</p>
+                <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">View <ArrowRight className="w-3 h-3" /></span>
+              </Link>
+              <Link href="/network/alma/gathering" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+                <h3 className="font-bold text-sm mb-1">National Gathering</h3>
+                <p className="text-xs text-[#0A0A0A]/50">July 2026 — first ever</p>
+                <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">View <ArrowRight className="w-3 h-3" /></span>
+              </Link>
+              <Link href="/network/alma/services" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+                <h3 className="font-bold text-sm mb-1">Services</h3>
+                <p className="text-xs text-[#0A0A0A]/50">Reports, consulting, intelligence</p>
+                <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">View <ArrowRight className="w-3 h-3" /></span>
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+              <Link href="/voices" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+                <h3 className="font-bold text-sm mb-1">Community Voices</h3>
+                <p className="text-xs text-[#0A0A0A]/50">Real stories from real people</p>
+                <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">Listen <ArrowRight className="w-3 h-3" /></span>
+              </Link>
+              <Link href="/competitions" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+                <h3 className="font-bold text-sm mb-1">Art Competitions</h3>
+                <p className="text-xs text-[#0A0A0A]/50">Monthly creative challenges</p>
+                <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">Enter <ArrowRight className="w-3 h-3" /></span>
+              </Link>
+              <Link href="/gig-guide" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+                <h3 className="font-bold text-sm mb-1">Gig Guide</h3>
+                <p className="text-xs text-[#0A0A0A]/50">Events near basecamps</p>
+                <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">Browse <ArrowRight className="w-3 h-3" /></span>
+              </Link>
+              <Link href="/join" className="bg-[#059669] text-white rounded-xl p-5 hover:bg-[#059669]/90 transition-colors group">
+                <h3 className="font-bold text-sm text-white mb-1">Join the Network</h3>
+                <p className="text-xs text-white/60">Two minutes. Free forever.</p>
+                <span className="text-xs font-semibold text-white mt-2 flex items-center gap-1 group-hover:underline">Join now <ArrowRight className="w-3 h-3" /></span>
+              </Link>
+            </div>
           </section>
 
           {/* Thesis */}
