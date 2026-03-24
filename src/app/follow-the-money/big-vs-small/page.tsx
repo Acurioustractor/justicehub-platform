@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { AlertTriangle, ArrowRight, TrendingDown, TrendingUp, Users, Shield } from 'lucide-react';
 import { Metadata } from 'next';
 
+import { fmt } from '@/lib/format';
+
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
@@ -11,13 +13,6 @@ export const metadata: Metadata = {
   description:
     'The top 10 youth justice providers receive billions. Community organisations get scraps. Same young people. Different outcomes. Follow the money.',
 };
-
-function fmt(n: number): string {
-  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toFixed(0)}`;
-}
 
 interface OrgRow {
   name: string;

@@ -15,15 +15,9 @@ import {
 } from 'lucide-react';
 import EmpathyLedgerStories from '@/components/EmpathyLedgerStories';
 import { ActivityFeed } from '@/components/activity-feed';
+import { fmt } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
-
-function fmt(n: number): string {
-  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toLocaleString()}`;
-}
 
 export default async function HomePage() {
   const supabase = createServiceClient() as any;

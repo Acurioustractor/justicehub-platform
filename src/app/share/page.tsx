@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowRight, Download, Share2, Linkedin, Twitter } from 'lucide-react';
 import { Metadata } from 'next';
 import { ShareCardGrid } from './ShareCardGrid';
+import { fmt } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,13 +13,6 @@ export const metadata: Metadata = {
   description:
     'Branded data cards from JusticeHub — share youth justice stats on LinkedIn, Twitter, email, and board packs. The data that changes the conversation.',
 };
-
-function fmt(n: number): string {
-  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toLocaleString()}`;
-}
 
 export default async function SharePage() {
   const supabase = createServiceClient() as any;

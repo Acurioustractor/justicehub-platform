@@ -15,6 +15,8 @@ import {
   Heart,
 } from 'lucide-react';
 import { Metadata } from 'next';
+import { fmt } from '@/lib/format';
+import { STATE_NAMES } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,23 +25,6 @@ export const metadata: Metadata = {
   description:
     'Every verified alternative model in Australia. Evidence levels, cost data, outcomes. The proof that community-led youth justice works — all in one place.',
 };
-
-const STATE_NAMES: Record<string, string> = {
-  NT: 'Northern Territory',
-  QLD: 'Queensland',
-  NSW: 'New South Wales',
-  VIC: 'Victoria',
-  WA: 'Western Australia',
-  SA: 'South Australia',
-  TAS: 'Tasmania',
-  ACT: 'Australian Capital Territory',
-};
-
-function fmt(n: number): string {
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toLocaleString()}`;
-}
 
 const EVIDENCE_COLORS: Record<string, { bg: string; text: string; icon: any }> = {
   Proven: { bg: 'bg-[#059669]/10', text: 'text-[#059669]', icon: CheckCircle },

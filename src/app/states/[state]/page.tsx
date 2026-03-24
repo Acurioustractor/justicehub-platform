@@ -14,28 +14,12 @@ import {
   Calendar,
 } from 'lucide-react';
 import { Metadata } from 'next';
+import { fmt } from '@/lib/format';
+import { STATE_NAMES } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
-const STATE_NAMES: Record<string, string> = {
-  NT: 'Northern Territory',
-  QLD: 'Queensland',
-  NSW: 'New South Wales',
-  VIC: 'Victoria',
-  WA: 'Western Australia',
-  SA: 'South Australia',
-  TAS: 'Tasmania',
-  ACT: 'Australian Capital Territory',
-};
-
 const VALID_STATES = Object.keys(STATE_NAMES);
-
-function fmt(n: number): string {
-  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toFixed(0)}`;
-}
 
 function pct(part: number, total: number): string {
   if (total === 0) return '0';

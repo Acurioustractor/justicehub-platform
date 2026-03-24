@@ -13,6 +13,7 @@ import {
   Filter,
 } from 'lucide-react';
 import { Metadata } from 'next';
+import { STATE_NAMES } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,17 +21,6 @@ export const metadata: Metadata = {
   title: 'Gig Guide | ALMA Network | JusticeHub',
   description:
     'Youth-friendly events, workshops, and gigs near ALMA Network basecamps across Australia.',
-};
-
-const STATE_NAMES: Record<string, string> = {
-  NT: 'Northern Territory',
-  QLD: 'Queensland',
-  NSW: 'New South Wales',
-  VIC: 'Victoria',
-  WA: 'Western Australia',
-  SA: 'South Australia',
-  TAS: 'Tasmania',
-  ACT: 'Australian Capital Territory',
 };
 
 const EVENT_TYPE_ICONS: Record<string, any> = {

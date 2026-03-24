@@ -4,19 +4,14 @@ import Link from 'next/link';
 import { TrendingUp, Users, DollarSign, Shield, ArrowRight, Heart } from 'lucide-react';
 import { Metadata } from 'next';
 
+import { fmt } from '@/lib/format';
+
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Network Impact | ALMA Network | JusticeHub',
   description: 'Collective impact of the ALMA Network — community organisations proving alternative models work.',
 };
-
-function fmt(n: number): string {
-  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toFixed(0)}`;
-}
 
 export default async function NetworkImpactPage() {
   const supabase = createServiceClient() as any;

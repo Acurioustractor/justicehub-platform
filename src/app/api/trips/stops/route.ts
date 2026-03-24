@@ -116,32 +116,37 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Trip not found' }, { status: 404 });
   }
 
-  // Try to enrich from DB
-  const supabase = createServiceClient() as any;
-  const enriched = await Promise.all(
-    stops.map(async (stop) => {
-      // Try to find org in DB by name match
-      const { data: org } = await supabase
-        .from('organizations')
-        .select('id, name, slug, state, is_indigenous_org, website')
-        .ilike('name', `%${stop.shortName}%`)
-        .limit(1)
-        .single();
+  try {
+    // Try to enrich from DB
+    const supabase = createServiceClient() as any;
+    const enriched = await Promise.all(
+      stops.map(async (stop) => {
+        // Try to find org in DB by name match
+        const { data: org } = await supabase
+          .from('organizations')
+          .select('id, name, slug, state, is_indigenous_org, website')
+          .ilike('name', `%${stop.shortName}%`)
+          .limit(1)
+          .single();
 
-      if (org) {
-        return {
-          ...stop,
-          orgId: org.id,
-          orgSlug: org.slug,
-          website: org.website,
-        };
-      }
-      return stop;
-    })
-  );
+        if (org) {
+          return {
+            ...stop,
+            orgId: org.id,
+            orgSlug: org.slug,
+            website: org.website,
+          };
+        }
+        return stop;
+      })
+    );
 
-  return NextResponse.json({
-    trip: tripSlug,
-    stops: enriched,
-  });
+    return NextResponse.json({
+      trip: tripSlug,
+      stops: enriched,
+    });
+  } catch (err) {
+    console.error('GET /api/trips/stops error:', err);
+    return NextResponse.json({ error: 'Something went wrong.' }, { status: 500 });
+  }
 }

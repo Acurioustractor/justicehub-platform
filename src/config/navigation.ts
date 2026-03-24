@@ -6,6 +6,11 @@ export interface NavigationItem {
     items?: NavigationItem[];
 }
 
+// Gate ALMA Network nav links behind an env flag.
+// Default is ENABLED — set NEXT_PUBLIC_ALMA_ENABLED=false to hide them.
+// The pages themselves still work by direct URL; only nav links are gated.
+const almaEnabled = process.env.NEXT_PUBLIC_ALMA_ENABLED !== 'false';
+
 /**
  * Navigation Configuration — 5 top-level items
  *
@@ -71,11 +76,11 @@ export const navigationItems: NavigationItem[] = [
         label: 'Intelligence',
         type: 'dropdown',
         items: [
-            {
+            ...(almaEnabled ? [{
                 label: 'State Leaderboard',
                 href: '/leaderboard',
                 description: 'Which states lead on community youth justice'
-            },
+            }] : []),
             {
                 label: 'This Week',
                 href: '/this-week',
@@ -187,6 +192,7 @@ export const navigationItems: NavigationItem[] = [
                 href: '/centre-of-excellence/map',
                 description: '16+ international models'
             },
+            ...(almaEnabled ? [
             {
                 label: 'ALMA Network',
                 href: '/network/alma',
@@ -242,6 +248,7 @@ export const navigationItems: NavigationItem[] = [
                 href: '/write-your-mp',
                 description: 'Data-backed letter to your local member'
             },
+            ] : []),
             {
                 label: 'International Exchange',
                 href: '/international-exchange',
@@ -288,16 +295,17 @@ export const navigationItems: NavigationItem[] = [
                 href: '/contained/tour',
                 description: 'Immersive youth justice experience'
             },
-            {
+            ...(almaEnabled ? [{
                 label: 'Basecamps',
                 href: '/basecamps',
                 description: 'The ALMA Network — community coordinators in every state'
-            },
+            }] : []),
             {
                 label: 'Stewards',
                 href: '/stewards',
                 description: 'Protect what works'
             },
+            ...(almaEnabled ? [
             {
                 label: 'Art Competitions',
                 href: '/competitions',
@@ -308,6 +316,7 @@ export const navigationItems: NavigationItem[] = [
                 href: '/gig-guide',
                 description: 'Youth-friendly events near basecamps'
             },
+            ] : []),
             {
                 label: 'Art & Innovation',
                 href: '/art-innovation',
@@ -419,12 +428,14 @@ export const footerSections = [
     {
         title: 'Network',
         links: [
+            ...(almaEnabled ? [
             { label: 'ALMA Network', href: '/network/alma', description: 'Community-led youth justice' },
             { label: 'Basecamps', href: '/basecamps', description: 'ALMA Network coordinators' },
             { label: 'Network Impact', href: '/network/alma/impact', description: 'Collective proof' },
             { label: 'Learning Trips', href: '/trips', description: 'Immersive exchanges' },
             { label: 'National Gathering', href: '/network/alma/gathering', description: 'July 2026' },
             { label: 'Services', href: '/network/alma/services', description: 'Reports & consulting' },
+            ] : []),
             { label: 'Funders', href: '/funders', description: '200+ foundations profiled' },
             { label: 'Centre of Excellence', href: '/centre-of-excellence', description: 'Proving what works' },
             { label: 'Global Map', href: '/centre-of-excellence/map', description: 'International models' },

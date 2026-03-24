@@ -15,6 +15,7 @@ import {
   MapPin,
 } from 'lucide-react';
 import { Metadata } from 'next';
+import { fmt } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,12 +24,6 @@ export const metadata: Metadata = {
   description:
     'You\'ve seen the reality. Now here\'s what you can do about it. Join the network, follow the money, share the data, and support the alternative.',
 };
-
-function fmt(n: number): string {
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toLocaleString()}`;
-}
 
 export default async function WhatNowPage() {
   const supabase = createServiceClient() as any;

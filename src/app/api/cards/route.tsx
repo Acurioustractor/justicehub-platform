@@ -1,20 +1,9 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
+import { fmt } from '@/lib/format';
+import { STATE_NAMES } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
-
-function fmt(n: number): string {
-  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toLocaleString()}`;
-}
-
-const STATE_NAMES: Record<string, string> = {
-  NT: 'Northern Territory', QLD: 'Queensland', NSW: 'New South Wales',
-  VIC: 'Victoria', WA: 'Western Australia', SA: 'South Australia',
-  TAS: 'Tasmania', ACT: 'Australian Capital Territory',
-};
 
 function buildCard(type: string, params: URLSearchParams) {
   const state = params.get('state')?.toUpperCase();
@@ -67,57 +56,68 @@ function buildCard(type: string, params: URLSearchParams) {
 }
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const type = searchParams.get('type') || 'cost-comparison';
-  const card = buildCard(type, searchParams);
+  try {
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type') || 'cost-comparison';
+    const card = buildCard(type, searchParams);
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          background: '#0A0A0A',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: '60px 70px',
-          fontFamily: 'system-ui, sans-serif',
-        }}
-      >
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '6px', background: card.accentColor }} />
+    const response = new ImageResponse(
+      (
+        <div
+          style={{
+            background: '#0A0A0A',
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            padding: '60px 70px',
+            fontFamily: 'system-ui, sans-serif',
+          }}
+        >
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '6px', background: card.accentColor }} />
 
-        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
-          <div style={{ fontSize: '14px', color: card.accentColor, letterSpacing: '3px', marginBottom: '32px' }}>
-            {card.title}
-          </div>
-          <div style={{ fontSize: '80px', fontWeight: 900, color: 'white', lineHeight: 1, marginBottom: '8px' }}>
-            {card.mainStat}
-          </div>
-          <div style={{ fontSize: '18px', color: 'rgba(255,255,255,0.5)', marginBottom: '40px' }}>
-            {card.mainLabel}
-          </div>
-          <div style={{ display: 'flex', gap: '48px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ fontSize: '36px', fontWeight: 900, color: card.accentColor }}>{card.secondStat}</div>
-              <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>{card.secondLabel}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
+            <div style={{ fontSize: '14px', color: card.accentColor, letterSpacing: '3px', marginBottom: '32px' }}>
+              {card.title}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ fontSize: '36px', fontWeight: 900, color: 'white' }}>{card.thirdStat}</div>
-              <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>{card.thirdLabel}</div>
+            <div style={{ fontSize: '80px', fontWeight: 900, color: 'white', lineHeight: 1, marginBottom: '8px' }}>
+              {card.mainStat}
             </div>
+            <div style={{ fontSize: '18px', color: 'rgba(255,255,255,0.5)', marginBottom: '40px' }}>
+              {card.mainLabel}
+            </div>
+            <div style={{ display: 'flex', gap: '48px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ fontSize: '36px', fontWeight: 900, color: card.accentColor }}>{card.secondStat}</div>
+                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>{card.secondLabel}</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ fontSize: '36px', fontWeight: 900, color: 'white' }}>{card.thirdStat}</div>
+                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>{card.thirdLabel}</div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ fontSize: '18px', fontWeight: 900, color: 'white' }}>JUSTICEHUB</div>
+              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>justicehub.org.au</div>
+            </div>
+            <div style={{ fontSize: '11px', color: '#059669', letterSpacing: '2px' }}>ALMA NETWORK</div>
           </div>
         </div>
+      ),
+      { width: 1200, height: 630 }
+    );
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ fontSize: '18px', fontWeight: 900, color: 'white' }}>JUSTICEHUB</div>
-            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>justicehub.org.au</div>
-          </div>
-          <div style={{ fontSize: '11px', color: '#059669', letterSpacing: '2px' }}>ALMA NETWORK</div>
-        </div>
-      </div>
-    ),
-    { width: 1200, height: 630 }
-  );
+    response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+    return response;
+  } catch (err) {
+    console.error('GET /api/cards error:', err);
+    return new Response(JSON.stringify({ error: 'Something went wrong.' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 }

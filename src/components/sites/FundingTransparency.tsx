@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { TrendingUp, AlertTriangle, ArrowRight } from 'lucide-react';
+import { fmt } from '@/lib/format';
+import { STATE_NAMES } from '@/lib/constants';
 
 interface FundingContext {
   state: string;
@@ -19,24 +21,6 @@ interface FundingContext {
   almaInterventionCount: number;
   indigenousOrgCount: number;
 }
-
-function formatAmount(amount: number): string {
-  if (amount >= 1_000_000_000) return `$${(amount / 1_000_000_000).toFixed(1)}B`;
-  if (amount >= 1_000_000) return `$${(amount / 1_000_000).toFixed(1)}M`;
-  if (amount >= 1_000) return `$${(amount / 1_000).toFixed(0)}K`;
-  return `$${amount.toFixed(0)}`;
-}
-
-const STATE_NAMES: Record<string, string> = {
-  NT: 'Northern Territory',
-  QLD: 'Queensland',
-  NSW: 'New South Wales',
-  VIC: 'Victoria',
-  WA: 'Western Australia',
-  SA: 'South Australia',
-  TAS: 'Tasmania',
-  ACT: 'Australian Capital Territory',
-};
 
 export default function FundingTransparency({
   orgId,
@@ -100,7 +84,7 @@ export default function FundingTransparency({
               className="text-3xl font-bold text-[#DC2626] mb-4"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
-              {formatAmount(topProviderTotal)}
+              {fmt(topProviderTotal)}
             </p>
             <div className="space-y-2">
               {data.topRecipients.slice(0, 5).map((r, i) => (
@@ -112,7 +96,7 @@ export default function FundingTransparency({
                     className="text-white/80 font-medium shrink-0"
                     style={{ fontFamily: "'IBM Plex Mono', monospace" }}
                   >
-                    {formatAmount(r.total)}
+                    {fmt(r.total)}
                     {!r.isIndigenous && (
                       <span className="text-white/30 ml-1 text-xs">non-Indigenous</span>
                     )}
@@ -134,7 +118,7 @@ export default function FundingTransparency({
               className="text-3xl font-bold text-[#059669] mb-4"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
-              {data.orgTotal > 0 ? formatAmount(data.orgTotal) : 'Under-funded'}
+              {data.orgTotal > 0 ? fmt(data.orgTotal) : 'Under-funded'}
             </p>
             <p className="text-sm text-white/60 leading-relaxed">
               {data.orgTotal > 0 ? (
@@ -203,7 +187,7 @@ export default function FundingTransparency({
               className="text-2xl font-bold text-white"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
-              {formatAmount(data.stateTotal)}
+              {fmt(data.stateTotal)}
             </p>
             <p
               className="text-xs text-white/40 mt-1"

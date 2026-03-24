@@ -14,6 +14,7 @@ import {
   Calendar,
 } from 'lucide-react';
 import { Metadata } from 'next';
+import { fmt } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,12 +23,6 @@ export const metadata: Metadata = {
   description:
     'What changed on JusticeHub this week — new models, funding updates, stories, evidence, and network activity.',
 };
-
-function fmt(n: number): string {
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toLocaleString()}`;
-}
 
 function timeAgo(date: string): string {
   const diff = Date.now() - new Date(date).getTime();

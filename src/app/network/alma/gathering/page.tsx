@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { Metadata } from 'next';
 
+import { fmt } from '@/lib/format';
+
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
@@ -22,13 +24,6 @@ export const metadata: Metadata = {
   description:
     'The first national gathering of the ALMA Network — Basecamps, miners, and validators from across Australia coming together to plan the future of community-led youth justice.',
 };
-
-function fmt(n: number): string {
-  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toFixed(0)}`;
-}
 
 export default async function GatheringPage() {
   const supabase = createServiceClient() as any;

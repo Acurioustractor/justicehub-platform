@@ -14,6 +14,8 @@ import {
   Briefcase,
 } from 'lucide-react';
 import { Metadata } from 'next';
+import { fmt } from '@/lib/format';
+import { STATE_NAMES } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,24 +23,6 @@ export const metadata: Metadata = {
   title: 'Services | ALMA Network | JusticeHub',
   description:
     'Data analysis, impact reports, and consulting services powered by the ALMA Network. Intelligence that funds the movement.',
-};
-
-function fmt(n: number): string {
-  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toFixed(0)}`;
-}
-
-const STATE_NAMES: Record<string, string> = {
-  NT: 'Northern Territory',
-  QLD: 'Queensland',
-  NSW: 'New South Wales',
-  VIC: 'Victoria',
-  WA: 'Western Australia',
-  SA: 'South Australia',
-  TAS: 'Tasmania',
-  ACT: 'Australian Capital Territory',
 };
 
 export default async function ServicesPage() {

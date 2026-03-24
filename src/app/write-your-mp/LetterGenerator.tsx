@@ -3,17 +3,7 @@
 import { useState, useMemo } from 'react';
 import { Copy, Check, Mail, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-
-const STATE_NAMES: Record<string, string> = {
-  NT: 'Northern Territory',
-  QLD: 'Queensland',
-  NSW: 'New South Wales',
-  VIC: 'Victoria',
-  WA: 'Western Australia',
-  SA: 'South Australia',
-  TAS: 'Tasmania',
-  ACT: 'Australian Capital Territory',
-};
+import { STATE_NAMES } from '@/lib/constants';
 
 const DETENTION_COSTS: Record<string, number> = {
   NT: 4217, QLD: 1650, NSW: 1568, VIC: 2100,

@@ -11,6 +11,8 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import { Metadata } from 'next';
+import { fmt } from '@/lib/format';
+import { STATE_NAMES } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,24 +21,6 @@ export const metadata: Metadata = {
   description:
     'Where does Australia\'s youth justice funding actually go? State-by-state data on who gets the money, who misses out, and what the ministers say versus what the numbers show.',
 };
-
-const STATE_NAMES: Record<string, string> = {
-  QLD: 'Queensland',
-  VIC: 'Victoria',
-  NSW: 'New South Wales',
-  WA: 'Western Australia',
-  NT: 'Northern Territory',
-  SA: 'South Australia',
-  ACT: 'Australian Capital Territory',
-  TAS: 'Tasmania',
-};
-
-function fmt(n: number): string {
-  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toFixed(0)}`;
-}
 
 function pct(part: number, total: number): string {
   if (total === 0) return '0';

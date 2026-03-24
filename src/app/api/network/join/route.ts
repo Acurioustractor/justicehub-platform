@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
+import { createClient } from '@/lib/supabase/server-lite';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,9 +9,20 @@ export const dynamic = 'force-dynamic';
  *
  * Join the ALMA Network as a miner. Matches to existing org or creates a new one.
  * Auto-assigns to the appropriate state Basecamp.
+ * Requires authenticated session.
  */
 export async function POST(request: NextRequest) {
   try {
+    // Auth check — require a logged-in user
+    const authClient = await createClient();
+    const { data: { user } } = await authClient.auth.getUser();
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required to join the network' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const {
       orgName,
@@ -84,8 +96,9 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (orgError) {
+        console.error('POST /api/network/join org insert failed:', orgError);
         return NextResponse.json(
-          { error: `Failed to create organisation: ${orgError.message}` },
+          { error: 'Something went wrong. Please try again.' },
           { status: 500 }
         );
       }
@@ -136,8 +149,9 @@ export async function POST(request: NextRequest) {
       });
 
     if (memberError) {
+      console.error('POST /api/network/join membership insert failed:', memberError);
       return NextResponse.json(
-        { error: `Failed to create membership: ${memberError.message}` },
+        { error: 'Something went wrong. Please try again.' },
         { status: 500 }
       );
     }
@@ -158,6 +172,8 @@ export async function POST(request: NextRequest) {
       // Non-blocking
     }
 
+    console.log(JSON.stringify({ event: 'network_join', orgId, orgName: orgName.trim(), state, status: 'pending' }));
+
     return NextResponse.json({
       success: true,
       status: 'pending',
@@ -166,8 +182,9 @@ export async function POST(request: NextRequest) {
       basecampName: basecamp ? 'Assigned to your state Basecamp' : 'No Basecamp in your state yet — you could be the first',
     });
   } catch (err: any) {
+    console.error('POST /api/network/join unhandled error:', err);
     return NextResponse.json(
-      { error: err.message || 'Something went wrong' },
+      { error: 'Something went wrong. Please try again.' },
       { status: 500 }
     );
   }

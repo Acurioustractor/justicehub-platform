@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { DollarSign, Globe, MapPin, ArrowRight, ExternalLink, Search } from 'lucide-react';
 import { Metadata } from 'next';
 
+import { fmt } from '@/lib/format';
+
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
@@ -11,13 +13,6 @@ export const metadata: Metadata = {
   description:
     'Who funds youth justice in Australia? Foundation profiles, giving amounts, focus areas, and geographic reach — transparency for community organisations.',
 };
-
-function fmt(n: number): string {
-  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toFixed(0)}`;
-}
 
 const FOCUS_LABELS: Record<string, string> = {
   'justice-reinvestment': 'Justice Reinvestment',

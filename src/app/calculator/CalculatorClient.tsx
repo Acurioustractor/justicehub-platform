@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Share2, DollarSign, Users, TrendingDown, AlertTriangle } from 'lucide-react';
+import { fmt } from '@/lib/format';
 
 interface CalculatorClientProps {
   avgCost: number;
@@ -21,13 +22,6 @@ const STATE_DETENTION_COSTS: Record<string, { daily: number; annual: number; lab
   tas: { daily: 1800, annual: 657000, label: 'Tasmania' },
   act: { daily: 2400, annual: 876000, label: 'Australian Capital Territory' },
 };
-
-function fmt(n: number): string {
-  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toLocaleString()}`;
-}
 
 function fmtFull(n: number): string {
   return `$${n.toLocaleString()}`;

@@ -122,9 +122,9 @@ export async function GET(request: NextRequest) {
       indigenousOrgCount: indigenousOrgCount || 0,
     });
   } catch (err: any) {
-    console.error('[FundingContext] Error:', err.message);
+    console.error('GET /api/basecamps/funding-context error:', err);
     return NextResponse.json(
-      { error: 'Failed to fetch funding context', detail: err.message },
+      { error: 'Something went wrong. Please try again.' },
       { status: 500 }
     );
   }

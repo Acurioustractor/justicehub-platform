@@ -2,6 +2,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { Metadata } from 'next';
 import { LetterGenerator } from './LetterGenerator';
+import { fmt } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,13 +11,6 @@ export const metadata: Metadata = {
   description:
     'Generate a data-backed letter to your local MP about youth justice. Your postcode, your state\'s data, your voice. Takes 2 minutes.',
 };
-
-function fmt(n: number): string {
-  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
-  return `$${n.toLocaleString()}`;
-}
 
 export default async function WriteYourMPPage() {
   const supabase = createServiceClient() as any;
