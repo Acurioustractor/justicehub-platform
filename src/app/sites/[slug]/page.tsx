@@ -8,6 +8,7 @@ import { ContactModal } from '@/components/sites/ContactModal';
 import { ShareButton } from '@/components/ShareButton';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import SiteGallery from '@/components/sites/SiteGallery';
+import FundingTransparency from '@/components/sites/FundingTransparency';
 
 // Rich site content per org — will move to DB later
 const ORG_SITE_CONTENT: Record<string, any> = {
@@ -322,6 +323,7 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
 
   const siteContent = ORG_SITE_CONTENT[params.slug];
   const hasOwnWebsite = org.website_url && !org.website_url.includes('justicehub');
+  const isBasecamp = org.type === 'basecamp' || org.partner_tier === 'basecamp';
 
   // Fetch public team members
   const { data: teamLinks } = await (supabase as any)
@@ -398,6 +400,15 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
             <div className="max-w-3xl">
               {siteContent.images?.logo && (
                 <img src={siteContent.images.logo} alt={org.name} className="w-14 h-14 rounded-lg mb-6 bg-white/10 p-1" />
+              )}
+              {isBasecamp && (
+                <Link
+                  href="/basecamps"
+                  className="inline-flex items-center gap-1.5 bg-[#059669] px-3 py-1.5 text-xs font-bold rounded-full mb-4 hover:bg-[#059669]/90 transition-colors uppercase tracking-wider"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
+                  <Shield className="w-3 h-3" /> {org.state} Basecamp — ALMA Network
+                </Link>
               )}
               <h1 className="text-5xl md:text-6xl font-black mb-4 leading-tight drop-shadow-lg">{org.name}</h1>
               <p className="text-2xl text-orange-300 font-medium mb-4">{siteContent.heroSubtitle}</p>
@@ -682,6 +693,11 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
               </div>
             </div>
           </section>
+        )}
+
+        {/* Funding Transparency — Basecamps only */}
+        {isBasecamp && org.state && (
+          <FundingTransparency orgId={org.id} orgName={org.name} state={org.state} />
         )}
 
         {/* Newsletter */}

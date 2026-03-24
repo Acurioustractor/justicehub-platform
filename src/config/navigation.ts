@@ -224,6 +224,11 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Immersive youth justice experience'
             },
             {
+                label: 'Basecamps',
+                href: '/basecamps',
+                description: 'The ALMA Network — community coordinators in every state'
+            },
+            {
                 label: 'Stewards',
                 href: '/stewards',
                 description: 'Protect what works'
@@ -325,7 +330,7 @@ export const footerSections = [
         title: 'Network',
         links: [
             { label: 'Centre of Excellence', href: '/centre-of-excellence', description: 'Proving what works' },
-            { label: 'Basecamps', href: '/centre-of-excellence/map?category=basecamp', description: 'Founding hubs' },
+            { label: 'Basecamps', href: '/basecamps', description: 'ALMA Network coordinators' },
             { label: 'Global Map', href: '/centre-of-excellence/map', description: 'International models' },
             { label: 'International Exchange', href: '/international-exchange', description: 'June 2026 mission' }
         ]
