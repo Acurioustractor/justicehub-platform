@@ -192,6 +192,68 @@ export default function ForFundersPage() {
           </div>
         </section>
 
+        {/* ALMA Intelligence Tools */}
+        <section className="py-16 bg-[#0A0A0A] text-white">
+          <div className="container-justice">
+            <p className="text-sm uppercase tracking-[0.3em] text-[#059669] mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+              Due Diligence Tools
+            </p>
+            <h2 className="text-3xl font-black text-white mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              The evidence base your board needs
+            </h2>
+            <p className="text-white/60 mb-8 max-w-2xl">
+              Live data from the platform. Updated daily. Everything here is open for
+              due diligence — no gatekeeping, no NDAs, just proof.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              <Link href="/proof" className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors group">
+                <Shield className="w-6 h-6 text-[#059669] mb-3" />
+                <h3 className="font-bold text-white mb-1">Wall of Proof</h3>
+                <p className="text-sm text-white/50">981 verified models with evidence levels, cost data, and org profiles.</p>
+                <span className="text-sm font-semibold text-[#059669] mt-3 flex items-center gap-1 group-hover:underline">
+                  See proof <ArrowRight className="w-3 h-3" />
+                </span>
+              </Link>
+              <Link href="/calculator" className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors group">
+                <DollarSign className="w-6 h-6 text-[#DC2626] mb-3" />
+                <h3 className="font-bold text-white mb-1">Cost Calculator</h3>
+                <p className="text-sm text-white/50">Interactive: detention vs community. Adjust by state, young people, years.</p>
+                <span className="text-sm font-semibold text-[#DC2626] mt-3 flex items-center gap-1 group-hover:underline">
+                  Calculate <ArrowRight className="w-3 h-3" />
+                </span>
+              </Link>
+              <Link href="/follow-the-money" className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors group">
+                <TrendingUp className="w-6 h-6 text-white mb-3" />
+                <h3 className="font-bold text-white mb-1">Follow the Money</h3>
+                <p className="text-sm text-white/50">Where funding goes, who gets it, who doesn&apos;t. State by state.</p>
+                <span className="text-sm font-semibold text-white/60 mt-3 flex items-center gap-1 group-hover:underline">
+                  Explore <ArrowRight className="w-3 h-3" />
+                </span>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Link href="/share" className="bg-white/5 rounded-lg px-4 py-3 border border-white/10 hover:bg-white/10 transition-colors text-sm">
+                <span className="font-semibold text-white">Data Cards</span>
+                <span className="text-white/40 block text-xs mt-0.5">For board packs</span>
+              </Link>
+              <Link href="/amplify" className="bg-white/5 rounded-lg px-4 py-3 border border-white/10 hover:bg-white/10 transition-colors text-sm">
+                <span className="font-semibold text-white">Content Templates</span>
+                <span className="text-white/40 block text-xs mt-0.5">Ready-to-send emails</span>
+              </Link>
+              <Link href="/network/alma/services" className="bg-white/5 rounded-lg px-4 py-3 border border-white/10 hover:bg-white/10 transition-colors text-sm">
+                <span className="font-semibold text-white">Services</span>
+                <span className="text-white/40 block text-xs mt-0.5">Reports & analysis</span>
+              </Link>
+              <Link href="/network/alma/impact" className="bg-white/5 rounded-lg px-4 py-3 border border-white/10 hover:bg-white/10 transition-colors text-sm">
+                <span className="font-semibold text-white">Network Impact</span>
+                <span className="text-white/40 block text-xs mt-0.5">Collective proof</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* The Problem / Opportunity */}
         <section className="py-16 bg-[#F5F0E8] border-y-2 border-[#0A0A0A]">
           <div className="container-justice">

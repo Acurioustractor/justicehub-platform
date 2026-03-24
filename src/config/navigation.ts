@@ -228,6 +228,11 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Branded data cards for LinkedIn and funder packs'
             },
             {
+                label: 'Amplify',
+                href: '/amplify',
+                description: 'Ready-to-post LinkedIn, Twitter, and funder content'
+            },
+            {
                 label: 'International Exchange',
                 href: '/international-exchange',
                 description: 'June 2026 learning mission'
