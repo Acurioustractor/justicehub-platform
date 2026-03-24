@@ -9,6 +9,7 @@ import { ShareButton } from '@/components/ShareButton';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import SiteGallery from '@/components/sites/SiteGallery';
 import FundingTransparency from '@/components/sites/FundingTransparency';
+import PeerValidations from '@/components/sites/PeerValidations';
 
 // Rich site content per org — will move to DB later
 const ORG_SITE_CONTENT: Record<string, any> = {
@@ -699,6 +700,9 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
         {isBasecamp && org.state && (
           <FundingTransparency orgId={org.id} orgName={org.name} state={org.state} />
         )}
+
+        {/* Peer Validations — Basecamps only */}
+        {isBasecamp && <PeerValidations orgId={org.id} />}
 
         {/* Newsletter */}
         <section className="bg-[#fdf8f6] border-y border-orange-100">
