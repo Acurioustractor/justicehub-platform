@@ -266,10 +266,10 @@ export default async function BasecampsPage() {
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link
-                  href="/basecamps/apply"
+                  href="/join"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#0A0A0A] font-semibold rounded-lg hover:bg-white/90 transition-colors text-sm"
                 >
-                  Become a Basecamp
+                  Join the Network
                 </Link>
                 <Link
                   href="/contained"
