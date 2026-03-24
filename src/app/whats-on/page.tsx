@@ -1,7 +1,7 @@
 import { createServiceClient } from '@/lib/supabase/service';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Calendar, MapPin, DollarSign, ExternalLink, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, DollarSign, ExternalLink, ArrowRight, Star, Music, Palette, Trophy, BookOpen, Award } from 'lucide-react';
 import { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -39,6 +39,34 @@ interface Opportunity {
   jurisdictions: string[] | null;
 }
 
+interface YouthOpportunity {
+  id: string;
+  title: string;
+  description: string | null;
+  category: string;
+  organizer: string | null;
+  source_url: string;
+  application_url: string | null;
+  deadline: string | null;
+  location_name: string | null;
+  location_state: string | null;
+  is_national: boolean;
+  age_min: number | null;
+  age_max: number | null;
+  prize_amount: number | null;
+}
+
+const CATEGORY_CONFIG: Record<string, { label: string; icon: typeof Star }> = {
+  art_prize: { label: 'Art Prize', icon: Palette },
+  music: { label: 'Music', icon: Music },
+  grant: { label: 'Grant', icon: DollarSign },
+  competition: { label: 'Competition', icon: Trophy },
+  workshop: { label: 'Workshop', icon: BookOpen },
+  scholarship: { label: 'Scholarship', icon: Award },
+  mentorship: { label: 'Mentorship', icon: Star },
+  other: { label: 'Opportunity', icon: Star },
+};
+
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-AU', {
     weekday: 'short',
@@ -72,7 +100,7 @@ export default async function WhatsOnPage() {
   const supabase = createServiceClient() as any;
   const now = new Date().toISOString();
 
-  const [eventsRes, oppsRes] = await Promise.all([
+  const [eventsRes, oppsRes, youthRes] = await Promise.all([
     supabase
       .from('events')
       .select(
@@ -90,10 +118,19 @@ export default async function WhatsOnPage() {
       .eq('status', 'open')
       .order('deadline', { ascending: true })
       .limit(20),
+    supabase
+      .from('youth_opportunities')
+      .select(
+        'id, title, description, category, organizer, source_url, application_url, deadline, location_name, location_state, is_national, age_min, age_max, prize_amount'
+      )
+      .eq('status', 'open')
+      .order('deadline', { ascending: true, nullsFirst: false })
+      .limit(20),
   ]);
 
   const events: Event[] = eventsRes.data || [];
   const opportunities: Opportunity[] = oppsRes.data || [];
+  const youthOpps: YouthOpportunity[] = youthRes.data || [];
 
   const containedEvents = events.filter((e) => e.title.includes('CONTAINED'));
   const otherEvents = events.filter((e) => !e.title.includes('CONTAINED'));
@@ -273,6 +310,107 @@ export default async function WhatsOnPage() {
             </section>
           )}
 
+          {/* Youth Opportunities */}
+          {youthOpps.length > 0 && (
+            <section>
+              <div className="flex items-baseline justify-between mb-8">
+                <div>
+                  <h2
+                    className="text-2xl font-bold tracking-tight"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  >
+                    Opportunities for Young People
+                  </h2>
+                  <p className="text-sm text-[#0A0A0A]/60 mt-1">
+                    Art prizes, music, competitions, grants, and more
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {youthOpps.map((opp) => {
+                  const days = opp.deadline ? daysUntil(opp.deadline) : null;
+                  const config = CATEGORY_CONFIG[opp.category] || CATEGORY_CONFIG.other;
+                  const Icon = config.icon;
+                  return (
+                    <a
+                      key={opp.id}
+                      href={opp.application_url || opp.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 flex flex-col gap-3 hover:border-[#0A0A0A]/30 transition-colors group"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#0A0A0A]/5">
+                            <Icon className="w-4 h-4 text-[#0A0A0A]/40" />
+                          </div>
+                          <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[#0A0A0A]/5 text-[#0A0A0A]/50">
+                            {config.label}
+                          </span>
+                        </div>
+                        <ExternalLink className="w-4 h-4 text-[#0A0A0A]/20 group-hover:text-[#0A0A0A]/50 transition-colors shrink-0" />
+                      </div>
+
+                      <div>
+                        <h3 className="font-bold text-sm leading-snug">{opp.title}</h3>
+                        {opp.organizer && (
+                          <p className="text-xs text-[#0A0A0A]/50 mt-0.5">{opp.organizer}</p>
+                        )}
+                      </div>
+
+                      {opp.description && (
+                        <p className="text-xs text-[#0A0A0A]/60 line-clamp-2">{opp.description}</p>
+                      )}
+
+                      <div className="flex flex-wrap gap-1.5 mt-auto text-xs">
+                        {opp.prize_amount && (
+                          <span
+                            className="px-2 py-0.5 rounded-full bg-[#059669]/10 text-[#059669] font-medium"
+                            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                          >
+                            {formatAmount(opp.prize_amount)}
+                          </span>
+                        )}
+                        {opp.deadline && (
+                          <span
+                            className={`px-2 py-0.5 rounded-full font-medium ${
+                              days !== null && days < 14
+                                ? 'bg-[#DC2626]/10 text-[#DC2626]'
+                                : 'bg-[#0A0A0A]/5 text-[#0A0A0A]/50'
+                            }`}
+                            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                          >
+                            {days !== null && days > 0
+                              ? `${days}d left`
+                              : `Closes ${formatDate(opp.deadline)}`}
+                          </span>
+                        )}
+                        {opp.is_national ? (
+                          <span className="px-2 py-0.5 rounded-full bg-[#0A0A0A]/5 text-[#0A0A0A]/50">
+                            National
+                          </span>
+                        ) : opp.location_state ? (
+                          <span className="px-2 py-0.5 rounded-full bg-[#0A0A0A]/5 text-[#0A0A0A]/50">
+                            {opp.location_state}
+                          </span>
+                        ) : null}
+                        {opp.age_min && opp.age_max && (
+                          <span
+                            className="px-2 py-0.5 rounded-full bg-[#0A0A0A]/5 text-[#0A0A0A]/50"
+                            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                          >
+                            {opp.age_min}–{opp.age_max}yo
+                          </span>
+                        )}
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
           {/* Funding Opportunities */}
           {opportunities.length > 0 && (
             <section>
@@ -361,7 +499,7 @@ export default async function WhatsOnPage() {
           )}
 
           {/* Empty state */}
-          {events.length === 0 && opportunities.length === 0 && (
+          {events.length === 0 && opportunities.length === 0 && youthOpps.length === 0 && (
             <div className="text-center py-20">
               <p className="text-lg text-[#0A0A0A]/50">
                 No upcoming events or opportunities right now. Check back soon.

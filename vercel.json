@@ -103,6 +103,10 @@
     {
       "path": "/api/cron/pulse/weekly",
       "schedule": "0 22 * * 0"
+    },
+    {
+      "path": "/api/cron/opportunities/discover?batch=3",
+      "schedule": "0 13 * * *"
     }
   ]
 }
