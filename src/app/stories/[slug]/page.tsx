@@ -65,6 +65,10 @@ export default async function StoryPage({ params }: { params: { slug: string } }
     notFound();
   }
 
+  // Increment view count (fire-and-forget)
+  const table = contentType === 'article' ? 'articles' : 'blog_posts';
+  supabase.from(table).update({ view_count: (story.view_count || 0) + 1 }).eq('id', story.id).then(() => {});
+
   const author = story.public_profiles;
   const publishDate = new Date(story.published_at as string);
 

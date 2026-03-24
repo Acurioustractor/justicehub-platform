@@ -26,6 +26,13 @@ interface AnalyticsData {
     category_breakdown: Record<string, number>;
     list_breakdown: Record<string, number>;
   };
+  site: {
+    total_articles: number;
+    total_views: number;
+    total_shares: number;
+    contained_articles: number;
+    contained_views: number;
+  };
   top_linkedin_engagers: Array<{
     name: string;
     organization: string;
@@ -41,6 +48,13 @@ interface AnalyticsData {
     slug: string;
     view_count: number;
     share_count: number;
+  }>;
+  top_viewed_articles: Array<{
+    title: string;
+    slug: string;
+    view_count: number;
+    share_count: number;
+    category: string;
   }>;
 }
 
@@ -93,7 +107,7 @@ export default function AnalyticsDashboard() {
 
   if (!data) return null;
 
-  const { summary, top_linkedin_engagers, top_contained_articles } = data;
+  const { summary, site, top_linkedin_engagers, top_contained_articles, top_viewed_articles } = data;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -124,6 +138,15 @@ export default function AnalyticsDashboard() {
             value={Object.entries(summary.outreach_breakdown).filter(([k]) => k !== 'pending').reduce((sum, [, v]) => sum + v, 0)}
             color="text-purple-600"
           />
+        </div>
+
+        {/* Site Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+          <SummaryCard icon={Eye} label="Total Article Views" value={site.total_views} color="text-blue-600" />
+          <SummaryCard icon={BarChart3} label="Total Articles" value={site.total_articles} />
+          <SummaryCard icon={Eye} label="CONTAINED Views" value={site.contained_views} color="text-red-600" />
+          <SummaryCard icon={BarChart3} label="CONTAINED Articles" value={site.contained_articles} color="text-red-600" />
+          <SummaryCard icon={ExternalLink} label="Total Shares" value={site.total_shares} color="text-emerald-600" />
         </div>
 
         {/* Two Column Layout */}
@@ -310,6 +333,38 @@ export default function AnalyticsDashboard() {
             </table>
           </div>
         </div>
+
+        {/* Top Viewed Articles */}
+        {top_viewed_articles && top_viewed_articles.length > 0 && (
+          <div className="bg-white border-2 border-black p-6 mb-8">
+            <h2 className="text-lg font-black mb-4 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-emerald-600" />
+              Top Viewed Articles (All Time)
+            </h2>
+            <div className="space-y-2">
+              {top_viewed_articles.map((article, i) => (
+                <div key={article.slug} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg font-black text-gray-300 w-6">{i + 1}</span>
+                    <Link
+                      href={`/stories/${article.slug}`}
+                      className="text-sm font-medium text-blue-600 hover:underline"
+                    >
+                      {article.title}
+                    </Link>
+                    {article.category && (
+                      <span className="text-xs px-2 py-0.5 bg-gray-100 rounded">{article.category}</span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1 text-sm font-bold">
+                    <Eye className="w-3.5 h-3.5 text-gray-400" />
+                    {article.view_count}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Vercel Analytics CTA */}
         <div className="bg-white border-2 border-black p-6">
