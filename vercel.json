@@ -99,6 +99,10 @@
     {
       "path": "/api/cron/campaign/social-publish",
       "schedule": "0 21 * * *"
+    },
+    {
+      "path": "/api/cron/pulse/weekly",
+      "schedule": "0 22 * * 0"
     }
   ]
 }

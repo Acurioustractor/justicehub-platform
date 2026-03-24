@@ -7,6 +7,7 @@ import { Navigation, Footer } from '@/components/ui/navigation';
 
 import HomepageNetworkMap from '@/components/HomepageNetworkMap';
 import EmpathyLedgerStories from '@/components/EmpathyLedgerStories';
+import { ActivityFeed } from '@/components/activity-feed';
 import { ThematicSection } from '@/components/thematic-section';
 import { basecampLocations } from '@/content/excellence-map-locations';
 import { MapPin, Building2 } from 'lucide-react';
@@ -707,6 +708,9 @@ export default function HomePage() {
           <EmpathyLedgerStories />
         </div>
       </section>
+
+      {/* Live Activity Feed */}
+      <ActivityFeed />
 
       {/* Final CTA */}
       <section className="section-padding bg-black">
