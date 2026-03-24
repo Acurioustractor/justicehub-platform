@@ -56,7 +56,7 @@ export default async function GigGuidePage() {
     .from('youth_opportunities')
     .select('*')
     .eq('status', 'open')
-    .order('closing_date', { ascending: true })
+    .order('deadline', { ascending: true })
     .limit(50);
 
   // Fetch basecamps for location context
@@ -73,7 +73,7 @@ export default async function GigGuidePage() {
   const byState: Record<string, typeof events> = {};
   const national: typeof events = [];
   for (const e of events) {
-    const state = e.state || e.location_state;
+    const state = e.location_state;
     if (state && STATE_NAMES[state]) {
       if (!byState[state]) byState[state] = [];
       byState[state].push(e);
@@ -266,7 +266,7 @@ export default async function GigGuidePage() {
 
 function EventCard({ event }: { event: any }) {
   const Icon = getEventTypeIcon(event.category || event.type || '');
-  const hasUrl = event.url || event.application_url;
+  const hasUrl = event.application_url || event.source_url;
 
   return (
     <div className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/20 transition-colors">
@@ -278,8 +278,8 @@ function EventCard({ event }: { event: any }) {
           <h3 className="font-semibold text-sm leading-tight">
             {event.title || event.name}
           </h3>
-          {event.organization_name && (
-            <p className="text-xs text-[#0A0A0A]/40 mt-0.5">{event.organization_name}</p>
+          {event.organizer && (
+            <p className="text-xs text-[#0A0A0A]/40 mt-0.5">{event.organizer}</p>
           )}
           {event.description && (
             <p className="text-xs text-[#0A0A0A]/60 mt-1.5 line-clamp-2">
@@ -287,26 +287,26 @@ function EventCard({ event }: { event: any }) {
             </p>
           )}
           <div className="flex flex-wrap gap-3 mt-2">
-            {event.closing_date && (
+            {event.deadline && (
               <span className="text-xs text-[#0A0A0A]/40 flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
-                {new Date(event.closing_date).toLocaleDateString('en-AU', {
+                {new Date(event.deadline).toLocaleDateString('en-AU', {
                   day: 'numeric',
                   month: 'short',
                   year: 'numeric',
                 })}
               </span>
             )}
-            {(event.state || event.location) && (
+            {(event.location_state || event.location_name) && (
               <span className="text-xs text-[#0A0A0A]/40 flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
-                {event.location || event.state}
+                {event.location_name || event.location_state}
               </span>
             )}
           </div>
           {hasUrl && (
             <a
-              href={event.url || event.application_url}
+              href={event.application_url || event.source_url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-xs font-semibold text-[#059669] mt-2 hover:underline"

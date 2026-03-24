@@ -461,25 +461,27 @@ export function StopContent({ slug }: { slug: string }) {
           </div>
         </section>
 
-        {/* CTA */}
+        {/* What Now CTA */}
         <section className="px-4 py-16 border-t border-gray-800 bg-gray-950">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-4">Experience it yourself</h2>
+            <p className="text-xs uppercase tracking-[0.3em] text-red-500 mb-4">You&apos;ve seen it</p>
+            <h2 className="text-3xl font-bold mb-4">Now what?</h2>
             <p className="text-gray-400 mb-8">
-              Thirty minutes inside the CONTAINED shipping container will change how you see youth justice.
+              The container showed you the reality. The alternative exists — 1,076 community
+              models proving it works better and costs less. Pick your lane.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/contained/register"
+                href="/contained/what-now"
                 className="px-6 py-3 text-sm font-bold uppercase tracking-widest bg-white text-black hover:bg-gray-200 transition-colors"
               >
-                Book your experience
+                What you can do
               </Link>
               <Link
-                href="/back-this"
+                href="/contained/register"
                 className="px-6 py-3 text-sm font-bold uppercase tracking-widest border border-gray-700 text-gray-300 hover:border-white hover:text-white transition-colors"
               >
-                Fund the tour
+                Book your experience
               </Link>
             </div>
           </div>
