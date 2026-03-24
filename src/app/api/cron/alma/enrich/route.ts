@@ -175,7 +175,7 @@ async function enrichCostData(
 
       if (!results?.length) continue;
 
-      const snippets = results.slice(0, 3).map((r: any) => `${r.title}: ${r.snippet}`).join('\n');
+      const snippets = results.slice(0, 3).map((r) => `${r.title}: ${r.description}`).join('\n');
 
       const prompt = `From these search results, can you determine the cost per young person/participant for this program?
 
@@ -245,11 +245,11 @@ async function discoverResearch(
 
   for (const result of results.slice(0, batch)) {
     try {
-      // Check for duplicate
+      // Check for duplicate by matching title in validation_source
       const { count } = await supabase
         .from('alma_research_findings')
         .select('*', { count: 'exact', head: true })
-        .eq('source_url', result.url);
+        .eq('validation_source', result.title);
 
       if ((count || 0) > 0) {
         duplicates++;
@@ -260,7 +260,7 @@ async function discoverResearch(
 
 Title: ${result.title}
 URL: ${result.url}
-Snippet: ${result.snippet}
+Snippet: ${result.description}
 
 Return JSON:
 {
@@ -281,22 +281,30 @@ Return JSON:
       const parsed = parseJSON(response);
 
       if (parsed && parsed.relevance_to_youth_justice !== 'low') {
+        // Determine finding_type from content
+        const text = `${parsed.title || ''} ${parsed.key_findings || ''}`.toLowerCase();
+        let findingType = 'external_source';
+        if (text.includes('evaluation') || text.includes('outcomes') || text.includes('effectiveness')) findingType = 'evidence_link';
+        else if (text.includes('recommend') || text.includes('policy')) findingType = 'recommendation';
+        else if (text.includes('gap') || text.includes('barrier')) findingType = 'gap_identified';
+
         const { error } = await supabase.from('alma_research_findings').insert({
-          title: parsed.title || result.title,
-          source_url: result.url,
-          authors: parsed.authors,
-          year: parsed.year,
-          methodology: parsed.methodology,
-          key_findings: parsed.key_findings,
-          metadata: {
+          finding_type: findingType,
+          content: {
+            title: parsed.title || result.title,
+            key_findings: parsed.key_findings,
+            authors: parsed.authors,
+            year: parsed.year,
+            methodology: parsed.methodology,
             outcome_types: parsed.outcome_types,
             geographic_focus: parsed.geographic_focus,
             indigenous_focus: parsed.indigenous_focus,
             sample_size: parsed.sample_size,
             recidivism_data: parsed.recidivism_data,
-            relevance: parsed.relevance_to_youth_justice,
-            search_term: term,
           },
+          confidence: parsed.relevance_to_youth_justice === 'high' ? 0.9 : 0.7,
+          validation_source: parsed.title || result.title,
+          sources: [result.url],
         });
 
         if (!error) inserted++;

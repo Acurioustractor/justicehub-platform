@@ -253,13 +253,13 @@ async function runDiscovery(batchSize: number, mode: DiscoveryMode) {
 }
 
 function buildPrompt(
-  searchResults: Array<{ title?: string; url?: string; snippet?: string }>,
+  searchResults: Array<{ title?: string; url?: string; description?: string }>,
   intervention: { name: string; type: string | null; org?: string | null },
   mode: DiscoveryMode,
 ): string {
   const resultsText = searchResults
     .slice(0, 8)
-    .map((r, i) => `${i + 1}. "${r.title}" — ${r.url}\n   ${r.snippet || ''}`)
+    .map((r, i) => `${i + 1}. "${r.title}" — ${r.url}\n   ${r.description || ''}`)
     .join('\n');
 
   return `You are an Australian youth justice researcher. Evaluate these search results for evidence relevant to:

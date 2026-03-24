@@ -177,8 +177,8 @@ export async function GET(request: NextRequest) {
     {
       id: 'research_findings',
       name: 'Research Findings',
-      score: Math.min(1, (totalFindings || 0) / 100), // target: 100 findings
-      target: 100,
+      score: Math.min(1, (totalFindings || 0) / 1500), // target: 1500 findings
+      target: 1500,
       current: totalFindings || 0,
       action: 'discover_research',
       description: `${totalFindings || 0}/100 target research findings`,
@@ -243,8 +243,8 @@ export async function GET(request: NextRequest) {
   // Cost data needs structured import from ROGS/AIHW reports.
   const actionableActions = new Set([
     'enrich_metadata', 'discover_media',
-    'discover_research', 'discover_docs',
-    // NOT: enrich_costs (ROGS-backed, done), discover_stories/discover_cases (curated), discover_evidence (saturated - all URLs deduplicated)
+    'discover_research', 'discover_docs', 'discover_evidence',
+    // NOT: enrich_costs (ROGS-backed, done), discover_stories/discover_cases (curated)
   ]);
   const target = dimensions.find(d => actionableActions.has(d.action)) || dimensions[0];
   const results: {
@@ -301,7 +301,7 @@ export async function GET(request: NextRequest) {
 
           const prompt = `You are an Australian youth justice researcher. Evaluate search results for evidence about "${intervention.name}" (${intervention.type}).
 
-${newResults.slice(0, 5).map((r, i) => `${i + 1}. "${r.title}" — ${r.url}\n   ${r.snippet || ''}`).join('\n')}
+${newResults.slice(0, 5).map((r, i) => `${i + 1}. "${r.title}" — ${r.url}\n   ${r.description || ''}`).join('\n')}
 
 For relevant results (score >= 0.4), return JSON: { "results": [{ "title": "...", "evidence_type": "Program evaluation|Case study|Policy analysis|Community-led research|Government report|Media coverage", "url": "...", "findings": "...", "methodology": null, "author": null, "year": null, "relevance_score": 0.0 }] }`;
 
@@ -361,7 +361,7 @@ For relevant results (score >= 0.4), return JSON: { "results": [{ "title": "..."
           if (!searchResults?.length) continue;
 
           results.discovered++;
-          const snippets = searchResults.slice(0, 3).map((r) => `${r.title}: ${r.snippet}`).join('\n');
+          const snippets = searchResults.slice(0, 3).map((r) => `${r.title}: ${r.description}`).join('\n');
 
           try {
             const raw = await LLMClient.getBackgroundInstance().call(
@@ -439,7 +439,7 @@ If you cannot determine the cost, return: {"cost_per_young_person": null, "cost_
 
           try {
             const raw = await LLMClient.getBackgroundInstance().call(
-              `Analyze this media article about Australian youth justice:\nTitle: ${r.title}\nURL: ${r.url}\nSnippet: ${r.snippet}\n\nReturn JSON: { "headline": "...", "summary": "2-3 sentences", "sentiment": "positive|negative|mixed|neutral", "topics": ["..."], "state": "QLD|NSW|VIC|WA|SA|NT|ACT|TAS|national" }`,
+              `Analyze this media article about Australian youth justice:\nTitle: ${r.title}\nURL: ${r.url}\nSnippet: ${r.description}\n\nReturn JSON: { "headline": "...", "summary": "2-3 sentences", "sentiment": "positive|negative|mixed|neutral", "topics": ["..."], "state": "QLD|NSW|VIC|WA|SA|NT|ACT|TAS|national" }`,
               { maxTokens: 500 }
             );
             const parsed = parseJSON(raw);
@@ -550,7 +550,7 @@ If you cannot determine the cost, return: {"cost_per_young_person": null, "cost_
               `Analyze this search result and extract source document metadata for Australian youth justice research.
 Title: ${r.title}
 URL: ${r.url}
-Snippet: ${r.snippet}
+Snippet: ${r.description}
 
 IMPORTANT: Respond with ONLY valid JSON.
 {"title": "document title", "document_type": "government_report|statistical_report|academic_paper|inquiry_report|evaluation_report|policy_document|community_report|media_article|other", "authority_level": "government_official|peer_reviewed|grey_literature|community_voice|media|primary_source", "source_organization": "publisher name", "jurisdiction": "national|QLD|NSW|VIC|WA|SA|NT|ACT|TAS", "scope": "national|state|local", "key_findings": ["finding 1", "finding 2"]}`,
