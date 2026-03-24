@@ -375,7 +375,10 @@ export default async function FollowTheMoneyPage() {
                     className="bg-white rounded-xl border border-[#0A0A0A]/10 overflow-hidden"
                   >
                     {/* State header */}
-                    <div className="bg-[#0A0A0A] text-white px-5 py-4 flex items-center justify-between">
+                    <Link
+                      href={`/states/${sd.state.toLowerCase()}`}
+                      className="bg-[#0A0A0A] text-white px-5 py-4 flex items-center justify-between hover:bg-[#0A0A0A]/90 transition-colors block"
+                    >
                       <div>
                         <p
                           className="text-xs uppercase tracking-wider text-white/50"
@@ -404,7 +407,7 @@ export default async function FollowTheMoneyPage() {
                           {sd.orgCount} orgs funded
                         </p>
                       </div>
-                    </div>
+                    </Link>
 
                     {/* Indigenous share bar */}
                     <div className="px-5 py-3 border-b border-[#0A0A0A]/5">
