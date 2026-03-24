@@ -218,6 +218,11 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Real stories from real people'
             },
             {
+                label: 'Share the Data',
+                href: '/share',
+                description: 'Branded data cards for LinkedIn and funder packs'
+            },
+            {
                 label: 'International Exchange',
                 href: '/international-exchange',
                 description: 'June 2026 learning mission'
