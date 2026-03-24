@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const supabase = createServiceClient();
+    const supabase = createServiceClient() as any;
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const cutoff = weekAgo.toISOString();
@@ -102,11 +102,11 @@ export async function GET(request: NextRequest) {
 
     // ── Compute stats ────────────────────────────────────────────────
     const totalFunding = funding.reduce(
-      (sum, f) => sum + (Number(f.amount_dollars) || 0),
+      (sum: number, f: { amount_dollars: string }) => sum + (Number(f.amount_dollars) || 0),
       0
     );
-    const negativeSentiment = media.filter((m) => m.sentiment === 'negative').length;
-    const positiveSentiment = media.filter((m) => m.sentiment === 'positive').length;
+    const negativeSentiment = media.filter((m: { sentiment: string }) => m.sentiment === 'negative').length;
+    const positiveSentiment = media.filter((m: { sentiment: string }) => m.sentiment === 'positive').length;
 
     const stats = {
       new_interventions: interventions.length,
@@ -124,14 +124,14 @@ export async function GET(request: NextRequest) {
     const dataSnapshot = JSON.stringify(
       {
         stats,
-        top_interventions: interventions.slice(0, 5).map((i) => i.name),
+        top_interventions: interventions.slice(0, 5).map((i: { name: string }) => i.name),
         top_media: media
           .slice(0, 5)
-          .map((m) => `${m.headline} (${m.source_name}, ${m.sentiment})`),
+          .map((m: { headline: string; source_name: string; sentiment: string }) => `${m.headline} (${m.source_name}, ${m.sentiment})`),
         top_statements: statements
           .slice(0, 3)
-          .map((s) => `${s.minister_name}: ${s.headline}`),
-        top_alerts: alerts.slice(0, 3).map((a) => `[${a.severity}] ${a.title}`),
+          .map((s: { minister_name: string; headline: string }) => `${s.minister_name}: ${s.headline}`),
+        top_alerts: alerts.slice(0, 3).map((a: { severity: string; title: string }) => `[${a.severity}] ${a.title}`),
       },
       null,
       2
@@ -184,7 +184,7 @@ OUTPUT: The briefing text only, no preamble.`,
       const weekLabel = `${weekAgo.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })} – ${now.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}`;
 
       sentCount = await sendBatchEmail({
-        emails: subscribers.map((sub) => ({
+        emails: subscribers.map((sub: { email: string; full_name: string | null }) => ({
           to: sub.email,
           name: sub.full_name || undefined,
           subject: `JusticeHub Pulse — Week of ${weekLabel}`,

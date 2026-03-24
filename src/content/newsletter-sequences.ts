@@ -206,43 +206,37 @@ See you there.
 };
 
 // ============================================================
-// 3. MONTHLY EVIDENCE DIGEST - triggered by cron
+// 3. WEEKLY PULSE DIGEST - powered by AI-generated pulse briefings
 // ============================================================
-export const monthlyDigestTemplate: EmailSequence = {
-  id: 'monthly-digest',
-  name: 'Monthly Evidence Digest',
-  trigger: 'cron_monthly',
+export const weeklyPulseTemplate: EmailSequence = {
+  id: 'weekly-pulse',
+  name: 'Weekly Pulse Digest',
+  trigger: 'cron_weekly',
   emails: [
     {
-      id: 'digest',
-      subject: 'JusticeHub Monthly: New evidence, new stories, new momentum',
-      preheader: 'What the movement achieved this month.',
+      id: 'pulse-digest',
+      subject: 'JusticeHub Weekly Pulse',
+      preheader: 'This week in youth justice — programs, funding, media, and policy.',
       delayDays: 0,
-      body: `JUSTICEHUB MONTHLY DIGEST
+      body: `This email is AI-generated from the latest pulse_reports briefing.
+The pulse cron (/api/cron/pulse/weekly) generates the actual content.
+This template is kept as a fallback reference only.
 
-NEW EVIDENCE DISCOVERED
-ALMA's discovery agent found new evidence items this month. The database now contains {{evidence_count}} evidence items across {{intervention_count}} interventions.
+WHAT HAPPENED THIS WEEK
+— AI-generated briefing from ALMA + CivicScope data —
 
-Browse new evidence: ${SITE}/intelligence/interventions
-
-NEW STORIES
-{{new_stories_count}} new stories published from community voices across Australia.
-
-Read them: ${SITE}/contained/stories
-
-CAMPAIGN PROGRESS
-- {{nomination_count}} leaders nominated for THE CONTAINED
-- {{backer_count}} backers supporting the tour
-- Tour stops: Mount Druitt → Adelaide → Perth → Tennant Creek
-
-TAKE ACTION
-The most powerful thing you can do today: nominate one decision-maker.
-→ ${SITE}/contained#nominate
+EXPLORE MORE
+Intelligence dashboard: ${SITE}/pulse
+Evidence library: ${SITE}/intelligence/interventions
+Funding tracker: ${SITE}/transparency
 
 — The JusticeHub Team`,
     },
   ],
 };
+
+/** @deprecated Use weeklyPulseTemplate — monthly digest replaced by weekly pulse */
+export const monthlyDigestTemplate = weeklyPulseTemplate;
 
 // ============================================================
 // 4. CAMPAIGN LAUNCH - triggered on campaign_launch
@@ -317,6 +311,7 @@ THE CONTAINED makes you feel it. Your action makes it impossible to ignore.
 export const allSequences: Record<string, EmailSequence> = {
   welcome: welcomeSequence,
   'pre-event': preEventSequence,
-  'monthly-digest': monthlyDigestTemplate,
+  'weekly-pulse': weeklyPulseTemplate,
+  'monthly-digest': monthlyDigestTemplate, // deprecated alias
   'campaign-launch': launchEmail,
 };

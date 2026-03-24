@@ -1,86 +1,99 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { sendBatchEmail } from '@/lib/email/send';
-import { monthlyDigestTemplate } from '@/content/newsletter-sequences';
 
 /**
  * GET /api/cron/newsletter/digest
  *
- * Monthly newsletter digest — queries live stats from ALMA tables,
- * fills template variables, sends to all active subscribers via Resend.
+ * Weekly newsletter digest — pulls the latest pulse_reports briefing
+ * and sends to subscribers who weren't reached by the pulse cron.
+ *
+ * Runs 1 hour after the pulse cron (Sun 23:00 UTC / Mon 9am AEST)
+ * as a catch-up for any subscribers in newsletter_subscriptions
+ * not covered by vw_newsletter_segments.
+ *
+ * Previously: monthly digest with hardcoded template.
+ * Now: weekly, powered by AI-generated pulse briefings.
  */
 export async function GET(request: NextRequest) {
-  // Verify cron secret
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const supabase = createServiceClient();
+    const supabase = createServiceClient() as any;
 
-    // Fetch live stats in parallel
-    const sb = supabase as any;
-    const [evidenceRes, interventionRes, storiesRes, nominationRes] = await Promise.all([
-      sb.from('alma_evidence').select('id', { count: 'exact', head: true }),
-      sb.from('alma_interventions').select('id', { count: 'exact', head: true })
-        .neq('verification_status', 'ai_generated'),
-      sb.from('alma_stories').select('id', { count: 'exact', head: true })
-        .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
-      sb.from('campaign_alignment_entities').select('id', { count: 'exact', head: true })
-        .eq('alignment_category', 'decision-maker'),
-    ]);
+    // Get latest weekly pulse report
+    const { data: report, error: reportError } = await supabase
+      .from('pulse_reports')
+      .select('*')
+      .eq('report_type', 'weekly')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
 
-    const stats = {
-      evidence_count: String(evidenceRes.count || 0),
-      intervention_count: String(interventionRes.count || 0),
-      new_stories_count: String(storiesRes.count || 0),
-      nomination_count: String(nominationRes.count || 0),
-      backer_count: '0', // Placeholder until backer tracking is added
-    };
-
-    // Fill template
-    const template = monthlyDigestTemplate.emails[0];
-    let body = template.body;
-    for (const [key, value] of Object.entries(stats)) {
-      body = body.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), value);
-    }
-
-    // Get all active subscribers
-    const { data: subscribers, error: fetchError } = await supabase
-      .from('newsletter_subscriptions')
-      .select('email')
-      .eq('is_active', true);
-
-    if (fetchError || !subscribers || subscribers.length === 0) {
+    if (reportError || !report) {
       return NextResponse.json({
-        success: true,
-        message: 'No active subscribers',
-        stats,
+        success: false,
+        message: 'No pulse report found — pulse cron may not have run yet',
       });
     }
 
-    // Send digest
+    // Check if report is recent (within last 2 hours)
+    const reportAge = Date.now() - new Date(report.created_at).getTime();
+    const twoHours = 2 * 60 * 60 * 1000;
+
+    if (reportAge > twoHours) {
+      return NextResponse.json({
+        success: true,
+        message: 'Latest pulse report is stale — skipping digest send',
+        report_age_hours: Math.round(reportAge / (60 * 60 * 1000)),
+      });
+    }
+
+    // Get subscribers from the segment view
+    const { data: subscribers } = await supabase
+      .from('vw_newsletter_segments')
+      .select('email, full_name')
+      .not('email', 'is', null);
+
+    if (!subscribers || subscribers.length === 0) {
+      return NextResponse.json({
+        success: true,
+        message: 'No subscribers to send to',
+      });
+    }
+
+    // Format week label
+    const periodStart = new Date(report.period_start);
+    const periodEnd = new Date(report.period_end);
+    const weekLabel = `${periodStart.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })} – ${periodEnd.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+
+    const stats = report.stats as Record<string, number>;
+    const totalFunding = stats.funding_total_dollars || 0;
+
     const sent = await sendBatchEmail({
-      emails: subscribers.map(sub => ({
+      emails: subscribers.map((sub: { email: string; full_name: string | null }) => ({
         to: sub.email,
-        subject: template.subject,
-        body,
-        preheader: template.preheader,
+        name: sub.full_name || undefined,
+        subject: `JusticeHub Weekly Pulse — ${weekLabel}`,
+        body: report.briefing,
+        preheader: `${stats.new_interventions || 0} programs, ${stats.media_articles || 0} articles, $${(totalFunding / 1_000_000).toFixed(1)}M tracked`,
       })),
+      tags: ['pulse-weekly-digest'],
+      source: 'newsletter_digest_cron',
     });
 
     return NextResponse.json({
       success: true,
       sent,
       total_subscribers: subscribers.length,
-      stats,
+      report_id: report.id,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Newsletter digest cron error:', error);
-    return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

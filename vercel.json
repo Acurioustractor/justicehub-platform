@@ -70,7 +70,7 @@
     },
     {
       "path": "/api/cron/newsletter/digest",
-      "schedule": "0 9 1 * *"
+      "schedule": "0 23 * * 0"
     },
     {
       "path": "/api/cron/newsletter/welcome-drip",
