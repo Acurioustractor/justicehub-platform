@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server-lite';
 import { redirect } from 'next/navigation';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink, Mail, Activity, Target, Workflow, Scale, Shield, UserCheck, Megaphone, Mic } from 'lucide-react';
+import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink, Mail, Activity, Target, Workflow, Scale, Shield, UserCheck, Megaphone, Mic, BarChart3 } from 'lucide-react';
 import { SystemStatus } from '@/components/admin/SystemStatus';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
@@ -151,6 +151,7 @@ export default async function AdminDashboard() {
         { title: 'CONTAINED', count: containedNominationsCount || 0, subtitle: 'Campaign nominations & CRM', icon: Megaphone, href: '/admin/contained', bgColor: 'bg-rose-50', textColor: 'text-rose-600' },
         { title: 'Signal Engine', count: '⚡' as string | number, subtitle: 'Autonomous content pipeline', icon: Zap, href: '/admin/signal-engine', bgColor: 'bg-yellow-50', textColor: 'text-yellow-600' },
         { title: 'Campaign Engine', count: '🎯' as string | number, subtitle: 'Alignment & tracked posts', icon: Target, href: '/admin/campaign-engine', bgColor: 'bg-rose-50', textColor: 'text-rose-600' },
+        { title: 'Analytics', count: '📊' as string | number, subtitle: 'LinkedIn × site × pipeline', icon: BarChart3, href: '/admin/analytics', bgColor: 'bg-indigo-50', textColor: 'text-indigo-600' },
         { title: 'Inbox', count: inboxCount || 0, subtitle: `${inboxNewCount || 0} new`, icon: Mail, href: '/admin/inbox', bgColor: 'bg-rose-50', textColor: 'text-rose-600', alert: (inboxNewCount || 0) > 0 ? `${inboxNewCount} unread` : undefined },
       ],
     },

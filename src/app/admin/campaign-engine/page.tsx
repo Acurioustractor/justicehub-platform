@@ -44,6 +44,7 @@ import {
 import Pipeline from '@/app/admin/comms/pipeline';
 import Calendar from '@/app/admin/comms/calendar';
 import Compose from '@/app/admin/comms/compose';
+import BrandSidebar from '@/app/admin/comms/brand-sidebar';
 
 interface Entity {
   id: string;
@@ -166,6 +167,12 @@ export default function CampaignEnginePage() {
   const [ghlSyncResult, setGhlSyncResult] = useState<string | null>(null);
   const [momentum, setMomentum] = useState<MomentumData | null>(null);
   const [momentumLoading, setMomentumLoading] = useState(false);
+  const [pendingStat, setPendingStat] = useState<string>('');
+
+  const handleInsertStat = (text: string) => {
+    setViewMode('compose');
+    setPendingStat(text);
+  };
 
   const fetchStats = async () => {
     const res = await fetch('/api/admin/campaign-alignment/stats');
@@ -426,9 +433,12 @@ export default function CampaignEnginePage() {
     );
   }
 
+  const isCommsView = viewMode === 'pipeline' || viewMode === 'calendar' || viewMode === 'compose';
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="flex">
+      <div className="flex-1 max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -706,10 +716,14 @@ export default function CampaignEnginePage() {
         {viewMode === 'pipeline' && <Pipeline />}
 
         {/* === COMMS: CALENDAR === */}
-        {viewMode === 'calendar' && <Calendar />}
+        {viewMode === 'calendar' && <Calendar onSelectPost={() => setViewMode('pipeline')} />}
 
         {/* === COMMS: COMPOSE === */}
-        {viewMode === 'compose' && <Compose />}
+        {viewMode === 'compose' && <Compose onInsertStat={pendingStat} />}
+      </div>
+
+      {/* Brand sidebar — visible on comms tabs */}
+      {isCommsView && <BrandSidebar onInsertStat={handleInsertStat} />}
       </div>
     </div>
   );
