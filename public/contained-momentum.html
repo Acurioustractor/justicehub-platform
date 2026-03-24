@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONTAINED — Movement Momentum Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0A0A0A; color: #F5F0E8; font-family: 'Space Grotesk', sans-serif; }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+
+  .hero { padding: 80px 40px 60px; max-width: 1200px; margin: 0 auto; }
+  .hero h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; }
+  .hero .subtitle { font-size: 1.1rem; color: #999; max-width: 700px; line-height: 1.6; }
+  .hero .date { font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: #666; margin-bottom: 24px; }
+
+  .section { max-width: 1200px; margin: 0 auto; padding: 0 40px 60px; }
+  .section-title { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: #666; margin-bottom: 24px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* Stats Grid */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #222; margin-bottom: 60px; }
+  .stat-card { background: #0A0A0A; padding: 32px 24px; text-align: center; }
+  .stat-number { font-size: 3rem; font-weight: 700; letter-spacing: -0.03em; }
+  .stat-number.red { color: #DC2626; }
+  .stat-number.green { color: #059669; }
+  .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #888; margin-top: 8px; letter-spacing: 0.05em; }
+
+  /* Comparison */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 60px; }
+  .compare-col { border: 1px solid #333; padding: 32px; }
+  .compare-col h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+  .compare-col .period { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #666; margin-bottom: 20px; }
+  .compare-stat { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1a1a1a; }
+  .compare-stat .label { color: #999; font-size: 0.9rem; }
+  .compare-stat .value { font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+
+  /* City Demand */
+  .city-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; margin-bottom: 60px; }
+  .city-card { border: 1px solid #333; padding: 24px; position: relative; }
+  .city-card.confirmed { border-color: #059669; }
+  .city-card.confirmed::before { content: 'CONFIRMED'; position: absolute; top: 8px; right: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; background: #059669; color: #fff; padding: 2px 8px; letter-spacing: 0.1em; }
+  .city-card.demand::before { content: 'DEMAND'; position: absolute; top: 8px; right: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; background: #DC2626; color: #fff; padding: 2px 8px; letter-spacing: 0.1em; }
+  .city-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+  .city-count { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: #059669; margin-bottom: 12px; }
+  .city-quote { font-size: 0.85rem; color: #999; line-height: 1.5; font-style: italic; margin-bottom: 8px; }
+  .city-quote .name { font-style: normal; color: #F5F0E8; font-weight: 500; }
+
+  /* Voices */
+  .voices { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 60px; }
+  .voice { border-left: 3px solid #333; padding: 16px 24px; }
+  .voice.highlight { border-color: #DC2626; }
+  .voice blockquote { font-size: 0.95rem; line-height: 1.6; color: #ccc; margin-bottom: 12px; }
+  .voice .attribution { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #666; }
+  .voice .attribution strong { color: #F5F0E8; font-weight: 500; }
+
+  /* Offers */
+  .offers-list { margin-bottom: 60px; }
+  .offer { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #1a1a1a; }
+  .offer-type { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; padding: 2px 10px; height: fit-content; letter-spacing: 0.1em; font-weight: 500; white-space: nowrap; }
+  .offer-type.host { background: #059669; color: #fff; }
+  .offer-type.fund { background: #DC2626; color: #fff; }
+  .offer-type.amplify { background: #2563EB; color: #fff; }
+  .offer-type.connect { background: #7C3AED; color: #fff; }
+  .offer-type.research { background: #D97706; color: #fff; }
+  .offer-body .offer-name { font-weight: 700; font-size: 0.9rem; }
+  .offer-body .offer-role { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #666; }
+  .offer-body .offer-quote { font-size: 0.85rem; color: #999; margin-top: 4px; line-height: 1.4; }
+
+  /* Senior */
+  .senior-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-bottom: 60px; }
+  .senior-card { display: flex; gap: 12px; padding: 12px 16px; border: 1px solid #222; }
+  .senior-card .score { font-family: 'IBM Plex Mono', monospace; font-size: 1.2rem; font-weight: 700; color: #059669; min-width: 36px; }
+  .senior-card .info .name { font-weight: 700; font-size: 0.85rem; }
+  .senior-card .info .role { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: #666; }
+
+  /* Coalition */
+  .coalition { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: #222; margin-bottom: 60px; }
+  .coalition-table { background: #0A0A0A; padding: 24px; }
+  .coalition-table h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+  .coalition-table .count { font-family: 'IBM Plex Mono', monospace; font-size: 1.5rem; font-weight: 700; color: #059669; margin-bottom: 8px; }
+  .coalition-table .names { font-size: 0.75rem; color: #666; line-height: 1.5; }
+
+  /* CTA */
+  .cta { background: #DC2626; padding: 60px 40px; text-align: center; margin-top: 40px; }
+  .cta h2 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; }
+  .cta p { font-size: 1rem; color: rgba(255,255,255,0.8); max-width: 600px; margin: 0 auto 24px; line-height: 1.5; }
+  .cta a { display: inline-block; background: #0A0A0A; color: #F5F0E8; padding: 14px 32px; font-weight: 700; text-decoration: none; font-size: 0.9rem; letter-spacing: 0.05em; }
+
+  .divider { height: 1px; background: #222; margin: 40px 0; }
+
+  .footer { max-width: 1200px; margin: 0 auto; padding: 40px; text-align: center; }
+  .footer p { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #444; }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 2rem; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .compare { grid-template-columns: 1fr; }
+    .voices { grid-template-columns: 1fr; }
+    .coalition { grid-template-columns: repeat(2, 1fr); }
+    .hero, .section { padding-left: 20px; padding-right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="date">MOMENTUM REPORT — MARCH 2026</div>
+  <h1>CONTAINED is building a movement.</h1>
+  <p class="subtitle">Three LinkedIn posts. 4,200+ reactions. 285 comments. 56 senior leaders. 30 offers to host, fund, or amplify. 10+ cities requesting tour stops. This is what happened when we stopped asking for permission and started building pressure.</p>
+</div>
+
+<!-- CORE STATS -->
+<div class="section">
+  <div class="section-title">The Numbers</div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">4,238</div>
+      <div class="stat-label">Total Reactions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">285</div>
+      <div class="stat-label">Comments</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number red">56</div>
+      <div class="stat-label">Senior Leaders Engaged</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number green">30</div>
+      <div class="stat-label">Offers to Help</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">117</div>
+      <div class="stat-label">Potential Allies Identified</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">10+</div>
+      <div class="stat-label">Cities Requesting Stops</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number red">2</div>
+      <div class="stat-label">State MPs Engaged</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number green">8K</div>
+      <div class="stat-label">LinkedIn Followers</div>
+    </div>
+  </div>
+</div>
+
+<!-- GROWTH: 5 MONTHS AGO vs NOW -->
+<div class="section">
+  <div class="section-title">Growth — October 2025 vs March 2026</div>
+  <div class="compare">
+    <div class="compare-col">
+      <h3>Post 1 — "We Bought a Container"</h3>
+      <div class="period">October 2025 · Launch announcement</div>
+      <div class="compare-stat"><span class="label">Reactions</span><span class="value">2,195</span></div>
+      <div class="compare-stat"><span class="label">Comments</span><span class="value">166</span></div>
+      <div class="compare-stat"><span class="label">Tour stops confirmed</span><span class="value">1 (Sydney)</span></div>
+      <div class="compare-stat"><span class="label">Funding partners</span><span class="value">0</span></div>
+      <div class="compare-stat"><span class="label">Hosting offers</span><span class="value">5</span></div>
+      <div class="compare-stat"><span class="label">Status</span><span class="value" style="color:#D97706">Concept</span></div>
+    </div>
+    <div class="compare-col" style="border-color: #059669;">
+      <h3>Posts 2 & 3 — "Pick a Fight" + "Spanish Youth"</h3>
+      <div class="period">March 2026 · National tour announcement</div>
+      <div class="compare-stat"><span class="label">Reactions</span><span class="value" style="color:#059669">2,043+</span></div>
+      <div class="compare-stat"><span class="label">Comments</span><span class="value" style="color:#059669">166+</span></div>
+      <div class="compare-stat"><span class="label">Tour stops confirmed</span><span class="value" style="color:#059669">5 cities</span></div>
+      <div class="compare-stat"><span class="label">Funding partners</span><span class="value" style="color:#059669">3 in pipeline</span></div>
+      <div class="compare-stat"><span class="label">Hosting offers</span><span class="value" style="color:#059669">8+ cities</span></div>
+      <div class="compare-stat"><span class="label">Status</span><span class="value" style="color:#059669">Tour Locked</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CITY DEMAND MAP -->
+<div class="section">
+  <div class="section-title">Where People Want CONTAINED</div>
+  <div class="city-grid">
+    <div class="city-card confirmed">
+      <div class="city-name">Sydney</div>
+      <div class="city-count">8 mentions · Launch city</div>
+      <div class="city-quote"><span class="name">Joy Woods</span>, Founder: "What are the details for Sydney? Keen to show my support and commitment!"</div>
+      <div class="city-quote"><span class="name">Emma Maiden</span>, Director: "Hoping some NSW MPs come and look at this"</div>
+    </div>
+    <div class="city-card confirmed">
+      <div class="city-name">Brisbane</div>
+      <div class="city-count">2 mentions · YAC hosting</div>
+      <div class="city-quote"><span class="name">Jonty Bush</span>, QLD Member of Parliament: "I love this concept, where is it touring in Queensland?"</div>
+    </div>
+    <div class="city-card confirmed">
+      <div class="city-name">Perth</div>
+      <div class="city-count">8 mentions · UWA partnership</div>
+      <div class="city-quote"><span class="name">Hayley Passmore</span>, Criminology Lecturer: "We can't wait to have this in Perth!!!"</div>
+      <div class="city-quote"><span class="name">Georgina Camp</span>: "We need to get this to WA asap"</div>
+    </div>
+    <div class="city-card confirmed">
+      <div class="city-name">Adelaide</div>
+      <div class="city-count">3 mentions · Reintegration Conference</div>
+      <div class="city-quote"><span class="name">Kirsty Stark</span>, Social Enterprise Expert: "Yes, bring this to Adelaide!!"</div>
+      <div class="city-quote"><span class="name">Aaron Baker</span>: "I am also presenting at the conference in Adelaide in June"</div>
+    </div>
+    <div class="city-card confirmed">
+      <div class="city-name">Alice Springs</div>
+      <div class="city-count">Oonchiumpa partnership</div>
+      <div class="city-quote">Indigenous community-led activation with Oonchiumpa Aboriginal Corporation</div>
+    </div>
+    <div class="city-card demand">
+      <div class="city-name">Canberra</div>
+      <div class="city-count">10 mentions · Highest demand</div>
+      <div class="city-quote"><span class="name">Robert Tickner</span>, JRI Chair: "Don't forget the drive to Canberra to deliver a message to the PM"</div>
+      <div class="city-quote"><span class="name">Rebecca Minty</span>, Inspector of Custodial Services: "Govt recently committed to a new model of care for youth detention"</div>
+      <div class="city-quote"><span class="name">PJ Hewitt</span>, Director of Health Services: "Host in Canberra!"</div>
+    </div>
+    <div class="city-card demand">
+      <div class="city-name">Melbourne</div>
+      <div class="city-count">8 mentions</div>
+      <div class="city-quote"><span class="name">Nadja Kostich</span>, Artistic Director: "This is so powerful and needs to be seen in Melbourne. You would have overwhelming community support."</div>
+      <div class="city-quote"><span class="name">Dr Kate Raynor</span>, Housing Scholar: "Would love to see this come to Melbourne! Melbourne Design Week?"</div>
+    </div>
+    <div class="city-card demand">
+      <div class="city-name">Tasmania</div>
+      <div class="city-count">2 mentions</div>
+      <div class="city-quote"><span class="name">Ruth Forrest</span>, Member of Parliament: "Can you also bring it to Tasmania?"</div>
+      <div class="city-quote"><span class="name">Jacqueline Dortmans</span>, Government Relations: "Let me know what an invitation needs to look like!"</div>
+    </div>
+    <div class="city-card demand">
+      <div class="city-name">International</div>
+      <div class="city-count">13 mentions · NZ, UK, US</div>
+      <div class="city-quote"><span class="name">Gemma Livingston</span> (NZ): "We have the same issue with youth detention in NZ"</div>
+      <div class="city-quote"><span class="name">Deborah Nikatsekpe</span> (UK): "Am in Youth Justice in the U.K. and keen to learn about this!"</div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT PEOPLE ARE SAYING -->
+<div class="section">
+  <div class="section-title">What People Are Saying</div>
+  <div class="voices">
+    <div class="voice highlight">
+      <blockquote>"We need lots more innovation like this in our campaign to end this discredited annual billion dollar plus failed youth incarceration system and shift to priority expenditure by all governments that addresses the underlying issues of the kids."</blockquote>
+      <div class="attribution"><strong>Robert Tickner</strong> · Chair, Justice Reform Initiative · 4K followers</div>
+    </div>
+    <div class="voice highlight">
+      <blockquote>"Closing the gap is impossible with the current paradigm. Doing the same thing over and over and expecting a different outcome is delusional. Great to see this initiative."</blockquote>
+      <div class="attribution"><strong>Paul Kelly</strong> · Former Chief Medical Officer of Australia</div>
+    </div>
+    <div class="voice">
+      <blockquote>"As one of the few people who have stood in both rooms (real and recreated) I can honestly say you've captured their essence perfectly. It was heartbreaking to see a young man who had been in youth detention from 12 years old stand inside that room remembering how cold he used to be."</blockquote>
+      <div class="attribution"><strong>Kate Bjur</strong> · Community Catalyst, lived experience advocate</div>
+    </div>
+    <div class="voice">
+      <blockquote>"This should be exhibited in an Art Gallery. It's installation art. It provokes critical thinking of how jailing young people is dehumanising. Great conversation starter on an issue that needs national attention."</blockquote>
+      <div class="attribution"><strong>Sally Anderson</strong> · Women's Safety Services SA</div>
+    </div>
+    <div class="voice highlight">
+      <blockquote>"This is the argument that needs to be had and the evidence is there to win it. Our program Futures Radio runs 24/7 inside youth detention, using music, storytelling and peer voices. Different medium, same fight. Would love to connect."</blockquote>
+      <div class="attribution"><strong>Musicians Making A Difference (MMAD)</strong> · Arts organisation</div>
+    </div>
+    <div class="voice">
+      <blockquote>"Some decision makers will never be persuaded with words, manufacturing real feels though can be a whole different ballgame. Love must overwhelm harm and hate. Always."</blockquote>
+      <div class="attribution"><strong>Linda Ryle</strong> · Senior Lawyer</div>
+    </div>
+    <div class="voice highlight">
+      <blockquote>"How can people help not just see the shipping containers... yet how everything that you're about can be brought to life in multiple communities and multiple key stakeholder groups all at one time?"</blockquote>
+      <div class="attribution"><strong>Tom Donaghy</strong> · HousingPLUS · tagged 19 senior leaders in response</div>
+    </div>
+    <div class="voice">
+      <blockquote>"This is literally the best thing I've read in weeks. WOW. This is what is needed."</blockquote>
+      <div class="attribution"><strong>Erin Newall</strong> · Youth Worker</div>
+    </div>
+    <div class="voice">
+      <blockquote>"The short-sightedness of successive Australian governments on this issue is astounding. It is long past time we embraced the successful methods used overseas."</blockquote>
+      <div class="attribution"><strong>Helen Klein</strong> · Inclusion and Accessibility Advocate</div>
+    </div>
+    <div class="voice">
+      <blockquote>"Speaking as a former foster parent of troubled teens, I know if kids have no hope, they are trapped in a downward spiral. Change is possible when they can begin to imagine a different life."</blockquote>
+      <div class="attribution"><strong>Deleece Hall</strong> · Founder</div>
+    </div>
+    <div class="voice highlight">
+      <blockquote>"Fantastic stuff Benjamin. It would be amazing to bring to ACT, where government recently committed to looking at a new model of care for youth detention."</blockquote>
+      <div class="attribution"><strong>Rebecca Minty</strong> · Inspector of Custodial Services, ACT</div>
+    </div>
+    <div class="voice">
+      <blockquote>"Until we change the rhetoric around justice issues, the model won't change. 'Tough on crime' needs to be changed to 'evidence based response'."</blockquote>
+      <div class="attribution"><strong>Marie-Clare Couper</strong> · Brain Injury Association of Tasmania</div>
+    </div>
+  </div>
+</div>
+
+<!-- OFFERS TO HOST / FUND / AMPLIFY -->
+<div class="section">
+  <div class="section-title">People Offering to Help</div>
+  <div class="offers-list">
+    <div class="offer">
+      <span class="offer-type host">HOST</span>
+      <div class="offer-body">
+        <div class="offer-name">Shannon Cant — Youth Affairs Council QLD</div>
+        <div class="offer-role">YAC wants to HOST the Container in Brisbane</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type host">HOST</span>
+      <div class="offer-body">
+        <div class="offer-name">Michelle Wieberneit — University of Western Australia</div>
+        <div class="offer-role">Academic partnership for Perth campus installation</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type host">HOST</span>
+      <div class="offer-body">
+        <div class="offer-name">PJ Hewitt — Director of Health Services</div>
+        <div class="offer-quote">"Host in Canberra!"</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type host">HOST</span>
+      <div class="offer-body">
+        <div class="offer-name">Jacqueline Dortmans — Government Relations</div>
+        <div class="offer-quote">"Need to bring this to Tassie — let me know what an invitation needs to look like!"</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type host">HOST</span>
+      <div class="offer-body">
+        <div class="offer-name">Moira Were AM — Barrister</div>
+        <div class="offer-quote">"Maybe this could be hosted at The Good Bank Gallery?"</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type host">HOST</span>
+      <div class="offer-body">
+        <div class="offer-name">ReLove</div>
+        <div class="offer-quote">"Looking forward to seeing this installed at ReLove soon"</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type fund">FUND</span>
+      <div class="offer-body">
+        <div class="offer-name">Teya Dusseldorp — Dusseldorp Forum</div>
+        <div class="offer-role">Engaged</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type fund">FUND</span>
+      <div class="offer-body">
+        <div class="offer-name">Jonas Kubitscheck & William Frazer — Paul Ramsay Foundation</div>
+        <div class="offer-role">Visited Container Oct 2025. Re-engaging on tour funding.</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type fund">FUND</span>
+      <div class="offer-body">
+        <div class="offer-name">Lucy Stronach — Minderoo Foundation</div>
+        <div class="offer-role">Expressed interest via form. Board decision June 2026.</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type fund">FUND</span>
+      <div class="offer-body">
+        <div class="offer-name">Dr Romina Santos Reyftmann</div>
+        <div class="offer-quote">"Is there a way to donate some funds? Happy to support your initiative"</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type amplify">AMPLIFY</span>
+      <div class="offer-body">
+        <div class="offer-name">Tom Donaghy — HousingPLUS</div>
+        <div class="offer-quote">Tagged 19 senior leaders including PRF, Ash Barty, Mark Bouris, Jim Betts, Bernie Shakeshaft</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type amplify">AMPLIFY</span>
+      <div class="offer-body">
+        <div class="offer-name">Musicians Making A Difference (MMAD)</div>
+        <div class="offer-quote">"Different medium, same fight. Would love to connect."</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type amplify">AMPLIFY</span>
+      <div class="offer-body">
+        <div class="offer-name">Peter Rowe — First Nations News</div>
+        <div class="offer-role">Invited op-ed submission for firstnationsnews.com.au</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type connect">POLICY</span>
+      <div class="offer-body">
+        <div class="offer-name">Jonty Bush — QLD Member of Parliament</div>
+        <div class="offer-quote">"I love this concept, where is it touring in Queensland?"</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type connect">POLICY</span>
+      <div class="offer-body">
+        <div class="offer-name">Ruth Forrest — Tasmanian Member of Parliament</div>
+        <div class="offer-quote">"Can you also bring it to Tasmania?"</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type connect">POLICY</span>
+      <div class="offer-body">
+        <div class="offer-name">Rebecca Minty — ACT Inspector of Custodial Services</div>
+        <div class="offer-quote">"Govt recently committed to looking at a new model of care for youth detention"</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type research">RESEARCH</span>
+      <div class="offer-body">
+        <div class="offer-name">Kate McKenzie — UWA Research Partnerships</div>
+        <div class="offer-role">Shared ARC Centre of Excellence for Prisoner Reintegration. Tagged Paul Flatau (UWA Centre for Social Impact Director).</div>
+      </div>
+    </div>
+    <div class="offer">
+      <span class="offer-type research">RESEARCH</span>
+      <div class="offer-body">
+        <div class="offer-name">Dr Kate Raynor — University of Melbourne</div>
+        <div class="offer-quote">"Melbourne Design Week? I'd love to see this come to Melbourne!"</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SENIOR ENGAGEMENT -->
+<div class="section">
+  <div class="section-title">Senior Leaders Who Engaged</div>
+  <div class="senior-grid">
+    <div class="senior-card"><div class="score">90</div><div class="info"><div class="name">Teya Dusseldorp</div><div class="role">Dusseldorp Forum · Funder</div></div></div>
+    <div class="senior-card"><div class="score">88</div><div class="info"><div class="name">Bernie Shakeshaft</div><div class="role">BackTrack Youth Works · Founder</div></div></div>
+    <div class="senior-card"><div class="score">87</div><div class="info"><div class="name">Gemma Livingston</div><div class="role">Human Rights Specialist (NZ)</div></div></div>
+    <div class="senior-card"><div class="score">87</div><div class="info"><div class="name">Moira Were AM</div><div class="role">Barrister & Campaigner</div></div></div>
+    <div class="senior-card"><div class="score">85</div><div class="info"><div class="name">Jonty Bush</div><div class="role">QLD Member of Parliament</div></div></div>
+    <div class="senior-card"><div class="score">85</div><div class="info"><div class="name">Ruth Forrest</div><div class="role">Tasmanian MP</div></div></div>
+    <div class="senior-card"><div class="score">81</div><div class="info"><div name="name">Adam Robinson</div><div class="role">StreetSmart Australia · Chief of Impact</div></div></div>
+    <div class="senior-card"><div class="score">81</div><div class="info"><div class="name">Davina Jones</div><div class="role">CEO & Founder</div></div></div>
+    <div class="senior-card"><div class="score">80</div><div class="info"><div class="name">Tom Donaghy</div><div class="role">HousingPLUS · Coalition builder</div></div></div>
+    <div class="senior-card"><div class="score">79</div><div class="info"><div class="name">Paul Kelly</div><div class="role">Former Chief Medical Officer</div></div></div>
+    <div class="senior-card"><div class="score">79</div><div class="info"><div class="name">Jade Harley</div><div class="role">Director of Impact</div></div></div>
+    <div class="senior-card"><div class="score">76</div><div class="info"><div class="name">Greg McIntyre</div><div class="role">Senior Counsel & Head of Chambers</div></div></div>
+    <div class="senior-card"><div class="score">75</div><div class="info"><div class="name">Jonas Kubitscheck</div><div class="role">Paul Ramsay Foundation</div></div></div>
+    <div class="senior-card"><div class="score">75</div><div class="info"><div class="name">Kim Porter</div><div class="role">Executive Manager — Child Safety</div></div></div>
+    <div class="senior-card"><div class="score">69</div><div class="info"><div class="name">Robert Tickner</div><div class="role">Chair, Justice Reform Initiative</div></div></div>
+    <div class="senior-card"><div class="score">69</div><div class="info"><div class="name">Rebecca Minty</div><div class="role">ACT Inspector of Custodial Services</div></div></div>
+  </div>
+</div>
+
+<!-- COALITION FORMING -->
+<div class="section">
+  <div class="section-title">The Coalition Is Already Forming</div>
+  <div class="coalition">
+    <div class="coalition-table">
+      <h4>Community Governance</h4>
+      <div class="count">8</div>
+      <div class="names">Oonchiumpa (Alice Springs), BackTrack (Armidale), YAC (Brisbane), JustReinvest (Mt Druitt), Palm Island CC, Mounty Yarns, JRI Perth, MMAD</div>
+    </div>
+    <div class="coalition-table">
+      <h4>Evidence</h4>
+      <div class="count">5</div>
+      <div class="names">UWA (McKenzie, Flatau, Wieberneit), Juanita Schaffa De Mauri (Criminology), ARC Centre for Prisoner Reintegration</div>
+    </div>
+    <div class="coalition-table">
+      <h4>Capital</h4>
+      <div class="count">5</div>
+      <div class="names">Dusseldorp Forum, Paul Ramsay Foundation, Minderoo Foundation, The Justice Project, individual donors</div>
+    </div>
+    <div class="coalition-table">
+      <h4>Policy</h4>
+      <div class="count">6</div>
+      <div class="names">Jonty Bush (QLD MP), Ruth Forrest (TAS MP), Rebecca Minty (ACT Inspector), Robert Tickner (JRI), Jim Betts, Ania Karzek</div>
+    </div>
+    <div class="coalition-table">
+      <h4>Amplification</h4>
+      <div class="count">15+</div>
+      <div class="names">Tom Donaghy (19 tags), Peter Rowe (First Nations News), MMAD, Nadja Kostich, Prof Selena Bartlett (podcast), Sophie Bretag (Mayor), 8K LinkedIn followers</div>
+    </div>
+  </div>
+</div>
+
+<!-- THE ASK -->
+<div class="section" style="padding-bottom: 0;">
+  <div class="section-title">The Opportunity</div>
+  <div style="max-width: 800px;">
+    <p style="font-size: 1.1rem; line-height: 1.8; color: #ccc; margin-bottom: 24px;">
+      CONTAINED is not a campaign looking for an audience. The audience is already here — asking where, when, and how they can help. The demand outstrips our capacity to deliver.
+    </p>
+    <p style="font-size: 1.1rem; line-height: 1.8; color: #ccc; margin-bottom: 24px;">
+      Five cities are confirmed. Eight more are requesting. Two state MPs have publicly asked for tour dates. A former Chief Medical Officer called the current system "delusional." A QLD MP asked when it's coming. An ACT Inspector of Custodial Services said government is ready for a new model.
+    </p>
+    <p style="font-size: 1.1rem; line-height: 1.8; color: #ccc; margin-bottom: 24px;">
+      Behind the Container sits <strong>ALMA</strong> — 981 verified community alternatives to youth detention, mapped nationally with cost data. And <strong>JusticeHub</strong> — tracking $71M+ in youth justice funding across every state, showing where money goes vs where evidence says it should.
+    </p>
+    <p style="font-size: 1.1rem; line-height: 1.8; color: #F5F0E8; font-weight: 500;">
+      Each tour stop costs $30–50K. Each one generates measurable community engagement, coalition formation, and policy pressure. The infrastructure exists. The demand is proven. The coalition is forming. We need partners who want to accelerate it.
+    </p>
+  </div>
+</div>
+
+<div class="cta">
+  <h2>Join the Coalition</h2>
+  <p>CONTAINED starts in Sydney end of April 2026. Then Adelaide. Then Perth. Then wherever communities are ready to stop managing this system and start replacing it.</p>
+  <a href="https://www.justicehub.com.au/contained">SEE THE TOUR →</a>
+</div>
+
+<div class="footer">
+  <p>CONTAINED — A Curious Tractor × JusticeHub · Data scraped from 3 LinkedIn posts, March 2026</p>
+  <p style="margin-top: 8px;">Contact: benjamin@act.place · +61 422 883 943</p>
+</div>
+
+</body>
+</html>

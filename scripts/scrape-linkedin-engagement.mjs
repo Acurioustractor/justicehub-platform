@@ -165,28 +165,34 @@ async function scrapePostCDP(postUrl) {
       return { commenters: [], reactionCount: 0, postUrl };
     }
 
-    // Wait for comments section
+    // Wait for comments section — supports both old and new LinkedIn DOM
     console.log('  Waiting for comments...');
-    await page.waitForSelector('.comments-comments-list, .comments-comment-item, [class*="comments-comment"]', { timeout: 15000 }).catch(() => {});
+    await page.waitForSelector('.comment, .comments-comments-list, .comments-comment-item', { timeout: 15000 }).catch(() => {});
     await sleep(2000);
 
     // Load ALL comments by clicking "Load more" repeatedly
     console.log('  Loading all comments...');
     let loadAttempts = 0;
     while (loadAttempts < 20) {
-      const loadMoreBtn = await page.$('.comments-comment-list__load-more-container button')
-        || await page.$('button.comments-comments-list__load-more-comments-button')
-        || await page.$('button[aria-label*="Load more comments"]')
-        || await page.$('button[aria-label*="more comments"]');
+      const loadMoreBtn = await page.$('button[aria-label*="Load more comments"]')
+        || await page.$('button[aria-label*="more comments"]')
+        || await page.$('button[aria-label*="Load more"]')
+        || await page.$('.comments-comment-list__load-more-container button')
+        || await page.$('button.comments-comments-list__load-more-comments-button');
 
       if (!loadMoreBtn) break;
 
-      await loadMoreBtn.click();
+      try {
+        await loadMoreBtn.click();
+      } catch {
+        // Button may detach from DOM after click — that's fine
+        break;
+      }
       await sleep(1500);
       loadAttempts++;
 
       const count = await page.$$eval(
-        'article.comments-comment-item, div.comments-comment-entity',
+        '.comment, article.comments-comment-item, div.comments-comment-entity',
         els => els.length
       );
       process.stdout.write(`\r  Loaded ${count} comments...`);
@@ -197,53 +203,85 @@ async function scrapePostCDP(postUrl) {
     let replyAttempts = 0;
     while (replyAttempts < 10) {
       const prevBtn = await page.$('button[aria-label*="previous replies"]')
-        || await page.$('button.show-prev-replies');
+        || await page.$('button.show-prev-replies')
+        || await page.$('button.comment__reply');
       if (!prevBtn) break;
       await prevBtn.click();
       await sleep(1000);
       replyAttempts++;
     }
 
-    // Extract all commenters
+    // Extract all commenters — supports both old and new LinkedIn DOM
     console.log('  Extracting commenters...');
     const commenters = await page.evaluate(() => {
       const results = [];
       const seen = new Set();
 
-      // LinkedIn logged-in view uses .comments-comment-entity
-      const commentEls = document.querySelectorAll('.comments-comment-entity');
+      // Try NEW LinkedIn DOM first (.comment), then OLD (.comments-comment-entity)
+      let commentEls = document.querySelectorAll('.comment.comment-with-action');
+      let isNewDOM = commentEls.length > 0;
+
+      if (!isNewDOM) {
+        commentEls = document.querySelectorAll('.comment');
+        isNewDOM = commentEls.length > 0;
+      }
+
+      if (!isNewDOM) {
+        // Fall back to old DOM
+        commentEls = document.querySelectorAll('.comments-comment-entity');
+      }
 
       for (const el of commentEls) {
-        // Skip reply comments (they're nested) — include them as separate entries
-        const isReply = el.classList.contains('comments-comment-entity--reply');
+        let name, headline, profileUrl, comment, isReply;
 
-        // Name — in .comments-comment-meta__description-title
-        const nameEl = el.querySelector('.comments-comment-meta__description-title');
-        const name = (nameEl?.textContent || '').trim().replace(/\n/g, ' ').replace(/\s+/g, ' ');
+        if (isNewDOM) {
+          // NEW LinkedIn DOM (2026+)
+          const nameEl = el.querySelector('.comment__author');
+          name = (nameEl?.textContent || '').trim().replace(/\n/g, ' ').replace(/\s+/g, ' ');
+
+          const headlineEl = el.querySelector('.comment__author-headline');
+          headline = (headlineEl?.textContent || '').trim().replace(/\n/g, ' ').replace(/\s+/g, ' ');
+
+          const profileLink = el.querySelector('a[href*="/in/"]');
+          profileUrl = (profileLink?.href || '').split('?')[0];
+
+          const textEl = el.querySelector('.comment__text');
+          comment = (textEl?.textContent || '').trim().substring(0, 500);
+
+          isReply = el.classList.contains('comment__reply') || el.closest('.comment__reply') !== null;
+        } else {
+          // OLD LinkedIn DOM
+          isReply = el.classList.contains('comments-comment-entity--reply');
+
+          const nameEl = el.querySelector('.comments-comment-meta__description-title');
+          name = (nameEl?.textContent || '').trim().replace(/\n/g, ' ').replace(/\s+/g, ' ');
+
+          const headlineEl = el.querySelector('.comments-comment-meta__description-subtitle');
+          headline = (headlineEl?.textContent || '').trim().replace(/\n/g, ' ').replace(/\s+/g, ' ');
+
+          const profileLink = el.querySelector('a.comments-comment-meta__image-link, a[href*="/in/"]');
+          profileUrl = (profileLink?.href || '').split('?')[0];
+
+          const textEl = el.querySelector('.comments-comment-item__main-content');
+          comment = (textEl?.textContent || '').trim().substring(0, 500);
+        }
+
         if (!name || seen.has(name)) continue;
         seen.add(name);
-
-        // Headline — in .comments-comment-meta__description-subtitle
-        const headlineEl = el.querySelector('.comments-comment-meta__description-subtitle');
-        const headline = (headlineEl?.textContent || '').trim().replace(/\n/g, ' ').replace(/\s+/g, ' ');
-
-        // Profile URL
-        const profileLink = el.querySelector('a.comments-comment-meta__image-link, a[href*="/in/"]');
-        const profileUrl = (profileLink?.href || '').split('?')[0];
-
-        // Comment text
-        const textEl = el.querySelector('.comments-comment-item__main-content');
-        const comment = (textEl?.textContent || '').trim().substring(0, 500);
-
         results.push({ name, headline, profileUrl, comment, isReply });
       }
       return results;
     });
 
-    // Reaction count
+    // Reaction count — supports both old and new DOM
     const reactionCount = await page.evaluate(() => {
-      const el = document.querySelector('.social-details-social-counts__reactions-count');
-      return el ? parseInt(el.textContent.replace(/[^0-9]/g, '') || '0') : 0;
+      // New DOM
+      const newEl = document.querySelector('[class*="reactions-count"]');
+      if (newEl) return parseInt(newEl.textContent.replace(/[^0-9]/g, '') || '0');
+      // Old DOM
+      const oldEl = document.querySelector('.social-details-social-counts__reactions-count');
+      if (oldEl) return parseInt(oldEl.textContent.replace(/[^0-9]/g, '') || '0');
+      return 0;
     });
 
     console.log(`  Found ${commenters.length} unique commenters, ${reactionCount} reactions`);

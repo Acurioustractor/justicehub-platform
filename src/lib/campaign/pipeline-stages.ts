@@ -23,6 +23,7 @@ export const STATUS_TO_STAGE: Record<string, PipelineStage> = {
   not_started: 'cold',
   identified: 'cold',
   pending: 'cold',
+  sent: 'warm',
   nominated: 'warm',
   contacted: 'warm',
   responded: 'proposal',
