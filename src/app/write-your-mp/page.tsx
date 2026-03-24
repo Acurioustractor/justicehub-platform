@@ -3,6 +3,7 @@ import { Navigation, Footer } from '@/components/ui/navigation';
 import { Metadata } from 'next';
 import { LetterGenerator } from './LetterGenerator';
 import { fmt } from '@/lib/format';
+import { getDetentionCosts } from '@/lib/detention-costs';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,7 +50,14 @@ export default async function WriteYourMPPage() {
 
   const costs = (costRes.data || []).map((r: any) => Number(r.cost_per_young_person)).filter((n: number) => n > 0);
   const avgCost = costs.length ? Math.round(costs.reduce((a: number, b: number) => a + b, 0) / costs.length) : 8500;
-  const ratio = Math.round(547500 / avgCost);
+  const detentionCostsData = await getDetentionCosts();
+  const ratio = Math.round(detentionCostsData.national.annualCost / avgCost);
+
+  // Build per-state detention daily costs from live ROGS data
+  const stateDetentionCosts: Record<string, number> = {};
+  for (const [code, data] of Object.entries(detentionCostsData.byState)) {
+    stateDetentionCosts[code] = data.dailyCost;
+  }
 
   const stateDataMap: Record<string, any> = {};
   for (const sd of stateData) {
@@ -81,6 +89,7 @@ export default async function WriteYourMPPage() {
             nationalModels={totalModelsRes.count || 0}
             avgCost={avgCost}
             ratio={ratio}
+            stateDetentionCosts={stateDetentionCosts}
           />
         </div>
       </main>

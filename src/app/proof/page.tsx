@@ -17,6 +17,7 @@ import {
 import { Metadata } from 'next';
 import { fmt } from '@/lib/format';
 import { STATE_NAMES } from '@/lib/constants';
+import { getDetentionCosts } from '@/lib/detention-costs';
 
 export const dynamic = 'force-dynamic';
 
@@ -72,7 +73,8 @@ export default async function WallOfProofPage() {
   const avgCost = withCost.length
     ? withCost.reduce((s: number, m: any) => s + Number(m.cost_per_young_person), 0) / withCost.length
     : 0;
-  const detentionCost = 1500 * 365;
+  const detentionCostsData = await getDetentionCosts();
+  const detentionCost = detentionCostsData.national.annualCost;
 
   // Evidence breakdown
   const evidenceCounts: Record<string, number> = {};

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Metadata } from 'next';
 import { fmt } from '@/lib/format';
+import { getDetentionCosts } from '@/lib/detention-costs';
 
 export const dynamic = 'force-dynamic';
 
@@ -37,7 +38,8 @@ export default async function WhatNowPage() {
   const modelCount = modelsRes.count || 0;
   const costs = (costRes.data || []).map((r: any) => Number(r.cost_per_young_person)).filter((n: number) => n > 0);
   const avgCost = costs.length ? Math.round(costs.reduce((a: number, b: number) => a + b, 0) / costs.length) : 8500;
-  const ratio = Math.round(547500 / avgCost);
+  const detentionCostsData = await getDetentionCosts();
+  const ratio = Math.round(detentionCostsData.national.annualCost / avgCost);
   const basecamps = basecampsRes.data || [];
 
   return (

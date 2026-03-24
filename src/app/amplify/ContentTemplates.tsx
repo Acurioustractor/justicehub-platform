@@ -33,8 +33,8 @@ interface Template {
 
 function generateTemplates(s: Stats): Template[] {
   const avgFmt = s.avgCost >= 1000 ? `$${(s.avgCost / 1000).toFixed(0)}K` : `$${s.avgCost.toLocaleString()}`;
-  const detFmt = '$547K';
-  const ntDetFmt = '$1.5M';
+  const detFmt = s.detentionCost >= 1_000_000 ? `$${(s.detentionCost / 1_000_000).toFixed(1)}M` : `$${(s.detentionCost / 1000).toFixed(0)}K`;
+  const ntDetFmt = s.ntDetentionCost >= 1_000_000 ? `$${(s.ntDetentionCost / 1_000_000).toFixed(1)}M` : `$${(s.ntDetentionCost / 1000).toFixed(0)}K`;
 
   return [
     // LinkedIn — Cost argument
@@ -51,7 +51,7 @@ function generateTemplates(s: Stats): Template[] {
       category: 'The Cost Argument',
       platform: 'linkedin',
       title: 'NT spotlight — highest cost in Australia',
-      content: `The Northern Territory spends $4,217 per day to detain one young person.\n\nThat's ${ntDetFmt} per year. Per child.\n\nCommunity models like Oonchiumpa in Mparntwe (Alice Springs) achieve better outcomes for ${avgFmt}.\n\nThat's ${s.ntRatio}x cheaper.\n\nThe NT also has the highest rate of Indigenous youth incarceration in the country. The money flows to a system that doesn't work while community organisations fight for scraps.\n\nThe data is all here: justicehub.org.au/calculator`,
+      content: `The Northern Territory spends $${Math.round(s.ntDetentionCost / 365).toLocaleString()} per day to detain one young person.\n\nThat's ${ntDetFmt} per year. Per child.\n\nCommunity models like Oonchiumpa in Mparntwe (Alice Springs) achieve better outcomes for ${avgFmt}.\n\nThat's ${s.ntRatio}x cheaper.\n\nThe NT also has the highest rate of Indigenous youth incarceration in the country. The money flows to a system that doesn't work while community organisations fight for scraps.\n\nThe data is all here: justicehub.org.au/calculator`,
       hashtags: '#NorthernTerritory #YouthJustice #IndigenousAustralia',
     },
     // LinkedIn — Follow the Money
@@ -78,7 +78,7 @@ function generateTemplates(s: Stats): Template[] {
       category: 'The Cost Argument',
       platform: 'twitter',
       title: 'Cost comparison thread',
-      content: `🧵 Thread: The youth justice cost argument in 5 tweets\n\n1/ Australia spends ${detFmt}/year per young person in detention. Community alternatives: ${avgFmt}. That's ${s.ratio}x cheaper.\n\n2/ The NT is worst: $4,217/day per child. ${ntDetFmt}/year. ${s.ntRatio}x what community models cost. Highest Indigenous incarceration rate in the country.\n\n3/ We've documented ${s.modelCount.toLocaleString()} alternative models. ${s.evidenceBacked} have evidence. ${s.costModels} have cost data. This isn't theory — these are real programs operating right now.\n\n4/ ${s.totalFunding} in funding tracked. The pattern: large providers get the bulk. Community orgs get scraps. The ones achieving better outcomes at lower cost are the ones being underfunded.\n\n5/ All the data: justicehub.org.au/proof\nThe calculator: justicehub.org.au/calculator\nFollow the money: justicehub.org.au/follow-the-money`,
+      content: `🧵 Thread: The youth justice cost argument in 5 tweets\n\n1/ Australia spends ${detFmt}/year per young person in detention. Community alternatives: ${avgFmt}. That's ${s.ratio}x cheaper.\n\n2/ The NT is worst: $${Math.round(s.ntDetentionCost / 365).toLocaleString()}/day per child. ${ntDetFmt}/year. ${s.ntRatio}x what community models cost. Highest Indigenous incarceration rate in the country.\n\n3/ We've documented ${s.modelCount.toLocaleString()} alternative models. ${s.evidenceBacked} have evidence. ${s.costModels} have cost data. This isn't theory — these are real programs operating right now.\n\n4/ ${s.totalFunding} in funding tracked. The pattern: large providers get the bulk. Community orgs get scraps. The ones achieving better outcomes at lower cost are the ones being underfunded.\n\n5/ All the data: justicehub.org.au/proof\nThe calculator: justicehub.org.au/calculator\nFollow the money: justicehub.org.au/follow-the-money`,
       hashtags: '#YouthJustice #auspol',
     },
     // Newsletter snippet
@@ -238,7 +238,7 @@ export function ContentTemplates({ stats }: { stats: Stats }) {
             <h3 className="text-sm font-bold text-white mb-2">LinkedIn (highest reach)</h3>
             <ul className="space-y-1.5">
               {[
-                'Lead with the number — "$547K vs $8K" stops the scroll',
+                `Lead with the number — "${stats.detentionCost >= 1_000_000 ? `$${(stats.detentionCost / 1_000_000).toFixed(1)}M` : `$${(stats.detentionCost / 1000).toFixed(0)}K`} vs ${stats.avgCost >= 1000 ? `$${(stats.avgCost / 1000).toFixed(0)}K` : `$${stats.avgCost.toLocaleString()}`}" stops the scroll`,
                 'Attach a data card from /share as the image',
                 'Tag relevant people (ministers, funder contacts, sector leads)',
                 'Post between 8-10am AEST for maximum reach',

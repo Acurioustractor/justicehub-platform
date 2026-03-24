@@ -2,6 +2,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { Metadata } from 'next';
 import { CalculatorClient } from './CalculatorClient';
+import { getDetentionCosts } from '@/lib/detention-costs';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,12 +29,8 @@ export default async function CalculatorPage() {
   const medianCost = costs.length ? costs.sort((a: number, b: number) => a - b)[Math.floor(costs.length / 2)] : 5000;
   const modelCount = costs.length;
 
-  // Get state detention costs from ROGS
-  const { data: rogsData } = await supabase
-    .from('rogs_justice_spending')
-    .select('state, rogs_section, data')
-    .eq('rogs_section', 'youth_justice')
-    .limit(50);
+  // Get live detention costs from ROGS
+  const detentionCosts = await getDetentionCosts();
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#0A0A0A]">
@@ -43,6 +40,7 @@ export default async function CalculatorPage() {
           avgCost={Math.round(avgCost)}
           medianCost={Math.round(medianCost)}
           modelCount={modelCount}
+          detentionCosts={detentionCosts}
         />
       </main>
       <Footer />

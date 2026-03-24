@@ -3,6 +3,7 @@ import { Navigation, Footer } from '@/components/ui/navigation';
 import { Metadata } from 'next';
 import { ContentTemplates } from './ContentTemplates';
 import { fmt } from '@/lib/format';
+import { getDetentionCosts } from '@/lib/detention-costs';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,8 +31,9 @@ export default async function AmplifyPage() {
   const funding = fundingRes.data || [];
   const totalFunding = funding.reduce((sum: number, f: any) => sum + (Number(f.amount_dollars) || 0), 0);
   const avgCost = costData.length ? Math.round(costData.reduce((a: number, b: number) => a + b, 0) / costData.length) : 8500;
-  const detentionCost = 547500;
-  const ntDetentionCost = 1539205;
+  const detentionCostsData = await getDetentionCosts();
+  const detentionCost = detentionCostsData.national.annualCost;
+  const ntDetentionCost = detentionCostsData.byState.NT?.annualCost || detentionCost;
   const ratio = Math.round(detentionCost / avgCost);
   const ntRatio = Math.round(ntDetentionCost / avgCost);
   const evidenceBacked = interventions.filter((i: any) => i.evidence_level && !i.evidence_level.startsWith('Untested')).length;

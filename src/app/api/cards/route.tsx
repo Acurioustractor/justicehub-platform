@@ -2,15 +2,16 @@ import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 import { fmt } from '@/lib/format';
 import { STATE_NAMES } from '@/lib/constants';
+import { getDetentionCosts } from '@/lib/detention-costs';
 
 export const dynamic = 'force-dynamic';
 
-function buildCard(type: string, params: URLSearchParams) {
+function buildCard(type: string, params: URLSearchParams, nationalAnnualCost: number, stateAnnualCosts: Record<string, number>) {
   const state = params.get('state')?.toUpperCase();
   const modelCount = parseInt(params.get('models') || '981');
   const evidenceBacked = parseInt(params.get('evidence') || '586');
   const avgCost = parseInt(params.get('avg_cost') || '8500');
-  const detentionCost = state === 'NT' ? 1539205 : 547500;
+  const detentionCost = state && stateAnnualCosts[state] ? stateAnnualCosts[state] : nationalAnnualCost;
   const ratio = Math.round(detentionCost / avgCost);
   const totalFunding = parseInt(params.get('funding') || '2100000000');
   const fundingRecords = parseInt(params.get('records') || '70963');
@@ -59,7 +60,12 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') || 'cost-comparison';
-    const card = buildCard(type, searchParams);
+    const detentionCostsData = await getDetentionCosts();
+    const stateAnnualCosts: Record<string, number> = {};
+    for (const [code, data] of Object.entries(detentionCostsData.byState)) {
+      stateAnnualCosts[code] = data.annualCost;
+    }
+    const card = buildCard(type, searchParams, detentionCostsData.national.annualCost, stateAnnualCosts);
 
     const response = new ImageResponse(
       (

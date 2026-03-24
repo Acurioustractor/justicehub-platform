@@ -16,6 +16,7 @@ import {
 import { Metadata } from 'next';
 
 import { fmt } from '@/lib/format';
+import { getDetentionCosts } from '@/lib/detention-costs';
 
 export const dynamic = 'force-dynamic';
 
@@ -79,7 +80,8 @@ export default async function GatheringPage() {
   const evidenceBacked = interventions.filter(
     (i: any) => i.evidence_level && !i.evidence_level.startsWith('Untested')
   ).length;
-  const detentionCostPerYear = 1500 * 365;
+  const detentionCostsData = await getDetentionCosts();
+  const detentionCostPerYear = detentionCostsData.national.annualCost;
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#0A0A0A]">

@@ -16,6 +16,7 @@ import {
 import EmpathyLedgerStories from '@/components/EmpathyLedgerStories';
 import { ActivityFeed } from '@/components/activity-feed';
 import { fmt } from '@/lib/format';
+import { getDetentionCosts } from '@/lib/detention-costs';
 
 export const dynamic = 'force-dynamic';
 
@@ -77,7 +78,10 @@ export default async function HomePage() {
 
   const totalFunding = funding.reduce((sum: number, f: any) => sum + (Number(f.amount_dollars) || 0), 0);
   const avgCost = costData.length ? Math.round(costData.reduce((a: number, b: number) => a + b, 0) / costData.length) : 8500;
-  const detentionCost = 1500 * 365;
+  const detentionCostsData = await getDetentionCosts();
+  const detentionCost = detentionCostsData.national.annualCost;
+  const nationalDailyCost = detentionCostsData.national.dailyCost;
+  const ntDailyCost = detentionCostsData.byState.NT?.dailyCost || nationalDailyCost;
   const ratio = Math.round(detentionCost / avgCost);
   const evidenceBacked = interventions.filter((i: any) => i.evidence_level && !i.evidence_level.startsWith('Untested')).length;
 
@@ -151,7 +155,7 @@ export default async function HomePage() {
                   {fmt(detentionCost)}
                 </p>
                 <p className="text-sm text-white/50 mt-1">per young person per year</p>
-                <p className="text-xs text-white/30 mt-2">$1,500/day national average. NT: $4,217/day.</p>
+                <p className="text-xs text-white/30 mt-2">${nationalDailyCost.toLocaleString()}/day national average. NT: ${ntDailyCost.toLocaleString()}/day.</p>
               </div>
               <div className="bg-[#059669]/10 rounded-xl p-6 border border-[#059669]/20">
                 <p

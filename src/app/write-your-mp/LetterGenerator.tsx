@@ -5,11 +5,6 @@ import { Copy, Check, Mail, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { STATE_NAMES } from '@/lib/constants';
 
-const DETENTION_COSTS: Record<string, number> = {
-  NT: 4217, QLD: 1650, NSW: 1568, VIC: 2100,
-  WA: 1400, SA: 1300, TAS: 1800, ACT: 2400,
-};
-
 interface StateData {
   state: string;
   totalFunding: string;
@@ -24,6 +19,7 @@ interface LetterGeneratorProps {
   nationalModels: number;
   avgCost: number;
   ratio: number;
+  stateDetentionCosts: Record<string, number>;
 }
 
 function generateLetter(
@@ -32,10 +28,11 @@ function generateLetter(
   name: string,
   nationalModels: number,
   avgCost: number,
-  ratio: number
+  ratio: number,
+  stateDetentionCosts: Record<string, number>
 ): string {
   const stateName = STATE_NAMES[state];
-  const detDaily = DETENTION_COSTS[state] || 1500;
+  const detDaily = stateDetentionCosts[state] || 1500;
   const detAnnual = detDaily * 365;
   const detFmt = detAnnual >= 1_000_000 ? `$${(detAnnual / 1_000_000).toFixed(1)}M` : `$${(detAnnual / 1000).toFixed(0)}K`;
   const avgFmt = avgCost >= 1000 ? `$${(avgCost / 1000).toFixed(0)}K` : `$${avgCost.toLocaleString()}`;
@@ -78,7 +75,7 @@ ${name ? `Yours sincerely,\n${name}` : 'Yours sincerely,\n[Your name]'}
 ${stateName} constituent`;
 }
 
-export function LetterGenerator({ stateData, nationalModels, avgCost, ratio }: LetterGeneratorProps) {
+export function LetterGenerator({ stateData, nationalModels, avgCost, ratio, stateDetentionCosts }: LetterGeneratorProps) {
   const [state, setState] = useState('');
   const [name, setName] = useState('');
   const [copied, setCopied] = useState(false);
@@ -87,8 +84,8 @@ export function LetterGenerator({ stateData, nationalModels, avgCost, ratio }: L
 
   const letter = useMemo(() => {
     if (!state || !sd) return '';
-    return generateLetter(state, sd, name, nationalModels, avgCost, ratio);
-  }, [state, sd, name, nationalModels, avgCost, ratio]);
+    return generateLetter(state, sd, name, nationalModels, avgCost, ratio, stateDetentionCosts);
+  }, [state, sd, name, nationalModels, avgCost, ratio, stateDetentionCosts]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(letter);
@@ -143,7 +140,7 @@ export function LetterGenerator({ stateData, nationalModels, avgCost, ratio }: L
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <p className="text-xl font-bold text-[#DC2626]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                ${(DETENTION_COSTS[state] || 1500).toLocaleString()}/day
+                ${(stateDetentionCosts[state] || 1500).toLocaleString()}/day
               </p>
               <p className="text-xs text-white/40">detention cost</p>
             </div>

@@ -4,30 +4,44 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Share2, DollarSign, Users, TrendingDown, AlertTriangle } from 'lucide-react';
 import { fmt } from '@/lib/format';
+import type { DetentionCosts } from '@/lib/detention-costs';
+
+const STATE_LABELS: Record<string, string> = {
+  national: 'National Average',
+  nt: 'Northern Territory',
+  nsw: 'New South Wales',
+  qld: 'Queensland',
+  vic: 'Victoria',
+  wa: 'Western Australia',
+  sa: 'South Australia',
+  tas: 'Tasmania',
+  act: 'Australian Capital Territory',
+};
 
 interface CalculatorClientProps {
   avgCost: number;
   medianCost: number;
   modelCount: number;
+  detentionCosts: DetentionCosts;
 }
 
-const STATE_DETENTION_COSTS: Record<string, { daily: number; annual: number; label: string }> = {
-  national: { daily: 1500, annual: 547500, label: 'National Average' },
-  nt: { daily: 4217, annual: 1539205, label: 'Northern Territory' },
-  nsw: { daily: 1568, annual: 572320, label: 'New South Wales' },
-  qld: { daily: 1650, annual: 602250, label: 'Queensland' },
-  vic: { daily: 2100, annual: 766500, label: 'Victoria' },
-  wa: { daily: 1400, annual: 511000, label: 'Western Australia' },
-  sa: { daily: 1300, annual: 474500, label: 'South Australia' },
-  tas: { daily: 1800, annual: 657000, label: 'Tasmania' },
-  act: { daily: 2400, annual: 876000, label: 'Australian Capital Territory' },
-};
+function buildStateDetentionCosts(dc: DetentionCosts): Record<string, { daily: number; annual: number; label: string }> {
+  const result: Record<string, { daily: number; annual: number; label: string }> = {
+    national: { daily: dc.national.dailyCost, annual: dc.national.annualCost, label: 'National Average' },
+  };
+  for (const [code, data] of Object.entries(dc.byState)) {
+    const key = code.toLowerCase();
+    result[key] = { daily: data.dailyCost, annual: data.annualCost, label: STATE_LABELS[key] || code };
+  }
+  return result;
+}
 
 function fmtFull(n: number): string {
   return `$${n.toLocaleString()}`;
 }
 
-export function CalculatorClient({ avgCost, medianCost, modelCount }: CalculatorClientProps) {
+export function CalculatorClient({ avgCost, medianCost, modelCount, detentionCosts }: CalculatorClientProps) {
+  const STATE_DETENTION_COSTS = useMemo(() => buildStateDetentionCosts(detentionCosts), [detentionCosts]);
   const [youngPeople, setYoungPeople] = useState(100);
   const [state, setState] = useState('national');
   const [years, setYears] = useState(1);
