@@ -40,9 +40,10 @@ export default function MomentumPage() {
       <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
       <style dangerouslySetInnerHTML={{ __html: `
         .mm-body { background: #0A0A0A; color: #F5F0E8; font-family: 'Space Grotesk', sans-serif; min-height: 100vh; }
+        .mm-body h1, .mm-body h2, .mm-body h3, .mm-body h4, .mm-body h5, .mm-body h6 { color: #F5F0E8 !important; }
         .mm-mono { font-family: 'IBM Plex Mono', monospace; }
         .mm-hero { padding: 80px 40px 60px; max-width: 1200px; margin: 0 auto; }
-        .mm-hero h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; }
+        .mm-hero h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; color: #F5F0E8 !important; }
         .mm-hero .mm-subtitle { font-size: 1.1rem; color: #999; max-width: 700px; line-height: 1.6; }
         .mm-hero .mm-date { font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: #666; margin-bottom: 24px; }
         .mm-section { max-width: 1200px; margin: 0 auto; padding: 0 40px 60px; }
