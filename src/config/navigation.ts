@@ -334,6 +334,7 @@ export const footerSections = [
         title: 'Action',
         links: [
             { label: 'Blog', href: '/blog', description: 'News and updates' },
+            { label: "What's On", href: '/whats-on', description: 'Events, tours, grants' },
             { label: 'Events', href: '/events', description: 'Upcoming gatherings' },
             { label: 'Stewards', href: '/stewards', description: 'Protect what works' },
             { label: 'Gallery', href: '/gallery', description: 'Programs in action' },
