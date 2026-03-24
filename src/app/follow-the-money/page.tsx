@@ -300,10 +300,18 @@ export default async function FollowTheMoneyPage() {
             >
               Top 10 Recipients — National
             </h2>
-            <p className="text-sm text-[#0A0A0A]/60 mb-6">
-              These organisations receive more funding than thousands of
-              community organisations combined.
-            </p>
+            <div className="flex items-baseline justify-between mb-6">
+              <p className="text-sm text-[#0A0A0A]/60">
+                These organisations receive more funding than thousands of
+                community organisations combined.
+              </p>
+              <Link
+                href="/follow-the-money/big-vs-small"
+                className="text-sm font-semibold text-[#DC2626] hover:underline flex items-center gap-1 shrink-0 ml-4"
+              >
+                Big vs Small <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
 
             <div className="bg-white rounded-xl border border-[#0A0A0A]/10 overflow-hidden">
               {top10National.map((org, i) => {
