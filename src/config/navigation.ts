@@ -72,6 +72,11 @@ export const navigationItems: NavigationItem[] = [
         type: 'dropdown',
         items: [
             {
+                label: 'This Week',
+                href: '/this-week',
+                description: 'What changed on JusticeHub this week'
+            },
+            {
                 label: 'The Pulse',
                 href: '/pulse',
                 description: 'Live youth justice intelligence'
