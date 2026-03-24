@@ -135,6 +135,68 @@ export default function ForGovernmentPage() {
           </div>
         </section>
 
+        {/* ALMA Intelligence Tools */}
+        <section className="py-16 bg-[#0A0A0A] text-white">
+          <div className="container-justice">
+            <p className="text-sm uppercase tracking-[0.3em] text-[#DC2626] mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+              Evidence for Decision-Making
+            </p>
+            <h2 className="text-3xl font-black text-white mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              The data your department needs
+            </h2>
+            <p className="text-white/60 mb-8 max-w-2xl">
+              Live intelligence from the platform. Open data, no gatekeeping. Use it for
+              policy development, budget submissions, and ministerial briefings.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              <Link href="/proof" className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors group">
+                <Shield className="w-6 h-6 text-[#059669] mb-3" />
+                <h3 className="font-bold text-white mb-1">Wall of Proof</h3>
+                <p className="text-sm text-white/50">981 verified models with evidence levels and cost data. The evidence base for alternative approaches.</p>
+                <span className="text-sm font-semibold text-[#059669] mt-3 flex items-center gap-1 group-hover:underline">
+                  View evidence <ArrowRight className="w-3 h-3" />
+                </span>
+              </Link>
+              <Link href="/calculator" className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors group">
+                <DollarSign className="w-6 h-6 text-[#DC2626] mb-3" />
+                <h3 className="font-bold text-white mb-1">Cost Calculator</h3>
+                <p className="text-sm text-white/50">Model the cost of detention vs community alternatives by state. Useful for Treasury submissions.</p>
+                <span className="text-sm font-semibold text-[#DC2626] mt-3 flex items-center gap-1 group-hover:underline">
+                  Calculate <ArrowRight className="w-3 h-3" />
+                </span>
+              </Link>
+              <Link href="/leaderboard" className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors group">
+                <BarChart3 className="w-6 h-6 text-white mb-3" />
+                <h3 className="font-bold text-white mb-1">State Leaderboard</h3>
+                <p className="text-sm text-white/50">How does your state compare? Live rankings on community models, evidence, and funding transparency.</p>
+                <span className="text-sm font-semibold text-white/60 mt-3 flex items-center gap-1 group-hover:underline">
+                  See rankings <ArrowRight className="w-3 h-3" />
+                </span>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Link href="/follow-the-money" className="bg-white/5 rounded-lg px-4 py-3 border border-white/10 hover:bg-white/10 transition-colors text-sm">
+                <span className="font-semibold text-white">Follow the Money</span>
+                <span className="text-white/40 block text-xs mt-0.5">Funding trail</span>
+              </Link>
+              <Link href="/follow-the-money/big-vs-small" className="bg-white/5 rounded-lg px-4 py-3 border border-white/10 hover:bg-white/10 transition-colors text-sm">
+                <span className="font-semibold text-white">Big vs Small</span>
+                <span className="text-white/40 block text-xs mt-0.5">Provider comparison</span>
+              </Link>
+              <Link href="/network/alma/services" className="bg-white/5 rounded-lg px-4 py-3 border border-white/10 hover:bg-white/10 transition-colors text-sm">
+                <span className="font-semibold text-white">Consulting</span>
+                <span className="text-white/40 block text-xs mt-0.5">Custom analysis</span>
+              </Link>
+              <Link href="/write-your-mp" className="bg-white/5 rounded-lg px-4 py-3 border border-white/10 hover:bg-white/10 transition-colors text-sm">
+                <span className="font-semibold text-white">Write to MP</span>
+                <span className="text-white/40 block text-xs mt-0.5">Constituent tool</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* The Problem */}
         <section className="py-16 bg-red-50 border-y-2 border-black">
           <div className="container-justice">

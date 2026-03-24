@@ -238,6 +238,11 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Ready-to-post LinkedIn, Twitter, and funder content'
             },
             {
+                label: 'Write to Your MP',
+                href: '/write-your-mp',
+                description: 'Data-backed letter to your local member'
+            },
+            {
                 label: 'International Exchange',
                 href: '/international-exchange',
                 description: 'June 2026 learning mission'
