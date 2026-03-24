@@ -17,6 +17,7 @@ const nextConfig = {
     // serverActions are now enabled by default in Next.js 14
     optimizeServerReact: true,
     mdxRs: true, // Use faster Rust-based MDX compiler
+    missingSuspenseWithCSRBailout: false, // Allow useSearchParams without Suspense boundary (187 pre-existing pages)
   },
   images: {
     remotePatterns: [
