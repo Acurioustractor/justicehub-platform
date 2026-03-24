@@ -415,7 +415,7 @@ export default function HomePage() {
               <Link href="/justice-funding?tab=organizations" className="cta-secondary inline-flex items-center gap-2 justify-center">
                 VIEW ALL ORGANISATIONS <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/transparency" className="cta-secondary inline-flex items-center gap-2 justify-center">
+              <Link href="/follow-the-money" className="cta-secondary inline-flex items-center gap-2 justify-center">
                 EXPLORE THE MONEY TRAIL <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -425,7 +425,7 @@ export default function HomePage() {
             <p className="text-2xl font-bold mb-4">
               Every dollar spent on detention is a dollar stolen from solutions that work.
             </p>
-            <Link href="/transparency" className="cta-primary inline-block">
+            <Link href="/follow-the-money" className="cta-primary inline-block">
               FOLLOW THE MONEY
             </Link>
           </div>
@@ -501,6 +501,37 @@ export default function HomePage() {
       {/* National Network Map */}
       <HomepageNetworkMap />
 
+      {/* ALMA Network */}
+      <section className="section-padding bg-[#0A0A0A] border-t-2 border-b-2 border-black">
+        <div className="container-justice">
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="text-sm uppercase tracking-[0.3em] text-[#059669] mb-4 font-mono">
+              ALMA Network
+            </p>
+            <h2 className="text-3xl md:text-4xl font-black text-white mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              The Alternative Exists
+            </h2>
+            <p className="text-lg text-white/70 max-w-2xl mx-auto mb-10">
+              Community organisations across Australia are proving that local
+              models work better, cost less, and keep young people safe.
+              The ALMA Network connects them, funds them, and makes their
+              work impossible to ignore.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link href="/network/alma" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#0A0A0A] font-bold uppercase tracking-wider hover:bg-white/90 transition-colors">
+                EXPLORE THE NETWORK <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link href="/follow-the-money" className="inline-flex items-center gap-2 px-6 py-3 border-2 border-white text-white font-bold uppercase tracking-wider hover:bg-white/10 transition-colors">
+                FOLLOW THE MONEY
+              </Link>
+              <Link href="/join" className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[#059669] text-[#059669] font-bold uppercase tracking-wider hover:bg-[#059669]/10 transition-colors">
+                JOIN THE NETWORK
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* What We Build */}
       <section className="section-padding bg-black">
         <div className="container-justice">
@@ -544,7 +575,7 @@ export default function HomePage() {
                 The evidence is unanimous. The community is ready. 
                 Your move.
               </p>
-              <Link href="/transparency" className="text-white underline font-bold hover:text-gray-300">
+              <Link href="/follow-the-money" className="text-white underline font-bold hover:text-gray-300">
                 See the evidence →
               </Link>
             </div>
