@@ -23,32 +23,34 @@ export const metadata: Metadata = {
 export default async function VoicesPage() {
   const supabase = createServiceClient() as any;
 
-  // Get stories
-  const { data: stories } = await supabase
-    .from('alma_stories')
-    .select('id, title, excerpt, story_type, created_at, organizations(name, slug, state)')
-    .order('created_at', { ascending: false })
-    .limit(20);
+  // Get stories from Empathy Ledger v2 API
+  let elStories: any[] = [];
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3004';
+    const res = await fetch(`${baseUrl}/api/empathy-ledger/stories`, { cache: 'no-store' });
+    if (res.ok) {
+      const json = await res.json();
+      elStories = json.stories || [];
+    }
+  } catch (e) {
+    // Silently fall back to empty
+  }
 
-  // Get storytellers from Empathy Ledger proxy (or fallback to stories count)
-  const { data: storiesCount } = await supabase
-    .from('alma_stories')
-    .select('id', { count: 'exact', head: true });
-
-  // Get media/photos count
-  const { data: mediaCount } = await supabase
+  // Get media article count from Supabase
+  const { count: mediaArticleCount } = await supabase
     .from('alma_media_articles')
     .select('id', { count: 'exact', head: true });
 
-  // Get evidence items with story-like content
-  const { data: findings } = await supabase
-    .from('alma_research_findings')
-    .select('id, content, finding_type, confidence, created_at')
-    .eq('finding_type', 'lived_experience')
-    .order('created_at', { ascending: false })
-    .limit(10);
-
-  const allStories = stories || [];
+  // Map EL stories to display format
+  const allStories = elStories.map((s: any) => ({
+    id: s.id,
+    title: s.title,
+    excerpt: s.summary || s.content?.substring(0, 200) || null,
+    story_type: s.story_type || 'case_study',
+    created_at: s.created_at || new Date().toISOString(),
+    image_url: s.story_image_url || null,
+    organizations: null,
+  }));
   const caseStudies = allStories.filter((s: any) => s.story_type === 'case_study');
   const communityVoices = allStories.filter((s: any) => s.story_type === 'community_voice');
 
@@ -81,7 +83,7 @@ export default async function VoicesPage() {
             <div className="flex flex-wrap gap-6">
               <div>
                 <p className="text-3xl font-bold text-white" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  {storiesCount?.count || allStories.length}
+                  {allStories.length}
                 </p>
                 <p className="text-xs text-white/40" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                   stories shared
@@ -89,7 +91,7 @@ export default async function VoicesPage() {
               </div>
               <div>
                 <p className="text-3xl font-bold text-white" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  {mediaCount?.count || 0}
+                  {mediaArticleCount || 0}
                 </p>
                 <p className="text-xs text-white/40" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                   media articles
@@ -247,38 +249,47 @@ export default async function VoicesPage() {
 function StoryCard({ story }: { story: any }) {
   const org = story.organizations;
   return (
-    <div className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5">
-      <div className="flex items-start gap-3">
-        <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#059669]/10 shrink-0">
-          {story.story_type === 'case_study' ? (
-            <BookOpen className="w-4 h-4 text-[#059669]" />
-          ) : (
-            <Mic className="w-4 h-4 text-[#059669]" />
-          )}
+    <div className="bg-white rounded-xl border border-[#0A0A0A]/10 overflow-hidden">
+      {story.image_url && (
+        <div className="aspect-[16/9] relative">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={story.image_url}
+            alt={story.title}
+            className="w-full h-full object-cover"
+          />
         </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm">{story.title}</h3>
-          {org && (
-            <p className="text-xs text-[#0A0A0A]/40 mt-0.5">
-              {org.name} · {org.state}
-            </p>
-          )}
-          {story.excerpt && (
-            <p className="text-xs text-[#0A0A0A]/60 mt-2 line-clamp-3">
-              {story.excerpt}
-            </p>
-          )}
-          <div className="flex items-center gap-2 mt-2">
-            <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-              story.story_type === 'case_study'
-                ? 'bg-[#059669]/10 text-[#059669]'
-                : 'bg-purple-500/10 text-purple-600'
-            }`}>
-              {story.story_type === 'case_study' ? 'Case Study' : 'Community Voice'}
-            </span>
-            <span className="text-[10px] text-[#0A0A0A]/30">
-              {new Date(story.created_at).toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })}
-            </span>
+      )}
+      <div className="p-5">
+        <div className="flex items-start gap-3">
+          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#059669]/10 shrink-0">
+            {story.story_type === 'case_study' ? (
+              <BookOpen className="w-4 h-4 text-[#059669]" />
+            ) : (
+              <Mic className="w-4 h-4 text-[#059669]" />
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-sm">{story.title}</h3>
+            {org && (
+              <p className="text-xs text-[#0A0A0A]/40 mt-0.5">
+                {org.name} · {org.state}
+              </p>
+            )}
+            {story.excerpt && (
+              <p className="text-xs text-[#0A0A0A]/60 mt-2 line-clamp-3">
+                {story.excerpt}
+              </p>
+            )}
+            <div className="flex items-center gap-2 mt-2">
+              <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                story.story_type === 'case_study'
+                  ? 'bg-[#059669]/10 text-[#059669]'
+                  : 'bg-purple-500/10 text-purple-600'
+              }`}>
+                {story.story_type === 'case_study' ? 'Case Study' : 'Community Voice'}
+              </span>
+            </div>
           </div>
         </div>
       </div>

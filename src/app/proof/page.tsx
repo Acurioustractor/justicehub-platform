@@ -65,7 +65,7 @@ export default async function WallOfProofPage() {
     .from('alma_interventions')
     .select(`
       id, name, type, description, evidence_level, cost_per_young_person,
-      target_population, operating_organization_id,
+      operating_organization_id,
       organizations!alma_interventions_operating_organization_id_fkey(name, slug, state, is_indigenous_org)
     `)
     .neq('verification_status', 'ai_generated')
