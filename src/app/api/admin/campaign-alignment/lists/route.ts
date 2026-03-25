@@ -48,7 +48,15 @@ export async function GET(request: NextRequest) {
     if (list) query = query.eq('campaign_list', list);
     if (category) query = query.eq('alignment_category', category);
     if (entityType) query = query.eq('entity_type', entityType);
-    if (outreachStatus) query = query.eq('outreach_status', outreachStatus);
+    if (outreachStatus === 'hot') {
+      query = query.in('outreach_status', ['responded', 'committed', 'active']);
+    } else if (outreachStatus === 'warm') {
+      query = query.in('outreach_status', ['contacted', 'sent', 'proposal_sent']);
+    } else if (outreachStatus === 'cold') {
+      query = query.in('outreach_status', ['pending', 'not_started']);
+    } else if (outreachStatus) {
+      query = query.eq('outreach_status', outreachStatus);
+    }
     if (sectorTag) query = query.eq('sector_tag', sectorTag);
     if (search) query = query.or(`name.ilike.%${search}%,organization.ilike.%${search}%,email.ilike.%${search}%`);
 

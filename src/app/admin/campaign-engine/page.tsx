@@ -475,6 +475,14 @@ export default function CampaignEnginePage() {
             <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2 border border-gray-300 bg-white text-sm font-bold hover:bg-gray-50">
               <Download className="w-4 h-4" /> Export CSV
             </button>
+            <button onClick={() => {
+              const emails = entities.filter(e => e.email).map(e => e.email);
+              if (emails.length === 0) { alert('No emails in current view'); return; }
+              navigator.clipboard.writeText(emails.join(', '));
+              alert(`Copied ${emails.length} emails to clipboard`);
+            }} className="flex items-center gap-2 px-4 py-2 border border-gray-300 bg-white text-sm font-bold hover:bg-gray-50">
+              <Mail className="w-4 h-4" /> Copy Emails ({entities.filter(e => e.email).length})
+            </button>
             <button
               onClick={syncGHL}
               disabled={ghlSyncing}
@@ -690,20 +698,19 @@ export default function CampaignEnginePage() {
                 <option value="melbourne">Melbourne</option>
                 <option value="tasmania">Tasmania</option>
               </select>
-              <select
-                value={outreachFilter}
-                onChange={e => setOutreachFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
-              >
-                <option value="">All Stages</option>
-                <option value="pending">Cold / Pending</option>
-                <option value="contacted">Contacted</option>
-                <option value="responded">Responded</option>
-                <option value="sent">Sent</option>
-                <option value="proposal_sent">Proposal Sent</option>
-                <option value="committed">Committed</option>
-                <option value="active">Active</option>
-              </select>
+              <div className="flex gap-0 border border-gray-300">
+                {[
+                  { key: '', label: 'All', color: '' },
+                  { key: 'hot', label: '🔥 Hot', color: 'text-red-600' },
+                  { key: 'warm', label: '🌡️ Warm', color: 'text-amber-600' },
+                  { key: 'cold', label: '❄️ Cold', color: 'text-blue-600' },
+                ].map(tier => (
+                  <button key={tier.key} onClick={() => setOutreachFilter(tier.key)}
+                    className={`px-3 py-2 text-xs font-medium ${outreachFilter === tier.key ? 'bg-black text-white' : `bg-white ${tier.color || 'text-gray-600'} hover:bg-gray-50`}`}>
+                    {tier.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Results count + view toggle */}
