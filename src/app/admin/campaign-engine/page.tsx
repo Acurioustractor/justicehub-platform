@@ -123,7 +123,7 @@ interface MomentumData {
   follow_ups_needed: number;
 }
 
-type ViewMode = 'lists' | 'actions' | 'social_proof' | 'tracked_posts' | 'momentum' | 'pipeline' | 'calendar' | 'compose';
+type ViewMode = 'lists' | 'actions' | 'tour_stops' | 'social_proof' | 'tracked_posts' | 'momentum' | 'pipeline' | 'calendar' | 'compose';
 
 const CATEGORY_COLORS: Record<string, string> = {
   ally: 'bg-emerald-100 text-emerald-800 border-emerald-300',
@@ -151,6 +151,8 @@ export default function CampaignEnginePage() {
   const [activeList, setActiveList] = useState('allies_to_activate');
   const [search, setSearch] = useState('');
   const [entityType, setEntityType] = useState<string>('');
+  const [cityFilter, setCityFilter] = useState<string>('');
+  const [outreachFilter, setOutreachFilter] = useState<string>('');
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('lists');
   const [socialProof, setSocialProof] = useState<SocialProofData | null>(null);
@@ -180,10 +182,12 @@ export default function CampaignEnginePage() {
     return res.json();
   };
 
-  const fetchList = async (list: string, searchQ?: string, type?: string) => {
+  const fetchList = async (list: string, searchQ?: string, type?: string, city?: string, outreach?: string) => {
     const params = new URLSearchParams({ list, limit: '100' });
     if (searchQ) params.set('search', searchQ);
     if (type) params.set('entity_type', type);
+    if (city) params.set('city', city);
+    if (outreach) params.set('outreach_status', outreach);
     const res = await fetch(`/api/admin/campaign-alignment/lists?${params}`);
     if (!res.ok) throw new Error('Failed to fetch list');
     return res.json();
@@ -306,7 +310,7 @@ export default function CampaignEnginePage() {
       setLoading(true);
       const [statsData, listData] = await Promise.all([
         fetchStats(),
-        fetchList(activeList, search || undefined, entityType || undefined),
+        fetchList(activeList, search || undefined, entityType || undefined, cityFilter || undefined, outreachFilter || undefined),
       ]);
       setStats(statsData);
       setEntities(listData.entities);
@@ -322,11 +326,11 @@ export default function CampaignEnginePage() {
 
   useEffect(() => {
     if (!loading) {
-      fetchList(activeList, search || undefined, entityType || undefined)
+      fetchList(activeList, search || undefined, entityType || undefined, cityFilter || undefined, outreachFilter || undefined)
         .then(data => { setEntities(data.entities); setTotalEntities(data.total); })
         .catch(() => {});
     }
-  }, [activeList, search, entityType]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activeList, search, entityType, cityFilter, outreachFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (viewMode === 'social_proof' && !socialProof) fetchSocialProof();
@@ -547,6 +551,7 @@ export default function CampaignEnginePage() {
           {[
             { key: 'lists' as ViewMode, label: 'Lists', icon: Users },
             { key: 'actions' as ViewMode, label: 'Actions', icon: Zap, badge: actionEntities.length > 0 ? actionEntities.filter(e => !skippedIds.has(e.id)).length : undefined },
+            { key: 'tour_stops' as ViewMode, label: 'Tour Stops', icon: MapPin },
             { key: 'social_proof' as ViewMode, label: 'Social Proof', icon: Heart },
             { key: 'tracked_posts' as ViewMode, label: 'Tracked Posts', icon: LinkIcon },
             { key: 'momentum' as ViewMode, label: 'Momentum', icon: TrendingUp },
@@ -612,6 +617,35 @@ export default function CampaignEnginePage() {
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
                 />
               </div>
+              <select
+                value={cityFilter}
+                onChange={e => setCityFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
+              >
+                <option value="">All Cities</option>
+                <option value="sydney">Sydney</option>
+                <option value="brisbane">Brisbane</option>
+                <option value="adelaide">Adelaide</option>
+                <option value="perth">Perth</option>
+                <option value="alice_springs">Alice Springs</option>
+                <option value="canberra">Canberra</option>
+                <option value="melbourne">Melbourne</option>
+                <option value="tasmania">Tasmania</option>
+              </select>
+              <select
+                value={outreachFilter}
+                onChange={e => setOutreachFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
+              >
+                <option value="">All Stages</option>
+                <option value="pending">Cold / Pending</option>
+                <option value="contacted">Contacted</option>
+                <option value="responded">Responded</option>
+                <option value="sent">Sent</option>
+                <option value="proposal_sent">Proposal Sent</option>
+                <option value="committed">Committed</option>
+                <option value="active">Active</option>
+              </select>
               <select
                 value={entityType}
                 onChange={e => setEntityType(e.target.value)}
@@ -688,6 +722,11 @@ export default function CampaignEnginePage() {
             onSkip={(id) => setSkippedIds(prev => new Set([...prev, id]))}
             onRefresh={fetchActionEntities}
           />
+        )}
+
+        {/* === TOUR STOPS VIEW === */}
+        {viewMode === 'tour_stops' && (
+          <TourStopsView onSelectCity={(city) => { setCityFilter(city); setViewMode('lists'); }} />
         )}
 
         {/* === MOMENTUM VIEW === */}
@@ -1577,6 +1616,110 @@ const FUNNEL_LABELS: Record<string, string> = {
   active: 'Active',
   stale: 'Stale',
 };
+
+const TOUR_CITIES = [
+  { key: 'sydney', label: 'Sydney', state: 'NSW', date: 'Late April 2026', status: 'confirmed' as const, partner: 'Mounty Yarns + Community Partners' },
+  { key: 'brisbane', label: 'Brisbane', state: 'QLD', date: 'May 2026', status: 'planning' as const, partner: 'YAC Queensland' },
+  { key: 'adelaide', label: 'Adelaide', state: 'SA', date: 'June 2026', status: 'confirmed' as const, partner: 'JRI + Reintegration Conference' },
+  { key: 'perth', label: 'Perth', state: 'WA', date: 'Jul–Aug 2026', status: 'planning' as const, partner: 'UWA + JRI WA' },
+  { key: 'alice_springs', label: 'Alice Springs', state: 'NT', date: 'Aug 2026', status: 'planning' as const, partner: 'Oonchiumpa' },
+  { key: 'canberra', label: 'Canberra', state: 'ACT', date: 'TBD', status: 'demand' as const, partner: '10 mentions' },
+  { key: 'melbourne', label: 'Melbourne', state: 'VIC', date: 'TBD', status: 'demand' as const, partner: '8 mentions' },
+  { key: 'tasmania', label: 'Tasmania', state: 'TAS', date: 'TBD', status: 'demand' as const, partner: '2 mentions' },
+];
+
+function TourStopsView({ onSelectCity }: { onSelectCity: (city: string) => void }) {
+  const [cityData, setCityData] = useState<Record<string, { total: number; responded: number; entities: Entity[] }>>({});
+  const [loadingCities, setLoadingCities] = useState(true);
+
+  useEffect(() => {
+    const loadAll = async () => {
+      setLoadingCities(true);
+      const results: Record<string, { total: number; responded: number; entities: Entity[] }> = {};
+      for (const city of TOUR_CITIES) {
+        try {
+          const res = await fetch(`/api/admin/campaign-alignment/lists?city=${city.key}&limit=200`);
+          if (res.ok) {
+            const data = await res.json();
+            const ents = data.entities || [];
+            results[city.key] = {
+              total: data.total || 0,
+              responded: ents.filter((e: Entity) => ['responded', 'sent', 'contacted', 'committed', 'active'].includes(e.outreach_status)).length,
+              entities: ents.slice(0, 5),
+            };
+          }
+        } catch { /* skip */ }
+      }
+      setCityData(results);
+      setLoadingCities(false);
+    };
+    loadAll();
+  }, []);
+
+  if (loadingCities) {
+    return <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-gray-400" /></div>;
+  }
+
+  const statusColor = (s: string) => s === 'confirmed' ? 'bg-emerald-100 text-emerald-800' : s === 'planning' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800';
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {TOUR_CITIES.map(city => {
+        const data = cityData[city.key] || { total: 0, responded: 0, entities: [] };
+        return (
+          <div key={city.key} className="bg-white border border-gray-200 p-5 hover:border-gray-400 transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h3 className="text-lg font-black">{city.label}</h3>
+                <p className="text-xs text-gray-400 font-mono">{city.state} · {city.date}</p>
+              </div>
+              <span className={`text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider ${statusColor(city.status)}`}>
+                {city.status}
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 mb-4">{city.partner}</p>
+
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="text-center p-2 bg-gray-50 border border-gray-100">
+                <div className="text-xl font-black">{data.total}</div>
+                <div className="text-[10px] text-gray-500 font-mono">CONTACTS</div>
+              </div>
+              <div className="text-center p-2 bg-gray-50 border border-gray-100">
+                <div className="text-xl font-black text-emerald-600">{data.responded}</div>
+                <div className="text-[10px] text-gray-500 font-mono">ACTIVE</div>
+              </div>
+            </div>
+
+            {data.entities.length > 0 && (
+              <div className="space-y-1.5 mb-4">
+                {data.entities.map(e => (
+                  <div key={e.id} className="flex items-center justify-between text-xs">
+                    <div className="truncate flex-1">
+                      <span className="font-bold">{e.name}</span>
+                      {e.organization && <span className="text-gray-400 ml-1">· {e.organization}</span>}
+                    </div>
+                    <span className={`ml-2 px-1.5 py-0.5 text-[9px] font-mono ${
+                      e.outreach_status === 'responded' ? 'bg-emerald-50 text-emerald-700' :
+                      e.outreach_status === 'sent' ? 'bg-blue-50 text-blue-700' :
+                      'bg-gray-50 text-gray-500'
+                    }`}>{e.outreach_status}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button
+              onClick={() => onSelectCity(city.key)}
+              className="w-full text-xs font-bold py-2 border border-gray-200 hover:bg-black hover:text-white hover:border-black transition-colors"
+            >
+              View All →
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 function MomentumView({ data, loading, onRefresh }: { data: MomentumData | null; loading: boolean; onRefresh: () => void }) {
   if (loading) {

@@ -26,6 +26,8 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search');
     const category = searchParams.get('category');
     const entityType = searchParams.get('entity_type');
+    const city = searchParams.get('city');
+    const outreachStatus = searchParams.get('outreach_status');
 
     const service = createServiceClient();
 
@@ -38,7 +40,33 @@ export async function GET(request: NextRequest) {
     if (list) query = query.eq('campaign_list', list);
     if (category) query = query.eq('alignment_category', category);
     if (entityType) query = query.eq('entity_type', entityType);
+    if (outreachStatus) query = query.eq('outreach_status', outreachStatus);
     if (search) query = query.or(`name.ilike.%${search}%,organization.ilike.%${search}%,email.ilike.%${search}%`);
+
+    // City filter — matches against alignment_signals, warm_paths, recommended_approach, and organization
+    if (city) {
+      const cityPatterns: Record<string, string> = {
+        sydney: '%sydney%,%nsw%,%mount druitt%',
+        brisbane: '%brisbane%,%queensland%,%qld%',
+        adelaide: '%adelaide%,%south australia%',
+        perth: '%perth%,%western australia%,%uwa%',
+        alice_springs: '%alice springs%,%oonchiumpa%,%tennant creek%,%northern territory%',
+        canberra: '%canberra%,%act%',
+        melbourne: '%melbourne%,%victoria%',
+        tasmania: '%tasmania%,%tassie%,%hobart%',
+      };
+      const patterns = cityPatterns[city];
+      if (patterns) {
+        const terms = patterns.split(',');
+        const orClauses = terms.flatMap(t => [
+          `recommended_approach.ilike.${t}`,
+          `organization.ilike.${t}`,
+          `alignment_signals::text.ilike.${t}`,
+          `warm_paths::text.ilike.${t}`,
+        ]);
+        query = query.or(orClauses.join(','));
+      }
+    }
 
     const { data, count, error } = await query;
     if (error) throw error;
