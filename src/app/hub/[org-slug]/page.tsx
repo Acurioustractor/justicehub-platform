@@ -1,8 +1,14 @@
+import { createClient } from '@/lib/supabase/server-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { redirect } from 'next/navigation';
 import { OrgSupportHubClient } from '@/app/admin/organizations/[slug]/hub/OrgSupportHubClient';
 
 export default async function OrgHubPage({ params }: { params: { 'org-slug': string } }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) redirect('/login?redirect=/hub');
+
   const service = createServiceClient();
 
   const { data: organization } = await service
@@ -12,6 +18,16 @@ export default async function OrgHubPage({ params }: { params: { 'org-slug': str
     .single();
 
   if (!organization) redirect('/hub');
+
+  // Check user's role in this org
+  const { data: membership } = await service
+    .from('organization_members')
+    .select('role')
+    .eq('user_id', user.id)
+    .eq('organization_id', organization.id)
+    .single();
+
+  const memberRole = (membership?.role as 'admin' | 'member') || 'member';
 
   return (
     <OrgSupportHubClient
@@ -27,6 +43,7 @@ export default async function OrgHubPage({ params }: { params: { 'org-slug': str
       }}
       backHref="/hub"
       backLabel="Back to Hub"
+      memberRole={memberRole}
     />
   );
 }
