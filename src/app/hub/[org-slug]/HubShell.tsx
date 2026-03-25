@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, DollarSign, ShieldCheck, Globe, PenSquare } from 'lucide-react';
+import { LayoutDashboard, DollarSign, ShieldCheck, Globe, PenSquare, Megaphone } from 'lucide-react';
 
 const NAV_ITEMS = [
   { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: 'dashboard' },
+  { key: 'campaign', label: 'Campaign', icon: Megaphone, href: 'campaign' },
   { key: 'grants', label: 'Grants', icon: DollarSign, href: 'grants' },
   { key: 'compliance', label: 'Compliance', icon: ShieldCheck, href: 'compliance' },
   { key: 'basecamp', label: 'Basecamp', icon: Globe, href: 'basecamp' },

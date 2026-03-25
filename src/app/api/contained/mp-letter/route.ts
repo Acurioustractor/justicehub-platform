@@ -162,6 +162,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to record letter' }, { status: 500 });
     }
 
+    // Track as member action if user has an account
+    const { data: matchedProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', email)
+      .single();
+
+    if (matchedProfile?.id) {
+      await supabase.from('member_actions').insert({
+        user_id: matchedProfile.id,
+        action_type: 'mp_letter',
+        metadata: { mp_name: sanitizedMPName, electorate: sanitizedElectorate, template_type: templateType },
+      }).catch(() => {});
+    }
+
     // Get social proof: how many letters sent to this MP
     let mpLetterCount = 1;
     if (sanitizedMPName) {

@@ -9,15 +9,19 @@ interface ShareButtonProps {
 
 export function ShareButton({ title, className }: ShareButtonProps) {
   const handleShare = () => {
+    const url = window.location.href;
     if (typeof navigator !== 'undefined' && navigator.share) {
-      navigator.share({
-        title,
-        url: window.location.href,
-      });
+      navigator.share({ title, url });
     } else {
-      // Fallback: copy URL to clipboard
-      navigator.clipboard.writeText(window.location.href);
+      navigator.clipboard.writeText(url);
     }
+
+    // Track the share action (fire-and-forget, no auth required to attempt)
+    fetch('/api/hub/actions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action_type: 'social_share', metadata: { title, url } }),
+    }).catch(() => {});
   };
 
   return (

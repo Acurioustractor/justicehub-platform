@@ -60,6 +60,7 @@ interface Entity {
   accessibility_score: number;
   composite_score: number;
   alignment_category: string;
+  sector_tag: string;
   campaign_list: string;
   alignment_signals: Array<{ type: string; detail: string }>;
   warm_paths: Array<{ via: string; org: string; abn?: string; comment?: string }>;
@@ -123,7 +124,7 @@ interface MomentumData {
   follow_ups_needed: number;
 }
 
-type ViewMode = 'lists' | 'actions' | 'social_proof' | 'tracked_posts' | 'momentum' | 'pipeline' | 'calendar' | 'compose';
+type ViewMode = 'lists' | 'actions' | 'tour_stops' | 'social_proof' | 'tracked_posts' | 'momentum' | 'pipeline' | 'calendar' | 'compose';
 
 const CATEGORY_COLORS: Record<string, string> = {
   ally: 'bg-emerald-100 text-emerald-800 border-emerald-300',
@@ -131,6 +132,17 @@ const CATEGORY_COLORS: Record<string, string> = {
   neutral: 'bg-gray-100 text-gray-700 border-gray-300',
   opponent: 'bg-red-100 text-red-800 border-red-300',
   unknown: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+};
+
+const SECTOR_COLORS: Record<string, string> = {
+  philanthropy: 'bg-purple-100 text-purple-800 border-purple-300',
+  services: 'bg-teal-100 text-teal-800 border-teal-300',
+  corporate: 'bg-slate-100 text-slate-800 border-slate-300',
+  research: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+  young_people: 'bg-orange-100 text-orange-800 border-orange-300',
+  government: 'bg-blue-100 text-blue-800 border-blue-300',
+  media: 'bg-pink-100 text-pink-800 border-pink-300',
+  other: 'bg-gray-100 text-gray-700 border-gray-300',
 };
 
 const CONFIDENCE_COLORS: Record<string, string> = {
@@ -150,8 +162,14 @@ export default function CampaignEnginePage() {
   const [error, setError] = useState<string | null>(null);
   const [activeList, setActiveList] = useState('allies_to_activate');
   const [search, setSearch] = useState('');
-  const [entityType, setEntityType] = useState<string>('');
+  const [sectorTag, setSectorTag] = useState<string>('');
+  const [cityFilter, setCityFilter] = useState<string>('');
+  const [stateFilter, setStateFilter] = useState<string>('');
+  const [outreachFilter, setOutreachFilter] = useState<string>('');
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [listView, setListView] = useState<'table' | 'cards'>('cards');
+  const [sortBy, setSortBy] = useState('composite_score');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [viewMode, setViewMode] = useState<ViewMode>('lists');
   const [socialProof, setSocialProof] = useState<SocialProofData | null>(null);
   const [socialProofLoading, setSocialProofLoading] = useState(false);
@@ -180,10 +198,15 @@ export default function CampaignEnginePage() {
     return res.json();
   };
 
-  const fetchList = async (list: string, searchQ?: string, type?: string) => {
+  const fetchList = async (list: string, searchQ?: string, sector?: string, city?: string, outreach?: string, sort?: string, dir?: string, state?: string) => {
     const params = new URLSearchParams({ list, limit: '100' });
     if (searchQ) params.set('search', searchQ);
-    if (type) params.set('entity_type', type);
+    if (sector) params.set('sector_tag', sector);
+    if (city) params.set('city', city);
+    if (state) params.set('state', state);
+    if (outreach) params.set('outreach_status', outreach);
+    if (sort) params.set('sort', sort);
+    if (dir) params.set('dir', dir);
     const res = await fetch(`/api/admin/campaign-alignment/lists?${params}`);
     if (!res.ok) throw new Error('Failed to fetch list');
     return res.json();
@@ -306,7 +329,7 @@ export default function CampaignEnginePage() {
       setLoading(true);
       const [statsData, listData] = await Promise.all([
         fetchStats(),
-        fetchList(activeList, search || undefined, entityType || undefined),
+        fetchList(activeList, search || undefined, sectorTag || undefined, cityFilter || undefined, outreachFilter || undefined, sortBy, sortDir, stateFilter || undefined),
       ]);
       setStats(statsData);
       setEntities(listData.entities);
@@ -321,12 +344,10 @@ export default function CampaignEnginePage() {
   useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!loading) {
-      fetchList(activeList, search || undefined, entityType || undefined)
-        .then(data => { setEntities(data.entities); setTotalEntities(data.total); })
-        .catch(() => {});
-    }
-  }, [activeList, search, entityType]); // eslint-disable-line react-hooks/exhaustive-deps
+    fetchList(activeList, search || undefined, sectorTag || undefined, cityFilter || undefined, outreachFilter || undefined, sortBy, sortDir, stateFilter || undefined)
+      .then(data => { setEntities(data.entities); setTotalEntities(data.total); })
+      .catch(() => {});
+  }, [activeList, search, sectorTag, cityFilter, stateFilter, outreachFilter, sortBy, sortDir]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (viewMode === 'social_proof' && !socialProof) fetchSocialProof();
@@ -385,7 +406,7 @@ export default function CampaignEnginePage() {
       );
       // Refresh the current list to show updated statuses
       if (viewMode === 'lists') {
-        const listData = await fetchList(activeList, search, entityType);
+        const listData = await fetchList(activeList, search, sectorTag, cityFilter, outreachFilter, sortBy, sortDir, stateFilter);
         setEntities(listData.entities);
         setTotalEntities(listData.total);
       }
@@ -453,6 +474,14 @@ export default function CampaignEnginePage() {
           <div className="flex gap-3">
             <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2 border border-gray-300 bg-white text-sm font-bold hover:bg-gray-50">
               <Download className="w-4 h-4" /> Export CSV
+            </button>
+            <button onClick={() => {
+              const emails = entities.filter(e => e.email).map(e => e.email);
+              if (emails.length === 0) { alert('No emails in current view'); return; }
+              navigator.clipboard.writeText(emails.join(', '));
+              alert(`Copied ${emails.length} emails to clipboard`);
+            }} className="flex items-center gap-2 px-4 py-2 border border-gray-300 bg-white text-sm font-bold hover:bg-gray-50">
+              <Mail className="w-4 h-4" /> Copy Emails ({entities.filter(e => e.email).length})
             </button>
             <button
               onClick={syncGHL}
@@ -547,6 +576,7 @@ export default function CampaignEnginePage() {
           {[
             { key: 'lists' as ViewMode, label: 'Lists', icon: Users },
             { key: 'actions' as ViewMode, label: 'Actions', icon: Zap, badge: actionEntities.length > 0 ? actionEntities.filter(e => !skippedIds.has(e.id)).length : undefined },
+            { key: 'tour_stops' as ViewMode, label: 'Tour Stops', icon: MapPin },
             { key: 'social_proof' as ViewMode, label: 'Social Proof', icon: Heart },
             { key: 'tracked_posts' as ViewMode, label: 'Tracked Posts', icon: LinkIcon },
             { key: 'momentum' as ViewMode, label: 'Momentum', icon: TrendingUp },
@@ -600,6 +630,32 @@ export default function CampaignEnginePage() {
               ))}
             </div>
 
+            {/* Sector quick-filters */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {[
+                { key: '', label: 'All', icon: '📋' },
+                { key: 'services', label: 'Local Services', icon: '🏠' },
+                { key: 'philanthropy', label: 'Philanthropy', icon: '💰' },
+                { key: 'government', label: 'Politicians', icon: '🏛️' },
+                { key: 'research', label: 'Research', icon: '🔬' },
+                { key: 'corporate', label: 'Companies', icon: '🏢' },
+                { key: 'young_people', label: 'Young People', icon: '🧑' },
+                { key: 'media', label: 'Media', icon: '📰' },
+              ].map(s => (
+                <button
+                  key={s.key}
+                  onClick={() => setSectorTag(s.key)}
+                  className={`px-3 py-1.5 text-xs font-medium border transition-colors ${
+                    sectorTag === s.key
+                      ? 'bg-black text-white border-black'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-gray-500'
+                  }`}
+                >
+                  {s.icon} {s.label}
+                </button>
+              ))}
+            </div>
+
             {/* Filters */}
             <div className="bg-white border border-gray-200 p-4 mb-6 flex flex-col sm:flex-row gap-4">
               <div className="relative flex-1">
@@ -613,36 +669,202 @@ export default function CampaignEnginePage() {
                 />
               </div>
               <select
-                value={entityType}
-                onChange={e => setEntityType(e.target.value)}
+                value={stateFilter}
+                onChange={e => { setStateFilter(e.target.value); setCityFilter(''); }}
                 className="px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
               >
-                <option value="">All Types</option>
-                <option value="organization">Organizations</option>
-                <option value="person">Persons</option>
+                <option value="">All States</option>
+                <option value="NSW">NSW</option>
+                <option value="QLD">QLD</option>
+                <option value="VIC">VIC</option>
+                <option value="WA">WA</option>
+                <option value="SA">SA</option>
+                <option value="NT">NT</option>
+                <option value="ACT">ACT</option>
+                <option value="TAS">TAS</option>
               </select>
+              <select
+                value={cityFilter}
+                onChange={e => setCityFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
+              >
+                <option value="">All Cities</option>
+                <option value="sydney">Sydney</option>
+                <option value="brisbane">Brisbane</option>
+                <option value="adelaide">Adelaide</option>
+                <option value="perth">Perth</option>
+                <option value="alice_springs">Alice Springs</option>
+                <option value="canberra">Canberra</option>
+                <option value="melbourne">Melbourne</option>
+                <option value="tasmania">Tasmania</option>
+              </select>
+              <div className="flex gap-0 border border-gray-300">
+                {[
+                  { key: '', label: 'All', color: '' },
+                  { key: 'hot', label: '🔥 Hot', color: 'text-red-600' },
+                  { key: 'warm', label: '🌡️ Warm', color: 'text-amber-600' },
+                  { key: 'cold', label: '❄️ Cold', color: 'text-blue-600' },
+                ].map(tier => (
+                  <button key={tier.key} onClick={() => setOutreachFilter(tier.key)}
+                    className={`px-3 py-2 text-xs font-medium ${outreachFilter === tier.key ? 'bg-black text-white' : `bg-white ${tier.color || 'text-gray-600'} hover:bg-gray-50`}`}>
+                    {tier.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Results count */}
-            <div className="text-sm text-gray-500 mb-3">
-              Showing {entities.length} of {totalEntities} entities
+            {/* Results count + view toggle */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-sm text-gray-500">
+                Showing {entities.length} of {totalEntities} entities
+              </div>
+              <div className="flex items-center gap-3">
+                <select value={`${sortBy}:${sortDir}`} onChange={e => { const [s, d] = e.target.value.split(':'); setSortBy(s); setSortDir(d as 'asc' | 'desc'); }} className="px-2 py-1 border border-gray-300 text-xs focus:outline-none focus:border-black">
+                  <option value="composite_score:desc">Score (High→Low)</option>
+                  <option value="composite_score:asc">Score (Low→High)</option>
+                  <option value="name:asc">Name (A→Z)</option>
+                  <option value="name:desc">Name (Z→A)</option>
+                  <option value="justice_alignment_score:desc">Alignment (High→Low)</option>
+                  <option value="reach_influence_score:desc">Influence (High→Low)</option>
+                  <option value="passion_score:desc">Passion (High→Low)</option>
+                  <option value="outreach_status:asc">Outreach Status</option>
+                </select>
+                <div className="flex gap-0 border border-gray-300">
+                  <button onClick={() => setListView('cards')} className={`px-2.5 py-1 text-xs font-medium ${listView === 'cards' ? 'bg-black text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
+                    Cards
+                  </button>
+                  <button onClick={() => setListView('table')} className={`px-2.5 py-1 text-xs font-medium ${listView === 'table' ? 'bg-black text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
+                    Table
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Entity Table */}
+            {/* Network Cards View */}
+            {listView === 'cards' ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {entities.map(entity => {
+                  const sectorIcon: Record<string, string> = { philanthropy: '💰', services: '🏠', corporate: '🏢', research: '🔬', government: '🏛️', media: '📰', young_people: '🧑', other: '📋' };
+                  const warmPaths = Array.isArray(entity.warm_paths) ? entity.warm_paths : [];
+                  const signals = Array.isArray(entity.alignment_signals) ? entity.alignment_signals : [];
+                  const locationSignal = signals.find((s: { type: string; detail: string }) => s.type === 'location');
+                  const statusColors: Record<string, string> = {
+                    pending: 'bg-gray-100 text-gray-600',
+                    contacted: 'bg-blue-100 text-blue-700',
+                    responded: 'bg-amber-100 text-amber-700',
+                    active: 'bg-emerald-100 text-emerald-700',
+                    committed: 'bg-purple-100 text-purple-700',
+                    sent: 'bg-sky-100 text-sky-700',
+                  };
+                  return (
+                    <div key={entity.id} className="bg-white border border-gray-200 hover:border-gray-400 transition-colors">
+                      <div className="p-4">
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <span className="text-sm">{sectorIcon[entity.sector_tag] || '📋'}</span>
+                              <span className="font-bold text-black text-sm truncate">{entity.name}</span>
+                              <span className="text-lg font-bold text-black ml-auto">{entity.composite_score}</span>
+                            </div>
+                            <div className="text-xs text-gray-500 truncate">
+                              {entity.entity_type === 'person' && entity.position ? `${entity.position}` : ''}
+                              {entity.entity_type === 'person' && entity.organization && entity.organization !== 'Unknown' ? ` · ${entity.organization}` : ''}
+                              {locationSignal ? ` · ${(locationSignal as { detail: string }).detail}` : ''}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Sector + Status badges */}
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className={`inline-flex px-2 py-0.5 text-[10px] font-medium border ${SECTOR_COLORS[entity.sector_tag] || SECTOR_COLORS.other}`}>
+                            {(entity.sector_tag || 'other').replace('_', ' ')}
+                          </span>
+                          <span className={`inline-flex px-2 py-0.5 text-[10px] font-medium ${statusColors[entity.outreach_status] || statusColors.pending}`}>
+                            {entity.outreach_status || 'pending'}
+                          </span>
+                          {entity.email && <Mail className="w-3 h-3 text-gray-400" />}
+                        </div>
+
+                        {/* Warm Paths */}
+                        {warmPaths.length > 0 && (
+                          <div className="border-t border-gray-100 pt-2 mb-2">
+                            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Connections</div>
+                            <div className="space-y-1">
+                              {warmPaths.slice(0, 4).map((wp: { via: string; org: string; comment?: string; amount?: number }, i: number) => (
+                                <div key={i} className="flex items-center gap-1.5 text-xs text-gray-600">
+                                  <LinkIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                                  <span className="font-medium text-gray-700">{wp.via?.replace('_', ' ')}:</span>
+                                  <span className="truncate">{wp.org || wp.comment}{wp.amount ? ` ($${(wp.amount / 1000000).toFixed(1)}M)` : ''}</span>
+                                </div>
+                              ))}
+                              {warmPaths.length > 4 && (
+                                <div className="text-[10px] text-gray-400">+{warmPaths.length - 4} more connections</div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Score bars */}
+                        <div className="flex gap-3 pt-2 border-t border-gray-100">
+                          <div className="flex-1">
+                            <div className="text-[10px] text-gray-400 mb-0.5">Alignment</div>
+                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${entity.justice_alignment_score}%` }} />
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="text-[10px] text-gray-400 mb-0.5">Influence</div>
+                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-blue-500 rounded-full" style={{ width: `${entity.reach_influence_score}%` }} />
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="text-[10px] text-gray-400 mb-0.5">Access</div>
+                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-amber-500 rounded-full" style={{ width: `${entity.accessibility_score}%` }} />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Recommended approach preview */}
+                        {entity.recommended_approach && (
+                          <div className="mt-2 pt-2 border-t border-gray-100">
+                            <div className="text-xs text-gray-500 line-clamp-2">{entity.recommended_approach}</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+                {entities.length === 0 && (
+                  <div className="col-span-full text-center py-16 text-gray-400 text-sm">No entities found.</div>
+                )}
+              </div>
+            ) : (
+            /* Entity Table */
             <div className="bg-white border border-gray-200 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
                     <th className="w-8 px-2"></th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600">Entity</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600">Category</th>
-                    <th className="text-center px-4 py-3 font-bold text-gray-600">Alignment</th>
-                    <th className="text-center px-4 py-3 font-bold text-gray-600">Influence</th>
-                    <th className="text-center px-4 py-3 font-bold text-gray-600">Access</th>
-                    <th className="text-center px-4 py-3 font-bold text-gray-600">Composite</th>
-                    <th className="text-center px-4 py-3 font-bold text-gray-600">Passion</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600">Confidence</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600">Outreach</th>
+                    {[
+                      { key: 'name', label: 'Entity', align: 'text-left' },
+                      { key: 'sector_tag', label: 'Sector', align: 'text-left' },
+                      { key: 'justice_alignment_score', label: 'Alignment', align: 'text-center' },
+                      { key: 'reach_influence_score', label: 'Influence', align: 'text-center' },
+                      { key: 'accessibility_score', label: 'Access', align: 'text-center' },
+                      { key: 'composite_score', label: 'Composite', align: 'text-center' },
+                      { key: 'passion_score', label: 'Passion', align: 'text-center' },
+                      { key: '', label: 'Confidence', align: 'text-left' },
+                      { key: 'outreach_status', label: 'Outreach', align: 'text-left' },
+                    ].map(col => (
+                      <th key={col.label} className={`${col.align} px-4 py-3 font-bold text-gray-600 ${col.key ? 'cursor-pointer hover:text-black select-none' : ''}`}
+                        onClick={() => { if (!col.key) return; setSortBy(col.key); setSortDir(prev => sortBy === col.key ? (prev === 'desc' ? 'asc' : 'desc') : 'desc'); }}>
+                        {col.label}
+                        {sortBy === col.key && <span className="ml-1 text-xs">{sortDir === 'desc' ? '▼' : '▲'}</span>}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
@@ -659,6 +881,7 @@ export default function CampaignEnginePage() {
                 </tbody>
               </table>
             </div>
+            )}
           </>
         )}
 
@@ -688,6 +911,11 @@ export default function CampaignEnginePage() {
             onSkip={(id) => setSkippedIds(prev => new Set([...prev, id]))}
             onRefresh={fetchActionEntities}
           />
+        )}
+
+        {/* === TOUR STOPS VIEW === */}
+        {viewMode === 'tour_stops' && (
+          <TourStopsView onSelectCity={(city) => { setCityFilter(city); setViewMode('lists'); }} />
         )}
 
         {/* === MOMENTUM VIEW === */}
@@ -767,8 +995,8 @@ function EntityRow({ entity, expandedRow, setExpandedRow, isOpponentView, onPipe
           </div>
         </td>
         <td className="px-4 py-3">
-          <span className={`inline-flex px-2 py-0.5 text-xs font-medium border ${CATEGORY_COLORS[entity.alignment_category] || CATEGORY_COLORS.unknown}`}>
-            {entity.alignment_category.replace('_', ' ')}
+          <span className={`inline-flex px-2 py-0.5 text-xs font-medium border ${SECTOR_COLORS[entity.sector_tag] || SECTOR_COLORS.other}`}>
+            {(entity.sector_tag || 'other').replace('_', ' ')}
           </span>
         </td>
         <td className="px-4 py-3 text-center">
@@ -1380,7 +1608,7 @@ function ActionsView({ entities, loading, skippedIds, actionFilter, actionTypeFi
   const filtered = entities.filter(e => {
     if (skippedIds.has(e.id)) return false;
     if (actionFilter && e.outreach_status !== actionFilter) return false;
-    if (actionTypeFilter && e.entity_type !== actionTypeFilter) return false;
+    if (actionTypeFilter && e.sector_tag !== actionTypeFilter) return false;
     return true;
   });
 
@@ -1431,9 +1659,15 @@ function ActionsView({ entities, loading, skippedIds, actionFilter, actionTypeFi
           onChange={e => setActionTypeFilter(e.target.value)}
           className="px-3 py-1.5 border border-gray-300 text-xs focus:outline-none focus:border-black"
         >
-          <option value="">All Types</option>
-          <option value="organization">Organizations</option>
-          <option value="person">Persons</option>
+          <option value="">All Sectors</option>
+          <option value="philanthropy">Philanthropy</option>
+          <option value="services">Services</option>
+          <option value="corporate">Companies</option>
+          <option value="research">Research</option>
+          <option value="young_people">Young People</option>
+          <option value="government">Government</option>
+          <option value="media">Media</option>
+          <option value="other">Other</option>
         </select>
       </div>
 
@@ -1577,6 +1811,110 @@ const FUNNEL_LABELS: Record<string, string> = {
   active: 'Active',
   stale: 'Stale',
 };
+
+const TOUR_CITIES = [
+  { key: 'sydney', label: 'Sydney', state: 'NSW', date: 'Late April 2026', status: 'confirmed' as const, partner: 'Mounty Yarns + Community Partners' },
+  { key: 'brisbane', label: 'Brisbane', state: 'QLD', date: 'May 2026', status: 'planning' as const, partner: 'YAC Queensland' },
+  { key: 'adelaide', label: 'Adelaide', state: 'SA', date: 'June 2026', status: 'confirmed' as const, partner: 'JRI + Reintegration Conference' },
+  { key: 'perth', label: 'Perth', state: 'WA', date: 'Jul–Aug 2026', status: 'planning' as const, partner: 'UWA + JRI WA' },
+  { key: 'alice_springs', label: 'Alice Springs', state: 'NT', date: 'Aug 2026', status: 'planning' as const, partner: 'Oonchiumpa' },
+  { key: 'canberra', label: 'Canberra', state: 'ACT', date: 'TBD', status: 'demand' as const, partner: '10 mentions' },
+  { key: 'melbourne', label: 'Melbourne', state: 'VIC', date: 'TBD', status: 'demand' as const, partner: '8 mentions' },
+  { key: 'tasmania', label: 'Tasmania', state: 'TAS', date: 'TBD', status: 'demand' as const, partner: '2 mentions' },
+];
+
+function TourStopsView({ onSelectCity }: { onSelectCity: (city: string) => void }) {
+  const [cityData, setCityData] = useState<Record<string, { total: number; responded: number; entities: Entity[] }>>({});
+  const [loadingCities, setLoadingCities] = useState(true);
+
+  useEffect(() => {
+    const loadAll = async () => {
+      setLoadingCities(true);
+      const results: Record<string, { total: number; responded: number; entities: Entity[] }> = {};
+      for (const city of TOUR_CITIES) {
+        try {
+          const res = await fetch(`/api/admin/campaign-alignment/lists?city=${city.key}&limit=200`);
+          if (res.ok) {
+            const data = await res.json();
+            const ents = data.entities || [];
+            results[city.key] = {
+              total: data.total || 0,
+              responded: ents.filter((e: Entity) => ['responded', 'sent', 'contacted', 'committed', 'active'].includes(e.outreach_status)).length,
+              entities: ents.slice(0, 5),
+            };
+          }
+        } catch { /* skip */ }
+      }
+      setCityData(results);
+      setLoadingCities(false);
+    };
+    loadAll();
+  }, []);
+
+  if (loadingCities) {
+    return <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-gray-400" /></div>;
+  }
+
+  const statusColor = (s: string) => s === 'confirmed' ? 'bg-emerald-100 text-emerald-800' : s === 'planning' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800';
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {TOUR_CITIES.map(city => {
+        const data = cityData[city.key] || { total: 0, responded: 0, entities: [] };
+        return (
+          <div key={city.key} className="bg-white border border-gray-200 p-5 hover:border-gray-400 transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h3 className="text-lg font-black">{city.label}</h3>
+                <p className="text-xs text-gray-400 font-mono">{city.state} · {city.date}</p>
+              </div>
+              <span className={`text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider ${statusColor(city.status)}`}>
+                {city.status}
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 mb-4">{city.partner}</p>
+
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="text-center p-2 bg-gray-50 border border-gray-100">
+                <div className="text-xl font-black">{data.total}</div>
+                <div className="text-[10px] text-gray-500 font-mono">CONTACTS</div>
+              </div>
+              <div className="text-center p-2 bg-gray-50 border border-gray-100">
+                <div className="text-xl font-black text-emerald-600">{data.responded}</div>
+                <div className="text-[10px] text-gray-500 font-mono">ACTIVE</div>
+              </div>
+            </div>
+
+            {data.entities.length > 0 && (
+              <div className="space-y-1.5 mb-4">
+                {data.entities.map(e => (
+                  <div key={e.id} className="flex items-center justify-between text-xs">
+                    <div className="truncate flex-1">
+                      <span className="font-bold">{e.name}</span>
+                      {e.organization && <span className="text-gray-400 ml-1">· {e.organization}</span>}
+                    </div>
+                    <span className={`ml-2 px-1.5 py-0.5 text-[9px] font-mono ${
+                      e.outreach_status === 'responded' ? 'bg-emerald-50 text-emerald-700' :
+                      e.outreach_status === 'sent' ? 'bg-blue-50 text-blue-700' :
+                      'bg-gray-50 text-gray-500'
+                    }`}>{e.outreach_status}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button
+              onClick={() => onSelectCity(city.key)}
+              className="w-full text-xs font-bold py-2 border border-gray-200 hover:bg-black hover:text-white hover:border-black transition-colors"
+            >
+              View All →
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 function MomentumView({ data, loading, onRefresh }: { data: MomentumData | null; loading: boolean; onRefresh: () => void }) {
   if (loading) {

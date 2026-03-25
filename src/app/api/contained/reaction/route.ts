@@ -124,6 +124,23 @@ Download stat cards and share templates. Same evidence, every platform.
       }).catch(err => console.error('[Reaction] Follow-up email failed:', err));
     }
 
+    // Track as member action if user has an account
+    if (email) {
+      const { data: matchedProfile } = await service
+        .from('profiles')
+        .select('id')
+        .eq('email', email)
+        .single();
+
+      if (matchedProfile?.id) {
+        await service.from('member_actions').insert({
+          user_id: matchedProfile.id,
+          action_type: 'event_registration',
+          metadata: { sub_type: 'contained_reaction', feelings: feelings || [] },
+        }).catch(() => {});
+      }
+    }
+
     return NextResponse.json({ success: true, id: data?.id });
   } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });

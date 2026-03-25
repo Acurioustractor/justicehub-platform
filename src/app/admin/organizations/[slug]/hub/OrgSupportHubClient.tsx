@@ -30,24 +30,26 @@ interface Organization {
 }
 
 const TABS = [
-  { key: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { key: 'grants', label: 'Grants & Finance', icon: DollarSign },
-  { key: 'compliance', label: 'Compliance', icon: ShieldCheck },
-  { key: 'people', label: 'People', icon: Users },
-  { key: 'programs', label: 'Programs', icon: Layers },
-  { key: 'referrals', label: 'Referrals', icon: ArrowRightLeft },
-  { key: 'stories', label: 'Stories', icon: BookOpen },
-  { key: 'analysis', label: 'Analysis', icon: BarChart3 },
-  { key: 'media', label: 'Media', icon: ImageIcon },
-  { key: 'communications', label: 'Comms', icon: MessageSquare },
-  { key: 'messages', label: 'Messages', icon: Mail },
-  { key: 'inbox', label: 'Tasks', icon: Inbox },
-  { key: 'support_network', label: 'Support Network', icon: Handshake },
+  { key: 'overview', label: 'Overview', icon: LayoutDashboard, adminOnly: false },
+  { key: 'grants', label: 'Grants & Finance', icon: DollarSign, adminOnly: false },
+  { key: 'compliance', label: 'Compliance', icon: ShieldCheck, adminOnly: true },
+  { key: 'people', label: 'People', icon: Users, adminOnly: true },
+  { key: 'programs', label: 'Programs', icon: Layers, adminOnly: false },
+  { key: 'referrals', label: 'Referrals', icon: ArrowRightLeft, adminOnly: false },
+  { key: 'stories', label: 'Stories', icon: BookOpen, adminOnly: false },
+  { key: 'analysis', label: 'Analysis', icon: BarChart3, adminOnly: true },
+  { key: 'media', label: 'Media', icon: ImageIcon, adminOnly: false },
+  { key: 'communications', label: 'Comms', icon: MessageSquare, adminOnly: true },
+  { key: 'messages', label: 'Messages', icon: Mail, adminOnly: true },
+  { key: 'inbox', label: 'Tasks', icon: Inbox, adminOnly: true },
+  { key: 'support_network', label: 'Support Network', icon: Handshake, adminOnly: false },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
 
-export function OrgSupportHubClient({ organization, isPortal }: { organization: Organization; isPortal?: boolean }) {
+export function OrgSupportHubClient({ organization, isPortal, backHref, backLabel, memberRole }: { organization: Organization; isPortal?: boolean; backHref?: string; backLabel?: string; memberRole?: 'admin' | 'member' | null }) {
+  const isAdmin = !memberRole || memberRole === 'admin'; // admin by default (backwards compat for /admin route)
+  const visibleTabs = TABS.filter(t => isAdmin || !t.adminOnly);
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -66,11 +68,11 @@ export function OrgSupportHubClient({ organization, isPortal }: { organization: 
           </button>
 
           <Link
-            href={isPortal ? '/portal' : `/admin/organizations/${organization.slug || ''}`}
+            href={backHref || (isPortal ? '/portal' : `/admin/organizations/${organization.slug || ''}`)}
             className="inline-flex items-center gap-2 text-sm font-bold text-earth-700 hover:text-black"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">{isPortal ? 'Back to Portal' : `Back to ${organization.name}`}</span>
+            <span className="hidden sm:inline">{backLabel || (isPortal ? 'Back to Portal' : `Back to ${organization.name}`)}</span>
           </Link>
 
           <div className="flex-1">
@@ -97,7 +99,7 @@ export function OrgSupportHubClient({ organization, isPortal }: { organization: 
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
           <nav className="py-2">
-            {TABS.map((tab) => {
+            {visibleTabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.key;
               return (

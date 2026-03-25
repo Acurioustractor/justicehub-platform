@@ -4,7 +4,7 @@ import { createServiceClient } from '@/lib/supabase/service-lite';
 
 /**
  * GET /api/admin/campaign-alignment/lists?list=allies_to_activate&limit=50&offset=0&search=...
- * Returns paginated campaign list entities ordered by composite_score.
+ * Returns paginated campaign list entities with filtering and sorting.
  */
 export async function GET(request: NextRequest) {
   try {
@@ -26,19 +26,43 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search');
     const category = searchParams.get('category');
     const entityType = searchParams.get('entity_type');
+    const city = searchParams.get('city');
+    const outreachStatus = searchParams.get('outreach_status');
+    const sectorTag = searchParams.get('sector_tag');
+    const stateFilter = searchParams.get('state');
+    const sortBy = searchParams.get('sort') || 'composite_score';
+    const sortDir = searchParams.get('dir') === 'asc' ? true : false;
 
     const service = createServiceClient();
+
+    // Valid sort columns
+    const validSorts = ['composite_score', 'justice_alignment_score', 'reach_influence_score', 'accessibility_score', 'name', 'outreach_status', 'sector_tag', 'passion_score'];
+    const sortColumn = validSorts.includes(sortBy) ? sortBy : 'composite_score';
 
     let query = service
       .from('campaign_alignment_entities')
       .select('*', { count: 'exact' })
-      .order('composite_score', { ascending: false })
+      .order(sortColumn, { ascending: sortDir })
       .range(offset, offset + limit - 1);
 
     if (list) query = query.eq('campaign_list', list);
     if (category) query = query.eq('alignment_category', category);
     if (entityType) query = query.eq('entity_type', entityType);
+    if (outreachStatus === 'hot') {
+      query = query.in('outreach_status', ['responded', 'committed', 'active']);
+    } else if (outreachStatus === 'warm') {
+      query = query.in('outreach_status', ['contacted', 'sent', 'proposal_sent']);
+    } else if (outreachStatus === 'cold') {
+      query = query.in('outreach_status', ['pending', 'not_started']);
+    } else if (outreachStatus) {
+      query = query.eq('outreach_status', outreachStatus);
+    }
+    if (sectorTag) query = query.eq('sector_tag', sectorTag);
     if (search) query = query.or(`name.ilike.%${search}%,organization.ilike.%${search}%,email.ilike.%${search}%`);
+
+    // Location filters — direct column match
+    if (city) query = query.eq('city', city);
+    if (stateFilter) query = query.eq('state', stateFilter);
 
     const { data, count, error } = await query;
     if (error) throw error;
