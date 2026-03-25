@@ -4,7 +4,7 @@ import { createServiceClient } from '@/lib/supabase/service-lite';
 
 /**
  * GET /api/admin/campaign-alignment/lists?list=allies_to_activate&limit=50&offset=0&search=...
- * Returns paginated campaign list entities ordered by composite_score.
+ * Returns paginated campaign list entities with filtering and sorting.
  */
 export async function GET(request: NextRequest) {
   try {
@@ -29,13 +29,20 @@ export async function GET(request: NextRequest) {
     const city = searchParams.get('city');
     const outreachStatus = searchParams.get('outreach_status');
     const sectorTag = searchParams.get('sector_tag');
+    const stateFilter = searchParams.get('state');
+    const sortBy = searchParams.get('sort') || 'composite_score';
+    const sortDir = searchParams.get('dir') === 'asc' ? true : false;
 
     const service = createServiceClient();
+
+    // Valid sort columns
+    const validSorts = ['composite_score', 'justice_alignment_score', 'reach_influence_score', 'accessibility_score', 'name', 'outreach_status', 'sector_tag', 'passion_score'];
+    const sortColumn = validSorts.includes(sortBy) ? sortBy : 'composite_score';
 
     let query = service
       .from('campaign_alignment_entities')
       .select('*', { count: 'exact' })
-      .order('composite_score', { ascending: false })
+      .order(sortColumn, { ascending: sortDir })
       .range(offset, offset + limit - 1);
 
     if (list) query = query.eq('campaign_list', list);
@@ -45,30 +52,9 @@ export async function GET(request: NextRequest) {
     if (sectorTag) query = query.eq('sector_tag', sectorTag);
     if (search) query = query.or(`name.ilike.%${search}%,organization.ilike.%${search}%,email.ilike.%${search}%`);
 
-    // City filter — matches against alignment_signals, warm_paths, recommended_approach, and organization
-    if (city) {
-      const cityPatterns: Record<string, string> = {
-        sydney: '%sydney%,%nsw%,%mount druitt%',
-        brisbane: '%brisbane%,%queensland%,%qld%',
-        adelaide: '%adelaide%,%south australia%',
-        perth: '%perth%,%western australia%,%uwa%',
-        alice_springs: '%alice springs%,%oonchiumpa%,%tennant creek%,%northern territory%',
-        canberra: '%canberra%,%act%',
-        melbourne: '%melbourne%,%victoria%',
-        tasmania: '%tasmania%,%tassie%,%hobart%',
-      };
-      const patterns = cityPatterns[city];
-      if (patterns) {
-        const terms = patterns.split(',');
-        const orClauses = terms.flatMap(t => [
-          `recommended_approach.ilike.${t}`,
-          `organization.ilike.${t}`,
-          `alignment_signals::text.ilike.${t}`,
-          `warm_paths::text.ilike.${t}`,
-        ]);
-        query = query.or(orClauses.join(','));
-      }
-    }
+    // Location filters — direct column match
+    if (city) query = query.eq('city', city);
+    if (stateFilter) query = query.eq('state', stateFilter);
 
     const { data, count, error } = await query;
     if (error) throw error;

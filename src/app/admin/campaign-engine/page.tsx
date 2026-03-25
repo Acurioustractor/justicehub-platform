@@ -164,8 +164,12 @@ export default function CampaignEnginePage() {
   const [search, setSearch] = useState('');
   const [sectorTag, setSectorTag] = useState<string>('');
   const [cityFilter, setCityFilter] = useState<string>('');
+  const [stateFilter, setStateFilter] = useState<string>('');
   const [outreachFilter, setOutreachFilter] = useState<string>('');
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [listView, setListView] = useState<'table' | 'cards'>('cards');
+  const [sortBy, setSortBy] = useState('composite_score');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [viewMode, setViewMode] = useState<ViewMode>('lists');
   const [socialProof, setSocialProof] = useState<SocialProofData | null>(null);
   const [socialProofLoading, setSocialProofLoading] = useState(false);
@@ -194,12 +198,15 @@ export default function CampaignEnginePage() {
     return res.json();
   };
 
-  const fetchList = async (list: string, searchQ?: string, sector?: string, city?: string, outreach?: string) => {
+  const fetchList = async (list: string, searchQ?: string, sector?: string, city?: string, outreach?: string, sort?: string, dir?: string, state?: string) => {
     const params = new URLSearchParams({ list, limit: '100' });
     if (searchQ) params.set('search', searchQ);
     if (sector) params.set('sector_tag', sector);
     if (city) params.set('city', city);
+    if (state) params.set('state', state);
     if (outreach) params.set('outreach_status', outreach);
+    if (sort) params.set('sort', sort);
+    if (dir) params.set('dir', dir);
     const res = await fetch(`/api/admin/campaign-alignment/lists?${params}`);
     if (!res.ok) throw new Error('Failed to fetch list');
     return res.json();
@@ -322,7 +329,7 @@ export default function CampaignEnginePage() {
       setLoading(true);
       const [statsData, listData] = await Promise.all([
         fetchStats(),
-        fetchList(activeList, search || undefined, sectorTag || undefined, cityFilter || undefined, outreachFilter || undefined),
+        fetchList(activeList, search || undefined, sectorTag || undefined, cityFilter || undefined, outreachFilter || undefined, sortBy, sortDir, stateFilter || undefined),
       ]);
       setStats(statsData);
       setEntities(listData.entities);
@@ -337,12 +344,10 @@ export default function CampaignEnginePage() {
   useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!loading) {
-      fetchList(activeList, search || undefined, sectorTag || undefined, cityFilter || undefined, outreachFilter || undefined)
-        .then(data => { setEntities(data.entities); setTotalEntities(data.total); })
-        .catch(() => {});
-    }
-  }, [activeList, search, sectorTag, cityFilter, outreachFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+    fetchList(activeList, search || undefined, sectorTag || undefined, cityFilter || undefined, outreachFilter || undefined, sortBy, sortDir, stateFilter || undefined)
+      .then(data => { setEntities(data.entities); setTotalEntities(data.total); })
+      .catch(() => {});
+  }, [activeList, search, sectorTag, cityFilter, stateFilter, outreachFilter, sortBy, sortDir]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (viewMode === 'social_proof' && !socialProof) fetchSocialProof();
@@ -401,7 +406,7 @@ export default function CampaignEnginePage() {
       );
       // Refresh the current list to show updated statuses
       if (viewMode === 'lists') {
-        const listData = await fetchList(activeList, search, sectorTag);
+        const listData = await fetchList(activeList, search, sectorTag, cityFilter, outreachFilter, sortBy, sortDir, stateFilter);
         setEntities(listData.entities);
         setTotalEntities(listData.total);
       }
@@ -656,6 +661,21 @@ export default function CampaignEnginePage() {
                 />
               </div>
               <select
+                value={stateFilter}
+                onChange={e => { setStateFilter(e.target.value); setCityFilter(''); }}
+                className="px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
+              >
+                <option value="">All States</option>
+                <option value="NSW">NSW</option>
+                <option value="QLD">QLD</option>
+                <option value="VIC">VIC</option>
+                <option value="WA">WA</option>
+                <option value="SA">SA</option>
+                <option value="NT">NT</option>
+                <option value="ACT">ACT</option>
+                <option value="TAS">TAS</option>
+              </select>
+              <select
                 value={cityFilter}
                 onChange={e => setCityFilter(e.target.value)}
                 className="px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
@@ -686,26 +706,158 @@ export default function CampaignEnginePage() {
               </select>
             </div>
 
-            {/* Results count */}
-            <div className="text-sm text-gray-500 mb-3">
-              Showing {entities.length} of {totalEntities} entities
+            {/* Results count + view toggle */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-sm text-gray-500">
+                Showing {entities.length} of {totalEntities} entities
+              </div>
+              <div className="flex items-center gap-3">
+                <select value={`${sortBy}:${sortDir}`} onChange={e => { const [s, d] = e.target.value.split(':'); setSortBy(s); setSortDir(d as 'asc' | 'desc'); }} className="px-2 py-1 border border-gray-300 text-xs focus:outline-none focus:border-black">
+                  <option value="composite_score:desc">Score (High→Low)</option>
+                  <option value="composite_score:asc">Score (Low→High)</option>
+                  <option value="name:asc">Name (A→Z)</option>
+                  <option value="name:desc">Name (Z→A)</option>
+                  <option value="justice_alignment_score:desc">Alignment (High→Low)</option>
+                  <option value="reach_influence_score:desc">Influence (High→Low)</option>
+                  <option value="passion_score:desc">Passion (High→Low)</option>
+                  <option value="outreach_status:asc">Outreach Status</option>
+                </select>
+                <div className="flex gap-0 border border-gray-300">
+                  <button onClick={() => setListView('cards')} className={`px-2.5 py-1 text-xs font-medium ${listView === 'cards' ? 'bg-black text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
+                    Cards
+                  </button>
+                  <button onClick={() => setListView('table')} className={`px-2.5 py-1 text-xs font-medium ${listView === 'table' ? 'bg-black text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
+                    Table
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Entity Table */}
+            {/* Network Cards View */}
+            {listView === 'cards' ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {entities.map(entity => {
+                  const sectorIcon: Record<string, string> = { philanthropy: '💰', services: '🏠', corporate: '🏢', research: '🔬', government: '🏛️', media: '📰', young_people: '🧑', other: '📋' };
+                  const warmPaths = Array.isArray(entity.warm_paths) ? entity.warm_paths : [];
+                  const signals = Array.isArray(entity.alignment_signals) ? entity.alignment_signals : [];
+                  const locationSignal = signals.find((s: { type: string; detail: string }) => s.type === 'location');
+                  const statusColors: Record<string, string> = {
+                    pending: 'bg-gray-100 text-gray-600',
+                    contacted: 'bg-blue-100 text-blue-700',
+                    responded: 'bg-amber-100 text-amber-700',
+                    active: 'bg-emerald-100 text-emerald-700',
+                    committed: 'bg-purple-100 text-purple-700',
+                    sent: 'bg-sky-100 text-sky-700',
+                  };
+                  return (
+                    <div key={entity.id} className="bg-white border border-gray-200 hover:border-gray-400 transition-colors">
+                      <div className="p-4">
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <span className="text-sm">{sectorIcon[entity.sector_tag] || '📋'}</span>
+                              <span className="font-bold text-black text-sm truncate">{entity.name}</span>
+                              <span className="text-lg font-bold text-black ml-auto">{entity.composite_score}</span>
+                            </div>
+                            <div className="text-xs text-gray-500 truncate">
+                              {entity.entity_type === 'person' && entity.position ? `${entity.position}` : ''}
+                              {entity.entity_type === 'person' && entity.organization && entity.organization !== 'Unknown' ? ` · ${entity.organization}` : ''}
+                              {locationSignal ? ` · ${(locationSignal as { detail: string }).detail}` : ''}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Sector + Status badges */}
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className={`inline-flex px-2 py-0.5 text-[10px] font-medium border ${SECTOR_COLORS[entity.sector_tag] || SECTOR_COLORS.other}`}>
+                            {(entity.sector_tag || 'other').replace('_', ' ')}
+                          </span>
+                          <span className={`inline-flex px-2 py-0.5 text-[10px] font-medium ${statusColors[entity.outreach_status] || statusColors.pending}`}>
+                            {entity.outreach_status || 'pending'}
+                          </span>
+                          {entity.email && <Mail className="w-3 h-3 text-gray-400" />}
+                        </div>
+
+                        {/* Warm Paths */}
+                        {warmPaths.length > 0 && (
+                          <div className="border-t border-gray-100 pt-2 mb-2">
+                            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Connections</div>
+                            <div className="space-y-1">
+                              {warmPaths.slice(0, 4).map((wp: { via: string; org: string; comment?: string; amount?: number }, i: number) => (
+                                <div key={i} className="flex items-center gap-1.5 text-xs text-gray-600">
+                                  <LinkIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                                  <span className="font-medium text-gray-700">{wp.via?.replace('_', ' ')}:</span>
+                                  <span className="truncate">{wp.org || wp.comment}{wp.amount ? ` ($${(wp.amount / 1000000).toFixed(1)}M)` : ''}</span>
+                                </div>
+                              ))}
+                              {warmPaths.length > 4 && (
+                                <div className="text-[10px] text-gray-400">+{warmPaths.length - 4} more connections</div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Score bars */}
+                        <div className="flex gap-3 pt-2 border-t border-gray-100">
+                          <div className="flex-1">
+                            <div className="text-[10px] text-gray-400 mb-0.5">Alignment</div>
+                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${entity.justice_alignment_score}%` }} />
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="text-[10px] text-gray-400 mb-0.5">Influence</div>
+                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-blue-500 rounded-full" style={{ width: `${entity.reach_influence_score}%` }} />
+                            </div>
+                          </div>
+                          <div className="flex-1">
+                            <div className="text-[10px] text-gray-400 mb-0.5">Access</div>
+                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-amber-500 rounded-full" style={{ width: `${entity.accessibility_score}%` }} />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Recommended approach preview */}
+                        {entity.recommended_approach && (
+                          <div className="mt-2 pt-2 border-t border-gray-100">
+                            <div className="text-xs text-gray-500 line-clamp-2">{entity.recommended_approach}</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+                {entities.length === 0 && (
+                  <div className="col-span-full text-center py-16 text-gray-400 text-sm">No entities found.</div>
+                )}
+              </div>
+            ) : (
+            /* Entity Table */
             <div className="bg-white border border-gray-200 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
                     <th className="w-8 px-2"></th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600">Entity</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600">Sector</th>
-                    <th className="text-center px-4 py-3 font-bold text-gray-600">Alignment</th>
-                    <th className="text-center px-4 py-3 font-bold text-gray-600">Influence</th>
-                    <th className="text-center px-4 py-3 font-bold text-gray-600">Access</th>
-                    <th className="text-center px-4 py-3 font-bold text-gray-600">Composite</th>
-                    <th className="text-center px-4 py-3 font-bold text-gray-600">Passion</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600">Confidence</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600">Outreach</th>
+                    {[
+                      { key: 'name', label: 'Entity', align: 'text-left' },
+                      { key: 'sector_tag', label: 'Sector', align: 'text-left' },
+                      { key: 'justice_alignment_score', label: 'Alignment', align: 'text-center' },
+                      { key: 'reach_influence_score', label: 'Influence', align: 'text-center' },
+                      { key: 'accessibility_score', label: 'Access', align: 'text-center' },
+                      { key: 'composite_score', label: 'Composite', align: 'text-center' },
+                      { key: 'passion_score', label: 'Passion', align: 'text-center' },
+                      { key: '', label: 'Confidence', align: 'text-left' },
+                      { key: 'outreach_status', label: 'Outreach', align: 'text-left' },
+                    ].map(col => (
+                      <th key={col.label} className={`${col.align} px-4 py-3 font-bold text-gray-600 ${col.key ? 'cursor-pointer hover:text-black select-none' : ''}`}
+                        onClick={() => { if (!col.key) return; setSortBy(col.key); setSortDir(prev => sortBy === col.key ? (prev === 'desc' ? 'asc' : 'desc') : 'desc'); }}>
+                        {col.label}
+                        {sortBy === col.key && <span className="ml-1 text-xs">{sortDir === 'desc' ? '▼' : '▲'}</span>}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
@@ -722,6 +874,7 @@ export default function CampaignEnginePage() {
                 </tbody>
               </table>
             </div>
+            )}
           </>
         )}
 
