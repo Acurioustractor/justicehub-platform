@@ -5,6 +5,7 @@ import {
   Building2, Newspaper, Heart, DollarSign, Users, MapPin,
   ExternalLink, ArrowRight, Download, Share2, ChevronRight,
   Calendar, CheckCircle2, Clock, Search, Loader2, Pencil, Save, User,
+  Mail, Eye, Zap,
 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
@@ -49,6 +50,7 @@ interface PersonalDashboardProps {
   profileSlug: string | null;
   profileBio: string | null;
   profilePhoto: string | null;
+  actionCounts: Record<string, number>;
 }
 
 export function PersonalDashboard({
@@ -66,6 +68,7 @@ export function PersonalDashboard({
   profileSlug,
   profileBio,
   profilePhoto,
+  actionCounts,
 }: PersonalDashboardProps) {
   const roleConfig = memberType ? ROLE_CONFIG[memberType] : null;
   const RoleIcon = roleConfig?.icon || Heart;
@@ -495,6 +498,69 @@ export function PersonalDashboard({
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Your Impact */}
+            {(() => {
+              const totalActions = Object.values(actionCounts).reduce((s, n) => s + n, 0);
+              const ACTION_DISPLAY = [
+                { type: 'mp_letter', label: 'MPs written', icon: Mail, color: 'text-[#DC2626]' },
+                { type: 'social_share', label: 'shares', icon: Share2, color: 'text-blue-400' },
+                { type: 'page_shared', label: 'pages shared', icon: Share2, color: 'text-blue-400' },
+                { type: 'event_registration', label: 'events registered', icon: Calendar, color: 'text-[#059669]' },
+                { type: 'story_read', label: 'stories read', icon: Eye, color: 'text-purple-400' },
+                { type: 'funding_explored', label: 'funding explored', icon: DollarSign, color: 'text-amber-400' },
+                { type: 'org_claim', label: 'orgs claimed', icon: Building2, color: 'text-[#059669]' },
+              ];
+              const activeActions = ACTION_DISPLAY.filter(a => (actionCounts[a.type] || 0) > 0);
+
+              return (
+                <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="font-mono text-xs text-[#F5F0E8]/40 uppercase tracking-wider">Your Impact</h2>
+                    <Zap className="w-4 h-4 text-[#DC2626]" />
+                  </div>
+                  {totalActions === 0 ? (
+                    <div>
+                      <p className="text-sm text-[#F5F0E8]/50 mb-3">
+                        Start taking action to see your impact here
+                      </p>
+                      <div className="space-y-2">
+                        <Link
+                          href="/contained/act"
+                          className="block text-xs font-mono text-[#DC2626] hover:underline"
+                        >
+                          Write to your MP →
+                        </Link>
+                        <Link
+                          href="/contained/tour/social"
+                          className="block text-xs font-mono text-[#DC2626] hover:underline"
+                        >
+                          Share the campaign →
+                        </Link>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-3xl font-bold font-mono mb-1">{totalActions}</p>
+                      <p className="text-xs font-mono text-[#F5F0E8]/40 mb-4">
+                        {totalActions === 1 ? 'action taken' : 'actions taken'}
+                      </p>
+                      <div className="space-y-2">
+                        {activeActions.map(({ type, label, icon: Icon, color }) => (
+                          <div key={type} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Icon className={`w-3.5 h-3.5 ${color}`} />
+                              <span className="text-xs text-[#F5F0E8]/60">{label}</span>
+                            </div>
+                            <span className="text-sm font-bold font-mono">{actionCounts[type]}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
             {/* Your Profile */}
             <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-5">
               <div className="flex items-center justify-between mb-3">

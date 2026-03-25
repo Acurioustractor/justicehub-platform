@@ -150,6 +150,21 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // 6. Track as member action if user has an account
+    const { data: matchedProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', email)
+      .single();
+
+    if (matchedProfile?.id) {
+      await (supabase as any).from('member_actions').insert({
+        user_id: matchedProfile.id,
+        action_type: 'event_registration',
+        metadata: { event_name: event_name || null, event_id: event_id || null },
+      }).catch(() => {});
+    }
+
     return NextResponse.json({
       success: true,
       registration_id: registration.id,

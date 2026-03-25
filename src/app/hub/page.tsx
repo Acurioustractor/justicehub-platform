@@ -83,6 +83,19 @@ export default async function HubPage() {
     fundingCount = count || 0;
   }
 
+  // Fetch user's engagement action counts
+  const { data: userActions } = await service
+    .from('member_actions')
+    .select('action_type')
+    .eq('user_id', user.id);
+
+  const actionCounts: Record<string, number> = {};
+  if (userActions) {
+    for (const a of userActions) {
+      actionCounts[(a as any).action_type] = (actionCounts[(a as any).action_type] || 0) + 1;
+    }
+  }
+
   // Pipeline-by-city: org claims per state + funding per state
   const { data: orgClaimsRaw } = await service
     .from('organization_members')
@@ -136,6 +149,7 @@ export default async function HubPage() {
       profileSlug={publicProfile?.slug || null}
       profileBio={publicProfile?.bio || null}
       profilePhoto={publicProfile?.photo_url || null}
+      actionCounts={actionCounts}
     />
   );
 }
