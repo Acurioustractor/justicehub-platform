@@ -222,7 +222,7 @@ export function PersonalDashboard({
           </div>
           {orgSlug && (
             <Link
-              href={`/hub/${orgSlug}/dashboard`}
+              href={`/hub/${orgSlug}`}
               className="text-xs font-mono text-[#059669] hover:underline flex items-center gap-1"
             >
               {orgName} Hub <ArrowRight className="w-3 h-3" />
@@ -661,7 +661,7 @@ export function PersonalDashboard({
             {/* Org hub link */}
             {orgSlug && (
               <Link
-                href={`/hub/${orgSlug}/dashboard`}
+                href={`/hub/${orgSlug}`}
                 className="block border border-[#059669]/30 bg-[#059669]/5 p-5 hover:border-[#059669]/50 transition-colors"
               >
                 <h2 className="font-mono text-xs text-[#059669] mb-2 uppercase tracking-wider">Organisation Hub</h2>
