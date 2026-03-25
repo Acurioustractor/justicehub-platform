@@ -4,6 +4,7 @@ import { Navigation, Footer } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { Calendar, Clock, Tag, MapPin, User } from 'lucide-react';
 import { PasswordGate } from '@/components/ui/password-gate';
+import { fetchSyndicatedStories, fetchSyndicatedStoryContent } from '@/lib/empathy-ledger/syndication';
 
 const PASSWORD_PROTECTED_SLUGS = ['the-cure-already-exists'];
 
@@ -15,6 +16,27 @@ const categories = {
   harvest: { emoji: '🌾', label: 'Harvest', color: 'bg-amber-100 text-amber-800' },
   roots: { emoji: '🌳', label: 'Roots', color: 'bg-amber-100 text-amber-900' },
 };
+
+function slugify(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+/** Try to find a story from Empathy Ledger syndication API by slug */
+async function fetchELStory(slug: string) {
+  try {
+    const stories = await fetchSyndicatedStories();
+    if (!stories.length) return null;
+    const match = stories.find(
+      (s: any) => slugify(s.title) === slug || s.id === slug
+    );
+    if (!match) return null;
+    // Fetch full content using embed token
+    const content = await fetchSyndicatedStoryContent(match.id, match.embedToken);
+    return { ...match, content };
+  } catch {
+    return null;
+  }
+}
 
 export default async function StoryPage({ params }: { params: { slug: string } }) {
   const supabase = createServiceClient();
@@ -38,7 +60,7 @@ export default async function StoryPage({ params }: { params: { slug: string } }
 
   // If not found in articles, try blog_posts
   let story = article;
-  let contentType: 'article' | 'blog' = 'article';
+  let contentType: 'article' | 'blog' | 'empathy-ledger' = 'article';
 
   if (!story) {
     const { data: blogPost } = await supabase
@@ -60,14 +82,44 @@ export default async function StoryPage({ params }: { params: { slug: string } }
     contentType = 'blog';
   }
 
+  // If still not found, try Empathy Ledger v2 API
+  if (!story) {
+    const elStory = await fetchELStory(slug);
+    if (elStory) {
+      story = {
+        id: elStory.id,
+        title: elStory.title,
+        excerpt: elStory.excerpt,
+        content: elStory.content?.html || elStory.content || '',
+        featured_image_url: elStory.content?.imageUrl || elStory.imageUrl || null,
+        featured_image_caption: null,
+        published_at: elStory.publishedAt || elStory.createdAt,
+        tags: elStory.themes || [],
+        location_tags: elStory.location ? [elStory.location] : [],
+        reading_time_minutes: elStory.content?.wordCount ? Math.ceil(elStory.content.wordCount / 200) : null,
+        category: null,
+        view_count: 0,
+        public_profiles: elStory.storyteller ? {
+          full_name: elStory.storyteller.name,
+          slug: null,
+          photo_url: elStory.storyteller.avatar,
+          bio: null,
+        } : null,
+      } as any;
+      contentType = 'empathy-ledger';
+    }
+  }
+
   // If still not found, return 404
   if (!story) {
     notFound();
   }
 
-  // Increment view count (fire-and-forget)
-  const table = contentType === 'article' ? 'articles' : 'blog_posts';
-  supabase.from(table).update({ view_count: (story.view_count || 0) + 1 }).eq('id', story.id).then(() => {});
+  // Increment view count (fire-and-forget) — only for local stories
+  if (contentType !== 'empathy-ledger') {
+    const table = contentType === 'article' ? 'articles' : 'blog_posts';
+    supabase.from(table).update({ view_count: (story.view_count || 0) + 1 }).eq('id', story.id).then(() => {});
+  }
 
   const author = story.public_profiles;
   const publishDate = new Date(story.published_at as string);

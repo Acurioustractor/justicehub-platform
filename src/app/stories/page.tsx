@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { StoriesPageContent } from './page-content';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
+import { fetchSyndicatedStories } from '@/lib/empathy-ledger/syndication';
 
 export const metadata = {
   title: 'Stories from the Movement - JusticeHub',
@@ -41,9 +42,35 @@ async function getStoriesData() {
       primary_tag: article.category,
     }));
 
-    // Temporarily local-first: keep stories list available even when Empathy Ledger env is absent.
-    // Voices are still available via dedicated Empathy Ledger routes once env is configured.
-    const allContent = [...articles].sort(
+    // Pull syndicated stories from Empathy Ledger
+    let elArticles: typeof articles = [];
+    try {
+      const elStories = await fetchSyndicatedStories();
+      elArticles = elStories.map((s) => ({
+        id: s.id,
+        slug: s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+        title: s.title,
+        excerpt: s.excerpt,
+        content: '',
+        featured_image_url: s.imageUrl,
+        featured_image_caption: null,
+        published_at: s.publishedAt || s.createdAt,
+        tags: s.themes || [],
+        location_tags: s.location ? [s.location] : [],
+        reading_time_minutes: null,
+        category: null,
+        view_count: 0,
+        content_type: 'empathy-ledger' as const,
+        author: s.storyteller ? { full_name: s.storyteller.name, slug: null, photo_url: s.storyteller.avatar } : null,
+        primary_tag: 'roots',
+        public_profiles: null,
+      }));
+    } catch { /* EL unavailable — continue with local only */ }
+
+    // Merge local + EL, deduplicate by slug
+    const localSlugs = new Set(articles.map((a: any) => a.slug));
+    const dedupedEL = elArticles.filter((e: any) => !localSlugs.has(e.slug));
+    const allContent = [...articles, ...dedupedEL].sort(
       (a, b) =>
         new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
     );
