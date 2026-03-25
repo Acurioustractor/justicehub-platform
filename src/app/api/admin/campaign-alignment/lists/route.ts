@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
     const entityType = searchParams.get('entity_type');
     const city = searchParams.get('city');
     const outreachStatus = searchParams.get('outreach_status');
+    const sectorTag = searchParams.get('sector_tag');
 
     const service = createServiceClient();
 
@@ -41,6 +42,7 @@ export async function GET(request: NextRequest) {
     if (category) query = query.eq('alignment_category', category);
     if (entityType) query = query.eq('entity_type', entityType);
     if (outreachStatus) query = query.eq('outreach_status', outreachStatus);
+    if (sectorTag) query = query.eq('sector_tag', sectorTag);
     if (search) query = query.or(`name.ilike.%${search}%,organization.ilike.%${search}%,email.ilike.%${search}%`);
 
     // City filter — matches against alignment_signals, warm_paths, recommended_approach, and organization

@@ -60,6 +60,7 @@ interface Entity {
   accessibility_score: number;
   composite_score: number;
   alignment_category: string;
+  sector_tag: string;
   campaign_list: string;
   alignment_signals: Array<{ type: string; detail: string }>;
   warm_paths: Array<{ via: string; org: string; abn?: string; comment?: string }>;
@@ -133,6 +134,17 @@ const CATEGORY_COLORS: Record<string, string> = {
   unknown: 'bg-yellow-100 text-yellow-800 border-yellow-300',
 };
 
+const SECTOR_COLORS: Record<string, string> = {
+  philanthropy: 'bg-purple-100 text-purple-800 border-purple-300',
+  services: 'bg-teal-100 text-teal-800 border-teal-300',
+  corporate: 'bg-slate-100 text-slate-800 border-slate-300',
+  research: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+  young_people: 'bg-orange-100 text-orange-800 border-orange-300',
+  government: 'bg-blue-100 text-blue-800 border-blue-300',
+  media: 'bg-pink-100 text-pink-800 border-pink-300',
+  other: 'bg-gray-100 text-gray-700 border-gray-300',
+};
+
 const CONFIDENCE_COLORS: Record<string, string> = {
   high: 'bg-emerald-50 text-emerald-700',
   medium: 'bg-amber-50 text-amber-700',
@@ -150,7 +162,7 @@ export default function CampaignEnginePage() {
   const [error, setError] = useState<string | null>(null);
   const [activeList, setActiveList] = useState('allies_to_activate');
   const [search, setSearch] = useState('');
-  const [entityType, setEntityType] = useState<string>('');
+  const [sectorTag, setSectorTag] = useState<string>('');
   const [cityFilter, setCityFilter] = useState<string>('');
   const [outreachFilter, setOutreachFilter] = useState<string>('');
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
@@ -182,10 +194,10 @@ export default function CampaignEnginePage() {
     return res.json();
   };
 
-  const fetchList = async (list: string, searchQ?: string, type?: string, city?: string, outreach?: string) => {
+  const fetchList = async (list: string, searchQ?: string, sector?: string, city?: string, outreach?: string) => {
     const params = new URLSearchParams({ list, limit: '100' });
     if (searchQ) params.set('search', searchQ);
-    if (type) params.set('entity_type', type);
+    if (sector) params.set('sector_tag', sector);
     if (city) params.set('city', city);
     if (outreach) params.set('outreach_status', outreach);
     const res = await fetch(`/api/admin/campaign-alignment/lists?${params}`);
@@ -310,7 +322,7 @@ export default function CampaignEnginePage() {
       setLoading(true);
       const [statsData, listData] = await Promise.all([
         fetchStats(),
-        fetchList(activeList, search || undefined, entityType || undefined, cityFilter || undefined, outreachFilter || undefined),
+        fetchList(activeList, search || undefined, sectorTag || undefined, cityFilter || undefined, outreachFilter || undefined),
       ]);
       setStats(statsData);
       setEntities(listData.entities);
@@ -326,11 +338,11 @@ export default function CampaignEnginePage() {
 
   useEffect(() => {
     if (!loading) {
-      fetchList(activeList, search || undefined, entityType || undefined, cityFilter || undefined, outreachFilter || undefined)
+      fetchList(activeList, search || undefined, sectorTag || undefined, cityFilter || undefined, outreachFilter || undefined)
         .then(data => { setEntities(data.entities); setTotalEntities(data.total); })
         .catch(() => {});
     }
-  }, [activeList, search, entityType, cityFilter, outreachFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activeList, search, sectorTag, cityFilter, outreachFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (viewMode === 'social_proof' && !socialProof) fetchSocialProof();
@@ -389,7 +401,7 @@ export default function CampaignEnginePage() {
       );
       // Refresh the current list to show updated statuses
       if (viewMode === 'lists') {
-        const listData = await fetchList(activeList, search, entityType);
+        const listData = await fetchList(activeList, search, sectorTag);
         setEntities(listData.entities);
         setTotalEntities(listData.total);
       }
@@ -605,6 +617,32 @@ export default function CampaignEnginePage() {
               ))}
             </div>
 
+            {/* Sector quick-filters */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {[
+                { key: '', label: 'All', icon: '📋' },
+                { key: 'services', label: 'Local Services', icon: '🏠' },
+                { key: 'philanthropy', label: 'Philanthropy', icon: '💰' },
+                { key: 'government', label: 'Politicians', icon: '🏛️' },
+                { key: 'research', label: 'Research', icon: '🔬' },
+                { key: 'corporate', label: 'Companies', icon: '🏢' },
+                { key: 'young_people', label: 'Young People', icon: '🧑' },
+                { key: 'media', label: 'Media', icon: '📰' },
+              ].map(s => (
+                <button
+                  key={s.key}
+                  onClick={() => setSectorTag(s.key)}
+                  className={`px-3 py-1.5 text-xs font-medium border transition-colors ${
+                    sectorTag === s.key
+                      ? 'bg-black text-white border-black'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-gray-500'
+                  }`}
+                >
+                  {s.icon} {s.label}
+                </button>
+              ))}
+            </div>
+
             {/* Filters */}
             <div className="bg-white border border-gray-200 p-4 mb-6 flex flex-col sm:flex-row gap-4">
               <div className="relative flex-1">
@@ -646,15 +684,6 @@ export default function CampaignEnginePage() {
                 <option value="committed">Committed</option>
                 <option value="active">Active</option>
               </select>
-              <select
-                value={entityType}
-                onChange={e => setEntityType(e.target.value)}
-                className="px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
-              >
-                <option value="">All Types</option>
-                <option value="organization">Organizations</option>
-                <option value="person">Persons</option>
-              </select>
             </div>
 
             {/* Results count */}
@@ -669,7 +698,7 @@ export default function CampaignEnginePage() {
                   <tr className="border-b border-gray-200 bg-gray-50">
                     <th className="w-8 px-2"></th>
                     <th className="text-left px-4 py-3 font-bold text-gray-600">Entity</th>
-                    <th className="text-left px-4 py-3 font-bold text-gray-600">Category</th>
+                    <th className="text-left px-4 py-3 font-bold text-gray-600">Sector</th>
                     <th className="text-center px-4 py-3 font-bold text-gray-600">Alignment</th>
                     <th className="text-center px-4 py-3 font-bold text-gray-600">Influence</th>
                     <th className="text-center px-4 py-3 font-bold text-gray-600">Access</th>
@@ -806,8 +835,8 @@ function EntityRow({ entity, expandedRow, setExpandedRow, isOpponentView, onPipe
           </div>
         </td>
         <td className="px-4 py-3">
-          <span className={`inline-flex px-2 py-0.5 text-xs font-medium border ${CATEGORY_COLORS[entity.alignment_category] || CATEGORY_COLORS.unknown}`}>
-            {entity.alignment_category.replace('_', ' ')}
+          <span className={`inline-flex px-2 py-0.5 text-xs font-medium border ${SECTOR_COLORS[entity.sector_tag] || SECTOR_COLORS.other}`}>
+            {(entity.sector_tag || 'other').replace('_', ' ')}
           </span>
         </td>
         <td className="px-4 py-3 text-center">
@@ -1419,7 +1448,7 @@ function ActionsView({ entities, loading, skippedIds, actionFilter, actionTypeFi
   const filtered = entities.filter(e => {
     if (skippedIds.has(e.id)) return false;
     if (actionFilter && e.outreach_status !== actionFilter) return false;
-    if (actionTypeFilter && e.entity_type !== actionTypeFilter) return false;
+    if (actionTypeFilter && e.sector_tag !== actionTypeFilter) return false;
     return true;
   });
 
@@ -1470,9 +1499,15 @@ function ActionsView({ entities, loading, skippedIds, actionFilter, actionTypeFi
           onChange={e => setActionTypeFilter(e.target.value)}
           className="px-3 py-1.5 border border-gray-300 text-xs focus:outline-none focus:border-black"
         >
-          <option value="">All Types</option>
-          <option value="organization">Organizations</option>
-          <option value="person">Persons</option>
+          <option value="">All Sectors</option>
+          <option value="philanthropy">Philanthropy</option>
+          <option value="services">Services</option>
+          <option value="corporate">Companies</option>
+          <option value="research">Research</option>
+          <option value="young_people">Young People</option>
+          <option value="government">Government</option>
+          <option value="media">Media</option>
+          <option value="other">Other</option>
         </select>
       </div>
 
