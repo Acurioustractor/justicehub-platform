@@ -124,7 +124,7 @@ interface MomentumData {
   follow_ups_needed: number;
 }
 
-type ViewMode = 'lists' | 'actions' | 'tour_stops' | 'social_proof' | 'tracked_posts' | 'momentum' | 'pipeline' | 'calendar' | 'compose';
+type ViewMode = 'lists' | 'actions' | 'tour_stops' | 'social_proof' | 'tracked_posts' | 'momentum' | 'pipeline' | 'calendar' | 'compose' | 'content_plan' | 'outreach';
 
 const CATEGORY_COLORS: Record<string, string> = {
   ally: 'bg-emerald-100 text-emerald-800 border-emerald-300',
@@ -583,6 +583,8 @@ export default function CampaignEnginePage() {
             { key: 'pipeline' as ViewMode, label: 'Pipeline', icon: ListChecks },
             { key: 'calendar' as ViewMode, label: 'Calendar', icon: CalendarDays },
             { key: 'compose' as ViewMode, label: 'Compose', icon: PenLine },
+            { key: 'content_plan' as ViewMode, label: 'Content', icon: StickyNote },
+            { key: 'outreach' as ViewMode, label: 'Outreach', icon: Mail },
           ].map(tab => (
             <button
               key={tab.key}
@@ -948,6 +950,12 @@ export default function CampaignEnginePage() {
 
         {/* === COMMS: COMPOSE === */}
         {viewMode === 'compose' && <Compose onInsertStat={pendingStat} />}
+
+        {/* === CONTENT PLAN === */}
+        {viewMode === 'content_plan' && <ContentPlanView />}
+
+        {/* === OUTREACH === */}
+        {viewMode === 'outreach' && <OutreachView />}
       </div>
 
       {/* Brand sidebar — visible on comms tabs */}
@@ -2068,6 +2076,177 @@ function MomentumView({ data, loading, onRefresh }: { data: MomentumData | null;
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ──── Content Plan View ────────────────────────────────────────────────────────
+
+function ContentPlanView() {
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [saving, setSaving] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/admin/campaign-content').then(r => r.json()).then(d => { setItems(d.data || []); setLoading(false); }).catch(() => setLoading(false));
+  }, []);
+
+  const updateStatus = async (id: string, status: string) => {
+    setSaving(id);
+    await fetch('/api/admin/campaign-content', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) });
+    setItems(prev => prev.map(c => c.id === id ? { ...c, status } : c));
+    setSaving(null);
+  };
+
+  if (loading) return <div className="flex justify-center py-12"><Loader2 className="w-5 h-5 animate-spin text-gray-400" /></div>;
+
+  const linkedin = items.filter(i => i.type === 'linkedin');
+  const STATUS_COLORS: Record<string, string> = { published: 'bg-emerald-100 text-emerald-800', ready: 'bg-red-100 text-red-800', draft: 'bg-gray-100 text-gray-600', scheduled: 'bg-blue-100 text-blue-800' };
+  const TYPE_LABELS: Record<string, string> = { linkedin: 'LinkedIn', article: 'Article', 'op-ed': 'Op-Ed', email: 'Email' };
+
+  return (
+    <div className="space-y-4">
+      {/* Arc */}
+      <div className="bg-black rounded-xl p-5">
+        <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-3">LinkedIn Campaign Arc</p>
+        <div className="grid grid-cols-3 gap-3">
+          {linkedin.slice(0, 3).map((item, i) => (
+            <div key={item.id} className={`rounded-lg p-3 ${item.status === 'ready' ? 'border-2 border-red-500' : item.status === 'published' ? 'border border-white/20' : 'border border-white/10'}`}>
+              <div className="flex items-center gap-2 mb-1">
+                {item.status === 'published' ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : item.status === 'ready' ? <Zap className="w-3 h-3 text-red-500" /> : <XCircle className="w-3 h-3 text-white/20" />}
+                <span className={`text-[10px] font-bold ${item.status === 'ready' ? 'text-red-400' : 'text-white/40'}`}>POST {i + 1}</span>
+              </div>
+              <p className={`text-xs font-semibold ${item.status === 'draft' ? 'text-white/40' : 'text-white'}`}>{item.title.replace(/^Room \d: /, '')}</p>
+              {item.metrics?.likes > 0 && (
+                <div className="flex gap-2 mt-2 text-[10px] text-white/30">
+                  <span>{item.metrics.likes} likes</span>
+                  <span>{item.metrics.comments} comments</span>
+                  <span>{item.metrics.reposts} reposts</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* All items */}
+      {items.map((item) => (
+        <div key={item.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <button onClick={() => setExpandedId(expandedId === item.id ? null : item.id)} className="w-full flex items-center gap-3 p-3 text-left hover:bg-gray-50">
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 uppercase">{TYPE_LABELS[item.type] || item.type}</span>
+            <span className="flex-1 text-sm font-semibold truncate">{item.title}</span>
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COLORS[item.status] || 'bg-gray-100'}`}>{item.status}</span>
+            {expandedId === item.id ? <ChevronDown className="w-3 h-3 text-gray-400" /> : <ChevronRight className="w-3 h-3 text-gray-400" />}
+          </button>
+          {expandedId === item.id && (
+            <div className="px-3 pb-3 border-t border-gray-100 space-y-2">
+              <p className="text-xs text-gray-500 mt-2"><strong>Angle:</strong> {item.angle}</p>
+              <div className="bg-gray-50 rounded p-3"><p className="text-xs whitespace-pre-line leading-relaxed text-gray-700">{item.content?.slice(0, 500)}{item.content?.length > 500 ? '...' : ''}</p></div>
+              {item.notes && <p className="text-xs text-gray-400"><strong>Notes:</strong> {item.notes}</p>}
+              {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 font-semibold hover:underline flex items-center gap-1"><LinkIcon className="w-3 h-3" />{item.link}</a>}
+              {item.tags?.length > 0 && <div className="flex flex-wrap gap-1">{item.tags.map((t: string) => <span key={t} className="text-[10px] px-1.5 py-0.5 bg-gray-100 rounded text-gray-500">{t}</span>)}</div>}
+              <div className="flex gap-1.5 pt-1">
+                {['draft', 'ready', 'scheduled', 'published'].map(s => (
+                  <button key={s} onClick={() => updateStatus(item.id, s)} disabled={item.status === s || saving === item.id}
+                    className={`text-[10px] px-2 py-1 rounded font-semibold ${item.status === s ? 'bg-black text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
+                    {saving === item.id ? '...' : s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ──── Outreach View ────────────────────────────────────────────────────────────
+
+function OutreachView() {
+  const [contacts, setContacts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<any>({});
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/admin/campaign-outreach').then(r => r.json()).then(d => { setContacts(d.data || []); setLoading(false); }).catch(() => setLoading(false));
+  }, []);
+
+  const saveEdit = async () => {
+    if (!editingId) return;
+    setSaving(true);
+    await fetch('/api/admin/campaign-outreach', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: editingId, ...editForm }) });
+    setContacts(prev => prev.map(c => c.id === editingId ? { ...c, ...editForm } : c));
+    setEditingId(null);
+    setSaving(false);
+  };
+
+  if (loading) return <div className="flex justify-center py-12"><Loader2 className="w-5 h-5 animate-spin text-gray-400" /></div>;
+
+  const STATUS_COLORS: Record<string, string> = { hot: 'bg-red-100 text-red-800', warm: 'bg-amber-100 text-amber-800', cold: 'bg-blue-100 text-blue-800', active: 'bg-emerald-100 text-emerald-800', 'follow-up': 'bg-amber-100 text-amber-800', overdue: 'bg-red-600 text-white', closed: 'bg-gray-100 text-gray-400' };
+  const hot = contacts.filter(c => c.status === 'hot' || c.status === 'overdue');
+  const funders = contacts.filter(c => c.sector === 'Corporate/Philanthropy');
+
+  return (
+    <div className="space-y-4">
+      {/* Stats */}
+      <div className="grid grid-cols-4 gap-3">
+        <div className="bg-red-600 text-white rounded-lg p-3"><p className="text-xl font-bold">{hot.length}</p><p className="text-[10px] text-white/60">Hot / Overdue</p></div>
+        <div className="bg-white border border-gray-200 rounded-lg p-3"><p className="text-xl font-bold">{contacts.filter(c => c.priority === 'A').length}</p><p className="text-[10px] text-gray-400">Priority A</p></div>
+        <div className="bg-white border border-gray-200 rounded-lg p-3"><p className="text-xl font-bold">{contacts.length}</p><p className="text-[10px] text-gray-400">Total</p></div>
+        <div className="bg-white border border-gray-200 rounded-lg p-3"><p className="text-xl font-bold">{funders.length}</p><p className="text-[10px] text-gray-400">Funders</p></div>
+      </div>
+
+      {/* Contacts */}
+      {contacts.map((c) => (
+        <div key={c.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="flex items-center gap-3 p-3">
+            <div className="h-8 w-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold shrink-0">
+              {c.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold">{c.name}</span>
+                <span className="text-[10px] text-gray-400">{c.location}</span>
+              </div>
+              <p className="text-xs text-gray-400 truncate">{c.org}</p>
+            </div>
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COLORS[c.status] || 'bg-gray-100'}`}>{c.status}</span>
+            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${c.priority === 'A' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500'}`}>{c.priority}</span>
+            <button onClick={() => { if (editingId === c.id) { setEditingId(null); } else { setEditingId(c.id); setEditForm({ next_action: c.next_action, notes: c.notes, status: c.status }); } }} className="p-1 hover:bg-gray-100 rounded">
+              <ChevronDown className="w-3 h-3 text-gray-400" />
+            </button>
+          </div>
+          <p className="px-3 pb-2 text-xs text-gray-400 truncate">{c.next_action}</p>
+          {editingId === c.id && (
+            <div className="px-3 pb-3 border-t border-gray-100 space-y-2 mt-1">
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 block mb-0.5">Next Action</label>
+                  <input value={editForm.next_action || ''} onChange={e => setEditForm({ ...editForm, next_action: e.target.value })} className="w-full text-xs border border-gray-200 rounded px-2 py-1.5" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 block mb-0.5">Status</label>
+                  <select value={editForm.status} onChange={e => setEditForm({ ...editForm, status: e.target.value })} className="w-full text-xs border border-gray-200 rounded px-2 py-1.5">
+                    {['hot', 'warm', 'cold', 'active', 'follow-up', 'overdue', 'closed'].map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 block mb-0.5">Notes</label>
+                <textarea value={editForm.notes || ''} onChange={e => setEditForm({ ...editForm, notes: e.target.value })} rows={2} className="w-full text-xs border border-gray-200 rounded px-2 py-1.5" />
+              </div>
+              <div className="flex gap-1.5">
+                <button onClick={saveEdit} disabled={saving} className="text-[10px] px-2.5 py-1 bg-black text-white rounded font-semibold">{saving ? '...' : 'Save'}</button>
+                <button onClick={() => setEditingId(null)} className="text-[10px] px-2.5 py-1 bg-gray-100 rounded font-semibold text-gray-500">Cancel</button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
