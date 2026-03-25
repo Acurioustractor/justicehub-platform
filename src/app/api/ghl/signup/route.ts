@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
       organization,
       newsletter,
       source,
+      member_type,
     } = body;
 
     // Validate required fields
@@ -50,6 +51,16 @@ export async function POST(request: NextRequest) {
         tags.push(GHL_TAGS.NEWSLETTER);
       }
 
+      // Campaign member type tags
+      if (member_type) {
+        tags.push(GHL_TAGS.CONTAINED);
+        if (member_type === 'media') tags.push(GHL_TAGS.MEDIA);
+        if (member_type === 'funder') tags.push(GHL_TAGS.PARTNER);
+        if (member_type === 'organization') tags.push(GHL_TAGS.WANTS_TO_HELP);
+        if (member_type === 'lived_experience') tags.push(GHL_TAGS.YOUTH_VOICE);
+        if (member_type === 'supporter') tags.push(GHL_TAGS.WANTS_TO_HELP);
+      }
+
       // Steward commitments stored in custom fields (tags consolidated)
       tags.push(GHL_TAGS.JUSTICEHUB);
 
@@ -62,7 +73,8 @@ export async function POST(request: NextRequest) {
         customFields: {
           preferred_name: preferred_name || '',
           organization: organization || '',
-          signup_type: is_steward ? 'steward' : 'user',
+          signup_type: member_type || (is_steward ? 'steward' : 'user'),
+          member_type: member_type || '',
           steward_motivation: steward_motivation || '',
           steward_experience: steward_experience || '',
           steward_commitments: steward_commitments?.join(', ') || '',

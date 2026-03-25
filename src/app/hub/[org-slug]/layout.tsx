@@ -29,8 +29,8 @@ export default async function HubLayout({
 
     const isBasecamp = organization.type === 'basecamp' || organization.partner_tier === 'basecamp';
     const modules = isBasecamp
-      ? ['dashboard', 'grants', 'compliance', 'basecamp', 'site-editor']
-      : ['dashboard', 'grants', 'compliance'];
+      ? ['dashboard', 'campaign', 'grants', 'compliance', 'basecamp', 'site-editor']
+      : ['dashboard', 'campaign', 'grants', 'compliance'];
     const trialEndsAt = organization.trial_ends_at;
     const upgradeUrl = `/portal/${organization.slug ?? params['org-slug']}/billing`;
 

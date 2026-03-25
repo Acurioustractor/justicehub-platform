@@ -138,6 +138,7 @@ export async function middleware(request: NextRequest) {
     '/community-programs',
     '/contained',
     '/contained/enroll',
+    '/contained/join',
     '/developer-api',
     '/events',
     '/for-funders',
