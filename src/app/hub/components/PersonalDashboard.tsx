@@ -27,6 +27,12 @@ interface CommunityCounts {
   lived_experience: number;
 }
 
+interface PipelineData {
+  members: number;
+  orgsClaimed: number;
+  fundingRecords: number;
+}
+
 interface PersonalDashboardProps {
   userName: string;
   memberType: string | null;
@@ -38,6 +44,7 @@ interface PersonalDashboardProps {
   communityCounts: Record<string, CommunityCounts>;
   tourStops: TourStop[];
   fundingCount: number;
+  pipelineByCity: Record<string, PipelineData>;
   profileSlug: string | null;
   profileBio: string | null;
   profilePhoto: string | null;
@@ -54,6 +61,7 @@ export function PersonalDashboard({
   communityCounts,
   tourStops,
   fundingCount,
+  pipelineByCity,
   profileSlug,
   profileBio,
   profilePhoto,
@@ -359,6 +367,66 @@ export function PersonalDashboard({
                       <div className="flex items-center justify-between mt-1">
                         <p className="text-xs text-[#F5F0E8]/30">{stop.partner}</p>
                         <p className="text-xs font-mono text-[#F5F0E8]/30">{stop.date}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Momentum — Pipeline by City */}
+            <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-6">
+              <h2 className="font-mono text-xs text-[#F5F0E8]/40 mb-1 uppercase tracking-wider">Momentum</h2>
+              <p className="text-sm text-[#F5F0E8]/60 mb-4">
+                Pipeline progress across tour stop cities
+              </p>
+              <div className="space-y-3">
+                {tourStops.map((stop) => {
+                  const pipeline = pipelineByCity[stop.state] || { members: 0, orgsClaimed: 0, fundingRecords: 0 };
+                  const isYours = stop.state === userState;
+                  // Simple momentum score: weighted sum
+                  const score = pipeline.members * 2 + pipeline.orgsClaimed * 5 + Math.min(pipeline.fundingRecords, 100);
+                  const maxScore = 200; // rough ceiling for bar width
+                  const barWidth = Math.min(100, Math.round((score / maxScore) * 100));
+                  return (
+                    <div
+                      key={stop.city}
+                      className={`p-4 border transition-colors ${
+                        isYours ? 'border-[#DC2626]/30 bg-[#DC2626]/5' : 'border-[#F5F0E8]/5'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <MapPin className={`w-3.5 h-3.5 ${isYours ? 'text-[#DC2626]' : 'text-[#F5F0E8]/30'}`} />
+                          <h3 className="font-bold text-sm">{stop.city}</h3>
+                          {isYours && <span className="text-[9px] font-mono text-[#DC2626] bg-[#DC2626]/10 px-1.5 py-0.5">YOU</span>}
+                        </div>
+                        <span className={`text-xs font-mono ${
+                          stop.status === 'confirmed' ? 'text-[#059669]' : 'text-amber-500'
+                        }`}>
+                          {stop.status}
+                        </span>
+                      </div>
+                      {/* Progress bar */}
+                      <div className="h-1.5 bg-[#F5F0E8]/5 mb-3">
+                        <div
+                          className={`h-full transition-all ${isYours ? 'bg-[#DC2626]' : 'bg-[#F5F0E8]/20'}`}
+                          style={{ width: `${barWidth}%` }}
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-center">
+                        <div>
+                          <p className="text-lg font-bold font-mono">{pipeline.members}</p>
+                          <p className="text-[10px] font-mono text-[#F5F0E8]/40">members</p>
+                        </div>
+                        <div>
+                          <p className="text-lg font-bold font-mono">{pipeline.orgsClaimed}</p>
+                          <p className="text-[10px] font-mono text-[#F5F0E8]/40">orgs</p>
+                        </div>
+                        <div>
+                          <p className="text-lg font-bold font-mono">{pipeline.fundingRecords > 999 ? `${(pipeline.fundingRecords / 1000).toFixed(1)}K` : pipeline.fundingRecords}</p>
+                          <p className="text-[10px] font-mono text-[#F5F0E8]/40">funding</p>
+                        </div>
                       </div>
                     </div>
                   );

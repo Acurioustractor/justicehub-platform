@@ -83,6 +83,43 @@ export default async function HubPage() {
     fundingCount = count || 0;
   }
 
+  // Pipeline-by-city: org claims per state + funding per state
+  const { data: orgClaimsRaw } = await service
+    .from('organization_members')
+    .select('organizations(state)')
+    .in('status', ['active', 'pending']);
+
+  const orgClaimsByState: Record<string, number> = {};
+  for (const state of tourStopStates) orgClaimsByState[state] = 0;
+  if (orgClaimsRaw) {
+    for (const claim of orgClaimsRaw) {
+      const st = (claim.organizations as any)?.state;
+      if (st && st in orgClaimsByState) orgClaimsByState[st]++;
+    }
+  }
+
+  // Funding counts per tour stop state — parallel count queries
+  const fundingByState: Record<string, number> = {};
+  const fundingCounts = await Promise.all(
+    tourStopStates.map(async (state) => {
+      const { count } = await service
+        .from('justice_funding')
+        .select('id', { count: 'exact', head: true })
+        .eq('state', state);
+      return { state, count: count || 0 };
+    })
+  );
+  for (const { state, count } of fundingCounts) fundingByState[state] = count;
+
+  const pipelineByCity: Record<string, { members: number; orgsClaimed: number; fundingRecords: number }> = {};
+  for (const state of tourStopStates) {
+    pipelineByCity[state] = {
+      members: communityCounts[state]?.total || 0,
+      orgsClaimed: orgClaimsByState[state] || 0,
+      fundingRecords: fundingByState[state] || 0,
+    };
+  }
+
   return (
     <PersonalDashboard
       userName={publicProfile?.preferred_name || publicProfile?.full_name || user.email || 'Member'}
@@ -95,6 +132,7 @@ export default async function HubPage() {
       communityCounts={communityCounts}
       tourStops={tourStops}
       fundingCount={fundingCount}
+      pipelineByCity={pipelineByCity}
       profileSlug={publicProfile?.slug || null}
       profileBio={publicProfile?.bio || null}
       profilePhoto={publicProfile?.photo_url || null}
