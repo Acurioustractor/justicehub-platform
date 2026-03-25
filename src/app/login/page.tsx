@@ -16,9 +16,12 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<string | null>(null);
   const [error, setError] = useState(searchParams.get('error') === 'auth_failed' ? 'Authentication failed. Please try again.' : '');
-  const [mode, setMode] = useState<'login' | 'reset' | 'magic-link'>('magic-link');
+  const [mode, setMode] = useState<'login' | 'reset' | 'magic-link' | 'phone'>('magic-link');
   const [resetSent, setResetSent] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [phoneOtp, setPhoneOtp] = useState('');
+  const [phoneOtpSent, setPhoneOtpSent] = useState(false);
 
   async function getPostLoginRedirect(): Promise<string> {
     // If ?redirect= param exists, honour it
@@ -91,7 +94,13 @@ function LoginForm() {
     }
   }
 
-  async function handleOAuthLogin(provider: 'google' | 'github' | 'linkedin_oidc' | 'facebook') {
+  type OAuthProvider = 'google' | 'github' | 'linkedin_oidc' | 'facebook' | 'azure' | 'twitter';
+  const PROVIDER_LABELS: Record<OAuthProvider, string> = {
+    google: 'Google', github: 'GitHub', linkedin_oidc: 'LinkedIn',
+    facebook: 'Facebook', azure: 'Microsoft', twitter: 'X (Twitter)',
+  };
+
+  async function handleOAuthLogin(provider: OAuthProvider) {
     setOauthLoading(provider);
     setError('');
 
@@ -101,15 +110,50 @@ function LoginForm() {
         provider,
         options: {
           redirectTo: `${window.location.origin}/auth/callback?next=${redirectNext}`,
+          ...(provider === 'azure' ? { scopes: 'openid email profile' } : {}),
         },
       });
 
       if (error) throw error;
     } catch (error: unknown) {
-      const label = { google: 'Google', github: 'GitHub', linkedin_oidc: 'LinkedIn', facebook: 'Facebook' }[provider];
-      const message = error instanceof Error ? error.message : `${label} login failed`;
+      const message = error instanceof Error ? error.message : `${PROVIDER_LABELS[provider]} login failed`;
       setError(message);
       setOauthLoading(null);
+    }
+  }
+
+  async function handlePhoneOtp(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    // Normalise: ensure +61 prefix for AU numbers
+    let normalised = phone.trim();
+    if (normalised.startsWith('0')) normalised = '+61' + normalised.slice(1);
+    if (!normalised.startsWith('+')) normalised = '+61' + normalised;
+
+    try {
+      if (!phoneOtpSent) {
+        // Step 1: Send OTP
+        const { error } = await supabase.auth.signInWithOtp({ phone: normalised });
+        if (error) throw error;
+        setPhoneOtpSent(true);
+      } else {
+        // Step 2: Verify OTP
+        const { error } = await supabase.auth.verifyOtp({
+          phone: normalised,
+          token: phoneOtp,
+          type: 'sms',
+        });
+        if (error) throw error;
+        const redirect = await getPostLoginRedirect();
+        window.location.href = redirect;
+      }
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Phone login failed';
+      setError(message);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -162,12 +206,14 @@ function LoginForm() {
     login: 'Log In',
     reset: 'Reset Password',
     'magic-link': 'Sign In',
+    phone: 'Phone Sign In',
   }[mode];
 
   const modeSubtitle = {
     login: 'Sign in with your email and password',
     reset: 'Enter your email to receive a password reset link',
     'magic-link': 'Enter your email — we\'ll send you a one-click sign-in link',
+    phone: 'Enter your mobile number — we\'ll text you a code',
   }[mode];
 
   return (
@@ -259,13 +305,88 @@ function LoginForm() {
                 {loading ? 'Sending...' : 'Send Magic Link'}
               </button>
 
+              <div className="flex gap-3 text-sm text-center">
+                <button
+                  type="button"
+                  onClick={() => { setMode('login'); setError(''); }}
+                  className="flex-1 text-earth-600 hover:text-earth-900 underline"
+                >
+                  Use password
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setMode('phone'); setError(''); }}
+                  className="flex-1 text-earth-600 hover:text-earth-900 underline"
+                >
+                  Use phone number
+                </button>
+              </div>
+            </form>
+          ) : mode === 'phone' ? (
+            <form onSubmit={handlePhoneOtp} className="space-y-6">
+              {!phoneOtpSent ? (
+                <div>
+                  <label className="block font-bold mb-2">Mobile Number</label>
+                  <div className="flex gap-2">
+                    <span className="px-3 py-3 border-2 border-black bg-gray-50 font-mono text-sm flex items-center">+61</span>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="0412 345 678"
+                      className="flex-1 px-4 py-3 border-2 border-black focus:outline-none focus:ring-2 focus:ring-ochre-600"
+                      required
+                    />
+                  </div>
+                  <p className="text-xs text-earth-500 mt-1">Australian mobile numbers only</p>
+                </div>
+              ) : (
+                <div>
+                  <div className="bg-green-100 border-2 border-green-600 text-green-800 px-4 py-3 mb-4 font-bold text-sm">
+                    Code sent to {phone}
+                  </div>
+                  <label className="block font-bold mb-2">Verification Code</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    value={phoneOtp}
+                    onChange={(e) => setPhoneOtp(e.target.value.replace(/\D/g, ''))}
+                    placeholder="123456"
+                    className="w-full px-4 py-3 border-2 border-black focus:outline-none focus:ring-2 focus:ring-ochre-600 text-center text-2xl font-mono tracking-widest"
+                    required
+                    autoFocus
+                  />
+                </div>
+              )}
+
               <button
-                type="button"
-                onClick={() => { setMode('login'); setError(''); }}
-                className="w-full text-sm text-earth-600 hover:text-earth-900 underline"
+                type="submit"
+                disabled={loading}
+                className="w-full px-6 py-4 bg-black text-white font-bold text-lg hover:bg-earth-800 transition-colors disabled:opacity-50"
               >
-                Use password instead
+                {loading ? (phoneOtpSent ? 'Verifying...' : 'Sending...') : (phoneOtpSent ? 'Verify Code' : 'Send Code')}
               </button>
+
+              <div className="flex gap-3 text-sm text-center">
+                {phoneOtpSent && (
+                  <button
+                    type="button"
+                    onClick={() => { setPhoneOtpSent(false); setPhoneOtp(''); setError(''); }}
+                    className="flex-1 text-earth-600 hover:text-earth-900 underline"
+                  >
+                    Resend code
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => { setMode('magic-link'); setError(''); setPhoneOtpSent(false); setPhoneOtp(''); }}
+                  className="flex-1 text-earth-600 hover:text-earth-900 underline"
+                >
+                  Use email instead
+                </button>
+              </div>
             </form>
           ) : (
             <>
@@ -307,15 +428,58 @@ function LoginForm() {
                   {oauthLoading === 'linkedin_oidc' ? 'Redirecting...' : 'Continue with LinkedIn'}
                 </button>
 
+                {/* Row of secondary providers */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleOAuthLogin('azure')}
+                    disabled={!!oauthLoading}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white text-gray-600 border-2 border-gray-200 font-bold text-sm hover:bg-gray-50 transition-colors disabled:opacity-50"
+                    title="Microsoft"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                      <path d="M0 0h11.377v11.377H0z" fill="#F25022"/>
+                      <path d="M12.623 0H24v11.377H12.623z" fill="#7FBA00"/>
+                      <path d="M0 12.623h11.377V24H0z" fill="#00A4EF"/>
+                      <path d="M12.623 12.623H24V24H12.623z" fill="#FFB900"/>
+                    </svg>
+                    {oauthLoading === 'azure' ? '...' : 'Microsoft'}
+                  </button>
+
+                  <button
+                    onClick={() => handleOAuthLogin('twitter')}
+                    disabled={!!oauthLoading}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-black text-white border-2 border-black font-bold text-sm hover:bg-gray-800 transition-colors disabled:opacity-50"
+                    title="X (Twitter)"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                    {oauthLoading === 'twitter' ? '...' : 'X'}
+                  </button>
+
+                  <button
+                    onClick={() => handleOAuthLogin('github')}
+                    disabled={!!oauthLoading}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#24292f] text-white border-2 border-black font-bold text-sm hover:bg-[#32383f] transition-colors disabled:opacity-50"
+                    title="GitHub"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                      <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    {oauthLoading === 'github' ? '...' : 'GitHub'}
+                  </button>
+                </div>
+
+                {/* Phone SMS option */}
                 <button
-                  onClick={() => handleOAuthLogin('github')}
-                  disabled={!!oauthLoading}
-                  className="w-full flex items-center justify-center gap-3 px-6 py-3.5 bg-[#24292f] text-white border-2 border-black font-bold hover:bg-[#32383f] transition-colors disabled:opacity-50"
+                  onClick={() => { setMode('phone'); setError(''); }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white text-gray-600 border-2 border-gray-200 font-bold text-sm hover:bg-gray-50 transition-colors"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                    <line x1="12" y1="18" x2="12.01" y2="18"/>
                   </svg>
-                  {oauthLoading === 'github' ? 'Redirecting...' : 'Continue with GitHub'}
+                  Sign in with phone number
                 </button>
               </div>
 
