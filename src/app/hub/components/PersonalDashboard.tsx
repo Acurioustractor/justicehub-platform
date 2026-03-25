@@ -4,7 +4,7 @@ import Link from 'next/link';
 import {
   Building2, Newspaper, Heart, DollarSign, Users, MapPin,
   ExternalLink, ArrowRight, Download, Share2, ChevronRight,
-  Calendar, CheckCircle2, Clock, Search, Loader2,
+  Calendar, CheckCircle2, Clock, Search, Loader2, Pencil, Save, User,
 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
@@ -38,6 +38,9 @@ interface PersonalDashboardProps {
   communityCounts: Record<string, CommunityCounts>;
   tourStops: TourStop[];
   fundingCount: number;
+  profileSlug: string | null;
+  profileBio: string | null;
+  profilePhoto: string | null;
 }
 
 export function PersonalDashboard({
@@ -51,9 +54,22 @@ export function PersonalDashboard({
   communityCounts,
   tourStops,
   fundingCount,
+  profileSlug,
+  profileBio,
+  profilePhoto,
 }: PersonalDashboardProps) {
   const roleConfig = memberType ? ROLE_CONFIG[memberType] : null;
   const RoleIcon = roleConfig?.icon || Heart;
+
+  // Profile edit state
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    preferred_name: userName,
+    location: userState,
+    bio: profileBio || '',
+  });
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileSaved, setProfileSaved] = useState(false);
 
   // Org search state
   const [orgQuery, setOrgQuery] = useState('');
@@ -158,6 +174,31 @@ export function PersonalDashboard({
     }
   }
 
+  async function handleSaveProfile() {
+    setSavingProfile(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      await supabase
+        .from('public_profiles')
+        .update({
+          preferred_name: profileForm.preferred_name,
+          location: profileForm.location,
+          bio: profileForm.bio,
+        })
+        .eq('user_id', user.id);
+      setEditingProfile(false);
+      setProfileSaved(true);
+      setTimeout(() => setProfileSaved(false), 3000);
+    } catch (err) {
+      console.error('Profile save failed:', err);
+    } finally {
+      setSavingProfile(false);
+    }
+  }
+
+  const stateOptions = ['NSW', 'QLD', 'SA', 'WA', 'NT', 'VIC', 'TAS', 'ACT'];
+
   const totalMembers = Object.values(communityCounts).reduce((sum, c) => sum + c.total, 0);
 
   return (
@@ -196,6 +237,33 @@ export function PersonalDashboard({
             </p>
           )}
         </div>
+
+        {/* Role-specific hub link */}
+        {memberType && memberType !== 'organization' && (
+          <Link
+            href={`/hub/${memberType === 'lived_experience' ? 'lived-experience' : memberType}`}
+            className={`mb-6 p-4 border flex items-center justify-between transition-colors ${
+              memberType === 'media' ? 'border-blue-500/30 bg-blue-500/5 hover:border-blue-500/50' :
+              memberType === 'funder' ? 'border-amber-500/30 bg-amber-500/5 hover:border-amber-500/50' :
+              memberType === 'supporter' ? 'border-pink-500/30 bg-pink-500/5 hover:border-pink-500/50' :
+              'border-purple-500/30 bg-purple-500/5 hover:border-purple-500/50'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <RoleIcon className={`w-5 h-5 ${roleConfig?.color || ''}`} />
+              <div>
+                <p className="font-bold text-sm">{roleConfig?.label} Hub</p>
+                <p className="text-xs text-[#F5F0E8]/40 font-mono">
+                  {memberType === 'media' ? 'Media intelligence, data briefings, press resources' :
+                   memberType === 'funder' ? 'Funding landscape, evidence-backed programs, due diligence' :
+                   memberType === 'supporter' ? 'Actions, tour events, campaign toolkit' :
+                   'Community, support resources, share your story'}
+                </p>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-[#F5F0E8]/30" />
+          </Link>
+        )}
 
         {/* Org status banner */}
         {orgStatus === 'pending' && orgName && (
@@ -348,6 +416,115 @@ export function PersonalDashboard({
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Your Profile */}
+            <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="font-mono text-xs text-[#F5F0E8]/40 uppercase tracking-wider">Your Profile</h2>
+                {!editingProfile ? (
+                  <button
+                    onClick={() => setEditingProfile(true)}
+                    className="text-xs font-mono text-[#F5F0E8]/40 hover:text-[#F5F0E8] flex items-center gap-1 transition-colors"
+                  >
+                    <Pencil className="w-3 h-3" /> Edit
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setEditingProfile(false)}
+                    className="text-xs font-mono text-[#F5F0E8]/40 hover:text-[#F5F0E8] transition-colors"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
+
+              {!editingProfile ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    {profilePhoto ? (
+                      <img src={profilePhoto} alt="" className="w-10 h-10 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-[#F5F0E8]/10 flex items-center justify-center">
+                        <User className="w-5 h-5 text-[#F5F0E8]/30" />
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-bold text-sm">{profileSaved ? profileForm.preferred_name : userName}</p>
+                      {roleConfig && (
+                        <p className={`text-xs font-mono ${roleConfig.color}`}>{roleConfig.label}</p>
+                      )}
+                    </div>
+                  </div>
+                  {(profileSaved ? profileForm.location : userState) && (
+                    <p className="text-xs text-[#F5F0E8]/50 font-mono flex items-center gap-1">
+                      <MapPin className="w-3 h-3" /> {profileSaved ? profileForm.location : userState}
+                    </p>
+                  )}
+                  {(profileSaved ? profileForm.bio : profileBio) && (
+                    <p className="text-xs text-[#F5F0E8]/40 line-clamp-2">
+                      {profileSaved ? profileForm.bio : profileBio}
+                    </p>
+                  )}
+                  {profileSlug && (
+                    <Link
+                      href={`/people/${profileSlug}/edit`}
+                      className="block text-xs font-mono text-[#DC2626] hover:underline mt-2"
+                    >
+                      Full profile settings →
+                    </Link>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-[10px] font-mono text-[#F5F0E8]/40 uppercase">Name</label>
+                    <input
+                      type="text"
+                      value={profileForm.preferred_name}
+                      onChange={(e) => setProfileForm(f => ({ ...f, preferred_name: e.target.value }))}
+                      className="w-full mt-1 px-3 py-2 bg-[#F5F0E8]/5 border border-[#F5F0E8]/20 text-[#F5F0E8] focus:outline-none focus:border-[#DC2626] font-mono text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-mono text-[#F5F0E8]/40 uppercase">State</label>
+                    <select
+                      value={profileForm.location}
+                      onChange={(e) => setProfileForm(f => ({ ...f, location: e.target.value }))}
+                      className="w-full mt-1 px-3 py-2 bg-[#F5F0E8]/5 border border-[#F5F0E8]/20 text-[#F5F0E8] focus:outline-none focus:border-[#DC2626] font-mono text-sm"
+                    >
+                      <option value="">Select state</option>
+                      {stateOptions.map(s => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-mono text-[#F5F0E8]/40 uppercase">Bio</label>
+                    <textarea
+                      value={profileForm.bio}
+                      onChange={(e) => setProfileForm(f => ({ ...f, bio: e.target.value }))}
+                      rows={3}
+                      className="w-full mt-1 px-3 py-2 bg-[#F5F0E8]/5 border border-[#F5F0E8]/20 text-[#F5F0E8] focus:outline-none focus:border-[#DC2626] font-mono text-sm resize-none"
+                      placeholder="Tell the network about yourself..."
+                    />
+                  </div>
+                  <button
+                    onClick={handleSaveProfile}
+                    disabled={savingProfile}
+                    className="w-full py-2 bg-[#DC2626] text-white text-sm font-bold hover:bg-[#DC2626]/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    Save Changes
+                  </button>
+                </div>
+              )}
+
+              {profileSaved && !editingProfile && (
+                <p className="text-xs font-mono text-[#059669] mt-2 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" /> Profile updated
+                </p>
+              )}
+            </div>
+
             {/* Claim Org (if no org yet) */}
             {!orgSlug && !claimSuccess && memberType === 'organization' && (
               <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-5">

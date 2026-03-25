@@ -17,7 +17,7 @@ export default async function HubPage() {
   // Fetch user's public profile
   const { data: publicProfile } = await service
     .from('public_profiles')
-    .select('full_name, preferred_name, role_tags, location, current_organization, slug')
+    .select('id, full_name, preferred_name, role_tags, location, current_organization, slug, bio, photo_url')
     .eq('user_id', user.id)
     .single();
 
@@ -95,6 +95,9 @@ export default async function HubPage() {
       communityCounts={communityCounts}
       tourStops={tourStops}
       fundingCount={fundingCount}
+      profileSlug={publicProfile?.slug || null}
+      profileBio={publicProfile?.bio || null}
+      profilePhoto={publicProfile?.photo_url || null}
     />
   );
 }
