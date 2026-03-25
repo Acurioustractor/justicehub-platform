@@ -545,8 +545,8 @@ export function getGHLClient(): GHLClient {
   return ghlClient;
 }
 
-// Consolidated tag system (12 core tags + 4 role tags + 4 tier tags)
-// See: consolidation done 2026-03-19
+// Consolidated tag system
+// See: consolidation done 2026-03-19, member hub tags added 2026-03-26
 export const GHL_TAGS = {
   // Source
   JUSTICEHUB: 'JusticeHub',
@@ -570,6 +570,33 @@ export const GHL_TAGS = {
   PRACTITIONER: 'Practitioner',
   YOUTH_VOICE: 'Youth Voice',
 
+  // Member hub roles (set on CONTAINED signup)
+  ROLE_ORGANIZATION: 'contained_organization',
+  ROLE_MEDIA: 'contained_media',
+  ROLE_SUPPORTER: 'contained_supporter',
+  ROLE_FUNDER: 'contained_funder',
+  ROLE_LIVED_EXPERIENCE: 'contained_lived_experience',
+
+  // State tags (set on signup from user's state selection)
+  STATE_NSW: 'state_nsw',
+  STATE_QLD: 'state_qld',
+  STATE_VIC: 'state_vic',
+  STATE_SA: 'state_sa',
+  STATE_WA: 'state_wa',
+  STATE_NT: 'state_nt',
+  STATE_TAS: 'state_tas',
+  STATE_ACT: 'state_act',
+
+  // Engagement tags (set by action tracking)
+  ORG_CLAIMED: 'org_claimed',
+  ACTIVE_ORG: 'active_org',
+  ENGAGED_MEDIA: 'engaged_media',
+  ACTIVE_SUPPORTER: 'active_supporter',
+  ENGAGED_FUNDER: 'engaged_funder',
+  ACTIVE_PEER: 'active_peer',
+  ONBOARDED: 'onboarded',
+  INACTIVE_7D: 'inactive_7d',
+
   // Engagement tiers (set by weekly scoring cron)
   TIER_AWARE: 'Tier: Aware',
   TIER_ENGAGED: 'Tier: Engaged',
@@ -577,7 +604,37 @@ export const GHL_TAGS = {
   TIER_CHAMPION: 'Tier: Champion',
 } as const;
 
+// Map member_type to GHL role tag
+export const MEMBER_TYPE_TO_TAG: Record<string, string> = {
+  organization: GHL_TAGS.ROLE_ORGANIZATION,
+  media: GHL_TAGS.ROLE_MEDIA,
+  supporter: GHL_TAGS.ROLE_SUPPORTER,
+  funder: GHL_TAGS.ROLE_FUNDER,
+  lived_experience: GHL_TAGS.ROLE_LIVED_EXPERIENCE,
+};
+
+// Map state abbreviation to GHL state tag
+export const STATE_TO_TAG: Record<string, string> = {
+  NSW: GHL_TAGS.STATE_NSW,
+  QLD: GHL_TAGS.STATE_QLD,
+  VIC: GHL_TAGS.STATE_VIC,
+  SA: GHL_TAGS.STATE_SA,
+  WA: GHL_TAGS.STATE_WA,
+  NT: GHL_TAGS.STATE_NT,
+  TAS: GHL_TAGS.STATE_TAS,
+  ACT: GHL_TAGS.STATE_ACT,
+};
+
 export const GHL_PIPELINES = {
   STEWARD: process.env.GHL_STEWARD_PIPELINE_ID || '',
   EVENT: process.env.GHL_EVENT_PIPELINE_ID || '',
 } as const;
+
+// Nurture workflow IDs — one per member role, configured in GHL
+export const GHL_NURTURE_WORKFLOWS: Record<string, string> = {
+  organization: process.env.GHL_WORKFLOW_ORGANIZATION || '',
+  media: process.env.GHL_WORKFLOW_MEDIA || '',
+  supporter: process.env.GHL_WORKFLOW_SUPPORTER || '',
+  funder: process.env.GHL_WORKFLOW_FUNDER || '',
+  lived_experience: process.env.GHL_WORKFLOW_LIVED_EXPERIENCE || '',
+};

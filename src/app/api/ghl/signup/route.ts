@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { getGHLClient, GHL_TAGS, GHL_PIPELINES } from '@/lib/ghl/client';
+import { getGHLClient, GHL_TAGS, GHL_PIPELINES, MEMBER_TYPE_TO_TAG, STATE_TO_TAG, GHL_NURTURE_WORKFLOWS } from '@/lib/ghl/client';
 
 /**
  * POST /api/ghl/signup
@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
       newsletter,
       source,
       member_type,
+      state,
     } = body;
 
     // Validate required fields
@@ -54,11 +55,21 @@ export async function POST(request: NextRequest) {
       // Campaign member type tags
       if (member_type) {
         tags.push(GHL_TAGS.CONTAINED);
+        // Role-specific tag for workflow triggers
+        const roleTag = MEMBER_TYPE_TO_TAG[member_type];
+        if (roleTag) tags.push(roleTag);
+        // Legacy tags for backwards compatibility
         if (member_type === 'media') tags.push(GHL_TAGS.MEDIA);
         if (member_type === 'funder') tags.push(GHL_TAGS.PARTNER);
         if (member_type === 'organization') tags.push(GHL_TAGS.WANTS_TO_HELP);
         if (member_type === 'lived_experience') tags.push(GHL_TAGS.YOUTH_VOICE);
         if (member_type === 'supporter') tags.push(GHL_TAGS.WANTS_TO_HELP);
+      }
+
+      // State tag for regional segmentation
+      if (state) {
+        const stateTag = STATE_TO_TAG[state.toUpperCase()];
+        if (stateTag) tags.push(stateTag);
       }
 
       // Steward commitments stored in custom fields (tags consolidated)
@@ -75,6 +86,7 @@ export async function POST(request: NextRequest) {
           organization: organization || '',
           signup_type: member_type || (is_steward ? 'steward' : 'user'),
           member_type: member_type || '',
+          state: state || '',
           steward_motivation: steward_motivation || '',
           steward_experience: steward_experience || '',
           steward_commitments: steward_commitments?.join(', ') || '',
@@ -89,6 +101,16 @@ export async function POST(request: NextRequest) {
           name: `Steward: ${full_name}`,
           contactId: ghlContactId,
         });
+      }
+
+      // Trigger role-specific nurture workflow
+      if (member_type && ghlContactId) {
+        const workflowId = GHL_NURTURE_WORKFLOWS[member_type];
+        if (workflowId) {
+          ghl.addToWorkflow(ghlContactId, workflowId).catch(err =>
+            console.error('Failed to trigger nurture workflow:', err)
+          );
+        }
       }
     }
 

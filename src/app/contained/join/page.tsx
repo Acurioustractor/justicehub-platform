@@ -83,6 +83,7 @@ async function syncWithGHL(data: {
   source?: string;
   organization?: string;
   member_type?: string;
+  state?: string;
 }) {
   try {
     const response = await fetch('/api/ghl/signup', {
@@ -337,6 +338,7 @@ function JoinContent() {
         source: 'CONTAINED Campaign Join',
         organization: selectedOrg?.name,
         member_type: memberRole,
+        state,
       });
 
       setStep('complete');
