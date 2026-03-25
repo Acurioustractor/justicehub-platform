@@ -11,6 +11,7 @@ const VALID_ACTION_TYPES = [
   'story_read',
   'funding_explored',
   'page_shared',
+  'nurture_email',
 ] as const;
 
 /**
