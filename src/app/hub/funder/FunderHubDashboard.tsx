@@ -1,9 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   DollarSign, ArrowLeft, MapPin, TrendingUp, Building2, Shield,
-  BarChart3, Users, BookOpen, CheckCircle2,
+  BarChart3, Users, BookOpen, CheckCircle2, AlertTriangle, Loader2,
 } from 'lucide-react';
 
 interface FunderHubDashboardProps {
@@ -31,6 +32,21 @@ export function FunderHubDashboard({
   indigenousOrgCount,
 }: FunderHubDashboardProps) {
   const maxCount = stateFunding.length > 0 ? Math.max(...stateFunding.map(s => s.count)) : 1;
+
+  // Fetch funding gap analysis
+  const [gaps, setGaps] = useState<{
+    funding_gaps: Array<{ program_name: string; evidence_level: string; org_name: string; org_slug: string | null; state: string | null; is_indigenous: boolean; funding_records: number }>;
+    summary: { total_proven_programs: number; unfunded_count: number; states_with_gaps: number };
+  } | null>(null);
+  const [gapsLoading, setGapsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`/api/hub/briefings?type=funder${userState ? `&state=${userState}` : ''}`)
+      .then(r => r.json())
+      .then(data => setGaps(data))
+      .catch(() => {})
+      .finally(() => setGapsLoading(false));
+  }, [userState]);
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F5F0E8]">
@@ -80,6 +96,82 @@ export function FunderHubDashboard({
             <p className="text-2xl font-bold mt-1">{provenInterventions.length}</p>
             <p className="text-[10px] text-[#F5F0E8]/30 font-mono">evidence-backed</p>
           </div>
+        </div>
+
+        {/* Funding Gaps — the key value-add */}
+        <div className="border border-amber-500/20 bg-amber-500/5 p-6 mb-8">
+          <h2 className="font-mono text-xs text-amber-500 mb-2 uppercase tracking-wider flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4" /> Funding Gap Analysis
+          </h2>
+          <p className="text-sm text-[#F5F0E8]/50 mb-4">
+            Evidence-backed programs with no tracked government funding — where investment could have the most impact
+          </p>
+          {gapsLoading ? (
+            <div className="flex items-center gap-2 text-sm text-[#F5F0E8]/30">
+              <Loader2 className="w-4 h-4 animate-spin" /> Analysing funding data...
+            </div>
+          ) : gaps?.funding_gaps ? (
+            <>
+              {gaps.summary && (
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="p-3 border border-[#F5F0E8]/10 bg-[#0A0A0A]/50">
+                    <p className="text-xl font-bold text-[#DC2626]">{gaps.summary.unfunded_count}</p>
+                    <p className="text-[10px] text-[#F5F0E8]/40 font-mono">unfunded programs</p>
+                  </div>
+                  <div className="p-3 border border-[#F5F0E8]/10 bg-[#0A0A0A]/50">
+                    <p className="text-xl font-bold">{gaps.summary.total_proven_programs}</p>
+                    <p className="text-[10px] text-[#F5F0E8]/40 font-mono">proven/effective total</p>
+                  </div>
+                  <div className="p-3 border border-[#F5F0E8]/10 bg-[#0A0A0A]/50">
+                    <p className="text-xl font-bold">{gaps.summary.states_with_gaps}</p>
+                    <p className="text-[10px] text-[#F5F0E8]/40 font-mono">states with gaps</p>
+                  </div>
+                </div>
+              )}
+              <div className="space-y-2">
+                {gaps.funding_gaps.slice(0, 8).map((gap, i) => (
+                  <div key={i} className="p-3 border border-[#F5F0E8]/10 bg-[#0A0A0A]/50 flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm">{gap.program_name}</p>
+                      <div className="flex items-center gap-2 mt-1 text-[10px] font-mono text-[#F5F0E8]/40">
+                        <span>{gap.org_name}</span>
+                        {gap.state && (
+                          <>
+                            <span className="text-[#F5F0E8]/20">·</span>
+                            <span className="flex items-center gap-0.5"><MapPin className="w-2.5 h-2.5" />{gap.state}</span>
+                          </>
+                        )}
+                        {gap.is_indigenous && (
+                          <>
+                            <span className="text-[#F5F0E8]/20">·</span>
+                            <span className="text-[#059669]">Indigenous-led</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <div className="shrink-0 flex items-center gap-2">
+                      <span className={`px-2 py-0.5 text-[9px] font-mono ${
+                        gap.evidence_level === 'Proven' ? 'bg-[#059669]/20 text-[#059669]' :
+                        gap.evidence_level === 'Indigenous-led' ? 'bg-purple-500/20 text-purple-400' :
+                        'bg-blue-500/20 text-blue-400'
+                      }`}>
+                        {gap.evidence_level}
+                      </span>
+                      <span className="px-2 py-0.5 text-[9px] font-mono bg-[#DC2626]/20 text-[#DC2626]">
+                        $0 tracked
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/intelligence"
+                className="block mt-4 text-xs font-mono text-[#DC2626] hover:underline"
+              >
+                View all programs in evidence library →
+              </Link>
+            </>
+          ) : null}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

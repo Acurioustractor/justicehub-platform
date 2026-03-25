@@ -1,9 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Newspaper, ArrowLeft, ExternalLink, TrendingUp, TrendingDown, Minus,
-  FileText, Database, BookOpen, MapPin, BarChart3,
+  FileText, Database, BookOpen, MapPin, BarChart3, Quote, Loader2, Copy, Check,
 } from 'lucide-react';
 
 interface MediaArticle {
@@ -44,6 +45,28 @@ export function MediaHubDashboard({
   sentimentCounts,
 }: MediaHubDashboardProps) {
   const totalSentiment = sentimentCounts.positive + sentimentCounts.negative + sentimentCounts.neutral;
+
+  // Fetch briefings
+  const [briefings, setBriefings] = useState<{
+    talking_points: Array<{ category: string; point: string; source: string; sourceUrl: string }>;
+    proven_programs: Array<{ name: string; evidence_level: string; org_name: string | null; state: string | null }>;
+  } | null>(null);
+  const [briefingsLoading, setBriefingsLoading] = useState(true);
+  const [copiedPoint, setCopiedPoint] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/hub/briefings?type=media${userState ? `&state=${userState}` : ''}`)
+      .then(r => r.json())
+      .then(data => setBriefings(data))
+      .catch(() => {})
+      .finally(() => setBriefingsLoading(false));
+  }, [userState]);
+
+  function copyPoint(text: string, index: number) {
+    navigator.clipboard.writeText(text);
+    setCopiedPoint(index);
+    setTimeout(() => setCopiedPoint(null), 2000);
+  }
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F5F0E8]">
@@ -103,6 +126,46 @@ export function MediaHubDashboard({
             </div>
             <p className="text-[10px] text-[#F5F0E8]/30 font-mono">negative vs positive</p>
           </div>
+        </div>
+
+        {/* Talking Points — the key value-add */}
+        <div className="border border-blue-500/20 bg-blue-500/5 p-6 mb-8">
+          <h2 className="font-mono text-xs text-blue-500 mb-4 uppercase tracking-wider flex items-center gap-2">
+            <Quote className="w-4 h-4" /> Data Talking Points
+          </h2>
+          <p className="text-sm text-[#F5F0E8]/50 mb-4">
+            Copy-ready data points for your reporting — sourced from live JusticeHub data
+          </p>
+          {briefingsLoading ? (
+            <div className="flex items-center gap-2 text-sm text-[#F5F0E8]/30">
+              <Loader2 className="w-4 h-4 animate-spin" /> Loading briefings...
+            </div>
+          ) : briefings?.talking_points ? (
+            <div className="space-y-3">
+              {briefings.talking_points.map((tp, i) => (
+                <div key={i} className="p-3 border border-[#F5F0E8]/10 bg-[#0A0A0A]/50">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <span className="text-[9px] font-mono text-blue-400 bg-blue-500/10 px-1.5 py-0.5 uppercase">
+                        {tp.category}
+                      </span>
+                      <p className="text-sm mt-1.5 leading-relaxed">{tp.point}</p>
+                      <Link href={tp.sourceUrl} className="text-[10px] font-mono text-[#F5F0E8]/30 hover:text-blue-400 mt-1 inline-block">
+                        Source: {tp.source}
+                      </Link>
+                    </div>
+                    <button
+                      onClick={() => copyPoint(tp.point, i)}
+                      className="shrink-0 p-1.5 text-[#F5F0E8]/20 hover:text-blue-400 transition-colors"
+                      title="Copy to clipboard"
+                    >
+                      {copiedPoint === i ? <Check className="w-3.5 h-3.5 text-[#059669]" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
