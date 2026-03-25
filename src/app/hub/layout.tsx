@@ -6,6 +6,13 @@ export default async function HubLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const isDev = process.env.NODE_ENV === 'development';
+
+  // In dev, bypass auth check (org hub has its own dev bypass)
+  if (isDev) {
+    return <>{children}</>;
+  }
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 

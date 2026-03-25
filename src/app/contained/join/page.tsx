@@ -69,6 +69,8 @@ interface OrgResult {
   slug: string | null;
   state: string | null;
   city: string | null;
+  abn: string | null;
+  source?: 'justicehub' | 'grantscope';
 }
 
 async function syncWithGHL(data: {
@@ -135,7 +137,7 @@ function JoinContent() {
     });
   }, [step]);
 
-  // Debounced org search
+  // Debounced org search — searches organizations first, then gs_entities for full 566K coverage
   const searchOrgs = useCallback(async (query: string) => {
     if (query.length < 2) {
       setOrgResults([]);
@@ -143,17 +145,44 @@ function JoinContent() {
     }
     setOrgSearching(true);
     try {
-      const { data, error } = await supabase
+      // Search JusticeHub organizations first (22K)
+      const { data: jhOrgs } = await supabase
         .from('organizations')
-        .select('id, name, slug, state, city')
+        .select('id, name, slug, state, city, abn')
         .ilike('name', `%${query}%`)
         .eq('is_active', true)
         .order('name')
         .limit(8);
 
-      if (!error && data) {
-        setOrgResults(data);
+      const results: OrgResult[] = (jhOrgs || []).map(o => ({ ...o, source: 'justicehub' as const }));
+      const jhAbns = new Set(results.map(r => r.abn).filter(Boolean));
+
+      // If fewer than 8 results, fill from gs_entities (566K)
+      if (results.length < 8) {
+        const { data: gsOrgs } = await (supabase as any)
+          .from('gs_entities')
+          .select('id, canonical_name, abn, state, lga_name, sector')
+          .ilike('canonical_name', `%${query}%`)
+          .order('canonical_name')
+          .limit(8 - results.length) as { data: Array<{ id: string; canonical_name: string; abn: string | null; state: string | null; lga_name: string | null; sector: string | null }> | null };
+
+        if (gsOrgs) {
+          for (const gs of gsOrgs) {
+            if (gs.abn && jhAbns.has(gs.abn)) continue;
+            results.push({
+              id: gs.id,
+              name: gs.canonical_name,
+              slug: null,
+              state: gs.state,
+              city: gs.lga_name,
+              abn: gs.abn,
+              source: 'grantscope' as const,
+            });
+          }
+        }
       }
+
+      setOrgResults(results);
     } catch {
       // Non-critical
     } finally {
@@ -261,11 +290,30 @@ function JoinContent() {
 
       // If org selected, claim it
       if (selectedOrg) {
+        let orgId = selectedOrg.id;
+
+        // If from GS (not in organizations table), create the org first
+        if (selectedOrg.source === 'grantscope') {
+          const { data: newOrg } = await supabase
+            .from('organizations')
+            .insert({
+              name: selectedOrg.name,
+              abn: selectedOrg.abn,
+              state: selectedOrg.state,
+              city: selectedOrg.city,
+              is_active: true,
+              type: 'community-service',
+            })
+            .select('id')
+            .single();
+          if (newOrg) orgId = newOrg.id;
+        }
+
         await supabase
           .from('organization_members')
           .insert({
             user_id: user.id,
-            organization_id: selectedOrg.id,
+            organization_id: orgId,
             role: 'member',
             status: 'pending',
             joined_at: new Date().toISOString(),
@@ -274,7 +322,7 @@ function JoinContent() {
         // Set primary org
         await supabase
           .from('profiles')
-          .update({ primary_organization_id: selectedOrg.id })
+          .update({ primary_organization_id: orgId })
           .eq('id', user.id);
       }
 
@@ -561,9 +609,10 @@ function JoinContent() {
                   {selectedOrg && (
                     <div className="mt-2 p-3 border border-[#059669] bg-[#059669]/10 flex items-center justify-between">
                       <div>
-                        <p className="font-bold text-sm">{selectedOrg.name}</p>
-                        <p className="text-xs text-[#F5F0E8]/40 font-mono">
-                          {[selectedOrg.city, selectedOrg.state].filter(Boolean).join(', ')}
+                        <p className="font-bold text-sm text-[#F5F0E8]">{selectedOrg.name}</p>
+                        <p className="text-xs text-[#F5F0E8]/60 font-mono">
+                          {selectedOrg.abn ? `ABN ${selectedOrg.abn}` : 'No ABN on file'}
+                          {selectedOrg.city || selectedOrg.state ? ` · ${[selectedOrg.city, selectedOrg.state].filter(Boolean).join(', ')}` : ''}
                         </p>
                       </div>
                       <Check className="w-5 h-5 text-[#059669]" />
@@ -583,9 +632,13 @@ function JoinContent() {
                           }}
                           className="w-full text-left px-4 py-3 hover:bg-[#F5F0E8]/5 transition-colors"
                         >
-                          <p className="font-bold text-sm">{org.name}</p>
-                          <p className="text-xs text-[#F5F0E8]/40 font-mono">
-                            {[org.city, org.state].filter(Boolean).join(', ')}
+                          <p className="font-bold text-sm text-[#F5F0E8]">
+                            {org.name}
+                            {org.source === 'grantscope' && <span className="ml-2 text-[10px] font-mono text-blue-400 bg-blue-400/10 px-1.5 py-0.5">ABR</span>}
+                          </p>
+                          <p className="text-xs text-[#F5F0E8]/50 font-mono">
+                            {org.abn ? `ABN ${org.abn}` : 'No ABN on file'}
+                            {org.city || org.state ? ` · ${[org.city, org.state].filter(Boolean).join(', ')}` : ''}
                           </p>
                         </button>
                       ))}

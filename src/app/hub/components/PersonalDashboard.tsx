@@ -57,7 +57,7 @@ export function PersonalDashboard({
 
   // Org search state
   const [orgQuery, setOrgQuery] = useState('');
-  const [orgResults, setOrgResults] = useState<Array<{ id: string; name: string; slug: string | null; state: string | null; city: string | null }>>([]);
+  const [orgResults, setOrgResults] = useState<Array<{ id: string; name: string; slug: string | null; state: string | null; city: string | null; abn: string | null; source?: 'justicehub' | 'grantscope' }>>([]);
   const [orgSearching, setOrgSearching] = useState(false);
   const [claimingOrg, setClaimingOrg] = useState(false);
   const [claimSuccess, setClaimSuccess] = useState(false);
@@ -68,14 +68,40 @@ export function PersonalDashboard({
     if (query.length < 2) { setOrgResults([]); return; }
     setOrgSearching(true);
     try {
-      const { data } = await supabase
+      // Search JusticeHub orgs first
+      const { data: jhOrgs } = await supabase
         .from('organizations')
-        .select('id, name, slug, state, city')
+        .select('id, name, slug, state, city, abn')
         .ilike('name', `%${query}%`)
         .eq('is_active', true)
         .order('name')
         .limit(8);
-      if (data) setOrgResults(data);
+
+      const results: typeof orgResults = (jhOrgs || []).map(o => ({ ...o, source: 'justicehub' as const }));
+      const jhAbns = new Set(results.map(r => r.abn).filter(Boolean));
+
+      // Fill from gs_entities if needed
+      if (results.length < 8) {
+        const { data: gsOrgs } = await (supabase as any)
+          .from('gs_entities')
+          .select('id, canonical_name, abn, state, lga_name')
+          .ilike('canonical_name', `%${query}%`)
+          .order('canonical_name')
+          .limit(8 - results.length) as { data: Array<{ id: string; canonical_name: string; abn: string | null; state: string | null; lga_name: string | null }> | null };
+
+        if (gsOrgs) {
+          for (const gs of gsOrgs) {
+            if (gs.abn && jhAbns.has(gs.abn)) continue;
+            results.push({
+              id: gs.id, name: gs.canonical_name, slug: null,
+              state: gs.state, city: gs.lga_name, abn: gs.abn,
+              source: 'grantscope' as const,
+            });
+          }
+        }
+      }
+
+      setOrgResults(results);
     } catch { /* non-critical */ }
     finally { setOrgSearching(false); }
   }, [supabase]);
@@ -85,11 +111,30 @@ export function PersonalDashboard({
     return () => clearTimeout(timeout);
   }, [orgQuery, searchOrgs]);
 
-  async function handleClaimOrg(orgId: string) {
+  async function handleClaimOrg(org: typeof orgResults[0]) {
     setClaimingOrg(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+
+      let orgId = org.id;
+
+      // If from GS, create in organizations table first
+      if (org.source === 'grantscope') {
+        const { data: newOrg } = await supabase
+          .from('organizations')
+          .insert({
+            name: org.name,
+            abn: org.abn,
+            state: org.state,
+            city: org.city,
+            is_active: true,
+            type: 'community-service',
+          })
+          .select('id')
+          .single();
+        if (newOrg) orgId = newOrg.id;
+      }
 
       await supabase.from('organization_members').insert({
         user_id: user.id,
@@ -326,13 +371,17 @@ export function PersonalDashboard({
                     {orgResults.map((org) => (
                       <button
                         key={org.id}
-                        onClick={() => handleClaimOrg(org.id)}
+                        onClick={() => handleClaimOrg(org)}
                         disabled={claimingOrg}
                         className="w-full text-left px-3 py-2.5 hover:bg-[#F5F0E8]/5 transition-colors"
                       >
-                        <p className="font-bold text-xs">{org.name}</p>
+                        <p className="font-bold text-xs text-[#F5F0E8]">
+                          {org.name}
+                          {org.source === 'grantscope' && <span className="ml-1.5 text-[9px] font-mono text-blue-400 bg-blue-400/10 px-1 py-0.5">ABR</span>}
+                        </p>
                         <p className="text-[10px] text-[#F5F0E8]/40 font-mono">
-                          {[org.city, org.state].filter(Boolean).join(', ')}
+                          {org.abn ? `ABN ${org.abn}` : ''}
+                          {(org.city || org.state) ? `${org.abn ? ' · ' : ''}${[org.city, org.state].filter(Boolean).join(', ')}` : ''}
                         </p>
                       </button>
                     ))}

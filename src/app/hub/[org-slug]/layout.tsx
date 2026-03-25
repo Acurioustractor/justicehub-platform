@@ -3,7 +3,6 @@ import { createServiceClient } from '@/lib/supabase/service-lite';
 import { checkOrgAccess } from '@/lib/org-hub/auth';
 import { redirect } from 'next/navigation';
 import { HubShell } from './HubShell';
-import { TrialBanner } from '@/components/ui/feature-gate';
 
 export default async function HubLayout({
   children,
@@ -19,7 +18,7 @@ export default async function HubLayout({
     const service = createServiceClient();
     const { data: organization } = await service
       .from('organizations')
-      .select('id, name, slug, type, plan, partner_tier, trial_ends_at, billing_status')
+      .select('id, name, slug, type, plan, partner_tier, billing_status')
       .eq('slug', params['org-slug'])
       .single();
 
@@ -31,23 +30,18 @@ export default async function HubLayout({
     const modules = isBasecamp
       ? ['dashboard', 'campaign', 'grants', 'compliance', 'basecamp', 'site-editor']
       : ['dashboard', 'campaign', 'grants', 'compliance'];
-    const trialEndsAt = organization.trial_ends_at;
-    const upgradeUrl = `/portal/${organization.slug ?? params['org-slug']}/billing`;
 
     return (
-      <>
-        {trialEndsAt && <TrialBanner trialEndsAt={trialEndsAt} upgradeUrl={upgradeUrl} />}
-        <HubShell
-          orgName={organization.name}
-          orgSlug={organization.slug ?? params['org-slug']}
-          orgPlan={organization.plan || 'community'}
-          orgType={organization.type}
-          partnerTier={organization.partner_tier}
-          modules={modules}
-        >
-          {children}
-        </HubShell>
-      </>
+      <HubShell
+        orgName={organization.name}
+        orgSlug={organization.slug ?? params['org-slug']}
+        orgPlan={organization.plan || 'community'}
+        orgType={organization.type}
+        partnerTier={organization.partner_tier}
+        modules={modules}
+      >
+        {children}
+      </HubShell>
     );
   }
 
@@ -60,7 +54,7 @@ export default async function HubLayout({
 
   const { data: organization } = await supabase
     .from('organizations')
-    .select('id, name, slug, type, plan, partner_tier, trial_ends_at, billing_status')
+    .select('id, name, slug, type, plan, partner_tier, billing_status')
     .eq('slug', params['org-slug'])
     .single();
 
@@ -75,24 +69,19 @@ export default async function HubLayout({
 
   const isBasecamp = organization.type === 'basecamp' || organization.partner_tier === 'basecamp';
   const modules = isBasecamp
-    ? ['dashboard', 'grants', 'compliance', 'basecamp', 'site-editor']
-    : ['dashboard', 'grants', 'compliance'];
-  const trialEndsAt = organization.trial_ends_at;
-  const upgradeUrl = `/portal/${organization.slug ?? params['org-slug']}/billing`;
+    ? ['dashboard', 'campaign', 'grants', 'compliance', 'basecamp', 'site-editor']
+    : ['dashboard', 'campaign', 'grants', 'compliance'];
 
   return (
-    <>
-      {trialEndsAt && <TrialBanner trialEndsAt={trialEndsAt} upgradeUrl={upgradeUrl} />}
-      <HubShell
-        orgName={organization.name}
-        orgSlug={organization.slug ?? params['org-slug']}
-        orgPlan={organization.plan || 'community'}
-        orgType={organization.type}
-        partnerTier={organization.partner_tier}
-        modules={modules}
-      >
-        {children}
-      </HubShell>
-    </>
+    <HubShell
+      orgName={organization.name}
+      orgSlug={organization.slug ?? params['org-slug']}
+      orgPlan={organization.plan || 'community'}
+      orgType={organization.type}
+      partnerTier={organization.partner_tier}
+      modules={modules}
+    >
+      {children}
+    </HubShell>
   );
 }
