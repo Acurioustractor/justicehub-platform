@@ -7,6 +7,7 @@ import {
   Users, Megaphone, CheckCircle2, Clock, ExternalLink, Zap, Copy, Check, Loader2, FileText,
 } from 'lucide-react';
 import type { TourStop } from '@/content/campaign';
+import { HubMediaGallery } from '../components/HubMediaGallery';
 
 interface SupporterHubDashboardProps {
   userName: string;
@@ -336,6 +337,9 @@ export function SupporterHubDashboard({
                 })}
               </div>
             </div>
+
+            {/* Stories & Media */}
+            <HubMediaGallery accentColor="pink-500" title="Campaign Stories & Photos" />
 
             {/* Quick Links */}
             <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-5">

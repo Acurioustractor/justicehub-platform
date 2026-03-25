@@ -7,6 +7,7 @@ import {
   Heart, Phone, MessageCircle, CheckCircle2, Clock, Calendar, Search, Loader2,
 } from 'lucide-react';
 import type { TourStop } from '@/content/campaign';
+import { HubMediaGallery } from '../components/HubMediaGallery';
 
 interface LivedExperienceHubDashboardProps {
   userName: string;
@@ -265,6 +266,9 @@ export function LivedExperienceHubDashboard({
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Community Stories & Media */}
+            <HubMediaGallery accentColor="purple-500" title="Community Stories & Media" />
+
             {/* Share your story */}
             <div className="border border-purple-500/20 bg-purple-500/5 p-5">
               <h2 className="font-mono text-xs text-purple-500 mb-2 uppercase tracking-wider">Share Your Story</h2>

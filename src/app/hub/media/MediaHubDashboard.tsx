@@ -6,6 +6,7 @@ import {
   Newspaper, ArrowLeft, ExternalLink, TrendingUp, TrendingDown, Minus,
   FileText, Database, BookOpen, MapPin, BarChart3, Quote, Loader2, Copy, Check,
 } from 'lucide-react';
+import { HubMediaGallery } from '../components/HubMediaGallery';
 
 interface MediaArticle {
   id: string;
@@ -258,6 +259,9 @@ export function MediaHubDashboard({
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Photo & Video Gallery */}
+            <HubMediaGallery accentColor="blue-500" title="Photo & Video Library" />
+
             {/* Regional coverage */}
             {userState && stateMedia.length > 0 && (
               <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-5">

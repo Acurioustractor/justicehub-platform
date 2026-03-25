@@ -6,6 +6,7 @@ import {
   DollarSign, ArrowLeft, MapPin, TrendingUp, Building2, Shield,
   BarChart3, Users, BookOpen, CheckCircle2, AlertTriangle, Loader2,
 } from 'lucide-react';
+import { HubMediaGallery } from '../components/HubMediaGallery';
 
 interface FunderHubDashboardProps {
   userName: string;
@@ -278,6 +279,9 @@ export function FunderHubDashboard({
                 ))}
               </div>
             </div>
+
+            {/* Stories & Media */}
+            <HubMediaGallery accentColor="amber-500" title="Impact Stories & Media" />
 
             {/* Due Diligence Tools */}
             <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-5">
