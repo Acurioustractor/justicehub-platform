@@ -16,11 +16,15 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [githubLoading, setGithubLoading] = useState(false);
   const [error, setError] = useState(searchParams.get('error') === 'auth_failed' ? 'Authentication failed. Please try again.' : '');
-  const [mode, setMode] = useState<'login' | 'reset' | 'magic-link'>('login');
+  const [mode, setMode] = useState<'login' | 'reset' | 'magic-link'>('magic-link');
   const [resetSent, setResetSent] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
 
   async function getPostLoginRedirect(): Promise<string> {
+    // If ?redirect= param exists, honour it
+    const redirectParam = searchParams.get('redirect');
+    if (redirectParam && redirectParam.startsWith('/')) return redirectParam;
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return '/';
@@ -35,6 +39,16 @@ function LoginForm() {
       if (!profile) return '/';
 
       if (profile.role === 'admin') return '/admin';
+
+      // Check if CONTAINED member — role_tags with contained_ prefix → /hub
+      const { data: publicProfile } = await supabase
+        .from('public_profiles')
+        .select('role_tags')
+        .eq('user_id', user.id)
+        .single();
+
+      const roleTags: string[] = publicProfile?.role_tags || [];
+      if (roleTags.some(t => t.startsWith('contained_'))) return '/hub';
 
       // Check org memberships (uses user_id and status, not profile_id/is_active)
       const { data: memberships } = await (supabase as any)
@@ -127,7 +141,7 @@ function LoginForm() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/portal`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${searchParams.get('redirect') || '/portal'}`,
         },
       });
 
@@ -145,13 +159,13 @@ function LoginForm() {
   const modeTitle = {
     login: 'Log In',
     reset: 'Reset Password',
-    'magic-link': 'Magic Link Login',
+    'magic-link': 'Sign In',
   }[mode];
 
   const modeSubtitle = {
-    login: 'Sign in to access your JusticeHub account',
+    login: 'Sign in with your email and password',
     reset: 'Enter your email to receive a password reset link',
-    'magic-link': 'Enter your email to receive a sign-in link',
+    'magic-link': 'Enter your email — we\'ll send you a one-click sign-in link',
   }[mode];
 
   return (
@@ -248,7 +262,7 @@ function LoginForm() {
                 onClick={() => { setMode('login'); setError(''); }}
                 className="w-full text-sm text-earth-600 hover:text-earth-900 underline"
               >
-                Back to Log In with password
+                Use password instead
               </button>
             </form>
           ) : (
@@ -322,7 +336,7 @@ function LoginForm() {
                   onClick={() => { setMode('magic-link'); setError(''); }}
                   className="w-full text-sm text-earth-600 hover:text-earth-900 underline"
                 >
-                  Send a magic link instead
+                  Sign in with magic link instead (no password needed)
                 </button>
               </form>
             </>
@@ -331,6 +345,10 @@ function LoginForm() {
           <div className="mt-6 text-center space-y-2">
             <p className="text-sm text-earth-600">
               Don&apos;t have an account?{' '}
+              <Link href="/contained/join" className="text-ochre-600 hover:text-ochre-800 underline font-bold">
+                Join CONTAINED
+              </Link>
+              {' '}or{' '}
               <Link href="/signup" className="text-ochre-600 hover:text-ochre-800 underline font-bold">
                 Sign up
               </Link>

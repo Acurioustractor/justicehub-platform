@@ -30,9 +30,30 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data: sessionData, error } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (!error) {
+    if (!error && sessionData?.user) {
+      // Smart routing: if next is generic (/portal, /admin), check for CONTAINED member
+      if (next === '/portal' || next === '/admin' || next === '/') {
+        const { data: publicProfile } = await supabase
+          .from('public_profiles')
+          .select('role_tags')
+          .eq('user_id', sessionData.user.id)
+          .single();
+
+        const roleTags: string[] = (publicProfile as any)?.role_tags || [];
+        if (roleTags.some((t: string) => t.startsWith('contained_'))) {
+          // Re-create redirect with same cookies so the session persists
+          const hubResponse = NextResponse.redirect(`${origin}/hub`);
+          response.cookies.getAll().forEach((cookie) => {
+            hubResponse.cookies.set(cookie.name, cookie.value);
+          });
+          return hubResponse;
+        }
+      }
+
+      return response;
+    } else if (!error) {
       return response;
     }
   }
