@@ -81,7 +81,7 @@ async function paginate(table, select, filter) {
 
 function mapCharityToOrg(charity) {
   return {
-    name: charity.charity_legal_name,
+    name: charity.name,
     abn: charity.abn,
     state: charity.state || null,
     city: charity.town_city || null,
@@ -89,14 +89,14 @@ function mapCharityToOrg(charity) {
     is_active: true,
     type: 'charity',
     acnc_data: {
-      charity_legal_name: charity.charity_legal_name,
+      name: charity.name,
       abn: charity.abn,
       town_city: charity.town_city,
       state: charity.state,
       postcode: charity.postcode,
       website: charity.website,
       charity_size: charity.charity_size,
-      date_organisation_established: charity.date_organisation_established,
+      date_established: charity.date_established,
       imported_at: new Date().toISOString(),
     },
   };
@@ -120,7 +120,7 @@ async function main() {
 
   // Step 2: Fetch all ACNC charities
   console.log('\nStep 2: Loading ACNC charities...');
-  const charities = await paginate('acnc_charities', 'abn,charity_legal_name,town_city,state,postcode,website,charity_size,date_organisation_established');
+  const charities = await paginate('acnc_charities', 'abn,name,town_city,state,postcode,website,charity_size,date_established');
   console.log(`  Found ${charities.length} total ACNC charities`);
 
   // Step 3: Deduplicate
@@ -149,7 +149,7 @@ async function main() {
     console.log(`Would insert ${newCharities.length} new organizations\n`);
     const samples = newCharities.slice(0, 5);
     console.log('Sample records:');
-    for (const c of samples) console.log(`  - ${c.charity_legal_name} (ABN: ${c.abn}, ${c.state || 'no state'})`);
+    for (const c of samples) console.log(`  - ${c.name} (ABN: ${c.abn}, ${c.state || 'no state'})`);
     if (newCharities.length > 5) console.log(`  ... and ${newCharities.length - 5} more`);
 
     const stateCounts = {};
