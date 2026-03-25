@@ -9,6 +9,7 @@ import {
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { TourStop } from '@/content/campaign';
+import { WelcomeOnboarding } from './WelcomeOnboarding';
 
 const ROLE_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
   organization: { label: 'Organisation', icon: Building2, color: 'text-[#059669]' },
@@ -245,6 +246,16 @@ export function PersonalDashboard({
             </p>
           )}
         </div>
+
+        {/* Welcome onboarding — shows once, dismissible */}
+        <WelcomeOnboarding
+          userName={userName}
+          memberType={memberType}
+          userState={userState}
+          orgSlug={orgSlug}
+          orgName={orgName}
+          profileSlug={profileSlug}
+        />
 
         {/* Role-specific hub link */}
         {memberType && memberType !== 'organization' && (

@@ -29,7 +29,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(await getProgramFinder(service, state));
   }
 
-  return NextResponse.json({ error: 'type must be media, funder, supporter, or programs' }, { status: 400 });
+  if (type === 'organization') {
+    const orgId = searchParams.get('orgId');
+    return NextResponse.json(await getOrganizationBriefings(service, state, orgId));
+  }
+
+  return NextResponse.json({ error: 'type must be media, funder, supporter, programs, or organization' }, { status: 400 });
 }
 
 async function getMediaBriefings(service: any, state: string | null) {
@@ -358,5 +363,133 @@ async function getProgramFinder(service: any, state: string | null) {
     total: programs.length,
     by_evidence: byEvidence,
     by_state: byState,
+  };
+}
+
+async function getOrganizationBriefings(service: any, state: string | null, orgId: string | null) {
+  // 1. Funding near this org's state
+  let nearbyFunding: Array<{ source: string; recipient_name: string; amount_dollars: number | null; state: string }> = [];
+  let stateFundingCount = 0;
+  if (state) {
+    const { count } = await service
+      .from('justice_funding')
+      .select('id', { count: 'exact', head: true })
+      .eq('state', state);
+    stateFundingCount = count || 0;
+
+    const { data: recentFunding } = await service
+      .from('justice_funding')
+      .select('source, recipient_name, amount_dollars, state')
+      .eq('state', state)
+      .not('amount_dollars', 'is', null)
+      .order('amount_dollars', { ascending: false })
+      .limit(10);
+    nearbyFunding = recentFunding || [];
+  }
+
+  // 2. Similar programs in same state
+  let similarPrograms: Array<{ name: string; evidence_level: string; org_name: string }> = [];
+  if (state) {
+    const { data: progs } = await service
+      .from('alma_interventions')
+      .select('name, evidence_level, organizations!inner(name, state)')
+      .neq('verification_status', 'ai_generated')
+      .eq('organizations.state', state)
+      .limit(15);
+
+    similarPrograms = (progs || [])
+      .filter((p: any) => p.organizations !== null)
+      .map((p: any) => ({
+        name: p.name,
+        evidence_level: p.evidence_level?.split(' (')[0] || 'Unknown',
+        org_name: p.organizations?.name || null,
+      }));
+  }
+
+  // 3. Org's own funding (if orgId provided)
+  let orgFunding: Array<{ source: string; amount_dollars: number | null; financial_year: string | null }> = [];
+  let orgFundingCount = 0;
+  if (orgId) {
+    const { count } = await service
+      .from('justice_funding')
+      .select('id', { count: 'exact', head: true })
+      .eq('alma_organization_id', orgId);
+    orgFundingCount = count || 0;
+
+    const { data: ownFunding } = await service
+      .from('justice_funding')
+      .select('source, amount_dollars, financial_year')
+      .eq('alma_organization_id', orgId)
+      .order('amount_dollars', { ascending: false })
+      .limit(10);
+    orgFunding = ownFunding || [];
+  }
+
+  // 4. Org's programs (if orgId provided)
+  let orgPrograms: Array<{ name: string; evidence_level: string; description: string | null }> = [];
+  if (orgId) {
+    const { data: progs } = await service
+      .from('alma_interventions')
+      .select('name, evidence_level, description')
+      .neq('verification_status', 'ai_generated')
+      .eq('operating_organization_id', orgId)
+      .limit(20);
+
+    orgPrograms = (progs || []).map((p: any) => ({
+      name: p.name,
+      evidence_level: p.evidence_level?.split(' (')[0] || 'Unknown',
+      description: p.description ? (p.description.length > 150 ? p.description.slice(0, 150) + '...' : p.description) : null,
+    }));
+  }
+
+  // 5. Compliance deadlines (ACNC reporting)
+  const complianceReminders = [];
+  const now = new Date();
+  const month = now.getMonth();
+  // ACNC Annual Information Statement due by 31 Dec (large), 30 Jun (medium/small)
+  if (month >= 9) {
+    complianceReminders.push({ type: 'ACNC', deadline: `31 December ${now.getFullYear()}`, description: 'Annual Information Statement due (large charities)' });
+  }
+  if (month >= 3 && month < 6) {
+    complianceReminders.push({ type: 'ACNC', deadline: `30 June ${now.getFullYear()}`, description: 'Annual Information Statement due (medium/small charities)' });
+  }
+  complianceReminders.push({ type: 'ORIC', deadline: 'Within 6 months of financial year end', description: 'General report due for ORIC-registered corporations' });
+
+  // 6. Network stats — other orgs in same state
+  let networkStats = { orgs_in_state: 0, indigenous_orgs_in_state: 0, members_in_state: 0 };
+  if (state) {
+    const { count: orgCount } = await service
+      .from('organizations')
+      .select('id', { count: 'exact', head: true })
+      .eq('state', state)
+      .eq('is_active', true);
+
+    const { count: indCount } = await service
+      .from('organizations')
+      .select('id', { count: 'exact', head: true })
+      .eq('state', state)
+      .eq('is_indigenous_org', true)
+      .eq('is_active', true);
+
+    const { data: stateMembers } = await service
+      .from('public_profiles')
+      .select('id')
+      .eq('location', state)
+      .not('role_tags', 'is', null);
+
+    networkStats = {
+      orgs_in_state: orgCount || 0,
+      indigenous_orgs_in_state: indCount || 0,
+      members_in_state: (stateMembers || []).length,
+    };
+  }
+
+  return {
+    state_funding: { count: stateFundingCount, top_recipients: nearbyFunding },
+    similar_programs: similarPrograms,
+    org_funding: { count: orgFundingCount, records: orgFunding },
+    org_programs: orgPrograms,
+    compliance: complianceReminders,
+    network: networkStats,
   };
 }
