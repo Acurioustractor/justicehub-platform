@@ -74,9 +74,9 @@ async function enrichEvidenceMetadata(
   // Find evidence with empty metadata
   const { data: evidence } = await supabase
     .from('alma_evidence')
-    .select('id, title, description, source_url, evidence_type, metadata')
+    .select('id, title, findings, source_url, evidence_type, metadata')
     .eq('metadata', '{}')
-    .not('description', 'is', null)
+    .not('findings', 'is', null)
     .limit(batch);
 
   if (!evidence?.length) {
@@ -91,7 +91,7 @@ async function enrichEvidenceMetadata(
       const prompt = `Analyze this youth justice evidence item and extract structured metadata.
 
 Title: ${item.title || 'Untitled'}
-Description: ${item.description || ''}
+Description: ${item.findings || ''}
 Evidence Type: ${item.evidence_type || 'Unknown'}
 Source: ${item.source_url || 'No URL'}
 

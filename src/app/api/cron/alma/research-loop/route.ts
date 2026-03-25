@@ -159,11 +159,11 @@ export async function GET(request: NextRequest) {
     {
       id: 'media_coverage',
       name: 'Media Article Coverage',
-      score: Math.min(1, (totalMedia || 0) / 200), // target: 200 articles
-      target: 200,
+      score: Math.min(1, (totalMedia || 0) / 500), // target: 500 articles
+      target: 500,
       current: totalMedia || 0,
       action: 'discover_media',
-      description: `${totalMedia || 0}/200 target media articles`,
+      description: `${totalMedia || 0}/500 target media articles`,
     },
     {
       id: 'stories',
@@ -181,7 +181,7 @@ export async function GET(request: NextRequest) {
       target: 1500,
       current: totalFindings || 0,
       action: 'discover_research',
-      description: `${totalFindings || 0}/100 target research findings`,
+      description: `${totalFindings || 0}/1500 target research findings`,
     },
     {
       id: 'australian_cases',
@@ -505,13 +505,22 @@ If you cannot determine the cost, return: {"cost_per_young_person": null, "cost_
 
           // Build content from structured data — no LLM call needed
           const authorStr = paper.authors.slice(0, 3).join(', ');
-          const content = paper.abstract
+          const summary = paper.abstract
             ? paper.abstract.substring(0, 500)
             : `${paper.title}. Published in ${paper.source || 'academic journal'} (${paper.year || 'n.d.'}). ${paper.cited_by_count > 0 ? `Cited ${paper.cited_by_count} times.` : ''}`;
 
           const { error } = await supabase.from('alma_research_findings').insert({
             finding_type: findingType,
-            content,
+            content: {
+              title: paper.title,
+              summary,
+              source: paper.source || 'academic journal',
+              year: paper.year || null,
+              authors: paper.authors?.slice(0, 5) || [],
+              cited_by_count: paper.cited_by_count || 0,
+              doi: paper.doi || null,
+              open_access: paper.open_access || false,
+            },
             confidence: paper.cited_by_count > 20 ? 0.9 : paper.cited_by_count > 5 ? 0.8 : 0.7,
             validated: paper.open_access, // OA papers are easier to verify
             validation_source: paper.title,

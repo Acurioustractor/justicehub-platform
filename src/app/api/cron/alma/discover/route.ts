@@ -192,7 +192,7 @@ async function runDiscovery(batchSize: number, mode: DiscoveryMode) {
 
           const evidenceType = EVIDENCE_TYPES.includes(ev.evidence_type as typeof EVIDENCE_TYPES[number])
             ? ev.evidence_type
-            : mode === 'media' ? 'Media coverage' : 'Case study';
+            : 'Case study';
 
           const { data: inserted } = await supabase
             .from('alma_evidence')
