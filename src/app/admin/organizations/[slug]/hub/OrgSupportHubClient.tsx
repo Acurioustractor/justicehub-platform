@@ -47,7 +47,7 @@ const TABS = [
 
 type TabKey = typeof TABS[number]['key'];
 
-export function OrgSupportHubClient({ organization, isPortal }: { organization: Organization; isPortal?: boolean }) {
+export function OrgSupportHubClient({ organization, isPortal, backHref, backLabel }: { organization: Organization; isPortal?: boolean; backHref?: string; backLabel?: string }) {
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -66,11 +66,11 @@ export function OrgSupportHubClient({ organization, isPortal }: { organization: 
           </button>
 
           <Link
-            href={isPortal ? '/portal' : `/admin/organizations/${organization.slug || ''}`}
+            href={backHref || (isPortal ? '/portal' : `/admin/organizations/${organization.slug || ''}`)}
             className="inline-flex items-center gap-2 text-sm font-bold text-earth-700 hover:text-black"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">{isPortal ? 'Back to Portal' : `Back to ${organization.name}`}</span>
+            <span className="hidden sm:inline">{backLabel || (isPortal ? 'Back to Portal' : `Back to ${organization.name}`)}</span>
           </Link>
 
           <div className="flex-1">
