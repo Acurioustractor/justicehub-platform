@@ -1,9 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Users, ArrowLeft, MapPin, Shield, Eye, EyeOff, BookOpen,
-  Heart, Phone, MessageCircle, CheckCircle2, Clock, Calendar,
+  Heart, Phone, MessageCircle, CheckCircle2, Clock, Calendar, Search, Loader2,
 } from 'lucide-react';
 import type { TourStop } from '@/content/campaign';
 
@@ -37,6 +38,31 @@ export function LivedExperienceHubDashboard({
   storyCount,
   youthPrograms,
 }: LivedExperienceHubDashboardProps) {
+  const [programs, setPrograms] = useState<Array<{
+    id: string; name: string; evidence_level: string | null; description: string | null;
+    org_name: string | null; state: string | null; city: string | null; is_indigenous: boolean;
+  }>>([]);
+  const [programsLoading, setProgramsLoading] = useState(true);
+  const [programSearch, setProgramSearch] = useState('');
+  const [selectedState, setSelectedState] = useState(userState || '');
+
+  useEffect(() => {
+    setProgramsLoading(true);
+    fetch(`/api/hub/briefings?type=programs${selectedState ? `&state=${selectedState}` : ''}`)
+      .then(r => r.json())
+      .then(data => setPrograms(data.programs || []))
+      .catch(() => {})
+      .finally(() => setProgramsLoading(false));
+  }, [selectedState]);
+
+  const filteredPrograms = programSearch
+    ? programs.filter(p =>
+        p.name.toLowerCase().includes(programSearch.toLowerCase()) ||
+        p.org_name?.toLowerCase().includes(programSearch.toLowerCase()) ||
+        p.city?.toLowerCase().includes(programSearch.toLowerCase())
+      )
+    : programs;
+
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F5F0E8]">
       {/* Header */}
@@ -154,29 +180,80 @@ export function LivedExperienceHubDashboard({
               </div>
             )}
 
-            {/* Programs that help */}
+            {/* Program Finder */}
             <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-6">
-              <h2 className="font-mono text-xs text-[#F5F0E8]/40 mb-4 uppercase tracking-wider">Programs That Help</h2>
+              <h2 className="font-mono text-xs text-[#F5F0E8]/40 mb-2 uppercase tracking-wider">Find Programs Near You</h2>
               <p className="text-sm text-[#F5F0E8]/50 mb-4">
-                Community-based alternatives — support that works outside the system
+                Community-based support — programs that help outside the system
               </p>
-              <div className="space-y-2">
-                {youthPrograms.map((program) => (
-                  <div key={program.id} className="p-3 border border-[#F5F0E8]/5">
-                    <p className="font-bold text-sm">{program.name}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      {(program.organizations as any)?.name && (
-                        <span className="text-[10px] font-mono text-[#F5F0E8]/40">{(program.organizations as any).name}</span>
-                      )}
-                      {program.evidence_level && (
-                        <span className="text-[9px] font-mono text-purple-400 bg-purple-500/10 px-1.5 py-0.5">
-                          {program.evidence_level.split(' (')[0]}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
+
+              {/* Filters */}
+              <div className="flex gap-2 mb-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-2.5 w-4 h-4 text-[#F5F0E8]/30" />
+                  <input
+                    type="text"
+                    value={programSearch}
+                    onChange={(e) => setProgramSearch(e.target.value)}
+                    className="w-full pl-10 pr-3 py-2 bg-[#F5F0E8]/5 border border-[#F5F0E8]/20 text-[#F5F0E8] focus:outline-none focus:border-purple-500 font-mono text-sm"
+                    placeholder="Search programs..."
+                  />
+                </div>
+                <select
+                  value={selectedState}
+                  onChange={(e) => setSelectedState(e.target.value)}
+                  className="px-3 py-2 bg-[#F5F0E8]/5 border border-[#F5F0E8]/20 text-[#F5F0E8] focus:outline-none focus:border-purple-500 font-mono text-sm"
+                >
+                  <option value="">All states</option>
+                  {['NSW', 'QLD', 'VIC', 'WA', 'NT', 'SA', 'ACT', 'TAS'].map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
               </div>
+
+              {programsLoading ? (
+                <div className="flex items-center gap-2 text-sm text-[#F5F0E8]/30 py-4">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Finding programs...
+                </div>
+              ) : filteredPrograms.length === 0 ? (
+                <p className="text-sm text-[#F5F0E8]/30 py-4">
+                  {programSearch ? 'No programs match your search.' : 'No programs found for this state.'}
+                </p>
+              ) : (
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {filteredPrograms.slice(0, 20).map((program) => (
+                    <div key={program.id} className="p-3 border border-[#F5F0E8]/5 hover:border-purple-500/20 transition-colors">
+                      <p className="font-bold text-sm">{program.name}</p>
+                      {program.description && (
+                        <p className="text-xs text-[#F5F0E8]/40 mt-1 line-clamp-2">{program.description}</p>
+                      )}
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                        {program.org_name && (
+                          <span className="text-[10px] font-mono text-[#F5F0E8]/40">{program.org_name}</span>
+                        )}
+                        {program.city && (
+                          <span className="text-[10px] font-mono text-[#F5F0E8]/30 flex items-center gap-0.5">
+                            <MapPin className="w-2.5 h-2.5" />{program.city}
+                          </span>
+                        )}
+                        {program.is_indigenous && (
+                          <span className="text-[9px] font-mono text-[#059669] bg-[#059669]/10 px-1.5 py-0.5">Indigenous-led</span>
+                        )}
+                        {program.evidence_level && (
+                          <span className="text-[9px] font-mono text-purple-400 bg-purple-500/10 px-1.5 py-0.5">
+                            {program.evidence_level}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  {filteredPrograms.length > 20 && (
+                    <p className="text-xs text-[#F5F0E8]/30 font-mono text-center py-2">
+                      Showing 20 of {filteredPrograms.length} programs
+                    </p>
+                  )}
+                </div>
+              )}
               <Link
                 href="/intelligence"
                 className="block mt-4 text-xs font-mono text-[#DC2626] hover:underline"

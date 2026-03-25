@@ -1,9 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Heart, ArrowLeft, MapPin, Share2, Mail, Calendar,
-  Users, Megaphone, CheckCircle2, Clock, ExternalLink, Zap,
+  Users, Megaphone, CheckCircle2, Clock, ExternalLink, Zap, Copy, Check, Loader2, FileText,
 } from 'lucide-react';
 import type { TourStop } from '@/content/campaign';
 
@@ -63,6 +64,29 @@ export function SupporterHubDashboard({
   fundingRecords,
   interventions,
 }: SupporterHubDashboardProps) {
+  const [briefings, setBriefings] = useState<{
+    mp_letter: string;
+    social_posts: Array<{ platform: string; text: string }>;
+    state_stats: { state: string; state_name: string; funding_records: number; programs: number; organizations: number };
+  } | null>(null);
+  const [briefingsLoading, setBriefingsLoading] = useState(true);
+  const [copied, setCopied] = useState<string | null>(null);
+  const [showLetter, setShowLetter] = useState(false);
+
+  useEffect(() => {
+    fetch(`/api/hub/briefings?type=supporter${userState ? `&state=${userState}` : ''}`)
+      .then(r => r.json())
+      .then(data => setBriefings(data))
+      .catch(() => {})
+      .finally(() => setBriefingsLoading(false));
+  }, [userState]);
+
+  function copyText(text: string, key: string) {
+    navigator.clipboard.writeText(text);
+    setCopied(key);
+    setTimeout(() => setCopied(null), 2000);
+  }
+
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F5F0E8]">
       {/* Header */}
@@ -116,32 +140,109 @@ export function SupporterHubDashboard({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main column */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Action items */}
+            {/* Write to your MP — with pre-filled letter */}
+            <div className="border border-pink-500/20 bg-pink-500/5 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-mono text-xs text-pink-500 uppercase tracking-wider flex items-center gap-2">
+                  <Mail className="w-4 h-4" /> Write to Your MP
+                </h2>
+                <span className="text-[9px] font-mono bg-[#DC2626]/20 text-[#DC2626] px-1.5 py-0.5">PRIORITY ACTION</span>
+              </div>
+              {briefingsLoading ? (
+                <div className="flex items-center gap-2 text-sm text-[#F5F0E8]/30">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Generating your letter...
+                </div>
+              ) : briefings?.mp_letter ? (
+                <>
+                  <p className="text-sm text-[#F5F0E8]/50 mb-3">
+                    Pre-written letter with {briefings.state_stats.state_name} data. Copy, personalise, and send.
+                  </p>
+                  {!showLetter ? (
+                    <button
+                      onClick={() => setShowLetter(true)}
+                      className="w-full py-3 border border-pink-500/30 text-sm font-bold hover:bg-pink-500/10 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <FileText className="w-4 h-4" /> View Letter Template
+                    </button>
+                  ) : (
+                    <>
+                      <pre className="text-xs text-[#F5F0E8]/70 whitespace-pre-wrap bg-[#0A0A0A]/50 p-4 border border-[#F5F0E8]/10 max-h-64 overflow-y-auto font-mono leading-relaxed">
+                        {briefings.mp_letter}
+                      </pre>
+                      <div className="flex gap-2 mt-3">
+                        <button
+                          onClick={() => copyText(briefings.mp_letter, 'letter')}
+                          className="flex-1 py-2 bg-[#DC2626] text-white text-sm font-bold hover:bg-[#DC2626]/90 transition-colors flex items-center justify-center gap-2"
+                        >
+                          {copied === 'letter' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                          {copied === 'letter' ? 'Copied!' : 'Copy Letter'}
+                        </button>
+                        <button
+                          onClick={() => setShowLetter(false)}
+                          className="px-4 py-2 border border-[#F5F0E8]/20 text-sm hover:bg-[#F5F0E8]/5 transition-colors"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : (
+                <p className="text-sm text-[#F5F0E8]/30">Select your state in your profile to generate a personalised letter.</p>
+              )}
+            </div>
+
+            {/* Social share posts */}
             <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-6">
-              <h2 className="font-mono text-xs text-[#F5F0E8]/40 mb-4 uppercase tracking-wider">Take Action</h2>
-              <div className="space-y-3">
-                {ACTIONS.map((action) => {
+              <h2 className="font-mono text-xs text-[#F5F0E8]/40 mb-4 uppercase tracking-wider flex items-center gap-2">
+                <Share2 className="w-4 h-4" /> Share the Campaign
+              </h2>
+              {briefingsLoading ? (
+                <div className="flex items-center gap-2 text-sm text-[#F5F0E8]/30">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Loading...
+                </div>
+              ) : briefings?.social_posts ? (
+                <div className="space-y-3">
+                  {briefings.social_posts.map((post) => (
+                    <div key={post.platform} className="p-3 border border-[#F5F0E8]/5">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-mono text-pink-500 uppercase">{post.platform}</span>
+                        <button
+                          onClick={() => copyText(post.text, post.platform)}
+                          className="text-[#F5F0E8]/20 hover:text-pink-400 transition-colors"
+                        >
+                          {copied === post.platform ? <Check className="w-3.5 h-3.5 text-[#059669]" /> : <Copy className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+                      <p className="text-xs text-[#F5F0E8]/60 whitespace-pre-wrap">{post.text}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+              <Link
+                href="/contained/tour/social"
+                className="block mt-4 text-xs font-mono text-[#DC2626] hover:underline"
+              >
+                Full social media kit →
+              </Link>
+            </div>
+
+            {/* Quick actions */}
+            <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-6">
+              <h2 className="font-mono text-xs text-[#F5F0E8]/40 mb-4 uppercase tracking-wider">More Actions</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {ACTIONS.filter(a => a.title !== 'Write to your MP' && a.title !== 'Share the campaign').map((action) => {
                   const Icon = action.icon;
                   return (
                     <Link
                       key={action.title}
                       href={action.href}
-                      className="block p-4 border border-[#F5F0E8]/5 hover:border-pink-500/30 transition-colors"
+                      className="p-3 border border-[#F5F0E8]/5 hover:border-pink-500/30 transition-colors flex items-center gap-3"
                     >
-                      <div className="flex items-start gap-3">
-                        <Icon className={`w-5 h-5 mt-0.5 shrink-0 ${
-                          action.urgency === 'high' ? 'text-[#DC2626]' : action.urgency === 'medium' ? 'text-pink-500' : 'text-[#F5F0E8]/30'
-                        }`} />
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <p className="font-bold text-sm">{action.title}</p>
-                            {action.urgency === 'high' && (
-                              <span className="text-[9px] font-mono bg-[#DC2626]/20 text-[#DC2626] px-1.5 py-0.5">PRIORITY</span>
-                            )}
-                          </div>
-                          <p className="text-xs text-[#F5F0E8]/40 mt-0.5">{action.description}</p>
-                        </div>
-                        <ExternalLink className="w-3.5 h-3.5 text-[#F5F0E8]/20 shrink-0 mt-1" />
+                      <Icon className="w-4 h-4 text-[#F5F0E8]/30 shrink-0" />
+                      <div>
+                        <p className="font-bold text-sm">{action.title}</p>
+                        <p className="text-[10px] text-[#F5F0E8]/40">{action.description}</p>
                       </div>
                     </Link>
                   );

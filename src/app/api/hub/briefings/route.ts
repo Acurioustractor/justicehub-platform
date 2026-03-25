@@ -21,7 +21,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(await getFunderBriefings(service, state));
   }
 
-  return NextResponse.json({ error: 'type must be media or funder' }, { status: 400 });
+  if (type === 'supporter') {
+    return NextResponse.json(await getSupporterBriefings(service, state));
+  }
+
+  if (type === 'programs') {
+    return NextResponse.json(await getProgramFinder(service, state));
+  }
+
+  return NextResponse.json({ error: 'type must be media, funder, supporter, or programs' }, { status: 400 });
 }
 
 async function getMediaBriefings(service: any, state: string | null) {
@@ -214,5 +222,141 @@ async function getFunderBriefings(service: any, state: string | null) {
       underfunded_count: underfunded.length,
       states_with_gaps: new Set(unfunded.map(g => g.state).filter(Boolean)).size,
     },
+  };
+}
+
+const STATE_NAMES: Record<string, string> = {
+  NSW: 'New South Wales', QLD: 'Queensland', VIC: 'Victoria', WA: 'Western Australia',
+  NT: 'Northern Territory', SA: 'South Australia', ACT: 'Australian Capital Territory', TAS: 'Tasmania',
+};
+
+async function getSupporterBriefings(service: any, state: string | null) {
+  const stateName = state ? STATE_NAMES[state] || state : 'Australia';
+
+  // State-specific data for the MP letter
+  let stateFundingRecords = 0;
+  let statePrograms = 0;
+  let stateOrgs = 0;
+
+  if (state) {
+    const { count: fc } = await service
+      .from('justice_funding')
+      .select('id', { count: 'exact', head: true })
+      .eq('state', state);
+    stateFundingRecords = fc || 0;
+
+    const { data: progs } = await service
+      .from('alma_interventions')
+      .select('id, organizations!inner(state)')
+      .neq('verification_status', 'ai_generated')
+      .eq('organizations.state', state);
+    statePrograms = (progs || []).length;
+
+    const { count: oc } = await service
+      .from('organizations')
+      .select('id', { count: 'exact', head: true })
+      .eq('state', state)
+      .eq('is_active', true);
+    stateOrgs = oc || 0;
+  }
+
+  // Pre-written MP letter template
+  const mpLetter = `Dear [MP Name],
+
+I am writing as a constituent in ${stateName} to raise concerns about youth justice in our state.
+
+${state ? `In ${stateName}, there are ${statePrograms} community-based youth programs operating across ${stateOrgs.toLocaleString()} organisations, yet many remain underfunded or unfunded entirely.` : 'Across Australia, hundreds of community-based youth programs operate with inadequate funding.'}
+
+Research shows that community alternatives to detention cost approximately $170,000 per young person per year, compared to $548,000 for detention — while delivering better outcomes for young people, families, and communities.
+
+${state ? `Our state has ${stateFundingRecords.toLocaleString()} tracked funding records in the JusticeHub database, but significant gaps remain in support for evidence-backed programs.` : ''}
+
+I urge you to:
+1. Increase investment in community-based alternatives to youth detention
+2. Support Indigenous-led programs that are proven to reduce reoffending
+3. Commit to transparent reporting on youth justice spending and outcomes
+
+The CONTAINED national tour is bringing together organisations, researchers, and people with lived experience to build a better approach. I encourage you to engage with this movement.
+
+Sincerely,
+[Your Name]
+[Your Address]`;
+
+  // Social share templates
+  const socialPosts = [
+    {
+      platform: 'Twitter/X',
+      text: `Community alternatives cost $170K/year vs $548K for detention — and they actually work. ${state ? `${stateName} has ${statePrograms} programs that need more support.` : ''} Learn more at justicehub.org.au #CONTAINED #YouthJustice`,
+    },
+    {
+      platform: 'LinkedIn',
+      text: `${state ? `${stateName}` : 'Australia'} invests heavily in youth detention ($548K/person/year) when community alternatives ($170K/year) deliver better outcomes. ${state ? `There are ${statePrograms} programs in ${state} working to change this.` : ''}\n\nThe CONTAINED tour is building a national coalition for change. justicehub.org.au/contained`,
+    },
+    {
+      platform: 'Instagram',
+      text: `$170K vs $548K. Community programs vs detention. The evidence is clear — alternatives work better AND cost less. ${state ? `${statePrograms} programs in ${state} are proving it every day.` : ''} Link in bio. #CONTAINED #YouthJustice #JusticeReinvestment`,
+    },
+  ];
+
+  return {
+    mp_letter: mpLetter,
+    social_posts: socialPosts,
+    state_stats: {
+      state: state || 'National',
+      state_name: stateName,
+      funding_records: stateFundingRecords,
+      programs: statePrograms,
+      organizations: stateOrgs,
+    },
+  };
+}
+
+async function getProgramFinder(service: any, state: string | null) {
+  // Fetch programs, filtered by state if provided
+  let query = service
+    .from('alma_interventions')
+    .select('id, name, evidence_level, description, implementation_cost, cost_per_young_person, operating_organization_id, organizations(name, slug, state, city, is_indigenous_org)')
+    .neq('verification_status', 'ai_generated')
+    .order('name');
+
+  if (state) {
+    query = query.eq('organizations.state', state);
+  }
+
+  const { data: programsRaw } = await query.limit(50);
+
+  // Filter out programs where the org join returned null (wrong state)
+  const programs = (programsRaw || [])
+    .filter((p: any) => p.organizations !== null)
+    .map((p: any) => ({
+      id: p.id,
+      name: p.name,
+      evidence_level: p.evidence_level?.split(' (')[0] || null,
+      description: p.description ? (p.description.length > 200 ? p.description.slice(0, 200) + '...' : p.description) : null,
+      org_name: p.organizations?.name || null,
+      org_slug: p.organizations?.slug || null,
+      state: p.organizations?.state || null,
+      city: p.organizations?.city || null,
+      is_indigenous: p.organizations?.is_indigenous_org || false,
+    }));
+
+  // Group by evidence level
+  const byEvidence: Record<string, number> = {};
+  for (const p of programs) {
+    const level = p.evidence_level || 'Other';
+    byEvidence[level] = (byEvidence[level] || 0) + 1;
+  }
+
+  // Programs by state counts
+  const byState: Record<string, number> = {};
+  for (const p of programs) {
+    if (p.state) byState[p.state] = (byState[p.state] || 0) + 1;
+  }
+
+  return {
+    programs,
+    total: programs.length,
+    by_evidence: byEvidence,
+    by_state: byState,
   };
 }
