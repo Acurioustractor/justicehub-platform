@@ -11,6 +11,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { TourStop } from '@/content/campaign';
 import { WelcomeOnboarding } from './WelcomeOnboarding';
+import { NotificationFeed } from './NotificationFeed';
 
 const ROLE_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
   organization: { label: 'Organisation', icon: Building2, color: 'text-[#059669]' },
@@ -387,6 +388,9 @@ export function PersonalDashboard({
                 })}
               </div>
             </div>
+
+            {/* Network Activity — cross-role notifications */}
+            <NotificationFeed />
 
             {/* Momentum — Pipeline by City */}
             <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-6">
