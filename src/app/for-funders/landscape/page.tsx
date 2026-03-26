@@ -262,6 +262,157 @@ export default function LandscapePage() {
           <FunderSection funder={PRF} color="#DC2626" />
         </section>
 
+        {/* ═══ THE MONEY — What we actually track ═══ */}
+        <section style={{ maxWidth: 1100, margin: '0 auto', padding: '0 40px 60px' }}>
+          <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#666', marginBottom: 16, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+            Follow the money — what JusticeHub actually tracks
+          </p>
+          <p style={{ fontSize: '0.95rem', color: '#888', maxWidth: 700, lineHeight: 1.7, marginBottom: 24 }}>
+            These are verified funding records from government sources, AusTender, NIAA, state grants portals,
+            and philanthropic disclosures — flowing through the same organisations both funders support.
+          </p>
+
+          {/* Mounty Yarns example */}
+          <div style={{ border: '1px solid #333', padding: 24, marginBottom: 16, background: '#111' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16 }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Mounty Yarns — full funding picture</h3>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', color: '#059669' }}>$4.3M tracked</span>
+            </div>
+            <div style={{ display: 'grid', gap: 8 }}>
+              {[
+                { source: 'Australian Government (Justice Reinvestment)', amount: '$2.3M', year: '2023-24', note: 'Federal JR funding — Mounty Yarns + Just Reinvest NSW joint' },
+                { source: 'NSW Government', amount: '$1.0M', year: '2023-24', note: 'State government direct' },
+                { source: 'Philanthropic (including Dusseldorp)', amount: '$1.0M', year: '2022-23', note: '3 separate grants — Dusseldorp is primary funder' },
+              ].map((f, i) => (
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 12, padding: '8px 0', borderBottom: '1px solid #1a1a1a' }}>
+                  <div>
+                    <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', fontWeight: 700, color: '#059669', marginBottom: 0 }}>{f.amount}</p>
+                    <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#555', marginBottom: 0 }}>{f.year}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.85rem', color: '#ccc', marginBottom: 2 }}>{f.source}</p>
+                    <p style={{ fontSize: '0.75rem', color: '#666', marginBottom: 0 }}>{f.note}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: '0.75rem', color: '#555', marginTop: 12, fontStyle: 'italic', marginBottom: 0 }}>
+              7 programs mapped in ALMA. Indigenous-led. Mt Druitt. CONTAINED Room 3 anchor.
+              Funded by Dusseldorp (philanthropic), Australian Government (JR), and NSW Government — three sources, one community org.
+            </p>
+          </div>
+
+          {/* Maranguka example */}
+          <div style={{ border: '1px solid #333', padding: 24, marginBottom: 16, background: '#111' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16 }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Maranguka (Bourke) — where both funders meet</h3>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', color: '#F5F0E8' }}>$3.87M tracked</span>
+            </div>
+            <div style={{ display: 'grid', gap: 8 }}>
+              {[
+                { source: 'Paul Ramsay Foundation (JR Portfolio)', amount: '$3.54M', year: '2021-25', note: 'PRF JR allocation — one of 15 sites nationally' },
+                { source: 'NIAA (Federal — Senate Order 16)', amount: '$331K', year: '2024-25', note: 'National Indigenous Australians Agency direct funding' },
+              ].map((f, i) => (
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 12, padding: '8px 0', borderBottom: '1px solid #1a1a1a' }}>
+                  <div>
+                    <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', fontWeight: 700, color: i === 0 ? '#DC2626' : '#059669', marginBottom: 0 }}>{f.amount}</p>
+                    <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#555', marginBottom: 0 }}>{f.year}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.85rem', color: '#ccc', marginBottom: 2 }}>{f.source}</p>
+                    <p style={{ fontSize: '0.75rem', color: '#666', marginBottom: 0 }}>{f.note}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: '0.75rem', color: '#555', marginTop: 12, fontStyle: 'italic', marginBottom: 0 }}>
+              The original Australian JR site. Dusseldorp funds Just Reinvest NSW (which coordinates Bourke).
+              PRF funds Maranguka directly. NIAA provides federal Indigenous funding. Three funders, one community, no shared data layer.
+            </p>
+          </div>
+
+          {/* PLACE */}
+          <div style={{ border: '1px solid #333', padding: 24, marginBottom: 16, background: '#111' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16 }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>PLACE — the co-investment</h3>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', color: '#F5F0E8' }}>$38.6M tracked</span>
+            </div>
+            <div style={{ display: 'grid', gap: 8 }}>
+              {[
+                { source: 'Philanthropic consortium (PRF anchor)', amount: '$19.3M', year: '2024-34', note: 'PRF, Ian Potter, Bryan Foundation, Dusseldorp — 10-year commitment' },
+                { source: 'Commonwealth Government (matched)', amount: '$19.3M', year: '2024-34', note: 'Federal government matched the philanthropic consortium dollar-for-dollar' },
+              ].map((f, i) => (
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 12, padding: '8px 0', borderBottom: '1px solid #1a1a1a' }}>
+                  <div>
+                    <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', fontWeight: 700, color: i === 0 ? '#DC2626' : '#059669', marginBottom: 0 }}>{f.amount}</p>
+                    <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#555', marginBottom: 0 }}>{f.year}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.85rem', color: '#ccc', marginBottom: 2 }}>{f.source}</p>
+                    <p style={{ fontSize: '0.75rem', color: '#666', marginBottom: 0 }}>{f.note}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: '0.75rem', color: '#555', marginTop: 12, fontStyle: 'italic', marginBottom: 0 }}>
+              The National Centre for Place-Based Collaboration. The most ambitious co-investment in Australian place-based philanthropy.
+              PRF is the anchor funder. Dusseldorp contributes. Commonwealth matches. 6 sites over 10 years.
+              This is what happens when funders coordinate — and exactly what JusticeHub makes visible across the whole system.
+            </p>
+          </div>
+
+          {/* ALS — government + philanthropic */}
+          <div style={{ border: '1px solid #333', padding: 24, marginBottom: 16, background: '#111' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16 }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Aboriginal Legal Service (NSW/ACT)</h3>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', color: '#F5F0E8' }}>$4.13M tracked</span>
+            </div>
+            <div style={{ display: 'grid', gap: 8 }}>
+              {[
+                { source: 'Paul Ramsay Foundation (JR Portfolio)', amount: '$3.54M', year: '2021-25', note: 'PRF JR allocation' },
+                { source: 'AusTender (Federal contract)', amount: '$586K', year: '2025-26', note: 'Commonwealth government direct procurement' },
+              ].map((f, i) => (
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 12, padding: '8px 0', borderBottom: '1px solid #1a1a1a' }}>
+                  <div>
+                    <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', fontWeight: 700, color: i === 0 ? '#DC2626' : '#059669', marginBottom: 0 }}>{f.amount}</p>
+                    <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#555', marginBottom: 0 }}>{f.year}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.85rem', color: '#ccc', marginBottom: 2 }}>{f.source}</p>
+                    <p style={{ fontSize: '0.75rem', color: '#666', marginBottom: 0 }}>{f.note}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: '0.75rem', color: '#555', marginTop: 12, fontStyle: 'italic', marginBottom: 0 }}>
+              PRF funds the JR work. Commonwealth funds the legal service. Without JusticeHub, these funding streams are invisible to each other.
+            </p>
+          </div>
+
+          {/* Summary */}
+          <div style={{ border: '1px solid #F5F0E8', padding: 24, background: '#0A0A0A', marginTop: 24 }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 12 }}>The total picture across both ecosystems</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: '#222', marginBottom: 16 }}>
+              {[
+                { n: '$314M+', label: 'Total funding tracked', color: '#F5F0E8' },
+                { n: '12', label: 'Funding sources', color: '#F5F0E8' },
+                { n: '50+', label: 'Orgs funded', color: '#059669' },
+                { n: '3', label: 'Shared grantees', color: '#DC2626' },
+              ].map((s, i) => (
+                <div key={i} style={{ background: '#0A0A0A', padding: '16px 8px', textAlign: 'center' }}>
+                  <p style={{ fontSize: '1.3rem', fontWeight: 700, color: s.color, marginBottom: 0 }}>{s.n}</p>
+                  <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.55rem', color: '#666', textTransform: 'uppercase', marginBottom: 0 }}>{s.label}</p>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: '0.85rem', color: '#888', lineHeight: 1.6, marginBottom: 0 }}>
+              This is money from PRF ($53.1M JR), PLACE ($38.6M co-investment), Commonwealth, NIAA, AusTender, QLD/NSW state governments,
+              and philanthropic sources — all flowing through organisations that Dusseldorp and PRF support.
+              No single funder sees the full picture. JusticeHub does.
+            </p>
+          </div>
+        </section>
+
         {/* Where they overlap */}
         <section style={{ maxWidth: 1100, margin: '0 auto', padding: '0 40px 60px' }}>
           <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#666', marginBottom: 20, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
