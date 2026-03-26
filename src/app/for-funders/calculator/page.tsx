@@ -18,6 +18,8 @@ const COMMUNITY_SUCCESS_RATE = 0.85;
 const DETENTION_REOFFEND_RATE = 0.84;
 const ALMA_MONTHLY_COST = 8_000; // Evidence infrastructure running costs
 const TOUR_STOP_COST = 50_000;
+const COORDINATOR_ANNUAL_COST = 45_000; // 0.5 FTE at community sector rates
+const COMMUNITY_PROFILE_COST = 2_000; // Cost to build one org profile with data
 
 const PRESETS = [
   { label: '$25K', value: 25_000 },
@@ -48,6 +50,8 @@ export default function ImpactCalculatorPage() {
   const roi = detentionAvoidedCost > 0 ? Math.round(detentionAvoidedCost / amount) : 0;
   const reoffendersAvoided = Math.round(successfulDiversions * DETENTION_REOFFEND_RATE);
   const almaMonths = Math.floor(amount / ALMA_MONTHLY_COST);
+  const coordinatorMonths = Math.round((amount / COORDINATOR_ANNUAL_COST) * 12);
+  const communityProfiles = Math.floor(amount * 0.3 / COMMUNITY_PROFILE_COST); // 30% to profiles
   const tourStops = Math.floor(amount / TOUR_STOP_COST);
 
   const handlePreset = (value: number) => {
@@ -213,6 +217,48 @@ export default function ImpactCalculatorPage() {
                 </div>
               </div>
 
+              {/* Basecamp Pilot */}
+              <div className="border-2 border-purple-600 bg-purple-50 p-6 mb-8">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-purple-600 font-mono mb-4">
+                  Basecamp Pilot — What This Funds
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <div className="text-3xl font-black font-mono text-purple-700">
+                      {coordinatorMonths}
+                    </div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-gray-500 font-mono mt-1">
+                      Coordinator Months
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      Fractional community coordinators (0.5 FTE) at basecamps, onboarding orgs and building profiles.
+                    </p>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-black font-mono text-purple-700">
+                      {communityProfiles}
+                    </div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-gray-500 font-mono mt-1">
+                      Community Org Profiles
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      Full evidence profiles with verified programs, funding data, and community stories.
+                    </p>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-black font-mono text-purple-700">
+                      {Math.max(1, Math.floor(coordinatorMonths / 6))}
+                    </div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-gray-500 font-mono mt-1">
+                      Basecamps Activated
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      Regional hubs (e.g. Palm Island, Alice Springs, Mt Druitt) with dedicated support.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Infrastructure Impact */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="border-2 border-[#0A0A0A] bg-white p-6">
@@ -221,7 +267,7 @@ export default function ImpactCalculatorPage() {
                     Months of ALMA Intelligence
                   </div>
                   <p className="text-sm text-gray-600 mt-2">
-                    Keeping 981 programs verified, evidence current, and data accessible.
+                    Keeping 1,076 programs verified, evidence current, and data accessible.
                   </p>
                 </div>
                 <div className="border-2 border-[#0A0A0A] bg-white p-6">
