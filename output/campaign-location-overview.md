@@ -314,6 +314,140 @@
 
 ---
 
+## YOUTH JUSTICE ORG MAP — Per Location
+
+### NSW (Mt Druitt stop)
+| Org | City | Indigenous | Programs | Funding | Why contact |
+|-----|------|-----------|----------|---------|-------------|
+| Ted Noffs Foundation | Randwick | ★ | 14 | $339M | Most programs in NSW. Drug/alcohol youth services. |
+| Just Reinvest NSW | Redfern | ★ | 11 | $0 | Bourke/Maranguka model. Dusseldorp also funds. Zero funding but massive impact. |
+| Mounty Yarns | Mt Druitt | ★ | 7 | $30M | **Tour partner.** Already connected. |
+| CREATE Foundation | Parramatta | | 4 | $38M | Out-of-home care voice. Youth-led advocacy. |
+| Mission Australia | Sydney | | 3 | $331M | Largest service org in NSW. Scale partner. |
+| T-REK (Youth Off The Streets) | Alexandria | | 2 | $881K | Street-level youth work. |
+
+### QLD — Brisbane stop
+| Org | City | Indigenous | Programs | Funding | Why contact |
+|-----|------|-----------|----------|---------|-------------|
+| Youth Advocacy Centre (YAC) | South Brisbane | | 14 | $163M | **Shannon wants to HOST.** 14 programs! |
+| Aurukun Youth Support | South Brisbane | | 8 | $16M | Remote Cape York. FNQ voice. |
+| Dept of Youth Justice (YFSS) | Goodna | | 6 | $29M | Government service — context, not partnership. |
+| BG Fit | Mt Isa | ★ | — | — | Brodie + Aunty Corrine. QLD-wide story. |
+| MMAD (Musicians Making A Difference) | — | | — | — | Futures Radio runs 24/7 INSIDE detention. Perfect collab. |
+
+### QLD — Townsville stop
+| Org | City | Indigenous | Programs | Funding | Why contact |
+|-----|------|-----------|----------|---------|-------------|
+| Palm Island Community Company | Townsville | ★ | 21 | $44M+ | **Tour partner.** THE proof point. |
+| TAIHS Youth Support | Garbutt | ★ | 1 | $43M | Major Townsville Indigenous health. |
+| The Lighthouse | Garbutt | ★ | 1 | $27M | After-hours youth diversion. Townsville. |
+| Yiliyapinya Indigenous Corp | Oxley | ★ | 4 | $2.7M | QLD Indigenous youth programs. |
+
+### VIC (Melbourne — not a stop yet)
+| Org | City | Indigenous | Programs | Funding | Why contact |
+|-----|------|-----------|----------|---------|-------------|
+| Human Rights Law Centre | Melbourne | | 8 | $0 | Legal advocacy. Cherry Creek angle. |
+| Victorian Aboriginal Legal Service | Melbourne | ★ | 1 | $0 | Key Aboriginal legal voice in VIC. |
+| Wathaurong Aboriginal Co-op | Norlane/Geelong | | 1 | $0 | Regional VIC + Geelong demand signal. |
+| Rumbalara Aboriginal Co-op | Mooroopna | | 1 | $237K | Regional VIC Aboriginal services. |
+| Save the Children | Melbourne | | 3 | $286M | National org, VIC base. Scale partner. |
+
+### SA (Adelaide stop)
+| Org | City | Indigenous | Programs | Funding | Why contact |
+|-----|------|-----------|----------|---------|-------------|
+| Grandparents for Grandchildren SA | Adelaide | ★ | 5 | $0 | Most programs in SA. Kinship care angle. |
+| Nunkuwarrin Yunti | Adelaide | ★ | 2 | $0 | Adelaide Aboriginal health/community. Key ACCO. |
+| Junction Australia | Parkside | | 1 | $0 | Youth services. |
+| JRI Network Australia | Port Adelaide | ★ | 1 | $0 | Mindy Sotiri's national network. SA node. |
+
+### WA (Perth stop)
+| Org | City | Indigenous | Programs | Funding | Why contact |
+|-----|------|-----------|----------|---------|-------------|
+| Youth Futures WA | Joondalup | | 4 | $0 | Perth youth services. 4 programs. |
+| Wunan Foundation | Kununurra | ★ | 3 | $3.2M | East Kimberley Aboriginal foundation. |
+| Olabud Doogethu AC | Halls Creek | ★ | 2 | $0 | PRF-funded JR site. Halls Creek. |
+| Kimberley Wilde / JRI Perth | Perth | | — | — | Already discussing Perth as Container stop. |
+
+### NT (Tennant Creek stop)
+| Org | City | Indigenous | Programs | Funding | Why contact |
+|-----|------|-----------|----------|---------|-------------|
+| CatholicCare NT | Berrimah/Darwin | | 7 | $25M | Biggest NT intervention count. |
+| Kalano Community Association | Katherine | ★ | 6 | $26M | Katherine region. 6 programs. |
+| Oonchiumpa | Alice Springs | ★ | 4 | $6.1M | **Tour partner.** Already deeply connected. |
+| Children's Ground | The Gap | | 2 | $0 | Early childhood, community development. |
+| NAAJA | Darwin | ★ | 1 | $2.1M | Aboriginal legal services. Key voice. |
+
+---
+
+## CIVICSCOPE INTEL — Government Announcements to Use at Each Stop
+
+### QLD (Brisbane + Townsville)
+| Date | Minister | Headline | Amount | Angle |
+|------|----------|---------|--------|-------|
+| Mar 11 | Laura Gerber | "Kickstarting early intervention to keep Toowoomba youth out of crime" | **$560M** | $560M announced — $0 to ACCOs |
+| Feb 28 | Premier Crisafulli | "Adult Crime, Adult Time expands to 45 offences" | — | Punitive expansion, not community |
+| Feb 26 | Laura Gerber | "Kickstarting early intervention" | **$115M** | Same language, still no ACCO funding |
+| Feb 12 | Laura Gerber | "Stronger youth bail monitoring laws" | — | More surveillance, not support |
+| Feb 4 | Premier Crisafulli | "Major milestone for Youth Justice School in Logan" | **$40M** | Government-run, not community-controlled |
+| Feb 4 | Tim Nicholls | "Townsville Youth Step Up Step Down facility" | **$50M** | Mental health — near PICC but not with PICC |
+
+**Room 3 talking point:** QLD government announced $765M+ in youth justice spending since Feb. Zero dollars directed to Aboriginal community-controlled organisations. PICC has 21 programs and gets none of it.
+
+---
+
+## TOP 5 ENGAGEMENT IDEAS — Per Location
+
+### Mt Druitt / Sydney
+1. **Emma Maiden (Uniting)** — Director of Advocacy wants NSW MPs at the stop. Uniting could co-host or provide venue. Reply with dates.
+2. **Tom DONAGHY** — Tagged 19 people including PRF, Ash Barty, Mark Bouris, Jim Betts. Ask him for specific intros to Jim Betts and Mark Bouris.
+3. **Natalie Chiappazzo / WSU Dean** — CONTAINED as university experiential learning. Could bring 100+ social work students.
+4. **Emily Williams** — "Know a few pollies that should see this." Ask for specific introductions to NSW politicians.
+5. **Nicole Mekler (JustReinvest Mt Druitt)** — Already confirmed attending. She's the local JR lead — co-facilitate Room 3 with Mounty Yarns.
+
+### Brisbane
+1. **Shannon Cant / YAC** — HOSTING confirmed. 14 programs. This is your venue AND your Room 3 partner.
+2. **Tim Bennett** — Travel costs + QLD funding connections. He's the money connector for this stop.
+3. **Megan Argent** — QLD Dept of Youth Justice insider. Get her there — but carefully. She sees the system from inside.
+4. **MMAD** — Futures Radio runs 24/7 inside youth detention. Propose: Futures Radio broadcasts live from inside the Container. Explosive content.
+5. **Jonty Bush** — QLD Government MP. Already yarning with YAC about the Container. Political endorsement.
+
+### Townsville / Palm Island
+1. **Rachel Atkinson (PICC CEO)** — You MUST build this relationship. 21 programs, 200 staff. She IS Room 3.
+2. **Julia Payne / PRF** — PICC sits in PRF's geography with $0 PRF funding. The pitch writes itself.
+3. **Robert Tickner** — Former Minister for Aboriginal Affairs. "Billion dollar failed system." His political credibility opens doors.
+4. **Mindy Sotiri / JRI National** — JRI has the coalition infrastructure. Robert Tickner is JRI Chair. Approach via both.
+5. **The Lighthouse (Garbutt)** — $27M, after-hours youth diversion, same city. Room 3 co-anchor with PICC.
+
+### Adelaide
+1. **Tracey Newman** — Already making calls to get Container to Adelaide. **Send her the info pack NOW.**
+2. **Sophie Bretag (City of Onkaparinga)** — Local government champion. Connect with Tracey for joint planning.
+3. **Hannah March** — Suggests ALP National Conference Jul 23-25 as timing. Political audience. Do both: an earlier community stop + conference activation.
+4. **Nunkuwarrin Yunti** — Adelaide's key Aboriginal health service. Room 3 candidate. Approach for partnership.
+5. **Grandparents for Grandchildren SA** — 5 programs, kinship care angle. Unique Room 3 story — grandparents keeping kids out of the system.
+
+### Perth
+1. **Kimberley Wilde / JRI Perth** — Actively discussing Perth as stop. Key anchor. Connect with Hayley Passmore.
+2. **Mark McPartland** — "Where in Perth? Forest Chase?" Direct demand signal. Reply with plans.
+3. **Hayley Passmore + Michelle Wieberneit (UWA)** — Academic consortium approach with Aboriginal-led orgs. Send Perth contact list.
+4. **Lucy Stronach / Minderoo** — $25-75K per stop. Board decision June. Perth stop = hometown advantage for Minderoo.
+5. **Samgiita Hope (Heart2Heart)** — "When will you be in Perth?" Second demand signal. Community org — Room 3 candidate?
+
+### Melbourne (NOT A STOP — should be)
+1. **Peter Norden AO** — 14 unread messages. AO. CALL HIM: 0409 04994. He unlocks the entire VIC network.
+2. **Dr Katrina Raynor** — Suggested Melbourne Design Week as venue. High-profile cultural event = audience.
+3. **Moira Were AM** — Tagged Zoe Brooks about The Good Bank Gallery. AM = credibility. Gallery = venue.
+4. **Ashlee Cooper** — "Would LOVE to see this in Geelong or Melbourne." Community demand.
+5. **Human Rights Law Centre** — 8 programs, Melbourne. Cherry Creek ($7,304/day) is their issue. Room 3 partner.
+
+### Canberra (NOT A STOP — demand exists)
+1. **Rebecca Minty** — ACT Government. "ACT recently committed to new model of care for youth detention." Government insider. Reply NOW.
+2. **PJ Hewitt** — "Josh Hewitt — host in Canberra!" Direct hosting offer.
+3. **Anissa Jones** — "Will you go to Canberra? Federal level too." Federal angle.
+4. **Genelee Mazarello** — National Justice Forum x ACT meeting. Third Sector connection.
+5. **Federal Parliament** — Canberra stop during sitting week = maximum political impact.
+
+---
+
 ## LINKS TO SHARE
 
 | Page | URL |
