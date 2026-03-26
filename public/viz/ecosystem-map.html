@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JusticeHub — The Real Picture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--black:#0A0A0A;--off-white:#F5F0E8;--red:#DC2626;--emerald:#059669;--dusseldorp:#6B7F99;--prf:#3B7A8C;--shared:#9B6DB0;--detention:#991B1B;--surface:rgba(245,240,232,0.95)}
+body{background:var(--black);color:var(--off-white);font-family:'Space Grotesk',sans-serif;overflow:hidden;height:100vh;width:100vw}
+
+/* ── LAYOUT ── */
+#app{display:flex;height:100vh;width:100vw}
+#map-wrap{flex:1;position:relative}
+#leaflet-map{width:100%;height:100%}
+#story-panel{width:420px;background:var(--black);overflow-y:auto;display:flex;flex-direction:column;border-left:1px solid rgba(245,240,232,0.06);position:relative;z-index:500}
+
+/* ── HEADER BAR ── */
+#bar{position:absolute;top:0;left:0;right:420px;z-index:800;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:48px;background:rgba(10,10,10,0.85);backdrop-filter:blur(12px)}
+#bar h1{font-size:15px;font-weight:700;letter-spacing:-0.03em}
+#bar h1 span{color:var(--emerald)}
+#bar .mode-toggle{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.08em;padding:5px 14px;border:1px solid rgba(245,240,232,0.15);border-radius:3px;background:none;color:var(--off-white);cursor:pointer;transition:all 0.2s}
+#bar .mode-toggle:hover{border-color:var(--off-white)}
+#bar .mode-toggle.active{background:var(--emerald);border-color:var(--emerald);color:var(--black)}
+
+/* ── STORY PANEL ── */
+.story-header{padding:24px 28px 0;flex-shrink:0}
+.story-header .kicker{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--emerald);margin-bottom:6px}
+.story-header h2{font-size:22px;font-weight:700;letter-spacing:-0.03em;line-height:1.2;margin-bottom:8px}
+.story-header .lede{font-size:13px;line-height:1.6;opacity:0.6;margin-bottom:20px}
+
+.story-body{padding:0 28px;flex:1}
+
+/* Stats row */
+.stat-row{display:flex;gap:12px;margin-bottom:20px}
+.stat-box{flex:1;background:rgba(245,240,232,0.04);border-radius:5px;padding:14px;text-align:center}
+.stat-box .num{font-weight:700;font-size:22px;letter-spacing:-0.03em;line-height:1}
+.stat-box .num.red{color:var(--red)}
+.stat-box .num.emerald{color:var(--emerald)}
+.stat-box .lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.35;margin-top:5px;line-height:1.3}
+
+/* Org list */
+.org-list{margin:16px 0}
+.org-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(245,240,232,0.04)}
+.org-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.org-info{flex:1;min-width:0}
+.org-name{font-size:12px;font-weight:600}
+.org-detail{font-family:'IBM Plex Mono',monospace;font-size:9px;opacity:0.4;margin-top:2px;line-height:1.4}
+
+/* Contrast block */
+.contrast{margin:16px 0;border-radius:5px;overflow:hidden}
+.contrast-row{display:flex;align-items:center;padding:12px 14px;gap:10px}
+.contrast-row.detention{background:rgba(153,27,27,0.15)}
+.contrast-row.community{background:rgba(5,150,105,0.1)}
+.contrast-icon{font-size:18px;flex-shrink:0}
+.contrast-text{flex:1;font-size:11px;line-height:1.5}
+.contrast-text strong{font-size:14px}
+.contrast-text .sub{font-family:'IBM Plex Mono',monospace;font-size:9px;opacity:0.5;margin-top:2px}
+
+/* Quote */
+.quote{margin:16px 0;padding:16px 18px;background:rgba(245,240,232,0.03);border-left:2px solid var(--emerald);border-radius:0 4px 4px 0}
+.quote p{font-style:italic;font-size:13px;line-height:1.6;opacity:0.85}
+.quote cite{display:block;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-style:normal;opacity:0.35}
+
+/* Callout */
+.callout{margin:16px 0;padding:12px 14px;border-radius:4px;font-size:11px;line-height:1.6}
+.callout.red{background:rgba(220,38,38,0.08);border-left:2px solid var(--red)}
+.callout.red strong{color:var(--red)}
+.callout.govt{background:rgba(100,116,139,0.08);border-left:2px solid #64748b}
+.callout.govt .minister{font-family:'IBM Plex Mono',monospace;font-size:9px;opacity:0.4;margin-top:4px}
+
+/* Insight */
+.insight{margin:16px 0;padding:14px 16px;background:rgba(245,240,232,0.03);border-radius:5px}
+.insight h4{font-size:12px;font-weight:700;margin-bottom:4px}
+.insight p{font-size:11px;line-height:1.6;opacity:0.6}
+
+/* ── NAVIGATION ── */
+.story-nav{padding:20px 28px;flex-shrink:0;border-top:1px solid rgba(245,240,232,0.06);display:flex;align-items:center;gap:12px}
+.nav-btn{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;padding:10px 20px;border:1px solid rgba(245,240,232,0.15);border-radius:4px;background:none;color:var(--off-white);cursor:pointer;transition:all 0.2s}
+.nav-btn:hover{border-color:var(--off-white)}
+.nav-btn.primary{background:var(--emerald);border-color:var(--emerald);color:var(--black)}
+.nav-btn.primary:hover{background:#06b57b}
+.nav-btn:disabled{opacity:0.2;cursor:default}
+.nav-progress{flex:1;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;opacity:0.3}
+.progress-dots{display:flex;gap:6px;justify-content:center;margin-top:4px}
+.progress-dot{width:6px;height:6px;border-radius:50%;background:rgba(245,240,232,0.12);transition:all 0.3s}
+.progress-dot.active{background:var(--emerald);transform:scale(1.3)}
+.progress-dot.visited{background:rgba(245,240,232,0.3)}
+
+/* ── EXPLORE MODE CONTROLS ── */
+.explore-controls{position:absolute;top:60px;left:12px;z-index:800;display:none;flex-direction:column;gap:4px}
+.explore-controls.show{display:flex}
+.layer-btn{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;padding:5px 10px;border:1px solid rgba(245,240,232,0.12);border-radius:3px;background:rgba(10,10,10,0.8);backdrop-filter:blur(8px);color:var(--off-white);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.15s}
+.layer-btn:hover{border-color:var(--off-white)}
+.layer-btn.active{background:rgba(245,240,232,0.12);border-color:rgba(245,240,232,0.3)}
+.layer-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* ── LEAFLET ── */
+.leaflet-container{background:#1a1a1a}
+.leaflet-popup-content-wrapper{background:var(--black);color:var(--off-white);border-radius:5px;border:1px solid rgba(245,240,232,0.1)}
+.leaflet-popup-tip{background:var(--black)}
+.leaflet-popup-content{margin:12px 16px;font-size:12px;line-height:1.5}
+.leaflet-popup-content .pn{font-weight:700;font-size:13px;margin-bottom:1px}
+.leaflet-popup-content .pt{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.4;margin-bottom:6px}
+.leaflet-popup-content .ps{font-family:'IBM Plex Mono',monospace;font-size:10px;opacity:0.7}
+
+/* ── DETENTION RADIUS ── */
+@keyframes pulse-detention{0%,100%{opacity:0.08}50%{opacity:0.2}}
+@keyframes pulse-gap{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,0.6)}50%{box-shadow:0 0 0 14px rgba(220,38,38,0)}}
+
+/* Scrollbar */
+#story-panel::-webkit-scrollbar{width:4px}
+#story-panel::-webkit-scrollbar-thumb{background:rgba(245,240,232,0.1);border-radius:2px}
+
+/* ── TRANSITIONS ── */
+.story-header,.story-body{transition:opacity 0.35s ease,transform 0.35s ease}
+.story-header.fade-out,.story-body.fade-out{opacity:0;transform:translateY(8px)}
+.story-header.fade-in,.story-body.fade-in{opacity:1;transform:translateY(0)}
+
+/* Stat box entry animation */
+.stat-box{opacity:0;transform:translateY(12px);animation:stat-enter 0.4s ease forwards}
+.stat-box:nth-child(1){animation-delay:0.15s}
+.stat-box:nth-child(2){animation-delay:0.25s}
+.stat-box:nth-child(3){animation-delay:0.35s}
+@keyframes stat-enter{to{opacity:1;transform:translateY(0)}}
+
+/* Org item stagger */
+.org-item{opacity:0;animation:item-enter 0.3s ease forwards}
+.org-item:nth-child(1){animation-delay:0.2s}
+.org-item:nth-child(2){animation-delay:0.3s}
+.org-item:nth-child(3){animation-delay:0.4s}
+.org-item:nth-child(4){animation-delay:0.5s}
+.org-item:nth-child(5){animation-delay:0.6s}
+@keyframes item-enter{to{opacity:1}}
+
+/* ── MAP LEGEND ── */
+.map-legend{position:absolute;bottom:60px;left:12px;z-index:800;display:none;background:rgba(10,10,10,0.88);backdrop-filter:blur(10px);border:1px solid rgba(245,240,232,0.08);border-radius:5px;padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:9px;line-height:1.8}
+.map-legend.show{display:block}
+.map-legend h5{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;margin-bottom:6px;opacity:0.5;text-transform:uppercase;letter-spacing:0.08em}
+.legend-row{display:flex;align-items:center;gap:8px}
+.legend-icon{width:10px;height:10px;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.4)}
+.legend-icon.circle{border-radius:50%}
+.legend-icon.square{border-radius:1px}
+.legend-icon.pulse{animation:pulse-gap 2s infinite}
+.legend-label{opacity:0.6}
+
+/* ── KEYBOARD HINT ── */
+.kbd-hint{text-align:center;padding:6px 0 0;font-family:'IBM Plex Mono',monospace;font-size:8px;opacity:0.2;letter-spacing:0.04em}
+.kbd-hint kbd{display:inline-block;padding:1px 5px;border:1px solid rgba(245,240,232,0.15);border-radius:2px;margin:0 1px}
+
+/* ── CIVICSCOPE FEED ── */
+.civicscope-feed{position:absolute;bottom:12px;right:12px;z-index:800;display:none}
+.civicscope-feed.show{display:block}
+.civicscope-toggle{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;padding:6px 14px;background:rgba(10,10,10,0.88);backdrop-filter:blur(10px);border:1px solid rgba(245,240,232,0.1);border-radius:4px;color:var(--off-white);cursor:pointer;display:flex;align-items:center;gap:6px;margin-left:auto}
+.civicscope-toggle:hover{border-color:var(--emerald)}
+.civicscope-dot{width:6px;height:6px;border-radius:50%;background:var(--emerald);animation:pulse-cs 2s infinite}
+@keyframes pulse-cs{0%,100%{opacity:1}50%{opacity:0.3}}
+.civicscope-panel{display:none;background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);border:1px solid rgba(245,240,232,0.08);border-radius:6px;width:340px;max-height:420px;overflow-y:auto;margin-top:6px}
+.civicscope-panel.open{display:block}
+.civicscope-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(245,240,232,0.06)}
+.civicscope-header h5{font-size:11px;font-weight:700;opacity:0.7}
+.civicscope-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:0.1em;color:var(--emerald);background:rgba(5,150,105,0.1);padding:2px 8px;border-radius:3px}
+.civicscope-items{padding:8px 0}
+.civicscope-item{padding:10px 16px;border-bottom:1px solid rgba(245,240,232,0.04)}
+.civicscope-item:last-child{border-bottom:none}
+.civicscope-quote{font-size:12px;font-style:italic;opacity:0.8;line-height:1.5;margin-bottom:4px}
+.civicscope-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;opacity:0.35;margin-bottom:4px}
+.civicscope-verdict{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500}
+.civicscope-verdict.red{color:var(--red)}
+.civicscope-verdict.amber{color:#F59E0B}
+.civicscope-verdict.green{color:var(--emerald)}
+.civicscope-footer{padding:8px 16px;border-top:1px solid rgba(245,240,232,0.06);font-family:'IBM Plex Mono',monospace;font-size:8px;opacity:0.3;text-align:center}
+.civicscope-panel::-webkit-scrollbar{width:3px}
+.civicscope-panel::-webkit-scrollbar-thumb{background:rgba(245,240,232,0.1);border-radius:2px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){#story-panel{width:340px}#bar{right:340px}}
+@media(max-width:700px){
+  #story-panel{position:absolute;bottom:0;left:0;right:0;width:100%;height:55vh;border-left:none;border-top:1px solid rgba(245,240,232,0.1);border-radius:12px 12px 0 0}
+  #bar{right:0;height:42px;padding:0 12px}
+  #bar h1{font-size:13px}
+  .story-header{padding:16px 20px 0}
+  .story-header h2{font-size:18px}
+  .story-body{padding:0 20px}
+  .story-nav{padding:12px 20px}
+  .stat-box .num{font-size:18px}
+  .map-legend{bottom:auto;top:50px;left:8px}
+  .explore-controls{top:50px}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div id="map-wrap">
+    <div id="bar">
+      <h1><span>JusticeHub</span> &mdash; The Real Picture</h1>
+      <button class="mode-toggle" id="mode-btn" onclick="toggleMode()">Explore Mode</button>
+    </div>
+    <div class="explore-controls" id="explore-controls">
+      <button class="layer-btn active" onclick="toggleLayer('community',this)"><div class="layer-dot" style="background:var(--emerald)"></div>Community Orgs</button>
+      <button class="layer-btn active" onclick="toggleLayer('detention',this)"><div class="layer-dot" style="background:var(--detention)"></div>Detention Centres</button>
+      <button class="layer-btn" onclick="toggleLayer('funding',this)"><div class="layer-dot" style="background:var(--prf)"></div>Funding Lines</button>
+      <button class="layer-btn" onclick="toggleLayer('dusseldorp',this)"><div class="layer-dot" style="background:var(--dusseldorp)"></div>Dusseldorp Network</button>
+    </div>
+    <div class="map-legend" id="map-legend">
+      <h5>Legend</h5>
+      <div class="legend-row"><div class="legend-icon circle" style="background:var(--emerald)"></div><div class="legend-label">Community org (Indigenous)</div></div>
+      <div class="legend-row"><div class="legend-icon circle" style="background:var(--prf)"></div><div class="legend-label">Community org (non-Indigenous)</div></div>
+      <div class="legend-row"><div class="legend-icon circle pulse" style="background:var(--red)"></div><div class="legend-label">Unfunded by philanthropy</div></div>
+      <div class="legend-row"><div class="legend-icon circle" style="background:var(--shared);box-shadow:0 0 6px rgba(155,109,176,0.5)"></div><div class="legend-label">ALMA Basecamp</div></div>
+      <div class="legend-row"><div class="legend-icon square" style="background:var(--detention)"></div><div class="legend-label">Youth detention centre</div></div>
+      <div class="legend-row"><div class="legend-icon" style="background:none;border:none;width:14px;height:2px;background:var(--dusseldorp)"></div><div class="legend-label">Dusseldorp network</div></div>
+      <div class="legend-row"><div class="legend-icon" style="background:none;border:none;width:14px;height:2px;background:#B8860B"></div><div class="legend-label">PRF funding line</div></div>
+    </div>
+    <div id="leaflet-map"></div>
+    <!-- CivicScope Live Feed -->
+    <div id="civicscope-feed" class="civicscope-feed">
+      <button class="civicscope-toggle" onclick="toggleCivicScope()">
+        <span class="civicscope-dot"></span> CivicScope Live
+      </button>
+      <div class="civicscope-panel" id="civicscope-panel">
+        <div class="civicscope-header">
+          <h5>Recent Ministerial Statements</h5>
+          <span class="civicscope-tag">LIVE</span>
+        </div>
+        <div class="civicscope-items" id="civicscope-items">
+          <div class="civicscope-item">
+            <div class="civicscope-quote">"Kickstarting early intervention to keep youth out of crime"</div>
+            <div class="civicscope-meta">Minister Laura Gerber, QLD · $560M announced</div>
+            <div class="civicscope-verdict red">$0 to Aboriginal community-controlled orgs</div>
+          </div>
+          <div class="civicscope-item">
+            <div class="civicscope-quote">"Major milestone for Youth Justice School in Logan"</div>
+            <div class="civicscope-meta">Premier Crisafulli, QLD · $40M facility</div>
+            <div class="civicscope-verdict red">Government-run, not community-controlled</div>
+          </div>
+          <div class="civicscope-item">
+            <div class="civicscope-quote">"Youth justice reform delivering results"</div>
+            <div class="civicscope-meta">Minister Enoch, QLD · Policy statement</div>
+            <div class="civicscope-verdict amber">Reform language without funding shift</div>
+          </div>
+          <div class="civicscope-item">
+            <div class="civicscope-quote">"New detention facility to replace Ashley"</div>
+            <div class="civicscope-meta">TAS Government · Pontville site</div>
+            <div class="civicscope-verdict red">Replacement, not alternative</div>
+          </div>
+          <div class="civicscope-item">
+            <div class="civicscope-quote">"Cherry Creek youth justice centre now operational"</div>
+            <div class="civicscope-meta">VIC Government · 140 beds · $7,304/day</div>
+            <div class="civicscope-verdict red">Most expensive detention in Australia</div>
+          </div>
+        </div>
+        <div class="civicscope-footer">
+          Data via <a href="https://justicehub.org.au/civic/qld-youth-justice" target="_blank" style="color:var(--emerald)">CivicScope</a> · Hansard, ministerial diaries, QLD open data
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="story-panel">
+    <div class="story-header" id="story-header"></div>
+    <div class="story-body" id="story-body"></div>
+    <div class="story-nav">
+      <button class="nav-btn" id="btn-prev" onclick="prevStory()" disabled>&larr; Back</button>
+      <div class="nav-progress">
+        <div id="nav-label"></div>
+        <div class="progress-dots" id="progress-dots"></div>
+      </div>
+      <button class="nav-btn primary" id="btn-next" onclick="nextStory()">Next &rarr;</button>
+    </div>
+    <div class="kbd-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> or <kbd>Space</kbd> to navigate</div>
+  </div>
+</div>
+
+<script>
+// ═══════ MAP SETUP ═══════
+const map = L.map('leaflet-map', {
+  center: [-28, 134], zoom: 4, minZoom: 4, maxZoom: 15,
+  zoomControl: false, attributionControl: false
+});
+L.control.zoom({position:'bottomright'}).addTo(map);
+L.control.attribution({position:'bottomright',prefix:false}).addAttribution('&copy; OSM &copy; CARTO').addTo(map);
+
+// Dark muted tiles
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  subdomains:'abcd', maxZoom:19
+}).addTo(map);
+
+// ═══════ DATA ═══════
+const detention = [
+  {n:'Cobham YJC',s:'NSW',lat:-33.757,lon:150.753,cap:60,cost:2573},
+  {n:'Frank Baxter YJC',s:'NSW',lat:-33.437,lon:151.289,cap:120,cost:2573},
+  {n:'Reiby YJC',s:'NSW',lat:-34.091,lon:150.832,cap:60,cost:2573},
+  {n:'Acmena YJC',s:'NSW',lat:-29.710,lon:152.939,cap:42,cost:2573},
+  {n:'Orana YJC',s:'NSW',lat:-32.253,lon:148.613,cap:30,cost:2573},
+  {n:'Riverina YJC',s:'NSW',lat:-35.117,lon:147.369,cap:30,cost:2573},
+  {n:'Brisbane YDC',s:'QLD',lat:-27.596,lon:152.931,cap:162,cost:2714},
+  {n:'West Moreton YDC',s:'QLD',lat:-27.598,lon:152.933,cap:32,cost:2714},
+  {n:'Cleveland YDC',s:'QLD',lat:-19.273,lon:146.728,cap:112,cost:2714},
+  {n:'Parkville YJP',s:'VIC',lat:-37.786,lon:144.953,cap:120,cost:7304},
+  {n:'Cherry Creek YJC',s:'VIC',lat:-37.844,lon:144.668,cap:140,cost:7304},
+  {n:'Malmsbury YJC',s:'VIC',lat:-37.187,lon:144.373,cap:30,cost:7304},
+  {n:'Banksia Hill DC',s:'WA',lat:-32.078,lon:115.918,cap:222,cost:4184},
+  {n:'Unit 18 (Adult Prison)',s:'WA',lat:-32.105,lon:115.862,cap:20,cost:4184},
+  {n:'Kurlana Tapa YJC',s:'SA',lat:-34.837,lon:138.596,cap:60,cost:3261},
+  {n:'Holtze YDC',s:'NT',lat:-12.428,lon:130.882,cap:40,cost:3452},
+  {n:'Alice Springs YDC',s:'NT',lat:-23.710,lon:133.871,cap:30,cost:3452},
+  {n:'Bimberi YJC',s:'ACT',lat:-35.215,lon:149.160,cap:40,cost:4149},
+  {n:'Ashley YDC',s:'TAS',lat:-41.529,lon:146.653,cap:50,cost:5121},
+];
+
+const communities = [
+  {n:'Palm Island CC',lat:-18.73,lon:146.58,orgs:3,int:21,fund:'$67M+',indigenous:true,basecamp:true,gap:true},
+  {n:'Mounty Yarns',lat:-33.77,lon:150.82,orgs:1,int:7,fund:'$4.3M',indigenous:true,basecamp:true},
+  {n:'Oonchiumpa',lat:-23.70,lon:133.88,orgs:2,int:4,fund:'$1.52M',indigenous:true,basecamp:true},
+  {n:'Maranguka (Bourke)',lat:-30.09,lon:145.94,orgs:1,int:12,fund:'$8.2M',indigenous:true},
+  {n:'Olabud Doogethu',lat:-18.23,lon:127.67,orgs:1,int:8,fund:'$3.1M',indigenous:true},
+  {n:'Redfern/Sydney',lat:-33.89,lon:151.21,orgs:16,int:13,fund:'$23.6M',indigenous:true},
+  {n:'Katherine',lat:-14.46,lon:132.27,orgs:12,int:6,fund:'$33M',indigenous:true},
+  {n:'Alice Springs',lat:-23.70,lon:133.88,orgs:14,int:8,fund:'$11.6M',indigenous:true},
+  {n:'Brisbane',lat:-27.47,lon:153.05,orgs:12,int:6,fund:'$118.8M',indigenous:true},
+  {n:'Kununurra',lat:-15.77,lon:128.74,orgs:5,int:3,fund:'$9.8M',indigenous:true},
+  {n:'Adelaide',lat:-34.93,lon:138.60,orgs:6,int:7,fund:'$466K',indigenous:true},
+  {n:'Tiraapendi Wodli',lat:-34.84,lon:138.51,orgs:2,int:6,fund:'$2.4M',indigenous:true},
+  {n:'Coffs Harbour',lat:-30.30,lon:153.11,orgs:3,int:2,fund:'$1.2M',indigenous:true},
+  {n:'Derby',lat:-17.30,lon:123.63,orgs:1,int:3,fund:'$1.2M',indigenous:true},
+  {n:'Fitzroy Crossing',lat:-18.20,lon:125.57,orgs:6,int:1,fund:'$6.2M',indigenous:true},
+  {n:'Yarrabah',lat:-16.92,lon:145.87,orgs:7,int:2,fund:'$8.5M',indigenous:true},
+  {n:'Arnhem Land',lat:-12.50,lon:134.00,orgs:4,int:2,fund:'$3.5M',indigenous:true},
+  {n:'Perth',lat:-31.95,lon:115.86,orgs:12,int:1,fund:'$7.5M',indigenous:true},
+  {n:'Darwin',lat:-12.46,lon:130.84,orgs:5,int:1,fund:'$4.9M',indigenous:true},
+  {n:'Mt Isa',lat:-20.73,lon:139.49,orgs:6,int:2,fund:'$35.6M',indigenous:true},
+  {n:'Hobart',lat:-42.88,lon:147.33,orgs:1,int:1,fund:'$1.5M',indigenous:true},
+  {n:'Mildura',lat:-34.18,lon:142.16,orgs:3,int:1,fund:'$2M',indigenous:true},
+  {n:'Doveton',lat:-38.01,lon:145.24,orgs:1,int:5,fund:'$22M',indigenous:false},
+  {n:'Logan',lat:-27.64,lon:153.11,orgs:1,int:3,fund:'$45M',indigenous:false},
+  {n:'Burnie',lat:-41.05,lon:145.91,orgs:1,int:4,fund:'$3M',indigenous:false},
+  {n:'Moree',lat:-29.46,lon:149.85,orgs:1,int:1,fund:'$500K',indigenous:true},
+  {n:'Kempsey',lat:-31.08,lon:152.83,orgs:1,int:2,fund:'$800K',indigenous:true},
+];
+
+// ═══════ MAP LAYERS ═══════
+const layers = {};
+
+// Detention — heavy red with shadow radius
+layers.detention = L.layerGroup();
+detention.forEach(dc => {
+  // Cost shadow radius — bigger cost = bigger shadow
+  const radius = dc.cost / 60; // ~40-120px
+  L.circle([dc.lat, dc.lon], {
+    radius: dc.cap * 80, // meters
+    fillColor: '#991B1B', fillOpacity: 0.12, stroke: false,
+    className: 'detention-shadow'
+  }).addTo(layers.detention);
+
+  const sz = Math.max(12, Math.min(24, dc.cap / 8));
+  const icon = L.divIcon({
+    className: '',
+    html: `<div style="width:${sz}px;height:${sz}px;background:#991B1B;border:2px solid rgba(255,255,255,0.5);border-radius:2px;box-shadow:0 0 20px rgba(153,27,27,0.6),0 0 40px rgba(153,27,27,0.3)"></div>`,
+    iconSize:[sz,sz], iconAnchor:[sz/2,sz/2]
+  });
+  L.marker([dc.lat, dc.lon], {icon}).bindPopup(`
+    <div class="pn">${dc.n}</div>
+    <div class="pt">${dc.s} · Youth Detention</div>
+    <div class="ps">Capacity: <strong>${dc.cap} beds</strong></div>
+    <div class="ps">Cost: <strong style="color:#DC2626">$${dc.cost.toLocaleString()}/day</strong> per child</div>
+    <div class="ps">Annual: <strong style="color:#DC2626">$${(dc.cost*365/1000).toFixed(0)}K/year</strong> per child</div>
+  `, {maxWidth:250}).addTo(layers.detention);
+});
+layers.detention.addTo(map);
+
+// Community orgs
+layers.community = L.layerGroup();
+communities.forEach(c => {
+  const isBasecamp = c.basecamp;
+  const isGap = c.gap;
+  const sz = isBasecamp ? 18 : Math.max(6, Math.min(18, c.int * 1.5 + c.orgs * 0.5));
+
+  let bg = c.indigenous ? '#059669' : '#3B7A8C';
+  let extra = '';
+  if (isGap) { bg = '#DC2626'; extra = 'animation:pulse-gap 2s infinite;'; }
+  else if (isBasecamp) { extra = 'box-shadow:0 0 12px rgba(5,150,105,0.5);'; }
+
+  const icon = L.divIcon({
+    className: '',
+    html: `<div style="width:${sz}px;height:${sz}px;background:${bg};border:${isBasecamp?'3':'2'}px solid rgba(255,255,255,${isBasecamp?'0.9':'0.5'});border-radius:50%;${extra}"></div>`,
+    iconSize:[sz,sz], iconAnchor:[sz/2,sz/2]
+  });
+
+  L.marker([c.lat, c.lon], {icon}).bindPopup(`
+    <div class="pn">${c.n}</div>
+    <div class="pt">${c.orgs} org${c.orgs>1?'s':''} · ${c.int} interventions</div>
+    <div class="ps">Funding: <strong>${c.fund}</strong></div>
+    ${isGap ? '<div class="ps" style="color:#DC2626;font-weight:600;margin-top:4px">Not in any funder network</div>' : ''}
+  `, {maxWidth:250}).addTo(layers.community);
+
+  if (isBasecamp) {
+    L.marker([c.lat, c.lon], {
+      icon: L.divIcon({
+        className: '',
+        html: `<div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;color:white;text-shadow:0 1px 6px rgba(0,0,0,0.8),0 0 20px rgba(0,0,0,0.5);white-space:nowrap;transform:translate(-50%,-100%);padding-bottom:4px">${c.n}</div>`,
+        iconSize:[0,0], iconAnchor:[0,14]
+      })
+    }).addTo(layers.community);
+  }
+});
+layers.community.addTo(map);
+
+// Funding lines
+layers.funding = L.layerGroup();
+const prfHQ = [-33.88, 151.22];
+[
+  {lat:-18.73,lon:146.58,w:2,c:'#059669'},  // PICC
+  {lat:-27.47,lon:153.02,w:2.5,c:'#B8860B'}, // Mercy
+  {lat:-32.93,lon:151.78,w:2,c:'#B8860B'},   // LWB
+  {lat:-33.92,lon:151.24,w:1.5,c:'#B8860B'}, // Noffs
+  {lat:-37.81,lon:144.96,w:1.5,c:'#B8860B'}, // Save the Children
+  {lat:-38.01,lon:145.24,w:1,c:'#B8860B'},   // Our Place
+].forEach(l => {
+  L.polyline([prfHQ,[l.lat,l.lon]], {color:l.c,weight:l.w,opacity:0.3,dashArray:'8,5'}).addTo(layers.funding);
+});
+
+// Dusseldorp network
+layers.dusseldorp = L.layerGroup();
+const dHQ = [-33.86, 151.21];
+[[-30.09,145.94],[-33.77,150.82],[-23.70,133.88],[-31.08,152.83],[-29.46,149.85],[-18.23,127.67],[-34.84,138.51],[-12.50,134.00],[-30.30,153.11],[-17.30,123.63],[-33.99,151.23],[-37.81,144.96]].forEach(p => {
+  L.polyline([dHQ,p], {color:'#6B7F99',weight:1.2,opacity:0.35,dashArray:'4,4'}).addTo(layers.dusseldorp);
+  L.circleMarker(p, {radius:4,fillColor:'#6B7F99',fillOpacity:0.6,color:'white',weight:1}).addTo(layers.dusseldorp);
+});
+
+function toggleLayer(name, btn) {
+  btn.classList.toggle('active');
+  if (btn.classList.contains('active')) map.addLayer(layers[name]);
+  else map.removeLayer(layers[name]);
+}
+
+// ═══════ STORIES ═══════
+const stories = [
+  // 0: Opening
+  {
+    center: [-25, 134], zoom: 4,
+    header: { kicker: 'The Real Picture', title: 'Australia spends billions on youth justice. Almost none of it reaches the communities that need it.', lede: 'This is a map of where money goes — and where it doesn\'t. Scroll through to see the pattern, or switch to Explore Mode to dig into the data yourself.' },
+    body: `
+      <div class="stat-row">
+        <div class="stat-box"><div class="num red">$20.1B</div><div class="lbl">To non-Indigenous providers</div></div>
+        <div class="stat-box"><div class="num emerald">$2.6B</div><div class="lbl">To Indigenous orgs</div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="num">18,823</div><div class="lbl">Non-Indigenous orgs funded</div></div>
+        <div class="stat-box"><div class="num emerald">646</div><div class="lbl">Indigenous orgs funded</div></div>
+      </div>
+      <div class="callout red"><strong>19,719 organisations</strong> receive government money with zero documented interventions. Meanwhile, Indigenous community orgs deliver 130 verified programs on 12% of the funding.</div>
+      <div class="insight"><h4>What you're looking at</h4><p>Red squares = detention centres (20 nationwide, ~1,234 beds). Green dots = community programs. Bigger dot = more interventions. The red glow around detention centres shows their cost shadow — the money being spent to cage children instead of supporting them.</p></div>
+    `
+  },
+
+  // 1: Palm Island
+  {
+    center: [-18.8, 146.7], zoom: 9,
+    header: { kicker: 'Story 1 — The Power Gap', title: 'Palm Island has 21 verified interventions. Zero philanthropic support.', lede: 'The strongest evidence base of any community in our database — and neither PRF nor Dusseldorp fund it.' },
+    body: `
+      <div class="stat-row">
+        <div class="stat-box"><div class="num emerald">21</div><div class="lbl">Verified interventions</div></div>
+        <div class="stat-box"><div class="num">$67M+</div><div class="lbl">Funding ecosystem</div></div>
+        <div class="stat-box"><div class="num red">$0</div><div class="lbl">Philanthropic support</div></div>
+      </div>
+      <div class="org-list">
+        <div class="org-item"><div class="org-dot" style="background:var(--emerald)"></div><div class="org-info"><div class="org-name">Palm Island Community Company</div><div class="org-detail">CEO Rachel Atkinson · 75% Palm Islanders · ~200 staff · 21 programs across justice, health, education, culture</div></div></div>
+      </div>
+      <div class="contrast">
+        <div class="contrast-row detention"><div class="contrast-icon">&#9632;</div><div class="contrast-text"><strong style="color:var(--red)">Cleveland YDC — 250km away</strong><div class="sub">112 beds · $2,714/day per child · $991K/year per child</div></div></div>
+        <div class="contrast-row community"><div class="contrast-icon">&#9679;</div><div class="contrast-text"><strong style="color:var(--emerald)">PICC's 21 programs — on Palm Island</strong><div class="sub">Median cost $170K/year · Community-controlled · Evidence-based</div></div></div>
+      </div>
+      <div class="callout red"><strong>This is the biggest opportunity.</strong> PICC sits in neither the PRF nor Dusseldorp funder network. One philanthropic partnership could connect 21 proven programs to national evidence infrastructure for the first time.</div>
+    `
+  },
+
+  // 2: Alice Springs
+  {
+    center: [-23.72, 133.88], zoom: 10,
+    header: { kicker: 'Story 2 — Remote Australia', title: 'Alice Springs: A detention centre and its alternative, side by side.', lede: 'Oonchiumpa runs 4 programs keeping young people on Country — right next to the Alice Springs Youth Detention Centre spending $3,452/day per child to lock them up.' },
+    body: `
+      <div class="stat-row">
+        <div class="stat-box"><div class="num emerald">4</div><div class="lbl">Oonchiumpa programs</div></div>
+        <div class="stat-box"><div class="num">$1.52M</div><div class="lbl">Total funding</div></div>
+        <div class="stat-box"><div class="num red">$3,452</div><div class="lbl">Detention cost/day</div></div>
+      </div>
+      <div class="org-list">
+        <div class="org-item"><div class="org-dot" style="background:var(--emerald)"></div><div class="org-info"><div class="org-name">Oonchiumpa</div><div class="org-detail">Youth mentorship, Deep Listening on Country, Atnarpa Homestead experiences, cultural brokerage · Connected via Dusseldorp + NTCOSS</div></div></div>
+      </div>
+      <div class="contrast">
+        <div class="contrast-row detention"><div class="contrast-icon">&#9632;</div><div class="contrast-text"><strong style="color:var(--red)">Alice Springs YDC — same town</strong><div class="sub">30 beds · $3,452/day · $1.26M/year per child · Kids from communities across the NT</div></div></div>
+        <div class="contrast-row community"><div class="contrast-icon">&#9679;</div><div class="contrast-text"><strong style="color:var(--emerald)">Oonchiumpa — keeping kids on Country</strong><div class="sub">$1.52M total · 4 programs · Community-led · Alice Springs and surrounds</div></div></div>
+      </div>
+      <div class="insight"><h4>Remote Australia: 23 documented interventions total</h4><p>For every detention centre bed in the NT ($3,452/day), there are fewer than 2 documented community alternatives. The entire remote Australia evidence base could fit on one page.</p></div>
+      <div class="callout red"><strong>Same town, two realities.</strong> The detention centre costs $1.26M/year per child. Oonchiumpa's entire annual budget is less than what it costs to detain two kids.</div>
+    `
+  },
+
+  // 3: Mt Druitt
+  {
+    center: [-33.77, 150.82], zoom: 11,
+    header: { kicker: 'Story 3 — The Proof Point', title: 'Mt Druitt: What happens when two funders back the same community.', lede: 'Mounty Yarns is funded by BOTH Dusseldorp AND PRF. Their documentary has 100,000+ views. Their team grew from 1 to 20. This is what support looks like.' },
+    body: `
+      <div class="stat-row">
+        <div class="stat-box"><div class="num emerald">7</div><div class="lbl">Interventions</div></div>
+        <div class="stat-box"><div class="num">$4.3M</div><div class="lbl">Total funding</div></div>
+        <div class="stat-box"><div class="num" style="color:var(--shared)">2</div><div class="lbl">Funders aligned</div></div>
+      </div>
+      <div class="org-list">
+        <div class="org-item"><div class="org-dot" style="background:var(--shared)"></div><div class="org-info"><div class="org-name">Mounty Yarns</div><div class="org-detail">Youth-led storytelling · Documentary (100K+ views) · Backyard Campus · JR Advocacy Workshops · Dusseldorp Year in Review 2025 feature</div></div></div>
+      </div>
+      <div class="contrast">
+        <div class="contrast-row detention"><div class="contrast-icon">&#9632;</div><div class="contrast-text"><strong style="color:var(--red)">3 detention centres within 60km</strong><div class="sub">Cobham (60 beds) · Reiby (60 beds) · Frank Baxter (120 beds) · $2,573/day each</div></div></div>
+        <div class="contrast-row community"><div class="contrast-icon">&#9679;</div><div class="contrast-text"><strong style="color:var(--emerald)">Mounty Yarns — 7 programs, 1→20 staff</strong><div class="sub">Documentary, Backyard Campus, Music, Girls Program, OzTag, Youth on Track, JR Advocacy</div></div></div>
+      </div>
+      <div class="quote"><p>"It was like flood water, seeing the effect the workshop had. Everyone was talking about how good it felt to be part of something."</p><cite>Buddy Moore, Bourke community participant — Dusseldorp Year in Review 2025</cite></div>
+    `
+  },
+
+  // 4: The National Pattern
+  {
+    center: [-25, 140], zoom: 4,
+    header: { kicker: 'Story 4 — The Pattern', title: 'Detention centres everywhere. Community programs nowhere near enough.', lede: '20 detention centres. 1,076 community alternatives mapped. $1.14B/year spent on cages. Zero RCT evidence that detention works.' },
+    body: `
+      <div class="stat-row">
+        <div class="stat-box"><div class="num red">$1.14B</div><div class="lbl">Annual detention spend</div></div>
+        <div class="stat-box"><div class="num emerald">$170K</div><div class="lbl">Median community program</div></div>
+      </div>
+      <div class="contrast">
+        <div class="contrast-row detention"><div class="contrast-icon">&#9632;</div><div class="contrast-text"><strong style="color:var(--red)">VIC: $7,304/day per child</strong><div class="sub">$2.67M/year · Cherry Creek (140 beds) just opened · Malmsbury reopening</div></div></div>
+        <div class="contrast-row detention"><div class="contrast-icon">&#9632;</div><div class="contrast-text"><strong style="color:var(--red)">WA: Children in adult prison</strong><div class="sub">Unit 18 at Casuarina — 20 kids in an adult prison precinct · Replacement "in planning"</div></div></div>
+        <div class="contrast-row detention"><div class="contrast-icon">&#9632;</div><div class="contrast-text"><strong style="color:var(--red)">TAS: Closure delayed for years</strong><div class="sub">Ashley YDC — 50 beds · Closure promised repeatedly · Pontville replacement stuck in appeals</div></div></div>
+      </div>
+      <div class="callout govt"><strong>"Kickstarting early intervention to keep youth out of crime"</strong> — $560M announced. None directed to Aboriginal community-controlled orgs.<div class="minister">Minister Laura Gerber, QLD · March 2026 · via CivicScope</div></div>
+      <div class="callout govt"><strong>"Major milestone for Youth Justice School in Logan"</strong> — $40M for government-run facility.<div class="minister">Premier Crisafulli, QLD · Feb 2026 · via CivicScope</div></div>
+      <div class="callout red"><strong>$650M+ in recent QLD government announcements</strong> — none directed to Aboriginal community-controlled organisations. All to government-run programs or non-Indigenous providers.</div>
+    `
+  },
+
+  // 5: The Money
+  {
+    center: [-33.88, 151.2], zoom: 6,
+    header: { kicker: 'Story 5 — Follow the Money', title: '88% of funding goes to non-Indigenous service providers. They document almost nothing.', lede: 'The top 5 non-Indigenous providers receive $1.97B combined with 7 documented interventions between them. Palm Island CC gets $67M+ with 21 interventions — and zero philanthropic support.' },
+    body: `
+      <div class="stat-row">
+        <div class="stat-box"><div class="num red">88%</div><div class="lbl">Non-Indigenous</div></div>
+        <div class="stat-box"><div class="num emerald">12%</div><div class="lbl">Indigenous</div></div>
+      </div>
+      <div class="org-list">
+        <div class="org-item"><div class="org-dot" style="background:#B8860B"></div><div class="org-info"><div class="org-name">1. UnitingCare — $508M</div><div class="org-detail">QLD · 1 intervention documented · 625 grant records over 10 years</div></div></div>
+        <div class="org-item"><div class="org-dot" style="background:#B8860B"></div><div class="org-info"><div class="org-name">2. Life Without Barriers — $474M</div><div class="org-detail">National · 1 intervention documented · Disability + child services</div></div></div>
+        <div class="org-item"><div class="org-dot" style="background:#B8860B"></div><div class="org-info"><div class="org-name">3. Fraser Coast Youth Support — $464M</div><div class="org-detail">QLD · 1 intervention documented · 483 grant records</div></div></div>
+        <div class="org-item"><div class="org-dot" style="background:#B8860B"></div><div class="org-info"><div class="org-name">4. Mercy Community — $269M</div><div class="org-detail">QLD · 3 interventions documented</div></div></div>
+        <div class="org-item"><div class="org-dot" style="background:#B8860B"></div><div class="org-info"><div class="org-name">5. Act for Kids — $258M</div><div class="org-detail">QLD · 1 intervention documented · Child protection</div></div></div>
+        <div style="margin:12px 0;padding:10px;background:rgba(245,240,232,0.03);border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;opacity:0.4;line-height:1.5">Top 5 = non-Indigenous, $1.97B combined, 7 documented interventions total</div>
+        <div class="org-item"><div class="org-dot" style="background:var(--emerald)"></div><div class="org-info"><div class="org-name">Palm Island CC — $67M+</div><div class="org-detail">QLD · 21 interventions · Only major Indigenous-controlled org · $0 philanthropic support</div></div></div>
+      </div>
+      <div class="insight"><h4>PRF's 61/22/17 split</h4><p>Of PRF's $1.15B committed: 61% goes to universities and research, 22% to non-Indigenous intermediaries, and just 17% directly to Aboriginal community-controlled organisations. Monash alone ($30M+) gets more than all named ACCO recipients combined.</p></div>
+      <div class="insight"><h4>Dusseldorp: The contrast</h4><p>Dusseldorp directs 30% of giving to First Nations-led orgs — vs the sector average of less than 1%. That's 30x the national average. Their total budget (~$1.8M/yr) is tiny, but their alignment ratio is extraordinary.</p></div>
+    `
+  },
+
+  // 6: The Opportunity
+  {
+    center: [-25, 134], zoom: 4,
+    header: { kicker: 'The Opportunity', title: 'The platform is built. The data is here. The gap is visible.', lede: 'JusticeHub tracks 1,076 alternatives, $111.7B in funding, and 22,236 organisations. PLACE has the convening power but no data platform. JusticeHub fills that gap.' },
+    body: `
+      <div class="stat-row">
+        <div class="stat-box"><div class="num emerald">1,076</div><div class="lbl">Alternatives mapped</div></div>
+        <div class="stat-box"><div class="num">$111.7B</div><div class="lbl">Funding tracked</div></div>
+        <div class="stat-box"><div class="num emerald">649</div><div class="lbl">Indigenous orgs</div></div>
+      </div>
+      <div class="insight"><h4>PLACE — The Shared Table</h4><p>All five target funders sit here: PRF, Dusseldorp, Minderoo, SVA, and government. PLACE visited 53 communities in 2025. They have convening power but no data platform. JusticeHub provides the evidence layer.</p></div>
+      <div class="insight"><h4>From Palimaa to JusticeHub</h4><p>Maranguka built Palimaa as a community data dashboard for Bourke. It proved the model. JusticeHub scales it nationally — community-owned data sovereignty at every site.</p></div>
+      <div class="insight"><h4>CivicScope — The Accountability Layer</h4><p>Government announces $650M+ in youth justice spending — none to ACCOs. CivicScope tracks ministerial statements, hansard, and consultancy spending so communities can hold government to account in real time.</p></div>
+      <div class="quote"><p>We have made mistakes: pushing too much funding too fast, giving funding to large organisations who aren't trusted by community members...</p><cite>Kristy Muir, CEO Paul Ramsay Foundation — "Power" letter, 2026</cite></div>
+      <div style="text-align:center;margin-top:24px;padding:20px;background:rgba(5,150,105,0.06);border-radius:6px">
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Three basecamps. One platform. The gap is clear.</div>
+        <div style="font-size:12px;opacity:0.6;line-height:1.6">Palm Island (21 interventions, zero philanthropic support). Alice Springs (detention centre and its alternative, same town). Mt Druitt (proof that dual-funder support works). JusticeHub connects them all.</div>
+      </div>
+    `
+  }
+];
+
+// ═══════ STORY RENDERING ═══════
+let currentStory = 0;
+let exploreMode = false;
+
+function renderStory(idx, animate) {
+  const s = stories[idx];
+  const header = document.getElementById('story-header');
+  const body = document.getElementById('story-body');
+
+  function show() {
+    header.innerHTML = `
+      <div class="kicker">${s.header.kicker}</div>
+      <h2>${s.header.title}</h2>
+      <div class="lede">${s.header.lede}</div>
+    `;
+    body.innerHTML = s.body;
+
+    // Fade in
+    requestAnimationFrame(() => {
+      header.classList.remove('fade-out');
+      header.classList.add('fade-in');
+      body.classList.remove('fade-out');
+      body.classList.add('fade-in');
+    });
+  }
+
+  if (animate) {
+    // Fade out current content, then swap
+    header.classList.add('fade-out');
+    header.classList.remove('fade-in');
+    body.classList.add('fade-out');
+    body.classList.remove('fade-in');
+    setTimeout(show, 300);
+  } else {
+    show();
+  }
+
+  // Fly map
+  map.flyTo(s.center, s.zoom, {duration: 1.5, easeLinearity: 0.25});
+
+  // Nav state
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-next').textContent = idx === stories.length - 1 ? 'Start Over' : 'Next →';
+  document.getElementById('nav-label').textContent = `${idx + 1} of ${stories.length}`;
+
+  // Progress dots
+  const dots = document.getElementById('progress-dots');
+  dots.innerHTML = stories.map((_, i) => `<div class="progress-dot ${i === idx ? 'active' : i < idx ? 'visited' : ''}"></div>`).join('');
+
+  // Scroll panel to top
+  document.getElementById('story-panel').scrollTop = 0;
+}
+
+function nextStory() {
+  if (currentStory >= stories.length - 1) { currentStory = 0; }
+  else { currentStory++; }
+  renderStory(currentStory, true);
+}
+
+function prevStory() {
+  if (currentStory > 0) { currentStory--; renderStory(currentStory, true); }
+}
+
+function toggleMode() {
+  exploreMode = !exploreMode;
+  const btn = document.getElementById('mode-btn');
+  const controls = document.getElementById('explore-controls');
+  const panel = document.getElementById('story-panel');
+  const legend = document.getElementById('map-legend');
+
+  const csf = document.getElementById('civicscope-feed');
+
+  if (exploreMode) {
+    btn.classList.add('active');
+    btn.textContent = 'Story Mode';
+    controls.classList.add('show');
+    legend.classList.add('show');
+    csf.classList.add('show');
+    panel.style.display = 'none';
+    document.getElementById('bar').style.right = '0';
+    map.invalidateSize();
+    // Show all layers in explore mode
+    Object.keys(layers).forEach(k => { if (!map.hasLayer(layers[k])) map.addLayer(layers[k]); });
+    document.querySelectorAll('.layer-btn').forEach(b => b.classList.add('active'));
+  } else {
+    btn.classList.remove('active');
+    btn.textContent = 'Explore Mode';
+    controls.classList.remove('show');
+    legend.classList.remove('show');
+    csf.classList.remove('show');
+    document.getElementById('civicscope-panel').classList.remove('open');
+    panel.style.display = 'flex';
+    document.getElementById('bar').style.right = '420px';
+    map.invalidateSize();
+    renderStory(currentStory);
+  }
+}
+
+// CivicScope feed toggle
+function toggleCivicScope() {
+  const panel = document.getElementById('civicscope-panel');
+  panel.classList.toggle('open');
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (exploreMode) return;
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextStory(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevStory(); }
+});
+
+// Init
+renderStory(0);
+</script>
+</body>
+</html>
