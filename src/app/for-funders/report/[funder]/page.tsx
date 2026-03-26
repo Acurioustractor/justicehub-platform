@@ -49,7 +49,7 @@ const FUNDER_CONFIGS: Record<string, FunderConfig> = {
     askDescription: 'Fund 2 basecamp coordinators + make your First Nations portfolio nationally visible',
     hookLine: 'You already direct 30% of your funding to First Nations organisations — 30x the sector average. Here\'s how to make that visible nationally.',
     keyInsight: 'Dusseldorp\'s 30x ACCO allocation ratio is sector-leading. Through Mannifera Collective\'s 27 member funders, this model could catalyse $5.6M+ in coordinated giving.',
-    sources: ['dusseldorp', 'philanthropic'],
+    sources: ['dusseldorp'],
     basecampLocations: ['Alice Springs', 'Mt Druitt'],
   },
   prf: {
@@ -60,7 +60,7 @@ const FUNDER_CONFIGS: Record<string, FunderConfig> = {
     askDescription: 'Fund Palm Island basecamp + evidence infrastructure for PLACE communities',
     hookLine: 'Your CEO acknowledged the pattern: "pushing too much funding too fast, giving funding to large organisations who aren\'t trusted by community members." The data confirms it.',
     keyInsight: 'PRF portfolio split: 61% to universities, 22% to intermediaries, 17% to ACCOs. Palm Island Community Company runs 21 verified programs with zero PRF philanthropic support.',
-    sources: ['prf', 'philanthropic'],
+    sources: ['prf-jr-portfolio-review-2025'],
     basecampLocations: ['Palm Island'],
   },
 };
