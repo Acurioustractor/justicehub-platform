@@ -125,12 +125,31 @@ async function getFunderReportData(funderKey: string) {
   const fundedInterventions = allInterventions.filter(i => fundedOrgIds.has(i.operating_organization_id));
   const unfundedInterventions = allInterventions.filter(i => !fundedOrgIds.has(i.operating_organization_id));
 
+  // Separate query for topics (avoids Supabase type inference issue)
+  const { data: topicRecords } = await supabase
+    .from('justice_funding')
+    .select('amount_dollars, topics')
+    .or(config.sources.map(s => `source.eq.${s}`).join(','))
+    .not('amount_dollars', 'is', null);
+
+  const pillarBreakdown = { education: 0, climate: 0, firstNations: 0, other: 0 };
+  for (const r of (topicRecords || [])) {
+    const topics: string[] = (r as any).topics || [];
+    const amt = (r as any).amount_dollars || 0;
+    if (topics.includes('education')) pillarBreakdown.education += amt;
+    else if (topics.includes('climate') || topics.includes('environment')) pillarBreakdown.climate += amt;
+    else if (topics.includes('first-nations')) pillarBreakdown.firstNations += amt;
+    else pillarBreakdown.other += amt;
+  }
+
   return {
     config,
     totalFunding,
     recordCount: records.length,
     recipients: recipientList,
     accoPercent,
+    accoFunding,
+    pillarBreakdown,
     fundedInterventions: fundedInterventions.length,
     unfundedInterventions: unfundedInterventions.length,
     totalInterventions: allInterventions.length,
@@ -152,7 +171,7 @@ export default async function FunderReportPage({ params }: { params: { funder: s
   const data = await getFunderReportData(params.funder);
   if (!data) notFound();
 
-  const { config, totalFunding, recordCount, recipients, accoPercent, fundedInterventions, unfundedInterventions, totalInterventions, indigenousOrgCount, generatedAt } = data;
+  const { config, totalFunding, recordCount, recipients, accoPercent, accoFunding, pillarBreakdown, fundedInterventions, unfundedInterventions, totalInterventions, indigenousOrgCount, generatedAt } = data;
 
   return (
     <div className="min-h-screen bg-white">
@@ -236,7 +255,7 @@ export default async function FunderReportPage({ params }: { params: { funder: s
                   </tr>
                 </thead>
                 <tbody>
-                  {recipients.slice(0, 10).map((r, i) => (
+                  {recipients.map((r, i) => (
                     <tr key={i} className="border-t border-gray-100">
                       <td className="px-5 py-3 text-sm">
                         {r.slug ? (
@@ -262,14 +281,58 @@ export default async function FunderReportPage({ params }: { params: { funder: s
                   ))}
                 </tbody>
               </table>
-              {recipients.length > 10 && (
-                <div className="px-5 py-3 text-sm text-center text-gray-400 border-t border-gray-100">
-                  + {recipients.length - 10} more recipients
-                </div>
-              )}
             </div>
           )}
         </section>
+
+        {/* Pillar Breakdown */}
+        {(pillarBreakdown.education > 0 || pillarBreakdown.climate > 0 || pillarBreakdown.firstNations > 0) && (
+          <section>
+            <h2 className="text-2xl font-bold text-[#0A0A0A] mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              Portfolio by Pillar
+            </h2>
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
+              {[
+                { label: 'Education Grounded in Place', amount: pillarBreakdown.education, share: '33%', color: '#0A0A0A', trend: null },
+                { label: 'Climate & Environment', amount: pillarBreakdown.climate, share: '37%', color: '#059669', trend: '$225K → $570K → $675K (2023–25)' },
+                { label: 'First Nations Leading Change', amount: pillarBreakdown.firstNations, share: '30%', color: '#7C3AED', trend: '$432K → $472K → $524K (2023–25)' },
+              ].map((p, i) => (
+                <div key={i} className="border rounded-lg p-5" style={{ borderColor: `${p.color}30` }}>
+                  <p className="text-xs font-mono text-gray-500 uppercase mb-2">{p.label}</p>
+                  <p className="text-2xl font-bold mb-1" style={{ fontFamily: 'Space Grotesk, sans-serif', color: p.color }}>
+                    {formatDollars(p.amount)}
+                  </p>
+                  <p className="text-sm text-gray-400 font-mono">{p.share} of total giving</p>
+                  {p.trend && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <div className="flex items-center gap-1.5">
+                        <TrendingUp className="w-3.5 h-3.5 text-[#059669]" />
+                        <p className="text-xs text-gray-500">{p.trend}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* ACCO breakdown bar */}
+            <div className="bg-[#F5F0E8] rounded-lg p-6">
+              <div className="flex items-baseline justify-between mb-3">
+                <p className="text-sm font-mono text-gray-600 uppercase">First Nations (ACCO) Allocation</p>
+                <p className="text-lg font-bold text-[#059669]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  {accoPercent}% — {formatDollars(accoFunding)}
+                </p>
+              </div>
+              <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-full bg-[#059669] rounded-full" style={{ width: `${accoPercent}%` }} />
+              </div>
+              <div className="flex justify-between mt-2">
+                <p className="text-xs text-gray-500">Sector average: &lt;1%</p>
+                <p className="text-xs text-[#059669] font-medium">{accoPercent}x sector average</p>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* The Gap */}
         <section>
