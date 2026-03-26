@@ -278,7 +278,7 @@ export default async function FunderOrgPitchPage({ params }: { params: { slug: s
             {/* Interventions list */}
             <div className="space-y-3">
               {interventions.map(intervention => (
-                <Link key={intervention.id} href={`/intelligence/interventions/${intervention.id}`} className="block bg-white rounded-lg p-5 border border-gray-200 hover:border-[#059669] hover:shadow-sm transition-all">
+                <div key={intervention.id} className="bg-white rounded-lg p-5 border border-gray-200 hover:border-gray-300 transition-colors">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-1">
@@ -321,7 +321,7 @@ export default async function FunderOrgPitchPage({ params }: { params: { slug: s
                         )}
                       </div>
                       {intervention.website && (
-                        <a href={intervention.website.startsWith('http') ? intervention.website : `https://${intervention.website}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1 text-xs text-[#059669] hover:underline mt-2">
+                        <a href={intervention.website.startsWith('http') ? intervention.website : `https://${intervention.website}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-[#059669] hover:underline mt-2">
                           <ExternalLink className="w-3 h-3" /> {intervention.website.replace(/^https?:\/\/(www\.)?/, '')}
                         </a>
                       )}
@@ -330,7 +330,7 @@ export default async function FunderOrgPitchPage({ params }: { params: { slug: s
                       {EVIDENCE_SHORT[intervention.evidence_level || ''] || 'Untested'}
                     </span>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           </section>
