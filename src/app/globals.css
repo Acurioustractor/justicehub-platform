@@ -151,27 +151,19 @@
   }
   
   /* Typography - Clean, accessible, no compromise */
+  /* FIXED: headings and paragraphs inherit color by default.
+     This prevents the dark-on-dark bug on pages with dark backgrounds
+     (inline styles, style tags, or non-Tailwind dark containers).
+     Light-background pages naturally inherit dark body text. */
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold tracking-tight;
     line-height: var(--heading-line-height);
-    color: hsl(var(--text-primary));
+    color: inherit;
   }
-  
+
   h1 {
     @apply text-4xl md:text-5xl lg:text-6xl;
     margin-bottom: 1rem;
-  }
-
-  /* Ensure headings on dark backgrounds inherit text color */
-  .bg-black h1, .bg-black h2, .bg-black h3, .bg-black h4, .bg-black h5, .bg-black h6,
-  .bg-gray-900 h1, .bg-gray-900 h2, .bg-gray-900 h3, .bg-gray-900 h4, .bg-gray-900 h5, .bg-gray-900 h6,
-  .bg-gray-950 h1, .bg-gray-950 h2, .bg-gray-950 h3, .bg-gray-950 h4, .bg-gray-950 h5, .bg-gray-950 h6,
-  .bg-amber-900 h1, .bg-amber-900 h2, .bg-amber-900 h3, .bg-amber-900 h4, .bg-amber-900 h5, .bg-amber-900 h6,
-  .text-white h1, .text-white h2, .text-white h3, .text-white h4, .text-white h5, .text-white h6,
-  .bg-\[\#0A0A0A\] h1, .bg-\[\#0A0A0A\] h2, .bg-\[\#0A0A0A\] h3, .bg-\[\#0A0A0A\] h4, .bg-\[\#0A0A0A\] h5, .bg-\[\#0A0A0A\] h6,
-  .text-\[\#F5F0E8\] h1, .text-\[\#F5F0E8\] h2, .text-\[\#F5F0E8\] h3, .text-\[\#F5F0E8\] h4, .text-\[\#F5F0E8\] h5, .text-\[\#F5F0E8\] h6,
-  .dark-section h1, .dark-section h2, .dark-section h3, .dark-section h4, .dark-section h5, .dark-section h6 {
-    color: inherit !important;
   }
   
   h2 {
@@ -201,7 +193,7 @@
   
   p {
     @apply leading-relaxed;
-    color: hsl(var(--text-primary));
+    color: inherit;
     margin-bottom: 1rem;
     line-height: var(--reading-line-height);
   }

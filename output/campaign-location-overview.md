@@ -1,22 +1,24 @@
 # CONTAINED Campaign — Complete Network Map
 
-**Generated:** 2026-03-26 | **68 people mapped** | **9 locations** | **Share freely**
+**Generated:** 2026-03-27 | **86 people mapped** | **15 locations** | **Share freely**
+
+> **NEW (Mar 27):** Added 18 original Notion container requesters (Oct-Nov 2025) across 6 new demand-signal locations. Total contacts now 225+.
 
 ---
 
 ## TOUR TIMELINE (revised with ALP Conference)
 
-| # | City | Date | Partner | People | Status |
-|---|------|------|---------|--------|--------|
-| 1 | **Mount Druitt, NSW** | Apr 25 | Mounty Yarns | 13 | Tentative |
-| 2 | **Brisbane, QLD** | May 15 | YAC (hosting!) | 6 | Tentative |
-| 3 | **Adelaide, SA** | Jun 15 | Reintegration Conference + JRI | 3 | Tentative |
-| 4 | **Townsville, QLD** | Jul 1 | PICC | 4 | NEW |
-| 5 | **Adelaide, SA** (return) | Jul 23-25 | ALP National Conference | — | IDEA |
-| 6 | **Perth, WA** | Aug 1 | UWA + JRI Perth | 7 | Tentative |
-| 7 | **Tennant Creek, NT** | Sep 15 | Oonchiumpa | 2 | Fixed |
-| 📣 | **Melbourne, VIC** | TBD | Demand — 5 asking | 5 | Should be a stop |
-| 📣 | **Canberra, ACT** | TBD | Demand — 3 asking | 3 | Should be a stop |
+| #   | City                      | Date      | Partner                        | People | Status           |
+| --- | ------------------------- | --------- | ------------------------------ | ------ | ---------------- |
+| 1   | **Mount Druitt, NSW**     | Apr 25    | Mounty Yarns                   | 13     | Tentative        |
+| 2   | **Brisbane, QLD**         | May 15    | YAC (hosting!)                 | 6      | Tentative        |
+| 3   | **Adelaide, SA**          | Jun 15    | Reintegration Conference + JRI | 3      | Tentative        |
+| 4   | **Townsville, QLD**       | Jul 1     | PICC                           | 4      | NEW              |
+| 5   | **Adelaide, SA** (return) | Jul 23-25 | ALP National Conference        | —      | IDEA             |
+| 6   | **Perth, WA**             | Aug 1     | UWA + JRI Perth                | 7      | Tentative        |
+| 7   | **Tennant Creek, NT**     | Sep 15    | Oonchiumpa                     | 2      | Fixed            |
+| 📣  | **Melbourne, VIC**        | TBD       | Demand — 5 asking              | 5      | Should be a stop |
+| 📣  | **Canberra, ACT**         | TBD       | Demand — 3 asking              | 3      | Should be a stop |
 
 ### ALP National Conference Impact (Hannah March idea)
 - **What:** ALP National Conference, Adelaide, Jul 23-25
@@ -33,7 +35,7 @@
 
 ## 📍 MOUNT DRUITT, NSW — Apr 25
 
-**Partner:** Mounty Yarns | **13 people** | **Room 3:** Youth-led storytelling
+**Partner:** Mounty Yarns | **15 people** | **Room 3:** Youth-led storytelling
 
 ### People
 | Name | Org | Status | Role |
@@ -41,6 +43,7 @@
 | **Teya Dusseldorp** | Dusseldorp Forum | ⚠️ Overdue | $40-80K funder. This is her patch. |
 | **Bernie Shakeshaft** | BackTrack | Active | Legend. Will repost. Amplifier. |
 | **Scarlett Steven** | Dusseldorp Forum | Active | Coordinating tour logistics |
+| **Daniel Daylight** | Mounty Yarns | 📦 Notion | Original Dusseldorp referral. Mt Druitt anchor. |
 | **Nicole Mekler** | JustReinvest Mt Druitt | Responded | Youth Advocacy lead. Will attend. |
 | **Jonas Kubitscheck** | PRF | Warm | Visited Container Oct 2025. Re-engage. |
 | **William Frazer** | PRF | Warm | Visited Container Oct 2025 with Jonas. |
@@ -79,17 +82,20 @@
 
 ## 📍 BRISBANE, QLD — May 15
 
-**Partner:** YAC (HOSTING!) | **6 people** | **Room 3:** QLD community orgs vs $765M in govt announcements with $0 to ACCOs
+**Partner:** YAC (HOSTING!) | **9 people** | **Room 3:** QLD community orgs vs $765M in govt announcements with $0 to ACCOs
 
 ### People
 | Name | Org | Status | Role |
 |------|-----|--------|------|
 | **Tim Bennett** | Via Bernie | 🔥 HOT | QLD ideas + travel costs. Key connector. |
 | **Shannon Cant** | YAC | Responded | **YAC wants to HOST.** Venue solved. |
+| **Katherine Hayes** | YAC | 📦 Notion | **Original requester.** "We would love to host this at YAC!!!" katherine@yac.net.au |
 | **Prof Selena Bartlett** | Thriving Minds podcast | Responded | Podcast interview. Brisbane academic. |
 | **Megan Argent** | QLD Dept of Youth Justice | Warm | **Government insider.** Clinical Practice Leader. |
 | **Jonty Bush** | QLD Government MP | Pending | Yarning with YAC about end of April. |
 | **MMAD** | Musicians Making A Difference | Pending | Futures Radio runs 24/7 INSIDE detention. |
+| **Toby Gowland** | Kalianah Outdoors | 📦 Notion | Tamborine. "What can I do, how can I help?" tobyg@kalianahoutdoors.com.au |
+| **Rhian Miller** | EPIC Pathways | 📦 Notion | Brisbane youth pathways org. rhian@epicpathways.org.au |
 
 ### Politicians to Target
 | Name | Role | Angle |
@@ -134,14 +140,16 @@
 
 ## 📍 ADELAIDE, SA — Jun 15 + Jul 23-25 (ALP Conference)
 
-**Partner:** Reintegration Conference + JRI | **3 people** | **Room 3:** TBD — needs research
+**Partner:** Reintegration Conference + JRI | **5 people** | **Room 3:** TBD — needs research
 
 ### People
 | Name | Org | Status | Role |
 |------|-----|--------|------|
-| **Hannah March** | Services | Responded | Adelaide host partner. ALP Conference idea. |
+| **Hannah March** | JRI | Responded | Adelaide host partner. ALP Conference idea. Original Notion requester. hannah@justicereforminitiative.org.au |
 | **Sophie Bretag** | City of Onkaparinga | Pending | Local government champion. Connect with Tracey. |
 | **Tracey Newman** | Services | Pending | **Making calls to get Container there.** Send info pack NOW. |
+| **Arianna Petra Watson** | SouthStart | 📦 Notion | Adelaide tech community. Shout out from Eloise Hall. LinkedIn. |
+| **Zoe Brooks** | Good Bank Gallery | 📦 Notion | McLaren Vale SA. **Venue offer.** LinkedIn. |
 
 ### Two Activations
 1. **Jun 15 — Community** (Reintegration Conference). Academic + practice audience.
@@ -259,7 +267,7 @@ Plus 4 more on the ground: Patricia Ann Miller AO, Max Bloomfield, Aunty Bev & U
 
 ---
 
-## 📣 MELBOURNE, VIC — DEMAND SIGNAL (5 people asking)
+## 📣 MELBOURNE, VIC — DEMAND SIGNAL (9 people asking)
 
 ### People
 | Name | Org | Status | What They Said |
@@ -269,6 +277,10 @@ Plus 4 more on the ground: Patricia Ann Miller AO, Max Bloomfield, Aunty Bev & U
 | **Moira Were AM** | Barrister | Pending | Tagged Zoe Brooks re Good Bank Gallery as venue. |
 | **Dr Katrina (Kate) Raynor** | Research | Pending | "Love this, would love to see in Melbourne." |
 | **Ashlee Cooper** | Services | Pending | "LOVE to see this in Geelong or Melbourne." |
+| **Alice Mahar** | Corner Store Network | 📦 Notion | Melbourne community network. alice@cornerstorenetwork.org.au |
+| **Anita Pahor** | Larita Academy | 📦 Notion | Melbourne education. Anita.Pahor@lkg.com.au |
+| **Jess Lilley** | The Open Arms | 📦 Notion | **Footscray West Writers Fest venue offer.** Theme: Words & Action. jess@theopenarms.com.au |
+| **Sonia Randhawa** | 3CR Radio | 📦 Notion | **Interview offer** — Wednesday Breakfast show. 0466342492 |
 
 ### Why It Must Be a Stop
 - **Cherry Creek** just opened — 140 beds, **$7,304/day** (most expensive detention in Australia)
@@ -301,7 +313,83 @@ Plus 4 more on the ground: Patricia Ann Miller AO, Max Bloomfield, Aunty Bev & U
 
 ---
 
-## 🌏 NATIONAL / UNASSIGNED — 25 people
+## 📣 TASMANIA — DEMAND SIGNAL (2 people asking)
+
+### People
+| Name | Org | Status | What They Said |
+|------|-----|--------|---------------|
+| **Loic Fery** | Prevention Not Detention TAS | 📦 Notion | "Coalition of individuals in the youth space. Will get politicians through it." loic.fery@gmail.com / 0478415878 |
+| **Lewina Schrale** | DECYP (Govt) | 📦 Notion | **Government insider.** Dept of Education Children & Young People. lewina.schrale@decyp.tas.gov.au |
+
+### Why It Could Be a Stop
+- **Ashley Youth Detention Centre closure** — live political issue
+- **Ruth Forrest MLC** — strong justice reform advocate already in campaign engine
+- Loic's coalition = grassroots infrastructure to organize politicians + public
+- Lewina = government buy-in from DECYP
+- 2 requesters + 1 MLC = 3 people minimum
+
+---
+
+## 📣 ARMIDALE, NSW — DEMAND SIGNAL (1 person asking)
+
+### People
+| Name | Org | Status | What They Said |
+|------|-----|--------|---------------|
+| **Penny Lamaro** | Ascent Group Ltd | 📦 Notion | "Keen to have you come to Armidale NSW!" plamaro@ascentgroup.org.au / 0477677445 |
+
+### Why It Matters
+- **Bernie Shakeshaft's town** — BackTrack is in Armidale
+- Regional NSW angle — youth justice isn't just a city issue
+- Ascent Group = services org, potential local anchor
+
+---
+
+## 📣 ROCKHAMPTON, QLD — DEMAND SIGNAL (1 person asking)
+
+### People
+| Name | Org | Status | What They Said |
+|------|-----|--------|---------------|
+| **Delilah MacGillivray** | DWords | 📦 Notion | **Kalkadoon woman.** "Showcase on Darumbal Country (Rockhampton CQ)." dmagilla@icloud.com / 0417284484 |
+
+### Why It Matters
+- First Nations-led request — Kalkadoon woman on Darumbal Country
+- Central Queensland = no other coverage in the tour
+- Regional QLD complement to Brisbane/Townsville
+
+---
+
+## 📣 CAIRNS, QLD — DEMAND SIGNAL (1 person asking)
+
+### People
+| Name | Org | Status | What They Said |
+|------|-----|--------|---------------|
+| **Irene Portelli** | We Made It / Lady Tradies | 📦 Notion | Jobs pipeline post-prison for women in Yarrabah + Townsville. Filming DV stories. Installation with Georgie Pinn. irene.portelli@wemadeit.com.au / 0407522741 |
+
+### Why It Matters
+- Far North Queensland — connects to Townsville stop
+- Jobs pipeline post-prison = practical reintegration angle
+- DV stories being filmed = content partnership potential
+- "Brisbane then TVL and CNS" — she's planning a multi-city project
+
+---
+
+## 📣 DOOMADGEE / CAPE YORK, QLD — DEMAND SIGNAL (2 people asking)
+
+### People
+| Name | Org | Status | What They Said |
+|------|-----|--------|---------------|
+| **Shannon Lemanski** | Aqua Ubique | 📦 Notion | Doomadgee. "Keen as part of broader project with Brodie." Long-term loan. shannon.lemanski@aquaubique.com.au |
+| **Baressa Frazer** | Community member | 📦 Notion | Cape York Peninsula. paiden.4892@gmail.com / 0428162417 |
+
+### Why It Matters
+- Remote QLD — most underserved communities in Australia
+- Shannon's project with Brodie = existing infrastructure
+- Long-term loan request = they want the container to STAY
+- Cape York + Doomadgee = Gulf/FNQ corridor
+
+---
+
+## 🌏 NATIONAL / UNASSIGNED — 28 people
 
 Key people not yet linked to a specific stop:
 
@@ -325,6 +413,9 @@ Key people not yet linked to a specific stop:
 | **Dr Romina Santos Reyftmann** | Unknown | Pending | **"How to donate funds?"** SEND LINK NOW. |
 | **John Katahanas** | Unknown | Pending | **"Sign up to donate time?"** SEND BACKER LINK. |
 | **Andrew Bloyce** | Tanda | Pending | **Offered free digital art piece.** RESPOND. |
+| **Rohan Lulham** | University of Sydney | 📦 Notion | "Let us know if like to do some research around the concept." rohan.lulham@sydney.edu.au → Mt Druitt? |
+| **Romina Reyftmann** | — | 📦 Notion | **"Happy to donate some funds."** romina.ilad@gmail.com. SEND BACK-THIS LINK. |
+| **Ludmila Andrade** | Young Perspectives (YOPE) | 📦 Notion | Amsterdam. Dutch NGO working with justice-involved youth. International partnership. ludmila@youngperspectives.org |
 
 ---
 
@@ -355,6 +446,7 @@ Key people not yet linked to a specific stop:
 | Dr Romina Santos Reyftmann | "How to donate funds?" | **SEND LINK** |
 | John Katahanas | "Donate time/effort?" | **SEND BACKER LINK** |
 | Andrew Bloyce | Free digital art | **RESPOND** |
+| Romina Reyftmann | "Happy to donate some funds" | **SEND BACK-THIS LINK** (from Notion Oct 2025!) |
 | Ric Cairns (Brandino) | Pro-bono brand support | Reply |
 | MMAD | Futures Radio collaboration | Reply |
 
@@ -364,6 +456,7 @@ Key people not yet linked to a specific stop:
 | Peter Rowe | First Nations News | **Op-ed invitation — WRITE IT** |
 | Prof Selena Bartlett | Thriving Minds podcast | Podcast interview |
 | Tom Allen | Impact Boom | Feature / podcast |
+| Sonia Randhawa | 3CR Radio Melbourne | **Interview offer — Wednesday Breakfast.** 0466342492 |
 | Tom DONAGHY | Personal | Tagged 19 people incl Ash Barty, Mark Bouris |
 
 ---
@@ -421,6 +514,19 @@ Key people not yet linked to a specific stop:
 - [ ] Respond Andrew Bloyce (digital art)
 - [ ] Follow up Ariane Dozer — "she is ready"
 - [ ] Pin comment on LinkedIn Post 2
+
+### TODAY (Mar 27) — Notion Requester Re-engagement
+- [ ] Email Romina Reyftmann — donation link (romina.ilad@gmail.com) — 5 months waiting!
+- [ ] Email Sonia Randhawa — 3CR radio interview (soniarandhawa1@yahoo.com.my)
+- [ ] Email Loic Fery — Tasmania coalition (loic.fery@gmail.com)
+- [ ] Email Katherine Hayes — confirm YAC hosting (katherine@yac.net.au)
+- [ ] Email Penny Lamaro — Armidale plans (plamaro@ascentgroup.org.au)
+- [ ] Email Irene Portelli — Cairns/Lady Tradies (irene.portelli@wemadeit.com.au)
+- [ ] Email Shannon Lemanski — Doomadgee project (shannon.lemanski@aquaubique.com.au)
+- [ ] Email Delilah MacGillivray — Rockhampton/Kalkadoon (dmagilla@icloud.com)
+- [ ] Email Jess Lilley — Melbourne/Open Arms (jess@theopenarms.com.au)
+- [ ] Email Lewina Schrale — DECYP Tasmania (lewina.schrale@decyp.tas.gov.au)
+- [ ] Email Rohan Lulham — research partnership (rohan.lulham@sydney.edu.au)
 
 ### Tomorrow (Mar 27)
 - [ ] Follow up Teya Dusseldorp

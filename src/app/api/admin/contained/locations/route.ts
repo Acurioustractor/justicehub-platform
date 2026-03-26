@@ -20,7 +20,7 @@ export async function GET() {
   // 2. Get all outreach contacts
   const { data: outreach } = await supabase
     .from('campaign_outreach')
-    .select('name, org, location, status, priority, next_action, notes');
+    .select('name, org, location, status, priority, next_action, notes, email, phone');
 
   // 3. Get scored campaign entities with approaches
   const { data: entities } = await supabase
@@ -71,8 +71,8 @@ export async function GET() {
   // Each tour stop has its own keyword set to avoid cross-contamination
   const cityKeywords: Record<string, string[]> = {
     'contained-mount-druitt-launch': ['mount druitt', 'mt druitt', 'western sydney', 'wsu', 'sydney details', 'sydney plans', 'redfern', 'parramatta', 'uniting', 'thread together', 'alexandria'],
-    'contained-brisbane': ['brisbane', 'yac', 'south brisbane', 'fortitude valley', 'west end', 'noosa', 'toowoomba', 'qld youth justice', 'queensland safer', 'futures radio'],
-    'contained-adelaide-reintegration': ['adelaide', 'onkaparinga', 'south australia', 'sa '],
+    'contained-brisbane': ['brisbane', 'yac', 'south brisbane', 'fortitude valley', 'west end', 'noosa', 'toowoomba', 'qld youth justice', 'queensland safer', 'futures radio', 'tamborine', 'epic pathways', 'kalianah'],
+    'contained-adelaide-reintegration': ['adelaide', 'onkaparinga', 'south australia', 'sa ', 'mclaren vale', 'southstart', 'good bank gallery'],
     'contained-townsville-picc': ['townsville', 'palm island', 'picc', 'cleveland ydc', 'garbutt', 'north queensland', 'rachel atkinson'],
     'contained-perth-uwa': ['perth', 'forest chase', 'western australia', 'minderoo', 'banksia hill', 'unit 18', 'kununurra', 'jri perth'],
     'contained-tennant-creek': ['tennant creek', 'alice springs', 'oonchiumpa', 'atnarpa', 'katherine', 'darwin', 'central arrernte'],
@@ -110,6 +110,8 @@ export async function GET() {
       .map((o: any) => ({
         name: o.name, org: o.org, status: o.status, score: 0,
         approach: o.next_action, location: o.location,
+        email: o.email || null, phone: o.phone || null,
+        source: (o.notes || '').startsWith('Notion') ? 'notion' : null,
       }));
 
     // Match people from scored entities — keyword match on approach text
@@ -122,6 +124,7 @@ export async function GET() {
       .map((e: any) => ({
         name: e.name, org: e.sector_tag, status: e.outreach_status || 'pending',
         score: e.composite_score, approach: e.recommended_approach, location: null,
+        email: null, phone: null, source: null,
       }));
 
     // Deduplicate (case-insensitive)
@@ -149,10 +152,16 @@ export async function GET() {
     };
   });
 
-  // Add Melbourne and Canberra as demand-signal locations (not tour stops yet)
+  // Demand-signal locations — places people are asking about that aren't tour stops yet
   const demandLocations = [
-    { city: 'Melbourne', state: 'VIC', keywords: ['melbourne', 'geelong', 'design week', 'cherry creek', 'parkville', 'good bank gallery'] },
+    { city: 'Melbourne', state: 'VIC', keywords: ['melbourne', 'geelong', 'design week', 'cherry creek', 'parkville', 'good bank gallery', 'footscray', 'corner store network', 'larita', '3cr radio'] },
     { city: 'Canberra', state: 'ACT', keywords: ['canberra', 'act gov', 'federal level', 'parliament'] },
+    { city: 'Tasmania', state: 'TAS', keywords: ['tasmania', 'hobart', 'launceston', 'ashley ydc', 'decyp', 'prevention not detention', 'darklab', 'mona'] },
+    { city: 'Armidale', state: 'ARMIDALE', keywords: ['armidale', 'ascent group'] },
+    { city: 'Rockhampton', state: 'ROCKY', keywords: ['rockhampton', 'darumbal', 'kalkadoon', 'central queensland', 'central qld'] },
+    { city: 'Cairns', state: 'CAIRNS', keywords: ['cairns', 'lady tradies', 'yarrabah', 'far north queensland', 'fnq'] },
+    { city: 'Doomadgee / Cape York', state: 'REMOTE-QLD', keywords: ['doomadgee', 'cape york', 'aqua ubique', 'gulf'] },
+    { city: 'Broome', state: 'BROOME', keywords: ['broome', 'mim foundation', 'kimberley'] },
   ];
 
   for (const dl of demandLocations) {
@@ -164,7 +173,7 @@ export async function GET() {
       if (o.location === dl.state || dl.keywords.some(kw => ` ${(o.notes || '').toLowerCase()} `.includes(kw))) {
         if (seenDl.has(o.name.toLowerCase())) continue;
         seenDl.add(o.name.toLowerCase());
-        dlPeople.push({ name: o.name, org: o.org, status: o.status, score: 0, approach: o.next_action, location: o.location });
+        dlPeople.push({ name: o.name, org: o.org, status: o.status, score: 0, approach: o.next_action, location: o.location, email: o.email || null, phone: o.phone || null, source: (o.notes || '').startsWith('Notion') ? 'notion' : null });
       }
     }
 
@@ -175,11 +184,11 @@ export async function GET() {
       if (!dl.keywords.some(kw => approach.includes(kw))) continue;
       if (seenDl.has(e.name.toLowerCase())) continue;
       seenDl.add(e.name.toLowerCase());
-      dlPeople.push({ name: e.name, org: e.sector_tag, status: e.outreach_status || 'pending', score: e.composite_score, approach: e.recommended_approach, location: null });
+      dlPeople.push({ name: e.name, org: e.sector_tag, status: e.outreach_status || 'pending', score: e.composite_score, approach: e.recommended_approach, location: null, email: null, phone: null, source: null });
     }
 
     if (dlPeople.length > 0) {
-      dlPeople.sort((a, b) => {
+      dlPeople.sort((a: any, b: any) => {
         const order: Record<string, number> = { hot: 0, overdue: 1, active: 2, responded: 3, warm: 4, 'follow-up': 5, sent: 6, pending: 7, cold: 8 };
         return (order[a.status] ?? 9) - (order[b.status] ?? 9);
       });
@@ -207,6 +216,8 @@ export async function GET() {
     .map((o: any) => ({
       name: o.name, org: o.org, status: o.status, score: 0,
       approach: o.next_action, location: o.location,
+      email: o.email || null, phone: o.phone || null,
+      source: (o.notes || '').startsWith('Notion') ? 'notion' : null,
     }));
 
   const nationalEntities = (entities || [])
@@ -215,6 +226,7 @@ export async function GET() {
     .map((e: any) => ({
       name: e.name, org: e.sector_tag, status: e.outreach_status || 'pending',
       score: e.composite_score, approach: e.recommended_approach, location: null,
+      email: null, phone: null, source: null,
     }));
 
   const nationalPeople: typeof nationalOutreach = [];
@@ -224,7 +236,7 @@ export async function GET() {
     seenNational.add(p.name);
     nationalPeople.push(p);
   }
-  nationalPeople.sort((a, b) => {
+  nationalPeople.sort((a: any, b: any) => {
     const order: Record<string, number> = { hot: 0, overdue: 1, active: 2, responded: 3, warm: 4, 'follow-up': 5, sent: 6, pending: 7, cold: 8 };
     return (order[a.status] ?? 9) - (order[b.status] ?? 9);
   });

@@ -34,6 +34,9 @@ interface PersonBrief {
   score: number;
   approach: string | null;
   location: string | null;
+  email: string | null;
+  phone: string | null;
+  source: string | null;
 }
 
 interface LocationData {
@@ -68,12 +71,12 @@ function LocationCard({ data, expanded, onToggle }: { data: LocationData; expand
   const pendingPeople = people.filter(p => !['hot', 'responded', 'active', 'overdue'].includes(p.status));
 
   return (
-    <div className="bg-white border-2 border-[#0A0A0A] mb-4">
+    <div className={`bg-white mb-4 ${stop.status === 'demand' ? 'border-2 border-dashed border-amber-400' : 'border-2 border-[#0A0A0A]'}`}>
       {/* Header — always visible */}
       <button onClick={onToggle} className="w-full p-5 flex items-center justify-between hover:bg-gray-50 transition-colors text-left">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-[#0A0A0A] text-white rounded-lg flex items-center justify-center font-bold text-sm">
-            {stop.state}
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm ${stop.status === 'demand' ? 'bg-amber-100 text-amber-800' : 'bg-[#0A0A0A] text-white'}`}>
+            {stop.status === 'demand' ? '📣' : stop.state}
           </div>
           <div>
             <h3 className="font-black text-lg">{stop.city}</h3>
@@ -134,34 +137,38 @@ function LocationCard({ data, expanded, onToggle }: { data: LocationData; expand
                 {hotPeople.map((p, i) => (
                   <div key={i} className="flex items-start justify-between gap-3 p-3 bg-red-50 rounded-lg border border-red-100">
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-bold text-sm">{p.name}</span>
                         <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${STATUS_COLORS[p.status] || 'bg-gray-100 text-gray-500'}`}>
                           {p.status}
                         </span>
+                        {p.source === 'notion' && <span className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800">📦 Notion</span>}
                         {p.score > 0 && <span className="text-[10px] text-gray-400">{p.score}</span>}
                       </div>
                       {p.org && <p className="text-xs text-gray-500">{p.org}</p>}
                       {p.approach && <p className="text-xs text-gray-600 mt-1 line-clamp-2">{p.approach}</p>}
+                      {p.email && <a href={`mailto:${p.email}`} className="text-xs text-[#059669] hover:underline mt-1 block">{p.email}</a>}
                     </div>
                   </div>
                 ))}
-                {pendingPeople.slice(0, 8).map((p, i) => (
+                {pendingPeople.slice(0, 12).map((p, i) => (
                   <div key={i} className="flex items-start justify-between gap-3 p-2 hover:bg-gray-50 rounded">
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-medium">{p.name}</span>
                         <span className={`text-[10px] px-1.5 py-0.5 rounded ${STATUS_COLORS[p.status] || 'bg-gray-100 text-gray-500'}`}>
                           {p.status}
                         </span>
+                        {p.source === 'notion' && <span className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800">📦 Notion</span>}
                       </div>
                       {p.org && <p className="text-xs text-gray-400">{p.org}</p>}
                       {p.approach && <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{p.approach}</p>}
+                      {p.email && <a href={`mailto:${p.email}`} className="text-xs text-[#059669] hover:underline">{p.email}</a>}
                     </div>
                   </div>
                 ))}
-                {pendingPeople.length > 8 && (
-                  <p className="text-xs text-gray-400 pl-2">+ {pendingPeople.length - 8} more</p>
+                {pendingPeople.length > 12 && (
+                  <p className="text-xs text-gray-400 pl-2">+ {pendingPeople.length - 12} more</p>
                 )}
               </div>
             </div>
@@ -281,10 +288,10 @@ export default function ContainedLocationsPage() {
             <p className="text-xs text-gray-500 uppercase tracking-widest">People Connected</p>
           </div>
           <div className="bg-white border-2 border-[#0A0A0A] p-4 text-center">
-            <p className="text-3xl font-black text-red-600">
-              {locations.reduce((s, l) => s + l.people.filter(p => ['hot', 'overdue'].includes(p.status)).length, 0)}
+            <p className="text-3xl font-black text-yellow-700">
+              {locations.reduce((s, l) => s + l.people.filter(p => p.source === 'notion').length, 0)}
             </p>
-            <p className="text-xs text-gray-500 uppercase tracking-widest">Need Action Now</p>
+            <p className="text-xs text-gray-500 uppercase tracking-widest">📦 Notion Requesters</p>
           </div>
         </div>
 
