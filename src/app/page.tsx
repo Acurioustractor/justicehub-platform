@@ -138,49 +138,49 @@ export default async function HomePage() {
         </section>
 
         {/* The Cost Argument — Visceral, immediate */}
-        <section className="bg-[#0A0A0A] border-t border-white/10">
+        <section className="bg-black text-white border-t border-white/10">
           <div className="max-w-6xl mx-auto px-6 sm:px-12 py-16">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-[#DC2626]/10 rounded-xl p-6 border border-[#DC2626]/20">
                 <p
-                  className="text-xs uppercase tracking-wider text-[#DC2626] mb-1"
-                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                  className="text-xs uppercase tracking-wider mb-1"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#DC2626' }}
                 >
                   Detention
                 </p>
                 <p
-                  className="text-4xl font-bold text-[#DC2626]"
-                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  className="text-4xl font-bold"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#DC2626' }}
                 >
                   {fmt(detentionCost)}
                 </p>
-                <p className="text-sm text-white/80 mt-1">per young person per year</p>
-                <p className="text-xs text-white/50 mt-2">${nationalDailyCost.toLocaleString()}/day national average. NT: ${ntDailyCost.toLocaleString()}/day.</p>
+                <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.8)' }}>per young person per year</p>
+                <p className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.5)' }}>${nationalDailyCost.toLocaleString()}/day national average. NT: ${ntDailyCost.toLocaleString()}/day.</p>
               </div>
               <div className="bg-[#059669]/10 rounded-xl p-6 border border-[#059669]/20">
                 <p
-                  className="text-xs uppercase tracking-wider text-[#059669] mb-1"
-                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                  className="text-xs uppercase tracking-wider mb-1"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#059669' }}
                 >
                   Community Models
                 </p>
                 <p
-                  className="text-4xl font-bold text-[#059669]"
-                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  className="text-4xl font-bold"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#059669' }}
                 >
                   {fmt(avgCost)}
                 </p>
-                <p className="text-sm text-white/80 mt-1">per young person (average)</p>
-                <p className="text-xs text-white/50 mt-2">Across {costData.length} models with cost data.</p>
+                <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.8)' }}>per young person (average)</p>
+                <p className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.5)' }}>Across {costData.length} models with cost data.</p>
               </div>
               <div className="bg-white/5 rounded-xl p-6 border border-white/10 flex flex-col justify-center">
                 <p
-                  className="text-5xl font-bold text-white"
-                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  className="text-5xl font-bold"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#ffffff' }}
                 >
                   {ratio}x
                 </p>
-                <p className="text-sm text-white/80 mt-1">cheaper. Better outcomes. Proven.</p>
+                <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.8)' }}>cheaper. Better outcomes. Proven.</p>
                 <Link
                   href="/calculator"
                   className="text-sm font-semibold text-[#059669] mt-3 flex items-center gap-1 hover:underline"
