@@ -343,6 +343,47 @@ const LOCATIONS: LocationInfo[] = [
   },
 ];
 
+// ── Story cards ──
+const STORIES = {
+  oonchiumpa: {
+    title: 'Oonchiumpa: What Happens When Community Leads',
+    slug: 'oonchiumpa-what-happens-when-community-leads',
+    image: 'https://tednluwflfhxyucgwigh.supabase.co/storage/v1/object/public/media/contained/gallery/oonchiumpa-hero.jpg',
+    excerpt: 'There is a version of this story told through numbers. It has its place. But numbers are a translation, and something always gets lost...',
+  },
+  cure: {
+    title: 'The Cure Already Exists',
+    slug: 'the-cure-already-exists',
+    image: 'https://tednluwflfhxyucgwigh.supabase.co/storage/v1/object/public/images/articles/container-room.jpg',
+    excerpt: 'We spend $1.3 million a year per child to lock them in a room with no window. The recidivism rate is 85%. But in communities across Australia, the alternatives are already working.',
+  },
+  contained: {
+    title: 'Building Revolution in Shipping Containers: The Story of CONTAINED',
+    slug: 'building-revolution-in-shipping-containers',
+    image: 'https://tednluwflfhxyucgwigh.supabase.co/storage/v1/object/public/story-images/stories/featured/pdlvi4yay5k-1762323853830.png',
+    excerpt: "CONTAINED is not another awareness campaign with sad statistics on posters. It's an immersive experience built from shipping containers.",
+  },
+  walking: {
+    title: 'Walking Toward Justice: A Personal Journey',
+    slug: 'walking-toward-justice-a-personal-journey-267823',
+    image: 'https://tednluwflfhxyucgwigh.supabase.co/storage/v1/object/public/story-images/stories/featured/x49v6n2z3j-1762321822459.JPG',
+    excerpt: "I didn't set out to build a platform like JusticeHub. I set out to listen.",
+  },
+};
+
+function StoryCard({ story }: { story: typeof STORIES.oonchiumpa }) {
+  return (
+    <a href={`/stories/${story.slug}`} style={{ display: 'block', background: '#111', border: '1px solid #222', textDecoration: 'none', overflow: 'hidden' }}>
+      <img src={story.image} alt={story.title} style={{ width: '100%', height: 180, objectFit: 'cover' }} />
+      <div style={{ padding: '16px 20px' }}>
+        <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#F5F0E8', marginBottom: 4, lineHeight: 1.3 }}>{story.title}</h4>
+        <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#059669', marginBottom: 8 }}>JusticeHub</p>
+        <p style={{ fontSize: '0.8rem', color: '#888', lineHeight: 1.5, marginBottom: 0 }}>{story.excerpt}</p>
+      </div>
+    </a>
+  );
+}
+
 // ── Passcode gate ──
 
 function PasscodeGate({ onAuth }: { onAuth: () => void }) {
@@ -609,6 +650,14 @@ export default function CommunityPage() {
           </div>
         </section>
 
+        {/* Stories: The art */}
+        <section style={{ maxWidth: 1000, margin: '0 auto', padding: '0 40px 60px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <StoryCard story={STORIES.contained} />
+            <StoryCard story={STORIES.walking} />
+          </div>
+        </section>
+
         {/* ═══ 2. THE REACTION ═══ */}
         <section style={{ maxWidth: 1000, margin: '0 auto', padding: '0 40px 60px' }}>
           <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#666', marginBottom: 24, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
@@ -685,6 +734,14 @@ export default function CommunityPage() {
                 <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#666', marginTop: 4, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{s.label}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Stories: The evidence */}
+        <section style={{ maxWidth: 1000, margin: '0 auto', padding: '0 40px 60px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <StoryCard story={STORIES.oonchiumpa} />
+            <StoryCard story={STORIES.cure} />
           </div>
         </section>
 
