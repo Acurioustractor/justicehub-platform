@@ -48,17 +48,18 @@ async function getOrgData(slug: string) {
 
   if (!org) return null;
 
-  // Parallel fetches
+  // Parallel fetches — cast to any to avoid typed client issues with ALMA tables
+  const sb = supabase as any;
   const [interventions, funding, metrics, storytellers, photos] = await Promise.all([
-    supabase
+    sb
       .from('alma_interventions')
-      .select('id, name, description, intervention_type, evidence_level, annual_cost_aud, participants_annually, community_verified, verification_status')
+      .select('id, name, description, type, evidence_level, cost_per_young_person, estimated_annual_capacity, verification_status')
       .eq('operating_organization_id', org.id)
       .neq('verification_status', 'ai_generated')
       .order('evidence_level'),
-    supabase
+    sb
       .from('justice_funding')
-      .select('id, source, program_name, amount_dollars, financial_year, funder_name')
+      .select('id, source, program_name, amount_dollars, financial_year, recipient_name')
       .eq('alma_organization_id', org.id)
       .order('amount_dollars', { ascending: false }),
     supabase
@@ -114,15 +115,15 @@ export default async function FunderOrgPitchPage({ params }: { params: { slug: s
   // Compute stats
   const totalFunding = funding.reduce((sum, f) => sum + (f.amount_dollars || 0), 0);
   const uniqueSources = [...new Set(funding.map(f => f.source))];
-  const communityVerified = interventions.filter(i => i.community_verified).length;
+  const communityVerified = interventions.filter(i => i.verification_status === 'community_verified').length;
   const evidenceCounts = interventions.reduce((acc, i) => {
     const level = i.evidence_level || 'Untested (theory/pilot stage)';
     acc[level] = (acc[level] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
-  const totalParticipants = interventions.reduce((sum, i) => sum + (i.participants_annually || 0), 0);
-  const avgCost = interventions.filter(i => i.annual_cost_aud).length > 0
-    ? interventions.reduce((sum, i) => sum + (i.annual_cost_aud || 0), 0) / interventions.filter(i => i.annual_cost_aud).length
+  const totalParticipants = interventions.reduce((sum, i) => sum + (i.estimated_annual_capacity || 0), 0);
+  const avgCost = interventions.filter(i => i.cost_per_young_person).length > 0
+    ? interventions.reduce((sum, i) => sum + (i.cost_per_young_person || 0), 0) / interventions.filter(i => i.cost_per_young_person).length
     : null;
   const detentionEquivalent = avgCost ? Math.round(DETENTION_COST_PER_CHILD / avgCost) : null;
   const heroPhoto = photos.find(p => p.is_featured) || photos[0];
@@ -282,7 +283,7 @@ export default async function FunderOrgPitchPage({ params }: { params: { slug: s
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-1">
                         <h3 className="font-semibold text-[#0A0A0A]">{intervention.name}</h3>
-                        {intervention.community_verified && (
+                        {intervention.verification_status === 'community_verified' && (
                           <span className="inline-flex items-center gap-1 text-xs text-[#059669]">
                             <CheckCircle className="w-3 h-3" /> Verified
                           </span>
@@ -292,17 +293,17 @@ export default async function FunderOrgPitchPage({ params }: { params: { slug: s
                         <p className="text-sm text-gray-600 line-clamp-2">{intervention.description}</p>
                       )}
                       <div className="flex items-center gap-4 mt-2">
-                        {intervention.intervention_type && (
-                          <span className="text-xs font-mono text-gray-400">{intervention.intervention_type}</span>
+                        {intervention.type && (
+                          <span className="text-xs font-mono text-gray-400">{intervention.type}</span>
                         )}
-                        {intervention.annual_cost_aud && (
+                        {intervention.cost_per_young_person && (
                           <span className="text-xs font-mono text-gray-400">
-                            {formatDollars(intervention.annual_cost_aud)}/yr
+                            {formatDollars(intervention.cost_per_young_person)}/yr
                           </span>
                         )}
-                        {intervention.participants_annually && (
+                        {intervention.estimated_annual_capacity && (
                           <span className="text-xs font-mono text-gray-400">
-                            {intervention.participants_annually} participants/yr
+                            {intervention.estimated_annual_capacity} participants/yr
                           </span>
                         )}
                       </div>
@@ -336,7 +337,7 @@ export default async function FunderOrgPitchPage({ params }: { params: { slug: s
                 <tbody>
                   {funding.slice(0, 15).map(f => (
                     <tr key={f.id} className="border-b border-gray-50 hover:bg-gray-50">
-                      <td className="px-6 py-3 text-sm text-gray-700">{f.funder_name || f.source}</td>
+                      <td className="px-6 py-3 text-sm text-gray-700">{f.recipient_name || f.source}</td>
                       <td className="px-6 py-3 text-sm text-gray-500">{f.program_name || '—'}</td>
                       <td className="px-6 py-3 text-sm text-right font-mono text-[#0A0A0A]">
                         {f.amount_dollars ? formatDollars(f.amount_dollars) : '—'}

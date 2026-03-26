@@ -47,7 +47,7 @@ async function getMatrixData() {
 
   const { data: interventions } = await supabase
     .from('alma_interventions')
-    .select('id, name, intervention_type, evidence_level, operating_organization_id, organizations!alma_interventions_operating_organization_id_fkey(name, slug)')
+    .select('id, name, type, evidence_level, operating_organization_id, organizations!alma_interventions_operating_organization_id_fkey(name, slug)')
     .neq('verification_status', 'ai_generated');
 
   if (!interventions) return { matrix: {}, typeTotals: {}, levelTotals: {}, total: 0 };
@@ -74,7 +74,7 @@ async function getMatrixData() {
   }
 
   for (const i of interventions) {
-    const type = i.intervention_type || 'Other';
+    const type = i.type || 'Other';
     const level = i.evidence_level || 'Untested (theory/pilot stage)';
     const org = i.organizations as any;
 

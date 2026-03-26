@@ -37,7 +37,7 @@ async function getFunderProfiles(): Promise<FunderProfile[]> {
   // Get all philanthropic funding with org details
   const { data: records } = await supabase
     .from('justice_funding')
-    .select('id, source, funder_name, amount_dollars, program_name, alma_organization_id, organizations!justice_funding_alma_organization_id_fkey(name, slug, state, is_indigenous_org)')
+    .select('id, source, recipient_name, amount_dollars, program_name, alma_organization_id, organizations!justice_funding_alma_organization_id_fkey(name, slug, state, is_indigenous_org)')
     .in('source', ['philanthropic', 'dusseldorp', 'prf'])
     .not('amount_dollars', 'is', null)
     .order('amount_dollars', { ascending: false });
@@ -48,7 +48,7 @@ async function getFunderProfiles(): Promise<FunderProfile[]> {
   const funderMap = new Map<string, FunderProfile>();
 
   for (const r of records) {
-    const funderName = r.funder_name || r.source || 'Unknown';
+    const funderName = r.recipient_name || r.source || 'Unknown';
     // Normalize funder names
     let normalizedName = funderName;
     if (funderName.toLowerCase().includes('paul ramsay') || funderName.toLowerCase().includes('prf') || r.source === 'prf') {

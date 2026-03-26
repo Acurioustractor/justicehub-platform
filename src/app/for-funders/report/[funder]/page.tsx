@@ -74,7 +74,7 @@ async function getFunderReportData(funderKey: string) {
   // Get funder's funding records with org details
   const { data: funding } = await supabase
     .from('justice_funding')
-    .select('id, source, funder_name, amount_dollars, program_name, financial_year, alma_organization_id, organizations!justice_funding_alma_organization_id_fkey(name, slug, state, is_indigenous_org, city)')
+    .select('id, source, recipient_name, amount_dollars, program_name, financial_year, alma_organization_id, organizations!justice_funding_alma_organization_id_fkey(name, slug, state, is_indigenous_org, city)')
     .or(config.sources.map(s => `source.eq.${s}`).join(','))
     .not('amount_dollars', 'is', null)
     .order('amount_dollars', { ascending: false });
@@ -82,7 +82,7 @@ async function getFunderReportData(funderKey: string) {
   // Get total interventions and evidence breakdown
   const { data: interventions } = await supabase
     .from('alma_interventions')
-    .select('id, name, evidence_level, intervention_type, operating_organization_id')
+    .select('id, name, evidence_level, type, operating_organization_id')
     .neq('verification_status', 'ai_generated');
 
   // Get Indigenous org count
