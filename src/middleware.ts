@@ -141,7 +141,6 @@ export async function middleware(request: NextRequest) {
     '/contained/join',
     '/developer-api',
     '/events',
-    '/for-funders',
     '/gallery',
     '/intelligence',
     '/justice-funding',
@@ -234,6 +233,13 @@ export async function middleware(request: NextRequest) {
         headers: { 'Content-Type': 'application/json', 'Retry-After': '60' }
       });
     }
+  }
+
+  // Gate /for-funders behind auth — strategy content, not public yet
+  if (path.startsWith('/for-funders') && !user) {
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('redirect', path);
+    return NextResponse.redirect(loginUrl);
   }
 
   // Most routes are public - no auth required
