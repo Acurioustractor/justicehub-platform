@@ -154,8 +154,8 @@ export default async function HomePage() {
                 >
                   {fmt(detentionCost)}
                 </p>
-                <p className="text-sm text-white/50 mt-1">per young person per year</p>
-                <p className="text-xs text-white/30 mt-2">${nationalDailyCost.toLocaleString()}/day national average. NT: ${ntDailyCost.toLocaleString()}/day.</p>
+                <p className="text-sm text-white/80 mt-1">per young person per year</p>
+                <p className="text-xs text-white/50 mt-2">${nationalDailyCost.toLocaleString()}/day national average. NT: ${ntDailyCost.toLocaleString()}/day.</p>
               </div>
               <div className="bg-[#059669]/10 rounded-xl p-6 border border-[#059669]/20">
                 <p
@@ -170,8 +170,8 @@ export default async function HomePage() {
                 >
                   {fmt(avgCost)}
                 </p>
-                <p className="text-sm text-white/50 mt-1">per young person (average)</p>
-                <p className="text-xs text-white/30 mt-2">Across {costData.length} models with cost data.</p>
+                <p className="text-sm text-white/80 mt-1">per young person (average)</p>
+                <p className="text-xs text-white/50 mt-2">Across {costData.length} models with cost data.</p>
               </div>
               <div className="bg-white/5 rounded-xl p-6 border border-white/10 flex flex-col justify-center">
                 <p
@@ -180,7 +180,7 @@ export default async function HomePage() {
                 >
                   {ratio}x
                 </p>
-                <p className="text-sm text-white/50 mt-1">cheaper. Better outcomes. Proven.</p>
+                <p className="text-sm text-white/80 mt-1">cheaper. Better outcomes. Proven.</p>
                 <Link
                   href="/calculator"
                   className="text-sm font-semibold text-[#059669] mt-3 flex items-center gap-1 hover:underline"
