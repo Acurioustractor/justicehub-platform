@@ -17,6 +17,20 @@ function LoginForm() {
   const [oauthLoading, setOauthLoading] = useState<string | null>(null);
   const [error, setError] = useState(searchParams.get('error') === 'auth_failed' ? 'Authentication failed. Please try again.' : '');
   const [mode, setMode] = useState<'login' | 'reset' | 'magic-link' | 'phone'>('magic-link');
+  const [devBypassing, setDevBypassing] = useState(false);
+
+  // Dev bypass: on localhost, skip login entirely
+  useState(() => {
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      setDevBypassing(true);
+      const redirect = searchParams.get('redirect') || '/';
+      window.location.href = redirect;
+    }
+  });
+
+  if (devBypassing) {
+    return <div className="min-h-screen flex items-center justify-center"><p className="text-gray-500">Dev bypass — redirecting...</p></div>;
+  }
   const [resetSent, setResetSent] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [phone, setPhone] = useState('');
