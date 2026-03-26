@@ -6,7 +6,7 @@ import { Calendar, Clock, Tag, MapPin, User } from 'lucide-react';
 import { PasswordGate } from '@/components/ui/password-gate';
 import { fetchSyndicatedStories, fetchSyndicatedStoryContent } from '@/lib/empathy-ledger/syndication';
 
-const PASSWORD_PROTECTED_SLUGS = ['the-cure-already-exists'];
+const PASSWORD_PROTECTED_SLUGS: string[] = [];
 
 export const dynamic = 'force-dynamic';
 
