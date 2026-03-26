@@ -53,7 +53,7 @@ async function getOrgData(slug: string) {
   const [interventions, funding, metrics, storytellers, photos] = await Promise.all([
     sb
       .from('alma_interventions')
-      .select('id, name, description, type, evidence_level, cost_per_young_person, estimated_annual_capacity, verification_status')
+      .select('id, name, description, type, evidence_level, cost_per_young_person, estimated_annual_capacity, verification_status, website, geography, years_operating, cultural_authority')
       .eq('operating_organization_id', org.id)
       .neq('verification_status', 'ai_generated')
       .order('evidence_level'),
@@ -278,7 +278,7 @@ export default async function FunderOrgPitchPage({ params }: { params: { slug: s
             {/* Interventions list */}
             <div className="space-y-3">
               {interventions.map(intervention => (
-                <div key={intervention.id} className="bg-white rounded-lg p-5 border border-gray-200 hover:border-gray-300 transition-colors">
+                <Link key={intervention.id} href={`/intelligence/interventions/${intervention.id}`} className="block bg-white rounded-lg p-5 border border-gray-200 hover:border-[#059669] hover:shadow-sm transition-all">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-1">
@@ -292,9 +292,17 @@ export default async function FunderOrgPitchPage({ params }: { params: { slug: s
                       {intervention.description && (
                         <p className="text-sm text-gray-600 line-clamp-2">{intervention.description}</p>
                       )}
-                      <div className="flex items-center gap-4 mt-2">
+                      <div className="flex flex-wrap items-center gap-3 mt-2">
                         {intervention.type && (
                           <span className="text-xs font-mono text-gray-400">{intervention.type}</span>
+                        )}
+                        {intervention.geography?.length > 0 && (
+                          <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+                            <MapPin className="w-3 h-3" /> {intervention.geography.join(', ')}
+                          </span>
+                        )}
+                        {intervention.years_operating && (
+                          <span className="text-xs font-mono text-gray-400">{intervention.years_operating}+ years</span>
                         )}
                         {intervention.cost_per_young_person && (
                           <span className="text-xs font-mono text-gray-400">
@@ -306,13 +314,23 @@ export default async function FunderOrgPitchPage({ params }: { params: { slug: s
                             {intervention.estimated_annual_capacity} participants/yr
                           </span>
                         )}
+                        {intervention.cultural_authority && (
+                          <span className="inline-flex items-center gap-1 text-xs text-purple-500">
+                            <Shield className="w-3 h-3" /> {intervention.cultural_authority}
+                          </span>
+                        )}
                       </div>
+                      {intervention.website && (
+                        <a href={intervention.website.startsWith('http') ? intervention.website : `https://${intervention.website}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1 text-xs text-[#059669] hover:underline mt-2">
+                          <ExternalLink className="w-3 h-3" /> {intervention.website.replace(/^https?:\/\/(www\.)?/, '')}
+                        </a>
+                      )}
                     </div>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium text-white whitespace-nowrap ${EVIDENCE_COLORS[intervention.evidence_level || ''] || 'bg-gray-400'}`}>
                       {EVIDENCE_SHORT[intervention.evidence_level || ''] || 'Untested'}
                     </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </section>
