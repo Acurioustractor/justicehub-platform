@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { StoriesPageContent } from './page-content';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
-import { fetchSyndicatedStories } from '@/lib/empathy-ledger/syndication';
+import { fetchSyndicatedStories, fetchContentHubArticles } from '@/lib/empathy-ledger/syndication';
 
 export const metadata = {
   title: 'Stories from the Movement - JusticeHub',
@@ -42,11 +42,16 @@ async function getStoriesData() {
       primary_tag: article.category,
     }));
 
-    // Pull syndicated stories from Empathy Ledger
+    // Pull syndicated stories + articles from Empathy Ledger
     let elArticles: typeof articles = [];
     try {
-      const elStories = await fetchSyndicatedStories();
-      elArticles = elStories.map((s) => ({
+      const [elStories, elContentHubArticles] = await Promise.all([
+        fetchSyndicatedStories(),
+        fetchContentHubArticles(),
+      ]);
+
+      // Map syndicated stories (consent-based)
+      const mappedStories = elStories.map((s) => ({
         id: s.id,
         slug: s.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
         title: s.title,
@@ -65,6 +70,29 @@ async function getStoriesData() {
         primary_tag: 'roots',
         public_profiles: null,
       }));
+
+      // Map Content Hub articles (public API)
+      const mappedArticles = elContentHubArticles.map((a) => ({
+        id: a.id,
+        slug: a.slug || a.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+        title: a.title,
+        excerpt: a.excerpt,
+        content: '',
+        featured_image_url: a.featuredImageUrl,
+        featured_image_caption: a.featuredImageAlt,
+        published_at: a.publishedAt,
+        tags: a.tags || [],
+        location_tags: [],
+        reading_time_minutes: null,
+        category: null,
+        view_count: 0,
+        content_type: 'empathy-ledger' as const,
+        author: a.authorName ? { full_name: a.authorName, slug: null, photo_url: null } : null,
+        primary_tag: 'growth',
+        public_profiles: null,
+      }));
+
+      elArticles = [...mappedStories, ...mappedArticles];
     } catch { /* EL unavailable — continue with local only */ }
 
     // Merge local + EL, deduplicate by slug

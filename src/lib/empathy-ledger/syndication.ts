@@ -74,6 +74,50 @@ export async function fetchSyndicatedStories(): Promise<SyndicatedStory[]> {
 }
 
 /**
+ * Fetch articles from EL Content Hub API syndicated to JusticeHub
+ * (Public API — no auth required, uses ?destination=act_jh)
+ */
+export interface ContentHubArticle {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  authorName: string | null;
+  articleType: string | null;
+  publishedAt: string | null;
+  tags: string[];
+  themes: string[];
+  syndicationDestinations: string[];
+  featuredImageUrl: string | null;
+  featuredImageAlt: string | null;
+}
+
+export async function fetchContentHubArticles(): Promise<ContentHubArticle[]> {
+  if (!API_URL) return [];
+
+  try {
+    const res = await fetch(
+      `${API_URL}/api/v1/content-hub/articles?destination=act_jh&limit=100`,
+      {
+        headers: { 'Accept': 'application/json' },
+        next: { revalidate: 60 } as any,
+      }
+    );
+
+    if (!res.ok) {
+      console.error(`EL Content Hub articles error ${res.status}`);
+      return [];
+    }
+
+    const json = await res.json();
+    return json.articles || [];
+  } catch (err) {
+    console.error('Failed to fetch Content Hub articles:', err);
+    return [];
+  }
+}
+
+/**
  * Fetch full content for a syndicated story using its embed token
  */
 export async function fetchSyndicatedStoryContent(
