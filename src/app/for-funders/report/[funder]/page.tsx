@@ -49,7 +49,7 @@ const FUNDER_CONFIGS: Record<string, FunderConfig> = {
     askDescription: 'Fund 2 basecamp coordinators + make your First Nations portfolio nationally visible',
     hookLine: 'You already direct 30% of your funding to First Nations organisations — 30x the sector average. Here\'s how to make that visible nationally.',
     keyInsight: 'Dusseldorp\'s 30x ACCO allocation ratio is sector-leading. Through Mannifera Collective\'s 27 member funders, this model could catalyse $5.6M+ in coordinated giving.',
-    sources: ['dusseldorp'],
+    sources: ['dusseldorp-yir-2025'],
     basecampLocations: ['Alice Springs', 'Mt Druitt'],
   },
   prf: {
