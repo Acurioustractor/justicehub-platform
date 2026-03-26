@@ -267,8 +267,8 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* The Network — Basecamps */}
-        <section className="bg-[#0A0A0A] text-white py-20">
+        {/* The Network — Basecamps — hidden until org data is verified */}
+        {false && <section className="bg-[#0A0A0A] text-white py-20">
           <div className="max-w-6xl mx-auto px-6 sm:px-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
               <div>
@@ -356,7 +356,7 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
-        </section>
+        </section>}
 
         {/* The Proof Row */}
         <section className="max-w-6xl mx-auto px-6 sm:px-12 py-20">
@@ -458,8 +458,8 @@ export default async function HomePage() {
           <EmpathyLedgerStories />
         </section>
 
-        {/* Activity Feed */}
-        <ActivityFeed />
+        {/* Activity Feed — hidden until data is reliable */}
+        {false && <ActivityFeed />}
 
         {/* Final CTA — The line */}
         <section className="bg-[#0A0A0A] text-white py-20">
