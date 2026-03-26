@@ -115,6 +115,18 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
+  // Dev bypass: auto-set admin cookie on localhost so you never need to log in locally
+  const hostname = request.nextUrl.hostname;
+  if ((hostname === 'localhost' || hostname === '127.0.0.1') && process.env.NODE_ENV !== 'production') {
+    const secret = process.env.FUNDING_SMOKE_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+    if (secret && !request.cookies.get(DEV_ADMIN_BYPASS_COOKIE)?.value) {
+      // Set on request so downstream checks see it this pass
+      request.cookies.set(DEV_ADMIN_BYPASS_COOKIE, secret);
+      response = NextResponse.next({ request });
+      response.cookies.set(DEV_ADMIN_BYPASS_COOKIE, secret, { path: '/', httpOnly: false, sameSite: 'lax' });
+    }
+  }
+
   // Apply security headers to all responses
   Object.entries(securityHeaders).forEach(([key, value]) => {
     response.headers.set(key, value);
@@ -236,7 +248,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Gate /for-funders behind auth — strategy content, not public yet
-  if (path.startsWith('/for-funders') && !user) {
+  if (path.startsWith('/for-funders') && !user && !isAdminUser) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', path);
     return NextResponse.redirect(loginUrl);
