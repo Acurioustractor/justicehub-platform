@@ -9,35 +9,47 @@ const PASSCODE = 'contained2026';
 const DUSSELDORP = {
   name: 'Dusseldorp Forum',
   founded: '1997',
-  approach: 'Place-based, narrative practice, direct community relationships',
-  philosophy: 'Invest deeply in places and people. 30% of funding goes to First Nations organisations — 30x the sector average. Believes in long-term, trust-based relationships over competitive grant rounds.',
-  totalTracked: '~$15-20M active portfolio',
+  approach: 'Place-based, long-term relationships, First Nations leadership, climate justice',
+  philosophy: 'Three strategic pillars: Education Grounded in Place (33%), Climate & Environment (37%), and First Nations Leading Change (30%). 30% of giving goes to First Nations-led initiatives — 30x the sector average. Climate giving tripled from $225K (2023) to $675K (2025). Member of Mannifera Collective since 2022. Committed to 10+ year partnerships.',
+  totalTracked: '~$1.75M/year (2025)',
   firstNationsShare: '30%',
   keyPeople: [
-    { name: 'Teya Dusseldorp', role: 'CEO' },
+    { name: 'Teya Dusseldorp', role: 'Executive Director' },
+    { name: 'Tom Dusseldorp', role: 'Board Chair' },
     { name: 'Scarlett Steven', role: 'Programs — coordinating CONTAINED tour' },
     { name: 'Margot Beach', role: 'Programs — accepted meeting Mar 20' },
-    { name: 'Jessica Duffy', role: 'Team — responded to campaign' },
   ],
   portfolio: [
-    { name: 'Mounty Yarns', location: 'Mt Druitt, NSW', type: 'Narrative practice', indigenous: true, detail: '7 programs. Youth storytelling. Dual-funded. Documentary in production. CONTAINED Room 3 anchor for Mt Druitt.' },
-    { name: 'Just Reinvest NSW', location: 'Bourke / Mt Druitt / Kempsey / Moree', type: 'Justice reinvestment', indigenous: true, detail: '11 programs across 4 sites. Maranguka model in Bourke = the original Australian JR proof point.' },
-    { name: 'PLACE Initiative', location: 'National (6 sites)', type: 'Place-based co-investment', indigenous: false, detail: '$38.6M co-investment with PRF, Ian Potter, Bryan Foundation, Commonwealth. The most ambitious place-based investment in Australian philanthropy.' },
-    { name: 'Dulwich Centre Foundation', location: 'Adelaide, SA', type: 'Narrative therapy', indigenous: false, detail: 'Narrative practice pioneer. Michael White\'s legacy. Therapeutic framework used across Dusseldorp\'s portfolio.' },
-    { name: 'Mannifera Collective', location: 'Melbourne, VIC', type: 'Systems change', indigenous: false, detail: 'Systems thinking, collective impact. Connected to Dusseldorp\'s approach to structural change.' },
-    { name: 'Groundswell Foundation', location: 'Sydney, NSW', type: 'Community development', indigenous: false, detail: 'Grassroots community development. Aligned with Dusseldorp\'s place-based philosophy.' },
-    { name: 'Big Picture Education', location: 'National', type: 'Education', indigenous: false, detail: 'Alternative education model. Schools where kids design their own learning. ~40 schools nationally.' },
-    { name: 'Wilya Janta', location: 'Tennant Creek, NT', type: 'Housing', indigenous: true, detail: 'Dusseldorp-funded housing project in Tennant Creek. Connected to Oonchiumpa and Central Arrernte community.' },
+    { name: 'Nawarddeken Academy', location: 'West Arnhem Land, NT', type: 'Education / First Nations', indigenous: true, detail: '10+ year partnership. Secondary school at Manmoyi and Mamardawerre outstations. First time senior students in Warddeken IPA accessed formal secondary education on homelands.' },
+    { name: 'Homeland School Company', location: 'Djelk IPA, NT', type: 'Education / First Nations', indigenous: true, detail: 'First independent primary school in Djelk IPA opening early 2026. Custom curriculum grounded in intergenerational knowledge and seasonal calendar.' },
+    { name: 'Karrkad Kanjdji Trust (KKT)', location: 'West & Central Arnhem Land', type: 'First Nations / Conservation', indigenous: true, detail: 'Shared resource for 8 First Nations community-controlled organisations. 50,000+ sq km of land and sea Country. "Educating future custodians" funding pillar.' },
+    { name: 'Yoorrook Justice Commission', location: 'Victoria', type: 'Truth-telling / Justice', indigenous: true, detail: 'Australia\'s first formal truth-telling inquiry. Independent digital platform for testimony. Walk for Truth — 500+ km Portland to Parliament. First Treaty signed Nov 2025.' },
+    { name: 'Woor-Dungin', location: 'Victoria', type: 'Systems change / First Nations', indigenous: true, detail: 'Decolonising Wealth: Cultural Audit & Toolkit. Cultivating Connections Forum. "Changing systems because it is the right thing to do." — Shaun Middlebrook' },
+    { name: 'Mounty Yarns (MAYCS)', location: 'Mt Druitt, NSW', type: 'Youth / Community', indigenous: true, detail: 'Youth programs, advocacy, community engagement. Young people as leaders driving systems change. CONTAINED Room 3 anchor for Mt Druitt.' },
+    { name: 'IndigiGrow', location: 'La Perouse, NSW', type: 'First Nations enterprise', indigenous: true, detail: 'First Nations-owned nursery and social enterprise. Bringing back native plants that shaped the landscape and Aboriginal lives for thousands of years.' },
+    { name: 'Wilya Janta', location: 'Tennant Creek, NT', type: 'Housing / First Nations', indigenous: true, detail: 'First Explain Home lands Dec 2025. Community-designed homes shaped by culture, climate and community leadership. New standards for remote Aboriginal housing.' },
+    { name: 'Groundswell Giving — Caring for Country', location: 'National', type: 'Climate / First Nations', indigenous: false, detail: '$1M generated for 30 First Nations-led climate initiatives. Spawned Just Futures Collab — Aboriginal-led giving circle for climate justice.' },
+    { name: 'Supercharge Australia', location: 'National', type: 'Climate / Innovation', indigenous: false, detail: '41 startups supported. A$100M+ raised. Innovation Challenge Awards. Liberate Minerals recognised for low-emissions critical mineral processing.' },
+    { name: 'Surfers for Climate', location: 'NSW', type: 'Climate / Advocacy', indigenous: false, detail: 'SAVE BEACHWATCH campaign. NSW Government recommitted funding for water quality testing on Sydney beaches.' },
+    { name: 'Mannifera Collective', location: 'National', type: 'Democracy / Collective giving', indigenous: false, detail: '27 members, $5.6M in grants to 67 civil society orgs over 5 years. Democracy 100 roundtables in Adelaide and Perth. 90+ connection events.' },
+    { name: 'PLACE', location: 'National (53 places)', type: 'Place-based', indigenous: false, detail: 'Community Roadshow visiting 53 places, engaging 75 initiatives. "From the Ground Up" content series. Co-investment with PRF, Ian Potter, Bryan Foundation, Commonwealth.' },
+    { name: 'Accountable Futures Collective', location: 'National', type: 'Youth / Systems change', indigenous: false, detail: 'NEW partner Sep 2025. Young people and adults solving the accountability void — gap between promises and reality. Tasha Ritchie as Youth Engagement Coordinator.' },
+    { name: 'Our Place (Colman Foundation)', location: 'Victoria', type: 'Education', indigenous: false, detail: 'Schools as central hubs for learning and wrap-around support. Evaluation report showed increased participation and family connection.' },
+    { name: 'Learning the Macleay', location: 'Macleay Valley, NSW', type: 'Education / Place-based', indigenous: false, detail: 'Yuwa Nyinda Youth Summit: 140 community leaders, 384 young people across 27 cultural backgrounds sharing what they need.' },
+    { name: 'Centre for Public Impact', location: 'National', type: 'Storytelling', indigenous: false, detail: 'Four Story Circles connecting theory and practice. Story-kit for changemakers distilling years of research into stories\' power to transform systems.' },
+    { name: 'ChangeFest', location: 'Walayup, WA', type: 'Place-based', indigenous: false, detail: 'Nov 2025 in Walayup WA. Connecting partners to build thriving, just and resilient communities shaped by the people who live there.' },
+    { name: 'UTS Impact Studios / Hey History!', location: 'National', type: 'Education / Media', indigenous: false, detail: 'Walk for Truth curriculum episode. Gold Signal Podcast Award (Kids Single Episode). Stage 2-3 history learning on truth-telling and Treaty.' },
   ],
   strengths: [
-    'Deep, long-term relationships with communities',
-    '30% First Nations allocation — sector-leading',
-    'PLACE co-investment shows ability to coordinate with other funders',
-    'Narrative practice framework = coherent theory of change',
+    'Deep, long-term relationships — 10+ year Arnhem Land partnership',
+    '30% First Nations allocation — 30x the sector average',
+    'Climate giving tripled in 2 years ($225K → $675K)',
+    'Mannifera network leverages $5.6M across 27 funders',
+    'PLACE co-investment shows ability to coordinate at scale',
     'Already connected to CONTAINED tour (Scarlett coordinating)',
   ],
   gaps: [
-    'No digital infrastructure connecting their portfolio',
+    'No digital infrastructure connecting their 19+ partners',
     'Funded organisations don\'t have a shared evidence base',
     'No public-facing data on what their programs achieve',
     'Philanthropy ecosystem not visible — funders can\'t see overlaps',
@@ -91,7 +103,8 @@ const PRF = {
 // ── Shared / Overlapping investments ──
 const SHARED = [
   { name: 'Just Reinvest NSW / Maranguka', detail: 'Both funders invest in Australia\'s original JR site. Dusseldorp funds the community side (Mounty Yarns, narrative practice). PRF funds the JR infrastructure.' },
-  { name: 'PLACE Initiative', detail: 'PRF is anchor funder ($38.6M co-investment). Dusseldorp also contributes. The biggest co-investment in Australian place-based philanthropy.' },
+  { name: 'PLACE Initiative', detail: 'PRF is anchor funder ($38.6M co-investment). Dusseldorp contributes + visited 53 places in 2025 Community Roadshow. The biggest co-investment in Australian place-based philanthropy.' },
+  { name: 'Our Place (Colman Foundation)', detail: 'PRF funds Place-Based Education ($13.5M). Dusseldorp also supports. Schools as community hubs model — evaluation showed increased participation and family connection.' },
   { name: 'Justice Reform Initiative', detail: 'PRF funds directly. Robert Tickner (JRI Chair) is in CONTAINED tour network. Dusseldorp connection through Scarlett Steven\'s logistics work.' },
 ];
 
@@ -225,12 +238,13 @@ export default function LandscapePage() {
             Two approaches to<br />justice reinvestment.
           </h1>
           <p style={{ fontSize: '1.05rem', color: '#888', maxWidth: 700, lineHeight: 1.7 }}>
-            Dusseldorp Forum and Paul Ramsay Foundation are the two most significant philanthropic investors
-            in justice reinvestment in Australia. They share grantees, they co-invest in PLACE, and they both
-            fund organisations now connected to the CONTAINED tour. But their approaches are fundamentally different.
+            Dusseldorp Forum (~$1.75M/year across 19 partners) and Paul Ramsay Foundation ($320M/year, 15 JR sites)
+            represent two fundamentally different models of philanthropic investment. One invests deeply in places
+            and relationships over decades. The other deploys transformative capital at national scale. They share
+            grantees, co-invest in PLACE, and both fund organisations connected to the CONTAINED tour.
           </p>
           <p style={{ fontSize: '1.05rem', color: '#ccc', maxWidth: 700, lineHeight: 1.7, marginTop: 16 }}>
-            This page maps what we know about both portfolios and where JusticeHub connects them.
+            This page maps both portfolios — built from Dusseldorp&apos;s Year in Review 2025 and PRF&apos;s public reporting — and shows where JusticeHub connects them.
           </p>
         </section>
 
@@ -240,7 +254,7 @@ export default function LandscapePage() {
             <div style={{ background: '#0A0A0A', padding: 24 }}>
               <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Dusseldorp Forum</p>
               <p style={{ fontSize: '0.9rem', color: '#ccc', lineHeight: 1.5, marginBottom: 0 }}>
-                Place-based. Narrative practice. Deep relationships. 30% First Nations. Smaller, patient capital. Funds the <em>community</em> side of JR.
+                Three pillars: Education (33%), Climate (37%), First Nations (30%). 19 partners. 10+ year commitments. Patient capital through Mannifera&apos;s 27-funder network. Funds the <em>community</em> side.
               </p>
             </div>
             <div style={{ background: '#0A0A0A', padding: 24 }}>
@@ -395,9 +409,9 @@ export default function LandscapePage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: '#222', marginBottom: 16 }}>
               {[
                 { n: '$314M+', label: 'Total funding tracked', color: '#F5F0E8' },
-                { n: '12', label: 'Funding sources', color: '#F5F0E8' },
-                { n: '50+', label: 'Orgs funded', color: '#059669' },
-                { n: '3', label: 'Shared grantees', color: '#DC2626' },
+                { n: '13', label: 'Funding sources', color: '#F5F0E8' },
+                { n: '60+', label: 'Orgs funded', color: '#059669' },
+                { n: '4', label: 'Shared grantees', color: '#DC2626' },
               ].map((s, i) => (
                 <div key={i} style={{ background: '#0A0A0A', padding: '16px 8px', textAlign: 'center' }}>
                   <p style={{ fontSize: '1.3rem', fontWeight: 700, color: s.color, marginBottom: 0 }}>{s.n}</p>
@@ -406,8 +420,8 @@ export default function LandscapePage() {
               ))}
             </div>
             <p style={{ fontSize: '0.85rem', color: '#888', lineHeight: 1.6, marginBottom: 0 }}>
-              This is money from PRF ($53.1M JR), PLACE ($38.6M co-investment), Commonwealth, NIAA, AusTender, QLD/NSW state governments,
-              and philanthropic sources — all flowing through organisations that Dusseldorp and PRF support.
+              This is money from Dusseldorp ($1.75M/year, 19 partners), PRF ($53.1M JR), PLACE ($38.6M co-investment),
+              Commonwealth, NIAA, AusTender, QLD/NSW state governments — all flowing through organisations that both funders support.
               No single funder sees the full picture. JusticeHub does.
             </p>
           </div>
@@ -444,16 +458,17 @@ export default function LandscapePage() {
               </thead>
               <tbody>
                 {[
-                  ['Scale', '~$15-20M active', '$320M/year ($53M JR)'],
-                  ['Theory of change', 'Narrative practice — change the story, change the system', 'Justice reinvestment — redirect funding from prisons to communities'],
-                  ['Unit of investment', 'Places and relationships', 'Sites and systems'],
-                  ['First Nations', '30% of portfolio (stated)', 'Significant (8/15 JR sites are Indigenous-led)'],
+                  ['Scale', '~$1.75M/year (2025)', '$320M/year ($53M JR)'],
+                  ['Theory of change', 'Place-based, long-term relationships, three pillars', 'Justice reinvestment — redirect funding from prisons to communities'],
+                  ['Unit of investment', 'Places, relationships, 10+ year commitments', 'Sites and systems'],
+                  ['First Nations', '30% of giving ($524K) — 30x sector avg', 'Significant (8/15 JR sites are Indigenous-led)'],
+                  ['Climate', '37% of giving ($675K) — tripled since 2023', 'Not a focus area'],
                   ['Evidence model', 'Stories, lived experience, practice wisdom', 'Evaluation frameworks, data, JR Community of Practice'],
-                  ['Intermediaries', 'Few — direct to community', 'Many — JRNA, HRLC, JRI, Change the Record'],
+                  ['Network leverage', 'Mannifera: 27 funders, $5.6M to 67 orgs', 'JR Community of Practice, 15 sites'],
                   ['Indirect costs', 'Unknown', '30% — "Paying What It Costs" policy'],
-                  ['Power reflection', 'Implicit — long-term trust', 'Explicit — Kristy Muir\'s "Power" letter Feb 2026'],
+                  ['Power reflection', 'Scaling Deep (Tatiana Fraser). Haumanu Framework.', 'Explicit — Kristy Muir\'s "Power" letter Feb 2026'],
                   ['CONTAINED connection', 'Scarlett coordinating Mt Druitt. Teya = lead funder ask.', 'Jonas + William visited Oct 2025. Robert Tickner on tour.'],
-                  ['JusticeHub value', 'Make portfolio visible. Connect Mounty Yarns to evidence.', 'Shared data layer for 15 JR sites. PICC as missing piece.'],
+                  ['JusticeHub value', 'Connect 19 partners. Make YIR portfolio visible with evidence.', 'Shared data layer for 15 JR sites. PICC as missing piece.'],
                 ].map(([dim, d, p], i) => (
                   <tr key={i} style={{ borderTop: '1px solid #222' }}>
                     <td style={{ padding: '10px 16px', color: '#888', fontWeight: 600, verticalAlign: 'top' }}>{dim}</td>
@@ -473,11 +488,13 @@ export default function LandscapePage() {
           </h2>
           <div style={{ maxWidth: 700 }}>
             <p style={{ fontSize: '1rem', color: '#888', lineHeight: 1.7, marginBottom: 16 }}>
-              Neither funder has a shared data layer. Dusseldorp&apos;s portfolio organisations don&apos;t know what PRF&apos;s are learning,
-              and vice versa. The JR Community of Practice meets monthly but has no platform connecting evidence across sites.
+              Dusseldorp&apos;s 19 partners don&apos;t know what PRF&apos;s 15 JR sites are learning, and vice versa.
+              Mannifera&apos;s 27-funder network has no shared evidence layer. The JR Community of Practice meets monthly
+              but has no platform connecting outcomes across sites. A $1.75M funder and a $320M funder — 180x difference
+              in scale — both investing in the same communities without seeing each other&apos;s work.
             </p>
             <p style={{ fontSize: '1rem', color: '#888', lineHeight: 1.7, marginBottom: 16 }}>
-              JusticeHub is that layer. 1,117 community programs mapped. 824 with cost data. 570 evidence records.
+              JusticeHub is that layer. 1,076 community programs mapped. 824 with cost data. 570 evidence records.
               Every organisation funded by either funder can see what&apos;s working elsewhere — not through a report
               that arrives 18 months later, but through a living platform updated by community.
             </p>
@@ -488,7 +505,7 @@ export default function LandscapePage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginTop: 32 }}>
             {[
-              { label: 'For Dusseldorp', items: ['Mounty Yarns profile with evidence + cost data', 'All 4 NSW JR sites visible in one view', 'PLACE partner network mapped', 'CONTAINED tour integrated with JusticeHub stories'] },
+              { label: 'For Dusseldorp', items: ['Connect 19 YIR partners with evidence + cost data', 'Arnhem Land education outcomes visible nationally', 'Mannifera network\'s $5.6M impact mapped', 'CONTAINED tour integrated with JusticeHub stories'] },
               { label: 'For PRF', items: ['Shared data layer for 15 JR sites', 'PICC: 21 programs, zero PRF funding — the gap', 'JR Community of Practice gets a platform', 'Cross-site evidence comparison'] },
               { label: 'For both', items: ['Portfolio overlap visible (Just Reinvest, PLACE)', 'CivicScope tracks whether govt follows their investment', 'Community-verified evidence — not funder-commissioned', 'National discussion driven by community data'] },
             ].map((col, i) => (
