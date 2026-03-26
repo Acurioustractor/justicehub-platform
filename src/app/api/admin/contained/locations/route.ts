@@ -66,47 +66,57 @@ export async function GET() {
     };
   }
 
-  // 6. Map people to locations
-  const stateKeywords: Record<string, string[]> = {
-    NSW: ['nsw', 'sydney', 'mount druitt', 'mt druitt', 'redfern', 'parramatta', 'armidale'],
-    QLD: ['qld', 'queensland', 'brisbane', 'townsville', 'palm island', 'noosa', 'toowoomba', 'mount isa', 'cairns', 'yac'],
-    VIC: ['vic', 'victoria', 'melbourne', 'geelong'],
-    SA: ['sa ', 'south australia', 'adelaide', 'onkaparinga'],
-    WA: ['wa ', 'western australia', 'perth', 'forest chase', 'kununurra', 'minderoo'],
-    NT: ['nt ', 'northern territory', 'alice springs', 'tennant creek', 'darwin', 'katherine', 'oonchiumpa'],
+  // 6. Map people to locations using CITY-level keywords (not state)
+  // Each tour stop has its own keyword set to avoid cross-contamination
+  const cityKeywords: Record<string, string[]> = {
+    'contained-mount-druitt-launch': ['mount druitt', 'mt druitt', 'western sydney', 'wsu', 'sydney details', 'sydney plans', 'redfern', 'parramatta', 'uniting'],
+    'contained-brisbane': ['brisbane', 'yac', 'south brisbane', 'fortitude valley', 'west end', 'noosa', 'toowoomba', 'qld youth justice', 'queensland safer'],
+    'contained-adelaide-reintegration': ['adelaide', 'onkaparinga', 'south australia', 'sa '],
+    'contained-townsville-picc': ['townsville', 'palm island', 'picc', 'cleveland ydc', 'garbutt', 'north queensland', 'rachel atkinson'],
+    'contained-perth-uwa': ['perth', 'forest chase', 'western australia', 'minderoo', 'banksia hill', 'unit 18', 'kununurra', 'jri perth'],
+    'contained-tennant-creek': ['tennant creek', 'alice springs', 'oonchiumpa', 'atnarpa', 'katherine', 'darwin', 'central arrernte'],
   };
 
-  function matchState(text: string): string[] {
+  // Outreach contacts have explicit location fields — map directly
+  const outreachLocationMap: Record<string, string> = {
+    NSW: 'contained-mount-druitt-launch',
+    WA: 'contained-perth-uwa',
+    VIC: '', // no stop yet
+    National: '', // skip
+  };
+
+  function matchStop(text: string, stopSlug: string): boolean {
+    const keywords = cityKeywords[stopSlug] || [];
     const lower = ` ${text.toLowerCase()} `;
-    return Object.entries(stateKeywords)
-      .filter(([, keywords]) => keywords.some(kw => lower.includes(kw)))
-      .map(([st]) => st);
+    return keywords.some(kw => lower.includes(kw));
   }
 
   // Build location data
   const locations = stops.map((stop: any) => {
+    const slug = stop.event_slug;
     const state = stop.state;
 
-    // Match people from outreach
+    // Match people from outreach — by explicit location or keyword match
     const outreachPeople = (outreach || [])
       .filter((o: any) => {
-        if (o.location === state) return true;
-        if (o.location === 'National') return false;
-        const matched = matchState(`${o.location || ''} ${o.notes || ''}`);
-        return matched.includes(state);
+        // Check location + notes for city-level keywords (NOT next_action — it often mentions other locations)
+        const searchText = `${o.location || ''} ${o.notes || ''}`;
+        if (matchStop(searchText, slug)) return true;
+        // Explicit state match — but only if there's one stop per state
+        if (o.location === state && stops.filter((s: any) => s.state === state).length === 1) return true;
+        return false;
       })
       .map((o: any) => ({
         name: o.name, org: o.org, status: o.status, score: 0,
         approach: o.next_action, location: o.location,
       }));
 
-    // Match people from scored entities
+    // Match people from scored entities — keyword match on approach text
     const entityPeople = (entities || [])
       .filter((e: any) => {
         if (e.entity_type !== 'person') return false;
         const approach = e.recommended_approach || '';
-        const matched = matchState(approach);
-        return matched.includes(state);
+        return matchStop(approach, slug);
       })
       .map((e: any) => ({
         name: e.name, org: e.sector_tag, status: e.outreach_status || 'pending',
@@ -133,6 +143,48 @@ export async function GET() {
       people: allPeople,
       stats: statsByState[state] || { indigenous_orgs: 0, interventions: 0, funding_records: 0 },
     };
+  });
+
+  // Add a "National / Unassigned" bucket for people not matching any stop
+  // Exclude the national bucket itself from assigned names
+  const assignedNames = new Set(locations.flatMap((l: any) => l.people.map((p: any) => p.name)));
+
+  const nationalOutreach = (outreach || [])
+    .filter((o: any) => !assignedNames.has(o.name))
+    .map((o: any) => ({
+      name: o.name, org: o.org, status: o.status, score: 0,
+      approach: o.next_action, location: o.location,
+    }));
+
+  const nationalEntities = (entities || [])
+    .filter((e: any) => e.entity_type === 'person' && !assignedNames.has(e.name))
+    .slice(0, 20)
+    .map((e: any) => ({
+      name: e.name, org: e.sector_tag, status: e.outreach_status || 'pending',
+      score: e.composite_score, approach: e.recommended_approach, location: null,
+    }));
+
+  const nationalPeople: typeof nationalOutreach = [];
+  const seenNational = new Set<string>();
+  for (const p of [...nationalOutreach, ...nationalEntities]) {
+    if (seenNational.has(p.name)) continue;
+    seenNational.add(p.name);
+    nationalPeople.push(p);
+  }
+  nationalPeople.sort((a, b) => {
+    const order: Record<string, number> = { hot: 0, overdue: 1, active: 2, responded: 3, warm: 4, 'follow-up': 5, sent: 6, pending: 7, cold: 8 };
+    return (order[a.status] ?? 9) - (order[b.status] ?? 9);
+  });
+
+  locations.push({
+    stop: {
+      city: 'National / Unassigned', state: 'ALL', partner: 'Not linked to a specific tour stop',
+      date: '2026-12-31', status: 'ongoing', description: 'People engaged with the campaign who haven\'t been assigned to a specific tour stop location yet.',
+      event_slug: 'national',
+    },
+    orgs: [],
+    people: nationalPeople,
+    stats: { indigenous_orgs: 0, interventions: 0, funding_records: 0 },
   });
 
   return NextResponse.json({ locations });
