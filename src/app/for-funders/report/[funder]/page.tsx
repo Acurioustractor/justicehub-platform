@@ -97,7 +97,7 @@ async function getFunderReportData(funderKey: string) {
 
   // Compute funder portfolio stats
   const totalFunding = records.reduce((sum, r) => sum + (r.amount_dollars || 0), 0);
-  const recipients = new Map<string, { name: string; slug: string | null; amount: number; isIndigenous: boolean; state: string | null }>();
+  const recipients = new Map<string, { name: string; slug: string | null; amount: number; totalAllSources: number; sourceCount: number; interventionCount: number; isIndigenous: boolean; state: string | null; orgId: string | null }>();
 
   for (const r of records) {
     const org = r.organizations as any;
@@ -110,9 +110,55 @@ async function getFunderReportData(funderKey: string) {
         name: org.name,
         slug: org.slug,
         amount: r.amount_dollars || 0,
+        totalAllSources: 0,
+        sourceCount: 0,
+        interventionCount: 0,
         isIndigenous: org.is_indigenous_org || false,
         state: org.state,
+        orgId: r.alma_organization_id,
       });
+    }
+  }
+
+  // Enrich with all-source funding totals and intervention counts
+  const orgIds = [...new Set(records.map(r => r.alma_organization_id).filter(Boolean))] as string[];
+  if (orgIds.length > 0) {
+    const { data: allSourceFunding } = await supabase
+      .from('justice_funding')
+      .select('alma_organization_id, source, amount_dollars')
+      .in('alma_organization_id', orgIds)
+      .not('amount_dollars', 'is', null);
+
+    // Aggregate all-source totals per org
+    const orgTotals = new Map<string, { total: number; sources: Set<string> }>();
+    for (const f of (allSourceFunding || [])) {
+      const existing = orgTotals.get(f.alma_organization_id!);
+      if (existing) {
+        existing.total += f.amount_dollars || 0;
+        existing.sources.add(f.source);
+      } else {
+        orgTotals.set(f.alma_organization_id!, { total: f.amount_dollars || 0, sources: new Set([f.source]) });
+      }
+    }
+
+    // Count interventions per org
+    const orgInterventionCounts = new Map<string, number>();
+    for (const i of allInterventions) {
+      if (i.operating_organization_id && orgIds.includes(i.operating_organization_id)) {
+        orgInterventionCounts.set(i.operating_organization_id, (orgInterventionCounts.get(i.operating_organization_id) || 0) + 1);
+      }
+    }
+
+    // Apply to recipients
+    for (const r of recipients.values()) {
+      if (r.orgId) {
+        const totals = orgTotals.get(r.orgId);
+        if (totals) {
+          r.totalAllSources = totals.total;
+          r.sourceCount = totals.sources.size;
+        }
+        r.interventionCount = orgInterventionCounts.get(r.orgId) || 0;
+      }
     }
   }
 
@@ -250,7 +296,9 @@ export default async function FunderReportPage({ params }: { params: { funder: s
                   <tr className="bg-gray-50">
                     <th className="text-left px-5 py-3 text-xs font-mono text-gray-500 uppercase">Recipient</th>
                     <th className="text-left px-5 py-3 text-xs font-mono text-gray-500 uppercase">Location</th>
-                    <th className="text-right px-5 py-3 text-xs font-mono text-gray-500 uppercase">Amount</th>
+                    <th className="text-right px-5 py-3 text-xs font-mono text-gray-500 uppercase">{config.shortName}</th>
+                    <th className="text-right px-5 py-3 text-xs font-mono text-gray-500 uppercase">All Sources</th>
+                    <th className="text-center px-5 py-3 text-xs font-mono text-gray-500 uppercase">Programs</th>
                     <th className="text-center px-5 py-3 text-xs font-mono text-gray-500 uppercase">ACCO</th>
                   </tr>
                 </thead>
@@ -265,9 +313,28 @@ export default async function FunderReportPage({ params }: { params: { funder: s
                         ) : (
                           <span className="text-gray-700">{r.name}</span>
                         )}
+                        {r.sourceCount > 1 && (
+                          <span className="ml-2 text-xs text-gray-400 font-mono">{r.sourceCount} sources</span>
+                        )}
                       </td>
                       <td className="px-5 py-3 text-sm text-gray-500">{r.state || '—'}</td>
                       <td className="px-5 py-3 text-sm text-right font-mono">{formatDollars(r.amount)}</td>
+                      <td className="px-5 py-3 text-sm text-right font-mono">
+                        {r.totalAllSources > r.amount ? (
+                          <span className="text-[#059669] font-medium">{formatDollars(r.totalAllSources)}</span>
+                        ) : (
+                          <span className="text-gray-300">—</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-3 text-center">
+                        {r.interventionCount > 0 ? (
+                          <span className="inline-flex items-center gap-1 text-xs text-[#059669] font-medium">
+                            <BarChart3 className="w-3 h-3" /> {r.interventionCount}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-300">0</span>
+                        )}
+                      </td>
                       <td className="px-5 py-3 text-center">
                         {r.isIndigenous ? (
                           <span className="inline-flex items-center gap-1 text-xs text-purple-600">
