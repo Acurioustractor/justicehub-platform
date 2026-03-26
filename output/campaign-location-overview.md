@@ -1,263 +1,334 @@
-# CONTAINED Campaign — People, Locations & Money
+# CONTAINED Campaign — Complete Network Map
 
-**Generated:** 2026-03-26 | **40+ active contacts** | **6 tour stops** | **Share freely**
+**Generated:** 2026-03-26 | **130+ scored contacts** | **6 tour stops** | **Share freely**
 
 ---
 
-## 🔥 CALLS TO MAKE TODAY
+## 🔥 RESPOND TODAY — Money & Venue Offers
 
-| Who | Why | Contact |
+| Who | What They Said/Offered | Action |
+|-----|----------------------|--------|
+| **Dr Romina Santos Reyftmann** | "Is there a way to donate some funds? Happy to support." | **SEND DONATION LINK NOW** |
+| **John Katahanas** | "Do you have a sign up to donate time/effort?" | **SEND BACKER LINK** |
+| **Andrew Bloyce** | Offered to create a digital art piece | **RESPOND — free creative collab** |
+| **Shannon Cant** (YAC) | YAC wants to HOST the Container in Brisbane | **CONFIRM VENUE** |
+| **Peter Norden AO** | 14 unread LinkedIn messages. AO. Major YJ voice. | **CALL: 0409 04994** |
+| **Ariane Dozer** | "Love this — looking forward to circling back" | **FOLLOW UP — she's ready** |
+| **Peter Rowe** | Invited you to write op-ed for First Nations News | **WRITE THE OP-ED** |
+| **Tom DONAGHY** | Tagged 19 people incl PRF, Ash Barty, Mark Bouris, Bernie. Wants "guiding coalition." | **Follow up with specific asks** |
+
+---
+
+## PEOPLE BY LOCATION — Everyone Who Asked About a City
+
+### 📍 SYDNEY / MT DRUITT, NSW — Apr 25
+
+**Partner:** Mounty Yarns | **12 storytellers** | **Room 3:** Youth-led storytelling
+
+#### People who asked about Sydney specifically:
+
+| Name | Org/Role | What They Said | Score |
+|------|----------|---------------|-------|
+| **Joy Woods** | Services | "What are the details for Sydney? Keen to show my support." | 67 |
+| **Emma Maiden** | Uniting — Dir of Advocacy | "Looking forward to Sydney details, hoping NSW MPs come." | 66 |
+| **Kyrstie Dunn** | Citizen | Wants CONTAINED in Sydney. Gave leads: Sarah Davies, Legal Aid, ACCs. | — |
+| **Anissa Jones** | Research | "Sydney location? Will you go to Canberra? Federal level too." | 54 |
+| **Nicole Mekler** | JustReinvest Mt Druitt | "Will attend." Youth Advocacy lead. | 49 |
+
+#### Key campaign contacts:
+
+| Name | Org | Score | Status | What They Bring |
+|------|-----|-------|--------|-----------------|
+| **Teya Dusseldorp** | Dusseldorp Forum | 92 | ⚠️ Overdue | $40-80K funder. Mt Druitt is her patch. |
+| **Jessica Duffy** | Dusseldorp team | 71 | Responded | Will join CONTAINED meeting. Part of funding circle. |
+| **Natalie Chiappazzo** | WSU | — | Warm | Dean wants CONTAINED as experiential learning at campus. |
+| **Bernie Shakeshaft** | BackTrack | — | Active | Will repost. Connected Tim Bennett. |
+| **Jade Harley** | UnLtd — Dir of Impact | 70 | Pending | ATTENDED the launch. Already warm. Corporate partnership. |
+| **Christine Thomas** | Calmer Kids | 59 | Pending | Was AT THE FARM when boys first saw CONTAINED. "My heart is still overflowing." Testimonial. |
+
+#### LinkedIn commenters (NSW-relevant):
+
+| Name | What They Said | Score |
+|------|---------------|-------|
+| **Emily Williams** | Tagged Tabitha Lean + "know a few pollies that should see this" — intro to politicians | 58 |
+| **Davina Jones** | 7 years with prisoners, CEO Interlace Advisory. Speaker for tour stops. | 71 |
+| **Helen Spain** | Lawyer, Non Executive Director. Legal authority. | 65 |
+| **Linda Ryle** | Senior Lawyer, CALM Australia. "Love must overwhelm harm." Cultural/legal authority. | 62 |
+
+#### 💰 Money: Teya ($40-80K), WSU (academic), UnLtd/Jade (corporate), Uniting/Emma (venue)
+
+---
+
+### 📍 BRISBANE, QLD — May 15 (NEW)
+
+**Partner:** YAC (venue confirmed!) + ATSICHS | **Room 3:** QLD community orgs
+
+#### People who asked about Brisbane / QLD:
+
+| Name | Org/Role | What They Said | Score |
+|------|----------|---------------|-------|
+| **Shannon Cant** | YAC | "YAC wants to HOST the Container." Venue partner. | 92 |
+| **Jonty Bush** | QLD Government | Yarning with YAC about bringing Container to Brisbane end of April. | 71 |
+| **Jen Shaw** | Emerge Toowoomba | "Goosebumps, incredible program I'd love to visit." (Post 2 comment today) | — |
+| **Viki Hannah** | Regional Training QLD | "Dignity in this." Youth/family intervention worker. QLD connection. | 58 |
+| **sue barstow** | DICWG FNQ | Offered support + talked about successful young person programs. Ask what programs. | 53 |
+
+#### Key campaign contacts:
+
+| Name | Org | Score | Status | What They Bring |
+|------|-----|-------|--------|-----------------|
+| **Tim Bennett** | Via Bernie | — | 🔥 HOT | Noosa. QLD ideas. **Might help with travel costs.** |
+| **Megan Argent** | Dept of Youth Justice QLD | 66 | Pending | Clinical Practice Leader. **Government insider.** |
+| **Tammy Baart** | Blak Ignited | 66 | Pending | Indigenous-led. "Time we start investing in a legacy." |
+| **Jay** | Social Impact Hub | 69 | Responded | Catalysing Impact induction 31 Mar. Partnership. |
+| **Prof Selena Bartlett** | Thriving Minds podcast | 64 | Responded | Podcast interview scheduled. Brisbane academic. |
+| **Hannah March** | Adelaide/national | 60 | Responded | Suggests pushing Adelaide stop to ALP Conference Jul 23-25. |
+
+#### Orgs to contact:
+
+| Org | Why | Funding |
 |-----|-----|---------|
-| **Peter Norden AO** | 14 unread LinkedIn messages. Major YJ voice. AO. Persistent. VIC stop anchor. | 0409 04994 |
-| **Teya Dusseldorp** | OVERDUE. Was due Mar 25. Follow up NOW. | Via LinkedIn/email |
-| **Tim Bennett** | HOT. Wants to call you. Has your number. QLD ideas + travel costs. | Waiting for his call |
+| YAC (Shannon) | **HOSTING — confirmed** | Venue saves $10-20K |
+| ATSICHS Brisbane | Biggest Indigenous health, SEQ | $81M |
+| Kummara Ltd | West End, child/family | $48M |
+| Brisbane Youth Service | Service org (scored 65) | — |
+| MMAD (Musicians Making A Difference) | Run Futures Radio 24/7 INSIDE detention. Perfect alignment. | — |
+
+#### 💰 Money: Tim Bennett (travel+), Shannon/YAC (venue), Jonty Bush (govt), MMAD (collab)
 
 ---
 
-## PEOPLE BY LOCATION
+### 📍 TOWNSVILLE / PALM ISLAND, QLD — Jul 1 (NEW)
 
-### 📍 MOUNT DRUITT / SYDNEY, NSW — Tour Stop Apr 25
+**Partner:** PICC | **Room 3:** 21 programs, 200 staff, $44M, $0 philanthropy
 
-**Partner:** Mounty Yarns | **12 storytellers on the ground**
+#### Key contacts:
 
-#### Campaign Contacts
+| Name | Org | Status | What They Bring |
+|------|-----|--------|-----------------|
+| **Julia Payne** | Paul Ramsay Foundation | ❄️ Cold | $100-200K. jpayne@paulramsayfoundation.org.au. Also Suzie Warrick. |
+| **Rachel Atkinson** | PICC CEO | Need to build | 200 staff. THE proof point. |
+| **Mindy Sotiri** | JRI National ED | Pending | Key coalition partner. Robert Tickner is Chair. |
+| **Robert Tickner** | Former Minister for Aboriginal Affairs | 62 | "Billion dollar failed system." Political credibility opens doors with MPs. |
 
-| Name | Org | Score | Status | What They Bring |
-|------|-----|-------|--------|-----------------|
-| **Teya Dusseldorp** | Dusseldorp Forum | 92 | ⚠️ Overdue | **$40-80K funder.** Mt Druitt is her patch. Dual-funds Mounty Yarns. |
-| **Jessica Duffy** | Dusseldorp team | 71 | Responded | Will try to join CONTAINED meeting. Connected to Teya. |
-| **Natalie Chiappazzo** | WSU | — | Warm | Dean wants CONTAINED as experiential learning on campus. |
-| **Bernie Shakeshaft** | BackTrack | — | Active | Legend. Will repost. Connected Tim Bennett. Armidale — could come to Mt Druitt. |
-| **Kyrstie Dunn** | Citizen / JR NSW | — | Warm | Wants CONTAINED in Sydney. Gave leads: Sarah Davies, Legal Aid, ACCs. |
-| **Joy Woods** | Unknown | 67 | Pending | Asked "What are the details for Sydney? Keen to show my support." **RESPOND.** |
-| **Emma Maiden** | Uniting — Dir of Advocacy | 66 | Pending | "Looking forward to Sydney details, hoping NSW MPs come." Uniting = major org. Venue partner? |
-| **Alexandra Cordukes** | Orange Sky contact | — | Warm | Has contacts for ACT. |
-| **Jade Harley** | UnLtd — Dir of Impact | 70 | Pending | ATTENDED the launch. Already warm. Intro to UnLtd network. Corporate partnership. |
-
-#### Orgs to Contact in NSW
-
-| Org | Why | Interventions | Funding |
-|-----|-----|---------------|---------|
-| Just Reinvest NSW | Bourke model. Dusseldorp funds them. 11 interventions. | 11 | $0 philanthropic |
-| Ted Noffs Foundation | Biggest NSW intervention count | 14 | $338M |
-| BackTrack (via Bernie) | 87% success rate. Armidale. | — | — |
-| Uniting (via Emma Maiden) | Director of Advocacy is keen. Major org. Venue? | — | — |
-
-#### 💰 Money Opportunity
-- **Teya / Dusseldorp:** $40-80K for 2 basecamp coordinators (Mt Druitt + Alice Springs)
-- **WSU Dean:** Academic partnership — could fund CONTAINED as teaching infrastructure
-- **UnLtd (Jade Harley):** Corporate partnership / sponsorship potential
+#### 💰 Money: PRF ($100-200K), PICC as proof point for all funders
 
 ---
 
-### 📍 BRISBANE, QLD — Tour Stop May 15 (NEW)
-
-**Partner:** TBD — ATSICHS + Kummara + QATSICPP
-
-#### Campaign Contacts
-
-| Name | Org | Score | Status | What They Bring |
-|------|-----|-------|--------|-----------------|
-| **Tim Bennett** | Via Bernie | — | 🔥 HOT | Noosa. QLD youth justice ideas. **Might help with travel costs.** Key connector. |
-| **Shannon Cant** | YAC (Youth Advocacy Centre) | 92 | Responded | **YAC wants to HOST the Container.** Meeting happened 23 Mar. Venue partner. |
-| **Jonty Bush** | Government (QLD) | 71 | Pending | Yarning with YAC Monday about bringing Container to Brisbane end of April. |
-| **Jen Shaw** | Emerge Toowoomba | — | Commented today | "Goosebumps, I'd love to visit." Invite to Brisbane stop. |
-| **Jay** | Social Impact Hub | 69 | Responded | Catalysing Impact induction 31 Mar. Partnership potential. |
-| **Megan Argent** | Dept of Youth Justice QLD | 66 | Pending | Clinical Practice Leader. **Government insider.** Careful engagement. |
-| **Tammy Baart** | Blak Ignited | 66 | Pending | Indigenous-led. "Time we start investing in a legacy." Cultural authority. |
-
-#### Orgs to Contact in Brisbane/QLD
-
-| Org | Why | Interventions | Funding |
-|-----|-----|---------------|---------|
-| YAC (Youth Advocacy Centre) | **Shannon wants to HOST.** Already committed. | — | — |
-| ATSICHS Brisbane | Biggest Indigenous health org in SEQ | 1 | $81M |
-| Kummara Ltd | West End. Child/family services. | 1 | $48M |
-| QATSICPP | Peak body for child protection | 1 | $5M |
-| Brisbane Youth Service | Service org, ally (scored 65) | — | — |
-| Carbal Aboriginal Health | Ally (scored 67) | — | — |
-
-#### 💰 Money Opportunity
-- **Tim Bennett:** Travel costs, QLD connections, possibly direct funding
-- **Shannon Cant / YAC:** Venue partner (saves $10-20K)
-- **Jonty Bush:** Government support / endorsement
-- **Blak Ignited (Tammy Baart):** Indigenous-led partnership
-
----
-
-### 📍 TOWNSVILLE / PALM ISLAND, QLD — Tour Stop Jul 1 (NEW)
-
-**Partner:** PICC | **Room 3:** 21 programs, 200 staff, $44M
-
-#### Campaign Contacts
-
-| Name | Org | Score | Status | What They Bring |
-|------|-----|-------|--------|-----------------|
-| **Julia Payne** | Paul Ramsay Foundation | — | ❄️ Cold | jpayne@paulramsayfoundation.org.au. Re-engage Mar 31. $100-200K ask. |
-| **PICC Leadership / Rachel Atkinson** | PICC | — | Need to build | CEO. 200 staff. 21 programs. THE proof point. |
-
-#### Orgs to Contact
-
-| Org | Why | Interventions | Funding |
-|-----|-----|---------------|---------|
-| Palm Island Community Company | **THE anchor.** 21 programs, $0 philanthropy. | 21 | $44M |
-| TAIHS Youth Support | Major Townsville service | 1 | $43M |
-| The Lighthouse | After-hours youth diversion, Garbutt | 1 | $27M |
-| Palm Island Community Justice Group | Connected to PICC | 0 | $23M |
-
-#### 💰 Money Opportunity
-- **PRF (Julia Payne):** $100-200K for Palm Island basecamp + evidence layer
-- PICC's 21 programs with $0 philanthropy = the clearest funding gap in the country
-
----
-
-### 📍 ADELAIDE, SA — Tour Stop Jun 15
+### 📍 ADELAIDE, SA — Jun 15
 
 **Partner:** Reintegration Conference + JRI
 
-#### Campaign Contacts
+#### People who asked about Adelaide:
 
-| Name | Org | Score | Status | What They Bring |
-|------|-----|-------|--------|-----------------|
-| None yet | — | — | — | **Needs research sprint** |
+| Name | Org/Role | What They Said | Score |
+|------|----------|---------------|-------|
+| **Tracey Newman** | Services | "Making calls to get Container there." **Adelaide champion.** Send her assets/info pack. | 64 |
+| **Sophie Bretag** | City of Onkaparinga | "We need to support our humans in a human centric way." Connect with Tracey for planning. | 64 |
+| **Hannah March** | Services | Suggests ALP National Conference Jul 23-25 as timing. Adelaide host partner. | 60 |
 
-#### 💰 Money Opportunity
-- Conference partnership reduces venue costs
-- SA philanthropy is relatively untapped
-
----
-
-### 📍 PERTH, WA — Tour Stop Aug 1
-
-**Partner:** UWA Social Sciences
-
-#### Campaign Contacts
-
-| Name | Org | Score | Status | What They Bring |
-|------|-----|-------|--------|-----------------|
-| **Lucy Stronach** | Minderoo Foundation | 77 | Follow-up | $150-300K ask. Board decision June. Fund a tour stop ($25-75K). |
-| **Hayley Passmore** | Academic | 73 | Responded | Wants Perth contacts. Keen on consortium with Aboriginal-led orgs. Academic partner. |
-
-#### Orgs to Contact
-
-| Org | Why |
-|-----|-----|
-| Wungening Aboriginal Corporation | Perth, healing services |
-| Aboriginal Legal Service of WA | Legal advocacy |
-| Unit 18 survivors/advocates | Most powerful Room 3 testimony in Australia |
-
-#### 💰 Money Opportunity
-- **Minderoo (Lucy):** $25-75K for Perth stop specifically, or $150-300K national
-- **Hayley Passmore:** Academic consortium funding
+#### 💰 Money: Conference reduces venue cost. Tracey + Sophie = local champions to unlock SA philanthropy.
 
 ---
 
-### 📍 TENNANT CREEK / ALICE SPRINGS, NT — Tour Stop Sep 15
+### 📍 PERTH, WA — Aug 1
+
+**Partner:** UWA + JRI Perth
+
+#### People who asked about Perth:
+
+| Name | Org/Role | What They Said | Score |
+|------|----------|---------------|-------|
+| **Mark McPartland** | Corporate | "Where in Perth will you be setting up? Forest Chase?" **Perth demand signal.** | 54 |
+| **Samgiita Hope** | Heart2Heart | "When will you be in Perth?" **Perth demand signal #2.** | 49 |
+| **Kimberley Wilde** | JRI Perth | Actively discussing Perth as Container stop. **Key Perth anchor.** | 51 |
+| **Hayley Passmore** | Academic | Wants Perth contacts. Keen on consortium with Aboriginal-led orgs. | 73 |
+| **Michelle Wieberneit** | UWA | Were already chatting about CONTAINED. Academic anchor. | 53 |
+
+#### Key contacts:
+
+| Name | Org | Score | Status | What They Bring |
+|------|-----|-------|--------|-----------------|
+| **Lucy Stronach** | Minderoo | 77 | Follow-up | $25-75K for a stop. Board decision June. |
+
+#### 💰 Money: Minderoo ($25-75K per stop or $150-300K national), UWA academic consortium
+
+---
+
+### 📍 TENNANT CREEK / ALICE SPRINGS, NT — Sep 15
 
 **Partner:** Oonchiumpa | **6 people on the ground**
 
-#### Campaign Contacts
+#### Key contacts: Kristy Bloomfield, Tanya Turner, Patricia Ann Miller AO, Max Bloomfield, Aunty Bev & Uncle Terry, Prof Helen Milroy
 
-| Name | Org | Score | Status | What They Bring |
-|------|-----|-------|--------|-----------------|
-| **Kristy Bloomfield** | Oonchiumpa | — | Active | Co-Founder. Grandfather stolen generation. The story anchor. |
-| **Tanya Turner** | Oonchiumpa | — | Active | Co-Founder. UWA law. Supreme Court. Came home. |
-| **Prof Helen Milroy** | ANU True Justice | — | Connected | Academic credibility. ANU partnership. |
-
-#### 💰 Money Opportunity
-- **Dusseldorp (Teya):** Alice Springs is one of the 2 basecamp coordinator locations ($20-40K)
-- **Wilya Janta:** Dusseldorp-funded housing in Tennant Creek — connection point
+#### 💰 Money: Dusseldorp ($20-40K for Alice Springs coordinator), Wilya Janta connection
 
 ---
 
-### 📍 MELBOURNE, VIC — NOT A STOP YET (should be)
+### 📍 MELBOURNE, VIC — NOT A STOP YET
 
-#### Campaign Contacts
+#### People who asked about Melbourne:
 
-| Name | Org | Score | Status | What They Bring |
-|------|-----|-------|--------|-----------------|
-| **Peter Norden AO** | Youth Justice Advocate | — | 🔥 HOT | 14 unread messages. AO recipient. Major voice. **CALL HIM.** |
-| **Davina Jones** | Interlace Advisory | 71 | Pending | 7 years with prisoners. CEO. Deeply aligned. Adviser / speaking partner. |
-| **Moira Were AM** | Barrister | 74 | Pending | Tagged Zoe Brooks about The Good Bank Gallery as venue. High-profile. AM = credibility. |
+| Name | Org/Role | What They Said | Score |
+|------|----------|---------------|-------|
+| **Peter Norden AO** | Youth Justice Advocate | 14 unread messages. AO. **CALL HIM.** 0409 04994 | — |
+| **Dr Katrina Raynor** | Research | "Suggested Melbourne Design Week as venue. Love this, would love to see in Melbourne." | 53 |
+| **Ashlee Cooper** | Services | "I would LOVE to see this in Geelong or Melbourne." | 51 |
+| **Moira Were AM** | Barrister | Tagged Zoe Brooks about The Good Bank Gallery as venue. AM = credibility. | 74 |
+| **Davina Jones** | Interlace Advisory CEO | 7 years with prisoners. Deeply aligned. Speaker. | 71 |
 
-**Why VIC matters:** Cherry Creek just opened — 140 beds, **$7,304/day** (most expensive in Australia). Peter Norden is desperate to connect. Moira Were has a venue idea.
-
-#### 💰 Money Opportunity
-- Peter Norden's network = access to VIC philanthropic + justice reform community
-- Moira Were AM = credibility for fundraising
-- Cherry Creek as the national cost story
+**Why it must be a stop:** Cherry Creek — 140 beds, **$7,304/day**. Most expensive detention in Australia. Peter Norden is desperate to connect. 3 people asking. Moira Were has a venue idea. Dr Raynor suggests Design Week.
 
 ---
 
-## UNTAGGED PEOPLE — Not Linked to a Location Yet
+### 📍 CANBERRA, ACT — NOT A STOP YET
 
-| Name | Org | Score | Status | Angle |
-|------|-----|-------|--------|-------|
-| **Ariane Dozer** | Justice Project | 75 | Responded | "Love this — apologies for radio silence, looking forward to circling back." **Follow up NOW — she is ready.** Funder. |
-| **Peter Rowe** | First Nations News | 77 | Responded | **MEDIA.** Invited you to write op-ed. Replied 12 Mar with format details. **WRITE AND SEND THE OP-ED.** |
-| **Priscilla Ennals** | TBC | — | Warm | Met you in person. Loved the post. Where did you meet? |
-| **Adam Robinson** | StreetSmart Australia | 68 | Pending | Founder / Chief of Impact. Tour stop sponsorship potential. |
-| **Tom Allen** | Impact Boom / Business for Good | 66 | Pending | Media/amplification. Feature on Impact Boom? |
-| **Paul Kelly** | Former Chief Medical Officer | 69 | Pending | "Detention as public health crisis" angle. Powerful champion. |
-| **Noreen Vu** | Local Government CEO | 68 | Pending | Could champion Container at council level. Venue at council? |
-| **Deleece Hall** | Former foster parent | 66 | Pending | "Change is possible when they can imagine a different life." Lived experience voice. |
-| **Michael Kwan** | Praxis Youth | 66 | Pending | "Played a small part" — already involved. Re-engage. |
-| **Genelee Mazarello** | Third Sector / NJF | 68 | Responded | National Justice Forum x ACT meeting 22 Mar — accepted. |
-| **Victoria Van Schie** | Unknown | 66 | Pending | "The carceral system for our babies needs to be abolished." Strong advocate. |
-| **Delilah MacGillivray** | Unknown | 71 | Sent | dmagilla@icloud.com. Previously sent. Re-engage. |
-| **Alice Mahar** | Cornerstone Network | 68 | Sent | alice@cornerstorenetwork.org.au. Community org. Re-engage. |
-| **Jess Lilley** | The Open Arms | 69 | Sent | jess@theopenarms.com.au. Re-engage with tour schedule. |
-| **Glenda Liell** | HMPPS HQ (UK prison service) | 66 | Pending | International interest. UK leg of world tour? |
-| **Alexander Rose** | Kingston Uni UK | — | Warm | Social work student. Oct 2026 placement. |
-| **Aaron Baker** | LinkedIn | — | Warm | Commented on Diagrama article. |
+#### People who asked about Canberra:
+
+| Name | What They Said | Score |
+|------|---------------|-------|
+| **Rebecca Minty** | ACT Government. "ACT govt recently committed to new model of care for youth detention." **Government insider.** | 62 |
+| **Anissa Jones** | "Will you go to Canberra? Federal level too." | 54 |
+| **PJ Hewitt** | "Josh Hewitt — host in Canberra!" Hosting connection. | 58 |
+| **Alexandra Cordukes** | Has contacts for ACT. | — |
 
 ---
 
-## WARM MONEY — People Who Could Bring Funding
+### 📍 GEELONG, VIC — DEMAND SIGNAL
+
+| **Ashlee Cooper** | "I would LOVE to see this in Geelong or Melbourne." | 51 |
+
+---
+
+### 🌍 INTERNATIONAL — UK / WORLD TOUR
+
+| Name | Org/Role | What They Said | Score |
+|------|----------|---------------|-------|
+| **Glenda Liell** | HMPPS HQ (UK prison service) | International interest. UK leg contacts. | 66 |
+| **Prof Kevin Haines** | Uni of South Wales | UK youth custody reduction expert (8000→400). Academic ally. | 57 |
+| **Alexander Rose** | Kingston Uni UK | Social work student. Oct 2026 placement. | — |
+
+---
+
+## ALL LINKEDIN COMMENTERS WITH NOTABLE QUOTES
+
+| Name | What They Said | Score | Action |
+|------|---------------|-------|--------|
+| **Sally Anderson** | Container "should be exhibited in an Art Gallery — installation art" | 63 | Gallery partnership for stops |
+| **Willow Aliento** | Every university campus that teaches policing, law, social work, education | 51 | University circuit idea |
+| **Erin Maxwell** | "Community-led alternatives exist, measurably effective, cost a fraction" | 59 | Evidence-aware — content contributor |
+| **Tasman Munro** | "Gotta get people feeling this stuff." Tagged Rohan Lulham. | 59 | Connect |
+| **Arianna Petra Watson** | "Fancy a chat with Ben?" Mentioned Fringe. Has connections. | 59 | Schedule chat |
+| **Andy Kazim** | Called for shifting discourse away from "tough on crime" | 65 | Connect |
+| **Victoria Van Schie** | "The carceral system for our babies needs to be abolished" | 66 | Strong advocate |
+| **Carey Sipp** | 25 years interested. "Everything we need we already have." | 51 | Long-term thinker |
+| **Ric Cairns** | Brandino. "An arrow to the heart of our dysfunction." | 52 | Pro-bono brand support |
+| **Jessamy House** | "The evidence is clear that youth detention does more harm than good" | 60 | Connect |
+| **Tom Wensley** | EPIC Pathways GM. Youth pathways org. | 63 | Partnership |
+| **Rachel G.** | SHINE for Kids. Youth-justice aligned org. | 44 | Partnership |
+| **Felicity J.** | Bluefin Resources. "Humans need love." | 52 | Connect |
+| **Sara Newton** | "How does someone learn to make better decisions without feeling of safety" | 56 | Connect |
+| **Linda Apps** | Shared Scotland link from The Justice Map. Content ally. | 47 | Evidence sharing |
+
+---
+
+## WARM MONEY — Complete Pipeline
+
+### Tier 1: Major Funders
 
 | Name | Org | Potential | Status | Next Step |
 |------|-----|-----------|--------|-----------|
-| **Teya Dusseldorp** | Dusseldorp Forum | $40-80K | ⚠️ OVERDUE | Follow up TOMORROW |
-| **Julia Payne** | Paul Ramsay Foundation | $100-200K | ❄️ Cold | Re-engage Mar 31 |
-| **Lucy Stronach** | Minderoo | $150-300K (or $25-75K per stop) | Follow-up | Call week Apr 6 |
-| **Tim Bennett** | Personal / QLD connections | Travel costs + QLD funding ideas | 🔥 HOT | Waiting for his call |
-| **Ariane Dozer** | Justice Project | Unknown — partnership | Responded | **Follow up NOW. She said she's ready.** |
-| **Shannon Cant** | YAC Brisbane | Venue (saves $10-20K) | Responded | **YAC wants to HOST.** Confirm. |
-| **Jessica Duffy** | Dusseldorp team | Part of Teya's circle | Responded | Via Teya |
-| **Jade Harley** | UnLtd | Corporate partnership | Pending | Already attended launch. Ask for intro to network. |
-| **Adam Robinson** | StreetSmart Australia | Tour stop sponsorship | Pending | Propose meeting. |
-| **Peter Norden AO** | Personal network | VIC philanthropic access | 🔥 HOT | **CALL: 0409 04994** |
-| **Moira Were AM** | Personal + Good Bank Gallery | Venue + credibility | Pending | Follow up on gallery venue idea. |
-| **Natalie Chiappazzo** | WSU Dean | Academic partnership funding | Warm | Follow up on Dean's plan. |
-| **Peter Rowe** | First Nations News | Media reach (free) | Responded | **WRITE THE OP-ED.** |
-| **Tom Allen** | Impact Boom | Media reach (free) | Pending | Feature on podcast. |
+| **Teya Dusseldorp** | Dusseldorp Forum | $40-80K | ⚠️ Overdue | **TOMORROW** |
+| **Julia Payne** | PRF | $100-200K | ❄️ Cold | Re-engage Mar 31 |
+| **Lucy Stronach** | Minderoo | $150-300K | Follow-up | Call week Apr 6 |
+
+### Tier 2: Tour Stop Funding / Venues
+
+| Name | Org | Potential | Status | Next Step |
+|------|-----|-----------|--------|-----------|
+| **Tim Bennett** | Personal / QLD | Travel costs + QLD funding | 🔥 HOT | Waiting for call |
+| **Shannon Cant** | YAC Brisbane | Venue ($10-20K saved) | Responded | **Confirm** |
+| **Ariane Dozer** | Justice Project | Partnership funding | Responded | **Follow up NOW** |
+| **Moira Were AM** | Good Bank Gallery | VIC venue | Pending | Follow up on gallery |
+| **Dr Katrina Raynor** | Melbourne Design Week | VIC venue/event | Pending | Follow up |
+| **Natalie Chiappazzo** | WSU Dean | Academic partnership $ | Warm | Dean's plan |
+| **Adam Robinson** | StreetSmart Australia | Tour stop sponsorship | Pending | Propose meeting |
+
+### Tier 3: Direct Donations / Offers
+
+| Name | What They Offered | Action |
+|------|------------------|--------|
+| **Dr Romina Santos Reyftmann** | "Is there a way to donate funds?" | **SEND LINK NOW** |
+| **John Katahanas** | "Sign up to donate time/effort?" | **SEND BACKER LINK** |
+| **Andrew Bloyce** | Free digital art piece | **RESPOND** |
+| **Ric Cairns** | Brandino — pro-bono brand support | Reply |
+| **MMAD** | Futures Radio collaboration (runs INSIDE detention) | Reply |
+
+### Tier 4: Media / Amplification (Free)
+
+| Name | Org | What | Status |
+|------|-----|------|--------|
+| **Peter Rowe** | First Nations News | Op-ed invitation — **WRITE IT** | Responded |
+| **Prof Selena Bartlett** | Thriving Minds podcast | Podcast interview | Responded |
+| **Tom Allen** | Impact Boom / Business for Good | Feature / podcast | Pending |
+| **Tom DONAGHY** | Personal | Tagged 19 people incl PRF, Ash Barty, Mark Bouris | Pending |
 
 ---
 
-## SUMMARY: What To Do This Week
+## ACTION CHECKLIST
 
-### Today (Mar 26)
+### Today
 - [ ] Call Peter Norden — 0409 04994
-- [ ] Follow up Ariane Dozer — "she is ready"
-- [ ] Pin comment on LinkedIn Post 2 with funder links
+- [ ] Send donation link to Dr Romina Santos Reyftmann
+- [ ] Send backer link to John Katahanas
+- [ ] Respond to Andrew Bloyce (digital art)
+- [ ] Follow up Ariane Dozer
+- [ ] Pin comment on Post 2 with funder links
 
 ### Tomorrow (Mar 27)
 - [ ] Follow up Teya Dusseldorp
-- [ ] Respond to Joy Woods — Sydney details
-- [ ] Respond to Emma Maiden (Uniting) — Sydney details
+- [ ] Respond Joy Woods — Sydney details
+- [ ] Respond Emma Maiden (Uniting) — Sydney venue?
+- [ ] Respond Mark McPartland — Perth plans
+- [ ] Respond Samgiita Hope — Perth plans
 
 ### This Week
-- [ ] Wait for Tim Bennett's call
+- [ ] Tim Bennett's call
 - [ ] Confirm Shannon Cant / YAC Brisbane hosting
-- [ ] Follow up Jonty Bush re Brisbane end of April
-- [ ] Publish Post 3 (cost data) — link to calculator + evidence gaps
-- [ ] Reply Jen Shaw — invite to Brisbane stop
-- [ ] Write and send the op-ed to Peter Rowe (First Nations News)
-- [ ] Thank Kyrstie Dunn for leads
+- [ ] Publish Post 3 (cost data)
+- [ ] Write op-ed for Peter Rowe (First Nations News)
+- [ ] Send Tracey Newman the Adelaide info pack
+- [ ] Connect Sophie Bretag with Tracey for Adelaide
+- [ ] Reply Rebecca Minty (ACT Government insider)
+- [ ] Reply MMAD about Futures Radio collab
+- [ ] Follow up Tom DONAGHY — specific intros from his 19 tags
 
 ### Before Mar 31
-- [ ] Re-engage Julia Payne (PRF) — Townsville/PICC angle
+- [ ] Re-engage Julia Payne (PRF)
 - [ ] Contact Rachel Atkinson at PICC
+- [ ] Follow up Hayley Passmore re Perth consortium
+- [ ] Send Kimberley Wilde Perth contact list
 
 ### Before Apr 6
 - [ ] Prepare for Lucy Stronach (Minderoo) call
+
+---
+
+## LINKS TO SHARE
+
+| Page | URL |
+|------|-----|
+| Funder Hub | justicehub.org.au/for-funders |
+| Storytelling Viz | justicehub.org.au/viz/ecosystem-map.html |
+| Impact Calculator | justicehub.org.au/for-funders/calculator |
+| Evidence Gap Matrix | justicehub.org.au/for-funders/evidence-gaps |
+| Funder Comparison | justicehub.org.au/for-funders/compare |
+| Dusseldorp Report | justicehub.org.au/for-funders/report/dusseldorp |
+| PRF Report | justicehub.org.au/for-funders/report/prf |
+| Minderoo Report | justicehub.org.au/for-funders/report/minderoo |
+| PICC Pitch | justicehub.org.au/for-funders/org/palm-island-community-company |
+| Mounty Yarns Pitch | justicehub.org.au/for-funders/org/mounty-yarns |
+| Oonchiumpa Pitch | justicehub.org.au/for-funders/org/oonchiumpa |
+| Oonchiumpa Article | justicehub.org.au/stories/oonchiumpa-what-happens-when-community-leads |
+| Back This / Donate | justicehub.org.au/back-this |
+| CONTAINED Tour | justicehub.org.au/contained/tour |
