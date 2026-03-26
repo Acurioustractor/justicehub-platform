@@ -13,7 +13,6 @@ import {
   Calendar,
   Sparkles,
 } from 'lucide-react';
-import EmpathyLedgerStories from '@/components/EmpathyLedgerStories';
 import { ActivityFeed } from '@/components/activity-feed';
 import { fmt } from '@/lib/format';
 import { getDetentionCosts } from '@/lib/detention-costs';
@@ -60,10 +59,11 @@ export default async function HomePage() {
       .from('alma_evidence')
       .select('id', { count: 'exact', head: true }),
     supabase
-      .from('alma_stories')
-      .select('id, title, excerpt, story_type, organizations(name, state)')
-      .order('created_at', { ascending: false })
-      .limit(3),
+      .from('articles')
+      .select('id, title, slug, excerpt, featured_image_url, published_at, author_id, profiles:author_id(full_name)')
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .limit(6),
     supabase
       .from('youth_opportunities')
       .select('id', { count: 'exact', head: true })
@@ -421,7 +421,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Stories from the community */}
+        {/* Stories */}
         {stories.length > 0 && (
           <section className="max-w-6xl mx-auto px-6 sm:px-12 pb-16">
             <div className="flex items-baseline justify-between mb-6">
@@ -429,34 +429,32 @@ export default async function HomePage() {
                 className="text-2xl font-bold tracking-tight"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
-                From the community
+                Stories
               </h2>
-              <Link href="/voices" className="text-sm font-semibold text-[#059669] hover:underline flex items-center gap-1">
-                All voices <ArrowRight className="w-3 h-3" />
+              <Link href="/stories" className="text-sm font-semibold text-[#059669] hover:underline flex items-center gap-1">
+                All stories <ArrowRight className="w-3 h-3" />
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {stories.map((story: any) => (
-                <div key={story.id} className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5">
-                  <p className="font-semibold text-sm mb-1">{story.title}</p>
-                  {story.organizations && (
-                    <p className="text-xs text-[#0A0A0A]/40 mb-2">
-                      {story.organizations.name} · {story.organizations.state}
-                    </p>
+                <Link key={story.id} href={`/stories/${story.slug}`} className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+                  {story.featured_image_url && (
+                    <div className="aspect-video rounded-lg overflow-hidden mb-3 bg-[#0A0A0A]/5">
+                      <img src={story.featured_image_url} alt={story.title} className="w-full h-full object-cover" />
+                    </div>
                   )}
+                  <p className="font-semibold text-sm mb-1 group-hover:underline">{story.title}</p>
+                  <p className="text-xs text-[#0A0A0A]/40 mb-2">
+                    {story.profiles?.full_name || 'JusticeHub'}
+                  </p>
                   {story.excerpt && (
                     <p className="text-xs text-[#0A0A0A]/60 line-clamp-3">{story.excerpt}</p>
                   )}
-                </div>
+                </Link>
               ))}
             </div>
           </section>
         )}
-
-        {/* Empathy Ledger Stories */}
-        <section className="max-w-6xl mx-auto px-6 sm:px-12 pb-16">
-          <EmpathyLedgerStories />
-        </section>
 
         {/* Activity Feed — hidden until data is reliable */}
         {false && <ActivityFeed />}
