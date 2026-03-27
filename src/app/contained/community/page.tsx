@@ -11,7 +11,7 @@ const MAP_POINTS: { city: string; x: number; y: number; people: number; status: 
   { city: 'Brisbane', x: 335, y: 155, people: 9, status: 'confirmed' },
   { city: 'Adelaide', x: 255, y: 215, people: 5, status: 'confirmed' },
   { city: 'Townsville', x: 310, y: 105, people: 4, status: 'confirmed' },
-  { city: 'Perth', x: 100, y: 200, people: 7, status: 'confirmed' },
+  { city: 'Perth', x: 100, y: 200, people: 8, status: 'confirmed' },
   { city: 'Tennant Creek', x: 230, y: 115, people: 2, status: 'confirmed' },
   { city: 'Melbourne', x: 290, y: 235, people: 9, status: 'demand' },
   { city: 'Canberra', x: 315, y: 215, people: 3, status: 'demand' },
@@ -106,10 +106,11 @@ const LOCATIONS: LocationInfo[] = [
   },
   {
     city: 'Perth', state: 'WA', status: 'confirmed', date: 'Jul-Aug', partner: 'UWA + JRI Perth',
-    people: 7, headline: 'Unit 18 / Banksia Hill — kids in adult prison',
+    people: 8, headline: 'Unit 18 / Banksia Hill — kids in adult prison',
     quotes: [
       { name: 'Mark McPartland', org: null, text: 'Where in Perth? Forest Chase?' },
       { name: 'Samgiita Hope', org: 'Heart2Heart', text: 'When will you be in Perth?' },
+      { name: 'Kylie Kerin', org: 'Consultant', text: 'Thinking about how I can support this in Perth.' },
     ],
     orgs: [
       { name: 'Youth Futures WA', detail: '4 programs. Perth youth services.' },
@@ -119,6 +120,7 @@ const LOCATIONS: LocationInfo[] = [
     politicians: [],
     drivers: [
       { name: 'Kimberley Wilde', org: 'JRI Perth', role: 'Key Perth anchor. Actively discussing the stop.' },
+      { name: 'Kylie Kerin', org: 'Social & Community Impact', role: 'Arts community hosting angle. Inter-cultural facilitator.' },
       { name: 'Hayley Passmore', org: 'Academic', role: 'Building consortium with Aboriginal-led orgs. Perth contacts.' },
       { name: 'Michelle Wieberneit', org: 'UWA', role: 'Academic anchor. Already chatting about CONTAINED.' },
     ],
@@ -126,6 +128,7 @@ const LOCATIONS: LocationInfo[] = [
       { name: 'Mark McPartland', org: null, what: '"Where in Perth? Forest Chase?" Demand signal.' },
       { name: 'Samgiita Hope', org: 'Heart2Heart', what: '"When will you be in Perth?" Demand signal.' },
       { name: 'Lucy Stronach', org: 'Minderoo Foundation', what: 'Engaged. Perth is her hometown.' },
+      { name: 'Kylie Kerin', org: 'Consultant', what: 'Arts community hosting. Inter-cultural communicator.' },
     ],
   },
   {
