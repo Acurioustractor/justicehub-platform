@@ -15,7 +15,7 @@
 | 3   | **Adelaide, SA**          | Jun 15    | Reintegration Conference + JRI | 3      | Tentative        |
 | 4   | **Townsville, QLD**       | Jul 1     | PICC                           | 4      | NEW              |
 | 5   | **Adelaide, SA** (return) | Jul 23-25 | ALP National Conference        | —      | IDEA             |
-| 6   | **Perth, WA**             | Aug 1     | UWA + JRI Perth                | 7      | Tentative        |
+| 6   | **Perth, WA**             | Aug 1     | UWA + JRI Perth                | 8      | Tentative        |
 | 7   | **Tennant Creek, NT**     | Sep 15    | Oonchiumpa                     | 2      | Fixed            |
 | 📣  | **Melbourne, VIC**        | TBD       | Demand — 5 asking              | 5      | Should be a stop |
 | 📣  | **Canberra, ACT**         | TBD       | Demand — 3 asking              | 3      | Should be a stop |
@@ -212,7 +212,7 @@
 
 ## 📍 PERTH, WA — Aug 1
 
-**Partner:** UWA + JRI Perth | **7 people** | **Room 3:** Unit 18 / Banksia Hill
+**Partner:** UWA + JRI Perth | **8 people** | **Room 3:** Unit 18 / Banksia Hill
 
 ### People
 | Name | Org | Status | Role |
@@ -221,6 +221,7 @@
 | **Michelle Wieberneit** | UWA | Responded | Academic anchor. Already chatting about CONTAINED. |
 | **Hayley (UWA)** | UWA | Responded | On Feb 2025 video call with Ben. |
 | **Kimberley Wilde** | JRI Perth | Warm | **Key Perth anchor.** Actively discussing stop. |
+| **Kylie Kerin** | Consultant / Social & Community Impact | Warm | Arts community hosting angle. Inter-cultural facilitator. LinkedIn 27 Mar. |
 | **Lucy Stronach** | Minderoo | Follow-up | $25-75K per stop. Board decision June. Hometown. |
 | **Mark McPartland** | Corporate | Pending | "Where in Perth? Forest Chase?" Demand signal. |
 | **Samgiita Hope** | Heart2Heart | Pending | "When will you be in Perth?" Demand signal #2. |
