@@ -92,7 +92,7 @@ const ROLE_STEPS: Record<string, Array<{
     },
     {
       title: 'Evidence Library',
-      description: '1,076 verified interventions with cost data, evidence levels, and outcomes. Filter by state, evidence level, and program type.',
+      description: '1,081 verified interventions with cost data, evidence levels, and outcomes. Filter by state, evidence level, and program type.',
       icon: Search,
       cta: { label: 'Explore evidence', href: '/intelligence' },
     },

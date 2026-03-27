@@ -2,30 +2,38 @@
 
 ---
 
-## Email 1: Teya Dusseldorp — Dusseldorp Forum [DRAFT COMPLETE — HOLD]
-**Subject:** Mounty Yarns is live on JusticeHub — your ecosystem is already here
+## Email 1: Teya Dusseldorp — Dusseldorp Forum [READY TO SEND]
+**Subject:** Your Year in Review through our lens — 19 partners, three pillars, one platform
 **Send date:** 27 March 2026
 
 Hi Teya,
 
-Mounty Yarns went live on JusticeHub last week. Their narrative practice work in Mt Druitt is now mapped alongside the three other Justice Reinvestment sites you fund in NSW — Bourke, Kempsey, and Moree — with funding flows, evidence ratings, and community outcomes all in one place.
+I spent last week reading your Year in Review cover to cover and mapping every partner into JusticeHub. All 19 of them — from Mounty Yarns in Mt Druitt to Nawarddeken Academy in West Arnhem, from PLACE's 53-community network to Surfers for Climate in the Gold Coast.
 
-I'm writing because I realised something building this: Dusseldorp's ecosystem is already deeply embedded in our platform. PLACE, Mannifera, Groundswell, Dulwich Centre, Big Picture Education — they're all connected through the organisations and funding records we track. Over 94,000 funding records across 22,000 organisations nationally, and your portfolio keeps showing up as a through-line.
+What came out surprised me. Your portfolio breaks cleanly into three pillars — Education ($550K, 33%), Climate ($675K, 37%), and First Nations ($524K, 30%) — and 43% of the total goes to Aboriginal Community Controlled Organisations. That's 43 times the sector average. Climate has tripled in two years ($225K → $570K → $675K). And Mannifera alone has leveraged $5.6M across 27 funders from the networks Dusseldorp seeded.
 
-What we've built is the connective tissue between these programs. JusticeHub shows how Mounty Yarns' $170K/year narrative work sits against the $1.33M/year national average cost of detaining a single child. That comparison isn't abstract — it's drawn from verified cost data across 1,076 community-led interventions.
+I built two pages to show this:
 
-Meanwhile, CONTAINED is gathering momentum. 86 people across 15 locations have reached out asking for the Container in their community — from Tasmania to Doomadgee. Mount Druitt is first, week of April 21, with Mounty Yarns hosting Room 3. I've put together a page showing who's involved, what they're saying, and which community organisations are anchoring each stop:
+→ justicehub.org.au/for-funders/landscape — your portfolio compared side-by-side with PRF's $89.5M, showing where you overlap (4 shared grantees) and where you're uniquely positioned
+
+→ justicehub.org.au/for-funders/report/dusseldorp — all 21 funding records, pillar breakdown, ACCO allocation, and every partner's programs with evidence ratings
+
+Every one of your 19 partners now has a profile page showing their programs, funding history, and evidence base. Mounty Yarns alone has 4 programs mapped — narrative practice, documentary storytelling, justice reinvestment advocacy, and the girls mentoring program.
+
+This sits inside a platform tracking 148,386 funding records across 82,966 organisations, with 1,081 verified community-led alternatives to detention. Your ecosystem is a through-line across all of it.
+
+Meanwhile, CONTAINED is gathering momentum. 225+ people across 15 locations have reached out. Mount Druitt is first, week of April 21, with Mounty Yarns hosting Room 3. I've put together a community demand page:
 
 → justicehub.org.au/contained/community (passcode: contained2026)
 
-I'd love to give you a 15-minute walkthrough of what your ecosystem looks like through JusticeHub and where the tour is heading. No pitch deck — just the live platform showing what's already there.
+I'd love 15 minutes to walk you through your portfolio view on the live platform. No pitch deck — just the data.
 
 Would next week work?
 
 Ben
 
 ---
-**Notes for Ben:** Confirm Mounty Yarns profile is polished and loading correctly before sending. Check that all four NSW JR sites (Bourke, Mt Druitt, Kempsey, Moree) appear linked to Dusseldorp funding. Teya may ask about Dulwich Centre's involvement — be ready to show that connection on the platform. The community page is passcode protected — she'll need "contained2026".
+**Notes for Ben:** All 19 Dusseldorp partners have profile pages at /for-funders/org/[slug]. Landscape page compares Dusseldorp vs PRF side-by-side. Funder report shows all 21 records with pillar breakdown. 4 shared grantees with PRF: PLACE, Mounty Yarns, Our Place, Just Reinvest NSW. Climate growth story is the hook — tripled in 2 years. 43% ACCO allocation is the standout stat. Teya may ask about the West Kimberley project (announced for 2026 in YIR but partner unnamed). Community page passcode: "contained2026".
 
 ---
 
@@ -37,7 +45,7 @@ Hi Lucy,
 
 PLACE brought together $38.6M from PRF, Ian Potter, Bryan Foundation, Dusseldorp, and the Commonwealth — one of the most ambitious co-investments in Australian place-based work. The challenge with investments at that scale is always the same: how do you know what's actually working across dozens of communities and partners?
 
-That's what we built JusticeHub to solve. It's a national data infrastructure platform tracking 94,742 funding records across 22,233 organisations, with a verified database of 1,076 community-led alternatives to detention. We pair that with CivicScope, a civic intelligence engine that monitors government spending, ministerial commitments, and policy shifts — so funders can see whether public investment is following or contradicting their own.
+That's what we built JusticeHub to solve. It's a national data infrastructure platform tracking 148,386 funding records across 82,966 organisations, with a verified database of 1,081 community-led alternatives to detention. We pair that with CivicScope, a civic intelligence engine that monitors government spending, ministerial commitments, and policy shifts — so funders can see whether public investment is following or contradicting their own.
 
 The cost gap is staggering. Victoria spends $7,304 per day — $2.67M per year — on a single child in detention. The community programs in our database have a median cost of $170K per year and stronger outcomes evidence. JusticeHub makes that comparison visible, searchable, and accountable at a national level.
 
@@ -64,7 +72,7 @@ Hi Kristy,
 
 Your February letter on the shadow side of philanthropic power stayed with me — particularly the tension around funding large organisations who aren't trusted by the communities they serve. It's a tension we've been trying to build technology around.
 
-JusticeHub is a national data infrastructure platform that tracks 94,742 funding records across 22,233 organisations. But the part I think matters most to PRF is what sits underneath: a verified database of 1,076 community-led alternatives to detention, built on a model where communities verify what works — not funders, not consultants. Your Seven Insights piece put it simply: "Communities know what they need." We took that literally and built ALMA as a community-verified evidence network.
+JusticeHub is a national data infrastructure platform that tracks 148,386 funding records across 82,966 organisations. But the part I think matters most to PRF is what sits underneath: a verified database of 1,081 community-led alternatives to detention, built on a model where communities verify what works — not funders, not consultants. Your Seven Insights piece put it simply: "Communities know what they need." We took that literally and built ALMA as a community-verified evidence network.
 
 I've been thinking about how this could support your JR Community of Practice. Right now we can show funding flows, evidence ratings, and outcome data for Maranguka, JR NSW, Olabud Doogethu, and the rest of your $53.1M JR portfolio — cross-referenced against the full ALMA database. If the CoP had a shared data layer showing what's working across all 37 sites, the conversations would start from evidence rather than anecdote.
 
@@ -98,7 +106,7 @@ For Perth specifically, here's what I'm thinking for Room 3:
 
 Hayley, you mentioned building a consortium with Aboriginal-led orgs — I'd love to hear where that's landed. And Michelle, if UWA wanted to formally partner on the Perth stop (academic partnership, research angle, student engagement), we'd welcome that.
 
-The platform behind this — JusticeHub — now tracks 1,117 community programs with cost data on 824 of them and 570 evidence records. The research angle Rohan Lulham at Sydney Uni flagged is live for Perth too if that's interesting.
+The platform behind this — JusticeHub — now tracks 1,081 verified community programs with 305 costed and 570 evidence records. The research angle Rohan Lulham at Sydney Uni flagged is live for Perth too if that's interesting.
 
 Could we get a call in the next couple of weeks to lock in the Perth plan?
 

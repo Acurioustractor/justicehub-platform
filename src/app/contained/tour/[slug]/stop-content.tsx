@@ -467,7 +467,7 @@ export function StopContent({ slug }: { slug: string }) {
             <p className="text-xs uppercase tracking-[0.3em] text-red-500 mb-4">You&apos;ve seen it</p>
             <h2 className="text-3xl font-bold mb-4">Now what?</h2>
             <p className="text-gray-400 mb-8">
-              The container showed you the reality. The alternative exists — 1,076 community
+              The container showed you the reality. The alternative exists — 1,081 community
               models proving it works better and costs less. Pick your lane.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
