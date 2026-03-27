@@ -8,15 +8,78 @@ status: active
 # Work Stream: campaign-engine-upgrade
 
 ## Ledger
-**Updated:** 2026-03-28T01:00:00Z
-**Goal:** Funder self-serve dashboard + data quality audit + portfolio org seeding
+**Updated:** 2026-03-28T12:00:00Z
+**Goal:** National youth justice evidence model — regional reports, data linkage, living system agents
 **Branch:** main
 **Test:** npm run type-check (ignore database.types.ts errors)
 
 ### Now
-[->] **Send Teya email** — updated with correct stats (148K records, 83K orgs), ready to send. Add line about funder dashboard login.
+[->] **Continue data enrichment** — foundation grants linkage ($3.1B unlinked), ASIC directors import, control_type bulk classification, evidence→program FK
 
-### This Session (2026-03-28 session 10)
+### This Session (2026-03-28 session 11)
+
+#### Regional Report Template — SHIPPED
+- [x] `/intelligence/regional/[region]/page.tsx` built — 900+ line server component
+- [x] 6 CONTAINED tour stops configured: Mt Druitt, Adelaide, Perth, Tennant Creek, Townsville, Brisbane
+- [x] Sections: hero, community control bar, org cards, programs by evidence, funding flow, data gaps
+- [x] Detention cost equation section ($1.3M vs community median)
+- [x] "Where Does the Money Go" — funding by control type stacked bar
+- [x] Intermediary presence cards + government funding flow visualization
+- [x] Print-friendly, brand-compliant
+
+#### National Intelligence Page — SHIPPED
+- [x] `/intelligence/national` — all-Australia evidence overview
+- [x] 9 sections: hero stats, cost equation, state-by-state table, CC bars, evidence profile, money flow, data quality dashboard, regional deep dives, inquiry tracker
+- [x] 11 parallel Supabase queries, all aggregation in JS
+
+#### Mt Druitt Data Enrichment — COMPLETE
+- [x] The Hive slug + city fixed
+- [x] 12 orgs classified by control_type
+- [x] 15 program geography tags upgraded to `{Mount Druitt, Western Sydney, NSW}`
+- [x] 50 funding records linked ($12.3M)
+- [x] 9 new orgs created (PCYC, headspace, Kimberwalli, CLCs, etc.)
+- [x] 14 new programs seeded across 8 orgs (Daramu, Wirringa Rising, Marrin Weejali, etc.)
+- [x] Final: 297 orgs, 28 programs, $21.8M tracked
+
+#### ABN Auto-Linkage Sprint — MASSIVE
+- [x] **58,548 funding records linked** via ABN matching + exact name matching
+- [x] Funding linkage rate: 45.1% → **77.6%** (+32.5pp)
+- [x] ~$15B additional funding now linked to orgs
+- [x] Remaining 35,163 unlinked are mostly ROGS state-aggregate (structurally unlinkable)
+- [x] ACNC enrichment: 51 new enrichments, city/state/website backfills applied
+
+#### Living System Agents — 2 BUILT
+- [x] **Regional Discovery** (`/api/cron/alma/discover?mode=regional`) — 05:30 UTC daily
+  - Rotates through 6 tour stops, 3 searches/day, LLM extraction, Zod validation
+  - New programs inserted as `ai_discovered` for review
+  - 16 unit tests passing
+- [x] **Sentiment Analysis** (`/api/cron/alma/enrich?mode=sentiment`) — 07:00 UTC daily
+  - Scores media articles for fear vs solutions framing (-1 to +1)
+  - Extracts orgs/programs mentioned, key claims
+  - Migration applied: 5 new columns on alma_media_articles
+  - 22 unit tests passing
+- [x] `thoughts/shared/data-sync-architecture.md` — full 6-agent architecture designed
+
+#### Narrative Research — COMPLETE
+- [x] Full Australian youth justice narrative map (March 2026)
+- [x] 2 active federal inquiries: Senate (report June 2026), NSW Select Committee (Dec 2026)
+- [x] State-by-state analysis: QLD punitive, NT Don Dale legacy, WA Banksia Hill collapse, SA control vs care, VIC contradictions, TAS reform, ACT proof of concept
+- [x] Key stats: $1.3M/child detention (ROGS 2026), 85% recidivism, 21x Indigenous overrepresentation
+- [x] ACT raised age to 14: 50% arrest reduction, no crime increase
+- [x] 415 media articles, 550 research findings, 570 evidence items in DB
+
+#### Data Health Audit — COMPLETE
+- [x] 82,969 orgs (99.7% have ABN), 64,642 ACNC-matched
+- [x] 77.6% funding linked (121,774/156,937 records)
+- [x] 1,157 verified programs across 607 orgs
+- [x] 19,760 funded orgs with 0 programs (core content gap)
+- [x] Foundation grants ($3.1B) at 0% linkage
+- [x] 95% of orgs unclassified by control_type
+- [x] ASIC directors table doesn't exist (script exists, never run)
+- [x] Evidence not FK-linked to programs
+- [x] 77 new tests passing (regional computations + sentiment + discovery)
+
+### Previous Session (2026-03-28 session 10)
 
 #### Funder Dashboard — SHIPPED
 - [x] `funder_profiles` table created (Supabase migration)
@@ -138,24 +201,60 @@ status: active
 - [ ] **Re-engage Julia Payne (PRF)** — Townsville/PICC angle (Mar 31)
 - [ ] **Coordinator JD** — fractional 0.5 FTE role
 
-### Key Data
+### Key Data (verified 2026-03-28 session 11)
 
 | Metric | Value |
 |--------|-------|
-| Dusseldorp YIR partners in DB | 20 (19 + Mounty Yarns re-tagged) |
-| Total `dusseldorp-yir-2025` records | 21 ($2M) |
-| PRF records (re-tagged) | 11 ($89.5M) |
-| Interventions seeded this session | 24 |
-| Total interventions (ALMA) | 1,081 verified (60 junk cleaned this session) |
-| ACCO allocation (Dusseldorp) | 43% ($865K of $2M) |
-| Pillar totals | Education $550K, Climate $675K, First Nations $524K |
+| Total organizations | 82,969 (4,254 classified by control_type) |
+| Indigenous/ACCO orgs | 1,725 |
+| Funded orgs with 0 programs | 19,760 (core content gap) |
+| Total funding records | 156,937 ($114.9B) |
+| Funding linkage rate | **77.6%** (was 45.1% — +58,548 ABN-linked this session) |
+| Total interventions (ALMA) | ~1,171 verified (14 seeded this session) |
+| Proven evidence programs | 6 |
+| Evidence items | 570 evidence + 550 findings + 415 media + 9 stories |
+| Funder profiles configured | 3 (Dusseldorp, Minderoo, PRF) |
+| PRF JR records linked | 21/30 |
+| Intermediary funding | $2.3B across 38 orgs ($62M avg per org) |
+| ACCO funding | $2.4B across 607 orgs ($4M avg per org) |
+| Community control by state | NT 85%, WA 70%, TAS 55%, VIC 2.4% (worst) |
+| Detention cost (ROGS 2026) | $1.3M/child/year, 85% recidivism |
+| Community program median | $77K/year (17:1 ratio vs detention) |
+| Active inquiries | Senate (June 2026), NSW Select Committee (Dec 2026) |
+| Inquiry recommendations | 1,845 across 17 inquiries, 0 complete |
+| Regional reports live | 6 tour stops + national overview |
+| Daily crons | 22 (20 existing + regional discovery + sentiment) |
+| New tests this session | 77 passing (regional + sentiment + discovery) |
+| Feynman review | `output/feynman-review-justicehub-model.md` |
+
+### Control Type Classification (new column on organizations)
+- `community_controlled` (1,724) — ACCO, Aboriginal corporations
+- `community_adjacent` (954) — local NFPs, place-based orgs
+- `government` (954) — councils, departments
+- `university` (288) — research institutions
+- `intermediary` (235) — Mission Australia, LWB, Save the Children, etc.
+- `peak_body` (80) — advocacy/policy orgs
+- 78,725 unclassified (mostly small orgs in ACNC bulk import)
 
 ### Decisions
 - Source tag `dusseldorp-yir-2025` for all YIR partners (not generic `dusseldorp` or `philanthropic`)
-- Source tag `prf-portfolio` for PRF grants (not generic `philanthropic`)
+- Source tag `prf-portfolio` + `prf-jr-portfolio-review-2025` for PRF grants
 - Per-partner amounts estimated from pillar totals (YIR gives pillar totals not per-partner)
-- West Kimberley project inserted without org link (unnamed in PDF, announced for 2026)
+- `control_type` column added to organizations — 6 values for community control mapping
+- Top-down seeding (start from funded orgs) proved more effective than bottom-up scraping
+- Localhost dev bypass needed for `/admin` and `/for-funders` layouts (login page auto-redirects)
 - Tour order: Mt Druitt → Adelaide → Perth → Tennant Creek → Townsville → Brisbane
+
+### Next
+- [ ] **Foundation grants linkage** — $3.1B at 0% linkage, needs name-matching sprint
+- [ ] **ASIC directors import** — script exists (`scripts/import-asic-directors.mjs`), table doesn't. Unlocks board overlap/governance network
+- [ ] **Bulk control_type classification** — infer from ACNC charity type for 78K unclassified orgs
+- [ ] **Evidence→Program FK** — `alma_evidence` disconnected from `alma_interventions`, needs linkage
+- [ ] **191 orphan programs** — no org link, name matching needed
+- [ ] **State normalization** — ~200 records with non-canonical casing ("Qld" vs "QLD")
+- [ ] **Send Teya email** — updated stats, add funder dashboard login + national page link
+- [ ] **Send Lucy email** — ahead of week of Apr 6 call
+- [ ] **Build remaining 4 agents** — Graph Score, Evidence Maturation, CivicScope Bridge, EL Story Linking
 
 ### Open Questions
 - Should we scrape PLACE's 53 community partners into the DB?
@@ -173,6 +272,13 @@ status: active
 | `src/app/globals.css` | Dark text fix (h1-h6/p → color: inherit) |
 | `output/funder-emails-draft.md` | 4 funder emails (Teya, Lucy, PRF, UWA) |
 | `/Users/benknight/Downloads/Dusseldorp_YearInReview25.pdf` | Source PDF for Dusseldorp data |
+| `src/app/intelligence/regional/[region]/page.tsx` | Regional report template (6 tour stops) |
+| `src/app/intelligence/national/page.tsx` | National all-Australia overview |
+| `src/lib/intelligence/regional-computations.ts` | Reusable computation functions (39 tests) |
+| `src/lib/cron/regional-discovery.ts` | Regional Discovery agent (16 tests) |
+| `src/lib/cron/sentiment-analysis.ts` | Sentiment Analysis agent (22 tests) |
+| `src/lib/ai/llm-schemas.ts` | Added SentimentAnalysisSchema |
+| `thoughts/shared/data-sync-architecture.md` | 6-agent living system architecture |
 
 ### Workflow State
 pattern: iterative

@@ -3,6 +3,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { LLMClient } from '@/lib/ai/model-router';
 import { parseJSON } from '@/lib/ai/parse-json';
 import { searchWeb } from '@/lib/scraping/web-search';
+import { processSentimentBatch } from '@/lib/cron/sentiment-analysis';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
@@ -50,6 +51,8 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(await enrichCostData(supabase, llm, batch));
       case 'research':
         return NextResponse.json(await discoverResearch(supabase, llm, batch));
+      case 'sentiment':
+        return NextResponse.json(await processSentimentBatch(supabase, llm, batch));
       default:
         return NextResponse.json({ error: `Unknown mode: ${mode}` }, { status: 400 });
     }

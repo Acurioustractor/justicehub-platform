@@ -188,6 +188,48 @@ export const GovernmentProgramsResponseSchema = z.object({
 export type GovernmentProgram = z.infer<typeof GovernmentProgramSchema>;
 
 // ---------------------------------------------------------------------------
+// Media sentiment analysis schema
+// ---------------------------------------------------------------------------
+
+export const SENTIMENT_TYPES = [
+  'fear_narrative',
+  'solutions_focused',
+  'neutral',
+  'mixed',
+] as const;
+
+export const CLAIM_TYPES = [
+  'statistic',
+  'anecdote',
+  'expert_opinion',
+  'political_statement',
+] as const;
+
+const FramingSchema = z.object({
+  punitive_language: z.boolean(),
+  community_voice: z.boolean(),
+  evidence_cited: z.boolean(),
+  political_framing: z.boolean(),
+});
+
+const KeyClaimSchema = z.object({
+  claim: z.string().min(5).max(500),
+  type: z.enum(CLAIM_TYPES),
+  verifiable: z.boolean(),
+});
+
+export const SentimentAnalysisSchema = z.object({
+  sentiment: z.enum(SENTIMENT_TYPES),
+  sentiment_score: z.number().min(-1).max(1),
+  framing: FramingSchema,
+  organizations_mentioned: z.array(z.string().max(300)).default([]),
+  programs_mentioned: z.array(z.string().max(300)).default([]),
+  key_claims: z.array(KeyClaimSchema).default([]),
+});
+
+export type SentimentAnalysis = z.infer<typeof SentimentAnalysisSchema>;
+
+// ---------------------------------------------------------------------------
 // Validated parse helper
 // ---------------------------------------------------------------------------
 
