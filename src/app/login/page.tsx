@@ -57,6 +57,15 @@ function LoginForm() {
 
       if (profile.role === 'admin') return '/admin';
 
+      // Check for funder profile → route to funder dashboard
+      const { data: funderProfile } = await ((supabase as any)
+        .from('funder_profiles')
+        .select('id')
+        .eq('email', user.email || '')
+        .single());
+
+      if (funderProfile) return '/for-funders';
+
       // Check if CONTAINED member — role_tags with contained_ prefix → /hub
       const { data: publicProfile } = await supabase
         .from('public_profiles')

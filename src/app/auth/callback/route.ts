@@ -33,8 +33,24 @@ export async function GET(request: NextRequest) {
     const { data: sessionData, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error && sessionData?.user) {
-      // Smart routing: if next is generic (/portal, /admin), check for CONTAINED member
+      // Smart routing: if next is generic (/portal, /admin), check role-based redirect
       if (next === '/portal' || next === '/admin' || next === '/') {
+        // Check for funder profile → route to funder dashboard
+        const { data: funderProfile } = await supabase
+          .from('funder_profiles')
+          .select('id')
+          .eq('email', sessionData.user.email!)
+          .single();
+
+        if (funderProfile) {
+          const funderResponse = NextResponse.redirect(`${origin}/for-funders`);
+          response.cookies.getAll().forEach((cookie) => {
+            funderResponse.cookies.set(cookie.name, cookie.value);
+          });
+          return funderResponse;
+        }
+
+        // Check for CONTAINED member
         const { data: publicProfile } = await supabase
           .from('public_profiles')
           .select('role_tags')
@@ -43,7 +59,6 @@ export async function GET(request: NextRequest) {
 
         const roleTags: string[] = (publicProfile as any)?.role_tags || [];
         if (roleTags.some((t: string) => t.startsWith('contained_'))) {
-          // Re-create redirect with same cookies so the session persists
           const hubResponse = NextResponse.redirect(`${origin}/hub`);
           response.cookies.getAll().forEach((cookie) => {
             hubResponse.cookies.set(cookie.name, cookie.value);
