@@ -60,7 +60,7 @@ const FUNDER_CONFIGS: Record<string, FunderConfig> = {
     askDescription: 'Fund Palm Island basecamp + evidence infrastructure for PLACE communities',
     hookLine: 'Your CEO acknowledged the pattern: "pushing too much funding too fast, giving funding to large organisations who aren\'t trusted by community members." The data confirms it.',
     keyInsight: 'PRF portfolio split: 61% to universities, 22% to intermediaries, 17% to ACCOs. Palm Island Community Company runs 21 verified programs with zero PRF philanthropic support.',
-    sources: ['prf-jr-portfolio-review-2025'],
+    sources: ['prf-portfolio', 'prf-jr-portfolio-review-2025'],
     basecampLocations: ['Palm Island'],
   },
 };
