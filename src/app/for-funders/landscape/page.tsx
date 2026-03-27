@@ -2,17 +2,15 @@
 
 import { useState } from 'react';
 
-const PASSCODE = 'contained2026';
-
 // ── Funder Portfolio Data ──
 
 const DUSSELDORP = {
   name: 'Dusseldorp Forum',
   founded: '1997',
   approach: 'Place-based, long-term relationships, First Nations leadership, climate justice',
-  philosophy: 'Three strategic pillars: Education Grounded in Place (33%), Climate & Environment (37%), and First Nations Leading Change (30%). 30% of giving goes to First Nations-led initiatives — 30x the sector average. Climate giving tripled from $225K (2023) to $675K (2025). Member of Mannifera Collective since 2022. Committed to 10+ year partnerships.',
-  totalTracked: '~$1.75M/year (2025)',
-  firstNationsShare: '30%',
+  philosophy: 'Three strategic pillars: Education Grounded in Place (33%), Climate & Environment (37%), and First Nations Leading Change (30%). 43% of total giving goes to Aboriginal Community Controlled Organisations — 43x the sector average. Climate giving tripled from $225K (2023) to $675K (2025). Member of Mannifera Collective since 2022. Committed to 10+ year partnerships.',
+  totalTracked: '~$2M/year (2025)',
+  firstNationsShare: '43% ACCO',
   keyPeople: [
     { name: 'Teya Dusseldorp', role: 'Executive Director' },
     { name: 'Tom Dusseldorp', role: 'Board Chair' },
@@ -20,29 +18,29 @@ const DUSSELDORP = {
     { name: 'Margot Beach', role: 'Programs — accepted meeting Mar 20' },
   ],
   portfolio: [
-    { name: 'Nawarddeken Academy', location: 'West Arnhem Land, NT', type: 'Education / First Nations', indigenous: true, detail: '10+ year partnership. Secondary school at Manmoyi and Mamardawerre outstations. First time senior students in Warddeken IPA accessed formal secondary education on homelands.' },
-    { name: 'Homeland School Company', location: 'Djelk IPA, NT', type: 'Education / First Nations', indigenous: true, detail: 'First independent primary school in Djelk IPA opening early 2026. Custom curriculum grounded in intergenerational knowledge and seasonal calendar.' },
-    { name: 'Karrkad Kanjdji Trust (KKT)', location: 'West & Central Arnhem Land', type: 'First Nations / Conservation', indigenous: true, detail: 'Shared resource for 8 First Nations community-controlled organisations. 50,000+ sq km of land and sea Country. "Educating future custodians" funding pillar.' },
-    { name: 'Yoorrook Justice Commission', location: 'Victoria', type: 'Truth-telling / Justice', indigenous: true, detail: 'Australia\'s first formal truth-telling inquiry. Independent digital platform for testimony. Walk for Truth — 500+ km Portland to Parliament. First Treaty signed Nov 2025.' },
-    { name: 'Woor-Dungin', location: 'Victoria', type: 'Systems change / First Nations', indigenous: true, detail: 'Decolonising Wealth: Cultural Audit & Toolkit. Cultivating Connections Forum. "Changing systems because it is the right thing to do." — Shaun Middlebrook' },
-    { name: 'Mounty Yarns (MAYCS)', location: 'Mt Druitt, NSW', type: 'Youth / Community', indigenous: true, detail: 'Youth programs, advocacy, community engagement. Young people as leaders driving systems change. CONTAINED Room 3 anchor for Mt Druitt.' },
-    { name: 'IndigiGrow', location: 'La Perouse, NSW', type: 'First Nations enterprise', indigenous: true, detail: 'First Nations-owned nursery and social enterprise. Bringing back native plants that shaped the landscape and Aboriginal lives for thousands of years.' },
-    { name: 'Wilya Janta', location: 'Tennant Creek, NT', type: 'Housing / First Nations', indigenous: true, detail: 'First Explain Home lands Dec 2025. Community-designed homes shaped by culture, climate and community leadership. New standards for remote Aboriginal housing.' },
-    { name: 'Groundswell Giving — Caring for Country', location: 'National', type: 'Climate / First Nations', indigenous: false, detail: '$1M generated for 30 First Nations-led climate initiatives. Spawned Just Futures Collab — Aboriginal-led giving circle for climate justice.' },
-    { name: 'Supercharge Australia', location: 'National', type: 'Climate / Innovation', indigenous: false, detail: '41 startups supported. A$100M+ raised. Innovation Challenge Awards. Liberate Minerals recognised for low-emissions critical mineral processing.' },
-    { name: 'Surfers for Climate', location: 'NSW', type: 'Climate / Advocacy', indigenous: false, detail: 'SAVE BEACHWATCH campaign. NSW Government recommitted funding for water quality testing on Sydney beaches.' },
-    { name: 'Mannifera Collective', location: 'National', type: 'Democracy / Collective giving', indigenous: false, detail: '27 members, $5.6M in grants to 67 civil society orgs over 5 years. Democracy 100 roundtables in Adelaide and Perth. 90+ connection events.' },
-    { name: 'PLACE', location: 'National (53 places)', type: 'Place-based', indigenous: false, detail: 'Community Roadshow visiting 53 places, engaging 75 initiatives. "From the Ground Up" content series. Co-investment with PRF, Ian Potter, Bryan Foundation, Commonwealth.' },
-    { name: 'Accountable Futures Collective', location: 'National', type: 'Youth / Systems change', indigenous: false, detail: 'NEW partner Sep 2025. Young people and adults solving the accountability void — gap between promises and reality. Tasha Ritchie as Youth Engagement Coordinator.' },
-    { name: 'Our Place (Colman Foundation)', location: 'Victoria', type: 'Education', indigenous: false, detail: 'Schools as central hubs for learning and wrap-around support. Evaluation report showed increased participation and family connection.' },
-    { name: 'Learning the Macleay', location: 'Macleay Valley, NSW', type: 'Education / Place-based', indigenous: false, detail: 'Yuwa Nyinda Youth Summit: 140 community leaders, 384 young people across 27 cultural backgrounds sharing what they need.' },
-    { name: 'Centre for Public Impact', location: 'National', type: 'Storytelling', indigenous: false, detail: 'Four Story Circles connecting theory and practice. Story-kit for changemakers distilling years of research into stories\' power to transform systems.' },
-    { name: 'ChangeFest', location: 'Walayup, WA', type: 'Place-based', indigenous: false, detail: 'Nov 2025 in Walayup WA. Connecting partners to build thriving, just and resilient communities shaped by the people who live there.' },
-    { name: 'UTS Impact Studios / Hey History!', location: 'National', type: 'Education / Media', indigenous: false, detail: 'Walk for Truth curriculum episode. Gold Signal Podcast Award (Kids Single Episode). Stage 2-3 history learning on truth-telling and Treaty.' },
+    { name: 'Nawarddeken Academy', location: 'West Arnhem Land, NT', type: 'Education / First Nations', indigenous: true, slug: 'nawarddeken-academy-ltd-31621135439', detail: '10+ year partnership. Secondary school at Manmoyi and Mamardawerre outstations. First time senior students in Warddeken IPA accessed formal secondary education on homelands.' },
+    { name: 'Homeland School Company', location: 'Djelk IPA, NT', type: 'Education / First Nations', indigenous: true, slug: 'homeland-school-company-ltd-90668321088', detail: 'First independent primary school in Djelk IPA opening early 2026. Custom curriculum grounded in intergenerational knowledge and seasonal calendar.' },
+    { name: 'Karrkad Kanjdji Trust (KKT)', location: 'West & Central Arnhem Land', type: 'First Nations / Conservation', indigenous: true, slug: 'the-trustee-for-karrkad-kanjdji-trust-98502331587', detail: 'Shared resource for 8 First Nations community-controlled organisations. 50,000+ sq km of land and sea Country. "Educating future custodians" funding pillar.' },
+    { name: 'Yoorrook Justice Commission', location: 'Victoria', type: 'Truth-telling / Justice', indigenous: true, slug: 'yoorrook-justice-commission', detail: 'Australia\'s first formal truth-telling inquiry. Independent digital platform for testimony. Walk for Truth — 500+ km Portland to Parliament. First Treaty signed Nov 2025.' },
+    { name: 'Woor-Dungin', location: 'Victoria', type: 'Systems change / First Nations', indigenous: true, slug: 'woor-dungin-inc--36146408318', detail: 'Decolonising Wealth: Cultural Audit & Toolkit. Cultivating Connections Forum. "Changing systems because it is the right thing to do." — Shaun Middlebrook' },
+    { name: 'Mounty Yarns (MAYCS)', location: 'Mt Druitt, NSW', type: 'Youth / Community', indigenous: true, slug: 'mounty-yarns', detail: 'Youth programs, advocacy, community engagement. Young people as leaders driving systems change. CONTAINED Room 3 anchor for Mt Druitt.' },
+    { name: 'IndigiGrow', location: 'La Perouse, NSW', type: 'First Nations enterprise', indigenous: true, slug: 'indigigrow', detail: 'First Nations-owned nursery and social enterprise. Bringing back native plants that shaped the landscape and Aboriginal lives for thousands of years.' },
+    { name: 'Wilya Janta', location: 'Tennant Creek, NT', type: 'Housing / First Nations', indigenous: true, slug: 'wilya-janta', detail: 'First Explain Home lands Dec 2025. Community-designed homes shaped by culture, climate and community leadership. New standards for remote Aboriginal housing.' },
+    { name: 'Groundswell Giving — Caring for Country', location: 'National', type: 'Climate / First Nations', indigenous: false, slug: 'groundswell-giving-ltd-86660758985', detail: '$1M generated for 30 First Nations-led climate initiatives. Spawned Just Futures Collab — Aboriginal-led giving circle for climate justice.' },
+    { name: 'Supercharge Australia', location: 'National', type: 'Climate / Innovation', indigenous: false, slug: 'supercharge-australia', detail: '41 startups supported. A$100M+ raised. Innovation Challenge Awards. Liberate Minerals recognised for low-emissions critical mineral processing.' },
+    { name: 'Surfers for Climate', location: 'NSW', type: 'Climate / Advocacy', indigenous: false, slug: 'surfers-for-climate-83642508781', detail: 'SAVE BEACHWATCH campaign. NSW Government recommitted funding for water quality testing on Sydney beaches.' },
+    { name: 'Mannifera Collective', location: 'National', type: 'Democracy / Collective giving', indigenous: false, slug: 'mannifera-collective-limited-14681515604', detail: '27 members, $5.6M in grants to 67 civil society orgs over 5 years. Democracy 100 roundtables in Adelaide and Perth. 90+ connection events.' },
+    { name: 'PLACE', location: 'National (53 places)', type: 'Place-based', indigenous: false, slug: 'place-national', detail: 'Community Roadshow visiting 53 places, engaging 75 initiatives. "From the Ground Up" content series. Co-investment with PRF, Ian Potter, Bryan Foundation, Commonwealth.' },
+    { name: 'Accountable Futures Collective', location: 'National', type: 'Youth / Systems change', indigenous: false, slug: 'accountable-futures-collective', detail: 'NEW partner Sep 2025. Young people and adults solving the accountability void — gap between promises and reality. Tasha Ritchie as Youth Engagement Coordinator.' },
+    { name: 'Our Place (Colman Foundation)', location: 'Victoria', type: 'Education', indigenous: false, slug: 'our-place-colman-foundation', detail: 'Schools as central hubs for learning and wrap-around support. Evaluation report showed increased participation and family connection.' },
+    { name: 'Learning the Macleay', location: 'Macleay Valley, NSW', type: 'Education / Place-based', indigenous: false, slug: 'learning-the-macleay', detail: 'Yuwa Nyinda Youth Summit: 140 community leaders, 384 young people across 27 cultural backgrounds sharing what they need.' },
+    { name: 'Centre for Public Impact', location: 'National', type: 'Storytelling', indigenous: false, slug: 'centre-for-public-impact-australia-and-new-zealand-ltd-54646378421', detail: 'Four Story Circles connecting theory and practice. Story-kit for changemakers distilling years of research into stories\' power to transform systems.' },
+    { name: 'ChangeFest', location: 'Walayup, WA', type: 'Place-based', indigenous: false, slug: 'changefest', detail: 'Nov 2025 in Walayup WA. Connecting partners to build thriving, just and resilient communities shaped by the people who live there.' },
+    { name: 'UTS Impact Studios / Hey History!', location: 'National', type: 'Education / Media', indigenous: false, slug: 'uts-impact-studios', detail: 'Walk for Truth curriculum episode. Gold Signal Podcast Award (Kids Single Episode). Stage 2-3 history learning on truth-telling and Treaty.' },
   ],
   strengths: [
     'Deep, long-term relationships — 10+ year Arnhem Land partnership',
-    '30% First Nations allocation — 30x the sector average',
+    '43% to Aboriginal Community Controlled Organisations — 43x the sector average',
     'Climate giving tripled in 2 years ($225K → $675K)',
     'Mannifera network leverages $5.6M across 27 funders',
     'PLACE co-investment shows ability to coordinate at scale',
@@ -70,18 +68,18 @@ const PRF = {
     { name: 'Julia Payne', role: 'Thriving Communities — PICC/Townsville geography' },
   ],
   portfolio: [
-    { name: 'Maranguka / Just Reinvest NSW', location: 'Bourke, NSW', type: 'Justice reinvestment', indigenous: true, detail: 'The original Australian JR site. Bourke model. $3.54M PRF allocation. Also funded by Dusseldorp.' },
-    { name: 'Olabud Doogethu', location: 'Halls Creek, WA', type: 'Justice reinvestment', indigenous: true, detail: 'JR site in remote WA. $3.54M. In CONTAINED Perth stop as Room 3 org.' },
+    { name: 'Maranguka / Just Reinvest NSW', location: 'Bourke, NSW', type: 'Justice reinvestment', indigenous: true, slug: 'maranguka-limited', detail: 'The original Australian JR site. Bourke model. $3.54M PRF allocation. Also funded by Dusseldorp.' },
+    { name: 'Olabud Doogethu', location: 'Halls Creek, WA', type: 'Justice reinvestment', indigenous: true, slug: 'olabud-doogethu', detail: 'JR site in remote WA. $3.54M. In CONTAINED Perth stop as Room 3 org.' },
     { name: 'Yuwaya Ngarra-li / UNSW', location: 'Moree, NSW', type: 'Justice reinvestment', indigenous: true, detail: 'Academic partnership JR model. UNSW partnership. $3.54M.' },
     { name: 'Tiraapendi Wodli / Red Cross', location: 'Adelaide, SA', type: 'Justice reinvestment', indigenous: true, detail: 'Port Adelaide JR site via Red Cross. $3.54M.' },
-    { name: 'Anindilyakwa Royalties Aboriginal Corporation', location: 'Groote Eylandt, NT', type: 'Justice reinvestment', indigenous: true, detail: 'Remote NT community. $3.54M. Indigenous-owned royalties corporation.' },
-    { name: 'Social Reinvestment WA', location: 'Perth, WA', type: 'Justice reinvestment', indigenous: false, detail: 'WA-wide JR advocacy and coordination. $3.54M.' },
-    { name: 'Justice Reform Initiative', location: 'National', type: 'Advocacy', indigenous: false, detail: 'Robert Tickner as Chair. National JR advocacy. Connected to CONTAINED tour.' },
+    { name: 'Anindilyakwa Royalties Aboriginal Corporation', location: 'Groote Eylandt, NT', type: 'Justice reinvestment', indigenous: true, slug: 'anindilyakwa-royalties-aboriginal-corporation-69806855472', detail: 'Remote NT community. $3.54M. Indigenous-owned royalties corporation.' },
+    { name: 'Social Reinvestment WA', location: 'Perth, WA', type: 'Justice reinvestment', indigenous: false, slug: 'social-reinvestment-wa-incorporated-38136101379', detail: 'WA-wide JR advocacy and coordination. $3.54M.' },
+    { name: 'Justice Reform Initiative', location: 'National', type: 'Advocacy', indigenous: false, slug: 'justice-reform-initiative-limited-68640446448', detail: 'Robert Tickner as Chair. National JR advocacy. Connected to CONTAINED tour.' },
     { name: 'Change the Record', location: 'National', type: 'Advocacy', indigenous: true, detail: 'Aboriginal and Torres Strait Islander-led. Closing the Gap on incarceration.' },
     { name: 'Human Rights Law Centre', location: 'National', type: 'Legal advocacy', indigenous: false, detail: 'Legal strategy on justice reform. $3.54M.' },
     { name: 'Justice Reinvestment Network Australia', location: 'National', type: 'Network coordination', indigenous: false, detail: 'The JR network that connects all sites. $3.54M.' },
     { name: 'Aboriginal Legal Services (NSW/ACT)', location: 'NSW/ACT', type: 'Legal services', indigenous: true, detail: 'Aboriginal legal aid. $3.54M.' },
-    { name: 'Justice and Equity Centre', location: 'National', type: 'Research', indigenous: false, detail: 'Formerly Law and Justice Foundation. Research on access to justice.' },
+    { name: 'Justice and Equity Centre', location: 'National', type: 'Research', indigenous: false, slug: 'justice-and-equity-centre-limited-77002773524', detail: 'Formerly Law and Justice Foundation. Research on access to justice.' },
     { name: 'WEstjustice / CMY (Target Zero)', location: 'Melbourne, VIC', type: 'Youth diversion', indigenous: false, detail: 'Western suburbs youth diversion. Target Zero program.' },
     { name: 'NTCOSS', location: 'Darwin, NT', type: 'Peak body', indigenous: false, detail: 'NT Council of Social Service. JR coordination in NT.' },
   ],
@@ -110,26 +108,7 @@ const SHARED = [
 
 // ── Components ──
 
-function PasscodeGate({ onAuth }: { onAuth: () => void }) {
-  const [input, setInput] = useState('');
-  const [error, setError] = useState(false);
-  return (
-    <div style={{ background: '#0A0A0A', color: '#F5F0E8', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Space Grotesk', sans-serif" }}>
-      <div style={{ textAlign: 'center', maxWidth: 400 }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: 8 }}>CONTAINED</h1>
-        <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.8rem', color: '#666', marginBottom: 32 }}>Funder Landscape — March 2026</p>
-        <form onSubmit={(e) => { e.preventDefault(); if (input === PASSCODE) { onAuth(); } else { setError(true); } }}>
-          <input type="password" value={input} onChange={(e) => { setInput(e.target.value); setError(false); }} placeholder="Enter passcode" autoFocus
-            style={{ background: '#1a1a1a', border: error ? '1px solid #DC2626' : '1px solid #333', color: '#F5F0E8', padding: '12px 16px', fontSize: '1rem', width: '100%', fontFamily: "'IBM Plex Mono', monospace", outline: 'none' }} />
-          {error && <p style={{ color: '#DC2626', fontSize: '0.8rem', marginTop: 8 }}>Incorrect passcode</p>}
-          <button type="submit" style={{ marginTop: 16, background: '#F5F0E8', color: '#0A0A0A', padding: '12px 32px', fontWeight: 700, fontSize: '0.9rem', border: 'none', cursor: 'pointer', width: '100%' }}>Enter</button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-function FunderSection({ funder, color }: { funder: typeof DUSSELDORP; color: string }) {
+function FunderSection({ funder, color }: { funder: typeof DUSSELDORP & { portfolio: Array<{ name: string; location: string; type: string; indigenous: boolean; slug?: string; detail: string }> }; color: string }) {
   const [showAll, setShowAll] = useState(false);
   const indigenous = funder.portfolio.filter(p => p.indigenous);
   const nonIndigenous = funder.portfolio.filter(p => !p.indigenous);
@@ -155,19 +134,6 @@ function FunderSection({ funder, color }: { funder: typeof DUSSELDORP; color: st
         </div>
       </div>
 
-      {/* Key people */}
-      <div style={{ marginBottom: 24 }}>
-        <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>Key people</p>
-        <div style={{ display: 'grid', gap: 4 }}>
-          {funder.keyPeople.map((p, i) => (
-            <p key={i} style={{ fontSize: '0.8rem', marginBottom: 0 }}>
-              <span style={{ fontWeight: 600, color: '#ddd' }}>{p.name}</span>
-              <span style={{ color: '#666' }}> — {p.role}</span>
-            </p>
-          ))}
-        </div>
-      </div>
-
       {/* Portfolio */}
       <div style={{ marginBottom: 24 }}>
         <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#555', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
@@ -177,7 +143,11 @@ function FunderSection({ funder, color }: { funder: typeof DUSSELDORP; color: st
           {(showAll ? funder.portfolio : funder.portfolio.slice(0, 6)).map((p, i) => (
             <div key={i} style={{ borderLeft: `2px solid ${p.indigenous ? '#059669' : '#333'}`, padding: '8px 12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#ddd' }}>{p.name}</span>
+                {p.slug ? (
+                  <a href={`/for-funders/org/${p.slug}`} style={{ fontWeight: 600, fontSize: '0.85rem', color: '#ddd', textDecoration: 'underline', textDecorationColor: '#333', textUnderlineOffset: '3px' }}>{p.name}</a>
+                ) : (
+                  <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#ddd' }}>{p.name}</span>
+                )}
                 {p.indigenous && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.6rem', color: '#059669' }}>First Nations</span>}
               </div>
               <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#666', marginBottom: 4 }}>{p.location} · {p.type}</p>
@@ -203,7 +173,7 @@ function FunderSection({ funder, color }: { funder: typeof DUSSELDORP; color: st
           ))}
         </div>
         <div>
-          <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#DC2626', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>Gaps JusticeHub fills</p>
+          <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#DC2626', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>What JusticeHub adds</p>
           {funder.gaps.map((g, i) => (
             <p key={i} style={{ fontSize: '0.75rem', color: '#888', lineHeight: 1.5, paddingLeft: 12, position: 'relative', marginBottom: 4 }}>
               <span style={{ position: 'absolute', left: 0, color: '#DC2626' }}>→</span>{g}
@@ -218,10 +188,6 @@ function FunderSection({ funder, color }: { funder: typeof DUSSELDORP; color: st
 // ── Main Page ──
 
 export default function LandscapePage() {
-  const [authed, setAuthed] = useState(false);
-
-  if (!authed) return <PasscodeGate onAuth={() => setAuthed(true)} />;
-
   return (
     <>
       {/* eslint-disable-next-line @next/next/no-css-tags */}
@@ -238,7 +204,7 @@ export default function LandscapePage() {
             Two approaches to<br />justice reinvestment.
           </h1>
           <p style={{ fontSize: '1.05rem', color: '#888', maxWidth: 700, lineHeight: 1.7 }}>
-            Dusseldorp Forum (~$1.75M/year across 19 partners) and Paul Ramsay Foundation ($320M/year, 15 JR sites)
+            Dusseldorp Forum (~$2M/year across 19 partners) and Paul Ramsay Foundation ($320M/year, 15 JR sites)
             represent two fundamentally different models of philanthropic investment. One invests deeply in places
             and relationships over decades. The other deploys transformative capital at national scale. They share
             grantees, co-invest in PLACE, and both fund organisations connected to the CONTAINED tour.
@@ -420,7 +386,7 @@ export default function LandscapePage() {
               ))}
             </div>
             <p style={{ fontSize: '0.85rem', color: '#888', lineHeight: 1.6, marginBottom: 0 }}>
-              This is money from Dusseldorp ($1.75M/year, 19 partners), PRF ($53.1M JR), PLACE ($38.6M co-investment),
+              This is money from Dusseldorp ($2M/year, 19 partners), PRF ($53.1M JR), PLACE ($38.6M co-investment),
               Commonwealth, NIAA, AusTender, QLD/NSW state governments — all flowing through organisations that both funders support.
               No single funder sees the full picture. JusticeHub does.
             </p>
@@ -458,10 +424,10 @@ export default function LandscapePage() {
               </thead>
               <tbody>
                 {[
-                  ['Scale', '~$1.75M/year (2025)', '$320M/year ($53M JR)'],
+                  ['Scale', '~$2M/year (2025)', '$320M/year ($53M JR)'],
                   ['Theory of change', 'Place-based, long-term relationships, three pillars', 'Justice reinvestment — redirect funding from prisons to communities'],
                   ['Unit of investment', 'Places, relationships, 10+ year commitments', 'Sites and systems'],
-                  ['First Nations', '30% of giving ($524K) — 30x sector avg', 'Significant (8/15 JR sites are Indigenous-led)'],
+                  ['First Nations', '43% ACCO allocation ($865K) — 43x sector avg', 'Significant (8/15 JR sites are Indigenous-led)'],
                   ['Climate', '37% of giving ($675K) — tripled since 2023', 'Not a focus area'],
                   ['Evidence model', 'Stories, lived experience, practice wisdom', 'Evaluation frameworks, data, JR Community of Practice'],
                   ['Network leverage', 'Mannifera: 27 funders, $5.6M to 67 orgs', 'JR Community of Practice, 15 sites'],
@@ -494,7 +460,7 @@ export default function LandscapePage() {
               in scale — both investing in the same communities without seeing each other&apos;s work.
             </p>
             <p style={{ fontSize: '1rem', color: '#888', lineHeight: 1.7, marginBottom: 16 }}>
-              JusticeHub is that layer. 1,076 community programs mapped. 824 with cost data. 570 evidence records.
+              JusticeHub is that layer. 1,081 community programs mapped. 824 with cost data. 570 evidence records.
               Every organisation funded by either funder can see what&apos;s working elsewhere — not through a report
               that arrives 18 months later, but through a living platform updated by community.
             </p>
