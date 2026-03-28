@@ -8,48 +8,72 @@ status: active
 # Work Stream: campaign-engine-upgrade
 
 ## Ledger
-**Updated:** 2026-03-28T18:00:00Z
-**Goal:** National youth justice evidence model — regional reports, data linkage, living system agents
+**Updated:** 2026-03-28T22:00:00Z
+**Goal:** National youth justice evidence model → ACT product ecosystem (CivicScope + JH + EL + Goods compound)
 **Branch:** main
 **Test:** npm run type-check (ignore database.types.ts errors)
 
 ### Now
-[->] **Send emails** — Teya, Lucy, UWA all have updated stats. Board network surfaced.
+[->] **Build orchestration layer** — ask questions in plain English, get answers from full data stack, agents fill gaps automatically
+[->] **CivicScope productisation** — auth + billing + search UI (highest revenue priority)
+[->] **Send emails** — Teya, Lucy, UWA all have updated stats + QLD deep dive
 
 ### This Session (2026-03-28 session 12)
 
 #### Board & Governance Network — SHIPPED
-- [x] `computeGovernanceNetwork()` added to `regional-computations.ts` — pure function, 9 new tests (48 total passing)
-- [x] Regional pages: governance query + "Governance Network" section (stat cards, top connectors table, narrative callout)
-- [x] National page: "Board & Governance Network" section with Indigenous org director stats, top connectors, self-determination narrative
-- [x] 339,698 board roles surfaced in UI for first time
+- [x] `computeGovernanceNetwork()` in `regional-computations.ts` — 9 new tests (48 total)
+- [x] Regional pages: governance section (stat cards, top connectors, narrative callout)
+- [x] National page: "Board & Governance Network" section (339K roles surfaced)
 
 #### Expand Org Universe — MASSIVE
-- [x] **15,435 new orgs created** from ACNC data for funding ABNs without org records
-- [x] **14,336 funding records linked** by ABN (Phase 2)
-- [x] GS entity bridging running (Phase 3)
-- [x] ACNC enrichment bug fixed (was selecting non-existent `email` column)
-- [x] Total orgs: 82,969 → **98,404** (+15,435)
-- [x] Indigenous orgs: 1,759 → **2,051** (+292)
+- [x] **15,435 new orgs created** from ACNC (82,969 → 98,404)
+- [x] **14,336 funding records linked** by ABN
+- [x] **50,577 GS entity links** created (Phase 3)
+- [x] ACNC enrichment bug fixed (`email` column)
+- [x] Indigenous orgs: 1,759 → **2,089** (+330)
+- [x] 100% control_type classification restored
 
-#### Multi-Source Fuzzy Matching — COMPLETE
-- [x] New script: `scripts/fuzzy-link-multi-source.mjs` — 4-stage pipeline (exact → normalized → ACNC bridge → trigram)
-- [x] NSW FACS: 311 linked (11.7%)
-- [x] NSW DCJ: 95 linked (15.1%)
-- [x] SA grants: 72 linked (12.0%)
-- [x] Foundation: 30 linked (5.7%)
-- [x] **Total: 508 records linked, 0 errors**
+#### Multi-Source Fuzzy Matching — 508 LINKED
+- [x] `scripts/fuzzy-link-multi-source.mjs` — 4-stage pipeline
+- [x] NSW FACS 311 + NSW DCJ 95 + SA 72 + Foundation 30 = **508 records, 0 errors**
 
-#### Funding Linkage Rate — 79.4% → 88.9%
-- [x] Combined: +14,844 funding records linked this session
-- [x] Remaining ~17K unlinked: mostly ROGS state-aggregate (structurally unlinkable) + programs without org names
+#### Funding Linkage: 79.4% → 88.9% (+14,844)
+- [x] Remaining ~17K structurally unlinkable (ROGS aggregate, no-ABN QGIP)
 
-#### Stale Platform Stats — UPDATED (12 files)
-- [x] Orgs: 82,966 → 98,404
-- [x] Indigenous: 1,724 → 2,051
-- [x] Programs: 1,081 → 1,165
-- [x] Funding records: 148,386 → 156,937
-- [x] Files: funder reports, emails, calculator, compare, tour, onboarding, newsletters, chat, viz, campaign hub
+#### 4 New ALMA Agents — BUILT + TESTED + RUN
+- [x] **Evidence Maturation** — 58 candidates flagged for evidence upgrade (12 tests)
+- [x] **Graph Score** — org connectedness scoring 0-100 (9 tests, running on 98K orgs)
+- [x] **CivicScope Bridge** — 99 parliamentary findings created, 64 org/program links (14 tests)
+- [x] **Story Linker** — ready, 0 stories (awaiting EL sync) (38 tests)
+- [x] Schema fixes: junction table for evidence, valid finding_type constraint
+- [x] Wired maturation + graph score into weekly pulse cron
+- [x] CivicScope bridge added to vercel.json (Sun 8pm UTC)
+
+#### Orphan Programs — RESOLVED
+- [x] 19 junk entries flagged (statistics, detention centres, strategic plans)
+- [x] 121 remaining are system-wide programs (correctly unlinked)
+
+#### QLD Justice Deep Dive — SHIPPED
+- [x] `/intelligence/qld-justice` — Corrective Services briefing-ready page
+- [x] $59.6B QLD spending by source, control type disparity analysis
+- [x] Top 20 funded orgs, Indigenous org table (Palm Island 21 programs, $44M)
+- [x] 54K QLD board roles, multi-board Indigenous connectors
+- [x] 451 QLD programs by evidence level
+- [x] Data gaps section (crime, disability, education, child protection)
+
+#### ACT Ecosystem Strategic Reviews — COMPLETE
+- [x] `output/act-ecosystem-review-march-2026.md` — impact framing, convergence thesis
+- [x] `output/act-product-ecosystem-review.md` — revenue model:
+  - CivicScope = cash register (widest market, $179K Y1)
+  - Empathy Ledger = OCAP moat ($72K Y1)
+  - JusticeHub = intelligence service ($50K Y1)
+  - Farm/Harvest = relationship builder ($60K Y1)
+  - Compound loop: each product sells the next
+  - Conservative Y1: $361K, Y2: $800K-$1.2M
+- [x] Product priority: CivicScope (auth+billing) → EL (multi-tenant) → JH (funder reports)
+
+#### Stale Stats Updated — 12 FILES
+- [x] Orgs: 82,966 → 98,404 | Indigenous: 1,724 → 2,051 | Programs: 1,081 → 1,165
 
 ### Previous Session (2026-03-28 session 11)
 
@@ -254,35 +278,33 @@ status: active
 |--------|-------|
 | Total organizations | **98,404** (+15,435 from ACNC expansion) |
 | Indigenous/ACCO orgs | **2,051** (+292) |
-| Classified orgs | 82,969 (older orgs classified, 15K new need classification) |
-| Total funding records | 156,937 ($114.9B) |
+| Classified orgs | **98,404 (100%)** — re-classified after expansion |
+| Total funding records | 156,937 ($120.4B) |
 | Funding linkage rate | **88.9%** (was 79.4% — +14,844 linked this session) |
-| Total interventions (ALMA) | **1,165** verified |
+| Remaining unlinked | ~17K (ROGS aggregate + no-ABN QGIP — structurally unlinkable) |
+| Total interventions (ALMA) | **1,146** verified (19 junk flagged this session) |
+| Maturation candidates | **58** flagged for evidence upgrade review |
 | Proven evidence programs | 6 |
-| Evidence items | 570 evidence + 550 findings + 430 media + 9 stories |
-| Board/governance records | 339,698 person-roles, 14,919 people, 858 multi-board Indigenous |
+| Evidence items | 570 evidence + 550 findings + 430 media + 99 parliamentary |
+| Board/governance records | 339,698 person-roles, 242K unique directors |
+| QLD board roles | 54,037 (via ABN join) |
+| GS entity links | **70,647** (+50,577 this session) |
+| Living agents | **6** (discovery, sentiment, maturation, graph score, civicscope, story linker) |
+| Tests passing | **337 lib tests** (82 new this session) |
 | Funder profiles configured | 3 (Dusseldorp, Minderoo, PRF) |
-| PRF JR records linked | 21/30 |
-| Intermediary funding | $2.3B across 38 orgs ($62M avg per org) |
-| ACCO funding | $2.4B across 607 orgs ($4M avg per org) |
-| Community control by state | NT 85%, WA 70%, TAS 55%, VIC 2.4% (worst) |
-| Detention cost (ROGS 2026) | $1.3M/child/year, 85% recidivism |
-| Community program median | $77K/year (17:1 ratio vs detention) |
-| Active inquiries | Senate (June 2026), NSW Select Committee (Dec 2026) |
-| Inquiry recommendations | 1,845 across 17 inquiries, 0 complete |
-| Regional reports live | 6 tour stops + national overview |
-| Daily crons | 22 (20 existing + regional discovery + sentiment) |
-| New tests this session | 77 passing (regional + sentiment + discovery) |
-| Feynman review | `output/feynman-review-justicehub-model.md` |
+| Intelligence pages | 6 regional + national + **QLD deep dive** (new) |
+| Daily crons | **24** (22 existing + regional discovery + sentiment) |
+| Weekly crons | **1** new (CivicScope bridge, Sun 8pm UTC) |
+| Strategic reviews | `output/act-ecosystem-review-march-2026.md` + `output/act-product-ecosystem-review.md` |
 
-### Control Type Classification (new column on organizations)
-- `community_controlled` (1,724) — ACCO, Aboriginal corporations
-- `community_adjacent` (954) — local NFPs, place-based orgs
-- `government` (954) — councils, departments
-- `university` (288) — research institutions
-- `intermediary` (235) — Mission Australia, LWB, Save the Children, etc.
-- `peak_body` (80) — advocacy/policy orgs
-- 78,725 unclassified (mostly small orgs in ACNC bulk import)
+### Control Type Classification
+- `community_controlled` (2,089) — ACCO, Aboriginal corporations
+- `community_adjacent` (74,892) — local NFPs, place-based orgs, QGIP recipients
+- `intermediary` (19,680) — Mission Australia, LWB, Anglicare, etc.
+- `government` (1,141) — councils, departments
+- `university` (433) — research institutions
+- `peak_body` (171) — advocacy/policy orgs
+- **Unclassified: 0**
 
 ### Decisions
 - Source tag `dusseldorp-yir-2025` for all YIR partners (not generic `dusseldorp` or `philanthropic`)
@@ -320,10 +342,17 @@ status: active
 | `/Users/benknight/Downloads/Dusseldorp_YearInReview25.pdf` | Source PDF for Dusseldorp data |
 | `src/app/intelligence/regional/[region]/page.tsx` | Regional report template (6 tour stops) |
 | `src/app/intelligence/national/page.tsx` | National all-Australia overview |
-| `src/lib/intelligence/regional-computations.ts` | Reusable computation functions (39 tests) |
+| `src/lib/intelligence/regional-computations.ts` | Reusable computation functions (48 tests) |
 | `src/lib/cron/regional-discovery.ts` | Regional Discovery agent (16 tests) |
 | `src/lib/cron/sentiment-analysis.ts` | Sentiment Analysis agent (22 tests) |
-| `src/lib/ai/llm-schemas.ts` | Added SentimentAnalysisSchema |
+| `src/lib/cron/evidence-maturation.ts` | Evidence Maturation agent (12 tests) |
+| `src/lib/cron/graph-score.ts` | Graph Score agent (9 tests) |
+| `src/lib/cron/civicscope-bridge.ts` | CivicScope Bridge agent (14 tests) |
+| `src/lib/cron/story-linker.ts` | Story Linker agent (38 tests) |
+| `src/app/intelligence/qld-justice/page.tsx` | QLD Justice deep dive (Corrective Services ready) |
+| `scripts/fuzzy-link-multi-source.mjs` | Multi-source fuzzy matching pipeline |
+| `output/act-product-ecosystem-review.md` | ACT revenue model + compound loop |
+| `output/act-ecosystem-review-march-2026.md` | ACT ecosystem convergence thesis |
 | `thoughts/shared/data-sync-architecture.md` | 6-agent living system architecture |
 
 ### Workflow State
