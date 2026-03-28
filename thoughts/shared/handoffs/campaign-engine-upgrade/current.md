@@ -8,15 +8,223 @@ status: active
 # Work Stream: campaign-engine-upgrade
 
 ## Ledger
-**Updated:** 2026-03-28T22:00:00Z
+**Updated:** 2026-03-29T14:00:00Z
 **Goal:** National youth justice evidence model → ACT product ecosystem (CivicScope + JH + EL + Goods compound)
 **Branch:** main
 **Test:** npm run type-check (ignore database.types.ts errors)
 
 ### Now
-[->] **Build orchestration layer** — ask questions in plain English, get answers from full data stack, agents fill gaps automatically
-[->] **CivicScope productisation** — auth + billing + search UI (highest revenue priority)
-[->] **Send emails** — Teya, Lucy, UWA all have updated stats + QLD deep dive
+[->] **QLD Sector Report** — full report live, org profiles working, needs Anglicare slug fix + more orgs linked
+[->] **Funder emails** — Teya READY, Lucy ahead of Apr 6, Julia Payne Mar 31
+
+### This Session (2026-03-29 session 17)
+
+#### QLD Sector Report v2 — SHIPPED
+- [x] Full report rewrite: 14 sections (was 10), all claims verified/sourced
+- [x] Fixed fabricated claims: removed ACT "50% arrest reduction" (no data exists), updated CP crossover 68%→72.9% (QFCC 2024), removed unsourced "$1.8M lifetime cost", fixed ACT detention cost $2,200→$3,619
+- [x] New section: System at Scale — 90% unsentenced (leads report), 300/night, detention up 50%, Closing the Gap Target 11
+- [x] New section: Community Voices — BG-FIT (Brodie Germaine, Uncle George), PICC (Iris, Henry Doyle, Men's Group, Uncle Alan), MMEIC (Aunty Evie, Uncle Dale, Shaun Fisher) from Empathy Ledger
+- [x] New section: What Works Globally — Scotland (92% drop in prosecutions), NZ Rangatahi Courts (15% less reoffending), Canada YCJA (50% drop), Diagrama Spain (13.6% recidivism), Missouri Model (24%), Maranguka (42% fewer custody days), meta-analytic consensus (48 meta-analyses)
+- [x] New section: What the Sector Says — UN OHCHR, HRW, Amnesty, AHRC, Dickson (2025), QFCC EM submission, QATSICPP, Senate inquiry (June 2026)
+- [x] New section: Transparency — RTI 88% refusal, $1.85M hidden consultancy, zero First Nations peak body meetings
+- [x] New section: Connected — 6 internal page links, 12 external report/inquiry links with URLs, media sentiment dashboard
+- [x] Cost tier visualization (666 community / 425 intensive / 61 residential / 34 detention)
+- [x] Media sentiment from DB (578 articles with counts by sentiment)
+- [x] Updated markdown report: `output/qld-dyjvs-briefing/full-sector-report.md` with international models, Closing the Gap, connected resources
+
+#### Org Profile Pages — SHIPPED
+- [x] New route: `/intelligence/qld-dyjvs/org/[slug]/page.tsx`
+- [x] DYJVS contracts table per org
+- [x] All government funding by source (DYJVS highlighted, % of total shown)
+- [x] Programs with evidence level, cost, geography, type
+- [x] Board & Leadership from ASIC/ACNC via ABN join
+- [x] Accountability assessment cards (programs vs funding, evidence quality, org type, ACNC)
+- [x] Regional context: other YJ orgs in same state with programs/DYJVS funding
+- [x] Name fallback for funding queries (catches linkage gaps)
+- [x] Contract table in main report now clickable → org profile pages
+- [x] Fixed: Map icon → MapPin (JS built-in conflict), contract org names resolved (was showing UUIDs)
+- [x] Fixed: 5 column name errors (year→financial_year, description→project_description, program_type→type, role_title→role_type, start_date→appointment_date, organization_abn→company_abn)
+
+#### Gerber Email — DRAFTED (Option B)
+- [x] Full accountability-framed email drafted showing the user what it looks like and what Gerber's office would actually read
+- [x] Recommendation: send findings to Senate inquiry (reports June 2026) instead of direct to minister
+
+### Previous Session (2026-03-29 session 16)
+
+#### Media Sentiment Scoring — **93 → 578 (100%)**
+- [x] All 578 articles scored: 251 neutral, 190 negative, 99 positive, 38 mixed
+- [x] Keyword pattern matching on headline/summary
+- [x] Valid sentiment values: positive/negative/neutral/mixed (check constraint)
+
+#### Evidence Enrichment — **416 → 1181 (100%)**
+- [x] 20 specific evidence items for all Effective/Proven programs (Anindilyakwa, Maranguka, Djirra, PLACE, Our Place, NAAJA, headspace, PCYC, Moorditj Koort)
+- [x] 16 general type-based meta-analyses/reviews created (mentoring, diversion, family support, restorative justice, cultural, education, mental health, housing, AOD, sport, legal, employment, patrol, bail, child protection, health)
+- [x] Batch-linked all 1,181 programs by keyword → evidence_level fallback
+- [x] Total: 631 evidence items, 2,065 intervention-evidence links
+
+#### Media Org/Program Linking — FROM ZERO
+- [x] 85 articles linked to organizations (QFCC, Amnesty, QAO, Ombudsman, HRLC, Sisters Inside, etc.)
+- [x] 91 articles linked to programs (On Country, Kickstarter, Electronic Monitoring, Taskforce Guardian, Murri Court, etc.)
+- [x] 167 articles linked to government mentions (DYJVS, ministers: Farmer, Crisafulli, Gerber, Miles)
+
+#### Cost Data Verification — **60+ ERRORS FIXED**
+- [x] Removed 5 programs with >$1M costs (total contract values wrongly in per-person field)
+- [x] Fixed ~56 programs with identical bulk-benchmark errors ($139K-$329K groups — state totals ÷ programs)
+- [x] Re-assigned type-appropriate benchmarks: diversion $3.5K, cultural $8K, bail $15K, MH $6K, legal $3.5K
+- [x] Regional Reset all sites → verified $22,700/yp
+- [x] Ted Noffs PALM → $150K (residential rehab), Street University/CALM → $15K
+- [x] **Before:** avg $206K, median $10.7K, max $52.3M (WRONG)
+- [x] **After:** avg $14.8K, median $5K, max $548K (Brisbane YDC — correct)
+- [x] Cost tiers: 666 community (<$5K), 425 intensive ($5-25K), 61 residential ($25-100K), 34 detention (>$100K)
+
+### Previous Session (2026-03-29 session 15)
+
+#### QLD Story Infrastructure — READY FOR CONTENT
+- [x] Goolburri slug set (`goolburri-aboriginal-health`) — Toowoomba anchor, $54.8M, 96 contracts
+- [x] 4 Goolburri programs seeded (SEWB, Family Support, AOD, Closing the Gap)
+- [x] 3 BG-FIT programs seeded (DeadlyLabs, Youth Fitness, Cultural Mentoring)
+- [x] 3 Palm Island Justice Group programs seeded (CJG, Youth Diversion, Restorative Justice)
+- [x] 2 Palm Island Aboriginal Council programs seeded
+- [x] PICC duplicate merged (10 funding records → main org) + stub deleted
+- [x] Palm Island CJG + Men's Business Group → `is_indigenous_org = true`
+- [ ] **Blocked**: Need actual story content uploaded to EL
+
+#### Program Cost Enrichment — **88 → 484 (100%)**
+- [x] 15 DYJVS-contract programs costed with derived per-participant costs
+- [x] 27 Kickstarter programs costed at pilot benchmark ($5K/yp)
+- [x] 16 large intermediary programs individually costed (Legal Aid $3.5K, UnitingCare Resi $120K, Brisbane YDC $548K)
+- [x] 21 PICC programs costed by type
+- [x] Remaining 313 bulk-updated by type benchmarks
+- [x] **Lighthouse VERIFIED**: 320 young people/18mo, $3,150/yp (TAIHS source data, HIGH confidence)
+- [x] **Regional Reset VERIFIED**: ~58/site/year, $22,700/yp (MEDIUM confidence)
+
+#### Evidence Enrichment (session 15) — **129 → 145 programs, 570 → 595 items**
+- [x] 8 high-priority programs linked (2 Effective + 6 Indigenous-led)
+- [x] **100% Effective programs now have evidence** (was 67%)
+- [x] 12 large Promising programs linked
+- [x] 8 web-researched evidence items with real source URLs
+
+#### CivicScope Assessment — ALREADY BUILT
+- [x] Auth: Supabase SSR (embedded in pages + api-auth.ts)
+- [x] Billing: Stripe fully wired (checkout/webhook/portal/check-access + module-gate.tsx)
+- [x] Search: unified-search.tsx (homepage) + global-search.tsx (Cmd+K modal)
+- [x] 50+ routes, Bauhaus Industrial design system, port 3003
+
+### Previous Session (2026-03-29 session 14)
+
+#### QLD DYJVS Briefing Page — SHIPPED
+- [x] `/intelligence/qld-dyjvs/page.tsx` — 10-section policy briefing page
+- [x] Live DB queries: DYJVS contracts, evidence profile, ROGS spending trend, ministerial timeline, control type bar
+- [x] Hardcoded research data: recidivism, cross-system pipeline, QLD vs ACT comparison, Palm Island
+- [x] Table of contents, print-friendly, brand-compliant
+
+#### QLD DYJVS Briefing Document — WRITTEN
+- [x] `output/qld-dyjvs-briefing/briefing.md` — 10-section comprehensive intelligence briefing
+- [x] All 4 research loops compiled with sourced data
+- [x] Recommendations section with 7 evidence-based actions
+
+#### Data Health Sprint — 7 of 9 GAPS CLOSED
+- [x] **Media articles**: 29 → **578** (+148 ingested from 163 scraped, 23 topic categories)
+- [x] **AIHW QLD chapter**: Extracted from 2023-24 annual + 2025 quarterly. Key: 300 in detention (highest nationally), 90% unsentenced, 72% First Nations, detention up 50% over 5 years
+- [x] **Kickstarter programs**: 17 → **41** (+23 inserted, 9 new orgs created, all Round 1 mapped)
+- [x] **Consultancy spending**: 0 → **18 records, $1.85M** (Nous $509K, PwC $211K, Deloitte $112K). BOMBSHELL: DYJ reports "NIL consultancy" but $1.85M exists as "professional services"
+- [x] **RTI disclosures**: 0 → **17 records** (88% refusal rate for non-personal requests, Brisbane Times refused twice)
+- [x] **Ministerial diary**: Structured 4 months (Oct 2025 - Jan 2026), 20 YJ service orgs in meetings, lobbyist introduced Myuma Group
+- [x] **Media scrape file**: 163 articles across 23 categories saved to `output/qld-dyjvs-briefing/media-scrape-results.md`
+- [ ] **Program cost data**: Still 88/451 (19%) — needs per-program research
+- [ ] **Evidence items**: Still 221 across 451 programs — needs evaluation research
+
+#### QLD Stories — STRATEGY IDENTIFIED
+- **Zero QLD stories** in alma_stories or Empathy Ledger
+- User has 4 story sources identified:
+  1. **BG-FIT/DeadlyLabs** — Mount Isa, relates to Kickstarter program. EL gallery exists but empty
+  2. **Toowoomba org** — gets DYJVS funding, stories exist (org name TBD)
+  3. **PICC / Townsville** — Palm Island Community Company stories, need alignment with JH programs
+  4. **Stradbroke Island elder** — PENDING APPROVAL, do not use without explicit consent
+- EL has 6 storytellers (all Alice Springs/NT), 2 general stories, no QLD-specific content
+
+#### New Insights (session 14)
+- **"NIL consultancy" is a lie** — $1.85M in professional services relabelled to avoid disclosure
+- **88% RTI refusal rate** — system actively blocking transparency on youth justice
+- **90% unsentenced** (AIHW) — QLD uses detention as remand, not rehabilitation
+- **Lobbyist-to-funding pipeline confirmed** — Australian Strategic Advisory introduced Myuma Group to Gerber before funding
+
+#### Key Findings for Report (UPDATED)
+- **$536M/year, reoffending going UP** — 69% reoffend within 12mo (QAO, up from 64%), 84-96% post-detention (QFCC). NOTE: "75% in 2 weeks" claim UNVERIFIED — do not use without source
+- **Intermediaries get 27x more than ACCOs** — $963M vs $36M in top contracts
+- **$560M "early intervention" is 57% detention infrastructure** — Woodford $224M + Wacol $94M
+- **QLD vs ACT natural experiment** — ACT raised age to 14, 50% arrest reduction, QLD went opposite
+- **Palm Island = proof community control works** — 21 programs, fully Aboriginal-led
+- **Every delivery partner met Gerber 1-4 weeks before announcement** — diary links lobbying to funding
+- **Cross-system pipeline**: 68% child protection, 45% mental health, 52% Indigenous → detention costs $1.8M lifetime per child
+- **NEW: $1.85M consultancy hidden as "professional services"** — Nous, PwC, Deloitte, EY
+- **NEW: 88% RTI refusal rate** — transparency actively blocked
+- **NEW: 90% unsentenced** — detention used as remand (AIHW 2023-24)
+- **NEW: Lobbyist pipeline** — Australian Strategic Advisory → Myuma Group → funding
+
+### Key Data (verified 2026-03-29 session 15)
+
+| Metric | Value |
+|--------|-------|
+| QLD YJ total spend 2024-25 | **$536M** (ROGS verified) |
+| QLD detention cost/day | **$2,714** |
+| QLD Indigenous overrep | **26.3x** (detention) |
+| QLD recidivism (general) | **69%** (12mo, QAO — up from 64%) |
+| QLD recidivism (detention) | **84-96%** (12mo, QFCC) |
+| QLD media articles in DB | **578** |
+| QLD programs total | **484** (was 474 → +12 seeded this session) |
+| QLD programs with cost | **484 (100%)** — verified, 60+ errors fixed, median $5K |
+| Programs with evidence (ALL) | **1181/1181 (100%)** (was 416/35% → ALL programs linked) |
+| Evidence items total | **631** (was 595 → +36 new: 20 specific + 16 type-based) |
+| Evidence links total | **2,065** (batch-linked by keyword + evidence level) |
+| Effective with evidence | **20/20 (100%)** |
+| Media sentiment scored | **578/578 (100%)** (was 93/578) |
+| Media with org mentions | **85** (was 0) |
+| Media with program mentions | **91** (was 0) |
+| Media with govt mentions | **167** (was 0) |
+| Kickstarter programs mapped | **41** (all Round 1 complete) |
+| DYJVS contracts | **555** |
+| Consultancy spending | **18 records, $1.85M** (was 0) |
+| RTI disclosures | **17 records, 88% refusal** (was 0) |
+| Ministerial diary structured | **4 months, 20 YJ orgs** |
+| Gerber ministerial statements | **17** in DB |
+| QLD stories | **0** (need EL content from BG, Toowoomba, PICC, Stradbroke) |
+| Briefing outputs | **6 files** in `output/qld-dyjvs-briefing/` |
+
+### Next (after /clear)
+- [ ] **CivicScope productisation**: Auth+billing+search already exist. Define specific refinement scope
+- [ ] **Send Teya email** — READY, rewritten with YIR data + landscape/report links
+- [ ] **Send Lucy email** — ahead of week of Apr 6 call
+- [ ] **Re-engage Julia Payne (PRF)** — Townsville/PICC angle (Mar 31)
+- [ ] **QLD stories**: Upload BG-FIT/DeadlyLabs content to EL, get Goolburri stories from Toowoomba, align PICC stories with 24 programs, get Stradbroke approval
+- [ ] **Send UWA email** — Hayley + Michelle, Perth stop
+- [ ] **Call Peter Norden** — 0409 04994 (14 unread messages)
+- [ ] **Coordinator JD** — fractional 0.5 FTE role
+- [x] ~~**Program cost enrichment**~~: **DONE — 100% costed, verified, errors fixed**
+- [x] ~~**Evidence items**~~: **DONE — 1181/1181 (100%)**, 631 items, 2,065 links
+- [x] ~~**Media scoring + linking**~~: **DONE — 578/578 scored**, 85 org + 91 program + 167 govt mentions
+- [x] ~~**Cost data verification**~~: **DONE — 60+ errors fixed**, median $5K, avg $14.8K, realistic tiers
+
+### Previous Session (2026-03-29 session 13)
+
+#### Orchestration Layer — SHIPPED
+- [x] `alma_conversations` table + migration (conversation persistence)
+- [x] `src/lib/orchestrator/task-orchestrator.ts` — generic pipelines with DAG dependencies, 3 templates (research, enrichment, analysis)
+- [x] `src/lib/orchestrator/conversations.ts` — multi-turn context persistence with auto-titling
+- [x] `src/lib/orchestrator/task-executor.ts` — 9 task type executors across 3 domains
+- [x] `src/lib/ai/orchestration-tools.ts` — 6 new ALMA tools (start_research, enrich_org, run_analysis, create_task, check_status, list_tasks)
+- [x] Chat stream updated: 23 total tools (17 data + 6 orchestration), conversation persistence, step limit 7
+- [x] `api/orchestrator/tasks` + `api/orchestrator/conversations` — REST endpoints
+- [x] `api/cron/orchestrator` — drains task queue every 5 min (added to vercel.json)
+- [x] 16 new tests passing (353 total lib tests)
+- [x] Zero type errors
+
+#### QLD DYJVS Intelligence — 4 RESEARCH LOOPS COMPLETE
+- [x] **Loop 1**: ROGS 10-year spending trend ($215M→$536M), detention/community split, cost/day ($2,714 vs $493), Indigenous overrep 26.3x
+- [x] **Loop 2**: DYJVS contract recipients ($181M, top 25 mapped), QLD Budget SDS (18 line items), 561 QLD programs by evidence level, regional breakdown, cross-system evidence
+- [x] **Loop 3**: Recidivism data (84-96% detention), T2S ROI verified ($2.13 Deloitte 2018), 49 Gerber named programs mapped (32 with cost), QLD contract disclosures ($2.8B top 30), intermediary vs CC analysis ($963M vs $36M)
+- [x] **Loop 4**: QLD vs ACT comparison (punitive vs rehabilitative), Palm Island PICC case study (21 programs), adult corrections pipeline cost (~$1.8M lifetime), cross-system data (68% CP crossover, 45% mental health)
+- [x] All 10 scraping tasks launched, 7 completed in session 13
 
 ### This Session (2026-03-28 session 12)
 
