@@ -14,6 +14,7 @@ import {
   computeGovernmentSources,
   computeIntermediaryPresence,
   computeFundingFlows,
+  computeGovernanceNetwork,
   DETENTION_COST_PER_CHILD,
   SOURCE_LABELS,
 } from '@/lib/intelligence/regional-computations';
@@ -213,7 +214,17 @@ async function getRegionData(config: RegionConfig) {
     evidence = evidenceData || [];
   }
 
-  return { organizations, interventions, funding, unlinkedFunding, evidence };
+  // 6. Board / governance data for orgs in region
+  let personRoles: any[] = [];
+  if (orgIds.length > 0) {
+    const { data: rolesData } = await sb
+      .from('person_roles')
+      .select('person_name, role_type, company_name, entity_id')
+      .in('entity_id', orgIds);
+    personRoles = rolesData || [];
+  }
+
+  return { organizations, interventions, funding, unlinkedFunding, evidence, personRoles };
 }
 
 /* ── Metadata ─────────────────────────────────────────────────── */
@@ -237,7 +248,7 @@ export default async function RegionalReportPage({ params }: { params: { region:
   const config = REGIONS[params.region];
   if (!config) notFound();
 
-  const { organizations, interventions, funding, unlinkedFunding, evidence } = await getRegionData(config);
+  const { organizations, interventions, funding, unlinkedFunding, evidence, personRoles } = await getRegionData(config);
 
   // ── Computed stats ──
   const totalFunding = funding.reduce((sum: number, f: any) => sum + (f.amount_dollars || 0), 0);
@@ -322,6 +333,7 @@ export default async function RegionalReportPage({ params }: { params: { region:
   const govSources = computeGovernmentSources(funding, organizations);
   const intermediaryPresence = computeIntermediaryPresence(organizations, interventions, funding);
   const fundingFlows = computeFundingFlows(govSources, intermediaryPresence, funding, organizations);
+  const governance = computeGovernanceNetwork(personRoles, organizations);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
@@ -1178,7 +1190,106 @@ export default async function RegionalReportPage({ params }: { params: { region:
           </section>
         )}
 
-        {/* ── SECTION 6: Data Gaps & Opportunities ── */}
+        {/* ── SECTION 6: Governance Network ── */}
+        {governance.totalDirectors > 0 && (
+          <section className="print:break-before-page">
+            <h2 className="text-2xl font-bold text-[#0A0A0A] mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              Governance Network
+            </h2>
+            <p className="text-sm text-gray-500 mb-6 font-mono">
+              {governance.totalDirectors.toLocaleString()} directors | {governance.multiboardDirectors.toLocaleString()} serving multiple boards | {governance.multiboardIndigenous.toLocaleString()} connecting Indigenous orgs
+            </p>
+
+            {/* Summary cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              <div className="bg-white/80 rounded-lg p-5 border border-gray-200">
+                <p className="text-2xl font-bold text-[#0A0A0A]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  {governance.totalDirectors.toLocaleString()}
+                </p>
+                <p className="text-xs text-gray-500 font-mono">Total Directors</p>
+              </div>
+              <div className="bg-white/80 rounded-lg p-5 border border-gray-200">
+                <p className="text-2xl font-bold text-[#059669]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  {governance.multiboardDirectors.toLocaleString()}
+                </p>
+                <p className="text-xs text-gray-500 font-mono">Multi-Board</p>
+              </div>
+              <div className="bg-white/80 rounded-lg p-5 border border-gray-200">
+                <p className="text-2xl font-bold text-purple-600" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  {governance.multiboardIndigenous.toLocaleString()}
+                </p>
+                <p className="text-xs text-gray-500 font-mono">Indigenous Connectors</p>
+              </div>
+              <div className="bg-white/80 rounded-lg p-5 border border-gray-200">
+                <p className="text-2xl font-bold text-amber-600" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  {governance.crossSectorConnections.toLocaleString()}
+                </p>
+                <p className="text-xs text-gray-500 font-mono">Cross-Sector Bridges</p>
+              </div>
+            </div>
+
+            {/* Top connectors */}
+            {governance.topConnectors.length > 0 && (
+              <div>
+                <h3 className="text-sm font-mono text-gray-500 uppercase tracking-wider mb-3">Top Connectors</h3>
+                <div className="bg-white/80 rounded-xl border border-gray-200 overflow-hidden">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-100">
+                        <th className="text-left px-5 py-3 text-xs font-mono text-gray-500 uppercase">Director</th>
+                        <th className="text-right px-5 py-3 text-xs font-mono text-gray-500 uppercase">Boards</th>
+                        <th className="text-right px-5 py-3 text-xs font-mono text-gray-500 uppercase">Indigenous</th>
+                        <th className="text-left px-5 py-3 text-xs font-mono text-gray-500 uppercase">Organisations</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {governance.topConnectors.map(director => (
+                        <tr key={director.personName} className="border-b border-gray-50 hover:bg-gray-50/50">
+                          <td className="px-5 py-3 text-sm font-medium text-[#0A0A0A]">{director.personName}</td>
+                          <td className="px-5 py-3 text-sm text-right font-mono text-gray-600">{director.totalBoards}</td>
+                          <td className="px-5 py-3 text-sm text-right">
+                            {director.indigenousBoards > 0 ? (
+                              <span className="inline-flex items-center gap-1 text-xs text-purple-600 font-mono">
+                                <Shield className="w-3 h-3" /> {director.indigenousBoards}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-gray-300 font-mono">0</span>
+                            )}
+                          </td>
+                          <td className="px-5 py-3 text-xs text-gray-500 truncate max-w-[300px]">
+                            {director.boards.map(b => b.orgName).join(', ')}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Narrative callout */}
+            {governance.multiboardIndigenous > 0 && (
+              <div className="mt-6 bg-purple-50 border border-purple-200 rounded-lg p-5">
+                <div className="flex items-start gap-3">
+                  <Users className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-semibold text-purple-900 text-sm">The Human Network Behind Community Control</h3>
+                    <p className="text-sm text-purple-700 mt-1 leading-relaxed">
+                      {governance.multiboardIndigenous} {governance.multiboardIndigenous === 1 ? 'director serves' : 'directors serve'} across
+                      multiple Indigenous organisations in this region &mdash; the connective tissue of
+                      self-determination. {governance.crossSectorConnections > 0 && (
+                        <>Another {governance.crossSectorConnections} bridge Indigenous and non-Indigenous organisations,
+                        building cross-sector relationships.</>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ── SECTION 7: Data Gaps & Opportunities ── */}
         {(orgsWithFundingNoPrograms.length > 0 || orgsNoClassification.length > 0 || unlinkedFunding.length > 0 || programsNoEvidence.length > 0) && (
           <section>
             <h2 className="text-2xl font-bold text-[#0A0A0A] mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>

@@ -4,12 +4,14 @@ import {
   computeGovernmentSources,
   computeIntermediaryPresence,
   computeFundingFlows,
+  computeGovernanceNetwork,
   formatDollars,
   pct,
   DETENTION_COST_PER_CHILD,
   RegionOrg,
   RegionFunding,
   RegionIntervention,
+  PersonRole,
 } from '@/lib/intelligence/regional-computations';
 
 /* ── Test fixtures ────────────────────────────────────────────── */
@@ -464,5 +466,149 @@ describe('computeFundingFlows', () => {
   it('handles empty inputs', () => {
     const result = computeFundingFlows([], [], [], []);
     expect(result).toHaveLength(0);
+  });
+});
+
+/* ── computeGovernanceNetwork ──────────────────────────────────── */
+
+const makeRole = (overrides: Partial<PersonRole> = {}): PersonRole => ({
+  person_name: 'Jane Smith',
+  role_type: 'Director',
+  company_name: 'Test Corp',
+  entity_id: null,
+  ...overrides,
+});
+
+describe('computeGovernanceNetwork', () => {
+  it('counts total unique directors', () => {
+    const roles = [
+      makeRole({ person_name: 'Alice', entity_id: 'org-1', company_name: 'Org A' }),
+      makeRole({ person_name: 'Bob', entity_id: 'org-1', company_name: 'Org A' }),
+      makeRole({ person_name: 'Alice', entity_id: 'org-2', company_name: 'Org B' }),
+    ];
+    const orgs = [
+      makeOrg({ id: 'org-1', name: 'Org A' }),
+      makeOrg({ id: 'org-2', name: 'Org B' }),
+    ];
+
+    const result = computeGovernanceNetwork(roles, orgs);
+    expect(result.totalDirectors).toBe(2); // Alice + Bob
+  });
+
+  it('identifies multi-board directors', () => {
+    const roles = [
+      makeRole({ person_name: 'Alice', entity_id: 'org-1', company_name: 'Org A' }),
+      makeRole({ person_name: 'Alice', entity_id: 'org-2', company_name: 'Org B' }),
+      makeRole({ person_name: 'Bob', entity_id: 'org-1', company_name: 'Org A' }),
+    ];
+    const orgs = [
+      makeOrg({ id: 'org-1', name: 'Org A' }),
+      makeOrg({ id: 'org-2', name: 'Org B' }),
+    ];
+
+    const result = computeGovernanceNetwork(roles, orgs);
+    expect(result.multiboardDirectors).toBe(1); // Alice only
+  });
+
+  it('counts Indigenous board connections', () => {
+    const roles = [
+      makeRole({ person_name: 'Alice', entity_id: 'org-1', company_name: 'ACCO One' }),
+      makeRole({ person_name: 'Alice', entity_id: 'org-2', company_name: 'ACCO Two' }),
+      makeRole({ person_name: 'Bob', entity_id: 'org-1', company_name: 'ACCO One' }),
+      makeRole({ person_name: 'Bob', entity_id: 'org-3', company_name: 'Non-Indigenous Org' }),
+    ];
+    const orgs = [
+      makeOrg({ id: 'org-1', name: 'ACCO One', is_indigenous_org: true }),
+      makeOrg({ id: 'org-2', name: 'ACCO Two', is_indigenous_org: true }),
+      makeOrg({ id: 'org-3', name: 'Non-Indigenous Org', is_indigenous_org: false }),
+    ];
+
+    const result = computeGovernanceNetwork(roles, orgs);
+    expect(result.multiboardIndigenous).toBe(1); // Alice (2 Indigenous boards)
+    // Bob has 1 Indigenous + 1 non-Indigenous, so indigenousBoards=1, not >=2
+  });
+
+  it('counts cross-sector connections', () => {
+    const roles = [
+      makeRole({ person_name: 'Bridge Person', entity_id: 'org-1', company_name: 'ACCO' }),
+      makeRole({ person_name: 'Bridge Person', entity_id: 'org-2', company_name: 'Non-ACCO' }),
+    ];
+    const orgs = [
+      makeOrg({ id: 'org-1', name: 'ACCO', is_indigenous_org: true }),
+      makeOrg({ id: 'org-2', name: 'Non-ACCO', is_indigenous_org: false }),
+    ];
+
+    const result = computeGovernanceNetwork(roles, orgs);
+    expect(result.crossSectorConnections).toBe(1);
+  });
+
+  it('returns top connectors sorted by board count', () => {
+    const roles = [
+      makeRole({ person_name: 'Alice', entity_id: 'org-1', company_name: 'A' }),
+      makeRole({ person_name: 'Alice', entity_id: 'org-2', company_name: 'B' }),
+      makeRole({ person_name: 'Alice', entity_id: 'org-3', company_name: 'C' }),
+      makeRole({ person_name: 'Bob', entity_id: 'org-1', company_name: 'A' }),
+      makeRole({ person_name: 'Bob', entity_id: 'org-2', company_name: 'B' }),
+    ];
+    const orgs = [
+      makeOrg({ id: 'org-1', name: 'A' }),
+      makeOrg({ id: 'org-2', name: 'B' }),
+      makeOrg({ id: 'org-3', name: 'C' }),
+    ];
+
+    const result = computeGovernanceNetwork(roles, orgs);
+    expect(result.topConnectors[0].personName).toBe('Alice');
+    expect(result.topConnectors[0].totalBoards).toBe(3);
+    expect(result.topConnectors[1].personName).toBe('Bob');
+    expect(result.topConnectors[1].totalBoards).toBe(2);
+  });
+
+  it('deduplicates multiple roles at same org', () => {
+    const roles = [
+      makeRole({ person_name: 'Alice', entity_id: 'org-1', company_name: 'Org A', role_type: 'Director' }),
+      makeRole({ person_name: 'Alice', entity_id: 'org-1', company_name: 'Org A', role_type: 'Secretary' }),
+      makeRole({ person_name: 'Alice', entity_id: 'org-2', company_name: 'Org B', role_type: 'Director' }),
+    ];
+    const orgs = [
+      makeOrg({ id: 'org-1', name: 'Org A' }),
+      makeOrg({ id: 'org-2', name: 'Org B' }),
+    ];
+
+    const result = computeGovernanceNetwork(roles, orgs);
+    expect(result.multiboardDirectors).toBe(1);
+    expect(result.topConnectors[0].totalBoards).toBe(2); // not 3
+  });
+
+  it('handles empty inputs', () => {
+    const result = computeGovernanceNetwork([], []);
+    expect(result.totalDirectors).toBe(0);
+    expect(result.multiboardDirectors).toBe(0);
+    expect(result.topConnectors).toHaveLength(0);
+  });
+
+  it('skips roles with null person_name', () => {
+    const roles = [
+      makeRole({ person_name: null as any, entity_id: 'org-1' }),
+      makeRole({ person_name: 'Alice', entity_id: 'org-1', company_name: 'A' }),
+    ];
+    const orgs = [makeOrg({ id: 'org-1', name: 'A' })];
+
+    const result = computeGovernanceNetwork(roles, orgs);
+    expect(result.totalDirectors).toBe(1);
+  });
+
+  it('computes average boards per director', () => {
+    const roles = [
+      makeRole({ person_name: 'Alice', entity_id: 'org-1', company_name: 'A' }),
+      makeRole({ person_name: 'Alice', entity_id: 'org-2', company_name: 'B' }),
+      makeRole({ person_name: 'Bob', entity_id: 'org-1', company_name: 'A' }),
+    ];
+    const orgs = [
+      makeOrg({ id: 'org-1', name: 'A' }),
+      makeOrg({ id: 'org-2', name: 'B' }),
+    ];
+
+    const result = computeGovernanceNetwork(roles, orgs);
+    expect(result.avgBoardsPerDirector).toBe(1.5); // Alice=2, Bob=1 → 3/2
   });
 });

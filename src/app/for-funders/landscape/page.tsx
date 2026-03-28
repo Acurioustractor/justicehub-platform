@@ -460,7 +460,7 @@ export default function LandscapePage() {
               in scale — both investing in the same communities without seeing each other&apos;s work.
             </p>
             <p style={{ fontSize: '1rem', color: '#888', lineHeight: 1.7, marginBottom: 16 }}>
-              JusticeHub is that layer. 1,081 community programs mapped. 824 with cost data. 570 evidence records.
+              JusticeHub is that layer. 1,165 community programs mapped. 824 with cost data. 570 evidence records.
               Every organisation funded by either funder can see what&apos;s working elsewhere — not through a report
               that arrives 18 months later, but through a living platform updated by community.
             </p>

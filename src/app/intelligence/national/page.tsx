@@ -11,6 +11,7 @@ import {
   formatDollars,
   pct,
 } from '@/lib/intelligence/regional-computations';
+import { Users } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -395,13 +396,57 @@ async function getNationalData() {
     orgs_with_abn: abnCountRes.count || 0,
   };
 
-  return { stats, stateRows, evidenceDistribution, topFunded, communityControl, detention, linkage };
+  // ── Governance network (national summary) ──
+  // Fetch person_roles linked to Indigenous orgs only (much smaller set)
+  const indigenousOrgIds = allOrgs.filter(o => o.is_indigenous_org).map(o => o.id);
+
+  const [totalRolesRes, indigenousRolesRes] = await Promise.all([
+    sb.from('person_roles').select('id', { count: 'exact', head: true }),
+    indigenousOrgIds.length > 0
+      ? sb.from('person_roles')
+          .select('person_name, company_name, entity_id')
+          .in('entity_id', indigenousOrgIds)
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  // Compute multi-board Indigenous directors
+  const indigenousRoles: any[] = indigenousRolesRes.data || [];
+  const personIndigenousBoards = new Map<string, { orgs: Map<string, string> }>();
+  for (const r of indigenousRoles) {
+    if (!r.person_name) continue;
+    const entry = personIndigenousBoards.get(r.person_name) || { orgs: new Map() };
+    if (r.entity_id && !entry.orgs.has(r.entity_id)) {
+      entry.orgs.set(r.entity_id, r.company_name || 'Unknown');
+    }
+    personIndigenousBoards.set(r.person_name, entry);
+  }
+
+  const multiboardIndigenous = [...personIndigenousBoards.entries()]
+    .filter(([, d]) => d.orgs.size >= 2);
+
+  const nationalTopConnectors = multiboardIndigenous
+    .sort((a, b) => b[1].orgs.size - a[1].orgs.size)
+    .slice(0, 10)
+    .map(([name, d]) => ({
+      name,
+      boards: d.orgs.size,
+      orgs: [...d.orgs.values()],
+    }));
+
+  const governanceStats = {
+    totalRoles: totalRolesRes.count || 0,
+    totalIndigenousDirectors: personIndigenousBoards.size,
+    multiboardIndigenous: multiboardIndigenous.length,
+    topConnectors: nationalTopConnectors,
+  };
+
+  return { stats, stateRows, evidenceDistribution, topFunded, communityControl, detention, linkage, governanceStats };
 }
 
 /* ── Page ──────────────────────────────────────────────────── */
 
 export default async function NationalIntelligencePage() {
-  const { stats, stateRows, evidenceDistribution, topFunded, communityControl, detention, linkage } =
+  const { stats, stateRows, evidenceDistribution, topFunded, communityControl, detention, linkage, governanceStats } =
     await getNationalData();
 
   const totalEvidence = evidenceDistribution.reduce((s, r) => s + r.count, 0);
@@ -891,7 +936,125 @@ export default async function NationalIntelligencePage() {
           </div>
         </section>
 
-        {/* ══════════════ SECTION 7: DATA QUALITY ══════════════ */}
+        {/* ══════════════ SECTION 7: GOVERNANCE NETWORK ══════════════ */}
+        {governanceStats.totalRoles > 0 && (
+          <section>
+            <h2
+              className="text-2xl md:text-3xl font-bold text-[#0A0A0A] mb-2"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
+              Board &amp; Governance Network
+            </h2>
+            <p className="text-gray-600 mb-6">
+              The human network behind community control. {governanceStats.totalRoles.toLocaleString()} board
+              roles mapped, revealing the connective tissue of self-determination.
+            </p>
+
+            {/* Summary cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+              <div className="bg-white/80 rounded-xl p-6 border border-gray-200">
+                <p
+                  className="text-3xl font-bold text-[#0A0A0A]"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                >
+                  {governanceStats.totalRoles.toLocaleString()}
+                </p>
+                <p className="text-xs font-mono text-gray-500 mt-1">Board Roles Mapped</p>
+              </div>
+              <div className="bg-white/80 rounded-xl p-6 border border-gray-200">
+                <p
+                  className="text-3xl font-bold text-purple-600"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                >
+                  {governanceStats.totalIndigenousDirectors.toLocaleString()}
+                </p>
+                <p className="text-xs font-mono text-gray-500 mt-1">Indigenous Org Directors</p>
+              </div>
+              <div className="bg-white/80 rounded-xl p-6 border border-gray-200">
+                <p
+                  className="text-3xl font-bold text-[#059669]"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                >
+                  {governanceStats.multiboardIndigenous.toLocaleString()}
+                </p>
+                <p className="text-xs font-mono text-gray-500 mt-1">Multi-Board Indigenous Directors</p>
+              </div>
+              <div className="bg-white/80 rounded-xl p-6 border border-gray-200">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-amber-500" />
+                  <p className="text-xs font-mono text-gray-500 uppercase tracking-wider">Network Density</p>
+                </div>
+                <p className="text-sm text-gray-600 mt-2 leading-relaxed">
+                  {governanceStats.multiboardIndigenous > 0
+                    ? `${governanceStats.multiboardIndigenous} directors connect multiple Indigenous organisations — bridging communities, sharing governance knowledge, and strengthening collective power.`
+                    : 'Board network data being mapped.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Top connectors table */}
+            {governanceStats.topConnectors.length > 0 && (
+              <div>
+                <h3 className="text-sm font-mono text-gray-500 uppercase tracking-wider mb-3">
+                  Top Indigenous Org Connectors
+                </h3>
+                <div className="bg-white/80 rounded-xl border border-gray-200 overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-[#0A0A0A] text-white">
+                        <th className="text-left px-4 py-3 font-mono text-xs uppercase tracking-wider">Director</th>
+                        <th className="text-right px-4 py-3 font-mono text-xs uppercase tracking-wider">Boards</th>
+                        <th className="text-left px-4 py-3 font-mono text-xs uppercase tracking-wider">Organisations</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {governanceStats.topConnectors.map((d, i) => (
+                        <tr
+                          key={d.name}
+                          className={`border-b border-gray-200 hover:bg-white/60 transition-colors ${
+                            i % 2 === 0 ? 'bg-white/40' : 'bg-transparent'
+                          }`}
+                        >
+                          <td className="px-4 py-3 font-medium text-[#0A0A0A]">{d.name}</td>
+                          <td className="px-4 py-3 text-right font-mono text-purple-600 font-bold">{d.boards}</td>
+                          <td className="px-4 py-3 text-xs text-gray-500 truncate max-w-[400px]">
+                            {d.orgs.slice(0, 5).join(', ')}
+                            {d.orgs.length > 5 && ` + ${d.orgs.length - 5} more`}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-gray-400 font-mono mt-2">
+                  Source: ASIC company register. Directors serving on 2+ Indigenous organisation boards.
+                </p>
+              </div>
+            )}
+
+            {/* Narrative callout */}
+            <div className="mt-6 bg-purple-50 rounded-xl p-6 border border-purple-200">
+              <div className="flex items-start gap-4">
+                <Shield className="w-6 h-6 text-purple-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3
+                    className="font-bold text-purple-900 mb-1"
+                    style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                  >
+                    The Invisible Infrastructure of Self-Determination
+                  </h3>
+                  <p className="text-sm text-purple-700 leading-relaxed">
+                    Behind every community-controlled organisation is a network of directors — often unpaid,
+                    often serving across multiple boards — who carry the governance load of self-determination.
+                    This data reveals for the first time the scale and interconnection of that network nationally.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ══════════════ SECTION 8: DATA QUALITY ══════════════ */}
         <section>
           <h2
             className="text-2xl md:text-3xl font-bold text-[#0A0A0A] mb-2"
@@ -954,7 +1117,7 @@ export default async function NationalIntelligencePage() {
           </div>
         </section>
 
-        {/* ══════════════ SECTION 8: REGIONAL DEEP DIVES ══════════════ */}
+        {/* ══════════════ SECTION 9: REGIONAL DEEP DIVES ══════════════ */}
         <section>
           <h2
             className="text-2xl md:text-3xl font-bold text-[#0A0A0A] mb-2"
@@ -994,7 +1157,7 @@ export default async function NationalIntelligencePage() {
           </div>
         </section>
 
-        {/* ══════════════ SECTION 9: INQUIRY TRACKER ══════════════ */}
+        {/* ══════════════ SECTION 10: INQUIRY TRACKER ══════════════ */}
         <section className="pb-8">
           <div className="bg-[#0A0A0A] rounded-xl p-8 md:p-12 text-white print:border print:border-gray-300">
             <h2

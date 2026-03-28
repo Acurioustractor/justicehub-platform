@@ -358,6 +358,107 @@ export function computeFundingFlows(
   return flows;
 }
 
+/* ── Governance Network ──────────────────────────────────────── */
+
+export interface BoardDirector {
+  personName: string;
+  boards: { orgName: string; orgId?: string; role: string; isIndigenous: boolean }[];
+  totalBoards: number;
+  indigenousBoards: number;
+}
+
+export interface GovernanceNetwork {
+  totalDirectors: number;
+  multiboardDirectors: number;
+  multiboardIndigenous: number;
+  topConnectors: BoardDirector[];
+  avgBoardsPerDirector: number;
+  crossSectorConnections: number;
+}
+
+export interface PersonRole {
+  person_name: string;
+  role_type: string;
+  company_name: string;
+  entity_id?: string | null;
+}
+
+/**
+ * Compute governance network metrics from person_roles data.
+ * Shows board overlap, cross-org connections, and key connectors.
+ */
+export function computeGovernanceNetwork(
+  personRoles: PersonRole[],
+  orgs: RegionOrg[]
+): GovernanceNetwork {
+  const orgMap = new Map<string, RegionOrg>();
+  for (const o of orgs) {
+    orgMap.set(o.id, o);
+  }
+
+  // Group roles by person name
+  const personBoards = new Map<string, { orgName: string; orgId?: string; role: string; isIndigenous: boolean }[]>();
+  for (const pr of personRoles) {
+    if (!pr.person_name) continue;
+    const normalised = pr.person_name.trim();
+    const existing = personBoards.get(normalised) || [];
+    const org = pr.entity_id ? orgMap.get(pr.entity_id) : undefined;
+    existing.push({
+      orgName: pr.company_name || 'Unknown',
+      orgId: pr.entity_id || undefined,
+      role: pr.role_type || 'Director',
+      isIndigenous: org?.is_indigenous_org ?? false,
+    });
+    personBoards.set(normalised, existing);
+  }
+
+  const totalDirectors = personBoards.size;
+  const multiboard: BoardDirector[] = [];
+
+  for (const [name, boards] of personBoards) {
+    // Deduplicate by org name (same person may have multiple roles at same org)
+    const uniqueOrgs = new Map<string, typeof boards[0]>();
+    for (const b of boards) {
+      if (!uniqueOrgs.has(b.orgName)) uniqueOrgs.set(b.orgName, b);
+    }
+    if (uniqueOrgs.size >= 2) {
+      const uniqueBoards = [...uniqueOrgs.values()];
+      multiboard.push({
+        personName: name,
+        boards: uniqueBoards,
+        totalBoards: uniqueBoards.length,
+        indigenousBoards: uniqueBoards.filter(b => b.isIndigenous).length,
+      });
+    }
+  }
+
+  const multiboardIndigenous = multiboard.filter(d => d.indigenousBoards >= 2).length;
+
+  // Cross-sector: directors connecting Indigenous + non-Indigenous orgs
+  const crossSector = multiboard.filter(d =>
+    d.boards.some(b => b.isIndigenous) && d.boards.some(b => !b.isIndigenous)
+  ).length;
+
+  // Top connectors: sort by total boards, take top 10
+  const topConnectors = [...multiboard]
+    .sort((a, b) => b.totalBoards - a.totalBoards)
+    .slice(0, 10);
+
+  const totalBoards = [...personBoards.values()].reduce((sum, boards) => {
+    const unique = new Set(boards.map(b => b.orgName));
+    return sum + unique.size;
+  }, 0);
+
+  return {
+    totalDirectors,
+    multiboardDirectors: multiboard.length,
+    multiboardIndigenous,
+    topConnectors,
+    avgBoardsPerDirector: totalDirectors > 0 ? Math.round((totalBoards / totalDirectors) * 10) / 10 : 0,
+    crossSectorConnections: crossSector,
+  };
+}
+
 /* ── Formatting helpers ───────────────────────────────────────── */
 
 export function formatDollars(n: number): string {

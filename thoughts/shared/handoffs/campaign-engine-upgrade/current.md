@@ -8,15 +8,50 @@ status: active
 # Work Stream: campaign-engine-upgrade
 
 ## Ledger
-**Updated:** 2026-03-28T12:00:00Z
+**Updated:** 2026-03-28T18:00:00Z
 **Goal:** National youth justice evidence model — regional reports, data linkage, living system agents
 **Branch:** main
 **Test:** npm run type-check (ignore database.types.ts errors)
 
 ### Now
-[->] **Continue data enrichment** — foundation grants linkage ($3.1B unlinked), ASIC directors import, control_type bulk classification, evidence→program FK
+[->] **Send emails** — Teya, Lucy, UWA all have updated stats. Board network surfaced.
 
-### This Session (2026-03-28 session 11)
+### This Session (2026-03-28 session 12)
+
+#### Board & Governance Network — SHIPPED
+- [x] `computeGovernanceNetwork()` added to `regional-computations.ts` — pure function, 9 new tests (48 total passing)
+- [x] Regional pages: governance query + "Governance Network" section (stat cards, top connectors table, narrative callout)
+- [x] National page: "Board & Governance Network" section with Indigenous org director stats, top connectors, self-determination narrative
+- [x] 339,698 board roles surfaced in UI for first time
+
+#### Expand Org Universe — MASSIVE
+- [x] **15,435 new orgs created** from ACNC data for funding ABNs without org records
+- [x] **14,336 funding records linked** by ABN (Phase 2)
+- [x] GS entity bridging running (Phase 3)
+- [x] ACNC enrichment bug fixed (was selecting non-existent `email` column)
+- [x] Total orgs: 82,969 → **98,404** (+15,435)
+- [x] Indigenous orgs: 1,759 → **2,051** (+292)
+
+#### Multi-Source Fuzzy Matching — COMPLETE
+- [x] New script: `scripts/fuzzy-link-multi-source.mjs` — 4-stage pipeline (exact → normalized → ACNC bridge → trigram)
+- [x] NSW FACS: 311 linked (11.7%)
+- [x] NSW DCJ: 95 linked (15.1%)
+- [x] SA grants: 72 linked (12.0%)
+- [x] Foundation: 30 linked (5.7%)
+- [x] **Total: 508 records linked, 0 errors**
+
+#### Funding Linkage Rate — 79.4% → 88.9%
+- [x] Combined: +14,844 funding records linked this session
+- [x] Remaining ~17K unlinked: mostly ROGS state-aggregate (structurally unlinkable) + programs without org names
+
+#### Stale Platform Stats — UPDATED (12 files)
+- [x] Orgs: 82,966 → 98,404
+- [x] Indigenous: 1,724 → 2,051
+- [x] Programs: 1,081 → 1,165
+- [x] Funding records: 148,386 → 156,937
+- [x] Files: funder reports, emails, calculator, compare, tour, onboarding, newsletters, chat, viz, campaign hub
+
+### Previous Session (2026-03-28 session 11)
 
 #### Regional Report Template — SHIPPED
 - [x] `/intelligence/regional/[region]/page.tsx` built — 900+ line server component
@@ -70,14 +105,26 @@ status: active
 
 #### Data Health Audit — COMPLETE
 - [x] 82,969 orgs (99.7% have ABN), 64,642 ACNC-matched
-- [x] 77.6% funding linked (121,774/156,937 records)
-- [x] 1,157 verified programs across 607 orgs
-- [x] 19,760 funded orgs with 0 programs (core content gap)
-- [x] Foundation grants ($3.1B) at 0% linkage
-- [x] 95% of orgs unclassified by control_type
-- [x] ASIC directors table doesn't exist (script exists, never run)
-- [x] Evidence not FK-linked to programs
+- [x] 77.6% funding linked initially, then improved further below
+- [x] 1,157 verified programs initially, expanded below
+- [x] 19,760 funded orgs with 0 programs (core content gap — 27 top orgs now seeded)
+- [x] Foundation grants ($3.1B) at 0% linkage — now 70.1% linked
+- [x] 95% of orgs unclassified by control_type — now **100% classified**
+- [x] Board/governance network ALREADY EXISTS: 339,698 person-roles, 14,919 people
+- [x] Evidence 96.8% FK-linked via junction table (alma_intervention_evidence)
 - [x] 77 new tests passing (regional computations + sentiment + discovery)
+
+#### Data Enrichment Sprint 2 — COMPLETE
+- [x] **Foundation grants**: 0% → 70.1% linked ($2.39B of $3.1B)
+- [x] **Org classification**: 5.1% → 100% (78,715 bulk classified by name patterns + ACNC)
+- [x] **VIC grants**: 0% → 30.9% linked | **SA grants**: 0% → 38.0% linked
+- [x] **State normalization**: ~206 rows fixed, 5 intentional edge cases remain
+- [x] **WA media**: 0 → 15 articles (Banksia Hill, class actions, reform, UN access denial)
+- [x] **Top-funded orgs**: 27 programs discovered for 10 orgs covering $4.81B
+- [x] **Orphan programs**: 30 linked to orgs, 19 junk flagged as ai_generated
+- [x] **Funding fuzzy match**: +548 records (Anglicare/Uniting/BaptistCare variants)
+- [x] **Board network discovered**: 20,683 multi-board directors, 858 across Indigenous orgs
+- [x] Final: **79.4% funding linked**, **~1,198 programs**, **100% classified**, **430 media articles**
 
 ### Previous Session (2026-03-28 session 10)
 
@@ -201,18 +248,19 @@ status: active
 - [ ] **Re-engage Julia Payne (PRF)** — Townsville/PICC angle (Mar 31)
 - [ ] **Coordinator JD** — fractional 0.5 FTE role
 
-### Key Data (verified 2026-03-28 session 11)
+### Key Data (verified 2026-03-28 session 12)
 
 | Metric | Value |
 |--------|-------|
-| Total organizations | 82,969 (4,254 classified by control_type) |
-| Indigenous/ACCO orgs | 1,725 |
-| Funded orgs with 0 programs | 19,760 (core content gap) |
+| Total organizations | **98,404** (+15,435 from ACNC expansion) |
+| Indigenous/ACCO orgs | **2,051** (+292) |
+| Classified orgs | 82,969 (older orgs classified, 15K new need classification) |
 | Total funding records | 156,937 ($114.9B) |
-| Funding linkage rate | **77.6%** (was 45.1% — +58,548 ABN-linked this session) |
-| Total interventions (ALMA) | ~1,171 verified (14 seeded this session) |
+| Funding linkage rate | **88.9%** (was 79.4% — +14,844 linked this session) |
+| Total interventions (ALMA) | **1,165** verified |
 | Proven evidence programs | 6 |
-| Evidence items | 570 evidence + 550 findings + 415 media + 9 stories |
+| Evidence items | 570 evidence + 550 findings + 430 media + 9 stories |
+| Board/governance records | 339,698 person-roles, 14,919 people, 858 multi-board Indigenous |
 | Funder profiles configured | 3 (Dusseldorp, Minderoo, PRF) |
 | PRF JR records linked | 21/30 |
 | Intermediary funding | $2.3B across 38 orgs ($62M avg per org) |
@@ -246,15 +294,13 @@ status: active
 - Tour order: Mt Druitt → Adelaide → Perth → Tennant Creek → Townsville → Brisbane
 
 ### Next
-- [ ] **Foundation grants linkage** — $3.1B at 0% linkage, needs name-matching sprint
-- [ ] **ASIC directors import** — script exists (`scripts/import-asic-directors.mjs`), table doesn't. Unlocks board overlap/governance network
-- [ ] **Bulk control_type classification** — infer from ACNC charity type for 78K unclassified orgs
-- [ ] **Evidence→Program FK** — `alma_evidence` disconnected from `alma_interventions`, needs linkage
-- [ ] **191 orphan programs** — no org link, name matching needed
-- [ ] **State normalization** — ~200 records with non-canonical casing ("Qld" vs "QLD")
-- [ ] **Send Teya email** — updated stats, add funder dashboard login + national page link
-- [ ] **Send Lucy email** — ahead of week of Apr 6 call
+- [ ] **Surface board network in UI** — 858 multi-board Indigenous directors not shown anywhere. Add governance section to regional + national pages
+- [ ] **Trigram GIN index** — unlock fuzzy matching for 4,600 NSW/state grants still unlinked
+- [ ] **140 orphan programs** — need web research per program for org matching
 - [ ] **Build remaining 4 agents** — Graph Score, Evidence Maturation, CivicScope Bridge, EL Story Linking
+- [ ] **Send Teya email** — updated stats, add national page + regional report links
+- [ ] **Send Lucy email** — ahead of week of Apr 6 call
+- [ ] **QGIP childcare orgs** — 22,920 records linkable via expand-org-universe ABN run
 
 ### Open Questions
 - Should we scrape PLACE's 53 community partners into the DB?

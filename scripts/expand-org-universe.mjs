@@ -352,7 +352,7 @@ async function phase5() {
   console.log('='.repeat(60));
 
   // Get orgs missing website/contact
-  const orgs = await paginate('organizations', 'id, abn, website, email, state, city',
+  const orgs = await paginate('organizations', 'id, abn, website, state, city',
     q => q.not('abn', 'is', null));
 
   const needsEnrichment = orgs.filter(o => !o.website || !o.state);
@@ -360,8 +360,8 @@ async function phase5() {
 
   if (needsEnrichment.length === 0) return;
 
-  // Load ACNC
-  const acnc = await paginate('acnc_charities', 'abn, website, state, town_city, email');
+  // Load ACNC (no email column exists on acnc_charities)
+  const acnc = await paginate('acnc_charities', 'abn, website, state, town_city');
   const acncByAbn = new Map();
   for (const c of acnc) {
     if (c.abn) acncByAbn.set(c.abn, c);
@@ -376,7 +376,6 @@ async function phase5() {
     if (!org.website && ac.website) updates.website = ac.website;
     if (!org.state && ac.state) updates.state = ac.state;
     if (!org.city && ac.town_city) updates.city = ac.town_city;
-    if (!org.email && ac.email) updates.email = ac.email;
 
     if (Object.keys(updates).length === 0) continue;
 

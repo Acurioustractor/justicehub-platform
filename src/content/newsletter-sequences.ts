@@ -331,7 +331,7 @@ ${SITE}/hub
 
 What you'll find:
 - Your funding profile — every grant, contract, and government allocation we've tracked
-- Evidence library — 1,081 verified interventions with cost data
+- Evidence library — 1,165 verified interventions with cost data
 - Network connections — organisations in your state and beyond
 
 If you haven't claimed your organisation yet, you can search for it and link it to your account from your dashboard.
@@ -343,7 +343,7 @@ If you haven't claimed your organisation yet, you can search for it and link it 
       subject: 'Your funding landscape at a glance',
       preheader: 'We track $114.9B in justice funding. Here\'s what matters for your org.',
       delayDays: 2,
-      body: `We've mapped $114.9 billion in justice funding across Australia — 148,386 records from federal, state, and local sources.
+      body: `We've mapped $114.9 billion in justice funding across Australia — 156,937 records from federal, state, and local sources.
 
 Your hub shows:
 - Funding flowing to organisations in your state
@@ -383,7 +383,7 @@ The stronger this network gets, the harder it becomes to ignore. Every organisat
       subject: 'Add your evidence to the library',
       preheader: 'Your program outcomes help every organisation in the network.',
       delayDays: 9,
-      body: `The ALMA evidence library now has 1,081 verified interventions — but we know there's more.
+      body: `The ALMA evidence library now has 1,165 verified interventions — but we know there's more.
 
 If your organisation runs programs with outcome data, evaluation reports, or even anecdotal evidence of what's working, we want to include it.
 
@@ -433,7 +433,7 @@ export const mediaNurture: EmailSequence = {
 You now have access to:
 - Live media coverage tracking — every article, every outlet, sentiment analysis
 - Data briefings — verified stats, not press releases
-- Evidence library — 1,081 interventions with cost data and outcomes
+- Evidence library — 1,165 interventions with cost data and outcomes
 - Source contacts — organisations doing the work on the ground
 
 LOG IN TO YOUR MEDIA HUB
@@ -481,7 +481,7 @@ We track 377+ media articles on youth justice. The hub shows you:
 CHECK YOUR REGIONAL FEED
 ${SITE}/hub/media
 
-The best youth justice stories aren't about incidents. They're about the 1,081 programs quietly proving that alternatives work — for a fraction of the cost.
+The best youth justice stories aren't about incidents. They're about the 1,165 programs quietly proving that alternatives work — for a fraction of the cost.
 
 — The CONTAINED Network`,
     },
@@ -650,7 +650,7 @@ export const funderNurture: EmailSequence = {
 
 We built this because funders tell us the same thing: the evidence exists, but it's scattered across dozens of sources. Your hub brings it together:
 
-- Funding landscape — $114.9B tracked across 148,386 records
+- Funding landscape — $114.9B tracked across 156,937 records
 - Proven interventions — 4 with RCT evidence, 32 with strong evaluations
 - Funding gaps by state — where money is needed vs where it's going
 - Indigenous-led programs — 646 organisations, 23 Indigenous-led interventions
@@ -691,7 +691,7 @@ ${SITE}/hub/funder
       subject: 'Four interventions with RCT-level evidence',
       preheader: 'The gold standard — replicated, evaluated, proven.',
       delayDays: 5,
-      body: `Out of 1,081 interventions in the ALMA database, 4 have the highest evidence level: Proven (RCT/quasi-experimental, replicated).
+      body: `Out of 1,165 interventions in the ALMA database, 4 have the highest evidence level: Proven (RCT/quasi-experimental, replicated).
 
 Another 32 are rated Effective (strong evaluation, positive outcomes).
 

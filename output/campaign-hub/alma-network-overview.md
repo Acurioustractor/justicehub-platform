@@ -81,7 +81,7 @@ Established community organisations that anchor the network in each state. They 
 
 ### Evidence Contributors — Community Organisations Doing the Work
 
-The 1,081+ community organisations running youth programs across Australia. They contribute stories, outcomes data, cost data, and lived experience. Every program they run generates proof that alternatives work.
+The 1,165+ community organisations running youth programs across Australia. They contribute stories, outcomes data, cost data, and lived experience. Every program they run generates proof that alternatives work.
 
 **What they contribute:**
 - Program models — mentoring, arts, sport, cultural healing, diversion, family support
@@ -121,7 +121,7 @@ ALMA Network (the platform)
   → Real stories from real people → not case studies, lives
 
 The Intelligence Layer
-  → Wall of Proof → 1,081 models, all verified
+  → Wall of Proof → 1,165 models, all verified
   → Cost Calculator → $548K detention vs $170K community
   → State Leaderboard → competitive pressure between states
   → Follow the Money → $83.7B tracked, who gets what
@@ -167,12 +167,12 @@ Revenue from ALMA Network services flows back to Basecamps, travel bursaries, an
 
 | Metric | Count |
 |--------|-------|
-| Verified alternative models | 1,081 |
+| Verified alternative models | 1,165 |
 | With cost data | 305 |
 | Median cost (community) | $77K/year |
 | Average cost (detention) | $548K/year (national), $2.67M/year (VIC) |
-| Organisations mapped | 82,966 |
-| Indigenous-led organisations | 1,724 |
+| Organisations mapped | 98,404 |
+| Indigenous-led organisations | 2,051 |
 | Funding records tracked | 148,386 ($114.9B) |
 | Evidence items | 570 |
 | Media articles | 415 |

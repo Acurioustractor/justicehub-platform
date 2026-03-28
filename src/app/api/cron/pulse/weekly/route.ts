@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { callLLM } from '@/lib/ai/model-router';
 import { sendBatchEmail } from '@/lib/email/send';
+import { runMaturationScan } from '@/lib/cron/evidence-maturation';
+import { runGraphScoring } from '@/lib/cron/graph-score';
 
 export const maxDuration = 60;
 
@@ -205,12 +207,31 @@ OUTPUT: The briefing text only, no preamble.`,
       }
     }
 
+    // ── Run weekly analysis agents (non-blocking) ──────────────────
+    // ── Run weekly analysis agents (non-blocking) ──────────────────
+    let maturationResult = { candidatesFound: 0, interventionsScanned: 0 };
+    let graphResult = { orgs_scored: 0, avg_score: 0 };
+    try {
+      const [matRes, graphRes] = await Promise.all([
+        runMaturationScan(),
+        runGraphScoring(),
+      ]);
+      maturationResult = matRes;
+      graphResult = graphRes;
+    } catch (agentErr) {
+      console.error('Weekly agents error (non-fatal):', agentErr);
+    }
+
     return NextResponse.json({
       success: true,
       stats,
       briefing_length: briefing.length,
       subscribers: subscribers?.length || 0,
       sent: sentCount,
+      agents: {
+        maturation: maturationResult,
+        graphScore: { scored: graphResult.orgs_scored, avgScore: graphResult.avg_score },
+      },
     });
   } catch (error: unknown) {
     console.error('Pulse weekly cron error:', error);

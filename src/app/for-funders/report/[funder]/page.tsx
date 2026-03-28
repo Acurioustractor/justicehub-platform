@@ -37,7 +37,7 @@ const FUNDER_CONFIGS: Record<string, FunderConfig> = {
     askTimeline: '12 months',
     askDescription: 'Fund national platform infrastructure — JusticeHub as shared evidence platform for the sector',
     hookLine: 'What if every dollar of justice funding in Australia was traceable? What if every community program had a living profile?',
-    keyInsight: 'Scale of the gap: 1,724 Indigenous organisations deliver 1,081 verified alternatives to detention. Most have zero digital presence connecting them to funders.',
+    keyInsight: 'Scale of the gap: 2,051 Indigenous organisations deliver 1,165 verified alternatives to detention. Most have zero digital presence connecting them to funders.',
     sources: ['philanthropic', 'niaa', 'austender-direct'],
     basecampLocations: ['Palm Island', 'Alice Springs', 'Mt Druitt'],
   },

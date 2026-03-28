@@ -279,7 +279,7 @@ export default async function FunderComparePage() {
               <BarChart3 className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-[#0A0A0A]">
-                  1,724 Indigenous organisations deliver 1,081 verified alternatives to detention — most have zero philanthropic support
+                  2,051 Indigenous organisations deliver 1,165 verified alternatives to detention — most have zero philanthropic support
                 </p>
                 <p className="text-xs text-gray-500 mt-1">Source: JusticeHub ALMA Network data</p>
               </div>

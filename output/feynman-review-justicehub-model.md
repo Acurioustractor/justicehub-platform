@@ -13,7 +13,7 @@ JusticeHub is **national data infrastructure that makes the case for community a
 | Layer | What it does | Evidence |
 |-------|-------------|----------|
 | **Funding Tracker** | Maps where money flows in youth justice | 148,386 records, 35 sources, $114.9B tracked |
-| **ALMA Network** | Catalogs community-led alternatives to detention | 1,081 verified interventions, 10 types, 5 evidence tiers |
+| **ALMA Network** | Catalogs community-led alternatives to detention | 1,165 verified interventions, 10 types, 5 evidence tiers |
 | **Funder Intelligence** | Shows funders their portfolio vs the evidence | 3 funder dashboards (Dusseldorp, PRF, Minderoo), personalized auth |
 | **Community Voice** | Real stories, real photos, consent-enforced | Empathy Ledger v2: 261 photos, 12 stories, 51 storytellers |
 
@@ -25,7 +25,7 @@ The connecting thesis: **Australia spends $3,635/day to lock up a child. Communi
 
 ### Mechanism 1: Making Invisible Programs Visible
 
-**Observation:** 1,081 verified community programs are cataloged with structured data — type, evidence level, cost, geography, cultural authority, target cohort. 586 organisations have at least one mapped program.
+**Observation:** 1,165 verified community programs are cataloged with structured data — type, evidence level, cost, geography, cultural authority, target cohort. 586 organisations have at least one mapped program.
 
 **How this helps:** A community org in Tennant Creek running a diversion program has no way to show a funder in Sydney that their work exists, what it costs, and what evidence supports it. JusticeHub gives them a searchable, citable profile.
 
@@ -69,7 +69,7 @@ The connecting thesis: **Australia spends $3,635/day to lock up a child. Communi
 
 **Observation:** The ALMA chat assistant (`/api/chat/stream`) provides tool-calling access to the entire database via 17 tools. It can search interventions, pull spending data, look up evidence, find organisations — and it cites sources.
 
-**How this helps:** A community worker in Alice Springs can ask "What diversion programs work in the NT?" and get back structured, cited results from 1,081 programs — not a Google search. A funder can ask "How does PRF's portfolio compare to Dusseldorp's?" and get real data. A journalist can ask "How much does QLD spend on youth detention vs community programs?" and get ROGS figures.
+**How this helps:** A community worker in Alice Springs can ask "What diversion programs work in the NT?" and get back structured, cited results from 1,165 programs — not a Google search. A funder can ask "How does PRF's portfolio compare to Dusseldorp's?" and get real data. A journalist can ask "How much does QLD spend on youth detention vs community programs?" and get ROGS figures.
 
 **Guardrails verified:** The system prompt explicitly forbids individual profiling, risk predictions, and legal advice. Sacred boundaries are coded, not just policy.
 
@@ -81,10 +81,10 @@ Feynman rule: *"Never say 'verified' unless you performed the check."*
 
 | Claim (from emails/pages) | Verified Value | Status |
 |---------------------------|---------------|--------|
-| "1,082 verified interventions" | 1,081 (live query) | CORRECT (off by 1) |
+| "1,082 verified interventions" | 1,165 (live query) | CORRECT (off by 1) |
 | "94,742 funding records" | 148,386 (live query) | OUTDATED — real number is 57% higher |
 | "22,233 organisations" | 82,966 (live query) | OUTDATED — real number is 3.7x higher |
-| "649 Indigenous organisations" | 1,724 (live query) | OUTDATED — real number is 2.7x higher |
+| "649 Indigenous organisations" | 2,051 (live query) | OUTDATED — real number is 2.7x higher |
 | "824 with cost data" | 305 with cost_per_young_person | OVERCOUNTED — definition may differ |
 | "570 evidence items" | 570 (live query) | CORRECT |
 | "Median cost $170K/year" | Median $77K/year | OVERCOUNTED or different calculation |
@@ -112,7 +112,7 @@ Feynman rule: *"If results look cleaner than expected, assume they are wrong."*
 | Effective | 39 | 3.6% |
 | Proven | **4** | **0.4%** |
 
-**Only 4 programs out of 1,081 have proven evidence (RCT/quasi-experimental, replicated).** The platform markets itself on evidence, but 92.1% of its interventions are either untested or have only community-endorsed evidence. A sophisticated funder (PRF has research PhDs on staff) will spot this immediately.
+**Only 4 programs out of 1,165 have proven evidence (RCT/quasi-experimental, replicated).** The platform markets itself on evidence, but 92.1% of its interventions are either untested or have only community-endorsed evidence. A sophisticated funder (PRF has research PhDs on staff) will spot this immediately.
 
 **Mitigation:** This isn't a bug — it reflects reality. Most community programs don't have RCT-level evidence because nobody funds the evaluations. The platform should own this explicitly: *"The evidence gap IS the finding. 548 programs are untested not because they don't work, but because nobody has funded the evaluation."* That reframes the weakness as the investment case.
 
