@@ -110,12 +110,23 @@ export async function assessMaturation(
     return null;
   }
 
-  // Fetch evidence items linked to this intervention
-  const { data: evidence, error: evError } = await (supabase as any)
-    .from('alma_evidence')
-    .select('id, methodology')
-    .eq('intervention_id', interventionId)
-    .neq('verification_status', 'ai_generated');
+  // Fetch evidence items linked via junction table
+  const { data: junctionRows, error: jError } = await (supabase as any)
+    .from('alma_intervention_evidence')
+    .select('evidence_id')
+    .eq('intervention_id', interventionId);
+
+  const evidenceIds = (junctionRows || []).map((r: { evidence_id: string }) => r.evidence_id);
+  let evidence: any[] = [];
+  let evError = jError;
+  if (!evError && evidenceIds.length > 0) {
+    const { data: evData, error: evErr } = await (supabase as any)
+      .from('alma_evidence')
+      .select('id, methodology')
+      .in('id', evidenceIds);
+    evidence = evData || [];
+    evError = evErr;
+  }
 
   if (evError) {
     console.error(`[Maturation] Failed to fetch evidence for ${interventionId}:`, evError);

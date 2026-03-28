@@ -182,7 +182,7 @@ export async function createResearchFindings(
       const { data: insertedRow, error: insertError } = await (supabase as any)
         .from('alma_research_findings')
         .insert({
-          finding_type: 'parliamentary',
+          finding_type: 'external_source',
           content: {
             title: mention.title,
             speaker: mention.speaker,

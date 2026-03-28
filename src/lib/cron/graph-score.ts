@@ -115,41 +115,30 @@ export async function runGraphScoring(options?: {
 
     const orgIds = orgs.map((o: any) => o.id);
 
-    // Fetch all linkage counts in parallel for this batch
-    const [fundingRes, programsRes, evidenceRes, mediaRes, storiesRes, costRes] =
+    // Fetch programs first (needed for evidence junction lookup)
+    const [fundingRes, programsRes, mediaRes, storiesRes, costRes] =
       await Promise.all([
-        // Funding records linked to these orgs
         (sb as any)
           .from('justice_funding')
           .select('alma_organization_id')
           .in('alma_organization_id', orgIds),
 
-        // Programs (interventions) operated by these orgs
         (sb as any)
           .from('alma_interventions')
-          .select('operating_organization_id')
+          .select('id, operating_organization_id')
           .neq('verification_status', 'ai_generated')
           .in('operating_organization_id', orgIds),
 
-        // Evidence linked via interventions -> orgs
-        (sb as any)
-          .from('alma_evidence')
-          .select('intervention_id, alma_interventions!inner(operating_organization_id)')
-          .in('alma_interventions.operating_organization_id', orgIds),
-
-        // Media mentions (organizations_mentioned JSONB array)
         (sb as any)
           .from('alma_media_articles')
           .select('id, organizations_mentioned')
           .not('organizations_mentioned', 'is', null),
 
-        // Stories linked to these orgs
         (sb as any)
           .from('alma_stories')
           .select('organization_id')
           .in('organization_id', orgIds),
 
-        // Programs with cost data
         (sb as any)
           .from('alma_interventions')
           .select('operating_organization_id, cost_per_young_person')
@@ -157,6 +146,16 @@ export async function runGraphScoring(options?: {
           .not('cost_per_young_person', 'is', null)
           .in('operating_organization_id', orgIds),
       ]);
+
+    // Evidence via junction table (needs program IDs from above)
+    const batchProgramIds = (programsRes.data || []).map((p: any) => p.id);
+    let evidenceRes = { data: [] as any[] };
+    if (batchProgramIds.length > 0) {
+      evidenceRes = await (sb as any)
+        .from('alma_intervention_evidence')
+        .select('intervention_id')
+        .in('intervention_id', batchProgramIds);
+    }
 
     // Build count maps
     const fundingCounts: Record<string, number> = {};
@@ -171,9 +170,14 @@ export async function runGraphScoring(options?: {
       if (oid) programCounts[oid] = (programCounts[oid] || 0) + 1;
     }
 
+    // Map intervention_id -> org_id for evidence counting
+    const programOrgMap: Record<string, string> = {};
+    for (const p of programsRes.data || []) {
+      if (p.id && p.operating_organization_id) programOrgMap[p.id] = p.operating_organization_id;
+    }
     const evidenceCounts: Record<string, number> = {};
     for (const r of evidenceRes.data || []) {
-      const oid = r.alma_interventions?.operating_organization_id;
+      const oid = programOrgMap[r.intervention_id];
       if (oid) evidenceCounts[oid] = (evidenceCounts[oid] || 0) + 1;
     }
 
