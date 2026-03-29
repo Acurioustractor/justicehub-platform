@@ -123,6 +123,10 @@
     {
       "path": "/api/cron/alma/civicscope-bridge",
       "schedule": "0 20 * * 0"
+    },
+    {
+      "path": "/api/cron/orchestrator?max=10",
+      "schedule": "*/5 * * * *"
     }
   ]
 }

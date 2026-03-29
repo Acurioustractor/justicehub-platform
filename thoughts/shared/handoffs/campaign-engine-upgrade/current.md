@@ -8,16 +8,59 @@ status: active
 # Work Stream: campaign-engine-upgrade
 
 ## Ledger
-**Updated:** 2026-03-29T14:00:00Z
+**Updated:** 2026-03-29T16:00:00Z
 **Goal:** National youth justice evidence model → ACT product ecosystem (CivicScope + JH + EL + Goods compound)
 **Branch:** main
 **Test:** npm run type-check (ignore database.types.ts errors)
 
 ### Now
-[->] **QLD Sector Report** — full report live, org profiles working, needs Anglicare slug fix + more orgs linked
 [->] **Funder emails** — Teya READY, Lucy ahead of Apr 6, Julia Payne Mar 31
+[->] **Foundation scraping** — Firecrawl token expired, need to renew for PRF/Minderoo/BHP grant lists
 
-### This Session (2026-03-29 session 17)
+### This Session (2026-03-29 session 19)
+
+#### Foundation Landscape Overlay — SHIPPED (CivicScope `/power`)
+- [x] API route: `/api/power/foundations/route.ts` — 6 parallel queries (top foundations, type breakdown, thematic focus, top recipients, dual-funded orgs, summary)
+- [x] Foundation Landscape section added to CivicScope `/power` page — 5 subsections:
+  - Summary stats: 10,837 foundations, $12.4B annual giving, 1,689 Indigenous-focused, 1,487 youth-focused
+  - Giving by foundation type: horizontal bar chart (corporate $2.2B, service delivery $2.8B, university $1.7B)
+  - Thematic focus tags: weighted, highlighted for justice-relevant themes (indigenous, youth, justice-reinvestment, human_rights)
+  - Top 30 foundations table: name, type, annual giving, focus areas, entity links
+  - Dual-funded callout: orgs getting both govt + foundation money (Maranguka $3.5M+$331K, ALS NSW/ACT $3.5M+$754K)
+- [x] Foundation data already rich: 10,837 profiles, 75.4% grant records linked (1,534/2,034)
+- [ ] Firecrawl token expired — couldn't scrape PRF/Minderoo/BHP for detailed grant recipient lists
+
+### Previous Session (2026-03-29 session 18)
+
+#### Power Map — SHIPPED (`/intelligence/power-map`)
+- [x] New page: 6 sections (Top 50 table, Funding Concentration, $/Program, Board Network, Cross-Sector Reach, Who Controls the Money)
+- [x] 4 Supabase RPCs created: `get_power_map_top_orgs`, `get_power_map_stats`, `get_power_map_board_connectors`, `get_power_map_control_breakdown`
+- [x] Transport/defense/medical noise filtered: excluded AusTender, foundation-notable-grants, ROGS aggregate, transport program names
+- [x] Director counts populated via person_roles ABN join
+- [x] Stats: $29.6B tracked, top 10 hold 22%, 28.4K funded orgs, Community Controlled = 3.8% of top 50
+- [x] Zero-program callout: shows how many top-50 orgs receive $hundreds of millions with no mapped programs
+- [x] CivicScope cross-link section at bottom with scope explanation
+
+#### Slug Generation — 4,593 ORGS FIXED
+- [x] 13 DYJVS contract orgs: generated slugs (Raw Impact, Mungalla SLS, Sisters Inside, Act for Kids, QATSICPP, etc.)
+- [x] QATSICPP slug cleaned (trailing hyphen from parentheses)
+- [x] Anglicare Central Queensland slug set
+- [x] 2,460 QLD orgs bulk slug generation
+- [x] 2,133 other state orgs bulk slug generation
+- [x] All DYJVS contract recipients now clickable in QLD Sector Report
+
+#### CivicScope Architecture Decision
+- [x] Explored CivicScope codebase: `/power` page exists (map, Sankey, network), `mv_entity_power_index` (83K entities), `mv_revolving_door` (4.7K), political donations (312K), AusTender (770K)
+- [x] Decision: JH Power Map = social services sector view, CivicScope = full cross-sector power map
+- [x] Cross-link added: JH → CivicScope for full picture (procurement + political donations)
+- [x] CivicScope `/power` page enhancement: Power Index table, Revolving Door, Board Connectors, JH cross-link
+- [x] CivicScope power APIs ungated (map-data, flows, network, place — all public now)
+- [x] SA2 map fix: created `mv_sa2_map_data` materialized view (was timing out on live RPC)
+- [x] Map API switched to materialized view — 2,473 SA2 regions loading instantly
+- [x] Foundation grant recipient scraping — agents produced no output (files never written)
+- [x] Foundation overlay page — SHIPPED in session 19 using existing 10,837 foundation profiles
+
+### Previous Session (2026-03-29 session 17)
 
 #### QLD Sector Report v2 — SHIPPED
 - [x] Full report rewrite: 14 sections (was 10), all claims verified/sourced

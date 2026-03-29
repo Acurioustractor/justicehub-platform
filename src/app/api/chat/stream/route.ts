@@ -9,6 +9,8 @@ import { streamText, stepCountIs } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { almaTools } from '@/lib/ai/alma-tools';
+import { orchestrationTools } from '@/lib/ai/orchestration-tools';
+import { createConversation, appendMessages, autoTitle } from '@/lib/orchestrator/conversations';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -150,7 +152,7 @@ function getModel() {
 
 export async function POST(request: Request) {
   try {
-    const { messages } = await request.json();
+    const { messages, conversation_id: incomingConvId } = await request.json();
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return new Response(JSON.stringify({ error: 'Messages array required' }), {
@@ -159,22 +161,67 @@ export async function POST(request: Request) {
       });
     }
 
+    // Create or reuse conversation for persistence
+    let conversationId = incomingConvId;
+    if (!conversationId) {
+      try {
+        conversationId = await createConversation({
+          session_id: request.headers.get('x-session-id') || undefined,
+        });
+      } catch (e) {
+        console.warn('[ALMA] Failed to create conversation, continuing without persistence:', e);
+      }
+    }
+
+    // Persist the latest user message
+    const lastMessage = messages[messages.length - 1];
+    if (conversationId && lastMessage?.role === 'user') {
+      appendMessages(conversationId, [{
+        role: 'user',
+        content: typeof lastMessage.content === 'string'
+          ? lastMessage.content
+          : JSON.stringify(lastMessage.content),
+      }]).catch((e) => console.warn('[ALMA] Failed to persist user message:', e));
+    }
+
     // Cap conversation length — pass messages directly (AI SDK v6 handles UIMessage format)
     const trimmed = messages.slice(-20);
 
+    // Merge ALMA data tools + orchestration tools
+    const allTools = {
+      ...almaTools,
+      ...orchestrationTools,
+    };
+
     const result = streamText({
       model: getModel(),
-      system: SYSTEM_PROMPT,
+      system: SYSTEM_PROMPT + (conversationId
+        ? `\n\n## Conversation Context\nThis conversation has ID: ${conversationId}. Pass this as conversation_id when creating background tasks so results are linked back to this chat.`
+        : ''),
       messages: trimmed,
-      tools: almaTools,
-      stopWhen: stepCountIs(5),
+      tools: allTools,
+      stopWhen: stepCountIs(7),
       toolChoice: 'auto',
-      onStepFinish({ stepType, finishReason }) {
-        console.log(`[ALMA] Step: ${stepType}, finish: ${finishReason}`);
+      async onStepFinish(event) {
+        console.log(`[ALMA] Step finished`);
+        // Persist assistant response
+        const text = (event as any).text;
+        if (conversationId && text) {
+          appendMessages(conversationId, [{
+            role: 'assistant',
+            content: text,
+          }]).catch((e) => console.warn('[ALMA] Failed to persist assistant message:', e));
+          autoTitle(conversationId).catch(() => {});
+        }
       },
     });
 
-    return result.toUIMessageStreamResponse();
+    // Include conversation_id in response headers so frontend can track it
+    const streamResponse = result.toUIMessageStreamResponse();
+    if (conversationId) {
+      streamResponse.headers.set('x-conversation-id', conversationId);
+    }
+    return streamResponse;
   } catch (error) {
     console.error('[ALMA Stream] Error:', error);
     return new Response(
