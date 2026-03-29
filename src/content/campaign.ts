@@ -70,7 +70,7 @@ export const journeyContainers = [
       { label: "Community Programs", value: "$75/day" },
       { label: "Reoffending", value: "3%" },
       { label: "Success Rate", value: "88%" },
-      { label: "Orgs on ALMA", value: "981" },
+      { label: "Orgs on ALMA", value: "1,081" },
     ],
     duration: "10 minutes to see what works",
     tone: "hopeful",
@@ -149,9 +149,9 @@ export const evidenceHighlights: EvidenceHighlight[] = [
     source: "Community Services Benchmark Study 2024",
   },
   {
-    label: "Tour cities confirmed",
-    value: "5",
-    source: "CONTAINED Campaign — Sydney, Brisbane, Adelaide, Perth, Alice Springs",
+    label: "Tour stops",
+    value: "9",
+    source: "CONTAINED Campaign — Mt Druitt, Brisbane, Adelaide, Townsville, Perth, Tennant Creek + demand signals",
   },
 ];
 
@@ -222,15 +222,15 @@ export interface TourStop {
 
 export const tourStops: TourStop[] = [
   {
-    city: 'Sydney',
+    city: 'Mount Druitt',
     state: 'NSW',
     venue: 'Western Sydney',
-    partner: 'Mounty Yarns + Community Partners',
+    partner: 'Mounty Yarns',
     description:
-      'The national tour kicks off in Western Sydney. CONTAINED launches with a community activation bringing together youth voices, local organisations, and decision makers.',
-    eventSlug: 'contained-sydney-launch',
-    date: 'Late April 2026',
-    status: 'confirmed',
+      'The national tour kicks off in Western Sydney with Mounty Yarns — a youth-led storytelling space running 7 programs on philanthropic funding alone, while NSW\'s $9.9M reoffending grants reach zero Aboriginal community-controlled organisations.',
+    eventSlug: 'contained-mount-druitt-launch',
+    date: 'April 25, 2026',
+    status: 'planning',
     lat: -33.74,
     lng: 150.82,
     partnerQuote: 'Young people telling their own stories is the most powerful advocacy there is.',
@@ -238,30 +238,44 @@ export const tourStops: TourStop[] = [
   {
     city: 'Brisbane',
     state: 'QLD',
-    venue: 'Youth Affairs Council QLD',
-    partner: 'YAC Queensland',
+    venue: 'YAC (Youth Advocacy Centre)',
+    partner: 'YAC (Youth Advocacy Centre)',
     description:
-      'YAC Queensland is hosting the Container. QLD MP Jonty Bush has publicly asked for tour dates. BackTrack Youth Works joining as a coalition partner.',
-    eventSlug: 'contained-brisbane-yac',
-    date: 'May 2026',
+      'YAC is hosting the Container in Brisbane. QLD has announced $765M+ in youth justice spending since February 2026 — zero dollars directed to Aboriginal community-controlled organisations.',
+    eventSlug: 'contained-brisbane',
+    date: 'May 15, 2026',
     status: 'planning',
     lat: -27.47,
     lng: 153.03,
-    partnerQuote: 'I love this concept, where is it touring in Queensland? — Jonty Bush MP',
+    partnerQuote: 'We would love to host this at YAC!!! — Katherine Hayes, YAC',
   },
   {
     city: 'Adelaide',
     state: 'SA',
-    venue: 'Reintegration Conference',
+    venue: 'Reintegration Conference + Adelaide Convention Centre',
     partner: 'Justice Reform Initiative + Conference Partners',
     description:
-      'Timed with the national Reintegration Conference week of 21 June. Policymakers, practitioners, and people with lived experience in one place.',
+      'Two activations: a community stop at the Reintegration Conference in June, and a political activation at the ALP National Conference in July — the container outside the convention centre as every federal Labor delegate walks past.',
     eventSlug: 'contained-adelaide-reintegration',
-    date: 'June 2026',
-    status: 'confirmed',
+    date: 'June 15 + July 23–25, 2026',
+    status: 'planning',
     lat: -34.93,
     lng: 138.60,
     partnerQuote: 'The conference that could change the national conversation on youth justice.',
+  },
+  {
+    city: 'Townsville / Palm Island',
+    state: 'QLD',
+    venue: 'Palm Island Community Company',
+    partner: 'PICC (Palm Island Community Company)',
+    description:
+      'PICC is the largest community-controlled youth justice response in Northern Queensland — 21 programs, 200 staff. Despite this scale, they receive zero philanthropic funding. This stop changes that.',
+    eventSlug: 'contained-townsville-picc',
+    date: 'July 1, 2026',
+    status: 'planning',
+    lat: -19.27,
+    lng: 146.78,
+    partnerQuote: 'The strongest single proof point in Australia.',
   },
   {
     city: 'Perth',
@@ -269,24 +283,24 @@ export const tourStops: TourStop[] = [
     venue: 'University of Western Australia',
     partner: 'UWA + Justice Reform Initiative WA',
     description:
-      'Academic partnership with UWA. 8 people publicly asking for Perth dates. Kimberley Wilde (JRI) anchoring community logistics. Megan McCormack (Reconciliation WA CEO) engaged.',
+      'Academic partnership with UWA. Western Australia housed children in Unit 18 — an adult maximum-security prison. The Banksia Hill crisis is not captured in any government dataset. WA has 9 mapped youth justice programs.',
     eventSlug: 'contained-perth-uwa',
-    date: 'July–August 2026',
+    date: 'August 2026',
     status: 'planning',
     lat: -31.95,
     lng: 115.86,
     partnerQuote: "We can't wait to have this in Perth!!! — Hayley Passmore, Criminology Lecturer",
   },
   {
-    city: 'Alice Springs',
+    city: 'Tennant Creek / Alice Springs',
     state: 'NT',
     venue: 'Community Space',
     partner: 'Oonchiumpa Aboriginal Corporation',
     description:
-      'Indigenous community-led activation with Oonchiumpa. A community-controlled engagement bringing First Nations families, Elders, and youth voices to the centre of the conversation.',
-    eventSlug: 'contained-alice-springs',
-    date: 'August 2026',
-    status: 'planning',
+      'Oonchiumpa achieves a 95% diversion rate through programs designed and led by Central Arrernte community. This is the most remote stop on the tour and arguably the most important.',
+    eventSlug: 'contained-tennant-creek',
+    date: 'September 15, 2026',
+    status: 'confirmed',
     lat: -23.70,
     lng: 133.88,
   },
@@ -304,8 +318,8 @@ export const campaignFundraising = {
     },
     {
       amount: 50000,
-      label: 'Adelaide + Perth',
-      description: 'Transport, logistics, and partner activation for confirmed tour stops',
+      label: 'Adelaide + Townsville + Perth',
+      description: 'Transport, logistics, and partner activation for tour stops',
     },
     {
       amount: 75000,
@@ -376,7 +390,7 @@ const CORE_HASHTAGS = ['#TheContained', '#YouthJustice', '#JusticeHub'];
 export const tourSocialKits: TourSocialKit[] = [
   {
     tourStopSlug: 'contained-mount-druitt-launch',
-    city: 'Mount Druitt',
+    city: 'Mount Druitt, NSW',
     posts: [
       {
         platform: 'twitter',
@@ -607,13 +621,13 @@ export const generalSocialPosts: SocialPost[] = [
     label: 'Tour Overview',
     content: `THE CONTAINED: Australian Tour 2026.
 
-Five cities. One shipping container, three rooms. One mission.
+Six stops. One shipping container, three rooms. One mission.
 
-Mount Druitt → Adelaide → Perth → Tennant Creek → Brisbane
+Mount Druitt → Brisbane → Adelaide → Townsville → Perth → Tennant Creek
 
 Thirty minutes inside youth detention reality, and the alternative that already works.
 
-justicehub.com.au/contained/tour`,
+justicehub.com.au/contained`,
     hashtags: CORE_HASHTAGS,
   },
   {
@@ -621,12 +635,14 @@ justicehub.com.au/contained/tour`,
     label: 'Tour Overview',
     content: `THE CONTAINED is going national.
 
-Five cities across Australia in 2026. One shipping container, three rooms that make the case for transforming youth justice.
+Six stops across Australia in 2026. One shipping container, three rooms that make the case for transforming youth justice.
 
-🔴 Mount Druitt, April 25 (Confirmed)
-🔴 Adelaide, June 15 (Confirmed)
+🔴 Mount Druitt, April 25 (Planning)
+🔴 Brisbane, May 15 (Planning)
+🔴 Adelaide, June 15 + ALP Conference Jul 23-25 (Planning)
+🔴 Townsville / Palm Island, July 1 (Planning)
 🟡 Perth, August (Planning)
-🟡 Tennant Creek, September (Planning)
+🟢 Tennant Creek, September 15 (Confirmed)
 
 $1.55M per child per year on detention. 84% reoffend.
 $75/day for community alternatives. 88% success rate.

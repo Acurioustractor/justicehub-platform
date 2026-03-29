@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONTAINED — Campaign Overview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #F5F0E8; color: #0A0A0A; font-family: 'Space Grotesk', sans-serif; }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+
+  /* Header */
+  .header { background: #0A0A0A; color: #F5F0E8; padding: 60px 40px 50px; }
+  .header h1 { font-size: 3rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 8px; }
+  .header .subtitle { font-size: 1rem; color: #999; max-width: 700px; }
+  .header .stats { display: flex; gap: 40px; margin-top: 24px; flex-wrap: wrap; }
+  .header .stat { text-align: left; }
+  .header .stat-num { font-size: 2rem; font-weight: 700; }
+  .header .stat-num.red { color: #DC2626; }
+  .header .stat-num.green { color: #059669; }
+  .header .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .content { max-width: 1200px; margin: 0 auto; padding: 40px; }
+
+  /* Timeline */
+  .timeline { margin-bottom: 60px; }
+  .timeline h2 { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: #0A0A0A; opacity: 0.4; margin-bottom: 20px; font-family: 'IBM Plex Mono', monospace; }
+  .timeline-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .timeline-card { background: #0A0A0A; color: #F5F0E8; border-radius: 12px; padding: 20px; cursor: default; transition: transform 0.15s; }
+  .timeline-card:hover { transform: translateY(-2px); }
+  .timeline-card .date { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: #059669; text-transform: uppercase; letter-spacing: 0.1em; }
+  .timeline-card .city { font-size: 1.2rem; font-weight: 700; margin: 6px 0 4px; }
+  .timeline-card .partner { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: #888; }
+  .timeline-card .people-count { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: #DC2626; margin-top: 8px; }
+  .timeline-card.demand { background: #1a1a1a; border: 1px dashed #333; }
+  .timeline-card .status { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; padding: 2px 8px; border-radius: 4px; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .status-tentative { background: #D97706; color: #0A0A0A; }
+  .status-fixed { background: #059669; color: #F5F0E8; }
+  .status-idea { background: #6B7280; color: #F5F0E8; }
+  .status-demand { background: #DC2626; color: #F5F0E8; }
+  .status-new { background: #3B82F6; color: #F5F0E8; }
+
+  /* Stop sections */
+  .stop { margin-bottom: 48px; border-left: 3px solid #0A0A0A; padding-left: 24px; }
+  .stop h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+  .stop .meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #0A0A0A; opacity: 0.5; margin-bottom: 16px; }
+  .stop .room3 { background: #0A0A0A; color: #F5F0E8; border-radius: 8px; padding: 12px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; margin-bottom: 16px; }
+  .stop .room3 strong { color: #DC2626; }
+
+  /* People tables */
+  .people-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+  .people-table th { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: left; padding: 8px 12px; border-bottom: 2px solid #0A0A0A; color: #0A0A0A; opacity: 0.4; }
+  .people-table td { padding: 8px 12px; border-bottom: 1px solid rgba(10,10,10,0.08); font-size: 0.85rem; vertical-align: top; }
+  .people-table tr:hover { background: rgba(10,10,10,0.03); }
+  .people-table .name { font-weight: 600; }
+  .people-table .org { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #0A0A0A; opacity: 0.6; }
+  .people-table .role { font-size: 0.8rem; color: #0A0A0A; opacity: 0.7; }
+  .badge { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; padding: 1px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .badge-hot { background: #DC2626; color: white; }
+  .badge-warm { background: #D97706; color: white; }
+  .badge-active { background: #059669; color: white; }
+  .badge-pending { background: #9CA3AF; color: white; }
+  .badge-notion { background: #3B82F6; color: white; }
+  .badge-overdue { background: #DC2626; color: white; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+  /* Funding pipeline */
+  .funding { margin-top: 60px; }
+  .funding h2 { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: #0A0A0A; opacity: 0.4; margin-bottom: 20px; font-family: 'IBM Plex Mono', monospace; }
+  .funding-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .funding-card { background: #F5F0E8; border-radius: 10px; padding: 20px; border: 1px solid rgba(10,10,10,0.06); }
+  .funding-card .amount { font-size: 1.4rem; font-weight: 700; color: #059669; }
+  .funding-card .funder { font-weight: 600; margin-top: 4px; }
+  .funding-card .detail { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #0A0A0A; opacity: 0.5; margin-top: 4px; }
+
+  /* Actions */
+  .actions { margin-top: 60px; }
+  .actions h2 { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: #0A0A0A; opacity: 0.4; margin-bottom: 20px; font-family: 'IBM Plex Mono', monospace; }
+  .action-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(10,10,10,0.06); }
+  .action-item .priority { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+  .priority-urgent { background: #DC2626; }
+  .priority-high { background: #D97706; }
+  .priority-normal { background: #059669; }
+  .action-item .text { font-size: 0.85rem; }
+  .action-item .text strong { font-weight: 600; }
+
+  /* Intelligence links */
+  .intel-links { margin-top: 60px; padding: 32px; background: #0A0A0A; border-radius: 12px; color: #F5F0E8; }
+  .intel-links h2 { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: #888; margin-bottom: 16px; font-family: 'IBM Plex Mono', monospace; }
+  .intel-links a { color: #059669; text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; }
+  .intel-links a:hover { text-decoration: underline; }
+  .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .link-card { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 14px; }
+  .link-card .label { font-size: 0.85rem; font-weight: 600; color: #F5F0E8; margin-bottom: 4px; }
+  .link-card .desc { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: #888; }
+
+  @media (max-width: 768px) {
+    .header { padding: 40px 20px 30px; }
+    .header h1 { font-size: 2rem; }
+    .content { padding: 20px; }
+    .header .stats { gap: 20px; }
+    .timeline-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div class="mono" style="font-size: 0.7rem; color: #666; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px;">CONTAINED Campaign — Internal Overview</div>
+    <h1>The Movement Map</h1>
+    <p class="subtitle">Every stop, every person, every dollar tracked. Updated 30 March 2026.</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">225+</div><div class="stat-label">Total Contacts</div></div>
+      <div class="stat"><div class="stat-num">86</div><div class="stat-label">People Mapped</div></div>
+      <div class="stat"><div class="stat-num">15</div><div class="stat-label">Locations</div></div>
+      <div class="stat"><div class="stat-num red">9</div><div class="stat-label">Tour Stops</div></div>
+      <div class="stat"><div class="stat-num green">$290K-$580K</div><div class="stat-label">Funding Pipeline</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- Timeline -->
+  <div class="timeline">
+    <h2>Tour Timeline</h2>
+    <div class="timeline-grid">
+      <div class="timeline-card">
+        <div class="date">Apr 25</div>
+        <div class="city">Mount Druitt</div>
+        <div class="partner">Mounty Yarns</div>
+        <div class="people-count">15 people</div>
+        <span class="status status-tentative">Tentative</span>
+      </div>
+      <div class="timeline-card">
+        <div class="date">May 15</div>
+        <div class="city">Brisbane</div>
+        <div class="partner">YAC (hosting!)</div>
+        <div class="people-count">9 people</div>
+        <span class="status status-tentative">Tentative</span>
+      </div>
+      <div class="timeline-card">
+        <div class="date">Jun 15</div>
+        <div class="city">Adelaide</div>
+        <div class="partner">Reintegration Conf + JRI</div>
+        <div class="people-count">5 people</div>
+        <span class="status status-tentative">Tentative</span>
+      </div>
+      <div class="timeline-card">
+        <div class="date">Jul 1</div>
+        <div class="city">Townsville</div>
+        <div class="partner">PICC</div>
+        <div class="people-count">4 people</div>
+        <span class="status status-new">New</span>
+      </div>
+      <div class="timeline-card">
+        <div class="date">Jul 23-25</div>
+        <div class="city">Adelaide (return)</div>
+        <div class="partner">ALP National Conference</div>
+        <div class="people-count">Political activation</div>
+        <span class="status status-idea">Idea</span>
+      </div>
+      <div class="timeline-card">
+        <div class="date">Aug 1</div>
+        <div class="city">Perth</div>
+        <div class="partner">UWA + JRI Perth</div>
+        <div class="people-count">8 people</div>
+        <span class="status status-tentative">Tentative</span>
+      </div>
+      <div class="timeline-card">
+        <div class="date">Sep 15</div>
+        <div class="city">Tennant Creek</div>
+        <div class="partner">Oonchiumpa</div>
+        <div class="people-count">2 + 4 on ground</div>
+        <span class="status status-fixed">Fixed</span>
+      </div>
+      <div class="timeline-card demand">
+        <div class="date">TBD</div>
+        <div class="city">Melbourne</div>
+        <div class="partner">9 people asking</div>
+        <div class="people-count">Strongest demand signal</div>
+        <span class="status status-demand">Should be a stop</span>
+      </div>
+      <div class="timeline-card demand">
+        <div class="date">TBD</div>
+        <div class="city">Canberra</div>
+        <div class="partner">3 people asking</div>
+        <div class="people-count">Federal Parliament angle</div>
+        <span class="status status-demand">Should be a stop</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOUNT DRUITT -->
+  <div class="stop" id="mount-druitt">
+    <h2>Mount Druitt, NSW — Apr 25</h2>
+    <div class="meta">Partner: Mounty Yarns | 15 people | Room 3: Youth-led storytelling</div>
+    <div class="room3"><strong>Room 3 hook:</strong> 7 programs, $1M+ philanthropic, $0 from NSW govt reoffending grants. Dusseldorp-funded. Documentary in progress.</div>
+    <table class="people-table">
+      <thead><tr><th>Name</th><th>Organisation</th><th>Status</th><th>Role / Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Teya Dusseldorp</td><td class="org">Dusseldorp Forum</td><td><span class="badge badge-overdue">Overdue</span></td><td class="role">$40-80K funder. This is her patch.</td></tr>
+        <tr><td class="name">Bernie Shakeshaft</td><td class="org">BackTrack</td><td><span class="badge badge-active">Active</span></td><td class="role">Legend. Amplifier. Will repost everything.</td></tr>
+        <tr><td class="name">Scarlett Steven</td><td class="org">Dusseldorp Forum</td><td><span class="badge badge-active">Active</span></td><td class="role">Coordinating tour logistics</td></tr>
+        <tr><td class="name">Daniel Daylight</td><td class="org">Mounty Yarns</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Original Dusseldorp referral. Mt Druitt anchor.</td></tr>
+        <tr><td class="name">Nicole Mekler</td><td class="org">JustReinvest Mt Druitt</td><td><span class="badge badge-warm">Responded</span></td><td class="role">Youth Advocacy lead. Will attend.</td></tr>
+        <tr><td class="name">Jonas Kubitscheck</td><td class="org">PRF</td><td><span class="badge badge-warm">Warm</span></td><td class="role">Visited Container Oct 2025. Re-engage.</td></tr>
+        <tr><td class="name">William Frazer</td><td class="org">PRF</td><td><span class="badge badge-warm">Warm</span></td><td class="role">Visited Container Oct 2025 with Jonas.</td></tr>
+        <tr><td class="name">Natalie Chiappazzo</td><td class="org">WSU</td><td><span class="badge badge-warm">Warm</span></td><td class="role">Dean wants CONTAINED as experiential learning</td></tr>
+        <tr><td class="name">Margot Beach</td><td class="org">Dusseldorp Forum</td><td><span class="badge badge-warm">Warm</span></td><td class="role">Accepted meeting 20 Mar</td></tr>
+        <tr><td class="name">Christine Thomas</td><td class="org">Calmer Kids</td><td><span class="badge badge-warm">Warm</span></td><td class="role">Was AT THE FARM. "Heart overflowing."</td></tr>
+        <tr><td class="name">Joy Woods</td><td class="org">Services</td><td><span class="badge badge-pending">Pending</span></td><td class="role">"What are the details for Sydney?" <strong>RESPOND</strong></td></tr>
+        <tr><td class="name">Emma Maiden</td><td class="org">Uniting — Dir of Advocacy</td><td><span class="badge badge-pending">Pending</span></td><td class="role">"Hoping NSW MPs come." Venue partner?</td></tr>
+        <tr><td class="name">Kyrstie Dunn</td><td class="org">Citizen</td><td><span class="badge badge-warm">Warm</span></td><td class="role">Wants Sydney. Gave leads.</td></tr>
+        <tr><td class="name">Alexandra Cordukes</td><td class="org">Orange Sky</td><td><span class="badge badge-warm">Warm</span></td><td class="role">Has ACT contacts</td></tr>
+        <tr><td class="name">Jade Harley</td><td class="org">UnLtd</td><td><span class="badge badge-pending">Pending</span></td><td class="role">Attended launch. Corporate sponsorship.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BRISBANE -->
+  <div class="stop" id="brisbane">
+    <h2>Brisbane, QLD — May 15</h2>
+    <div class="meta">Partner: YAC (HOSTING!) | 9 people | Room 3: $765M govt announcements, $0 to ACCOs</div>
+    <div class="room3"><strong>Room 3 hook:</strong> QLD govt announced <strong>$765M+</strong> since February. Zero dollars to Aboriginal community-controlled organisations. PICC has 21 programs and gets none of it.</div>
+    <table class="people-table">
+      <thead><tr><th>Name</th><th>Organisation</th><th>Status</th><th>Role / Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Tim Bennett</td><td class="org">Via Bernie</td><td><span class="badge badge-hot">Hot</span></td><td class="role">QLD ideas + travel costs. Key connector.</td></tr>
+        <tr><td class="name">Shannon Cant</td><td class="org">YAC</td><td><span class="badge badge-warm">Responded</span></td><td class="role">YAC wants to HOST. Venue solved.</td></tr>
+        <tr><td class="name">Katherine Hayes</td><td class="org">YAC</td><td><span class="badge badge-notion">Notion</span></td><td class="role">"We would love to host this at YAC!!!"</td></tr>
+        <tr><td class="name">Prof Selena Bartlett</td><td class="org">Thriving Minds podcast</td><td><span class="badge badge-warm">Responded</span></td><td class="role">Podcast interview. Brisbane academic.</td></tr>
+        <tr><td class="name">Megan Argent</td><td class="org">QLD Dept of Youth Justice</td><td><span class="badge badge-warm">Warm</span></td><td class="role">Government insider. Clinical Practice Leader.</td></tr>
+        <tr><td class="name">Jonty Bush</td><td class="org">QLD Government MP</td><td><span class="badge badge-pending">Pending</span></td><td class="role">Yarning with YAC about end of April.</td></tr>
+        <tr><td class="name">MMAD</td><td class="org">Musicians Making A Difference</td><td><span class="badge badge-pending">Pending</span></td><td class="role">Futures Radio runs 24/7 INSIDE detention.</td></tr>
+        <tr><td class="name">Toby Gowland</td><td class="org">Kalianah Outdoors</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Tamborine. "What can I do, how can I help?"</td></tr>
+        <tr><td class="name">Rhian Miller</td><td class="org">EPIC Pathways</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Brisbane youth pathways org.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ADELAIDE -->
+  <div class="stop" id="adelaide">
+    <h2>Adelaide, SA — Jun 15 + Jul 23-25 (ALP Conference)</h2>
+    <div class="meta">Partner: Reintegration Conference + JRI | 5 people | Two activations: community + political</div>
+    <div class="room3"><strong>ALP Conference:</strong> Container outside the convention centre — every federal Labor delegate walks past. Maximum political leverage.</div>
+    <table class="people-table">
+      <thead><tr><th>Name</th><th>Organisation</th><th>Status</th><th>Role / Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Hannah March</td><td class="org">JRI</td><td><span class="badge badge-warm">Responded</span></td><td class="role">Adelaide host. ALP Conference idea originator.</td></tr>
+        <tr><td class="name">Sophie Bretag</td><td class="org">City of Onkaparinga</td><td><span class="badge badge-pending">Pending</span></td><td class="role">Local government champion.</td></tr>
+        <tr><td class="name">Tracey Newman</td><td class="org">Services</td><td><span class="badge badge-pending">Pending</span></td><td class="role">Making calls to get Container there. Send info pack.</td></tr>
+        <tr><td class="name">Arianna Petra Watson</td><td class="org">SouthStart</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Adelaide tech community.</td></tr>
+        <tr><td class="name">Zoe Brooks</td><td class="org">Good Bank Gallery</td><td><span class="badge badge-notion">Notion</span></td><td class="role">McLaren Vale. Venue offer.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TOWNSVILLE -->
+  <div class="stop" id="townsville">
+    <h2>Townsville / Palm Island, QLD — Jul 1</h2>
+    <div class="meta">Partner: PICC | 4 people | Room 3: 21 programs, 200 staff, $44M, $0 philanthropy</div>
+    <div class="room3"><strong>Room 3 hook:</strong> PICC — 21 programs, 200 staff, $44M revenue, <strong>zero philanthropic funding</strong>. The strongest single proof point in Australia.</div>
+    <table class="people-table">
+      <thead><tr><th>Name</th><th>Organisation</th><th>Status</th><th>Role / Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Robert Tickner</td><td class="org">JRI / Former Minister</td><td><span class="badge badge-warm">Warm</span></td><td class="role">Political credibility. JRI Chair.</td></tr>
+        <tr><td class="name">Jonas Kubitscheck</td><td class="org">PRF</td><td><span class="badge badge-warm">Warm</span></td><td class="role">PRF connection. Visited Container.</td></tr>
+        <tr><td class="name">Rachel Atkinson</td><td class="org">PICC CEO</td><td><span class="badge badge-pending">Pending</span></td><td class="role">Must build this relationship. 200 staff. THE proof point.</td></tr>
+        <tr><td class="name">Julia Payne</td><td class="org">PRF</td><td><span class="badge badge-pending">Pending</span></td><td class="role">$100-200K ask. PICC is in PRF geography.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PERTH -->
+  <div class="stop" id="perth">
+    <h2>Perth, WA — Aug 1</h2>
+    <div class="meta">Partner: UWA + JRI Perth | 8 people | Room 3: Unit 18 / Banksia Hill</div>
+    <div class="room3"><strong>Room 3 hook:</strong> Unit 18 — kids in adult prison. Most powerful Room 3 testimony in Australia.</div>
+    <table class="people-table">
+      <thead><tr><th>Name</th><th>Organisation</th><th>Status</th><th>Role / Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Hayley Passmore</td><td class="org">Academic</td><td><span class="badge badge-warm">Responded</span></td><td class="role">Consortium with Aboriginal-led orgs.</td></tr>
+        <tr><td class="name">Michelle Wieberneit</td><td class="org">UWA</td><td><span class="badge badge-warm">Responded</span></td><td class="role">Academic anchor.</td></tr>
+        <tr><td class="name">Kimberley Wilde</td><td class="org">JRI Perth</td><td><span class="badge badge-warm">Warm</span></td><td class="role">Key Perth anchor. Actively discussing stop.</td></tr>
+        <tr><td class="name">Kylie Kerin</td><td class="org">Social & Community Impact</td><td><span class="badge badge-warm">Warm</span></td><td class="role">Arts community hosting. Inter-cultural facilitator.</td></tr>
+        <tr><td class="name">Lucy Stronach</td><td class="org">Minderoo</td><td><span class="badge badge-warm">Warm</span></td><td class="role">$25-75K per stop. Board decision June. Hometown.</td></tr>
+        <tr><td class="name">Mark McPartland</td><td class="org">Corporate</td><td><span class="badge badge-pending">Pending</span></td><td class="role">"Where in Perth? Forest Chase?"</td></tr>
+        <tr><td class="name">Samgiita Hope</td><td class="org">Heart2Heart</td><td><span class="badge badge-pending">Pending</span></td><td class="role">"When will you be in Perth?"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TENNANT CREEK -->
+  <div class="stop" id="tennant-creek">
+    <h2>Tennant Creek / Alice Springs, NT — Sep 15</h2>
+    <div class="meta">Partner: Oonchiumpa | 2 + 4 on ground | Room 3: On-Country programs</div>
+    <div class="room3"><strong>Room 3 hook:</strong> Oonchiumpa — 95% diversion rate. Operation Luna. Central Arrernte-led.</div>
+    <table class="people-table">
+      <thead><tr><th>Name</th><th>Organisation</th><th>Status</th><th>Role / Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Kristy Bloomfield</td><td class="org">Oonchiumpa Co-Founder</td><td><span class="badge badge-active">Active</span></td><td class="role">Central Arrernte. Story anchor.</td></tr>
+        <tr><td class="name">Tanya Turner</td><td class="org">Oonchiumpa Co-Founder</td><td><span class="badge badge-active">Active</span></td><td class="role">UWA law. Came home.</td></tr>
+        <tr><td class="name">Patricia Ann Miller AO</td><td class="org">Community Elder</td><td><span class="badge badge-warm">Warm</span></td><td class="role">On the ground. Authority.</td></tr>
+        <tr><td class="name">Prof Helen Milroy</td><td class="org">Academic</td><td><span class="badge badge-warm">Warm</span></td><td class="role">First Indigenous medical graduate.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MELBOURNE -->
+  <div class="stop" id="melbourne" style="border-left-color: #DC2626;">
+    <h2>Melbourne, VIC — TBD (DEMAND: 9 people)</h2>
+    <div class="meta">Strongest unconfirmed demand signal | Cherry Creek: $7,304/day (most expensive detention in Australia)</div>
+    <div class="room3"><strong>Why it must be a stop:</strong> Cherry Creek just opened — 140 beds, <strong>$7,304/day</strong>. Peter Norden AO has sent 14 messages. 3CR Radio interview offered. Design Week venue offered. 99 Indigenous orgs, 40 interventions in VIC.</div>
+    <table class="people-table">
+      <thead><tr><th>Name</th><th>Organisation</th><th>Status</th><th>Role / Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Peter Norden AO</td><td class="org">Youth Justice Advocate</td><td><span class="badge badge-hot">Hot</span></td><td class="role">14 unread messages. CALL: 0409 04994</td></tr>
+        <tr><td class="name">Dr Katrina Raynor</td><td class="org">Academic</td><td><span class="badge badge-warm">Warm</span></td><td class="role">"Melbourne Design Week as venue."</td></tr>
+        <tr><td class="name">Moira Were AM</td><td class="org">Barrister</td><td><span class="badge badge-pending">Pending</span></td><td class="role">Tagged Zoe Brooks re Good Bank Gallery.</td></tr>
+        <tr><td class="name">Ashlee Cooper</td><td class="org">Services</td><td><span class="badge badge-pending">Pending</span></td><td class="role">"LOVE to see this in Geelong or Melbourne."</td></tr>
+        <tr><td class="name">Alice Mahar</td><td class="org">Corner Store Network</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Melbourne community network.</td></tr>
+        <tr><td class="name">Anita Pahor</td><td class="org">Larita Academy</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Melbourne education.</td></tr>
+        <tr><td class="name">Jess Lilley</td><td class="org">The Open Arms</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Footscray Writers Fest venue offer. Theme: Words & Action.</td></tr>
+        <tr><td class="name">Sonia Randhawa</td><td class="org">3CR Radio</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Interview offer — Wednesday Breakfast. 0466342492</td></tr>
+        <tr><td class="name">Davina Jones</td><td class="org">Interlace Advisory</td><td><span class="badge badge-pending">Pending</span></td><td class="role">7 years with prisoners. Speaker.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CANBERRA -->
+  <div class="stop" id="canberra" style="border-left-color: #DC2626;">
+    <h2>Canberra, ACT — TBD (DEMAND: 3 people)</h2>
+    <div class="meta">Federal Parliament angle | Container during sitting week = national story</div>
+    <table class="people-table">
+      <thead><tr><th>Name</th><th>Organisation</th><th>Status</th><th>Role / Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Rebecca Minty</td><td class="org">ACT Government</td><td><span class="badge badge-pending">Pending</span></td><td class="role">"ACT committed to new model of care." Government insider.</td></tr>
+        <tr><td class="name">PJ Hewitt</td><td class="org">Corporate</td><td><span class="badge badge-pending">Pending</span></td><td class="role">"Josh Hewitt — host in Canberra!" Hosting offer.</td></tr>
+        <tr><td class="name">Anissa Jones</td><td class="org">Research</td><td><span class="badge badge-pending">Pending</span></td><td class="role">"Will you go to Canberra? Federal level too."</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OTHER DEMAND SIGNALS -->
+  <div class="stop" id="other-demand" style="border-left-color: #6B7280;">
+    <h2>Other Demand Signals</h2>
+    <div class="meta">Tasmania (2) | Armidale (1) | Rockhampton (1) | Cairns (1) | Doomadgee/Cape York (2)</div>
+    <table class="people-table">
+      <thead><tr><th>Name</th><th>Location</th><th>Status</th><th>Role / Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Loic Fery</td><td class="org">Tasmania</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Prevention Not Detention coalition. Will get politicians through it.</td></tr>
+        <tr><td class="name">Lewina Schrale</td><td class="org">Tasmania (DECYP)</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Government insider. Dept of Education Children & Young People.</td></tr>
+        <tr><td class="name">Penny Lamaro</td><td class="org">Armidale (Ascent Group)</td><td><span class="badge badge-notion">Notion</span></td><td class="role">"Keen to have you come to Armidale!" Bernie's town.</td></tr>
+        <tr><td class="name">Delilah MacGillivray</td><td class="org">Rockhampton</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Kalkadoon woman. "Showcase on Darumbal Country."</td></tr>
+        <tr><td class="name">Irene Portelli</td><td class="org">Cairns (We Made It)</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Jobs pipeline post-prison. Filming DV stories.</td></tr>
+        <tr><td class="name">Shannon Lemanski</td><td class="org">Doomadgee</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Long-term loan. Project with Brodie.</td></tr>
+        <tr><td class="name">Baressa Frazer</td><td class="org">Cape York</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Cape York Peninsula community member.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- NATIONAL / UNASSIGNED -->
+  <div class="stop" id="national" style="border-left-color: #3B82F6;">
+    <h2>National / Unassigned — Key People</h2>
+    <div class="meta">28 people not yet linked to a specific stop</div>
+    <table class="people-table">
+      <thead><tr><th>Name</th><th>Organisation</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Peter Rowe</td><td class="org">First Nations News</td><td><span class="badge badge-warm">Responded</span></td><td class="role"><strong>WRITE THE OP-ED.</strong> He invited you.</td></tr>
+        <tr><td class="name">Ariane Dozer</td><td class="org">Justice Project</td><td><span class="badge badge-warm">Responded</span></td><td class="role"><strong>Follow up NOW.</strong> "Looking forward to circling back." Funder.</td></tr>
+        <tr><td class="name">Jay</td><td class="org">Social Impact Hub</td><td><span class="badge badge-warm">Responded</span></td><td class="role">Catalysing Impact induction 31 Mar. Partnership.</td></tr>
+        <tr><td class="name">Tom Donaghy</td><td class="org">Personal</td><td><span class="badge badge-pending">Pending</span></td><td class="role">Tagged 19 people incl PRF, Ash Barty, Mark Bouris. Ask for intros.</td></tr>
+        <tr><td class="name">Dr Romina Reyftmann</td><td class="org">—</td><td><span class="badge badge-hot">Hot</span></td><td class="role"><strong>"How to donate funds?"</strong> SEND LINK NOW.</td></tr>
+        <tr><td class="name">John Katahanas</td><td class="org">—</td><td><span class="badge badge-hot">Hot</span></td><td class="role"><strong>"Sign up to donate time?"</strong> SEND BACKER LINK.</td></tr>
+        <tr><td class="name">Andrew Bloyce</td><td class="org">Tanda</td><td><span class="badge badge-pending">Pending</span></td><td class="role">Offered free digital art piece. RESPOND.</td></tr>
+        <tr><td class="name">Paul Kelly</td><td class="org">Former Chief Medical Officer</td><td><span class="badge badge-pending">Pending</span></td><td class="role">"Detention as public health crisis" champion.</td></tr>
+        <tr><td class="name">Willow Aliento</td><td class="org">Research</td><td><span class="badge badge-pending">Pending</span></td><td class="role">"Every university campus" — university circuit idea.</td></tr>
+        <tr><td class="name">Ludmila Andrade</td><td class="org">YOPE (Amsterdam)</td><td><span class="badge badge-notion">Notion</span></td><td class="role">Dutch NGO. International partnership potential.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FUNDING PIPELINE -->
+  <div class="funding">
+    <h2>Funding Pipeline</h2>
+    <div class="funding-grid">
+      <div class="funding-card">
+        <div class="amount">$150-300K</div>
+        <div class="funder">Lucy Stronach — Minderoo</div>
+        <div class="detail">Perth + national. Board decision June. Call week Apr 6.</div>
+      </div>
+      <div class="funding-card">
+        <div class="amount">$100-200K</div>
+        <div class="funder">Julia Payne — Paul Ramsay Foundation</div>
+        <div class="detail">Townsville/PICC. Re-engage by Mar 31.</div>
+      </div>
+      <div class="funding-card">
+        <div class="amount">$40-80K</div>
+        <div class="funder">Teya Dusseldorp — Dusseldorp Forum</div>
+        <div class="detail">Mt Druitt + Tennant Creek. 2 basecamp coordinators. OVERDUE.</div>
+      </div>
+      <div class="funding-card">
+        <div class="amount">$10-20K saved</div>
+        <div class="funder">Shannon Cant — YAC</div>
+        <div class="detail">Brisbane venue (hosting!)</div>
+      </div>
+      <div class="funding-card">
+        <div class="amount">TBD</div>
+        <div class="funder">Ariane Dozer — Justice Project</div>
+        <div class="detail">Partnership $. "Looking forward to circling back."</div>
+      </div>
+      <div class="funding-card">
+        <div class="amount">TBD</div>
+        <div class="funder">Tim Bennett</div>
+        <div class="detail">Travel costs + QLD connections + possibly direct funding</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- URGENT ACTIONS -->
+  <div class="actions">
+    <h2>Urgent Actions</h2>
+    <div class="action-item"><div class="priority priority-urgent"></div><div class="text"><strong>Call Peter Norden AO</strong> — 0409 04994. 14 unread messages.</div></div>
+    <div class="action-item"><div class="priority priority-urgent"></div><div class="text"><strong>Send donation link</strong> to Dr Romina Santos Reyftmann — she asked "How to donate funds?"</div></div>
+    <div class="action-item"><div class="priority priority-urgent"></div><div class="text"><strong>Send backer link</strong> to John Katahanas — "Sign up to donate time?"</div></div>
+    <div class="action-item"><div class="priority priority-urgent"></div><div class="text"><strong>Follow up Teya Dusseldorp</strong> — overdue. Send v2 email with platform links.</div></div>
+    <div class="action-item"><div class="priority priority-high"></div><div class="text"><strong>Follow up Ariane Dozer</strong> — "Looking forward to circling back." Funder. Ready now.</div></div>
+    <div class="action-item"><div class="priority priority-high"></div><div class="text"><strong>Re-engage Julia Payne (PRF)</strong> — Townsville/PICC pitch. By Mar 31.</div></div>
+    <div class="action-item"><div class="priority priority-high"></div><div class="text"><strong>Write the op-ed</strong> for Peter Rowe (First Nations News). Invited you.</div></div>
+    <div class="action-item"><div class="priority priority-high"></div><div class="text"><strong>Respond Andrew Bloyce</strong> — offered free digital art piece.</div></div>
+    <div class="action-item"><div class="priority priority-normal"></div><div class="text"><strong>Prepare for Lucy (Minderoo) call</strong> — week of Apr 6. Platform walkthrough ready.</div></div>
+    <div class="action-item"><div class="priority priority-normal"></div><div class="text"><strong>Contact Rachel Atkinson (PICC CEO)</strong> — must build this relationship before Townsville.</div></div>
+    <div class="action-item"><div class="priority priority-normal"></div><div class="text"><strong>Sonia Randhawa (3CR Radio)</strong> — confirm Melbourne interview. 0466342492.</div></div>
+  </div>
+
+  <!-- INTELLIGENCE PLATFORM LINKS -->
+  <div class="intel-links">
+    <h2>Intelligence Platform — Share These</h2>
+    <div class="link-grid">
+      <div class="link-card">
+        <div class="label">Evidence Scatter</div>
+        <div class="desc">550:1 cost ratio. 1,081 programs vs detention.</div>
+        <a href="/intelligence/evidence">/intelligence/evidence</a>
+      </div>
+      <div class="link-card">
+        <div class="label">Funding Map</div>
+        <div class="desc">360 LGAs. 96 funding deserts.</div>
+        <a href="/intelligence/funding-map">/intelligence/funding-map</a>
+      </div>
+      <div class="link-card">
+        <div class="label">Funding Flows</div>
+        <div class="desc">$114.9B tracked. Who funds whom.</div>
+        <a href="/intelligence/funding-flows">/intelligence/funding-flows</a>
+      </div>
+      <div class="link-card">
+        <div class="label">Network Explorer</div>
+        <div class="desc">587K entities. 1.5M relationships.</div>
+        <a href="/intelligence/network">/intelligence/network</a>
+      </div>
+      <div class="link-card">
+        <div class="label">Story Bridge</div>
+        <div class="desc">Data points connected to real stories.</div>
+        <a href="/intelligence/stories">/intelligence/stories</a>
+      </div>
+      <div class="link-card">
+        <div class="label">NSW Sector Report</div>
+        <div class="desc">$327M/year. 34% detention surge. Bail crisis.</div>
+        <a href="/intelligence/nsw">/intelligence/nsw</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
