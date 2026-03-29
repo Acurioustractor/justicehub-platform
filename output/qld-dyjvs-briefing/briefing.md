@@ -287,4 +287,4 @@ These gaps are not accidental — they protect the status quo from accountabilit
 
 *This briefing was produced by JusticeHub Intelligence using data from ROGS 2025, QAO Report 15, QFCC, QLD Contract Disclosure, CivicScope ministerial analysis, and AIHW. All claims are sourced and independently verifiable. Where claims could not be verified, they are marked as UNVERIFIED.*
 
-*Interactive version: justicehub.org.au/intelligence/qld-dyjvs*
+*Interactive version: justicehub.com.au/intelligence/qld-dyjvs*

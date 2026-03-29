@@ -383,7 +383,7 @@ Uncle George provides cultural authority for the programs — the element that n
 
 BG-FIT has 3 published stories and 5 recorded transcripts in the Empathy Ledger. Brodie Germaine and Benjamin Knight have presented together at the BAIL (Be an Indigenous Leader) conference on Gadigal land, connecting the Mount Isa experience to the national justice reinvestment conversation.
 
-*Source: Empathy Ledger v2, BG-FIT organisation (19 storytellers, 3 stories, 5 transcripts). JusticeHub org page: justicehub.org.au/for-funders/org/bg-fit*
+*Source: Empathy Ledger v2, BG-FIT organisation (19 storytellers, 3 stories, 5 transcripts). JusticeHub org page: justicehub.com.au/for-funders/org/bg-fit*
 
 ---
 
@@ -653,7 +653,7 @@ All stories and interviews sourced from the **Empathy Ledger** — a digital sto
 
 ---
 
-*This report was produced by JusticeHub Intelligence. All claims are sourced. Where data could not be independently verified, it has been excluded or marked. The interactive version of this report, with live database queries, is available at justicehub.org.au/intelligence/qld-dyjvs.*
+*This report was produced by JusticeHub Intelligence. All claims are sourced. Where data could not be independently verified, it has been excluded or marked. The interactive version of this report, with live database queries, is available at justicehub.com.au/intelligence/qld-dyjvs.*
 
 *The Senate Standing Committee on Legal and Constitutional Affairs inquiry into youth justice reports 30 June 2026. JusticeHub's data, evidence mapping, and community voice archive are available to the Committee and to any organisation working toward reform.*
 
@@ -662,11 +662,11 @@ All stories and interviews sourced from the **Empathy Ledger** — a digital sto
 ## Connected Resources
 
 ### JusticeHub Pages
-- **QLD Justice Overview:** justicehub.org.au/intelligence/qld-justice — full QLD spending by source, top funded orgs, Indigenous org table, governance network
-- **National Intelligence:** justicehub.org.au/intelligence/national — all-Australia evidence overview, state-by-state comparison
-- **Organisation Directory:** justicehub.org.au/hub — 98,404 orgs searchable, including 2,051 Indigenous organisations
-- **Funder Landscape:** justicehub.org.au/for-funders/landscape — portfolio comparison across major funders
-- **Regional Reports:** justicehub.org.au/intelligence/regional — deep dives into Mt Druitt, Adelaide, Perth, Tennant Creek, Townsville, Brisbane
+- **QLD Justice Overview:** justicehub.com.au/intelligence/qld-justice — full QLD spending by source, top funded orgs, Indigenous org table, governance network
+- **National Intelligence:** justicehub.com.au/intelligence/national — all-Australia evidence overview, state-by-state comparison
+- **Organisation Directory:** justicehub.com.au/hub — 98,404 orgs searchable, including 2,051 Indigenous organisations
+- **Funder Landscape:** justicehub.com.au/for-funders/landscape — portfolio comparison across major funders
+- **Regional Reports:** justicehub.com.au/intelligence/regional — deep dives into Mt Druitt, Adelaide, Perth, Tennant Creek, Townsville, Brisbane
 
 ### External Reports & Inquiries
 - [Senate Inquiry into Youth Justice and Incarceration (reports June 2026)](https://www.aph.gov.au/Parliamentary_Business/Committees/Senate/Legal_and_Constitutional_Affairs/YouthJustice2025)
@@ -699,7 +699,7 @@ All stories published with informed consent, cultural authority, and community g
 
 ## Appendix B: Full DYJVS Contract Table
 
-*See: JusticeHub database, 555 DYJVS contracts queryable at justicehub.org.au/intelligence/qld-dyjvs*
+*See: JusticeHub database, 555 DYJVS contracts queryable at justicehub.com.au/intelligence/qld-dyjvs*
 
 ## Appendix C: Media Coverage Index
 

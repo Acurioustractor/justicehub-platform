@@ -155,6 +155,11 @@ export const navigationItems: NavigationItem[] = [
                 label: 'Youth Justice Report',
                 href: '/youth-justice-report',
                 description: 'National youth justice analysis'
+            },
+            {
+                label: 'NSW Sector Report',
+                href: '/intelligence/nsw',
+                description: 'NSW youth justice — $327M, bail crisis, 154 programs'
             }
         ]
     },
@@ -422,7 +427,8 @@ export const footerSections = [
             { label: 'Impact Calculator', href: '/intelligence/impact-calculator', description: 'Cost comparison' },
             { label: 'Funding', href: '/intelligence/funding', description: 'Grants & opportunities' },
             { label: 'Justice Spending', href: '/justice-funding', description: 'Track where justice dollars go' },
-            { label: 'Reports', href: '/intelligence/reports', description: 'Weekly summaries' }
+            { label: 'Reports', href: '/intelligence/reports', description: 'Weekly summaries' },
+            { label: 'NSW Sector Report', href: '/intelligence/nsw', description: 'NSW youth justice sector report' }
         ]
     },
     {
