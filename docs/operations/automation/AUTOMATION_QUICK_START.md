@@ -51,7 +51,7 @@ Go to **Settings → Secrets and variables → Actions → New repository secret
    - Format: `https://hooks.slack.com/services/...`
 
 8. **NEXT_PUBLIC_SITE_URL**
-   - Your production URL: `https://justicehub.org.au`
+   - Your production URL: `https://justicehub.com.au`
 
 ---
 

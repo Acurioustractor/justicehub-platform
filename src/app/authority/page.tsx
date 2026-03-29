@@ -899,7 +899,7 @@ export default function AuthorityPage() {
                 </h3>
                 <div className="space-y-3 md:space-y-4">
                   {[
-                    "For every $23 spent locking kids up, $1 goes to community programs that work. We tracked $97.9 billion. justicehub.org.au/authority",
+                    "For every $23 spent locking kids up, $1 goes to community programs that work. We tracked $97.9 billion. justicehub.com.au/authority",
                     "Victoria spends $7,304 PER DAY to cage one child. Community supervision costs $351. 84% of detained kids reoffend. The numbers don't lie. #TheContained #YouthJustice",
                     "Just Reinvest NSW runs 9 evidence-rated programs with $0 government funding. 981 alternatives exist. 54.9% are evidence-backed. They work. They're just not funded.",
                     "Indigenous organisations receive 10.8% of justice funding. Indigenous youth are 23x overrepresented in detention. This is not a coincidence. It's a policy choice.",

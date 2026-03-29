@@ -24,7 +24,7 @@ const story = {
   excerpt: 'How shipping containers became spaces for justice, healing, and transformation',
   image_url: 'https://tednluwflfhxyucgwigh.supabase.co/storage/v1/object/public/story-images/stories/featured/pdlvi4yay5k-1762323853830.png',
   brand: 'JUSTICEHUB',
-  cta: 'justicehub.org.au/contained',
+  cta: 'justicehub.com.au/contained',
   countdown: '5 DAYS TILL LAUNCH',
   countdown2: '30 DAYS TILL FIRST STOP',
 };

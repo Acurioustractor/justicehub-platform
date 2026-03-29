@@ -218,19 +218,19 @@ export default async function BasecampPage({ params }: { params: { 'org-slug': s
           <div className="flex items-center justify-between">
             <span className="text-sm text-earth-600">Community page:</span>
             <Link href={`/sites/${slug}`} className="text-ochre-700 hover:text-ochre-900 font-bold text-sm underline" target="_blank">
-              justicehub.org.au/sites/{slug}
+              justicehub.com.au/sites/{slug}
             </Link>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sm text-earth-600">Full profile:</span>
             <Link href={`/organizations/${slug}`} className="text-ochre-700 hover:text-ochre-900 font-bold text-sm underline" target="_blank">
-              justicehub.org.au/organizations/{slug}
+              justicehub.com.au/organizations/{slug}
             </Link>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sm text-earth-600">Funder pitch page:</span>
             <Link href={`/for-funders/org/${slug}`} className="text-ochre-700 hover:text-ochre-900 font-bold text-sm underline" target="_blank">
-              justicehub.org.au/for-funders/org/{slug}
+              justicehub.com.au/for-funders/org/{slug}
             </Link>
           </div>
         </div>

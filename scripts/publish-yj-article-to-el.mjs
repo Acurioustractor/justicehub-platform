@@ -144,7 +144,7 @@ If you are a **community organisation**, JusticeHub's CON|X infrastructure is be
 
 If you are a **policy maker or advocate**, the Senate Inquiry has created a window. The community-led evidence base is deep, documented, and ready to be actioned.
 
-If you are an **engaged Australian** who wants to understand this issue, experience it, and back what works — start at [justicehub.org.au](https://justicehub.org.au).
+If you are an **engaged Australian** who wants to understand this issue, experience it, and back what works — start at [justicehub.com.au](https://justicehub.com.au).
 
 ## The Bottom Line
 
@@ -158,7 +158,7 @@ That is what JusticeHub is building. That is what Contained is for.
 
 ---
 
-*JusticeHub is a community-led platform connecting youth justice solutions, stories, and communities across Australia. Learn more at [justicehub.org.au](https://justicehub.org.au) or experience Contained at [justicehub.org.au/contained](https://justicehub.org.au/contained).*`;
+*JusticeHub is a community-led platform connecting youth justice solutions, stories, and communities across Australia. Learn more at [justicehub.com.au](https://justicehub.com.au) or experience Contained at [justicehub.com.au/contained](https://justicehub.com.au/contained).*`;
 
 const SOURCE_LINKS = [
   'https://www.aihw.gov.au/reports/youth-justice/youth-justice-in-australia-2023-24',

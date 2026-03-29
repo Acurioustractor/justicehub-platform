@@ -397,8 +397,8 @@ export default function ForCommunityLeadersPage() {
                 <p className="text-gray-600 mb-4">
                   Drop us an email and we'll respond within 48 hours.
                 </p>
-                <a href="mailto:partners@justicehub.org.au" className="font-bold">
-                  partners@justicehub.org.au
+                <a href="mailto:partners@justicehub.com.au" className="font-bold">
+                  partners@justicehub.com.au
                 </a>
               </div>
 

@@ -187,7 +187,7 @@ export default async function ForFundersPage() {
         <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center">
           <div className="text-center max-w-md">
             <h1 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>No Funder Profile</h1>
-            <p className="text-gray-600 mb-6">Your account ({user?.email || 'unknown'}) doesn&apos;t have a funder profile yet. Contact ben@justicehub.org.au to get set up.</p>
+            <p className="text-gray-600 mb-6">Your account ({user?.email || 'unknown'}) doesn&apos;t have a funder profile yet. Contact ben@justicehub.com.au to get set up.</p>
             <Link href="/" className="text-[#059669] font-bold hover:underline">Back to home</Link>
           </div>
         </div>

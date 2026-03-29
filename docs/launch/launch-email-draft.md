@@ -83,11 +83,11 @@ Every dollar spent on detention is a dollar stolen from solutions that actually 
 
 ### Explore JusticeHub
 
-🔗 **Homepage:** https://justicehub.org.au
-🔗 **Community Map:** https://justicehub.org.au/community-map
-🔗 **Ask ALMA:** https://justicehub.org.au/intelligence/chat
-🔗 **Meet the Network:** https://justicehub.org.au/people
-🔗 **Founding Basecamps:** https://justicehub.org.au/centre-of-excellence/map?category=basecamp
+🔗 **Homepage:** https://justicehub.com.au
+🔗 **Community Map:** https://justicehub.com.au/community-map
+🔗 **Ask ALMA:** https://justicehub.com.au/intelligence/chat
+🔗 **Meet the Network:** https://justicehub.com.au/people
+🔗 **Founding Basecamps:** https://justicehub.com.au/centre-of-excellence/map?category=basecamp
 
 ---
 
@@ -121,7 +121,7 @@ JusticeHub is live. 624 programs. 4 basecamps. One mission.
 
 Community solutions work 5x better than detention at 1/19th the cost. The evidence is in. The network is ready.
 
-Join us: justicehub.org.au
+Join us: justicehub.com.au
 
 **LinkedIn:**
 Today we launch JusticeHub—Australia's first comprehensive youth justice intelligence platform.

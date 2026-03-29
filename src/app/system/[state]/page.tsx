@@ -1306,7 +1306,7 @@ export default async function SystemTerminalPage({ params }: { params: Promise<{
       {/* Footer timestamp */}
       <TerminalFooter
         label={`JusticeHub / ${config.state} System Map`}
-        printLine={`Generated from justicehub.org.au/system/${config.slug} — Data: QLD Open Data, AIHW, ROGS, Empathy Ledger`}
+        printLine={`Generated from justicehub.com.au/system/${config.slug} — Data: QLD Open Data, AIHW, ROGS, Empathy Ledger`}
       />
 
       {/* Drill-down inline script — avoids Next.js 14 HMR crash with client components */}

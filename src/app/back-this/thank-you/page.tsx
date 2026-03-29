@@ -39,7 +39,7 @@ function ThankYouContent() {
   }
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText('https://justicehub.org.au/back-this')
+    navigator.clipboard.writeText('https://justicehub.com.au/back-this')
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }

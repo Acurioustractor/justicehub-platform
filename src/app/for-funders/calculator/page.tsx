@@ -322,7 +322,7 @@ export default function ImpactCalculatorPage() {
               </Link>
             </div>
             <p className="text-xs text-gray-500 mt-6">
-              ben@justicehub.org.au &middot; justicehub.com.au/contained/invest/one-pager
+              ben@justicehub.com.au &middot; justicehub.com.au/contained/invest/one-pager
             </p>
           </div>
         </section>

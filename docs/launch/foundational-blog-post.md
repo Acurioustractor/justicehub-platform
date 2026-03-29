@@ -156,10 +156,10 @@ The infrastructure is built. The evidence is in. The network is ready.
 
 All that's left is you.
 
-**Explore JusticeHub:** justicehub.org.au
-**Meet the Network:** justicehub.org.au/people
-**Ask ALMA:** justicehub.org.au/intelligence/chat
-**Find Programs:** justicehub.org.au/community-programs
+**Explore JusticeHub:** justicehub.com.au
+**Meet the Network:** justicehub.com.au/people
+**Ask ALMA:** justicehub.com.au/intelligence/chat
+**Find Programs:** justicehub.com.au/community-programs
 
 We don't decorate injustice. We dismantle it.
 

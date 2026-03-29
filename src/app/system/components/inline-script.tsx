@@ -145,7 +145,7 @@ const INTERACTIVE_SCRIPT = `
     var parent = el.closest('div[class*="border"]') || el.parentElement;
     var sourceEl = parent ? parent.querySelector('[class*="text-gray-700"], [class*="text-gray-600"]') : null;
     var source = sourceEl ? sourceEl.textContent.trim() : 'JusticeHub System Terminal';
-    var copyText = text + ' (Source: ' + source + ' — justicehub.org.au/system)';
+    var copyText = text + ' (Source: ' + source + ' — justicehub.com.au/system)';
     navigator.clipboard.writeText(copyText).then(function() {
       var toast = document.createElement('div');
       toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#059669;color:#F5F0E8;font-family:monospace;font-size:13px;padding:8px 16px;border-radius:4px;z-index:99999;';

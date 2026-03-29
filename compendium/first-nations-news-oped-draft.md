@@ -149,13 +149,13 @@ You can see this work at [goodsoncountry.com](https://www.goodsoncountry.com/).
 
 This is not an abstract conversation. Here is what is real and available right now:
 
-**Experience the container.** CONTAINED launches April 20 and will tour nationally. Bring your colleagues, your family, your local MP. Thirty minutes changes the way you see this issue. [justicehub.org.au/contained](https://justicehub.org.au/contained)
+**Experience the container.** CONTAINED launches April 20 and will tour nationally. Bring your colleagues, your family, your local MP. Thirty minutes changes the way you see this issue. [justicehub.com.au/contained](https://justicehub.com.au/contained)
 
-**Nominate a decision-maker.** We are building a public list of politicians, justice officials, media leaders, and community figures who should experience CONTAINED. Name them. Make the case for why. Public pressure is the mechanism. [justicehub.org.au/contained](https://justicehub.org.au/contained)
+**Nominate a decision-maker.** We are building a public list of politicians, justice officials, media leaders, and community figures who should experience CONTAINED. Name them. Make the case for why. Public pressure is the mechanism. [justicehub.com.au/contained](https://justicehub.com.au/contained)
 
-**Back the tour.** It costs money to move a shipping container across Australia. We are asking for direct support to get CONTAINED to the communities where it matters most. [justicehub.org.au/back-this](https://justicehub.org.au/back-this)
+**Back the tour.** It costs money to move a shipping container across Australia. We are asking for direct support to get CONTAINED to the communities where it matters most. [justicehub.com.au/back-this](https://justicehub.com.au/back-this)
 
-**Connect with the organisations doing the work.** If you run a program, add it to JusticeHub. If you fund programs, use JusticeHub to find what works. If you are a young person looking for support, find services near you. [justicehub.org.au](https://justicehub.org.au)
+**Connect with the organisations doing the work.** If you run a program, add it to JusticeHub. If you fund programs, use JusticeHub to find what works. If you are a young person looking for support, find services near you. [justicehub.com.au](https://justicehub.com.au)
 
 **Support Goods on Country.** Every bed, every washing machine, every training placement is a step toward community-owned enterprise and away from the conditions that feed the justice system. [goodsoncountry.com](https://www.goodsoncountry.com/)
 
@@ -198,6 +198,6 @@ The only question is whether the rest of us will catch up.
 12. Benjamin Knight headshot
 
 **Links:**
-- [justicehub.org.au/contained](https://justicehub.org.au/contained)
+- [justicehub.com.au/contained](https://justicehub.com.au/contained)
 - [goodsoncountry.com](https://www.goodsoncountry.com/)
-- [justicehub.org.au](https://justicehub.org.au)
+- [justicehub.com.au](https://justicehub.com.au)

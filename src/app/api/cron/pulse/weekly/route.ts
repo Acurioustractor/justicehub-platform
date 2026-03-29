@@ -151,7 +151,7 @@ RULES:
 - Bold the key numbers
 - Include specific program names, ministers, and sources where available
 - End with one "Action Item" — the single most important thing readers should do this week
-- After the action item, add: "See the full breakdown at justicehub.org.au/this-week"
+- After the action item, add: "See the full breakdown at justicehub.com.au/this-week"
 - Tone: urgent but hopeful. Data-driven, not preachy.
 - Do NOT use emojis
 - Write in plain text (the email system wraps it in HTML)

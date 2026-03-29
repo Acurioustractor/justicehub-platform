@@ -8,7 +8,7 @@
 
 | Item | Value |
 |------|-------|
-| **Platform** | JusticeHub - justicehub.org.au |
+| **Platform** | JusticeHub - justicehub.com.au |
 | **Mission** | Prove community-based youth justice works better than detention |
 | **Intelligence System** | ALMA (Alternative Local Models Australia) |
 | **Parent Organization** | A Curious Tractor (ACT) |

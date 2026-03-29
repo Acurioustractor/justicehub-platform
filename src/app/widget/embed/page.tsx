@@ -296,7 +296,7 @@ export default function WidgetEmbedPage() {
           {/* Footer */}
           <div className="px-6 py-3 bg-black/20 border-t border-gray-800/20 text-center">
             <a
-              href="https://justicehub.org.au"
+              href="https://justicehub.com.au"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[10px] text-gray-700 hover:text-gray-500 transition-colors font-medium tracking-wide"

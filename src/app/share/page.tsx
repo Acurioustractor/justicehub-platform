@@ -161,7 +161,7 @@ export default async function SharePage() {
               className="text-xs bg-[#0A0A0A] text-[#059669] px-4 py-2 rounded block overflow-x-auto"
               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
             >
-              {'<img src="https://justicehub.org.au/api/cards?type=cost-comparison" />'}
+              {'<img src="https://justicehub.com.au/api/cards?type=cost-comparison" />'}
             </code>
             <p className="text-xs text-[#0A0A0A]/40 mt-2">
               Types: cost-comparison, proof, funding, state. Add ?state=QLD for state-specific cards.

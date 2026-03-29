@@ -457,7 +457,7 @@ export default function AnalyticsDashboard() {
           <div className="bg-gray-50 border border-gray-200 p-4 rounded mb-4">
             <p className="text-xs font-mono text-gray-600 mb-1">UTM template for LinkedIn:</p>
             <code className="text-xs text-blue-700 break-all">
-              https://www.justicehub.org.au/stories/[slug]?utm_source=linkedin&utm_medium=social&utm_campaign=[campaign-name]
+              https://www.justicehub.com.au/stories/[slug]?utm_source=linkedin&utm_medium=social&utm_campaign=[campaign-name]
             </code>
           </div>
           <a

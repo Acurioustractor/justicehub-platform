@@ -548,7 +548,7 @@ All findings in this plan are sourced from comprehensive Playwright automated au
 ### C. Contact
 
 **JusticeHub**
-- Email: hello@justicehub.org.au
+- Email: hello@justicehub.com.au
 - Phone: 1800 123 456
 - Address: Level 3, 123 Justice St, Brisbane QLD 4000
 

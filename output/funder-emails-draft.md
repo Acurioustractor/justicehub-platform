@@ -14,9 +14,9 @@ What came out surprised me. Your portfolio breaks cleanly into three pillars —
 
 I built two pages to show this:
 
-→ justicehub.org.au/for-funders/landscape — your portfolio compared side-by-side with PRF's $89.5M, showing where you overlap (4 shared grantees) and where you're uniquely positioned
+→ justicehub.com.au/for-funders/landscape — your portfolio compared side-by-side with PRF's $89.5M, showing where you overlap (4 shared grantees) and where you're uniquely positioned
 
-→ justicehub.org.au/for-funders/report/dusseldorp — all 21 funding records, pillar breakdown, ACCO allocation, and every partner's programs with evidence ratings
+→ justicehub.com.au/for-funders/report/dusseldorp — all 21 funding records, pillar breakdown, ACCO allocation, and every partner's programs with evidence ratings
 
 Every one of your 19 partners now has a profile page showing their programs, funding history, and evidence base. Mounty Yarns alone has 4 programs mapped — narrative practice, documentary storytelling, justice reinvestment advocacy, and the girls mentoring program.
 
@@ -24,7 +24,7 @@ This sits inside a platform tracking 156,937 funding records across 98,404 organ
 
 Meanwhile, CONTAINED is gathering momentum. 225+ people across 15 locations have reached out. Mount Druitt is first, week of April 21, with Mounty Yarns hosting Room 3. I've put together a community demand page:
 
-→ justicehub.org.au/contained/community (passcode: contained2026)
+→ justicehub.com.au/contained/community (passcode: contained2026)
 
 I'd love 15 minutes to walk you through your portfolio view on the live platform. No pitch deck — just the data.
 
@@ -53,7 +53,7 @@ We're working with three basecamp communities — Oonchiumpa in Tennant Creek, P
 
 CONTAINED is also heading to Perth — Jul/Aug, with UWA and JRI Perth as anchors. Kimberley Wilde is driving it locally, and Hayley Passmore is building an academic consortium with Aboriginal-led orgs. 7 people are already connected to the Perth stop. I've put together a community demand page showing who's involved across all 14 locations:
 
-→ justicehub.org.au/contained/community (passcode: contained2026)
+→ justicehub.com.au/contained/community (passcode: contained2026)
 
 Could I get 15 minutes during the week of April 6 to show you the platform and the Perth stop? Perth is Minderoo's hometown — it would mean a lot to have you involved.
 
@@ -96,7 +96,7 @@ Following up on our conversations about bringing CONTAINED to Perth. Things have
 
 Here's where we're at nationally: 86 people across 15 locations have reached out since the Container launched in Sydney. The demand has been extraordinary — from a Kalkadoon woman in Rockhampton to a coalition in Tasmania to a Dutch NGO in Amsterdam. I've built a page showing who's involved at each stop, the community organisations anchoring Room 3, and the political landscape:
 
-→ justicehub.org.au/contained/community (passcode: contained2026)
+→ justicehub.com.au/contained/community (passcode: contained2026)
 
 For Perth specifically, here's what I'm thinking for Room 3:
 - Youth Futures WA (4 programs, Perth youth services)

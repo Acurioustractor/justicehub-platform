@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
 
     try {
       await resend.emails.send({
-        from: 'JusticeHub Alerts <alerts@justicehub.org.au>',
+        from: 'JusticeHub Alerts <alerts@justicehub.com.au>',
         to: email,
         subject: `Youth Justice Alert Digest — ${relevantAlerts.length} alert${relevantAlerts.length !== 1 ? 's' : ''}, ${relevantStatements.length} statement${relevantStatements.length !== 1 ? 's' : ''}`,
         html,
@@ -187,9 +187,9 @@ function buildDigestHtml(
   html += `
       <div style="border-top:1px solid #333;padding-top:16px;margin-top:24px">
         <p style="font-family:monospace;font-size:11px;color:#555;margin:0">
-          <a href="https://justicehub.org.au/system" style="color:#DC2626;text-decoration:none">View System Terminal</a> ·
+          <a href="https://justicehub.com.au/system" style="color:#DC2626;text-decoration:none">View System Terminal</a> ·
           Source: CivicScope auto-scraper ·
-          <a href="https://justicehub.org.au/system" style="color:#555;text-decoration:none">Unsubscribe</a>
+          <a href="https://justicehub.com.au/system" style="color:#555;text-decoration:none">Unsubscribe</a>
         </p>
       </div>
     </div>`;

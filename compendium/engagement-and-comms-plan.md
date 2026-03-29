@@ -112,7 +112,7 @@ Ben
 **Follow-up sequence (if no reply):**
 - Day 5: Forward the original with "Hi [name], just floating this back up. No rush." (7 words)
 - Day 12: New angle — share a piece of content (stat tile, photo, article) with "Thought you'd find this interesting."
-- Day 20: Last touch — "I know you're busy. If the timing's wrong, no stress. But if you want to see what we're building: justicehub.org.au/contained"
+- Day 20: Last touch — "I know you're busy. If the timing's wrong, no stress. But if you want to see what we're building: justicehub.com.au/contained"
 - Then stop. Three touches max. Respect > persistence.
 
 ---
@@ -223,7 +223,7 @@ We're looking for foundation partners to fund specific tour stops. Adelaide is c
 
 Ben Knight
 JusticeHub / CONTAINED
-justicehub.org.au/contained
+justicehub.com.au/contained
 ```
 
 ### For Allies (Tier 2, campaign_list = 'allies_to_activate')
@@ -254,7 +254,7 @@ Would you be willing to walk through it when we bring it to [their city]?
 
 Ben Knight
 JusticeHub / CONTAINED
-justicehub.org.au/contained
+justicehub.com.au/contained
 ```
 
 ---

@@ -407,7 +407,7 @@ export default function BackThisPage() {
         <section className="py-12">
           <div className="container-justice text-center max-w-2xl mx-auto">
             <p className="text-sm text-gray-500">
-              Questions? ben@justicehub.org.au &middot; All stats sourced from Productivity
+              Questions? ben@justicehub.com.au &middot; All stats sourced from Productivity
               Commission ROGS 2024-25 and verified program evaluations.
             </p>
           </div>

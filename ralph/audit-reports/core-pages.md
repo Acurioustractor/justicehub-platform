@@ -125,7 +125,7 @@ All 6 core public pages were successfully audited using Playwright browser autom
 **Key Sections Present:**
 - "GET IN TOUCH" header
 - Contact methods:
-  - Email: hello@justicehub.org.au
+  - Email: hello@justicehub.com.au
   - Phone: 1800 123 456
   - Address: Level 3, 123 Justice St, Brisbane QLD 4000
 - Contact form with fields:

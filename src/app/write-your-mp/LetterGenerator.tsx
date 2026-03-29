@@ -48,7 +48,7 @@ I want to draw your attention to some numbers that I believe warrant serious con
 
 • Nationally, community-led alternatives to detention cost an average of ${avgFmt} per young person — ${stateRatio}x less than detention.
 
-• Across Australia, ${nationalModels.toLocaleString()} community-led alternative models have been documented by JusticeHub (justicehub.org.au/proof). ${sd.almaModels} of these operate in ${stateName}.
+• Across Australia, ${nationalModels.toLocaleString()} community-led alternative models have been documented by JusticeHub (justicehub.com.au/proof). ${sd.almaModels} of these operate in ${stateName}.
 
 • ${stateName} has ${sd.totalOrgs.toLocaleString()} organisations working in youth justice, of which ${sd.indigenousOrgs.toLocaleString()} are Indigenous-led. ${sd.totalFunding} in funding has been tracked across ${sd.fundingRecords.toLocaleString()} records.
 
@@ -62,12 +62,12 @@ I would welcome the opportunity to discuss:
 2. What plans exist to increase investment in evidence-backed community models
 3. How Indigenous-led organisations — who work with the communities most affected — are being supported and funded proportionally
 
-The data I've referenced is publicly available at justicehub.org.au. I encourage your office to review the following resources:
+The data I've referenced is publicly available at justicehub.com.au. I encourage your office to review the following resources:
 
-• Wall of Proof: justicehub.org.au/proof
-• Cost Calculator: justicehub.org.au/calculator
-• Funding Trail: justicehub.org.au/follow-the-money
-• ${stateName} Scorecard: justicehub.org.au/states/${state.toLowerCase()}
+• Wall of Proof: justicehub.com.au/proof
+• Cost Calculator: justicehub.com.au/calculator
+• Funding Trail: justicehub.com.au/follow-the-money
+• ${stateName} Scorecard: justicehub.com.au/states/${state.toLowerCase()}
 
 I look forward to your response.
 

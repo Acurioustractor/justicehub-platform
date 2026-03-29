@@ -63,7 +63,7 @@ async function fetchPage(url) {
   try {
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; ALMA/1.0; +https://justicehub.org.au)',
+        'User-Agent': 'Mozilla/5.0 (compatible; ALMA/1.0; +https://justicehub.com.au)',
         Accept: 'text/html,application/xhtml+xml,application/xml',
       },
     });

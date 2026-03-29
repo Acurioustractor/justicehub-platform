@@ -63,8 +63,8 @@ The Centre coordinates JusticeHub nodes across every state and territory, connec
     type: 'nonprofit',
     description: coeDescription,
     location: 'National (Coordinating from Brisbane, QLD)',
-    website: 'https://justicehub.org.au',
-    email: 'hello@justicehub.org.au',
+    website: 'https://justicehub.com.au',
+    email: 'hello@justicehub.com.au',
     verification_status: 'verified',
     is_active: true,
     tags: ['youth-justice', 'research', 'advocacy', 'indigenous-led', 'community-controlled', 'policy'],
@@ -75,7 +75,7 @@ The Centre coordinates JusticeHub nodes across every state and territory, connec
           {
             title: 'JusticeHub Launch 2026',
             description: 'The national launch of JusticeHub - a platform for youth justice transformation',
-            url: 'https://justicehub.org.au/launch',
+            url: 'https://justicehub.com.au/launch',
             type: 'event',
             featured: true,
           },
@@ -127,8 +127,8 @@ The Centre coordinates JusticeHub nodes across every state and territory, connec
 
         // Contacts
         contacts: [
-          { type: 'website', label: 'JusticeHub Platform', value: 'https://justicehub.org.au', primary: true },
-          { type: 'email', label: 'General Inquiries', value: 'hello@justicehub.org.au' },
+          { type: 'website', label: 'JusticeHub Platform', value: 'https://justicehub.com.au', primary: true },
+          { type: 'email', label: 'General Inquiries', value: 'hello@justicehub.com.au' },
           { type: 'website', label: 'Empathy Ledger', value: 'https://empathyledger.org' },
           { type: 'website', label: 'A Curious Tractor', value: 'https://act.place' },
         ],
@@ -244,8 +244,8 @@ Key Functions:
 • Advocate for policy reform at federal level
 • Amplify youth voices through Empathy Ledger platform
 • Connect Australian practice with international best practice`,
-        website_url: 'https://justicehub.org.au',
-        contact_email: 'hello@justicehub.org.au',
+        website_url: 'https://justicehub.com.au',
+        contact_email: 'hello@justicehub.com.au',
         status: 'active',
       })
       .eq('id', existingNode.id);
@@ -262,8 +262,8 @@ Key Functions:
         country: 'Australia',
         lead_organization_id: COE_ORG_ID,
         description: `The national coordinating node for JusticeHub, led by the Centre of Excellence in Youth Justice Reform.`,
-        website_url: 'https://justicehub.org.au',
-        contact_email: 'hello@justicehub.org.au',
+        website_url: 'https://justicehub.com.au',
+        contact_email: 'hello@justicehub.com.au',
         status: 'active',
         latitude: -27.4698,
         longitude: 153.0251,

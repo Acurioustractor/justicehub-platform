@@ -299,8 +299,8 @@ export default function PrivacyPolicyPage() {
 
                 <p className="text-gray-700 mb-4">
                   To exercise these rights, email us at{' '}
-                  <a href="mailto:privacy@justicehub.org.au" className="text-blue-800 hover:underline font-medium">
-                    privacy@justicehub.org.au
+                  <a href="mailto:privacy@justicehub.com.au" className="text-blue-800 hover:underline font-medium">
+                    privacy@justicehub.com.au
                   </a>
                 </p>
               </div>
@@ -327,7 +327,7 @@ export default function PrivacyPolicyPage() {
                 </p>
 
                 <div className="bg-gray-50 border-2 border-black p-6">
-                  <p className="mb-2"><strong>Email:</strong> <a href="mailto:privacy@justicehub.org.au" className="text-blue-800 hover:underline">privacy@justicehub.org.au</a></p>
+                  <p className="mb-2"><strong>Email:</strong> <a href="mailto:privacy@justicehub.com.au" className="text-blue-800 hover:underline">privacy@justicehub.com.au</a></p>
                   <p className="mb-2"><strong>Phone:</strong> <a href="tel:1800123456" className="text-blue-800 hover:underline">1800 123 456</a></p>
                   <p className="mb-2"><strong>Mail:</strong> Privacy Officer, JusticeHub</p>
                   <p>Level 3, 123 Justice St, Brisbane QLD 4000</p>

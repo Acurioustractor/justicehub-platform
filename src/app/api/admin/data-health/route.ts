@@ -74,6 +74,15 @@ const TRACKED_TABLES: TrackedTable[] = [
   { name: 'funding_transparency', keyColumns: [], domain: 'platform' },
   // Signal Engine
   { name: 'signal_events', keyColumns: ['event_type'], domain: 'signal' },
+  // CivicScope
+  { name: 'civic_ministerial_statements', keyColumns: ['title', 'minister'], domain: 'civicscope' },
+  { name: 'civic_hansard', keyColumns: ['speaker', 'debate_title'], domain: 'civicscope' },
+  { name: 'civic_ministerial_diaries', keyColumns: ['minister', 'organisation'], domain: 'civicscope' },
+  { name: 'civic_consultancy_spending', keyColumns: ['consultant_name', 'department'], domain: 'civicscope' },
+  { name: 'civic_rti_disclosures', keyColumns: ['title', 'department'], domain: 'civicscope' },
+  { name: 'civic_charter_commitments', keyColumns: ['commitment_text'], domain: 'civicscope' },
+  { name: 'civic_alerts', keyColumns: ['alert_type', 'title'], domain: 'civicscope' },
+  { name: 'civic_digests', keyColumns: ['title'], domain: 'civicscope' },
 ];
 
 interface TableHealth {

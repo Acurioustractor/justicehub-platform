@@ -237,4 +237,4 @@ Ben
 
 - **Day 5:** Forward original with "Hi [name], just floating this back up. No rush."
 - **Day 12:** Share a piece of content — stat tile or real photo from the build
-- **Day 20:** Final touch — "If timing's wrong, no stress. justicehub.org.au/contained"
+- **Day 20:** Final touch — "If timing's wrong, no stress. justicehub.com.au/contained"

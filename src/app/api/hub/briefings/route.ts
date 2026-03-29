@@ -291,11 +291,11 @@ Sincerely,
   const socialPosts = [
     {
       platform: 'Twitter/X',
-      text: `Community alternatives cost $170K/year vs $548K for detention — and they actually work. ${state ? `${stateName} has ${statePrograms} programs that need more support.` : ''} Learn more at justicehub.org.au #CONTAINED #YouthJustice`,
+      text: `Community alternatives cost $170K/year vs $548K for detention — and they actually work. ${state ? `${stateName} has ${statePrograms} programs that need more support.` : ''} Learn more at justicehub.com.au #CONTAINED #YouthJustice`,
     },
     {
       platform: 'LinkedIn',
-      text: `${state ? `${stateName}` : 'Australia'} invests heavily in youth detention ($548K/person/year) when community alternatives ($170K/year) deliver better outcomes. ${state ? `There are ${statePrograms} programs in ${state} working to change this.` : ''}\n\nThe CONTAINED tour is building a national coalition for change. justicehub.org.au/contained`,
+      text: `${state ? `${stateName}` : 'Australia'} invests heavily in youth detention ($548K/person/year) when community alternatives ($170K/year) deliver better outcomes. ${state ? `There are ${statePrograms} programs in ${state} working to change this.` : ''}\n\nThe CONTAINED tour is building a national coalition for change. justicehub.com.au/contained`,
     },
     {
       platform: 'Instagram',

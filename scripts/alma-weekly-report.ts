@@ -463,7 +463,7 @@ async function main() {
   console.log('');
   console.log('='.repeat(60));
   console.log('Report generation complete!');
-  console.log(`View at: https://justicehub.org.au/admin/funding/reports/${savedReport.id}`);
+  console.log(`View at: https://justicehub.com.au/admin/funding/reports/${savedReport.id}`);
 }
 
 main().catch((error) => {

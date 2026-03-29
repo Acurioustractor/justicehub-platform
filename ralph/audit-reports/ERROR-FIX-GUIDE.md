@@ -330,7 +330,7 @@ export const metadata = {
 ```tsx
 export const metadata = {
   alternates: {
-    canonical: 'https://justicehub.org.au/gallery',
+    canonical: 'https://justicehub.com.au/gallery',
   },
 };
 ```

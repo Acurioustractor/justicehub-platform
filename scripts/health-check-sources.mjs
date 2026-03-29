@@ -72,7 +72,7 @@ async function checkSource(source) {
       response = await fetch(source.url, {
         method: 'HEAD',
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; JusticeHub-HealthCheck/1.0; +https://justicehub.org.au)',
+          'User-Agent': 'Mozilla/5.0 (compatible; JusticeHub-HealthCheck/1.0; +https://justicehub.com.au)',
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
         },
         redirect: 'follow',
@@ -84,7 +84,7 @@ async function checkSource(source) {
       response = await fetch(source.url, {
         method: 'GET',
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; JusticeHub-HealthCheck/1.0; +https://justicehub.org.au)',
+          'User-Agent': 'Mozilla/5.0 (compatible; JusticeHub-HealthCheck/1.0; +https://justicehub.com.au)',
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
         },
         redirect: 'follow',
@@ -108,7 +108,7 @@ async function checkSource(source) {
           // Otherwise, fetch the full content
           const fullResponse = await fetch(source.url, {
             headers: {
-              'User-Agent': 'Mozilla/5.0 (compatible; JusticeHub-HealthCheck/1.0; +https://justicehub.org.au)',
+              'User-Agent': 'Mozilla/5.0 (compatible; JusticeHub-HealthCheck/1.0; +https://justicehub.com.au)',
               'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
             },
             redirect: 'follow',

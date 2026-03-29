@@ -410,31 +410,48 @@ function formatDate(dateStr: string) {
 const RESEARCH_DATA = {
   // ROGS 2025 — NSW
   rogsTotal2025: 327_000_000,
-  detentionCostPerDay: 2_460,
+  detentionCostPerDay: 2_573,
   communityCostPerDay: 137,
-  detentionCostPerYear: 898_000,
+  detentionCostPerYear: 939_000,
+
+  // ROGS spending by component
+  detentionSpend: 217_000_000,
+  detentionSpendPct: 66,
+  communitySpend: 109_000_000,
+  communitySpendPct: 33,
+  conferencingSpend: 1_100_000,
 
   // AIHW Youth Justice in Australia 2023-24
   aihwDetainedPerNight: 184,
-  aihwSupervisedPerDay: 1_736,
+  aihwSupervisedPerDay: 918,
   aihwUnsentencedPct: 70,
   aihwNationalUnsentencedPct: 72,
-  aihwFirstNationsPctDetained: 48,
+  aihwFirstNationsPctDetained: 60,
+  aihwDetentionRatePer10K: 2.2,
+  aihwSupervisionRatePer10K: 8.9,
 
   // Indigenous overrepresentation
   indigenousOverrep: 22.1,
+  indigenousSupervisionRate: 63.9,
 
   // Bail Act 2024 impact
   bailSurge: 34,
   bailSurgeDate: 'March 2024',
+  bailPreCount: 175,
+  bailPostCount: 234,
+  bailFirstNationsPct: '85-90',
+  bailRemandPct: 79.8,
+  indigenousDetentionSurge: 86,
 
   // Select Committee / Inspector of Custodial Services
   selectCommittee2024: true,
-  inspectorFindings: 'Conditions of concern at Cobham and Reiby',
+  inspectorFindings: '51 recommendations across 6 centres',
 
-  // Cross-system pipeline
+  // Cross-system pipeline (BOCSAR)
   crossSystemCP: 82,
-  crossSystemCPFirstNations: 89,
+  crossSystemChargesWithdrawn: 53,
+  reconviction10yr: 81,
+  crossSystemCPFirstNations: 65,
   crossSystemMH: 50,
   crossSystemDisability: 40,
 
@@ -448,20 +465,54 @@ const RESEARCH_DATA = {
   marangukaCostRatio: '5:1',
   marangukaCost: 600_000,
   marangukaImpact: 3_100_000,
+  marangukaYr12Rise: 31,
+  marangukaJuvenileOffenceDrop: 38,
 
   // Key programs
   totalProgramsMapped: 154,
   provenCount: 4,
   effectiveCount: 16,
+  promisingCount: 72,
+  indigenousLedCount: 13,
+  untestedCount: 49,
+  effectiveIndigenousLed: 10,
+  cheapestEffective: 1_708,
+  costRatio: 550,
+
+  // Government funding (DCJ/FACS NGO Grants)
+  govtTotalFunding: 5_010_000_000,
+  govtOrgsFunded: 2_675,
+  govtIndigenousOrgs: 86,
+  govtIndigenousPct: 3.2,
+  govtFirstIndigenousRank: 19,
+  govtTopRecipient: 'Wesley Community Services',
+  govtTopRecipientAmount: 827_000_000,
+
+  // Reoffending grants
+  reoffendingTotal: 9_900_000,
+  reoffendingGrants: 41,
+  reoffendingACCOs: 0,
 
   // Philanthropic comparison
   govtYJSpend: 327_000_000,
-  philanthropicEstimate: 45_000_000,
-  philanthropicSources: ['Dusseldorp Forum', 'Paul Ramsay Foundation', 'Vincent Fairfax Family Foundation', 'Tim Fairfax Foundation', 'Minderoo Foundation'],
+  philanthropicTotal: 115_000_000,
+  philanthropicOrgs: 86,
+  philanthropicIndigenousOrgs: 61,
+  philanthropicIndigenousPct: 70.9,
+  philanthropicFirstIndigenousRank: 2,
+  philanthropicTopRecipient: 'Maranguka',
+  philanthropicTopRecipientAmount: 43_000_000,
+
+  // Key philanthropic actors
+  prfJRInvestment: 40_000_000,
+  mountyYarnsPhilanthropic: 1_000_000,
+  mountyYarnsGovtReoffending: 0,
 
   // NSW-specific models
-  kooriCourtReduction: 15,
+  kooriCourtReduction: 40,
+  yuwayaNgarraliCourtAppearances: 7.8,
   yuwayaNgarraliModel: 'Collective impact, Elder-led',
+  dubboYouthCrimeDrop: 50,
 };
 
 /* ── Page ──────────────────────────────────────────────────── */
@@ -627,14 +678,14 @@ export default async function NSWSectorReport() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <KeyFinding title="A bail crisis driving detention numbers" urgent>
+            <KeyFinding title="A bail crisis, not a crime crisis" urgent>
               <p>
-                Since the NSW Government tightened bail laws in <strong>March 2024</strong>, detention numbers have
-                surged <strong>{RESEARCH_DATA.bailSurge}%</strong>. The increase is overwhelmingly children on remand
-                — not sentenced. NSW is not responding to more crime; it is detaining more children
-                who haven&apos;t been found guilty, at ${RESEARCH_DATA.detentionCostPerDay.toLocaleString()}/day.
+                Since the Bail and Crimes Amendment Act 2024 (March 2024), detention surged <strong>{RESEARCH_DATA.bailSurge}%</strong> --
+                from {RESEARCH_DATA.bailPreCount} to {RESEARCH_DATA.bailPostCount} young people. <strong>{RESEARCH_DATA.bailFirstNationsPct}%
+                of those refused bail are First Nations children.</strong> {RESEARCH_DATA.bailRemandPct}% of Aboriginal youth
+                in detention are on remand -- not convicted. The laws were extended for three more years in May 2025.
               </p>
-              <p className="mt-2"><SourceLink href="https://www.aihw.gov.au/reports/youth-justice/youth-justice-in-australia-2023-24/contents/state-and-territory-overviews/new-south-wales" label="AIHW 2023-24, NSW chapter" /></p>
+              <p className="mt-2"><SourceLink href="https://www.bocsar.nsw.gov.au/" label="BOCSAR Custody Statistics; SBS NITV Feb 2025" /></p>
             </KeyFinding>
             <KeyFinding title="22.1x Indigenous overrepresentation" urgent>
               <p>
@@ -667,7 +718,7 @@ export default async function NSWSectorReport() {
             id="spending"
             icon={<TrendingUp className="w-6 h-6" />}
             title="The Spending Picture"
-            subtitle="$327M/year on youth justice. Detention costs $2,460/day per child. Community supervision costs $137/day. The system chooses the expensive option."
+            subtitle="$327M/year on youth justice. 66% goes to detention. The cheapest Effective program costs 550x less."
           />
 
           {spendingTrend.length > 0 && (
@@ -727,10 +778,10 @@ export default async function NSWSectorReport() {
                 </thead>
                 <tbody>
                   {[
-                    { setting: 'Detention', costDay: '$2,460', costYear: '$898K', buys: 'A concrete cell, 34% surge in numbers, worsening outcomes', urgent: true },
-                    { setting: 'Community supervision', costDay: '$137', costYear: '$50K', buys: 'Case management, reporting obligations', urgent: false },
-                    { setting: 'Maranguka (Bourke)', costDay: '~$10', costYear: '$3.6K', buys: 'Aboriginal-led, 42% fewer custody days, 5:1 return', urgent: false },
-                    { setting: 'Youth on Track', costDay: '~$30', costYear: '$11K', buys: 'Early intervention, evidence-based, evaluated', urgent: false },
+                    { setting: 'Detention', costDay: '$2,573', costYear: '$939K', buys: '81% reconvicted within 10 years (BOCSAR)', urgent: true },
+                    { setting: 'Community supervision', costDay: '~$493', costYear: '~$180K', buys: 'Case management, reporting obligations', urgent: false },
+                    { setting: 'JR site (Maranguka model)', costDay: '~$14', costYear: '$5-28K', buys: 'Aboriginal-led, 42% fewer custody days, 5:1 KPMG return', urgent: false },
+                    { setting: 'JR Mechanism Design', costDay: '~$5', costYear: '$1,708', buys: 'Cheapest Effective program — 550x less than detention', urgent: false },
                   ].map((row, i) => (
                     <tr key={i} className="border-b border-[#0A0A0A]/5">
                       <td className={`py-2 ${row.urgent ? 'font-medium text-[#DC2626]' : 'text-[#0A0A0A]'}`}>{row.setting}</td>
@@ -742,7 +793,7 @@ export default async function NSWSectorReport() {
                 </tbody>
               </table>
             </div>
-            <p className="text-xs font-mono text-[#0A0A0A]/40 mt-3">Source: ROGS 2025; Maranguka KPMG assessment; Youth on Track evaluation</p>
+            <p className="text-xs font-mono text-[#0A0A0A]/40 mt-3">Source: ROGS 2025, Table 17A.20; KPMG Maranguka assessment; JusticeHub program cost analysis</p>
           </div>
 
           {/* Cost tiers */}
@@ -782,19 +833,54 @@ export default async function NSWSectorReport() {
             </div>
           )}
 
+          {/* Spending by component */}
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h3 className="text-lg font-bold mb-1" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}>
+              Spending by Component (ROGS 2024-25)
+            </h3>
+            <p className="text-sm text-[#0A0A0A]/50 mb-4">Where the $327M goes.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[#0A0A0A]/10">
+                    <th className="text-left py-2 font-mono text-xs uppercase text-[#0A0A0A]/40">Component</th>
+                    <th className="text-right py-2 font-mono text-xs uppercase text-[#0A0A0A]/40">NSW</th>
+                    <th className="text-right py-2 font-mono text-xs uppercase text-[#0A0A0A]/40">% of Budget</th>
+                    <th className="text-right py-2 font-mono text-xs uppercase text-[#0A0A0A]/40">QLD (comparison)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { component: 'Detention', nsw: '$217M', pct: '66%', qld: '$298M (56%)', urgent: true },
+                    { component: 'Community supervision', nsw: '$109M', pct: '33%', qld: '$228M (42%)', urgent: false },
+                    { component: 'Group conferencing', nsw: '$1.1M', pct: '<1%', qld: '$10.4M (2%)', urgent: true },
+                  ].map((row, i) => (
+                    <tr key={i} className="border-b border-[#0A0A0A]/5">
+                      <td className={`py-2 ${row.urgent ? 'font-medium text-[#DC2626]' : 'text-[#0A0A0A]'}`}>{row.component}</td>
+                      <td className="py-2 text-right font-mono text-xs">{row.nsw}</td>
+                      <td className="py-2 text-right font-mono text-xs">{row.pct}</td>
+                      <td className="py-2 text-right font-mono text-xs text-[#0A0A0A]/40">{row.qld}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs font-mono text-[#0A0A0A]/40 mt-3">Source: ROGS 2025, Table 17A.11</p>
+          </div>
+
           <div className="grid md:grid-cols-2 gap-6">
-            <KeyFinding title="Detention costs 18x more than community supervision" urgent>
+            <KeyFinding title="66% of spending goes to detention" urgent>
               <p>
-                NSW spends <strong>$2,460/day</strong> per child in detention vs <strong>$137/day</strong> for
-                community supervision. The 34% surge since bail changes means an estimated additional
-                $30-40M/year in detention costs — money that produces worse outcomes.
+                NSW spends a higher proportion on detention than QLD. <strong>$217M</strong> of $327M
+                goes to locking up children at <strong>$2,573/day</strong>. Group conferencing receives
+                less than half a percent of the budget -- ten times less than QLD.
               </p>
             </KeyFinding>
-            <KeyFinding title="Maranguka delivers a 5:1 return at a fraction of the cost">
+            <KeyFinding title="550:1 — the cost ratio that defines the system" urgent>
               <p>
-                The KPMG-validated Maranguka Justice Reinvestment Project in Bourke costs <strong>$600K/year</strong> and
-                delivers <strong>$3.1M in gross impact</strong>. A 5:1 return. 42% fewer custody days.
-                23% drop in domestic violence. Aboriginal-led. Evidence-based. Underfunded.
+                The cheapest Effective program in NSW costs <strong>$1,708/year</strong>. Detention
+                costs <strong>$939,000/year</strong>. That is a <strong>550:1 ratio</strong>. For the cost of
+                one child in detention, NSW could fund 550 young people in an Effective community program.
               </p>
             </KeyFinding>
           </div>
@@ -923,14 +1009,62 @@ export default async function NSWSectorReport() {
             </div>
           )}
 
-          <KeyFinding title="The intermediary question" urgent>
-            <p>
-              Across NSW youth justice, the pattern mirrors the national trend: intermediary organisations
-              receive the bulk of government funding while Aboriginal Community Controlled Organisations
-              (ACCOs) receive a fraction. When {RESEARCH_DATA.aihwFirstNationsPctDetained}% of detained
-              young people are First Nations, the question is whether the funding structure matches the need.
-            </p>
-          </KeyFinding>
+          {/* Reoffending grants breakdown */}
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h3 className="text-lg font-bold mb-1" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}>
+              &ldquo;Breaking the Cycle of Reoffending&rdquo; -- $9.9M, {RESEARCH_DATA.reoffendingGrants} Grants
+            </h3>
+            <p className="text-sm text-[#0A0A0A]/50 mb-4">NSW&apos;s direct youth justice reoffending grants. Every dollar goes to non-Indigenous intermediaries.</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[#0A0A0A]/10">
+                    <th className="text-left py-2 font-mono text-xs uppercase text-[#0A0A0A]/40">Organisation</th>
+                    <th className="text-center py-2 font-mono text-xs uppercase text-[#0A0A0A]/40">Indigenous</th>
+                    <th className="text-right py-2 font-mono text-xs uppercase text-[#0A0A0A]/40">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { org: 'Mission Australia', indigenous: false, amount: '$3.65M' },
+                    { org: 'Anglicare NT', indigenous: false, amount: '$646K' },
+                    { org: 'ACC Chaplaincy', indigenous: false, amount: '$417K' },
+                    { org: 'Presbyterian Social Services', indigenous: false, amount: '$301K' },
+                    { org: 'CatholicCare Sydney', indigenous: false, amount: '$263K' },
+                    { org: '+ 13 smaller grants', indigenous: false, amount: '<$195K each' },
+                  ].map((row, i) => (
+                    <tr key={i} className="border-b border-[#0A0A0A]/5">
+                      <td className="py-2 text-[#0A0A0A]">{row.org}</td>
+                      <td className="py-2 text-center text-xs text-[#0A0A0A]/40">No</td>
+                      <td className="py-2 text-right font-mono text-xs">{row.amount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs font-mono text-[#DC2626] mt-3 font-medium">Zero Aboriginal community-controlled organisations receive reoffending grants.</p>
+            <p className="text-xs font-mono text-[#0A0A0A]/40 mt-1">Source: DCJ/FACS NGO Grant Data; JusticeHub analysis</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <KeyFinding title="$5.01B through 2,675 orgs -- 3.2% Indigenous" urgent>
+              <p>
+                The broader DCJ/FACS grant pool sends <strong>$5.01 billion</strong> through 2,675
+                organisations. Only <strong>86 (3.2%)</strong> are Indigenous. The first Aboriginal
+                community-controlled organisation appears at <strong>rank 19</strong> (Burrun Dalai, $59M).
+                The top 18 are all intermediaries.
+              </p>
+              <p className="mt-2"><SourceLink href="https://www.facs.nsw.gov.au/resources/research/ngo-grants" label="DCJ/FACS NGO Grant Data" /></p>
+            </KeyFinding>
+            <KeyFinding title="Mounty Yarns: $1M+ philanthropic, $0 govt reoffending" urgent>
+              <p>
+                Mounty Yarns in Mt Druitt -- a 20-person Aboriginal-led team with 7 programs, a 100K-view
+                documentary, and NSW&apos;s first community-led Youth Justice Roundtable -- receives
+                <strong> $1M+ in philanthropic funding</strong> from three foundations. It receives
+                <strong> zero dollars</strong> from the DCJ &ldquo;Breaking the Cycle of Reoffending&rdquo; grants.
+              </p>
+            </KeyFinding>
+          </div>
         </section>
 
         {/* ====== SECTION 4: EVIDENCE BASE ====== */}
@@ -1211,35 +1345,49 @@ export default async function NSWSectorReport() {
             subtitle="Aboriginal-led models and evidence-based programs that deliver results. These exist. They are underfunded."
           />
 
-          <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             {[
               {
                 name: 'Maranguka Justice Reinvestment (Bourke)',
-                type: 'Aboriginal-led, collective impact',
-                outcome: '42% fewer custody days, 23% less DV, 5:1 ROI',
-                detail: 'KPMG-evaluated. Aboriginal community governance. $600K/year cost, $3.1M gross impact. The most rigorously evaluated justice reinvestment project in Australia.',
-                source: 'JustReinvest NSW; KPMG Assessment',
+                type: 'Aboriginal-led, KPMG-validated',
+                outcome: '5:1 return, 42% fewer custody days',
+                detail: '$600K/year cost, $3.1M gross impact. 23% drop in DV. 38% reduction in juvenile offences. 31% rise in Year 12 retention. Australia\'s most rigorously evaluated JR model.',
+                source: 'JustReinvest NSW; KPMG Preliminary Assessment',
               },
               {
-                name: 'Koori Court (Circle Sentencing)',
+                name: 'Youth Koori Court',
                 type: 'Aboriginal-led, court diversion',
-                outcome: '15% less reoffending',
-                detail: 'Elders sit with magistrates. Cultural authority integrated into the justice process. Operating in multiple NSW locations. Lower reoffending than mainstream courts for comparable offences.',
+                outcome: '40% less custody than mainstream court',
+                detail: 'No increase in reoffending. Culturally appropriate diversionary mechanism operating in several NSW locations. Elders sit with magistrates.',
                 source: 'NSW BOCSAR evaluation',
               },
               {
-                name: 'Youth on Track',
-                type: 'Evidence-based early intervention',
-                outcome: 'Evaluated, positive outcomes',
-                detail: 'Targets 10-17 year olds at risk of reoffending. Uses risk-needs-responsivity framework. Delivered by NGOs. Independently evaluated with positive results.',
-                source: 'NSW DCJ evaluation',
+                name: 'Yuwaya Ngarra-li (Walgett)',
+                type: 'Elder-led, 23-year partnership',
+                outcome: 'Court appearances down to 7.8%',
+                detail: 'Place-based approach -- Baulaarr Bagay Warruwi Burranba-li-gu (Two River Pathway to Change). Won APPI grant November 2025. Submitted to NSW Select Committee March 2026.',
+                source: 'Law Society Journal; UNSW Social Determinants of Justice Hub',
               },
               {
-                name: 'Yuwaya Ngarra-li (Walgett)',
-                type: 'Elder-led collective impact',
-                outcome: 'Governance transformation',
-                detail: 'Not a program -- a governance model. Elders set priorities, government and NGOs accountable to community. UNSW partnership. Addresses root causes across education, housing, health, justice.',
-                source: 'UNSW; Yuwaya Ngarra-li consortium',
+                name: 'Dubbo SAY Program',
+                type: 'Place-based, community-led',
+                outcome: 'Youth crime halved in one year',
+                detail: '317 incidents (2024) to 159 (2025). The Oyster Tribe delivers Sustainable, Accessible Youth services. Community safety approaches.',
+                source: 'Regional media; DCJ reporting',
+              },
+              {
+                name: 'BackTrack Youth Works (Armidale)',
+                type: 'Indigenous-led youth engagement',
+                outcome: 'Evidence base emerging',
+                detail: 'Youth engagement through animal care, agriculture, and mentoring. Place-based model in regional NSW with strong community endorsement.',
+                source: 'BackTrack evaluation reports',
+              },
+              {
+                name: 'Six JR Sites Across NSW',
+                type: 'Justice reinvestment network',
+                outcome: 'Bourke, Mt Druitt, Moree, Nowra, Cowra, Kempsey',
+                detail: 'The Maranguka model has expanded to six sites. NSW JR Program received $9.8M through the PRF Justice Reinvestment portfolio. All Aboriginal-led.',
+                source: 'JustReinvest NSW; NIAA',
               },
             ].map((item, i) => (
               <div key={i} className="bg-white rounded-xl shadow-sm p-5">
@@ -1273,113 +1421,146 @@ export default async function NSWSectorReport() {
           </div>
         </section>
 
-        {/* ====== SECTION 9: PHILANTHROPIC RESPONSE (NEW - NSW ONLY) ====== */}
+        {/* ====== SECTION 9: PHILANTHROPIC RESPONSE (NSW-SPECIFIC) ====== */}
         <section>
           <SectionHeader
             id="philanthropy"
             icon={<Handshake className="w-6 h-6" />}
             title="The Philanthropic Response"
-            subtitle="Government spends $327M/year on youth justice. Philanthropy contributes ~$45M. They fund very different things."
+            subtitle="Government sends 3.2% of funding through Indigenous orgs. Philanthropy sends 70.9%. The numbers tell the story."
           />
 
+          {/* The structural comparison table */}
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
             <h3 className="text-lg font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}>
-              Government vs Philanthropy: Where the Money Goes
+              Government vs Philanthropy -- The Structural Comparison
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b-2 border-[#0A0A0A]/10">
-                    <th className="text-left py-3 font-mono text-xs uppercase text-[#0A0A0A]/40 w-1/3">Dimension</th>
-                    <th className="text-left py-3 font-mono text-xs uppercase text-[#0A0A0A]/40 w-1/3">Government ($327M/yr)</th>
-                    <th className="text-left py-3 font-mono text-xs uppercase text-[#0A0A0A]/40 w-1/3">Philanthropy (~$45M/yr)</th>
+                    <th className="text-left py-3 font-mono text-xs uppercase text-[#0A0A0A]/40 w-1/3"></th>
+                    <th className="text-left py-3 font-mono text-xs uppercase text-[#0A0A0A]/40 w-1/3">Government</th>
+                    <th className="text-left py-3 font-mono text-xs uppercase text-[#0A0A0A]/40 w-1/3">Philanthropy</th>
                   </tr>
                 </thead>
                 <tbody>
                   {[
-                    {
-                      dim: 'Primary investment',
-                      govt: 'Detention infrastructure and operations',
-                      phil: 'Community programs, research, advocacy',
-                    },
-                    {
-                      dim: 'Approach',
-                      govt: 'Tighter bail, longer sentences, more beds',
-                      phil: 'Prevention, diversion, justice reinvestment',
-                    },
-                    {
-                      dim: 'ACCO funding',
-                      govt: 'Minority of grants go to ACCOs',
-                      phil: 'Several foundations prioritise ACCOs directly',
-                    },
-                    {
-                      dim: 'Evidence alignment',
-                      govt: 'Contradicts 40-year meta-analytic consensus',
-                      phil: 'Generally aligned with evidence base',
-                    },
-                    {
-                      dim: 'Accountability',
-                      govt: 'Low transparency (limited RTI, no outcome data)',
-                      phil: 'Variable -- some publish evaluations, others do not',
-                    },
-                    {
-                      dim: 'Scale',
-                      govt: 'System-wide but poorly targeted',
-                      phil: 'Place-based but limited reach',
-                    },
+                    { dim: 'Total NSW funding', govt: '$5.01 billion', phil: '$115 million' },
+                    { dim: 'Organisations funded', govt: '2,675', phil: '86' },
+                    { dim: 'Indigenous orgs funded', govt: '86 (3.2%)', phil: '61 (70.9%)', highlight: true },
+                    { dim: '"Reoffending" grants to ACCOs', govt: '$0', phil: '$81M+ to Indigenous orgs', highlight: true },
+                    { dim: 'Top recipient', govt: 'Wesley ($827M, intermediary)', phil: 'Maranguka ($43M, Indigenous-led)' },
+                    { dim: 'First Indigenous org rank', govt: '#19', phil: '#2', highlight: true },
+                    { dim: 'Evidence-based programs funded', govt: 'Mostly untested', phil: '16 Effective, 4 Proven' },
                   ].map((row, i) => (
                     <tr key={i} className="border-b border-[#0A0A0A]/5">
                       <td className="py-3 font-medium text-[#0A0A0A] text-xs">{row.dim}</td>
-                      <td className="py-3 text-xs text-[#0A0A0A]/60">{row.govt}</td>
-                      <td className="py-3 text-xs text-[#0A0A0A]/60">{row.phil}</td>
+                      <td className={`py-3 text-xs ${row.highlight ? 'text-[#DC2626] font-medium' : 'text-[#0A0A0A]/60'}`}>{row.govt}</td>
+                      <td className={`py-3 text-xs ${row.highlight ? 'text-[#059669] font-medium' : 'text-[#0A0A0A]/60'}`}>{row.phil}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+            <p className="text-xs font-mono text-[#0A0A0A]/40 mt-3">Source: JusticeHub DB -- justice_funding table (PRF, Dusseldorp, NIAA, DCJ/FACS sources)</p>
           </div>
 
+          {/* Top philanthropic recipients */}
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
             <h3 className="text-lg font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}>
-              Key Philanthropic Actors in NSW Youth Justice
+              Top NSW Philanthropic Recipients
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[#0A0A0A]/10">
+                    <th className="text-left py-2 font-mono text-xs uppercase text-[#0A0A0A]/40 w-8">#</th>
+                    <th className="text-left py-2 font-mono text-xs uppercase text-[#0A0A0A]/40">Organisation</th>
+                    <th className="text-center py-2 font-mono text-xs uppercase text-[#0A0A0A]/40">Indigenous</th>
+                    <th className="text-right py-2 font-mono text-xs uppercase text-[#0A0A0A]/40">Amount</th>
+                    <th className="text-right py-2 font-mono text-xs uppercase text-[#0A0A0A]/40">Programs</th>
+                    <th className="text-left py-2 pl-4 font-mono text-xs uppercase text-[#0A0A0A]/40">Funders</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { rank: 1, org: 'PLACE National Centre', indigenous: false, amount: '$77M', programs: 4, funders: 'Dusseldorp, PRF, Minderoo, Ian Potter, Bryan' },
+                    { rank: 2, org: 'Maranguka', indigenous: true, amount: '$43M', programs: 11, funders: 'PRF, NIAA' },
+                    { rank: 3, org: 'Just Reinvest NSW', indigenous: true, amount: '$39M', programs: 11, funders: 'PRF' },
+                    { rank: 4, org: 'The Hive Mt Druitt', indigenous: false, amount: '$29M', programs: 7, funders: 'PRF' },
+                    { rank: 5, org: 'ALS NSW/ACT', indigenous: true, amount: '$7M', programs: 2, funders: 'PRF' },
+                    { rank: 6, org: 'Mounty Yarns', indigenous: true, amount: '$7M', programs: 7, funders: 'PRF, Dusseldorp, Ritchie' },
+                    { rank: 7, org: 'Australian Schools Plus', indigenous: false, amount: '$5M', programs: 0, funders: 'PRF' },
+                    { rank: 8, org: 'Uni of Newcastle', indigenous: false, amount: '$4M', programs: 0, funders: 'PRF' },
+                    { rank: 9, org: 'Justice & Equity Centre', indigenous: false, amount: '$4M', programs: 0, funders: 'PRF' },
+                    { rank: 10, org: 'Justice Reform Initiative', indigenous: false, amount: '$4M', programs: 0, funders: 'PRF' },
+                  ].map((row, i) => (
+                    <tr key={i} className={`border-b border-[#0A0A0A]/5 ${row.indigenous ? 'bg-emerald-50/50' : ''}`}>
+                      <td className="py-2 font-mono text-xs text-[#0A0A0A]/40">{row.rank}</td>
+                      <td className={`py-2 font-medium ${row.indigenous ? 'text-[#059669]' : 'text-[#0A0A0A]'}`}>{row.org}</td>
+                      <td className="py-2 text-center">{row.indigenous && <span className="text-purple-600 font-medium text-xs">Yes</span>}</td>
+                      <td className="py-2 text-right font-mono text-xs font-medium">{row.amount}</td>
+                      <td className="py-2 text-right font-mono text-xs">{row.programs}</td>
+                      <td className="py-2 pl-4 text-xs text-[#0A0A0A]/50">{row.funders}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-[#0A0A0A]/50 mt-3"><strong>5 of the top 6 philanthropic recipients with mapped programs are Indigenous-led.</strong></p>
+            <p className="text-xs font-mono text-[#0A0A0A]/40 mt-1">Source: PRF Annual Reports; Dusseldorp Forum YIR 2025; JusticeHub DB</p>
+          </div>
+
+          {/* Key funders */}
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h3 className="text-lg font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}>
+              Key Funders in NSW Youth Justice
             </h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
                 {
-                  name: 'Dusseldorp Forum',
-                  focus: 'Justice reinvestment, Aboriginal self-determination',
-                  notable: 'Core funder of JustReinvest NSW and Maranguka. Backs Aboriginal-led governance models.',
-                },
-                {
                   name: 'Paul Ramsay Foundation',
-                  focus: 'Place-based initiatives, systemic change',
-                  notable: 'Largest Australian philanthropy. Funds community-led approaches to breaking cycles of disadvantage.',
+                  investment: '~$40M+ (JR portfolio)',
+                  focus: 'Justice reinvestment, place-based disadvantage',
+                  notable: 'Invested more in NSW JR than the entire govt reoffending grant pool ($9.9M). 100% of JR funding to community-controlled or Indigenous-led orgs.',
                 },
                 {
-                  name: 'Vincent Fairfax Family Foundation',
-                  focus: 'Youth, Aboriginal communities, leadership',
-                  notable: 'Long-term funder of Aboriginal community development and youth programs in regional NSW.',
+                  name: 'NIAA (Federal)',
+                  investment: '$9.8M (NSW JR Program, 6 sites)',
+                  focus: 'Indigenous community safety',
+                  notable: 'Funds six active JR sites across NSW: Bourke, Mt Druitt, Moree, Nowra, Cowra, and Kempsey.',
                 },
                 {
-                  name: 'Tim Fairfax Foundation',
-                  focus: 'Regional and remote communities, arts, health',
-                  notable: 'Funds community infrastructure in remote NSW communities. Arts-based youth engagement.',
+                  name: 'Dusseldorp Forum',
+                  investment: '$250K+ (Mounty Yarns + others)',
+                  focus: 'Youth, place-based, First Nations',
+                  notable: 'Core co-funder of Maranguka from 2013. Backs Aboriginal-led governance models.',
+                },
+                {
+                  name: 'PLACE Initiative',
+                  investment: '$77M (philanthropic pool)',
+                  focus: 'Collaborative place-based model',
+                  notable: 'Multi-funder collaborative (Dusseldorp, PRF, Minderoo, Ian Potter, Bryan Foundation).',
                 },
                 {
                   name: 'Minderoo Foundation',
+                  investment: 'Contributor to PLACE',
                   focus: 'Systemic reform, data and evidence',
                   notable: 'Funds Raise the Age campaign. Invests in data infrastructure for justice reform.',
                 },
                 {
-                  name: 'Social Ventures Australia',
-                  focus: 'Impact investment, social enterprise',
-                  notable: 'Manages social impact bonds for youth justice. Bridges philanthropy and government funding.',
+                  name: 'Bill & Patricia Ritchie Foundation',
+                  investment: '$150K (Mounty Yarns)',
+                  focus: 'Youth justice',
+                  notable: 'Direct funder of Aboriginal-led youth programs in Western Sydney.',
                 },
               ].map((funder, i) => (
                 <div key={i} className="p-4 rounded-xl border border-[#0A0A0A]/10">
                   <h4 className="font-bold text-sm text-[#0A0A0A] mb-1" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                     {funder.name}
                   </h4>
+                  <div className="text-xs font-mono text-[#059669] font-medium mb-1">{funder.investment}</div>
                   <p className="text-[10px] font-mono text-[#0A0A0A]/40 mb-2">{funder.focus}</p>
                   <p className="text-xs text-[#0A0A0A]/60 leading-relaxed">{funder.notable}</p>
                 </div>
@@ -1388,22 +1569,21 @@ export default async function NSWSectorReport() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <KeyFinding title="Philanthropy funds what government won't">
+            <KeyFinding title="Government funds the system. Philanthropy funds the alternative.">
               <p>
-                In NSW, philanthropic funders have filled critical gaps: funding the Maranguka evaluation,
-                supporting Raise the Age advocacy, backing Aboriginal-led governance models. Government
-                spends $327M primarily on detention. Philanthropy spends ~$45M primarily on alternatives.
-                The question is not whether alternatives exist -- it is why they remain philanthropically funded
-                rather than publicly funded.
+                The Paul Ramsay Foundation alone has invested more in NSW justice reinvestment (<strong>$40M+</strong>)
+                than the total government &ldquo;Breaking the Cycle of Reoffending&rdquo; grant pool (<strong>$9.9M</strong>).
+                100% of PRF&apos;s JR funding goes to community-controlled or Indigenous-led organisations.
+                Government sends 3.2% of its funding to Indigenous orgs. Philanthropy sends 70.9%.
               </p>
             </KeyFinding>
-            <KeyFinding title="The ACCO funding gap persists" urgent>
+            <KeyFinding title="The structural gap: 3.2% vs 70.9%" urgent>
               <p>
-                Even in philanthropy, ACCOs receive less than their non-Indigenous counterparts. While
-                foundations like Dusseldorp Forum explicitly prioritise Aboriginal-led organisations, the
-                broader philanthropic sector still channels the majority of funding through intermediaries.
-                In a system where {RESEARCH_DATA.aihwFirstNationsPctDetained}% of detained young people
-                are First Nations, this remains a structural problem.
+                Government funds <strong>86 Indigenous orgs out of 2,675</strong> (3.2%). Philanthropy funds
+                <strong> 61 out of 86</strong> (70.9%). In a system where {RESEARCH_DATA.aihwFirstNationsPctDetained}%
+                of detained young people are First Nations, this is not a data quirk -- it is a structural choice.
+                The philanthropic sector has demonstrated it is possible to fund Indigenous-led organisations at scale.
+                Government has not.
               </p>
             </KeyFinding>
           </div>
@@ -1619,24 +1799,23 @@ export default async function NSWSectorReport() {
             <div className="space-y-4 text-white/80 text-sm leading-relaxed max-w-3xl">
               <p>
                 New South Wales spends <strong className="text-white">$327 million per year</strong> on youth
-                justice. Since the bail law changes in March 2024, detention numbers have
-                surged <strong className="text-[#DC2626]">34%</strong>. Over 70% of detained children
-                are <strong className="text-white">unsentenced</strong>.
+                justice. <strong className="text-[#DC2626]">66% goes to detention.</strong> Since the bail law
+                changes in March 2024, detention surged <strong className="text-[#DC2626]">34%</strong>.
+                85-90% of those refused bail are First Nations children.
               </p>
               <p>
-                Aboriginal young people are <strong className="text-white">{RESEARCH_DATA.indigenousOverrep}x
-                overrepresented</strong> in detention. {RESEARCH_DATA.crossSystemCP}% of children in youth
-                justice were known to child protection. The pipeline is identifiable and preventable.
+                The state&apos;s direct reoffending grants total <strong className="text-white">$9.9 million</strong>.
+                Zero Aboriginal community-controlled organisations receive a dollar. The broader DCJ grant pool sends
+                $5 billion through 2,675 organisations -- <strong className="text-[#DC2626]">3.2% are Indigenous</strong>.
               </p>
               <p>
-                Meanwhile, Maranguka in Bourke delivers a <strong className="text-white">5:1 return on
-                investment</strong>. Koori Courts reduce reoffending by 15%. Yuwaya Ngarra-li in
-                Walgett shows what Elder-led governance looks like. These models exist, they work,
-                and they are underfunded.
+                Philanthropic funders have taken a different approach. <strong className="text-white">$115 million through 86
+                organisations -- 70.9% Indigenous-led.</strong> Maranguka delivers a 5:1 return. Youth Koori Court delivers
+                40% less custody. Dubbo halved youth crime. Mounty Yarns built a 20-person team on $1M.
+                The cheapest Effective program costs <strong className="text-white">550x less than detention</strong>.
               </p>
               <p>
-                The question is not whether alternatives exist. It is why NSW continues to invest
-                in a system that every piece of evidence says does not work.
+                The NSW Select Committee on Youth Justice reports in December 2026. The evidence is already in.
               </p>
             </div>
 
@@ -1671,9 +1850,11 @@ export default async function NSWSectorReport() {
             </div>
 
             <p className="text-xs text-white/20 mt-6 font-mono leading-relaxed">
-              Data: ROGS 2025, AIHW 2023-24, BOCSAR, NSW Inspector of Custodial Services, NSW Legislative Council,
-              KPMG (Maranguka), AHRC, Senate Inquiry.
-              Built by JusticeHub (justicehub.com.au). Senate inquiry reports June 2026.
+              Data: ROGS 2025, AIHW 2023-24, BOCSAR (BB171, BB162, Custody Statistics), NSW Inspector of Custodial Services,
+              NSW Ombudsman, NSW Auditor-General, DCJ/FACS NGO Grant Data, NSW Select Committee, Senate Inquiry,
+              KPMG (Maranguka), SBS NITV, PRF, Dusseldorp Forum.
+              Stories: Empathy Ledger (published with informed consent and cultural authority).
+              Built by JusticeHub. Select Committee reports December 2026. Senate inquiry reports June 2026.
             </p>
           </div>
         </section>

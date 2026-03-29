@@ -200,7 +200,7 @@ export default function DecisionMakerBriefPage() {
                 </li>
                 <li className="flex items-start gap-2">
                   <ArrowRight className="w-4 h-4 mt-0.5 text-[#DC2626] flex-shrink-0" />
-                  <span>Review the evidence at justicehub.org.au/intelligence/dashboard</span>
+                  <span>Review the evidence at justicehub.com.au/intelligence/dashboard</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <ArrowRight className="w-4 h-4 mt-0.5 text-[#DC2626] flex-shrink-0" />
@@ -210,7 +210,7 @@ export default function DecisionMakerBriefPage() {
               <div className="mt-4 pt-4 border-t border-gray-700 text-xs text-gray-400">
                 CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
                 <br />
-                justicehub.org.au/contained | ben@justicehub.org.au
+                justicehub.com.au/contained | ben@justicehub.com.au
               </div>
             </div>
           </div>

@@ -152,7 +152,7 @@ export function JusticeHubSettings({ profile }) {
                 })}
               </div>
               <a
-                href={`https://justicehub.org.au/people/${profile.slug}`}
+                href={`https://justicehub.com.au/people/${profile.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-green-700 underline mt-2 inline-block"
@@ -362,7 +362,7 @@ export function OrganizationJusticeHubSettings({ organization }) {
             Last synced: {new Date(organization.justicehub_synced_at).toLocaleDateString()}
           </div>
           <a
-            href={`https://justicehub.org.au/organizations/${organization.slug}`}
+            href={`https://justicehub.com.au/organizations/${organization.slug}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-green-700 underline mt-2 inline-block"

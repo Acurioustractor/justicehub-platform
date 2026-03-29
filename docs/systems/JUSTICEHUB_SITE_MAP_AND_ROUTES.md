@@ -1993,7 +1993,7 @@ Cache-Control: no-cache
   "@type": "NGO",
   "name": "JusticeHub",
   "description": "Revolutionary infrastructure for youth justice reform",
-  "url": "https://justicehub.org.au",
+  "url": "https://justicehub.com.au",
   "sameAs": [
     "https://twitter.com/justicehub",
     "https://facebook.com/justicehub"

@@ -40,7 +40,7 @@ export default async function Image() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ fontSize: '22px', fontWeight: 900, color: 'white', letterSpacing: '-0.5px' }}>JUSTICEHUB</div>
-            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>justicehub.org.au</div>
+            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>justicehub.com.au</div>
           </div>
           <div style={{ fontSize: '11px', color: '#059669', textTransform: 'uppercase', letterSpacing: '2px' }}>ALMA Network</div>
         </div>

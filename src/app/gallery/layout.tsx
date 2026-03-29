@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     images: ['/images/og/gallery.png'],
   },
   alternates: {
-    canonical: 'https://justicehub.org.au/gallery',
+    canonical: 'https://justicehub.com.au/gallery',
   },
 };
 

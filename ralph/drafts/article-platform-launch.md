@@ -118,8 +118,8 @@ That's the future JusticeHub is building. And we're just getting started.
 
 **Ready to join?**
 
-- Visit [justicehub.org.au](https://justicehub.org.au) to explore the platform
-- Contact us at hello@justicehub.org.au to register your organisation
+- Visit [justicehub.com.au](https://justicehub.com.au) to explore the platform
+- Contact us at hello@justicehub.com.au to register your organisation
 - Follow our journey on [LinkedIn](https://linkedin.com/company/justicehub)
 
 **About A Curious Tractor**

@@ -22,9 +22,9 @@ The alternative isn't theoretical. It exists. It works. It costs a fraction of w
 
 We built a platform to prove it. Every number is real. Every model is verified. Every dollar is tracked.
 
-See the data: justicehub.org.au/proof
-Follow the money: justicehub.org.au/follow-the-money
-The cost calculator: justicehub.org.au/calculator
+See the data: justicehub.com.au/proof
+Follow the money: justicehub.com.au/follow-the-money
+The cost calculator: justicehub.com.au/calculator
 
 #YouthJustice #Australia #AlternativeModels #ALMA #IndigenousAustralia #FundingTransparency
 
@@ -34,5 +34,5 @@ The cost calculator: justicehub.org.au/calculator
 
 - Best time to post: Tuesday–Thursday, 8-10am AEST
 - Tag: relevant ministers, funders, org leaders who've been tagged in media articles
-- Attach: download the cost comparison card from justicehub.org.au/share
+- Attach: download the cost comparison card from justicehub.com.au/share
 - Follow-up post (2 days later): NT spotlight version using the same template

@@ -158,7 +158,7 @@ If you run a community program, JusticeHub is built for you:
 - **Share success stories**: With consent, amplify the voices of young people you've supported
 - **Join the network**: Connect with other programs, share learnings, and advocate together
 
-**Register your program**: Visit [justicehub.org.au/community-programs/add](https://justicehub.org.au/community-programs/add) to get started.
+**Register your program**: Visit [justicehub.com.au/community-programs/add](https://justicehub.com.au/community-programs/add) to get started.
 
 ---
 
@@ -178,13 +178,13 @@ JusticeHub helps them find it.
 
 **Ready to discover what's available?**
 
-- Browse programs: [justicehub.org.au/community-programs](https://justicehub.org.au/community-programs)
-- View the map: [justicehub.org.au/map](https://justicehub.org.au/map)
-- Read community stories: [justicehub.org.au/stories](https://justicehub.org.au/stories)
+- Browse programs: [justicehub.com.au/community-programs](https://justicehub.com.au/community-programs)
+- View the map: [justicehub.com.au/map](https://justicehub.com.au/map)
+- Read community stories: [justicehub.com.au/stories](https://justicehub.com.au/stories)
 
 **Know a program that should be listed?**
 
-Tell them about JusticeHub, or [submit a suggestion](https://justicehub.org.au/suggest-program).
+Tell them about JusticeHub, or [submit a suggestion](https://justicehub.com.au/suggest-program).
 
 ---
 

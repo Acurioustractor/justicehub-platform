@@ -315,7 +315,7 @@ interface Source {
 
 ```html
 <!-- Embed widget on external sites -->
-<script src="https://justicehub.org.au/widget/alma-bot.js"></script>
+<script src="https://justicehub.com.au/widget/alma-bot.js"></script>
 <div id="alma-bot" data-theme="light" data-position="bottom-right"></div>
 ```
 

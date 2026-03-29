@@ -44,8 +44,8 @@ The alternative to detention isn't theoretical. It's Fred driving a kid to schoo
 
 CONTAINED launches April 20. Come sit in the room. Then tell us who else needs to.
 
-→ Full story: justicehub.org.au/stories/oonchiumpa-what-happens-when-community-leads
-→ justicehub.org.au/contained
+→ Full story: justicehub.com.au/stories/oonchiumpa-what-happens-when-community-leads
+→ justicehub.com.au/contained
 
 #YouthJustice #CONTAINED #IndigenousAustralia #AliceSprings #CommunityLed
 

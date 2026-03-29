@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://justicehub.org.au';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://justicehub.com.au';
   const enrollUrl = `${baseUrl}/contained/enroll?code=${data.code}`;
 
   return NextResponse.json({

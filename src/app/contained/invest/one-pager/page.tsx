@@ -198,7 +198,7 @@ export default function FunderOnePager() {
             <div>
               <div className="text-sm font-black uppercase tracking-tighter">Ready to talk?</div>
               <div className="text-[11px] text-gray-600 mt-0.5">
-                ben@justicehub.org.au &middot; justicehub.com.au/contained/invest
+                ben@justicehub.com.au &middot; justicehub.com.au/contained/invest
               </div>
               <div className="text-[9px] text-gray-400 font-mono mt-1">
                 All statistics sourced from Productivity Commission ROGS 2024-25 and verified program evaluations.

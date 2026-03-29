@@ -179,7 +179,7 @@ export default function SignalEnginePreviewPage() {
             </div>
           </div>
           <div style={{ textAlign: 'center', marginTop: 16, fontSize: 11, color: '#3a3a5a' }}>
-            Embed on any website: &lt;script src=&quot;justicehub.org.au/widget.js&quot;&gt;&lt;/script&gt;
+            Embed on any website: &lt;script src=&quot;justicehub.com.au/widget.js&quot;&gt;&lt;/script&gt;
           </div>
         </div>
       </div>

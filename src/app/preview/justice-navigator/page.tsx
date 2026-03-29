@@ -122,7 +122,7 @@ export default function JusticeNavigatorPreviewPage() {
           I&apos;ve put together a Support Pack with everything in one place &mdash; the appeal guide, service contacts, and complaint options. You can share it with family.
           <div style={{ background: 'linear-gradient(135deg, #2d1b4e, #16213e)', border: '2px solid #9b59b6', borderRadius: 12, padding: 18, textAlign: 'center', marginTop: 8 }}>
             <h4 style={{ color: '#fff', fontSize: 14, marginBottom: 6 }}>Your Support Pack</h4>
-            <div style={{ background: '#1a1a2e', padding: 10, borderRadius: 6, fontSize: 12, color: '#9b59b6', fontFamily: 'monospace', margin: '10px 0' }}>justicehub.org.au/navigator/abc123</div>
+            <div style={{ background: '#1a1a2e', padding: 10, borderRadius: 6, fontSize: 12, color: '#9b59b6', fontFamily: 'monospace', margin: '10px 0' }}>justicehub.com.au/navigator/abc123</div>
             <a href="#" style={{ display: 'inline-block', background: '#9b59b6', color: '#fff', padding: '8px 20px', borderRadius: 6, textDecoration: 'none', fontSize: 12, fontWeight: 600 }}>Copy Link to Share</a>
           </div>
         </div>

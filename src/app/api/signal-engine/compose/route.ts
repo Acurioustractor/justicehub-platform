@@ -161,11 +161,11 @@ function generateFallbackContent(event: SignalEvent): Record<string, { title: st
       return {
         data_story: {
           title: `${region_name} reaches ${payload.milestone} discrimination reports`,
-          body: `Community-sourced data from JusticeHub's Call It Out platform shows that ${region_name} in ${state} has now received ${payload.total_reports} discrimination reports, crossing the ${payload.milestone}-report milestone. Reports span ${payload.system_types_reported} different system types including education, health, policing, and housing.\n\nThis data reflects the experiences shared by community members who chose to document discrimination they faced. Every report contributes to a clearer picture of systemic patterns.\n\n**What you can do:**\n- Report discrimination at justicehub.org.au/call-it-out\n- Share this data with your local representative\n- Contact a support service if you need help`,
+          body: `Community-sourced data from JusticeHub's Call It Out platform shows that ${region_name} in ${state} has now received ${payload.total_reports} discrimination reports, crossing the ${payload.milestone}-report milestone. Reports span ${payload.system_types_reported} different system types including education, health, policing, and housing.\n\nThis data reflects the experiences shared by community members who chose to document discrimination they faced. Every report contributes to a clearer picture of systemic patterns.\n\n**What you can do:**\n- Report discrimination at justicehub.com.au/call-it-out\n- Share this data with your local representative\n- Contact a support service if you need help`,
         },
         social_card: {
           title: `${region_name} hits ${payload.milestone} reports`,
-          body: `${payload.total_reports} discrimination reports in ${region_name}, ${state}. The data is building a picture of systemic racism. Add your voice: justicehub.org.au/call-it-out`,
+          body: `${payload.total_reports} discrimination reports in ${region_name}, ${state}. The data is building a picture of systemic racism. Add your voice: justicehub.com.au/call-it-out`,
         },
         widget_alert: {
           title: null,
@@ -177,11 +177,11 @@ function generateFallbackContent(event: SignalEvent): Record<string, { title: st
       return {
         data_story: {
           title: `${payload.concentration_pct}% of ${region_name} discrimination reports involve ${payload.system_type}`,
-          body: `Data from JusticeHub shows a significant concentration of discrimination reports in the ${payload.system_type} system in ${region_name}, ${state}. ${payload.system_count} out of ${payload.total_reports} reports — ${payload.concentration_pct}% — cite ${payload.system_type} as the system involved.\n\nThis concentration pattern suggests systemic issues within ${payload.system_type} institutions in the region that warrant closer examination.\n\n**What you can do:**\n- If you've experienced discrimination in ${payload.system_type}, report it at justicehub.org.au/call-it-out\n- Contact your local anti-discrimination body\n- Reach out to a community legal service`,
+          body: `Data from JusticeHub shows a significant concentration of discrimination reports in the ${payload.system_type} system in ${region_name}, ${state}. ${payload.system_count} out of ${payload.total_reports} reports — ${payload.concentration_pct}% — cite ${payload.system_type} as the system involved.\n\nThis concentration pattern suggests systemic issues within ${payload.system_type} institutions in the region that warrant closer examination.\n\n**What you can do:**\n- If you've experienced discrimination in ${payload.system_type}, report it at justicehub.com.au/call-it-out\n- Contact your local anti-discrimination body\n- Reach out to a community legal service`,
         },
         social_card: {
           title: `${region_name}: ${payload.system_type} pattern`,
-          body: `${payload.concentration_pct}% of discrimination reports in ${region_name} involve ${payload.system_type}. That's ${payload.system_count} out of ${payload.total_reports} reports. Data: justicehub.org.au`,
+          body: `${payload.concentration_pct}% of discrimination reports in ${region_name} involve ${payload.system_type}. That's ${payload.system_count} out of ${payload.total_reports} reports. Data: justicehub.com.au`,
         },
         widget_alert: {
           title: null,
@@ -197,7 +197,7 @@ function generateFallbackContent(event: SignalEvent): Record<string, { title: st
         },
         social_card: {
           title: `Service gap in ${region_name}`,
-          body: `${payload.total_reports} discrimination reports in ${region_name}, ${state} — but ZERO local support services. Communities deserve better. justicehub.org.au`,
+          body: `${payload.total_reports} discrimination reports in ${region_name}, ${state} — but ZERO local support services. Communities deserve better. justicehub.com.au`,
         },
         widget_alert: {
           title: null,
@@ -213,7 +213,7 @@ function generateFallbackContent(event: SignalEvent): Record<string, { title: st
         },
         social_card: {
           title: `New signal: ${region_name || 'National'}`,
-          body: `New data pattern detected in ${region_name || 'national data'}. See more at justicehub.org.au`,
+          body: `New data pattern detected in ${region_name || 'national data'}. See more at justicehub.com.au`,
         },
         widget_alert: {
           title: null,

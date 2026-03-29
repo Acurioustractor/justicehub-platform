@@ -251,7 +251,7 @@ export default function ContainedInvestPage() {
               </Link>
             </div>
             <p className="text-xs text-gray-500 mt-8">
-              Contact: ben@justicehub.org.au | All stats sourced from Productivity Commission ROGS 2024-25
+              Contact: ben@justicehub.com.au | All stats sourced from Productivity Commission ROGS 2024-25
             </p>
           </div>
         </section>

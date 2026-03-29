@@ -24,7 +24,7 @@ Room 3: The community organisations already doing it. $75/day. 88% success. Cult
 
 This isn't a lecture. It's an experience designed to change how you see youth justice.
 
-Back this stop: justicehub.org.au/contained
+Back this stop: justicehub.com.au/contained
 
 `#TheContained #YouthJustice #JusticeHub #MountDruitt #WesternSydney #Brisbane`
 
@@ -38,7 +38,7 @@ April 25, Mounty Yarns.
 
 $1.55M per child per year. 84% reoffend. Community programs: $75/day, 88% success.
 
-justicehub.org.au/contained
+justicehub.com.au/contained
 
 `#TheContained #YouthJustice #MountDruitt`
 
@@ -62,7 +62,7 @@ These aren't our numbers. They're the Productivity Commission's. The Queensland 
 
 THE CONTAINED puts these numbers into physical space. Three rooms. Thirty minutes. The cost becomes real.
 
-Back this stop: justicehub.org.au/contained
+Back this stop: justicehub.com.au/contained
 
 `#TheContained #YouthJustice #JusticeHub #YouthDetention`
 
@@ -183,7 +183,7 @@ CONTAINED centres their authority. Not as case studies. Not as cautionary tales.
 
 Today, Mount Druitt. Then Adelaide, Perth, Tennant Creek.
 
-justicehub.org.au/contained
+justicehub.com.au/contained
 
 `#TheContained #YouthJustice #JusticeHub #YouthVoice #MountDruitt #LaunchDay`
 
@@ -197,7 +197,7 @@ This campaign centres their authority — not as case studies, but as the people
 
 Mount Druitt. Today.
 
-justicehub.org.au/contained
+justicehub.com.au/contained
 
 `#TheContained #YouthJustice #LaunchDay`
 
@@ -224,7 +224,7 @@ Thirty minutes. Three rooms. And then you can never unsee what you've seen.
 
 Next stop: Adelaide, May 2026 — the national Reintegration Conference.
 
-Back the tour: justicehub.org.au/contained/tour
+Back the tour: justicehub.com.au/contained/tour
 
 `#TheContained #YouthJustice #JusticeHub #AustralianTour #ImmersiveAdvocacy`
 
@@ -238,7 +238,7 @@ The CONTAINED tour is underway. Thirty minutes that change how you see youth jus
 
 Next: Adelaide, Reintegration Conference, May 2026.
 
-justicehub.org.au/contained/tour
+justicehub.com.au/contained/tour
 
 `#TheContained #YouthJustice #AustralianTour`
 
@@ -254,19 +254,19 @@ Path: `/images/articles/the-courage-to-connect-how-authentic-relationships-trans
 You've seen the numbers. You've felt the story. Now here's what you can do.
 
 **NOMINATE** a decision maker. A politician, CEO, editor, or community leader. Create the public pressure that forces participation.
-→ justicehub.org.au/contained#nominate
+→ justicehub.com.au/contained#nominate
 
 **BOOK** your experience. 24 slots per day. Pay what you can ($0–$50). Trauma-informed facilitation.
-→ justicehub.org.au/contained/tour
+→ justicehub.com.au/contained/tour
 
 **SHARE** the evidence. Download stat cards, social templates, and talking points.
-→ justicehub.org.au/contained/tour/social
+→ justicehub.com.au/contained/tour/social
 
 **WRITE** to your MP. Pre-written templates for email, SMS, and social.
-→ justicehub.org.au/contained/act
+→ justicehub.com.au/contained/act
 
 **BACK** the tour. Every dollar funds infrastructure for the movement.
-→ justicehub.org.au/back-this
+→ justicehub.com.au/back-this
 
 The evidence is overwhelming. The containers make you feel it. Your action makes it impossible to ignore.
 
@@ -276,10 +276,10 @@ The evidence is overwhelming. The containers make you feel it. Your action makes
 
 One week since CONTAINED launched. Here's what you can do right now:
 
-→ NOMINATE a leader: justicehub.org.au/contained#nominate
-→ BOOK your experience: justicehub.org.au/contained/tour
-→ SHARE the stats: justicehub.org.au/contained/tour/social
-→ WRITE your MP: justicehub.org.au/contained/act
+→ NOMINATE a leader: justicehub.com.au/contained#nominate
+→ BOOK your experience: justicehub.com.au/contained/tour
+→ SHARE the stats: justicehub.com.au/contained/tour/social
+→ WRITE your MP: justicehub.com.au/contained/act
 
 Every action builds pressure. Decision makers are watching.
 

@@ -504,7 +504,7 @@ function NewStoryForm() {
                         <span className="font-bold">I consent to sharing my story *</span>
                         <p className="text-gray-700 mt-1">
                           I understand that my story will be reviewed and published on JusticeHub.
-                          I can request removal or updates at any time by contacting stories@justicehub.org.au
+                          I can request removal or updates at any time by contacting stories@justicehub.com.au
                         </p>
                       </div>
                     </label>

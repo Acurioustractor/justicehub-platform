@@ -117,7 +117,7 @@ jobs:
           echo "- Scrape Job: ${{ needs.scrape-funding.result }}" >> $GITHUB_STEP_SUMMARY
           echo "- Report Job: ${{ needs.generate-report.result }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "View the funding pipeline at: https://justicehub.org.au/admin/funding" >> $GITHUB_STEP_SUMMARY
+          echo "View the funding pipeline at: https://justicehub.com.au/admin/funding" >> $GITHUB_STEP_SUMMARY
 
       - name: Notify on failure
         if: failure()
