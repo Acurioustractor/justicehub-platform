@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONTAINED — Where We're Going</title>
+<meta name="description" content="The CONTAINED shipping container is touring Australia. See where we're headed and who's building the movement in each community.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #F5F0E8; color: #0A0A0A; font-family: 'Space Grotesk', sans-serif; }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+
+  .header { background: #0A0A0A; color: #F5F0E8; padding: 80px 40px 60px; text-align: center; }
+  .header .tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: #888; margin-bottom: 20px; }
+  .header h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; max-width: 800px; margin-left: auto; margin-right: auto; }
+  .header h1 span { color: #DC2626; }
+  .header .subtitle { font-size: 1.05rem; color: #999; max-width: 620px; margin: 0 auto; line-height: 1.7; }
+  .header .stats { display: flex; justify-content: center; gap: 48px; margin-top: 36px; flex-wrap: wrap; }
+  .header .stat-num { font-size: 2.2rem; font-weight: 700; }
+  .header .stat-num.red { color: #DC2626; }
+  .header .stat-num.green { color: #059669; }
+  .header .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: #666; text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .content { max-width: 1000px; margin: 0 auto; padding: 48px 24px; }
+  .intro { font-size: 1.05rem; line-height: 1.8; color: #0A0A0A; opacity: 0.7; margin-bottom: 48px; max-width: 720px; }
+  .intro strong { color: #0A0A0A; opacity: 1; }
+
+  /* Legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 40px; padding: 16px 20px; background: #F5F0E8; border-radius: 10px; border: 1px solid rgba(10,10,10,0.06); }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: #0A0A0A; opacity: 0.6; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Stop cards */
+  .stop-card { margin-bottom: 36px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(10,10,10,0.08); background: #F5F0E8; }
+  .stop-header { padding: 28px 28px 20px; }
+  .stop-header .date-line { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+  .stop-header .date { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #059669; font-weight: 500; }
+  .pill { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; padding: 2px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .pill-confirmed { background: #059669; color: white; }
+  .pill-planning { background: #D97706; color: white; }
+  .pill-demand { background: #DC2626; color: white; }
+  .stop-header h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+  .stop-header .partner { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: #0A0A0A; opacity: 0.45; }
+
+  /* Data highlight */
+  .data-highlight { margin: 0 28px 20px; background: #0A0A0A; color: #F5F0E8; border-radius: 10px; padding: 20px; }
+  .data-highlight .stat-row { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 12px; }
+  .data-highlight .mini-stat { text-align: center; }
+  .data-highlight .mini-num { font-size: 1.4rem; font-weight: 700; }
+  .data-highlight .mini-num.red { color: #DC2626; }
+  .data-highlight .mini-num.green { color: #059669; }
+  .data-highlight .mini-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; color: #888; text-transform: uppercase; letter-spacing: 0.08em; }
+  .data-highlight .narrative { font-size: 0.88rem; line-height: 1.6; color: #ccc; }
+  .data-highlight .narrative strong { color: #DC2626; }
+  .data-highlight .source { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; color: #555; margin-top: 10px; display: block; }
+
+  /* Sections inside card */
+  .card-section { padding: 0 28px 20px; }
+  .card-section h3 { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: #0A0A0A; opacity: 0.35; margin-bottom: 12px; }
+
+  /* People pills */
+  .person-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .person { display: inline-flex; align-items: center; gap: 8px; background: #F5F0E8; border-radius: 8px; padding: 8px 14px; }
+  .person .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-org { background: #059669; }
+  .dot-govt { background: #3B82F6; }
+  .dot-academic { background: #8B5CF6; }
+  .dot-media { background: #D97706; }
+  .dot-community { background: #0A0A0A; }
+  .dot-funder { background: #EC4899; }
+  .dot-political { background: #EF4444; }
+  .person .name { font-size: 0.8rem; font-weight: 500; }
+  .person .org-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: #0A0A0A; opacity: 0.4; }
+
+  /* Org chips */
+  .org-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .org-chip { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; background: rgba(10,10,10,0.04); border: 1px solid rgba(10,10,10,0.08); padding: 6px 14px; border-radius: 8px; }
+  .org-chip .programs { color: #059669; font-weight: 500; }
+  .org-chip.indigenous { border-color: #D97706; background: rgba(217,119,6,0.06); }
+
+  /* Civic intel */
+  .civic-intel { margin: 0 28px 20px; background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.15); border-radius: 10px; padding: 16px 20px; }
+  .civic-intel h4 { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: #3B82F6; margin-bottom: 10px; }
+  .civic-intel .intel-item { font-size: 0.82rem; color: #0A0A0A; opacity: 0.7; padding: 4px 0; border-bottom: 1px solid rgba(59,130,246,0.08); }
+  .civic-intel .intel-item:last-child { border-bottom: none; }
+  .civic-intel .intel-date { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: #3B82F6; }
+  .civic-intel .intel-amount { font-weight: 600; color: #0A0A0A; }
+
+  /* Engage box */
+  .engage-box { margin: 0 28px 24px; background: rgba(5,150,105,0.05); border: 1px solid rgba(5,150,105,0.15); border-radius: 10px; padding: 16px 20px; }
+  .engage-box h4 { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: #059669; margin-bottom: 8px; }
+  .engage-box ul { list-style: none; padding: 0; }
+  .engage-box li { font-size: 0.82rem; color: #0A0A0A; opacity: 0.7; padding: 3px 0; padding-left: 16px; position: relative; }
+  .engage-box li::before { content: "→"; position: absolute; left: 0; color: #059669; }
+
+  /* Demand + CTA */
+  .demand-section { margin-top: 48px; margin-bottom: 32px; }
+  .demand-section h2 { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .demand-section .desc { color: #0A0A0A; opacity: 0.5; margin-bottom: 24px; font-size: 0.95rem; }
+
+  /* LinkedIn / supporters */
+  .supporters-section { margin-top: 60px; padding: 40px 28px; background: #F5F0E8; border-radius: 16px; border: 1px solid rgba(10,10,10,0.06); }
+  .supporters-section h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+  .supporters-section .desc { font-size: 0.9rem; color: #0A0A0A; opacity: 0.5; margin-bottom: 20px; }
+
+  .cta { background: #0A0A0A; color: #F5F0E8; border-radius: 16px; padding: 48px; text-align: center; margin-top: 60px; }
+  .cta h2 { font-size: 2rem; font-weight: 700; margin-bottom: 12px; }
+  .cta p { color: #999; max-width: 500px; margin: 0 auto 24px; line-height: 1.6; }
+  .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .cta a { display: inline-block; text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; font-weight: 500; padding: 14px 32px; border-radius: 8px; letter-spacing: 0.05em; transition: opacity 0.15s; }
+  .cta a:hover { opacity: 0.85; }
+  .cta a.primary { background: #DC2626; color: white; }
+  .cta a.secondary { background: transparent; color: #F5F0E8; border: 1px solid #333; }
+
+  .footer { text-align: center; padding: 40px; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: #0A0A0A; opacity: 0.25; }
+
+  @media (max-width: 768px) {
+    .header { padding: 60px 20px 40px; }
+    .header h1 { font-size: 2.2rem; }
+    .header .stats { gap: 24px; }
+    .data-highlight .stat-row { gap: 16px; }
+    .civic-intel, .engage-box, .data-highlight { margin-left: 16px; margin-right: 16px; }
+    .card-section, .stop-header { padding-left: 16px; padding-right: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="tag">The Contained National Tour — 2026</div>
+  <h1>Where We're <span>Going</span></h1>
+  <p class="subtitle">A shipping container touring Australia — bringing youth justice data into communities, connecting local services with supporters, and collecting the stories the system doesn't tell.</p>
+  <div class="stats">
+    <div><div class="stat-num">225+</div><div class="stat-label">People involved</div></div>
+    <div><div class="stat-num">15</div><div class="stat-label">Communities</div></div>
+    <div><div class="stat-num red">9</div><div class="stat-label">Tour stops</div></div>
+    <div><div class="stat-num green">1,081</div><div class="stat-label">Programs mapped</div></div>
+    <div><div class="stat-num">360</div><div class="stat-label">LGAs tracked</div></div>
+  </div>
+</div>
+
+<div class="content">
+
+  <p class="intro">
+    At each stop, the container surfaces <strong>local youth justice data</strong> — which programs exist, where funding goes, what the evidence says — and collects <strong>stories from the people who live inside those numbers</strong>. It connects the organisations doing the work with the people who can support them — philanthropic, government, academic, and community.
+  </p>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#059669;"></div> Service organisation</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#3B82F6;"></div> Government</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8B5CF6;"></div> Academic / Research</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#D97706;"></div> Media</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#0A0A0A;"></div> Community</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#EC4899;"></div> Philanthropy</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#EF4444;"></div> Political</div>
+  </div>
+
+  <!-- ═══ MOUNT DRUITT ═══ -->
+  <div class="stop-card">
+    <div class="stop-header">
+      <div class="date-line"><span class="date">Apr 25, 2026</span><span class="pill pill-planning">Planning</span></div>
+      <h2>Mount Druitt, NSW</h2>
+      <div class="partner">Hosted by Mounty Yarns</div>
+    </div>
+    <div class="data-highlight">
+      <div class="stat-row">
+        <div class="mini-stat"><div class="mini-num red">$327M</div><div class="mini-label">NSW YJ spend/year</div></div>
+        <div class="mini-stat"><div class="mini-num red">66%</div><div class="mini-label">Goes to detention</div></div>
+        <div class="mini-stat"><div class="mini-num red">22.1x</div><div class="mini-label">Indigenous overrep</div></div>
+        <div class="mini-stat"><div class="mini-num green">7</div><div class="mini-label">Mounty Yarns programs</div></div>
+      </div>
+      <div class="narrative">NSW's "Breaking the Cycle" reoffending grants total $9.9M — <strong>zero reaches Aboriginal community-controlled organisations</strong>. Mounty Yarns runs 7 programs on philanthropic funding alone. The 2024 bail laws drove a 34% detention surge — 79.8% of Aboriginal youth in detention are on remand, not convicted.</div>
+      <span class="source">JusticeHub NSW Sector Report | ROGS 2025 | NSW Select Committee (reporting Dec 2026)</span>
+    </div>
+    <div class="card-section">
+      <h3>People involved</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-community"></div><span class="name">Daniel Daylight</span><span class="org-label">Mounty Yarns</span></div>
+        <div class="person"><div class="dot dot-org"></div><span class="name">Nicole Mekler</span><span class="org-label">JustReinvest Mt Druitt</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Bernie Shakeshaft</span><span class="org-label">BackTrack</span></div>
+        <div class="person"><div class="dot dot-funder"></div><span class="name">Teya Dusseldorp</span><span class="org-label">Dusseldorp Forum</span></div>
+        <div class="person"><div class="dot dot-funder"></div><span class="name">Scarlett Steven</span><span class="org-label">Dusseldorp Forum</span></div>
+        <div class="person"><div class="dot dot-funder"></div><span class="name">Margot Beach</span><span class="org-label">Dusseldorp Forum</span></div>
+        <div class="person"><div class="dot dot-funder"></div><span class="name">Jessica Duffy</span><span class="org-label">Dusseldorp Forum</span></div>
+        <div class="person"><div class="dot dot-funder"></div><span class="name">Jonas Kubitscheck</span><span class="org-label">Paul Ramsay Foundation</span></div>
+        <div class="person"><div class="dot dot-funder"></div><span class="name">William Frazer</span><span class="org-label">Paul Ramsay Foundation</span></div>
+        <div class="person"><div class="dot dot-academic"></div><span class="name">Natalie Chiappazzo</span><span class="org-label">Western Sydney University</span></div>
+        <div class="person"><div class="dot dot-org"></div><span class="name">Emma Maiden</span><span class="org-label">Uniting — Dir of Advocacy</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Christine Thomas</span><span class="org-label">Calmer Kids</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Joy Woods</span><span class="org-label">Community services</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Kyrstie Dunn</span><span class="org-label">Community</span></div>
+        <div class="person"><div class="dot dot-org"></div><span class="name">Alexandra Cordukes</span><span class="org-label">Orange Sky</span></div>
+        <div class="person"><div class="dot dot-funder"></div><span class="name">Jade Harley</span><span class="org-label">UnLtd</span></div>
+        <div class="person"><div class="dot dot-academic"></div><span class="name">Rohan Lulham</span><span class="org-label">University of Sydney</span></div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Local organisations to engage</h3>
+      <div class="org-list">
+        <div class="org-chip indigenous">Mounty Yarns <span class="programs">7 programs</span></div>
+        <div class="org-chip indigenous">Just Reinvest NSW / MARANGUKA <span class="programs">11 programs</span></div>
+        <div class="org-chip">Ted Noffs Foundation <span class="programs">14 programs</span></div>
+        <div class="org-chip">BackTrack</div>
+        <div class="org-chip">Uniting</div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Politicians to invite</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-political"></div><span class="name">Jim Betts</span><span class="org-label">Former senior NSW govt</span></div>
+        <div class="person"><div class="dot dot-political"></div><span class="name">Via Emma Maiden</span><span class="org-label">NSW MPs (Uniting connections)</span></div>
+        <div class="person"><div class="dot dot-political"></div><span class="name">Via Emily Williams</span><span class="org-label">"Knows a few pollies"</span></div>
+      </div>
+    </div>
+    <div class="engage-box">
+      <h4>Ways to engage at this stop</h4>
+      <ul>
+        <li>Walk through the container's Room 3 — Mounty Yarns youth-led storytelling experience</li>
+        <li>Explore the NSW data on the interactive screens (funding map, evidence scatter, sector report)</li>
+        <li>Meet the organisations doing the work — and the young people whose lives they've changed</li>
+        <li>Connect with Uniting and Western Sydney University on partnership opportunities</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ BRISBANE ═══ -->
+  <div class="stop-card">
+    <div class="stop-header">
+      <div class="date-line"><span class="date">May 15, 2026</span><span class="pill pill-planning">Planning</span></div>
+      <h2>Brisbane, QLD</h2>
+      <div class="partner">Hosted by YAC (Youth Advocacy Centre)</div>
+    </div>
+    <div class="data-highlight">
+      <div class="stat-row">
+        <div class="mini-stat"><div class="mini-num red">$765M+</div><div class="mini-label">Announced since Feb</div></div>
+        <div class="mini-stat"><div class="mini-num red">$0</div><div class="mini-label">To ACCOs</div></div>
+        <div class="mini-stat"><div class="mini-num green">14</div><div class="mini-label">YAC programs</div></div>
+        <div class="mini-stat"><div class="mini-num">45</div><div class="mini-label">Offences expanded</div></div>
+      </div>
+      <div class="narrative">QLD has announced <strong>$765M+ in youth justice spending</strong> since February 2026 — including $560M for "early intervention" and $40M for a Youth Justice School. Zero dollars directed to Aboriginal community-controlled organisations. Meanwhile, "Adult Crime Adult Time" has expanded to 45 offences.</div>
+      <span class="source">CivicScope QLD Ministerial Statements | JusticeHub Funding Tracker</span>
+    </div>
+    <div class="civic-intel">
+      <h4>CivicScope — Live political intelligence</h4>
+      <div class="intel-item"><span class="intel-date">Mar 11</span> — Laura Gerber: "Kickstarting early intervention — Toowoomba" <span class="intel-amount">$560M</span></div>
+      <div class="intel-item"><span class="intel-date">Feb 28</span> — David Crisafulli: "Adult Crime, Adult Time expands to 45 offences"</div>
+      <div class="intel-item"><span class="intel-date">Feb 26</span> — Laura Gerber: "Kickstarting early intervention" <span class="intel-amount">$115M</span></div>
+      <div class="intel-item"><span class="intel-date">Feb 12</span> — Laura Gerber: "Stronger youth bail monitoring laws"</div>
+      <div class="intel-item"><span class="intel-date">Feb 4</span> — David Crisafulli: "Youth Justice School in Logan" <span class="intel-amount">$40M</span></div>
+      <div class="intel-item"><span class="intel-date">Feb 4</span> — Tim Nicholls: "Townsville Youth Step Up Step Down" <span class="intel-amount">$50M</span></div>
+    </div>
+    <div class="card-section">
+      <h3>People involved</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-org"></div><span class="name">Shannon Cant</span><span class="org-label">YAC — hosting</span></div>
+        <div class="person"><div class="dot dot-org"></div><span class="name">Katherine Hayes</span><span class="org-label">YAC — original requester</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Tim Bennett</span><span class="org-label">QLD connector (via Bernie)</span></div>
+        <div class="person"><div class="dot dot-academic"></div><span class="name">Prof Selena Bartlett</span><span class="org-label">Thriving Minds podcast</span></div>
+        <div class="person"><div class="dot dot-govt"></div><span class="name">Megan Argent</span><span class="org-label">QLD Dept of Youth Justice</span></div>
+        <div class="person"><div class="dot dot-political"></div><span class="name">Jonty Bush</span><span class="org-label">QLD Government MP</span></div>
+        <div class="person"><div class="dot dot-org"></div><span class="name">MMAD</span><span class="org-label">Futures Radio (inside detention)</span></div>
+        <div class="person"><div class="dot dot-org"></div><span class="name">Toby Gowland</span><span class="org-label">Kalianah Outdoors</span></div>
+        <div class="person"><div class="dot dot-org"></div><span class="name">Rhian Miller</span><span class="org-label">EPIC Pathways</span></div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Local organisations to engage</h3>
+      <div class="org-list">
+        <div class="org-chip">YAC <span class="programs">14 programs</span></div>
+        <div class="org-chip">Goodna Street Life <span class="programs">10 programs</span></div>
+        <div class="org-chip indigenous">ATSICHS Brisbane <span class="programs">1 program</span></div>
+        <div class="org-chip indigenous">Kummara Ltd <span class="programs">1 program</span></div>
+        <div class="org-chip">BG Fit</div>
+        <div class="org-chip">MMAD / Futures Radio</div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Politicians to invite</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-political"></div><span class="name">David Crisafulli</span><span class="org-label">Premier QLD</span></div>
+        <div class="person"><div class="dot dot-political"></div><span class="name">Laura Gerber</span><span class="org-label">Minister for Youth Justice</span></div>
+        <div class="person"><div class="dot dot-political"></div><span class="name">Deb Frecklington</span><span class="org-label">AG & Justice Minister</span></div>
+        <div class="person"><div class="dot dot-political"></div><span class="name">Nikki Boyd</span><span class="org-label">ALP MP Pine Rivers</span></div>
+        <div class="person"><div class="dot dot-political"></div><span class="name">Sandy Bolton</span><span class="org-label">Independent MP Noosa</span></div>
+        <div class="person"><div class="dot dot-political"></div><span class="name">Amanda Camm</span><span class="org-label">Child Safety Minister</span></div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Media</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-media"></div><span class="name">Prof Selena Bartlett</span><span class="org-label">Thriving Minds — podcast interview</span></div>
+        <div class="person"><div class="dot dot-media"></div><span class="name">MMAD Futures Radio</span><span class="org-label">Live from inside the container</span></div>
+      </div>
+    </div>
+    <div class="engage-box">
+      <h4>Ways to engage at this stop</h4>
+      <ul>
+        <li>See the CivicScope data — what QLD politicians have announced vs what's actually reaching communities</li>
+        <li>Meet the organisations running programs with zero government support</li>
+        <li>Hear from Futures Radio — a station that broadcasts 24/7 from inside youth detention</li>
+        <li>Explore the national funding map and see where QLD's investment gaps are sharpest</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ ADELAIDE ═══ -->
+  <div class="stop-card">
+    <div class="stop-header">
+      <div class="date-line"><span class="date">Jun 15 + Jul 23-25, 2026</span><span class="pill pill-planning">Planning</span></div>
+      <h2>Adelaide, SA</h2>
+      <div class="partner">Reintegration Conference + JRI | ALP National Conference</div>
+    </div>
+    <div class="data-highlight">
+      <div class="narrative">Two activations: a <strong>community stop</strong> at the Reintegration Conference in June, and a <strong>political activation</strong> at the ALP National Conference in July — the container outside the convention centre as every federal Labor delegate walks past. South Australia has 6 Indigenous-led programs and some of the strongest kinship care organisations in the country.</div>
+      <span class="source">ALP National Conference: Adelaide Convention Centre, Jul 23-25</span>
+    </div>
+    <div class="card-section">
+      <h3>People involved</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-org"></div><span class="name">Hannah March</span><span class="org-label">JRI — ALP Conference idea</span></div>
+        <div class="person"><div class="dot dot-govt"></div><span class="name">Sophie Bretag</span><span class="org-label">City of Onkaparinga</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Tracey Newman</span><span class="org-label">Making calls to get container there</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Arianna Petra Watson</span><span class="org-label">SouthStart (tech community)</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Zoe Brooks</span><span class="org-label">Good Bank Gallery — venue offer</span></div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Local organisations to engage</h3>
+      <div class="org-list">
+        <div class="org-chip indigenous">Tiraapendi Wodli <span class="programs">6 programs</span></div>
+        <div class="org-chip indigenous">Grandparents for Grandchildren SA <span class="programs">5 programs</span></div>
+        <div class="org-chip indigenous">Aboriginal Legal Rights Movement <span class="programs">4 programs</span></div>
+        <div class="org-chip indigenous">Nunkuwarrin Yunti <span class="programs">2 programs</span></div>
+        <div class="org-chip">JRI Network Australia <span class="programs">1 program</span></div>
+        <div class="org-chip">Junction Australia <span class="programs">1 program</span></div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Politicians to invite (ALP Conference)</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-political"></div><span class="name">Federal Labor MPs</span><span class="org-label">ALP Conference delegates</span></div>
+        <div class="person"><div class="dot dot-political"></div><span class="name">Nikki Boyd</span><span class="org-label">ALP MP Pine Rivers (YJ voice)</span></div>
+        <div class="person"><div class="dot dot-political"></div><span class="name">Emily Williams' contacts</span><span class="org-label">"Knows a few pollies"</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TOWNSVILLE ═══ -->
+  <div class="stop-card">
+    <div class="stop-header">
+      <div class="date-line"><span class="date">Jul 1, 2026</span><span class="pill pill-planning">Planning</span></div>
+      <h2>Townsville / Palm Island, QLD</h2>
+      <div class="partner">PICC (Palm Island Community Company)</div>
+    </div>
+    <div class="data-highlight">
+      <div class="stat-row">
+        <div class="mini-stat"><div class="mini-num green">21</div><div class="mini-label">PICC programs</div></div>
+        <div class="mini-stat"><div class="mini-num">200</div><div class="mini-label">Staff</div></div>
+        <div class="mini-stat"><div class="mini-num red">0</div><div class="mini-label">Philanthropic partners</div></div>
+      </div>
+      <div class="narrative">PICC is the <strong>largest community-controlled youth justice response in Northern Queensland</strong> — 21 programs, 200 staff. Despite this scale, they receive zero philanthropic funding. The organisations who could support them don't know they exist. This stop changes that.</div>
+      <span class="source">JusticeHub ALMA Database | Organisation Profiles</span>
+    </div>
+    <div class="card-section">
+      <h3>People involved</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-community"></div><span class="name">Robert Tickner</span><span class="org-label">JRI Chair / Former Minister for Aboriginal Affairs</span></div>
+        <div class="person"><div class="dot dot-org"></div><span class="name">Rachel Atkinson</span><span class="org-label">PICC CEO</span></div>
+        <div class="person"><div class="dot dot-funder"></div><span class="name">Jonas Kubitscheck</span><span class="org-label">Paul Ramsay Foundation</span></div>
+        <div class="person"><div class="dot dot-funder"></div><span class="name">Julia Payne</span><span class="org-label">Paul Ramsay Foundation</span></div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Local organisations to engage</h3>
+      <div class="org-list">
+        <div class="org-chip indigenous">PICC <span class="programs">21 programs</span></div>
+        <div class="org-chip indigenous">TAIHS Youth Support <span class="programs">1 program</span></div>
+        <div class="org-chip">The Lighthouse <span class="programs">1 program</span></div>
+        <div class="org-chip indigenous">Palm Island Community Justice Group</div>
+      </div>
+    </div>
+    <div class="engage-box">
+      <h4>Ways to engage at this stop</h4>
+      <ul>
+        <li>See how 21 community programs operate with zero philanthropic support</li>
+        <li>Explore the funding map — see Townsville's position in the national landscape</li>
+        <li>Connect with PICC staff on what partnership could look like</li>
+        <li>Hear stories from Palm Island community members</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ PERTH ═══ -->
+  <div class="stop-card">
+    <div class="stop-header">
+      <div class="date-line"><span class="date">Aug 1, 2026</span><span class="pill pill-planning">Planning</span></div>
+      <h2>Perth, WA</h2>
+      <div class="partner">UWA + JRI Perth</div>
+    </div>
+    <div class="data-highlight">
+      <div class="narrative">Western Australia housed children in <strong>Unit 18 — an adult maximum-security prison</strong>. The Banksia Hill crisis saw kids moved into conditions designed for the state's most dangerous adult offenders. The human cost of this is not captured in any government dataset. WA has 9 mapped youth justice programs — including 2 at the PRF-funded Olabud Doogethu JR site in Halls Creek.</div>
+      <span class="source">Inspector of Custodial Services WA | JusticeHub ALMA Database</span>
+    </div>
+    <div class="card-section">
+      <h3>People involved</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-academic"></div><span class="name">Hayley Passmore</span><span class="org-label">Academic — Aboriginal-led consortium</span></div>
+        <div class="person"><div class="dot dot-academic"></div><span class="name">Michelle Wieberneit</span><span class="org-label">UWA</span></div>
+        <div class="person"><div class="dot dot-org"></div><span class="name">Kimberley Wilde</span><span class="org-label">JRI Perth</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Kylie Kerin</span><span class="org-label">Social & Community Impact</span></div>
+        <div class="person"><div class="dot dot-funder"></div><span class="name">Lucy Stronach</span><span class="org-label">Minderoo Foundation</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Mark McPartland</span><span class="org-label">"Where in Perth? Forest Chase?"</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Samgiita Hope</span><span class="org-label">Heart2Heart</span></div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Local organisations to engage</h3>
+      <div class="org-list">
+        <div class="org-chip">Youth Futures WA <span class="programs">4 programs</span></div>
+        <div class="org-chip indigenous">Wunan Foundation <span class="programs">3 programs</span></div>
+        <div class="org-chip indigenous">Olabud Doogethu AC <span class="programs">2 programs</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TENNANT CREEK ═══ -->
+  <div class="stop-card">
+    <div class="stop-header">
+      <div class="date-line"><span class="date">Sep 15, 2026</span><span class="pill pill-confirmed">Confirmed</span></div>
+      <h2>Tennant Creek / Alice Springs, NT</h2>
+      <div class="partner">Oonchiumpa</div>
+    </div>
+    <div class="data-highlight">
+      <div class="stat-row">
+        <div class="mini-stat"><div class="mini-num green">95%</div><div class="mini-label">Diversion rate</div></div>
+        <div class="mini-stat"><div class="mini-num green">6</div><div class="mini-label">Programs</div></div>
+      </div>
+      <div class="narrative">Oonchiumpa achieves a <strong>95% diversion rate</strong> — through programs designed and led by Central Arrernte community, including Operation Luna (nighttime youth outreach). The NT has 27 mapped programs across some of Australia's most remote communities. This is the most remote stop on the tour and arguably the most important.</div>
+      <span class="source">Oonchiumpa program data | JusticeHub ALMA Database</span>
+    </div>
+    <div class="card-section">
+      <h3>People involved</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-community"></div><span class="name">Kristy Bloomfield</span><span class="org-label">Oonchiumpa Co-Founder (Central Arrernte)</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Tanya Turner</span><span class="org-label">Oonchiumpa Co-Founder</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Patricia Ann Miller AO</span><span class="org-label">Community Elder</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Max Bloomfield</span><span class="org-label">Oonchiumpa</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Aunty Bev & Uncle Terry</span><span class="org-label">Community Elders</span></div>
+        <div class="person"><div class="dot dot-academic"></div><span class="name">Prof Helen Milroy</span><span class="org-label">First Indigenous medical graduate</span></div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Local organisations to engage</h3>
+      <div class="org-list">
+        <div class="org-chip indigenous">Oonchiumpa <span class="programs">6 programs</span></div>
+        <div class="org-chip indigenous">Anindilyakwa Land Council <span class="programs">8 programs</span></div>
+        <div class="org-chip">CatholicCare NT <span class="programs">7 programs</span></div>
+        <div class="org-chip indigenous">Kalano Community Association <span class="programs">6 programs</span></div>
+        <div class="org-chip indigenous">Children's Ground <span class="programs">2 programs</span></div>
+        <div class="org-chip indigenous">NAAJA <span class="programs">1 program</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ DEMAND SIGNALS ═══ -->
+  <div class="demand-section">
+    <h2>Communities asking for the container</h2>
+    <p class="desc">These communities have reached out. Help us get there.</p>
+  </div>
+
+  <!-- MELBOURNE -->
+  <div class="stop-card">
+    <div class="stop-header">
+      <div class="date-line"><span class="date">Date TBD</span><span class="pill pill-demand">9 people asking</span></div>
+      <h2>Melbourne, VIC</h2>
+      <div class="partner">Strongest demand signal in Australia</div>
+    </div>
+    <div class="data-highlight">
+      <div class="stat-row">
+        <div class="mini-stat"><div class="mini-num red">$7,304</div><div class="mini-label">Cherry Creek /day</div></div>
+        <div class="mini-stat"><div class="mini-num">140</div><div class="mini-label">New beds</div></div>
+        <div class="mini-stat"><div class="mini-num green">40</div><div class="mini-label">VIC interventions</div></div>
+        <div class="mini-stat"><div class="mini-num">99</div><div class="mini-label">Indigenous orgs</div></div>
+      </div>
+      <div class="narrative">Victoria just opened <strong>Cherry Creek Youth Justice Centre</strong> — 140 beds at the highest per-day cost of any youth detention facility in Australia. Melbourne has 99 Indigenous organisations and 40 mapped youth justice programs — yet the connection between those services and the people who could support them barely exists.</div>
+      <span class="source">Victorian Budget Papers | JusticeHub ALMA Database</span>
+    </div>
+    <div class="card-section">
+      <h3>People who've reached out</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-community"></div><span class="name">Peter Norden AO</span><span class="org-label">Youth Justice Advocate</span></div>
+        <div class="person"><div class="dot dot-academic"></div><span class="name">Dr Katrina Raynor</span><span class="org-label">Design Week venue offer</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Moira Were AM</span><span class="org-label">Barrister</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Ashlee Cooper</span><span class="org-label">Community services</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Alice Mahar</span><span class="org-label">Corner Store Network</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Anita Pahor</span><span class="org-label">Larita Academy</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Jess Lilley</span><span class="org-label">The Open Arms — Writers Fest venue</span></div>
+        <div class="person"><div class="dot dot-media"></div><span class="name">Sonia Randhawa</span><span class="org-label">3CR Radio — interview offer</span></div>
+        <div class="person"><div class="dot dot-org"></div><span class="name">Davina Jones</span><span class="org-label">Interlace Advisory</span></div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Local organisations to engage</h3>
+      <div class="org-list">
+        <div class="org-chip">Human Rights Law Centre <span class="programs">8 programs</span></div>
+        <div class="org-chip indigenous">Djirra <span class="programs">6 programs</span></div>
+        <div class="org-chip">Jesuit Social Services <span class="programs">4 programs</span></div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Media opportunities</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-media"></div><span class="name">Sonia Randhawa</span><span class="org-label">3CR Radio — Wednesday Breakfast interview</span></div>
+        <div class="person"><div class="dot dot-media"></div><span class="name">Melbourne Design Week</span><span class="org-label">Dr Raynor — venue + event platform</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANBERRA -->
+  <div class="stop-card">
+    <div class="stop-header">
+      <div class="date-line"><span class="date">Date TBD</span><span class="pill pill-demand">3 people asking</span></div>
+      <h2>Canberra, ACT</h2>
+      <div class="partner">Federal Parliament angle</div>
+    </div>
+    <div class="data-highlight">
+      <div class="narrative">The ACT Government has committed to a new model of care for youth detention. A Canberra stop during a <strong>sitting week puts the container in front of federal parliament</strong> — where national youth justice policy is made. ACT has a small but active set of Indigenous-led organisations including Gugan Gulwan Youth Aboriginal Corporation.</div>
+      <span class="source">ACT Government policy statements</span>
+    </div>
+    <div class="card-section">
+      <h3>People who've reached out</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-govt"></div><span class="name">Rebecca Minty</span><span class="org-label">ACT Government — "new model of care"</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">PJ Hewitt</span><span class="org-label">Hosting offer in Canberra</span></div>
+        <div class="person"><div class="dot dot-academic"></div><span class="name">Anissa Jones</span><span class="org-label">"Will you go to Canberra? Federal level too."</span></div>
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Local organisations to engage</h3>
+      <div class="org-list">
+        <div class="org-chip indigenous">Gugan Gulwan Youth Aboriginal Corporation <span class="programs">1 program</span></div>
+        <div class="org-chip indigenous">Indigenous Marathon Foundation <span class="programs">5 programs</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OTHER DEMAND -->
+  <div class="stop-card">
+    <div class="stop-header">
+      <div class="date-line"><span class="date">Emerging</span><span class="pill pill-demand">7 more communities</span></div>
+      <h2>Tasmania, Armidale, Rockhampton, Cairns, Doomadgee, Cape York</h2>
+      <div class="partner">Regional and remote communities reaching out</div>
+    </div>
+    <div class="data-highlight">
+      <div class="narrative">From a <strong>Kalkadoon woman in Rockhampton</strong> asking to "showcase on Darumbal Country," to a <strong>coalition in Tasmania</strong> ready to walk politicians through the container, to a request from <strong>Doomadgee</strong> for the container to stay long-term. Tasmania's Ashley Youth Detention Centre closure is a live political issue. Armidale is BackTrack's home. Cairns connects to the Far North QLD corridor.</div>
+    </div>
+    <div class="card-section">
+      <h3>People who've reached out</h3>
+      <div class="person-grid">
+        <div class="person"><div class="dot dot-org"></div><span class="name">Loic Fery</span><span class="org-label">Tasmania — Prevention Not Detention coalition</span></div>
+        <div class="person"><div class="dot dot-govt"></div><span class="name">Lewina Schrale</span><span class="org-label">Tasmania — DECYP (Government)</span></div>
+        <div class="person"><div class="dot dot-political"></div><span class="name">Ruth Forrest MLC</span><span class="org-label">Tasmania — justice reform advocate</span></div>
+        <div class="person"><div class="dot dot-org"></div><span class="name">Penny Lamaro</span><span class="org-label">Armidale — Ascent Group</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Delilah MacGillivray</span><span class="org-label">Rockhampton — Kalkadoon woman</span></div>
+        <div class="person"><div class="dot dot-org"></div><span class="name">Irene Portelli</span><span class="org-label">Cairns — We Made It / Lady Tradies</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Shannon Lemanski</span><span class="org-label">Doomadgee — long-term loan request</span></div>
+        <div class="person"><div class="dot dot-community"></div><span class="name">Baressa Frazer</span><span class="org-label">Cape York Peninsula</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ NATIONAL SUPPORTERS ═══ -->
+  <div class="supporters-section">
+    <h2>National supporters and connectors</h2>
+    <p class="desc">People across Australia who are championing, connecting, amplifying, or building the CONTAINED movement.</p>
+    <div class="person-grid">
+      <div class="person"><div class="dot dot-media"></div><span class="name">Peter Rowe</span><span class="org-label">First Nations News — op-ed invitation</span></div>
+      <div class="person"><div class="dot dot-funder"></div><span class="name">Ariane Dozer</span><span class="org-label">Justice Project — partnership</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Jay</span><span class="org-label">Social Impact Hub</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Genelee Mazarello</span><span class="org-label">Third Sector / National Justice Forum</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Tom Donaghy</span><span class="org-label">Tagged 19 people incl Ash Barty, Mark Bouris</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Hazel Westbury</span><span class="org-label">Connector — Scotland model</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Joe Kwon</span><span class="org-label">Early supporter</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Anne Gripper</span><span class="org-label">Gathering yarn Mar 24</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Dr Romina Reyftmann</span><span class="org-label">"How can I donate?"</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">John Katahanas</span><span class="org-label">"Sign up to donate time"</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Andrew Bloyce</span><span class="org-label">Tanda — free digital art</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Paul Kelly</span><span class="org-label">Former Chief Medical Officer</span></div>
+      <div class="person"><div class="dot dot-academic"></div><span class="name">Willow Aliento</span><span class="org-label">"Every university campus"</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Noreen Vu</span><span class="org-label">Local Government CEO</span></div>
+      <div class="person"><div class="dot dot-funder"></div><span class="name">Adam Robinson</span><span class="org-label">StreetSmart Australia</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Ric Cairns</span><span class="org-label">Brandino — pro-bono brand support</span></div>
+      <div class="person"><div class="dot dot-media"></div><span class="name">Tom Allen</span><span class="org-label">Impact Boom — podcast</span></div>
+      <div class="person"><div class="dot dot-academic"></div><span class="name">Rohan Lulham</span><span class="org-label">University of Sydney — research partnership</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Ludmila Andrade</span><span class="org-label">YOPE Amsterdam — international partner</span></div>
+      <div class="person"><div class="dot dot-community"></div><span class="name">Kyrstie Dunn</span><span class="org-label">Sydney leads</span></div>
+      <div class="person"><div class="dot dot-org"></div><span class="name">Alexandra Cordukes</span><span class="org-label">Orange Sky — ACT contacts</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ MEDIA ═══ -->
+  <div class="supporters-section" style="margin-top: 32px;">
+    <h2>Media opportunities</h2>
+    <p class="desc">Confirmed and potential media coverage across the tour.</p>
+    <div class="person-grid">
+      <div class="person"><div class="dot dot-media"></div><span class="name">Peter Rowe</span><span class="org-label">First Nations News — op-ed invitation</span></div>
+      <div class="person"><div class="dot dot-media"></div><span class="name">Sonia Randhawa</span><span class="org-label">3CR Radio Melbourne — interview offer</span></div>
+      <div class="person"><div class="dot dot-media"></div><span class="name">Prof Selena Bartlett</span><span class="org-label">Thriving Minds podcast — Brisbane</span></div>
+      <div class="person"><div class="dot dot-media"></div><span class="name">Tom Allen</span><span class="org-label">Impact Boom — feature / podcast</span></div>
+      <div class="person"><div class="dot dot-media"></div><span class="name">MMAD Futures Radio</span><span class="org-label">Live from inside the container — Brisbane</span></div>
+      <div class="person"><div class="dot dot-media"></div><span class="name">National Indigenous Times</span><span class="org-label">Senate inquiry coverage — March 2026</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ WHAT THE DATA SHOWS ═══ -->
+  <div class="supporters-section" style="margin-top: 32px; background: #0A0A0A; color: #F5F0E8; border-color: #222;">
+    <h2 style="color: #F5F0E8;">What you'll see inside the container</h2>
+    <p class="desc" style="color: #888;">Interactive data from JusticeHub and CivicScope — the intelligence tools powering each stop.</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 20px;">
+      <div style="background: #141414; border-radius: 10px; padding: 20px;">
+        <div style="font-weight: 600; margin-bottom: 6px;">The 550:1 Ratio</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: #888; line-height: 1.6;">The cheapest effective community program costs $1,708/year. Detention costs $939,000. Every verified program plotted on an interactive scatter chart.</div>
+      </div>
+      <div style="background: #141414; border-radius: 10px; padding: 20px;">
+        <div style="font-weight: 600; margin-bottom: 6px;">Funding Deserts</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: #888; line-height: 1.6;">360 Local Government Areas classified by funding level. 96 are "funding deserts" — communities where detention spending dwarfs community investment.</div>
+      </div>
+      <div style="background: #141414; border-radius: 10px; padding: 20px;">
+        <div style="font-weight: 600; margin-bottom: 6px;">Who Funds Whom</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: #888; line-height: 1.6;">$114.9 billion in youth justice funding tracked across 35 sources. See exactly where the money goes — and where it doesn't.</div>
+      </div>
+      <div style="background: #141414; border-radius: 10px; padding: 20px;">
+        <div style="font-weight: 600; margin-bottom: 6px;">Political Accountability</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: #888; line-height: 1.6;">CivicScope tracks what politicians say about youth justice — ministerial statements, Hansard, consultancy spending. Announcements vs reality.</div>
+      </div>
+      <div style="background: #141414; border-radius: 10px; padding: 20px;">
+        <div style="font-weight: 600; margin-bottom: 6px;">Network Explorer</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: #888; line-height: 1.6;">587,000 entities and 1.5 million relationships. Search any organisation and see its funding connections, board members, and political donations.</div>
+      </div>
+      <div style="background: #141414; border-radius: 10px; padding: 20px;">
+        <div style="font-weight: 600; margin-bottom: 6px;">Real Stories</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: #888; line-height: 1.6;">From the Empathy Ledger — real stories from real people connected to the data points. The numbers have names.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <h2>Want the container in your community?</h2>
+    <p>We go where the need is — and where people are ready to build something. If that's your community, we want to hear from you.</p>
+    <div class="cta-buttons">
+      <a class="primary" href="/contained/register-interest">Register Interest</a>
+      <a class="secondary" href="/contained/act">Get Involved</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  JusticeHub — CONTAINED National Tour 2026<br>
+  Data from 1,081 verified programs across 360 LGAs | Powered by JusticeHub + CivicScope
+</div>
+
+</body>
+</html>
