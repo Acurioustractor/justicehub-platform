@@ -1,715 +1,544 @@
-'use client';
-
-import { useState, useEffect, useMemo } from 'react';
+import { Metadata } from 'next';
 import Link from 'next/link';
+import { createServiceClient } from '@/lib/supabase/service';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import {
-  FileText, Filter, Search, ExternalLink, Calendar, Building2, ChevronDown,
-  TrendingDown, DollarSign, Shield, ArrowUpDown, Sparkles, Users, Home,
-  Scale, BookOpen, Microscope
-} from 'lucide-react';
+import EvidenceScatterChart from '@/components/intelligence/EvidenceScatterChart';
+import type { ScatterProgram } from '@/components/intelligence/EvidenceScatterChart';
 
-interface Evidence {
-  id: string;
-  title: string;
-  evidence_type: string;
-  methodology: string | null;
-  findings: string | null;
-  author: string | null;
-  organization: string | null;
-  publication_date: string | null;
-  source_url: string | null;
-  consent_level: string | null;
-}
+export const dynamic = 'force-dynamic';
 
-interface Provenance {
-  mode: 'authoritative' | 'computed';
-  summary: string;
-  generated_at: string;
-}
-
-// Evidence strength ranking (higher = stronger)
-const EVIDENCE_STRENGTH: Record<string, { rank: number; label: string; color: string; description: string }> = {
-  'RCT': { rank: 6, label: 'RCT', color: 'bg-green-600', description: 'Gold standard - randomized controlled trial' },
-  'RCT (Randomized Control Trial)': { rank: 6, label: 'RCT', color: 'bg-green-600', description: 'Gold standard - randomized controlled trial' },
-  'Quasi-experimental': { rank: 5, label: 'Quasi', color: 'bg-emerald-500', description: 'Strong comparison groups' },
-  'Program evaluation': { rank: 4, label: 'Eval', color: 'bg-teal-500', description: 'Systematic program assessment' },
-  'Community-led research': { rank: 4, label: 'Community', color: 'bg-purple-500', description: 'First Nations community-controlled' },
-  'Policy analysis': { rank: 3, label: 'Policy', color: 'bg-blue-500', description: 'Policy review and analysis' },
-  'Case study': { rank: 2, label: 'Case', color: 'bg-amber-500', description: 'In-depth single case analysis' },
-};
-
-// Topic classification based on keywords in title/findings
-const TOPICS: Record<string, { keywords: string[]; icon: typeof FileText; color: string }> = {
-  'Diversion': {
-    keywords: ['diversion', 'divert', 'conferencing', 'caution', 'restorative', 'alternative'],
-    icon: TrendingDown,
-    color: 'bg-green-100 text-green-800 border-green-300'
-  },
-  'Detention': {
-    keywords: ['detention', 'custody', 'incarcerat', 'prison', 'remand', 'facility', 'centre'],
-    icon: Home,
-    color: 'bg-red-100 text-red-800 border-red-300'
-  },
-  'Cultural Programs': {
-    keywords: ['aboriginal', 'indigenous', 'first nations', 'cultural', 'koori', 'murri', 'on country', 'elder'],
-    icon: Users,
-    color: 'bg-purple-100 text-purple-800 border-purple-300'
-  },
-  'Early Intervention': {
-    keywords: ['early intervention', 'prevention', 'family', 'school', 'child protection'],
-    icon: Shield,
-    color: 'bg-blue-100 text-blue-800 border-blue-300'
-  },
-  'Cost-Benefit': {
-    keywords: ['cost', 'economic', 'saving', 'investment', 'reinvest', 'return', 'dollar'],
-    icon: DollarSign,
-    color: 'bg-yellow-100 text-yellow-800 border-yellow-300'
-  },
-  'Reoffending': {
-    keywords: ['reoffend', 'recidiv', 'reconvict', 'return to custody'],
-    icon: TrendingDown,
-    color: 'bg-orange-100 text-orange-800 border-orange-300'
-  },
-  'Therapeutic': {
-    keywords: ['therap', 'trauma', 'mental health', 'mst', 'fft', 'cognitive'],
-    icon: Sparkles,
-    color: 'bg-pink-100 text-pink-800 border-pink-300'
-  },
-  'Legal/Rights': {
-    keywords: ['rights', 'legal', 'law', 'bail', 'sentence', 'age of criminal', 'minimum age'],
-    icon: Scale,
-    color: 'bg-indigo-100 text-indigo-800 border-indigo-300'
+export const metadata: Metadata = {
+  title: 'Evidence Scatter: The 550:1 Ratio | JusticeHub Intelligence',
+  description:
+    'Interactive visualization of every verified youth justice program — cost vs evidence, with detention cost as the reference line.',
+  openGraph: {
+    title: 'Evidence Scatter: The 550:1 Ratio',
+    description:
+      'Every verified youth justice program plotted by cost and evidence. The cheapest effective program costs $1,708/year vs $939,000 for detention.',
   },
 };
 
-// Sort options
-type SortOption = 'date' | 'strength' | 'recidivism' | 'costbenefit' | 'title';
+/* ── Constants ──────────────────────────────────────────────────── */
 
-const SORT_OPTIONS: { value: SortOption; label: string; description: string }[] = [
-  { value: 'date', label: 'Publication Date', description: 'Most recent first' },
-  { value: 'strength', label: 'Evidence Strength', description: 'RCT > Quasi > Case study' },
-  { value: 'recidivism', label: 'Recidivism Reduction', description: 'Highest impact first' },
-  { value: 'costbenefit', label: 'Cost-Benefit Ratio', description: 'Best return on investment' },
-  { value: 'title', label: 'Alphabetical', description: 'A-Z by title' },
+const DETENTION_COST = 939_000;
+
+const EVIDENCE_ORDER = [
+  'Proven (RCT/quasi-experimental, replicated)',
+  'Effective (strong evaluation, positive outcomes)',
+  'Promising (community-endorsed, emerging evidence)',
+  'Indigenous-led (culturally grounded, community authority)',
+  'Untested (theory/pilot stage)',
 ];
 
-// Extract recidivism reduction percentage from findings text
-function extractRecidivismReduction(text: string | null): number | null {
-  if (!text) return null;
+const EVIDENCE_SHORT: Record<string, string> = {
+  'Proven (RCT/quasi-experimental, replicated)': 'Proven',
+  'Effective (strong evaluation, positive outcomes)': 'Effective',
+  'Promising (community-endorsed, emerging evidence)': 'Promising',
+  'Indigenous-led (culturally grounded, community authority)': 'Indigenous-led',
+  'Untested (theory/pilot stage)': 'Untested',
+};
 
-  // Match patterns like "15-20% less likely", "reduced by 50%", "70% reduction", etc.
-  const patterns = [
-    /(\d+)(?:-(\d+))?%\s*(?:less likely|reduction|reduced|decrease|lower|fewer)/i,
-    /reduc(?:ed?|tion)\s*(?:by\s*)?(\d+)(?:-(\d+))?%/i,
-    /(\d+)(?:-(\d+))?%\s*(?:drop|decline|fall)/i,
-  ];
+const EVIDENCE_COLORS: Record<string, string> = {
+  'Proven (RCT/quasi-experimental, replicated)': 'bg-emerald-600',
+  'Effective (strong evaluation, positive outcomes)': 'bg-green-600',
+  'Promising (community-endorsed, emerging evidence)': 'bg-amber-500',
+  'Indigenous-led (culturally grounded, community authority)': 'bg-purple-600',
+  'Untested (theory/pilot stage)': 'bg-gray-400',
+};
 
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
-    if (match) {
-      const num1 = parseInt(match[1]);
-      const num2 = match[2] ? parseInt(match[2]) : null;
-      // Return average if range, otherwise single value
-      return num2 ? (num1 + num2) / 2 : num1;
+/* ── Helpers ────────────────────────────────────────────────────── */
+
+function formatDollars(n: number): string {
+  if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
+  return `$${n.toLocaleString()}`;
+}
+
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+/* ── Data Fetching ──────────────────────────────────────────────── */
+
+async function getEvidenceData() {
+  const supabase = createServiceClient();
+  const sb = supabase as any;
+
+  const [interventionsRes, orgsRes, fundingRes] = await Promise.all([
+    sb
+      .from('alma_interventions')
+      .select('id, name, type, evidence_level, cost_per_young_person, operating_organization_id')
+      .neq('verification_status', 'ai_generated'),
+    sb
+      .from('organizations')
+      .select('id, name, state, is_indigenous_org')
+      .eq('is_active', true),
+    sb
+      .from('justice_funding')
+      .select('alma_organization_id, amount_dollars'),
+  ]);
+
+  const interventions: any[] = interventionsRes.data || [];
+  const orgs: any[] = orgsRes.data || [];
+  const funding: any[] = fundingRes.data || [];
+
+  // Build lookups
+  const orgMap = new Map<string, any>();
+  for (const o of orgs) orgMap.set(o.id, o);
+
+  const fundingByOrg = new Map<string, number>();
+  for (const f of funding) {
+    if (f.alma_organization_id && f.amount_dollars) {
+      fundingByOrg.set(
+        f.alma_organization_id,
+        (fundingByOrg.get(f.alma_organization_id) || 0) + f.amount_dollars
+      );
     }
   }
-  return null;
-}
 
-// Extract cost-benefit ratio from findings text
-function extractCostBenefit(text: string | null): number | null {
-  if (!text) return null;
-
-  // Match patterns like "$4.40 return", "$8 return per dollar", "17:1 ratio", etc.
-  const patterns = [
-    /\$(\d+(?:\.\d+)?)\s*(?:return|saved?|benefit)/i,
-    /(\d+(?:\.\d+)?)\s*(?:times|x)\s*(?:return|benefit)/i,
-    /(\d+(?:\.\d+)?):1\s*(?:ratio|return)/i,
-    /(\d+(?:\.\d+)?)\s*(?:for every|per)\s*(?:\$?1|dollar)/i,
-    /return(?:ed)?\s*(?:of\s*)?\$(\d+(?:\.\d+)?)/i,
-  ];
-
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
-    if (match) {
-      return parseFloat(match[1]);
-    }
-  }
-  return null;
-}
-
-// Classify evidence into topics based on keywords
-function classifyTopics(title: string | null, findings: string | null): string[] {
-  const text = `${title || ''} ${findings || ''}`.toLowerCase();
-  const matched: string[] = [];
-
-  for (const [topic, config] of Object.entries(TOPICS)) {
-    if (config.keywords.some(kw => text.includes(kw.toLowerCase()))) {
-      matched.push(topic);
-    }
-  }
-
-  return matched;
-}
-
-// Get evidence strength info
-function getStrengthInfo(evidenceType: string | null) {
-  if (!evidenceType) return { rank: 0, label: '?', color: 'bg-gray-400', description: 'Unknown' };
-  return EVIDENCE_STRENGTH[evidenceType] || { rank: 1, label: 'Other', color: 'bg-gray-400', description: 'Other study type' };
-}
-
-export default function EvidencePage() {
-  const [evidence, setEvidence] = useState<Evidence[]>([]);
-  const [provenance, setProvenance] = useState<Provenance | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedType, setSelectedType] = useState('');
-  const [selectedTopic, setSelectedTopic] = useState('');
-  const [selectedStrength, setSelectedStrength] = useState<number | ''>('');
-  const [sortBy, setSortBy] = useState<SortOption>('strength');
-  const [totalCount, setTotalCount] = useState(0);
-  const [availableTypes, setAvailableTypes] = useState<string[]>([]);
-
-  // Get actual evidence types from data
-  const actualTypes = useMemo(() => {
-    if (availableTypes.length > 0) {
-      return availableTypes;
-    }
-    const types = new Set(evidence.map(e => e.evidence_type).filter(Boolean));
-    return Array.from(types).sort();
-  }, [availableTypes, evidence]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchEvidence() {
-      try {
-        setLoading(true);
-        const params = new URLSearchParams({ limit: '200' });
-        if (searchQuery.trim()) {
-          params.set('search', searchQuery.trim());
-        }
-        if (selectedType) {
-          params.set('type', selectedType);
-        }
-
-        const response = await fetch(`/api/intelligence/evidence?${params.toString()}`, {
-          cache: 'no-store',
-        });
-        const payload = await response.json();
-
-        if (!response.ok || !payload?.success) {
-          throw new Error(payload?.error || 'Failed to fetch evidence');
-        }
-
-        if (cancelled) {
-          return;
-        }
-
-        setEvidence(payload.evidence || []);
-        setTotalCount(payload.totalCount || 0);
-        setAvailableTypes(payload.filters?.types || []);
-        setProvenance(payload.provenance || null);
-      } catch (error) {
-        console.error('Error fetching evidence:', error);
-        if (!cancelled) {
-          setEvidence([]);
-          setTotalCount(0);
-          setAvailableTypes([]);
-          setProvenance(null);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    }
-
-    fetchEvidence();
-    return () => {
-      cancelled = true;
+  // Build programs
+  const programs: ScatterProgram[] = interventions.map((i: any) => {
+    const org = i.operating_organization_id ? orgMap.get(i.operating_organization_id) : null;
+    return {
+      id: i.id,
+      name: i.name,
+      type: i.type,
+      evidence_level: i.evidence_level,
+      cost_per_young_person: i.cost_per_young_person,
+      org_name: org?.name || null,
+      org_id: i.operating_organization_id,
+      state: org?.state || null,
+      is_indigenous_org: org?.is_indigenous_org || false,
+      funding_total: i.operating_organization_id
+        ? fundingByOrg.get(i.operating_organization_id) || 0
+        : 0,
     };
-  }, [searchQuery, selectedType]);
+  });
 
-  // Process and sort evidence client-side
-  const processedEvidence = useMemo(() => {
-    let filtered = evidence.map(item => ({
-      ...item,
-      strengthInfo: getStrengthInfo(item.evidence_type),
-      topics: classifyTopics(item.title, item.findings),
-      recidivismReduction: extractRecidivismReduction(item.findings),
-      costBenefit: extractCostBenefit(item.findings),
-    }));
+  // Stats
+  const costsOnly = programs
+    .filter((p) => p.cost_per_young_person && p.cost_per_young_person > 0)
+    .map((p) => p.cost_per_young_person as number);
+  const medianCost = Math.round(median(costsOnly));
 
-    // Filter by topic
-    if (selectedTopic) {
-      filtered = filtered.filter(item => item.topics.includes(selectedTopic));
+  // Evidence distribution
+  const evidenceDistribution: Record<string, number> = {};
+  for (const level of EVIDENCE_ORDER) evidenceDistribution[level] = 0;
+  for (const p of programs) {
+    if (p.evidence_level && evidenceDistribution[p.evidence_level] !== undefined) {
+      evidenceDistribution[p.evidence_level]++;
     }
+  }
 
-    // Filter by minimum strength
-    if (selectedStrength !== '') {
-      filtered = filtered.filter(item => item.strengthInfo.rank >= selectedStrength);
-    }
+  // Cheapest effective+
+  const effectivePlus = programs
+    .filter(
+      (p) =>
+        p.cost_per_young_person &&
+        p.cost_per_young_person > 0 &&
+        (p.evidence_level === 'Effective (strong evaluation, positive outcomes)' ||
+          p.evidence_level === 'Proven (RCT/quasi-experimental, replicated)')
+    )
+    .sort((a, b) => (a.cost_per_young_person || 0) - (b.cost_per_young_person || 0));
 
-    // Sort
-    switch (sortBy) {
-      case 'strength':
-        filtered.sort((a, b) => b.strengthInfo.rank - a.strengthInfo.rank);
-        break;
-      case 'recidivism':
-        filtered.sort((a, b) => (b.recidivismReduction ?? -1) - (a.recidivismReduction ?? -1));
-        break;
-      case 'costbenefit':
-        filtered.sort((a, b) => (b.costBenefit ?? -1) - (a.costBenefit ?? -1));
-        break;
-      case 'title':
-        filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
-        break;
-      case 'date':
-      default:
-        // Already sorted by date from query
-        break;
-    }
+  const cheapestEffective = effectivePlus.length > 0
+    ? { name: effectivePlus[0].name, cost: effectivePlus[0].cost_per_young_person as number }
+    : null;
 
-    return filtered;
-  }, [evidence, selectedTopic, selectedStrength, sortBy]);
+  // Unfunded effective+
+  const unfundedEffPlus = effectivePlus.filter((p) => p.funding_total < 100_000).length;
 
-  // Count evidence by strength level for legend
-  const strengthCounts = useMemo(() => {
-    const counts: Record<number, number> = {};
-    evidence.forEach(item => {
-      const strength = getStrengthInfo(item.evidence_type);
-      counts[strength.rank] = (counts[strength.rank] || 0) + 1;
-    });
-    return counts;
-  }, [evidence]);
+  // Best buys: top 10 cheapest programs rated effective+
+  const bestBuys = effectivePlus.slice(0, 10);
 
-  // Count evidence by topic
-  const topicCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    evidence.forEach(item => {
-      const topics = classifyTopics(item.title, item.findings);
-      topics.forEach(topic => {
-        counts[topic] = (counts[topic] || 0) + 1;
-      });
-    });
-    return counts;
-  }, [evidence]);
+  // Funding gap: effective+ but under $100K
+  const fundingGap = effectivePlus.filter((p) => p.funding_total < 100_000);
 
-  const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return null;
-    return new Date(dateStr).toLocaleDateString('en-AU', {
-      year: 'numeric',
-      month: 'short',
-    });
+  // Evidence breakdown: per-level stats
+  const evidenceBreakdown = EVIDENCE_ORDER.map((level) => {
+    const inLevel = programs.filter((p) => p.evidence_level === level);
+    const withCost = inLevel.filter((p) => p.cost_per_young_person && p.cost_per_young_person > 0);
+    const costs = withCost.map((p) => p.cost_per_young_person as number);
+    return {
+      level,
+      short: EVIDENCE_SHORT[level],
+      count: inLevel.length,
+      withCost: withCost.length,
+      avgCost: costs.length > 0 ? Math.round(costs.reduce((a, b) => a + b, 0) / costs.length) : 0,
+      medianCost: median(costs),
+    };
+  });
+
+  return {
+    programs,
+    stats: {
+      totalPrograms: programs.length,
+      programsWithCost: costsOnly.length,
+      medianCost,
+      cheapestEffective,
+      evidenceDistribution,
+      unfundedEffPlus,
+    },
+    bestBuys,
+    fundingGap,
+    evidenceBreakdown,
   };
+}
 
-  const clearFilters = () => {
-    setSearchQuery('');
-    setSelectedType('');
-    setSelectedTopic('');
-    setSelectedStrength('');
-    setSortBy('strength');
-  };
+/* ── Page ───────────────────────────────────────────────────────── */
 
-  const hasFilters = searchQuery || selectedType || selectedTopic || selectedStrength !== '';
+export default async function EvidenceScatterPage() {
+  const { programs, stats, bestBuys, fundingGap, evidenceBreakdown } = await getEvidenceData();
+
+  const ratio = stats.cheapestEffective
+    ? Math.round(DETENTION_COST / stats.cheapestEffective.cost)
+    : 0;
 
   return (
-    <div className="min-h-screen bg-white page-content">
+    <>
       <Navigation />
-
-      <main>
-        {/* Hero */}
-        <section className="bg-gradient-to-br from-eucalyptus-50 via-sand-50 to-ochre-50 py-12 border-b-2 border-black">
-          <div className="container-justice">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 bg-eucalyptus-100 border-2 border-black">
-                <Microscope className="w-8 h-8" />
-              </div>
-              <div>
-                <h1 className="text-5xl font-black">The Evidence Is Clear</h1>
-                <p className="text-earth-600">Research-backed solutions for youth justice reform</p>
-              </div>
-            </div>
-
-            <p className="text-lg text-earth-700 max-w-2xl mb-6">
-              Browse peer-reviewed research, program evaluations, and government inquiries
-              documenting what works - and what doesn't - in youth justice across Australia.
-            </p>
-
-            {provenance && (
-              <div className="mb-6 inline-flex items-center gap-2 border border-black bg-white px-3 py-1 text-xs">
-                <span className={`font-bold uppercase ${provenance.mode === 'authoritative' ? 'text-emerald-700' : 'text-amber-700'}`}>
-                  {provenance.mode}
-                </span>
-                <span className="text-gray-700">{provenance.summary}</span>
-              </div>
-            )}
-
-            {/* Stats row */}
-            <div className="flex flex-wrap items-center gap-6">
-              <div className="text-sm text-earth-600">
-                <span className="font-bold text-3xl text-eucalyptus-600">{totalCount}</span>
-                <span className="ml-2">studies documented</span>
-              </div>
-              <div className="h-8 w-px bg-earth-300" />
-              <div className="text-sm text-earth-600">
-                <span className="font-bold text-2xl text-green-600">{strengthCounts[6] || 0}</span>
-                <span className="ml-2">RCTs</span>
-              </div>
-              <div className="text-sm text-earth-600">
-                <span className="font-bold text-2xl text-emerald-600">{strengthCounts[5] || 0}</span>
-                <span className="ml-2">Quasi-experimental</span>
-              </div>
-              <div className="text-sm text-earth-600">
-                <span className="font-bold text-2xl text-purple-600">{strengthCounts[4] || 0}</span>
-                <span className="ml-2">Evaluations</span>
-              </div>
-            </div>
+      <main className="min-h-screen" style={{ background: '#F5F0E8' }}>
+        {/* Header */}
+        <section className="px-6 py-12 max-w-7xl mx-auto">
+          <div className="flex items-center gap-2 mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '13px', color: '#666' }}>
+            <Link href="/intelligence" className="hover:underline">Intelligence</Link>
+            <span>/</span>
+            <span>Evidence Scatter</span>
           </div>
-        </section>
 
-        {/* Evidence Strength Legend */}
-        <section className="py-4 bg-gray-50 border-b border-gray-200">
-          <div className="container-justice">
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <span className="font-semibold text-earth-600 mr-2">Evidence Strength:</span>
-              {Object.entries(EVIDENCE_STRENGTH)
-                .filter(([key]) => !key.includes('(')) // Avoid duplicates
-                .sort((a, b) => b[1].rank - a[1].rank)
-                .map(([type, info]) => (
-                  <button
-                    key={type}
-                    onClick={() => setSelectedStrength(selectedStrength === info.rank ? '' : info.rank)}
-                    className={`px-2 py-1 rounded-full flex items-center gap-1 transition-all ${
-                      selectedStrength === info.rank
-                        ? 'ring-2 ring-black ring-offset-1'
-                        : 'hover:ring-1 hover:ring-gray-400'
-                    }`}
-                    title={info.description}
-                  >
-                    <span className={`w-2 h-2 rounded-full ${info.color}`} />
-                    <span>{info.label}</span>
-                  </button>
-                ))}
-            </div>
-          </div>
-        </section>
+          <h1
+            className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
+            style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#0A0A0A' }}
+          >
+            The {ratio > 0 ? `${ratio}:1` : '550:1'} Ratio
+          </h1>
+          <p className="text-lg max-w-3xl" style={{ color: '#333', lineHeight: 1.6 }}>
+            Every verified youth justice program in Australia, plotted by cost and evidence strength.
+            The most expensive option — detention at <span style={{ color: '#DC2626', fontWeight: 700 }}>${(DETENTION_COST / 1000).toFixed(0)}K/year</span> — is
+            the red line. Most programs sit far below it.
+          </p>
 
-        {/* Filters */}
-        <section className="py-4 border-b-2 border-black bg-white sticky top-32 z-10">
-          <div className="container-justice">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Filter className="w-4 h-4 text-earth-600" />
-                <span className="text-sm font-medium text-earth-600">Filters:</span>
-              </div>
-
-              {/* Search */}
-              <div className="relative flex-1 max-w-xs">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-earth-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search evidence..."
-                  className="w-full pl-10 pr-4 py-2 border-2 border-black bg-white text-sm focus:outline-none focus:border-eucalyptus-500"
-                />
-              </div>
-
-              {/* Type Filter */}
-              <div className="relative">
-                <select
-                  value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="appearance-none border-2 border-black px-4 py-2 pr-10 bg-white font-medium text-sm cursor-pointer hover:bg-sand-50"
-                >
-                  <option value="">All Types</option>
-                  {actualTypes.map((type) => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
-              </div>
-
-              {/* Topic Filter */}
-              <div className="relative">
-                <select
-                  value={selectedTopic}
-                  onChange={(e) => setSelectedTopic(e.target.value)}
-                  className="appearance-none border-2 border-black px-4 py-2 pr-10 bg-white font-medium text-sm cursor-pointer hover:bg-sand-50"
-                >
-                  <option value="">All Topics</option>
-                  {Object.entries(TOPICS).map(([topic]) => (
-                    <option key={topic} value={topic}>
-                      {topic} ({topicCounts[topic] || 0})
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
-              </div>
-
-              {/* Sort */}
-              <div className="relative">
-                <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-earth-600" />
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="appearance-none border-2 border-black pl-10 pr-10 py-2 bg-white font-medium text-sm cursor-pointer hover:bg-sand-50"
-                >
-                  {SORT_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      Sort: {option.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
-              </div>
-
-              {hasFilters && (
-                <button
-                  onClick={clearFilters}
-                  className="text-sm text-ochre-600 hover:text-ochre-800 font-medium"
-                >
-                  Clear all
-                </button>
-              )}
-            </div>
-
-            {/* Active filter summary */}
-            {hasFilters && (
-              <div className="mt-3 text-sm text-earth-600">
-                Showing <span className="font-bold">{processedEvidence.length}</span> of {totalCount} studies
-                {selectedStrength !== '' && (
-                  <span className="ml-2 px-2 py-0.5 bg-eucalyptus-100 text-eucalyptus-800 text-xs font-medium">
-                    Strength {selectedStrength}+
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Results */}
-        <section className="py-8">
-          <div className="container-justice">
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-eucalyptus-600"></div>
-              </div>
-            ) : processedEvidence.length === 0 ? (
-              <div className="text-center py-12">
-                <FileText className="w-12 h-12 text-earth-300 mx-auto mb-4" />
-                <h3 className="text-xl font-bold mb-2">No evidence found</h3>
-                <p className="text-earth-600">
-                  {hasFilters
-                    ? 'Try adjusting your search or filters'
-                    : 'Evidence studies will appear here as they are added'}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {processedEvidence.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={`/intelligence/evidence/${item.id}`}
-                    className="block border-2 border-black p-6 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow bg-white"
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        {/* Badges row */}
-                        <div className="flex flex-wrap items-center gap-2 mb-3">
-                          {/* Strength indicator */}
-                          <span
-                            className={`inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider px-2 py-1 text-white ${item.strengthInfo.color}`}
-                            title={item.strengthInfo.description}
-                          >
-                            <span className="w-1.5 h-1.5 bg-white rounded-full opacity-80" />
-                            {item.evidence_type || 'Unknown'}
-                          </span>
-
-                          {/* Topic badges */}
-                          {item.topics.slice(0, 2).map(topic => {
-                            const TopicIcon = TOPICS[topic]?.icon || BookOpen;
-                            return (
-                              <span
-                                key={topic}
-                                className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-1 border ${TOPICS[topic]?.color || 'bg-gray-100 text-gray-800 border-gray-300'}`}
-                              >
-                                <TopicIcon className="w-3 h-3" />
-                                {topic}
-                              </span>
-                            );
-                          })}
-                        </div>
-
-                        <h3 className="text-xl font-bold mb-2 line-clamp-2">
-                          {item.title || 'Untitled Study'}
-                        </h3>
-
-                        {/* Meta info */}
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-earth-600 mb-3">
-                          {item.author && (
-                            <span>{item.author}</span>
-                          )}
-                          {item.organization && (
-                            <span className="flex items-center gap-1">
-                              <Building2 className="w-3 h-3" />
-                              {item.organization}
-                            </span>
-                          )}
-                          {item.publication_date && (
-                            <span className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />
-                              {formatDate(item.publication_date)}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Key metrics if found */}
-                        {(item.recidivismReduction || item.costBenefit) && (
-                          <div className="flex flex-wrap items-center gap-4 mb-3">
-                            {item.recidivismReduction && (
-                              <span className="inline-flex items-center gap-1 text-sm font-medium text-green-700 bg-green-50 px-2 py-1 border border-green-200">
-                                <TrendingDown className="w-3 h-3" />
-                                {item.recidivismReduction}% recidivism reduction
-                              </span>
-                            )}
-                            {item.costBenefit && (
-                              <span className="inline-flex items-center gap-1 text-sm font-medium text-yellow-700 bg-yellow-50 px-2 py-1 border border-yellow-200">
-                                <DollarSign className="w-3 h-3" />
-                                ${item.costBenefit} return per $1
-                              </span>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Findings preview */}
-                        {item.findings && item.findings !== 'See source document' && (
-                          <p className="text-earth-700 text-sm line-clamp-2">
-                            {item.findings}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex flex-col items-end gap-2">
-                        {item.consent_level && (
-                          <span className="text-xs font-medium px-2 py-1 bg-sand-100 text-earth-600">
-                            {item.consent_level}
-                          </span>
-                        )}
-                        {item.source_url && (
-                          <a
-                            href={item.source_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="p-2 border border-black hover:bg-sand-50"
-                            title="View source"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-
-            {/* Load more hint */}
-            {processedEvidence.length > 0 && processedEvidence.length < totalCount && !hasFilters && (
-              <div className="text-center mt-8 text-sm text-earth-600">
-                Showing {processedEvidence.length} of {totalCount} studies
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Key Insights Summary */}
-        {!loading && processedEvidence.length > 0 && (
-          <section className="py-8 border-t-2 border-black bg-eucalyptus-50">
-            <div className="container-justice">
-              <h2 className="text-2xl font-bold mb-6">What the Evidence Shows</h2>
-              <div className="grid md:grid-cols-3 gap-6">
-                <div className="bg-white border-2 border-black p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <TrendingDown className="w-5 h-5 text-green-600" />
-                    <h3 className="font-bold">Recidivism Reduction</h3>
-                  </div>
-                  <p className="text-sm text-earth-600 mb-2">
-                    Studies showing programs that reduce reoffending rates
-                  </p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {processedEvidence.filter(e => e.recidivismReduction).length} studies
-                  </p>
-                  <p className="text-xs text-earth-500">
-                    Average reduction: {Math.round(
-                      processedEvidence
-                        .filter(e => e.recidivismReduction)
-                        .reduce((sum, e) => sum + (e.recidivismReduction || 0), 0) /
-                      (processedEvidence.filter(e => e.recidivismReduction).length || 1)
-                    )}%
-                  </p>
-                </div>
-
-                <div className="bg-white border-2 border-black p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <DollarSign className="w-5 h-5 text-yellow-600" />
-                    <h3 className="font-bold">Cost-Benefit Evidence</h3>
-                  </div>
-                  <p className="text-sm text-earth-600 mb-2">
-                    Studies documenting economic returns on investment
-                  </p>
-                  <p className="text-2xl font-bold text-yellow-600">
-                    {processedEvidence.filter(e => e.costBenefit).length} studies
-                  </p>
-                  <p className="text-xs text-earth-500">
-                    Best ROI: ${Math.max(...processedEvidence.map(e => e.costBenefit || 0))} per $1
-                  </p>
-                </div>
-
-                <div className="bg-white border-2 border-black p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Users className="w-5 h-5 text-purple-600" />
-                    <h3 className="font-bold">Cultural Programs</h3>
-                  </div>
-                  <p className="text-sm text-earth-600 mb-2">
-                    First Nations community-led and cultural research
-                  </p>
-                  <p className="text-2xl font-bold text-purple-600">
-                    {topicCounts['Cultural Programs'] || 0} studies
-                  </p>
-                  <p className="text-xs text-earth-500">
-                    Community-controlled research: {evidence.filter(e => e.consent_level === 'Community Controlled').length}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* CTA */}
-        <section className="py-12 border-t-2 border-black bg-sand-50">
-          <div className="container-justice text-center">
-            <h2 className="text-2xl font-bold mb-4">Have research to contribute?</h2>
-            <p className="text-earth-600 mb-6 max-w-lg mx-auto">
-              If you have evidence or research on youth justice programs that should be
-              included in our database, we&apos;d love to hear from you.
-            </p>
+          {/* Links */}
+          <div className="flex gap-4 mt-4" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '13px' }}>
             <Link
-              href="/contact"
-              className="inline-block px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-colors"
+              href="/intelligence/evidence/library"
+              className="underline hover:no-underline"
+              style={{ color: '#059669' }}
             >
-              Submit Research
+              Evidence Library
+            </Link>
+            <Link
+              href="/intelligence/interventions"
+              className="underline hover:no-underline"
+              style={{ color: '#059669' }}
+            >
+              All Interventions
             </Link>
           </div>
         </section>
-      </main>
 
+        {/* Key Stats */}
+        <section className="px-6 pb-8 max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <StatCard
+              label="Programs with cost data"
+              value={stats.programsWithCost.toString()}
+              sublabel={`of ${stats.totalPrograms} total`}
+            />
+            <StatCard
+              label="Median cost"
+              value={formatDollars(stats.medianCost)}
+              sublabel={`vs ${formatDollars(DETENTION_COST)} detention`}
+              highlight
+            />
+            {stats.cheapestEffective && (
+              <StatCard
+                label="Cheapest Effective"
+                value={formatDollars(stats.cheapestEffective.cost)}
+                sublabel={`${ratio}:1 ratio vs detention`}
+                highlight
+              />
+            )}
+            <StatCard
+              label="Unfunded Effective+"
+              value={stats.unfundedEffPlus.toString()}
+              sublabel="rated Effective+ but <$100K funding"
+              alert
+            />
+            <StatCard
+              label="Evidence levels"
+              value={Object.entries(stats.evidenceDistribution)
+                .map(([k, v]) => `${EVIDENCE_SHORT[k] || k}: ${v}`)
+                .join(', ')}
+              sublabel=""
+              small
+            />
+          </div>
+        </section>
+
+        {/* Scatter Chart */}
+        <section className="px-6 pb-12 max-w-7xl mx-auto">
+          <div className="border rounded-lg p-6" style={{ background: '#fff', borderColor: '#ddd' }}>
+            <h2
+              className="text-2xl font-bold mb-6"
+              style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#0A0A0A' }}
+            >
+              Cost vs Evidence
+            </h2>
+            <EvidenceScatterChart programs={programs} />
+          </div>
+        </section>
+
+        {/* Evidence Breakdown Table */}
+        <section className="px-6 pb-12 max-w-7xl mx-auto">
+          <h2
+            className="text-2xl font-bold mb-6"
+            style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#0A0A0A' }}
+          >
+            Evidence Breakdown
+          </h2>
+          <div className="overflow-x-auto border rounded-lg" style={{ borderColor: '#ddd' }}>
+            <table className="w-full" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '13px' }}>
+              <thead>
+                <tr style={{ background: '#0A0A0A', color: '#F5F0E8' }}>
+                  <th className="text-left p-3">Evidence Level</th>
+                  <th className="text-right p-3">Programs</th>
+                  <th className="text-right p-3">With Cost Data</th>
+                  <th className="text-right p-3">Avg Cost/Year</th>
+                  <th className="text-right p-3">Median Cost/Year</th>
+                  <th className="text-right p-3">Savings vs Detention</th>
+                </tr>
+              </thead>
+              <tbody>
+                {evidenceBreakdown.map((row) => (
+                  <tr
+                    key={row.level}
+                    className="border-t"
+                    style={{ borderColor: '#eee', background: '#fff' }}
+                  >
+                    <td className="p-3">
+                      <span className={`inline-block w-2 h-2 rounded-full mr-2 ${EVIDENCE_COLORS[row.level]}`} />
+                      {row.short}
+                    </td>
+                    <td className="text-right p-3">{row.count}</td>
+                    <td className="text-right p-3">{row.withCost}</td>
+                    <td className="text-right p-3">{row.avgCost > 0 ? formatDollars(row.avgCost) : '-'}</td>
+                    <td className="text-right p-3">{row.medianCost > 0 ? formatDollars(Math.round(row.medianCost)) : '-'}</td>
+                    <td className="text-right p-3" style={{ color: row.medianCost > 0 ? '#059669' : '#999' }}>
+                      {row.medianCost > 0 ? formatDollars(DETENTION_COST - Math.round(row.medianCost)) : '-'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* Best Buys */}
+        <section className="px-6 pb-12 max-w-7xl mx-auto">
+          <h2
+            className="text-2xl font-bold mb-2"
+            style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#0A0A0A' }}
+          >
+            Best Buys: Top 10 Cost-Effective Programs
+          </h2>
+          <p className="text-sm mb-6" style={{ color: '#666', fontFamily: "'IBM Plex Mono', monospace" }}>
+            Lowest cost per young person among programs rated Effective or Proven
+          </p>
+          <div className="grid gap-3">
+            {bestBuys.map((p, i) => (
+              <div
+                key={p.id}
+                className="flex items-center gap-4 border rounded-lg p-4"
+                style={{ background: '#fff', borderColor: '#ddd' }}
+              >
+                <span
+                  className="text-xl font-bold w-8 text-center"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#059669' }}
+                >
+                  {i + 1}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-sm truncate" style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#0A0A0A' }}>
+                    {p.name}
+                  </p>
+                  <p className="text-xs" style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#666' }}>
+                    {p.org_name || 'Unknown org'} {p.state ? `(${p.state})` : ''}
+                    {p.is_indigenous_org ? ' — Indigenous-led' : ''}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold" style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#059669' }}>
+                    {formatDollars(p.cost_per_young_person || 0)}/yr
+                  </p>
+                  <p className="text-xs" style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#666' }}>
+                    {p.cost_per_young_person
+                      ? `${Math.round(DETENTION_COST / p.cost_per_young_person)}:1 ratio`
+                      : ''}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs" style={{ fontFamily: "'IBM Plex Mono', monospace", color: p.funding_total > 0 ? '#0A0A0A' : '#DC2626' }}>
+                    {p.funding_total > 0 ? formatDollars(p.funding_total) : '$0 funded'}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Funding Gap */}
+        {fundingGap.length > 0 && (
+          <section className="px-6 pb-12 max-w-7xl mx-auto">
+            <h2
+              className="text-2xl font-bold mb-2"
+              style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#DC2626' }}
+            >
+              Funding Gap: Effective Programs Getting Less Than $100K
+            </h2>
+            <p className="text-sm mb-6" style={{ color: '#666', fontFamily: "'IBM Plex Mono', monospace" }}>
+              Programs rated Effective or Proven but receiving less than $100K in tracked government funding
+            </p>
+            <div className="overflow-x-auto border rounded-lg" style={{ borderColor: '#DC2626' }}>
+              <table className="w-full" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '13px' }}>
+                <thead>
+                  <tr style={{ background: '#0A0A0A', color: '#F5F0E8' }}>
+                    <th className="text-left p-3">Program</th>
+                    <th className="text-left p-3">Organisation</th>
+                    <th className="text-left p-3">State</th>
+                    <th className="text-right p-3">Cost/Year</th>
+                    <th className="text-right p-3">Evidence</th>
+                    <th className="text-right p-3">Govt Funding</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {fundingGap.slice(0, 20).map((p) => (
+                    <tr
+                      key={p.id}
+                      className="border-t"
+                      style={{ borderColor: '#eee', background: '#fff' }}
+                    >
+                      <td className="p-3 font-medium">{p.name}</td>
+                      <td className="p-3">{p.org_name || '-'}</td>
+                      <td className="p-3">{p.state || '-'}</td>
+                      <td className="text-right p-3" style={{ color: '#059669' }}>
+                        {p.cost_per_young_person ? formatDollars(p.cost_per_young_person) : '-'}
+                      </td>
+                      <td className="text-right p-3">
+                        {p.evidence_level ? EVIDENCE_SHORT[p.evidence_level] : '-'}
+                      </td>
+                      <td
+                        className="text-right p-3 font-bold"
+                        style={{ color: '#DC2626' }}
+                      >
+                        {p.funding_total > 0 ? formatDollars(p.funding_total) : '$0'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {fundingGap.length > 20 && (
+              <p className="text-xs mt-2" style={{ color: '#666', fontFamily: "'IBM Plex Mono', monospace" }}>
+                Showing 20 of {fundingGap.length} underfunded programs
+              </p>
+            )}
+          </section>
+        )}
+
+        {/* Methodology */}
+        <section className="px-6 pb-16 max-w-7xl mx-auto">
+          <div className="border rounded-lg p-6" style={{ background: '#fff', borderColor: '#ddd' }}>
+            <h3
+              className="text-lg font-bold mb-3"
+              style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#0A0A0A' }}
+            >
+              Methodology
+            </h3>
+            <div className="space-y-2" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px', color: '#666' }}>
+              <p>
+                Data sourced from the ALMA (Alternative Local Models of Australia) database.
+                {stats.totalPrograms.toLocaleString()} verified interventions, {stats.programsWithCost} with
+                cost-per-young-person data.
+              </p>
+              <p>
+                Detention cost benchmark of $939,000/year sourced from Productivity Commission
+                Report on Government Services (ROGS) 2024.
+              </p>
+              <p>
+                Funding data aggregated from {' '}
+                <Link href="/intelligence/funding" className="underline hover:no-underline" style={{ color: '#059669' }}>
+                  justice funding records
+                </Link>
+                {' '} across federal and state sources.
+                Programs shown as &quot;$0 funded&quot; may receive funding through channels not yet tracked.
+              </p>
+              <p>
+                Evidence levels assigned through systematic review: Proven (RCT with replication),
+                Effective (strong evaluation), Promising (community-endorsed), Indigenous-led
+                (culturally grounded), Untested (pilot/theory stage).
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
       <Footer />
+    </>
+  );
+}
+
+/* ── Sub-components ─────────────────────────────────────────────── */
+
+function StatCard({
+  label,
+  value,
+  sublabel,
+  highlight,
+  alert,
+  small,
+}: {
+  label: string;
+  value: string;
+  sublabel: string;
+  highlight?: boolean;
+  alert?: boolean;
+  small?: boolean;
+}) {
+  return (
+    <div
+      className="border rounded-lg p-4"
+      style={{
+        background: alert ? '#FEF2F2' : '#fff',
+        borderColor: alert ? '#DC2626' : highlight ? '#059669' : '#ddd',
+      }}
+    >
+      <p
+        className="text-xs mb-1"
+        style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#666' }}
+      >
+        {label}
+      </p>
+      <p
+        className={small ? 'text-xs font-medium' : 'text-2xl font-bold'}
+        style={{
+          fontFamily: small ? "'IBM Plex Mono', monospace" : "'Space Grotesk', sans-serif",
+          color: alert ? '#DC2626' : highlight ? '#059669' : '#0A0A0A',
+        }}
+      >
+        {value}
+      </p>
+      {sublabel && (
+        <p
+          className="text-xs mt-1"
+          style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#999' }}
+        >
+          {sublabel}
+        </p>
+      )}
     </div>
   );
 }
