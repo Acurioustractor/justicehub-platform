@@ -56,7 +56,7 @@ function StoryCard({ story }: { story: Story }) {
   const href = story.source === 'article' && story.slug
     ? `/stories/${story.slug}`
     : story.source === 'el' && story.slug
-    ? `/stories/empathy-ledger/${story.slug}`
+    ? `/stories/${story.slug}`
     : null;
 
   const card = (

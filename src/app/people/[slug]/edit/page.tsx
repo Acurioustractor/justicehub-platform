@@ -164,6 +164,29 @@ export default function EditProfilePage({ params }: { params: { slug: string } }
 
       if (error) throw error;
 
+      // Push changes to Empathy Ledger if profile is linked
+      if (profile.empathy_ledger_profile_id) {
+        try {
+          await fetch('/api/empathy-ledger/profiles/push', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              profileId: profile.id,
+              elProfileId: profile.empathy_ledger_profile_id,
+              updates: {
+                display_name: formData.full_name,
+                bio: formData.bio,
+                avatar_url: formData.photo_url,
+                location: profile.location,
+              },
+            }),
+          });
+        } catch {
+          // Don't block the save if EL sync fails
+          console.warn('EL sync failed — changes saved locally');
+        }
+      }
+
       alert('Profile updated successfully!');
       router.push(`/people/${params.slug}`);
     } catch (error: any) {

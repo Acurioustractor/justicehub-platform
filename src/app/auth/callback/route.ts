@@ -34,6 +34,11 @@ export async function GET(request: NextRequest) {
 
     if (!error && sessionData?.user) {
       // Smart routing: if next is generic (/portal, /admin), check role-based redirect
+      // If coming from /judges-on-country, redirect back there
+      if (next === '/judges-on-country') {
+        return response;
+      }
+
       if (next === '/portal' || next === '/admin' || next === '/') {
         // Check for funder profile → route to funder dashboard
         const { data: funderProfile } = await supabase

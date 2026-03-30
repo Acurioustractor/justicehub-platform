@@ -213,8 +213,6 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
                 href={
                   featuredContent.content_type === 'blog'
                     ? `/blog/${featuredContent.slug}`
-                    : featuredContent.content_type === 'empathy-ledger'
-                    ? `/stories/empathy-ledger/${featuredContent.slug}`
                     : `/stories/${featuredContent.slug}`
                 }
                 className="group block bg-white border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 overflow-hidden no-underline"
@@ -293,8 +291,6 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
                   href={
                     item.content_type === 'blog'
                       ? `/blog/${item.slug}`
-                      : item.content_type === 'empathy-ledger'
-                      ? `/stories/empathy-ledger/${item.slug}`
                       : `/stories/${item.slug}`
                   }
                   className="group block bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 overflow-hidden no-underline"

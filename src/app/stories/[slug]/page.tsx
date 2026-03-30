@@ -4,7 +4,8 @@ import { Navigation, Footer } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { Calendar, Clock, Tag, MapPin, User } from 'lucide-react';
 import { PasswordGate } from '@/components/ui/password-gate';
-import { fetchSyndicatedStories, fetchSyndicatedStoryContent } from '@/lib/empathy-ledger/syndication';
+import { fetchSyndicatedStories, fetchSyndicatedStoryContent, fetchContentHubArticles } from '@/lib/empathy-ledger/syndication';
+import { fetchContentHubArticleBySlug } from '@/lib/empathy-ledger-content-hub';
 
 const PASSWORD_PROTECTED_SLUGS: string[] = [];
 
@@ -21,18 +22,80 @@ function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+/** Simple markdown→HTML for EL article content (no external dependency) */
+function mdToHtml(md: string): string {
+  // Normalize line breaks — some content uses literal \n or double-space breaks
+  let text = md.replace(/\\n/g, '\n').replace(/  \n/g, '\n');
+
+  // Split into blocks by double newline
+  const blocks = text.split(/\n{2,}/);
+
+  return blocks.map(block => {
+    const trimmed = block.trim();
+    if (!trimmed) return '';
+
+    // Headings
+    if (trimmed.startsWith('### ')) return `<h3>${trimmed.slice(4)}</h3>`;
+    if (trimmed.startsWith('## ')) return `<h2>${trimmed.slice(3)}</h2>`;
+    if (trimmed.startsWith('# ')) return `<h1>${trimmed.slice(2)}</h1>`;
+
+    // Blockquote
+    if (trimmed.startsWith('> ')) return `<blockquote><p>${trimmed.slice(2)}</p></blockquote>`;
+
+    // List items
+    if (trimmed.match(/^[-*] /m)) {
+      const items = trimmed.split(/\n/).map(line =>
+        `<li>${line.replace(/^[-*] /, '')}</li>`
+      ).join('');
+      return `<ul>${items}</ul>`;
+    }
+
+    // Paragraph — apply inline formatting
+    let p = trimmed
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+      .replace(/\n/g, '<br/>');
+
+    return `<p>${p}</p>`;
+  }).join('\n');
+}
+
 /** Try to find a story from Empathy Ledger syndication API by slug */
 async function fetchELStory(slug: string) {
   try {
+    // Try syndicated stories first (consent-based, has embed tokens)
     const stories = await fetchSyndicatedStories();
-    if (!stories.length) return null;
-    const match = stories.find(
+    const storyMatch = stories.find(
       (s: any) => slugify(s.title) === slug || s.id === slug
     );
-    if (!match) return null;
-    // Fetch full content using embed token
-    const content = await fetchSyndicatedStoryContent(match.id, match.embedToken);
-    return { ...match, content };
+    if (storyMatch) {
+      const content = await fetchSyndicatedStoryContent(storyMatch.id, storyMatch.embedToken);
+      return { ...storyMatch, content };
+    }
+
+    // Try EL articles (content hub — the 36+ published articles)
+    const article = await fetchContentHubArticleBySlug(slug);
+    if (article) {
+      return {
+        id: article.id,
+        title: article.title,
+        excerpt: article.excerpt,
+        themes: article.themes || article.tags || [],
+        publishedAt: article.publishedAt,
+        createdAt: article.publishedAt,
+        imageUrl: article.featuredImageUrl,
+        location: null,
+        storyteller: article.authorName ? { name: article.authorName, avatar: null } : null,
+        content: {
+          html: article.content?.startsWith('<') ? article.content : mdToHtml(article.content || ''),
+          wordCount: article.content?.split(/\s+/).length || 0,
+          imageUrl: article.featuredImageUrl,
+        },
+      };
+    }
+
+    return null;
   } catch {
     return null;
   }
@@ -263,7 +326,11 @@ export default async function StoryPage({ params }: { params: { slug: string } }
                 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-gray-700
                 prose-img:border-2 prose-img:border-black prose-img:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
                 prose-img:rounded-none prose-img:my-8"
-              dangerouslySetInnerHTML={{ __html: story.content }}
+              dangerouslySetInnerHTML={{
+                __html: story.content?.startsWith('<')
+                  ? story.content
+                  : mdToHtml(story.content || '')
+              }}
             />
           </div>
 

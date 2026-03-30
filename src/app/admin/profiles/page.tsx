@@ -73,7 +73,7 @@ export default async function AdminProfilesPage({
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-8">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-8">
             <div className="bg-white border-2 border-black p-4">
               <div className="text-3xl font-black">{totalProfiles}</div>
               <div className="text-sm text-earth-600 font-medium">Total Profiles</div>
@@ -94,6 +94,30 @@ export default async function AdminProfilesPage({
               <div className="text-3xl font-black text-blue-600">{elSyncedProfiles}</div>
               <div className="text-sm text-earth-600 font-medium">EL Synced</div>
             </div>
+            <div className="bg-white border-2 border-black p-4">
+              <div className="text-3xl font-black text-red-600">
+                {profiles?.filter(p => !p.user_id).length || 0}
+              </div>
+              <div className="text-sm text-earth-600 font-medium">Unclaimed</div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex gap-3 mt-4">
+            <a
+              href="/api/cron/profile-sync?direction=pull&dry=true"
+              target="_blank"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition-colors"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Preview EL Sync
+            </a>
+            <Link
+              href="/admin/empathy-ledger"
+              className="inline-flex items-center gap-2 px-4 py-2 border-2 border-black font-bold text-sm hover:bg-gray-100 transition-colors"
+            >
+              EL Dashboard
+            </Link>
           </div>
         </div>
       </section>

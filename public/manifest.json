@@ -1,8 +1,8 @@
 {
-  "name": "JusticeHub Campaign Engine",
-  "short_name": "Campaign Engine",
-  "description": "Campaign alignment, outreach tracking, and comms pipeline",
-  "start_url": "/admin/campaign-engine",
+  "name": "JusticeHub — Youth Justice Intelligence",
+  "short_name": "JusticeHub",
+  "description": "1,081 community-led alternatives to youth detention mapped across Australia. Real stories, real evidence, real change.",
+  "start_url": "/judges-on-country",
   "display": "standalone",
   "background_color": "#F5F0E8",
   "theme_color": "#0A0A0A",

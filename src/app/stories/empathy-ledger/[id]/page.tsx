@@ -7,6 +7,33 @@ import { Calendar, Tag, MapPin, ExternalLink, Shield, BookOpen } from 'lucide-re
 
 export const dynamic = 'force-dynamic';
 
+/** Simple markdown→HTML for EL article content (no external dependency) */
+function mdToHtml(md: string): string {
+  let text = md.replace(/\\n/g, '\n').replace(/  \n/g, '\n');
+  const blocks = text.split(/\n{2,}/);
+
+  return blocks.map(block => {
+    const trimmed = block.trim();
+    if (!trimmed) return '';
+    if (trimmed.startsWith('### ')) return `<h3>${trimmed.slice(4)}</h3>`;
+    if (trimmed.startsWith('## ')) return `<h2>${trimmed.slice(3)}</h2>`;
+    if (trimmed.startsWith('# ')) return `<h1>${trimmed.slice(2)}</h1>`;
+    if (trimmed.startsWith('> ')) return `<blockquote><p>${trimmed.slice(2)}</p></blockquote>`;
+    if (trimmed.match(/^[-*] /m)) {
+      const items = trimmed.split(/\n/).map(line =>
+        `<li>${line.replace(/^[-*] /, '')}</li>`
+      ).join('');
+      return `<ul>${items}</ul>`;
+    }
+    let p = trimmed
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+      .replace(/\n/g, '<br/>');
+    return `<p>${p}</p>`;
+  }).join('\n');
+}
+
 interface PageProps {
   params: { id: string };
 }
@@ -14,18 +41,51 @@ interface PageProps {
 export default async function EmpathyLedgerStoryPage({ params }: PageProps) {
   const { id } = params;
 
-  // Fetch story from Empathy Ledger
-  // Note: Avoiding organization join due to RLS recursion issue in Empathy Ledger
-  const { data: story, error } = await empathyLedgerClient
-    .from('stories')
-    .select('*')
-    .eq('id', id)
-    .eq('is_public', true)
-    .eq('privacy_level', 'public')
-    .single();
+  // Try stories table first (by UUID or slug)
+  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 
-  if (error || !story) {
-    console.error('Story fetch error:', error?.message);
+  let story: any = null;
+
+  if (isUUID) {
+    const { data } = await empathyLedgerClient
+      .from('stories')
+      .select('*')
+      .eq('id', id)
+      .eq('is_public', true)
+      .eq('privacy_level', 'public')
+      .single();
+    story = data;
+  }
+
+  // If not found in stories, try articles table (by UUID or slug)
+  if (!story) {
+    const col = isUUID ? 'id' : 'slug';
+    const { data } = await empathyLedgerClient
+      .from('articles')
+      .select('*, content')
+      .eq(col, id)
+      .eq('status', 'published')
+      .eq('visibility', 'public')
+      .single();
+
+    if (data) {
+      // Map article fields to story-compatible shape
+      story = {
+        ...data,
+        summary: data.excerpt || data.subtitle,
+        story_image_url: data.featured_image_id
+          ? `https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/${data.featured_image_id}`
+          : null,
+        story_category: data.article_type,
+        themes: data.themes || data.tags || [],
+        published_at: data.published_at,
+        cultural_warnings: null,
+        location_text: null,
+      };
+    }
+  }
+
+  if (!story) {
     notFound();
   }
 
@@ -199,16 +259,12 @@ export default async function EmpathyLedgerStoryPage({ params }: PageProps) {
                 prose-img:border-2 prose-img:border-black prose-img:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
                 prose-img:rounded-none prose-img:my-8"
             >
-              {/* Render content - handle both HTML and plain text */}
-              {story.content?.startsWith('<') ? (
-                <div dangerouslySetInnerHTML={{ __html: story.content }} />
-              ) : (
-                <div>
-                  {story.content?.split('\n\n').map((paragraph: string, i: number) => (
-                    <p key={i}>{paragraph}</p>
-                  ))}
-                </div>
-              )}
+              {/* Render content - handle HTML, markdown, and plain text */}
+              <div dangerouslySetInnerHTML={{
+                __html: story.content?.startsWith('<')
+                  ? story.content
+                  : mdToHtml(story.content || '')
+              }} />
             </div>
           </div>
 

@@ -5,6 +5,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, ExternalLink, Mail, Globe, Linkedin, Twitter, Edit, Building2, Briefcase, MapPin, Users, Sparkles, FileText, BookOpen, Calendar } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import { ClaimProfile } from '@/components/profile/ClaimProfile';
+import { Suspense } from 'react';
 
 interface PublicProfile {
   id: string;
@@ -172,6 +174,27 @@ export default async function ProfilePage({
     .order('published_at', { ascending: false })
     .limit(6);
 
+  // Fetch organization memberships
+  const { data: orgMemberships } = await (supabase as any)
+    .from('organizations_profiles')
+    .select('role, role_description, is_current, organizations:organization_id (id, name, slug, state, is_indigenous_org)')
+    .eq('public_profile_id', profile.id)
+    .limit(10);
+
+  // Fetch EL stories this person is tagged in (via storyteller_id in EL)
+  let elMentions: { title: string; id: string }[] = [];
+  if (profile.empathy_ledger_profile_id) {
+    try {
+      const { fetchContentHubArticles } = await import('@/lib/empathy-ledger-content-hub');
+      const elArticles = await fetchContentHubArticles({ limit: 100 });
+      // Content hub articles authored by this person
+      elMentions = elArticles
+        .filter((a: any) => a.authorName && profile.full_name && a.authorName.includes(profile.full_name.split(' ')[0]))
+        .map((a: any) => ({ title: a.title, id: a.slug }))
+        .slice(0, 6);
+    } catch { /* EL unavailable */ }
+  }
+
   return (
     <div className="min-h-screen bg-white page-content">
       <Navigation />
@@ -300,6 +323,18 @@ export default async function ProfilePage({
                   </a>
                 )}
               </div>
+
+              {/* Claim Profile — show only if unclaimed and user is not already editing */}
+              {!typedProfile.user_id && !canEdit && (
+                <Suspense fallback={null}>
+                  <ClaimProfile
+                    profileId={typedProfile.id}
+                    profileName={typedProfile.preferred_name || typedProfile.full_name}
+                    profileSlug={typedProfile.slug}
+                    profileEmail={typedProfile.email}
+                  />
+                </Suspense>
+              )}
             </div>
           </div>
         </div>
@@ -567,6 +602,86 @@ export default async function ProfilePage({
           )}
         </div>
       </section>
+
+      {/* Organizations */}
+      {orgMemberships && orgMemberships.length > 0 && (
+        <section className="container-justice py-16 border-t-2 border-gray-200">
+          <h2 className="text-3xl font-black mb-8 flex items-center gap-3">
+            <Building2 className="h-8 w-8" />
+            Organizations
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {orgMemberships.map((m: any, i: number) => m.organizations && (
+              <Link
+                key={i}
+                href={`/organizations/${m.organizations.slug}`}
+                className="border-2 border-black p-5 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group"
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h4 className="font-bold text-lg group-hover:text-blue-600 transition-colors">
+                      {m.organizations.name}
+                    </h4>
+                    {m.role && (
+                      <p className="text-sm text-gray-600 mt-1">{m.role_description || m.role}</p>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    {m.organizations.state && (
+                      <span className="text-xs font-mono bg-gray-100 px-2 py-1">{m.organizations.state}</span>
+                    )}
+                    {m.organizations.is_indigenous_org && (
+                      <span className="text-xs font-mono bg-purple-100 text-purple-800 px-2 py-1">Indigenous-led</span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Where I Appear — articles + EL mentions */}
+      {((articles && articles.length > 0) || elMentions.length > 0) && (
+        <section className="container-justice py-16 border-t-2 border-gray-200">
+          <h2 className="text-3xl font-black mb-8 flex items-center gap-3">
+            <FileText className="h-8 w-8" />
+            Where I Appear
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {articles?.map((article: any) => (
+              <Link
+                key={article.id}
+                href={`/stories/${article.slug}`}
+                className="border-2 border-black p-5 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group"
+              >
+                <span className="text-xs font-mono text-blue-600 uppercase mb-1 block">JusticeHub Article</span>
+                <h4 className="font-bold group-hover:text-blue-600 transition-colors line-clamp-2">
+                  {article.title}
+                </h4>
+                {article.published_at && (
+                  <p className="text-xs text-gray-500 mt-2 font-mono">
+                    <Calendar className="h-3 w-3 inline mr-1" />
+                    {new Date(article.published_at).toLocaleDateString('en-AU', { year: 'numeric', month: 'short' })}
+                  </p>
+                )}
+              </Link>
+            ))}
+            {elMentions.map((mention, i) => (
+              <Link
+                key={`el-${i}`}
+                href={`/stories/${mention.id}`}
+                className="border-2 border-black p-5 bg-purple-50 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group"
+              >
+                <span className="text-xs font-mono text-purple-600 uppercase mb-1 block">Empathy Ledger</span>
+                <h4 className="font-bold group-hover:text-purple-600 transition-colors line-clamp-2">
+                  {mention.title}
+                </h4>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <Footer />
     </div>

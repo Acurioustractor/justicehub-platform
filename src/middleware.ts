@@ -162,6 +162,7 @@ export async function middleware(request: NextRequest) {
     '/stories',
     '/transparency',
     '/wiki',
+    '/judges-on-country',
   ];
   const isPublicRoute = publicRoutes.some(route => path === route || path.startsWith(`${route}/`));
 
