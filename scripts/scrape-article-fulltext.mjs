@@ -40,7 +40,10 @@ function loadEnv() {
 }
 
 const env = loadEnv();
-const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
+const supabase = createClient(
+  env.NEXT_PUBLIC_SUPABASE_URL || env.SUPABASE_URL,
+  env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 const BATCH_SIZE = 10;
 const BATCH_DELAY_MS = 2000;
