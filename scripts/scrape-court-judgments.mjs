@@ -18,7 +18,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createClient } from '@supabase/supabase-js';
-import { JSDOM } from 'jsdom';
+// No jsdom needed — use regex XML parsing
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
@@ -71,22 +71,22 @@ const FEEDS = [
 // RSS PARSING
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-function textOf(el, tag) {
-  const node = el.getElementsByTagName(tag)[0];
-  return node?.textContent?.trim() || '';
+function extractTag(xml, tag) {
+  const match = xml.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`));
+  return match ? match[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').trim() : '';
 }
 
 function parseRssItems(xml) {
-  const dom = new JSDOM(xml, { contentType: 'text/xml' });
-  const doc = dom.window.document;
-  const items = doc.getElementsByTagName('item');
   const entries = [];
-  for (const item of items) {
+  const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+  let match;
+  while ((match = itemRegex.exec(xml)) !== null) {
+    const itemXml = match[1];
     entries.push({
-      title: textOf(item, 'title'),
-      link: textOf(item, 'link'),
-      description: textOf(item, 'description'),
-      pubDate: textOf(item, 'pubDate'),
+      title: extractTag(itemXml, 'title'),
+      link: extractTag(itemXml, 'link'),
+      description: extractTag(itemXml, 'description'),
+      pubDate: extractTag(itemXml, 'pubDate'),
     });
   }
   return entries;
