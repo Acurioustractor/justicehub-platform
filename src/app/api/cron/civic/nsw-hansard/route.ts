@@ -27,12 +27,24 @@ function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-interface SittingDate {
+interface SittingEvent {
+  Chamber?: string;
+  chamber?: string;
   TocDocId?: string;
   tocDocId?: string;
+  PdfDocId?: string;
+  pdfDocId?: string;
+}
+
+interface SittingDate {
   Date?: string;
   date?: string;
   SittingDate?: string;
+  Events?: SittingEvent[];
+  events?: SittingEvent[];
+  // Legacy flat format
+  TocDocId?: string;
+  tocDocId?: string;
 }
 
 interface TocTopic {
@@ -44,9 +56,9 @@ interface HansardRecord {
   subject: string;
   body_text: string;
   speaker_name: string | null;
-  party: string | null;
+  speaker_party: string | null;
+  speech_type: string;
   sitting_date: string;
-  house: string;
   source_url: string;
   jurisdiction: string;
   scraped_at: string;
@@ -182,9 +194,9 @@ function parseFragment(xml: string, tocTitle: string, sittingDate: string): Omit
     subject: tocTitle,
     body_text: finalBody.slice(0, 50000),
     speaker_name: speakerName,
-    party: null,
+    speaker_party: null,
+    speech_type: house, // legislative_assembly or legislative_council
     sitting_date: sittingDate,
-    house,
     jurisdiction: 'NSW',
     scraped_at: new Date().toISOString(),
   };
@@ -238,23 +250,38 @@ export async function GET(request: NextRequest) {
       await sleep(500);
     }
 
-    // Filter to only sittings within our lookback window
-    allSittings = allSittings.filter((s) => {
-      const dateStr = s.Date || s.date || s.SittingDate || '';
-      const parsed = dateStr.split('T')[0];
-      return parsed >= cutoffStr;
-    });
+    // Flatten sittings: each has an Events array with per-chamber entries
+    interface FlatEvent { date: string; chamber: string; tocDocId: string; }
+    const allEvents: FlatEvent[] = [];
+    for (const sitting of allSittings) {
+      const sittingDate = (sitting.date || sitting.Date || sitting.SittingDate || '').split('T')[0];
+      if (sittingDate < cutoffStr) continue;
 
-    console.log(`[nsw-hansard] Processing ${allSittings.length} sittings within last ${DAYS_BACK} days`);
+      const events = sitting.Events || sitting.events || [];
+      if (events.length > 0) {
+        for (const evt of events) {
+          const tocId = evt.TocDocId || evt.tocDocId;
+          if (tocId) {
+            allEvents.push({ date: sittingDate, chamber: evt.Chamber || evt.chamber || 'Unknown', tocDocId: tocId });
+          }
+        }
+      } else {
+        // Fallback: TocDocId at top level (older format)
+        const tocId = sitting.TocDocId || sitting.tocDocId;
+        if (tocId) {
+          allEvents.push({ date: sittingDate, chamber: 'Unknown', tocDocId: tocId });
+        }
+      }
+    }
+
+    console.log(`[nsw-hansard] Processing ${allEvents.length} chamber-sessions within last ${DAYS_BACK} days`);
 
     const toInsert: HansardRecord[] = [];
     const seenUrls = new Set<string>();
 
-    for (const sitting of allSittings) {
-      const tocDocId = sitting.TocDocId || sitting.tocDocId;
-      const sittingDate = (sitting.Date || sitting.date || sitting.SittingDate || '').split('T')[0];
+    for (const event of allEvents) {
+      const { tocDocId, date: sittingDate } = event;
 
-      if (!tocDocId) continue;
       stats.dates_checked++;
 
       // Fetch TOC
@@ -296,7 +323,7 @@ export async function GET(request: NextRequest) {
         const batch = toInsert.slice(i, i + 50);
         const { error } = await supabase
           .from('civic_hansard')
-          .upsert(batch, { onConflict: 'source_url', ignoreDuplicates: true });
+          .insert(batch);
         if (error) {
           console.error('[nsw-hansard] Batch upsert error:', error.message);
           stats.errors += batch.length;

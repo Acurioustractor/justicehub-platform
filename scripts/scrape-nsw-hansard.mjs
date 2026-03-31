@@ -200,9 +200,9 @@ function parseFragment(xml, tocTitle, sittingDate) {
     subject: tocTitle,
     body_text: finalBody.slice(0, 50000), // Cap at 50K chars
     speaker_name: speakerName,
-    party: null, // NSW API doesn't provide party in fragments
+    speaker_party: null, // NSW API doesn't provide party in fragments
+    speech_type: house, // legislative_assembly or legislative_council
     sitting_date: sittingDate,
-    house,
     source_url: null, // Will be set by caller
     jurisdiction: 'NSW',
     scraped_at: new Date().toISOString(),
@@ -252,27 +252,44 @@ async function main() {
     await sleep(500);
   }
 
-  // Filter to only recent sittings within our lookback window
-  allSittings = allSittings.filter((s) => {
-    const dateStr = s.Date || s.date || s.SittingDate || '';
-    // Parse date - might be in various formats
-    const parsed = dateStr.split('T')[0];
-    return parsed >= cutoffStr;
-  });
-
-  console.log(`\nProcessing ${allSittings.length} sittings within last ${DAYS_BACK} days\n`);
-
+  // Flatten sittings: each sitting has an Events array with per-chamber entries
+  // Each event has its own TocDocId. We need to iterate Events, not sittings.
+  let allEvents = [];
   for (const sitting of allSittings) {
-    const tocDocId = sitting.TocDocId || sitting.tocDocId;
-    const sittingDate = (sitting.Date || sitting.date || sitting.SittingDate || '').split('T')[0];
+    const sittingDate = (sitting.date || sitting.Date || sitting.SittingDate || '').split('T')[0];
+    if (sittingDate < cutoffStr) continue;
+
+    const events = sitting.Events || sitting.events || [];
+    if (events.length > 0) {
+      for (const evt of events) {
+        allEvents.push({
+          date: sittingDate,
+          chamber: evt.Chamber || evt.chamber || 'Unknown',
+          tocDocId: evt.TocDocId || evt.tocDocId,
+          pdfDocId: evt.PdfDocId || evt.pdfDocId,
+        });
+      }
+    } else {
+      // Fallback: TocDocId at top level (older format)
+      const tocDocId = sitting.TocDocId || sitting.tocDocId;
+      if (tocDocId) {
+        allEvents.push({ date: sittingDate, chamber: 'Unknown', tocDocId });
+      }
+    }
+  }
+
+  console.log(`\nProcessing ${allEvents.length} chamber-sessions within last ${DAYS_BACK} days\n`);
+
+  for (const event of allEvents) {
+    const { tocDocId, date: sittingDate, chamber } = event;
 
     if (!tocDocId) {
-      console.log(`  Skipping sitting ${sittingDate} — no TocDocId`);
+      console.log(`  Skipping ${sittingDate} ${chamber} — no TocDocId`);
       continue;
     }
 
     stats.dates_checked++;
-    console.log(`\nProcessing ${sittingDate} (TocDocId: ${tocDocId})`);
+    console.log(`\nProcessing ${sittingDate} ${chamber} (TocDocId: ${tocDocId})`);
 
     // Fetch TOC
     await sleep(500);
@@ -338,7 +355,7 @@ async function main() {
       const batch = toInsert.slice(i, i + BATCH);
       const { error } = await supabase
         .from('civic_hansard')
-        .upsert(batch, { onConflict: 'source_url', ignoreDuplicates: true });
+        .insert(batch);
       if (error) {
         console.error(`  Batch ${Math.floor(i / BATCH) + 1} error:`, error.message);
         stats.errors += batch.length;
