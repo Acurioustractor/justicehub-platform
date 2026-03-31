@@ -14,13 +14,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Evidence Scatter: The 550:1 Ratio',
     description:
-      'Every verified youth justice program plotted by cost and evidence. The cheapest effective program costs $1,708/year vs $939,000 for detention.',
+      'Every verified youth justice program plotted by cost and evidence. The cheapest effective program costs $1,708/year vs $1.33M for detention (ROGS 2024-25).',
   },
 };
 
 /* ── Constants ──────────────────────────────────────────────────── */
 
-const DETENTION_COST = 939_000;
+const DETENTION_COST = 1_330_000; // National avg, ROGS 2024-25 Table 17A.20
 
 const EVIDENCE_ORDER = [
   'Proven (RCT/quasi-experimental, replicated)',
@@ -466,8 +466,8 @@ export default async function EvidenceScatterPage() {
                 cost-per-young-person data.
               </p>
               <p>
-                Detention cost benchmark of $939,000/year sourced from Productivity Commission
-                Report on Government Services (ROGS) 2024.
+                Detention cost benchmark of $1.33M/year sourced from Productivity Commission
+                Report on Government Services (ROGS) 2024-25, Table 17A.20.
               </p>
               <p>
                 Funding data aggregated from {' '}

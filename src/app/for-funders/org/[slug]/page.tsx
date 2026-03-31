@@ -10,7 +10,7 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-const DETENTION_COST_PER_CHILD = 1_550_000;
+const DETENTION_COST_PER_CHILD = 1_330_000; // ROGS 2024-25 national avg
 
 function formatDollars(n: number): string {
   if (n >= 1_000_000_000) return `$${(n / 1_000_000_000).toFixed(1)}B`;

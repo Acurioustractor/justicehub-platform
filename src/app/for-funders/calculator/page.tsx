@@ -12,7 +12,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
  * Community success rate: ~85% (weighted average from basecamps)
  * Detention reoffending: 84%
  */
-const DETENTION_COST_PER_CHILD = 1_550_000;
+const DETENTION_COST_PER_CHILD = 1_330_000; // ROGS 2024-25 national avg
 const COMMUNITY_COST_PER_CHILD = 50_000;
 const COMMUNITY_SUCCESS_RATE = 0.85;
 const DETENTION_REOFFEND_RATE = 0.84;

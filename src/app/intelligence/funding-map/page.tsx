@@ -6,6 +6,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { formatDollars } from '@/lib/intelligence/regional-computations';
+import FundingDesertMap from '@/components/intelligence/FundingDesertMap';
 import {
   processLgaData,
   tierColor,
@@ -291,6 +292,22 @@ export default async function FundingMapPage() {
               );
             })}
           </div>
+        </div>
+      </div>
+
+      {/* ── Interactive Map ── */}
+      <div className="max-w-6xl mx-auto px-6 mt-10">
+        <div className="bg-[#0A0A0A] rounded-xl p-6">
+          <h2
+            className="text-xl font-bold mb-4 text-white"
+            style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+          >
+            Funding Desert Map
+          </h2>
+          <p className="text-sm text-white/50 font-mono mb-4">
+            {summary.totalLgas} LGAs plotted. Bubble size = population. Red = funding desert. Click any bubble for details.
+          </p>
+          <FundingDesertMap />
         </div>
       </div>
 
