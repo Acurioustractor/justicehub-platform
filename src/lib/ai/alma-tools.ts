@@ -21,6 +21,49 @@ function sanitize(input: string): string {
   return input.replace(/[%_\\(),"']/g, '');
 }
 
+/** Fallback text search when embeddings aren't available */
+async function fallbackTextSearch(supabase: any, query: string, sourceFilter: string, limit: number) {
+  const sourceTableMap: Record<string, string> = {
+    hansard: 'civic_hansard',
+    statements: 'civic_ministerial_statements',
+    media: 'alma_media_articles',
+  };
+
+  const results: any[] = [];
+  const tables = sourceFilter === 'all'
+    ? ['civic_hansard', 'civic_ministerial_statements', 'alma_media_articles']
+    : [sourceTableMap[sourceFilter] || 'civic_hansard'];
+
+  const keyword = sanitize(query).split(/\s+/).slice(0, 3).join(' ');
+
+  for (const table of tables) {
+    const textCol = table === 'alma_media_articles' ? 'summary' : 'body_text';
+    const titleCol = table === 'alma_media_articles' ? 'headline' : table === 'civic_hansard' ? 'subject' : 'headline';
+
+    const { data } = await supabase
+      .from(table)
+      .select(`id, ${titleCol}, ${textCol}`)
+      .or(`${titleCol}.ilike.%${keyword}%,${textCol}.ilike.%${keyword}%`)
+      .limit(Math.ceil(limit / tables.length));
+
+    for (const row of data || []) {
+      results.push({
+        source: table.replace('civic_', '').replace('alma_', ''),
+        text: (row[textCol] || '').slice(0, 500),
+        title: row[titleCol],
+      });
+    }
+  }
+
+  return {
+    results: results.slice(0, limit),
+    count: results.length,
+    query,
+    source: 'CivicScope Intelligence (text search fallback)',
+    note: 'Embeddings not yet built — using keyword matching. Run scripts/build-civic-embeddings.mjs to enable semantic search.',
+  };
+}
+
 export const almaTools = {
   search_interventions: {
     description:
@@ -848,6 +891,155 @@ export const almaTools = {
       return {
         profile,
         source: org.gs_entity_id ? 'JusticeHub + GrantScope Entity Graph' : 'JusticeHub',
+      };
+    },
+  },
+
+  search_civic_intelligence: {
+    description:
+      'Semantic search across ALL civic intelligence: Hansard speeches, ministerial statements, charter commitments, oversight recommendations, media articles, consultancy spending, and RTI disclosures. Use this to find what politicians said, promised, or spent money on related to youth justice.',
+    inputSchema: z.object({
+      query: z.string().describe('Natural language question (e.g. "What has the QLD government said about raising the age?" or "Who got paid for youth justice consulting?")'),
+      source_filter: z.enum(['all', 'hansard', 'statements', 'charter', 'oversight', 'media', 'consultancy', 'rti']).default('all').describe('Filter by source type'),
+      limit: z.number().min(1).max(20).default(8),
+    }),
+    execute: async ({ query, source_filter, limit }: { query: string; source_filter: string; limit: number }) => {
+      try {
+        const supabase = createServiceClient();
+
+        // Generate embedding for the query
+        const embRes = await fetch('https://api.openai.com/v1/embeddings', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'text-embedding-3-small',
+            input: query,
+          }),
+        });
+
+        if (!embRes.ok) {
+          // Fallback to text search if embeddings fail
+          return await fallbackTextSearch(supabase, query, source_filter, limit);
+        }
+
+        const embJson = await embRes.json();
+        const embedding = embJson.data[0].embedding;
+
+        // Vector similarity search
+        const sourceTableMap: Record<string, string> = {
+          hansard: 'civic_hansard',
+          statements: 'civic_ministerial_statements',
+          charter: 'civic_charter_commitments',
+          oversight: 'oversight_recommendations',
+          media: 'alma_media_articles',
+          consultancy: 'civic_consultancy_spending',
+          rti: 'civic_rti_disclosures',
+        };
+
+        let rpcQuery = supabase.rpc('match_civic_chunks', {
+          query_embedding: JSON.stringify(embedding),
+          match_count: limit,
+          filter_source: source_filter === 'all' ? null : (sourceTableMap[source_filter] || null),
+        });
+
+        const { data: matches, error } = await rpcQuery;
+
+        if (error) {
+          // Fallback if RPC doesn't exist yet
+          return await fallbackTextSearch(supabase, query, source_filter, limit);
+        }
+
+        return {
+          results: (matches || []).map((m: any) => ({
+            source: m.source_table?.replace('civic_', '').replace('alma_', ''),
+            similarity: Math.round((m.similarity || 0) * 100) + '%',
+            text: m.chunk_text?.slice(0, 500),
+            metadata: m.metadata,
+          })),
+          count: matches?.length || 0,
+          query,
+          source: 'CivicScope Intelligence (embedded)',
+          note: 'Results ranked by semantic similarity. Cross-reference with funding data and intervention records for full picture.',
+        };
+      } catch (err) {
+        return { error: `Civic intelligence search failed: ${err instanceof Error ? err.message : String(err)}`, results: [], count: 0 };
+      }
+    },
+  },
+
+  query_promise_tracker: {
+    description:
+      'Check the status of government charter letter commitments related to youth justice. Shows what politicians promised and whether they delivered, with evidence links.',
+    inputSchema: z.object({
+      status_filter: z.enum(['all', 'delivered', 'in_progress', 'not_started', 'rejected']).default('all'),
+      youth_justice_only: z.boolean().default(true),
+    }),
+    execute: async ({ status_filter, youth_justice_only }: { status_filter: string; youth_justice_only: boolean }) => {
+      const supabase = createServiceClient();
+      let q = (supabase as any)
+        .from('civic_charter_commitments')
+        .select('minister_name, portfolio, commitment_text, status, status_evidence, category, linked_statement_ids, linked_funding_ids, linked_intervention_ids');
+
+      if (youth_justice_only) q = q.eq('youth_justice_relevant', true);
+      if (status_filter !== 'all') q = q.eq('status', status_filter);
+
+      const { data, error } = await q.order('status');
+      if (error) return { error: error.message, commitments: [], count: 0 };
+
+      return {
+        commitments: (data || []).map((c: any) => ({
+          minister: c.minister_name,
+          portfolio: c.portfolio,
+          commitment: c.commitment_text,
+          status: c.status,
+          evidence: c.status_evidence,
+          category: c.category,
+          linked_statements: c.linked_statement_ids?.length || 0,
+          linked_funding: c.linked_funding_ids?.length || 0,
+          linked_programs: c.linked_intervention_ids?.length || 0,
+        })),
+        count: data?.length || 0,
+        summary: {
+          delivered: data?.filter((c: any) => c.status === 'delivered').length || 0,
+          in_progress: data?.filter((c: any) => c.status === 'in_progress').length || 0,
+          rejected: data?.filter((c: any) => c.status === 'rejected').length || 0,
+        },
+        source: 'CivicScope Charter Commitment Tracker',
+      };
+    },
+  },
+
+  query_oversight_recommendations: {
+    description:
+      'Search oversight body recommendations about youth justice — from ombudsmen, human rights commissioners, audit offices, sentencing advisory councils. Shows what experts recommended and whether government acted.',
+    inputSchema: z.object({
+      status_filter: z.enum(['all', 'rejected', 'pending', 'partially_implemented', 'unknown']).default('all'),
+      severity_filter: z.enum(['all', 'critical', 'high', 'medium']).default('all'),
+    }),
+    execute: async ({ status_filter, severity_filter }: { status_filter: string; severity_filter: string }) => {
+      const supabase = createServiceClient();
+      let q = (supabase as any)
+        .from('oversight_recommendations')
+        .select('oversight_body, report_title, recommendation_text, status, severity, jurisdiction, domain');
+
+      if (status_filter !== 'all') q = q.eq('status', status_filter);
+      if (severity_filter !== 'all') q = q.eq('severity', severity_filter);
+
+      const { data, error } = await q.order('severity');
+      if (error) return { error: error.message, recommendations: [], count: 0 };
+
+      return {
+        recommendations: data || [],
+        count: data?.length || 0,
+        summary: {
+          critical: data?.filter((r: any) => r.severity === 'critical').length || 0,
+          rejected: data?.filter((r: any) => r.status === 'rejected').length || 0,
+        },
+        source: 'CivicScope Oversight Intelligence',
+        note: 'These are recommendations from independent statutory bodies. Rejected recommendations are particularly significant.',
       };
     },
   },
