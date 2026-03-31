@@ -18,7 +18,9 @@ import {
   AlertTriangle,
   Target,
   Sparkles,
+  Heart,
 } from 'lucide-react';
+import { StoriesPanel } from '@/components/intelligence/StoriesPanel';
 
 interface DashboardStats {
   services: number;
@@ -286,6 +288,11 @@ export default function IntelligenceOverview() {
             </ExpandableCard>
 
             {/* Funding Pipeline — wired to GrantScope grant_opportunities in next session */}
+          </div>
+
+          {/* Community Voices — Empathy Ledger Stories */}
+          <div className="mt-8 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8">
+            <StoriesPanel limit={6} showViewAll heading="Community Voices" />
           </div>
 
           {/* Action Items */}

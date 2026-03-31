@@ -1,15 +1,17 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { createServiceClient } from '@/lib/supabase/service';
 import {
   ArrowRight, BookOpen, DollarSign, Building2,
-  Heart, MessageCircle, MapPin, AlertTriangle, ExternalLink,
+  Heart, MessageCircle, MapPin, AlertTriangle, ExternalLink, Users,
 } from 'lucide-react';
 import {
   DETENTION_COST_PER_CHILD,
   formatDollars,
 } from '@/lib/intelligence/regional-computations';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import { getStories, isV2Configured, type V2Story } from '@/lib/empathy-ledger/v2-client';
 
 export const dynamic = 'force-dynamic';
 
@@ -79,8 +81,15 @@ interface StoryRow {
 async function fetchStoryData() {
   const supabase = createServiceClient();
 
-  // Parallel queries
-  const [almaRes, syncedRes] = await Promise.all([
+  // Parallel queries — alma_stories + synced_stories + Empathy Ledger v2
+  const v2Promise = isV2Configured
+    ? getStories({ limit: 100 }).catch((err) => {
+        console.error('EL v2 stories fetch failed:', err);
+        return null;
+      })
+    : Promise.resolve(null);
+
+  const [almaRes, syncedRes, v2Result] = await Promise.all([
     supabase
       .from('alma_stories')
       .select('id, title, summary, full_story, story_type, region_slug, featured, published_at, created_at, linked_organization_ids')
@@ -91,6 +100,7 @@ async function fetchStoryData() {
       .select('id, title, summary, story_type, themes, is_featured, created_at, source')
       .order('created_at', { ascending: false })
       .limit(20),
+    v2Promise,
   ]);
 
   const almaStories: StoryRow[] = (almaRes.data || []) as any[];
@@ -181,19 +191,25 @@ async function fetchStoryData() {
     }
   }
 
+  const v2Stories: V2Story[] = v2Result?.data || [];
+  const v2Total = v2Result?.pagination?.total || 0;
+
   return {
     almaStories,
     syncedStories,
     orgMap,
     totalIndigenousOrgs: totalIndigenousOrgs || 0,
     statesWithStories,
+    v2Stories,
+    v2Total,
   };
 }
 
 /* ── Page ───────────────────────────────────────────────────── */
 
 export default async function StoryBridgePage() {
-  const { almaStories, syncedStories, orgMap, totalIndigenousOrgs, statesWithStories } = await fetchStoryData();
+  const { almaStories, syncedStories, orgMap, totalIndigenousOrgs, statesWithStories, v2Stories, v2Total } = await fetchStoryData();
+  const totalStoryCount = almaStories.length + syncedStories.length + v2Stories.length;
 
   // Separate featured story (Mounty Yarns / "In Their Own Words")
   const featuredStory = almaStories.find(
@@ -249,7 +265,7 @@ export default async function StoryBridgePage() {
             {/* Summary stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
               {[
-                { value: String(almaStories.length), label: 'stories collected', icon: BookOpen },
+                { value: String(totalStoryCount), label: 'stories collected', icon: BookOpen },
                 { value: String(communityVoices.length), label: 'community voices', icon: MessageCircle },
                 { value: String(totalIndigenousOrgs.toLocaleString()), label: 'Indigenous orgs tracked', icon: Building2 },
                 { value: String(statesWithout.length), label: 'states need stories', icon: MapPin },
@@ -625,8 +641,152 @@ export default async function StoryBridgePage() {
           </section>
         )}
 
-        {/* ── Synced Stories from Empathy Ledger ───────────────── */}
-        {syncedStories.length > 0 && (
+        {/* ── Empathy Ledger v2 Stories ─────────────────────── */}
+        {v2Stories.length > 0 && (
+          <section className="py-16 border-t border-[#0A0A0A]/10">
+            <div className="max-w-6xl mx-auto px-6 sm:px-12">
+              <div className="flex items-center gap-3 mb-2">
+                <Heart className="w-5 h-5 text-[#059669]" />
+                <p
+                  className="text-sm uppercase tracking-[0.3em] text-[#059669]"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
+                  Empathy Ledger
+                </p>
+              </div>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2
+                    className="text-2xl md:text-3xl font-bold tracking-tight"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  >
+                    Stories from the Field
+                  </h2>
+                  <p className="text-[#0A0A0A]/60 mt-2 max-w-2xl">
+                    Real stories from real communities, collected through the Empathy Ledger
+                    — our companion platform for ethical, community-owned storytelling.
+                  </p>
+                </div>
+                <div className="hidden md:flex items-center gap-2 bg-[#059669]/10 px-4 py-2 rounded-lg">
+                  <Users className="w-4 h-4 text-[#059669]" />
+                  <span
+                    className="text-sm font-bold text-[#059669]"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  >
+                    {v2Total} stories
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                {v2Stories.map((story) => (
+                  <div
+                    key={story.id}
+                    className="bg-white/60 border border-[#0A0A0A]/10 rounded-lg overflow-hidden hover:border-[#0A0A0A]/20 hover:shadow-md transition-all group"
+                  >
+                    {/* Story image */}
+                    {story.imageUrl && (
+                      <div className="relative w-full h-44 overflow-hidden bg-[#0A0A0A]/5">
+                        <Image
+                          src={story.imageUrl}
+                          alt={story.title || 'Community story'}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
+                      </div>
+                    )}
+
+                    <div className="p-5">
+                      {/* Storyteller */}
+                      {story.storyteller?.displayName && (
+                        <div className="flex items-center gap-2 mb-2">
+                          {story.storyteller.avatarUrl && (
+                            <Image
+                              src={story.storyteller.avatarUrl}
+                              alt={story.storyteller.displayName}
+                              width={24}
+                              height={24}
+                              className="rounded-full object-cover"
+                            />
+                          )}
+                          <p
+                            className="text-xs text-[#059669] font-medium"
+                            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                          >
+                            {story.storyteller.displayName}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Title */}
+                      <h3
+                        className="font-bold text-lg leading-tight mb-2 line-clamp-2"
+                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                      >
+                        {story.title || 'Untitled Story'}
+                      </h3>
+
+                      {/* Excerpt */}
+                      {story.excerpt && (
+                        <p className="text-sm text-[#0A0A0A]/60 line-clamp-3 mb-3">
+                          {story.excerpt}
+                        </p>
+                      )}
+
+                      {/* Themes */}
+                      {story.themes && story.themes.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {story.themes.slice(0, 3).map((theme) => (
+                            <span
+                              key={theme}
+                              className="text-[10px] px-2 py-0.5 rounded-full bg-[#0A0A0A]/5 text-[#0A0A0A]/50"
+                              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                            >
+                              {theme}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Date */}
+                      {story.publishedAt && (
+                        <p
+                          className="text-[10px] text-[#0A0A0A]/30 mt-3"
+                          style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                        >
+                          {new Date(story.publishedAt).toLocaleDateString('en-AU', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* View more on Empathy Ledger */}
+              {v2Total > v2Stories.length && (
+                <div className="mt-10 text-center">
+                  <Link
+                    href="https://www.empathyledger.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-[#059669] text-white px-6 py-3 rounded-lg text-sm font-medium hover:bg-[#059669]/90 transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    View All {v2Total} Stories on Empathy Ledger
+                  </Link>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* ── Synced Stories (legacy fallback) ─────────────────── */}
+        {syncedStories.length > 0 && v2Stories.length === 0 && (
           <section className="py-16 border-t border-[#0A0A0A]/10">
             <div className="max-w-6xl mx-auto px-6 sm:px-12">
               <div className="flex items-center gap-3 mb-2">
@@ -645,7 +805,7 @@ export default async function StoryBridgePage() {
                 Stories from the Field
               </h2>
               <p className="text-[#0A0A0A]/60 mb-8 max-w-2xl">
-                Additional stories synced from the Empathy Ledger — our companion platform
+                Stories synced from the Empathy Ledger — our companion platform
                 for ethical storytelling and community-owned narratives.
               </p>
 

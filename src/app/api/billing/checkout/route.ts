@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
         .eq('id', organizationId)
     }
 
-    const appUrl = process.env.NEXTAUTH_URL || 'http://localhost:3004'
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3004'
     const session = await stripe.checkout.sessions.create({
       customer: stripeCustomerId,
       mode: 'subscription',

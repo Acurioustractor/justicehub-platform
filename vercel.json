@@ -127,6 +127,14 @@
     {
       "path": "/api/cron/orchestrator?max=10",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/civic/court-judgments",
+      "schedule": "0 14 * * 1,4"
+    },
+    {
+      "path": "/api/cron/civic/federal-hansard",
+      "schedule": "0 15 * * *"
     }
   ]
 }

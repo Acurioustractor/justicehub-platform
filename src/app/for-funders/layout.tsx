@@ -1,12 +1,9 @@
 import { redirect } from 'next/navigation';
-import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 
 export default async function ForFundersLayout({ children }: { children: React.ReactNode }) {
-  // Skip auth on localhost (dev bypass — login page also skips on localhost)
-  const headersList = await headers();
-  const host = headersList.get('host') || '';
-  const isDev = host.startsWith('localhost') || host.startsWith('127.0.0.1');
+  // Skip auth in development (dev bypass — login page also skips in dev)
+  const isDev = process.env.NODE_ENV === 'development';
 
   if (!isDev) {
     const supabase = await createClient();

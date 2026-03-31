@@ -137,6 +137,34 @@ export async function POST(request: NextRequest) {
         break
       }
 
+      case 'invoice.paid': {
+        const invoice = event.data.object as Stripe.Invoice
+        const subscriptionId = typeof invoice.subscription === 'string'
+          ? invoice.subscription
+          : invoice.subscription?.id
+
+        if (subscriptionId) {
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+          const organizationId = subscription.metadata?.organization_id
+
+          if (organizationId) {
+            await supabase
+              .from('organizations')
+              .update({ billing_status: 'active' })
+              .eq('id', organizationId)
+
+            console.log(`JusticeHub invoice paid: org=${organizationId}`)
+          }
+        }
+        break
+      }
+
+      case 'checkout.session.expired': {
+        const session = event.data.object as Stripe.Checkout.Session
+        console.log(`JusticeHub checkout expired: session=${session.id} org=${session.metadata?.organization_id || 'unknown'}`)
+        break
+      }
+
       case 'customer.subscription.trial_will_end': {
         // Stripe sends this 3 days before trial ends — log for now
         const subscription = event.data.object as Stripe.Subscription
