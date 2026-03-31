@@ -306,12 +306,12 @@ export function SupporterHubDashboard({
                   <p className="text-xs text-[#F5F0E8]/40 font-mono">median program cost/year</p>
                 </div>
                 <div className="p-3 border border-[#F5F0E8]/5">
-                  <p className="text-xl font-bold">$548K</p>
+                  <p className="text-xl font-bold">$1.33M</p>
                   <p className="text-xs text-[#F5F0E8]/40 font-mono">cost of detention/year</p>
                 </div>
               </div>
               <p className="text-xs text-[#F5F0E8]/40 mt-3 font-mono">
-                Community alternatives cost 3x less than detention and deliver better outcomes.
+                Community alternatives cost 8x less than detention and deliver better outcomes.
               </p>
             </div>
           </div>

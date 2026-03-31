@@ -59,7 +59,7 @@ const AUSTRALIAN_STATES = [
 ];
 
 const KEY_STATS = [
-  { value: '$548K', label: 'Cost to detain one young person per year', source: 'Productivity Commission ROGS' },
+  { value: '$1.33M', label: 'Cost to detain one young person per year', source: 'Productivity Commission ROGS 2024-25' },
   { value: '$75', label: 'Daily cost of community alternatives', source: 'Community Services Benchmark' },
   { value: '84%', label: 'Reoffending rate after detention', source: 'QLD Youth Justice Strategy' },
   { value: '3%', label: 'Reoffending with community programs', source: 'Community Accountability Pilot' },
@@ -77,6 +77,7 @@ const FEATURED_BASECAMPS = [
     description: 'Cultural healing on country. Young people working on station, building enterprise, reconnecting with culture. 95% reduction in anti-social behaviour.',
     articleSlug: 'oonchiumpa-what-happens-when-community-leads',
     imageUrl: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/oonchiumpa/hero-hero-main.jpg',
+    videoUrl: null as string | null, // Paste YouTube/Vimeo URL here when video is cut
     videoPlaceholder: true,
     color: '#DC2626',
   },
@@ -86,7 +87,7 @@ const FEATURED_BASECAMPS = [
     tagline: 'Young People Tell Their Own Story',
     description: 'Youth-led storytelling and media production. Young people from Western Sydney documenting their reality, building skills, and changing the narrative.',
     articleSlug: null,
-    imageUrl: null,
+    imageUrl: 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/mounty-yarns/backyard-workbee/20251210-1E5A8290.jpg',
     videoPlaceholder: false,
     color: '#059669',
   },
@@ -106,7 +107,7 @@ const FEATURED_BASECAMPS = [
     tagline: 'Fitness, Culture, Connection',
     description: 'Brodie Germaine built BG Fit from nothing — fitness-based youth engagement on Kalkadoon country. 400+ young people every year. Bush camps, on-country programs, real connection.',
     articleSlug: 'spotlight-on-changemaker-brodie-germaine',
-    imageUrl: null,
+    imageUrl: 'https://tednluwflfhxyucgwigh.supabase.co/storage/v1/object/public/media/contained/gallery/bgfit-hero.jpg',
     videoPlaceholder: false,
     color: '#059669',
   },
@@ -462,8 +463,25 @@ export default function ForJudgesPage() {
                   className="bg-[#F5F0E8] border-2 border-gray-700 overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(220,38,38,0.5)] transition-shadow"
                 >
                   <div className="md:flex">
-                    {/* Image or color bar */}
-                    {bc.imageUrl ? (
+                    {/* Image, video embed, or color bar */}
+                    {bc.videoUrl ? (
+                      <div className="relative w-full md:w-72 flex-shrink-0">
+                        <div className="aspect-video md:aspect-auto md:h-full">
+                          <iframe
+                            src={
+                              bc.videoUrl.includes('youtube.com') || bc.videoUrl.includes('youtu.be')
+                                ? `https://www.youtube.com/embed/${bc.videoUrl.includes('v=') ? bc.videoUrl.split('v=')[1]?.split('&')[0] : bc.videoUrl.split('youtu.be/')[1]?.split('?')[0]}`
+                                : bc.videoUrl.includes('vimeo.com')
+                                  ? `https://player.vimeo.com/video/${bc.videoUrl.match(/vimeo\.com\/(\d+)/)?.[1]}`
+                                  : bc.videoUrl
+                            }
+                            className="w-full h-full"
+                            allowFullScreen
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          />
+                        </div>
+                      </div>
+                    ) : bc.imageUrl ? (
                       <div className="relative w-full md:w-72 h-48 md:h-auto flex-shrink-0">
                         <Image
                           src={bc.imageUrl}
@@ -544,7 +562,7 @@ export default function ForJudgesPage() {
                   The Cost of Detention
                 </h3>
                 <div className="text-4xl font-bold text-[#DC2626] mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                  $548K/year
+                  $1.33M/year
                 </div>
                 <p className="text-gray-600 text-sm">
                   Per young person in detention. 84% reoffend within 12 months.

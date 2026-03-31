@@ -122,7 +122,7 @@ ALMA Network (the platform)
 
 The Intelligence Layer
   → Wall of Proof → 1,165 models, all verified
-  → Cost Calculator → $548K detention vs $170K community
+  → Cost Calculator → $1.33M detention vs $170K community
   → State Leaderboard → competitive pressure between states
   → Follow the Money → $83.7B tracked, who gets what
   → Write to Your MP → data-backed letters per state
@@ -170,7 +170,7 @@ Revenue from ALMA Network services flows back to Basecamps, travel bursaries, an
 | Verified alternative models | 1,165 |
 | With cost data | 305 |
 | Median cost (community) | $77K/year |
-| Average cost (detention) | $548K/year (national), $2.67M/year (VIC) |
+| Average cost (detention) | $1.33M/year (national, ROGS 2024-25), $2.67M/year (VIC) |
 | Organisations mapped | 98,404 |
 | Indigenous-led organisations | 2,051 |
 | Funding records tracked | 148,386 ($114.9B) |
@@ -188,7 +188,7 @@ Revenue from ALMA Network services flows back to Basecamps, travel bursaries, an
 
 3. **Honest evidence.** Half the models are untested. We say so. That's more credible than inflating everything to "evidence-based."
 
-4. **The cost argument is irrefutable.** $548K vs $170K. 3x cheaper. Better outcomes.
+4. **The cost argument is irrefutable.** $1.33M vs $170K. 8x cheaper. Better outcomes.
 
 5. **Indigenous-led where it matters.** Basecamps in NT and QLD are Indigenous organisations. The network centres community authority, not institutional authority.
 

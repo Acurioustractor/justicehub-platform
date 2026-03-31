@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
-import { MapPin, Phone, Mail, Globe, Users, Calendar, Heart, ArrowRight, ExternalLink, Shield, Dumbbell, Tent, UserCheck, Home, GraduationCap, Handshake, CheckCircle2, Camera, Compass, Scale, TreePine, MessageCircle, Mic, Film, BookOpen, Hammer, UtensilsCrossed, Play } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, Users, Calendar, Heart, ArrowRight, ExternalLink, Shield, Dumbbell, Tent, UserCheck, Home, GraduationCap, Handshake, CheckCircle2, Camera, Compass, Scale, TreePine, MessageCircle, Mic, Film, BookOpen, Hammer, UtensilsCrossed, Play, Quote, DollarSign, TrendingUp, Briefcase } from 'lucide-react';
 import { ContactModal } from '@/components/sites/ContactModal';
 import { ShareButton } from '@/components/ShareButton';
 import NewsletterSignup from '@/components/NewsletterSignup';
@@ -264,10 +264,18 @@ const ORG_SITE_CONTENT: Record<string, any> = {
       period: 'Ongoing',
     },
     cta: {
-      title: 'Get Involved with Mounty Yarns',
-      description: 'Want to support youth-led storytelling in Western Sydney? Whether you\'re a young person, funder, researcher, or community member, there\'s a place for you.',
+      title: 'Work With Mounty Yarns',
+      description: 'Youth-led storytelling workshops. Backyard Campus activations. Community voice methodology. Mounty Yarns consults with organisations, governments, and funders who want to centre young people in youth justice reform.',
       email: 'info@mountyyarns.org.au',
       phone: '0400 000 000',
+    },
+    socialEnterprise: {
+      services: [
+        { title: 'Storytelling Workshops', description: 'Train your team or community in youth-led documentary, podcast, and media production.' },
+        { title: 'Backyard Campus Model', description: 'Replicate the shipping container activation — yarning circles, gym, kitchen, creative spaces.' },
+        { title: 'Community Voice Methodology', description: 'Set up an Empathy Ledger-connected story collection system in your community.' },
+        { title: 'Justice Reinvestment Advocacy', description: 'Young people trained to speak to government, researchers, and decision-makers.' },
+      ],
     },
   },
 };
@@ -365,6 +373,24 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
     .eq('organization_id', org.id)
     .eq('is_public', true)
     .order('display_order', { ascending: true })
+    .limit(10);
+
+  // Fetch community voice stories from ALMA (linked via organization ID)
+  const { data: communityVoices } = await (supabase as any)
+    .from('alma_stories')
+    .select('id, title, summary, story_type, full_story')
+    .contains('linked_organization_ids', [org.id])
+    .eq('status', 'published')
+    .eq('story_type', 'community_voice')
+    .order('created_at', { ascending: false })
+    .limit(14);
+
+  // Fetch funding records for this org
+  const { data: fundingRecords } = await (supabase as any)
+    .from('justice_funding')
+    .select('source, recipient_name, program_name, amount_dollars, financial_year, funding_type')
+    .eq('alma_organization_id', org.id)
+    .order('amount_dollars', { ascending: false })
     .limit(10);
 
   // Rich site (has content data)
@@ -545,6 +571,126 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
           </section>
         )}
 
+        {/* Community Voices — from ALMA stories */}
+        {communityVoices && communityVoices.length > 0 && (
+          <section className="bg-[#0A0A0A] text-white">
+            <div className="max-w-6xl mx-auto px-6 py-16">
+              <div className="text-center mb-12">
+                <p className="text-xs uppercase tracking-[0.3em] text-white/40 mb-3" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                  {communityVoices.length} voices on the record
+                </p>
+                <h2 className="text-3xl md:text-4xl font-black text-white mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  In Their Own Words
+                </h2>
+                <p className="text-white/60 max-w-2xl mx-auto">
+                  Real stories from real young people. Not case studies. Not statistics. Their words, their experiences, their vision for change.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {communityVoices.filter((v: any) => v.title !== 'Mounty Yarns: In Their Own Words').slice(0, 9).map((voice: any) => {
+                  const extractQuote = (text: string) => {
+                    if (!text) return null;
+                    const match = text.match(/"([^"]{30,200})"/);
+                    return match ? match[1] : null;
+                  };
+                  const quote = extractQuote(voice.full_story || '') || extractQuote(voice.summary || '');
+                  const name = voice.title?.split(' - ')[0] || voice.title;
+                  return (
+                    <div key={voice.id} className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-colors">
+                      <Quote className="w-5 h-5 text-white/30 mb-3" />
+                      <p className="text-white/80 text-sm leading-relaxed line-clamp-4 mb-4">
+                        {quote ? `"${quote}"` : voice.summary}
+                      </p>
+                      <div className="flex items-center gap-2 pt-3 border-t border-white/10">
+                        <div className="w-8 h-8 rounded-full bg-[#059669]/30 flex items-center justify-center text-xs font-bold text-[#059669]">
+                          {name?.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-white">{name}</p>
+                          <p className="text-xs text-white/40" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Community Voice</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {/* Documentary callout */}
+              {communityVoices.find((v: any) => v.title === 'Mounty Yarns: In Their Own Words') && (
+                <div className="mt-10 bg-white/5 border border-white/10 rounded-xl p-8 text-center">
+                  <Film className="w-8 h-8 text-white/40 mx-auto mb-3" />
+                  <h3 className="text-xl font-bold text-white mb-2">In Their Own Words — The Documentary</h3>
+                  <p className="text-white/60 max-w-xl mx-auto mb-4 text-sm">
+                    A 24-minute documentary made by young people, watched by 100,000+ people. The stories above come from the young people who made it.
+                  </p>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Funding Reality — tracked funding vs system cost */}
+        {fundingRecords && fundingRecords.length > 0 && isBasecamp && (
+          <section className="max-w-6xl mx-auto px-6 py-16">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-black mb-3">Follow the Money</h2>
+              <p className="text-[#8b7355] max-w-2xl mx-auto">
+                Every dollar tracked. Full transparency on who funds {org.name} and how it compares to the system.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Funding sources */}
+              <div className="bg-[#fdf8f6] border-2 border-[#43302b]/10 rounded-xl p-6">
+                <h3 className="font-black text-lg mb-4 flex items-center gap-2">
+                  <DollarSign className="w-5 h-5 text-[#059669]" /> Tracked Funding
+                </h3>
+                <div className="space-y-3">
+                  {fundingRecords.map((f: any, i: number) => (
+                    <div key={i} className="flex items-center justify-between py-2 border-b border-[#43302b]/5 last:border-0">
+                      <div>
+                        <p className="font-semibold text-sm">{f.program_name || f.source}</p>
+                        <p className="text-xs text-[#8b7355]">{f.financial_year} &middot; {f.funding_type}</p>
+                      </div>
+                      <p className="font-black text-[#059669]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                        ${(Number(f.amount_dollars) / 1000).toFixed(0)}K
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t-2 border-[#43302b]/10 flex justify-between">
+                  <p className="font-black">Total Tracked</p>
+                  <p className="font-black text-[#059669] text-xl" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                    ${(fundingRecords.reduce((sum: number, f: any) => sum + Number(f.amount_dollars || 0), 0) / 1000000).toFixed(1)}M
+                  </p>
+                </div>
+              </div>
+              {/* The contrast */}
+              <div className="space-y-4">
+                <div className="bg-red-50 border-2 border-red-200 rounded-xl p-6">
+                  <h3 className="font-black text-red-800 mb-2 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" /> The System Cost
+                  </h3>
+                  <p className="text-4xl font-black text-red-700 mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>$1.33M</p>
+                  <p className="text-sm text-red-700/70">Average cost per young person per year in detention (ROGS 2024-25)</p>
+                </div>
+                <div className="bg-[#059669]/10 border-2 border-[#059669]/30 rounded-xl p-6">
+                  <h3 className="font-black text-[#059669] mb-2 flex items-center gap-2">
+                    <Heart className="w-5 h-5" /> Community Cost
+                  </h3>
+                  <p className="text-4xl font-black text-[#059669] mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>$3.5–8K</p>
+                  <p className="text-sm text-[#059669]/70">Per young person across {org.name}&apos;s programs</p>
+                </div>
+                <div className="bg-[#0A0A0A] text-white rounded-xl p-6">
+                  <h3 className="font-black text-white mb-2 flex items-center gap-2">
+                    <Briefcase className="w-5 h-5" /> NSW Reoffending Grants to ACCOs
+                  </h3>
+                  <p className="text-4xl font-black text-[#DC2626] mb-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>$0</p>
+                  <p className="text-sm text-white/60">Of $9.9M &ldquo;Breaking the Cycle&rdquo; grants went to Aboriginal community-controlled orgs</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Founder */}
         {siteContent.founder && (
           <section className="max-w-6xl mx-auto px-6 py-16">
@@ -671,6 +817,31 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
               <h3 className="font-black text-lg mb-2">Funded Program</h3>
               <p className="text-blue-800 font-bold text-xl mb-1">{siteContent.funding.name}</p>
               <p className="text-blue-600">{siteContent.funding.funder} &middot; {siteContent.funding.amount} &middot; {siteContent.funding.period}</p>
+            </div>
+          </section>
+        )}
+
+        {/* Social Enterprise Services */}
+        {siteContent.socialEnterprise && (
+          <section className="bg-[#F5F0E8] border-y border-[#0A0A0A]/10">
+            <div className="max-w-6xl mx-auto px-6 py-16">
+              <div className="text-center mb-10">
+                <p className="text-xs uppercase tracking-[0.3em] text-[#0A0A0A]/40 mb-3" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                  Consulting &amp; Training
+                </p>
+                <h2 className="text-3xl font-black mb-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>What We Can Build With You</h2>
+                <p className="text-[#0A0A0A]/60 max-w-2xl mx-auto">
+                  Five years of building from nothing taught us something replicable. We help other communities, organisations, and governments set up what we&apos;ve built.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                {siteContent.socialEnterprise.services.map((service: any, i: number) => (
+                  <div key={i} className="bg-white rounded-xl border border-[#0A0A0A]/10 p-6 hover:border-[#059669]/40 transition-colors">
+                    <h3 className="font-bold text-lg mb-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{service.title}</h3>
+                    <p className="text-sm text-[#0A0A0A]/60">{service.description}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
         )}

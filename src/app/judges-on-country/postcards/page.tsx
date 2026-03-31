@@ -14,7 +14,7 @@ interface Story {
 }
 
 const POSTCARD_STATS = [
-  { value: '$548K/yr', context: 'to lock up one young person' },
+  { value: '$1.33M/yr', context: 'to lock up one young person' },
   { value: '$75/day', context: 'for community alternatives' },
   { value: '84%', context: 'reoffend after detention' },
   { value: '3%', context: 'reoffend with community programs' },

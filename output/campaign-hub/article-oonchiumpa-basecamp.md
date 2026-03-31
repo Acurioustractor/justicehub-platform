@@ -4,7 +4,7 @@
 
 ---
 
-Australia spends $548,000 per year to detain one young person. In Victoria, it's $2.67 million. The reoffending rate sits above 80%.
+Australia spends $1.33 million per year to detain one young person (ROGS 2024-25). In Victoria, it's $2.67 million. The reoffending rate sits above 80%.
 
 In Alice Springs, a small Aboriginal community-controlled organisation called Oonchiumpa does things differently. Their results — 95% diversion success, 72% school re-engagement, at 97.6% less cost than detention — are not new. What's new is that we can finally see them in context.
 
@@ -127,7 +127,7 @@ Every claim in this article is backed by live data on JusticeHub:
 | What | Where |
 |------|-------|
 | 1,076 verified alternative models | [Wall of Proof](/proof) |
-| $548K detention vs $170K community | [Cost Calculator](/calculator) |
+| $1.33M detention vs $170K community | [Cost Calculator](/calculator) |
 | Where public money goes ($83.7B tracked) | [Follow the Money](/follow-the-money) |
 | State-by-state comparison | [State Leaderboard](/states) |
 | Indigenous funding share (<2.5% in every state) | [Funding Breakdown](/follow-the-money) |

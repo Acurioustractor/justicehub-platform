@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, LayoutDashboard, DollarSign, ShieldCheck, Layers, ArrowRightLeft, BookOpen, MessageSquare, Inbox, Mail, Image as ImageIcon, Users, BarChart3, Handshake, Menu, X } from 'lucide-react';
+import { ArrowLeft, LayoutDashboard, DollarSign, ShieldCheck, Layers, ArrowRightLeft, BookOpen, MessageSquare, Inbox, Mail, Image as ImageIcon, Users, BarChart3, Handshake, Menu, X, Mic } from 'lucide-react';
 import { OverviewTab } from './tabs/OverviewTab';
 import { GrantsTab } from './tabs/GrantsTab';
 import { ComplianceTab } from './tabs/ComplianceTab';
@@ -16,6 +16,7 @@ import { MediaTab } from './tabs/MediaTab';
 import { PeopleTab } from './tabs/PeopleTab';
 import { AnalysisTab } from './tabs/AnalysisTab';
 import { SupportNetworkTab } from './tabs/SupportNetworkTab';
+import { StorytellerContentTab } from './tabs/StorytellerContentTab';
 import { ALMAChat } from '@/components/ui/alma-chat';
 
 interface Organization {
@@ -39,6 +40,7 @@ const TABS = [
   { key: 'stories', label: 'Stories', icon: BookOpen, adminOnly: false },
   { key: 'analysis', label: 'Analysis', icon: BarChart3, adminOnly: true },
   { key: 'media', label: 'Media', icon: ImageIcon, adminOnly: false },
+  { key: 'storytellers', label: 'Storytellers', icon: Mic, adminOnly: true },
   { key: 'communications', label: 'Comms', icon: MessageSquare, adminOnly: true },
   { key: 'messages', label: 'Messages', icon: Mail, adminOnly: true },
   { key: 'inbox', label: 'Tasks', icon: Inbox, adminOnly: true },
@@ -134,6 +136,7 @@ export function OrgSupportHubClient({ organization, isPortal, backHref, backLabe
           {activeTab === 'stories' && <StoriesTab orgId={organization.id} />}
           {activeTab === 'analysis' && <AnalysisTab orgId={organization.id} />}
           {activeTab === 'media' && <MediaTab orgId={organization.id} />}
+          {activeTab === 'storytellers' && <StorytellerContentTab orgId={organization.id} />}
           {activeTab === 'communications' && <CommunicationsTab orgId={organization.id} />}
           {activeTab === 'messages' && <MessagesTab orgId={organization.id} />}
           {activeTab === 'inbox' && <InboxTab orgId={organization.id} />}

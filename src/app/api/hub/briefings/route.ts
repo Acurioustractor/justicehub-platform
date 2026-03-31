@@ -126,7 +126,7 @@ async function getMediaBriefings(service: any, state: string | null) {
 
   talkingPoints.push({
     category: 'Cost Comparison',
-    point: 'Median community program costs ~$170K/year vs ~$548K/year for youth detention per person',
+    point: 'Median community program costs ~$170K/year vs ~$1.33M/year for youth detention per person (ROGS 2024-25)',
     source: 'ALMA Interventions Database',
     sourceUrl: '/intelligence',
   });
@@ -272,7 +272,7 @@ I am writing as a constituent in ${stateName} to raise concerns about youth just
 
 ${state ? `In ${stateName}, there are ${statePrograms} community-based youth programs operating across ${stateOrgs.toLocaleString()} organisations, yet many remain underfunded or unfunded entirely.` : 'Across Australia, hundreds of community-based youth programs operate with inadequate funding.'}
 
-Research shows that community alternatives to detention cost approximately $170,000 per young person per year, compared to $548,000 for detention — while delivering better outcomes for young people, families, and communities.
+Research shows that community alternatives to detention cost approximately $170,000 per young person per year, compared to $1.33 million for detention (Productivity Commission ROGS 2024-25) — while delivering better outcomes for young people, families, and communities.
 
 ${state ? `Our state has ${stateFundingRecords.toLocaleString()} tracked funding records in the JusticeHub database, but significant gaps remain in support for evidence-backed programs.` : ''}
 
@@ -291,15 +291,15 @@ Sincerely,
   const socialPosts = [
     {
       platform: 'Twitter/X',
-      text: `Community alternatives cost $170K/year vs $548K for detention — and they actually work. ${state ? `${stateName} has ${statePrograms} programs that need more support.` : ''} Learn more at justicehub.com.au #CONTAINED #YouthJustice`,
+      text: `Community alternatives cost $170K/year vs $1.33M for detention — and they actually work. ${state ? `${stateName} has ${statePrograms} programs that need more support.` : ''} Learn more at justicehub.com.au #CONTAINED #YouthJustice`,
     },
     {
       platform: 'LinkedIn',
-      text: `${state ? `${stateName}` : 'Australia'} invests heavily in youth detention ($548K/person/year) when community alternatives ($170K/year) deliver better outcomes. ${state ? `There are ${statePrograms} programs in ${state} working to change this.` : ''}\n\nThe CONTAINED tour is building a national coalition for change. justicehub.com.au/contained`,
+      text: `${state ? `${stateName}` : 'Australia'} invests heavily in youth detention ($1.33M/person/year) when community alternatives ($170K/year) deliver better outcomes. ${state ? `There are ${statePrograms} programs in ${state} working to change this.` : ''}\n\nThe CONTAINED tour is building a national coalition for change. justicehub.com.au/contained`,
     },
     {
       platform: 'Instagram',
-      text: `$170K vs $548K. Community programs vs detention. The evidence is clear — alternatives work better AND cost less. ${state ? `${statePrograms} programs in ${state} are proving it every day.` : ''} Link in bio. #CONTAINED #YouthJustice #JusticeReinvestment`,
+      text: `$170K vs $1.33M. Community programs vs detention. The evidence is clear — alternatives work better AND cost 8x less. ${state ? `${statePrograms} programs in ${state} are proving it every day.` : ''} Link in bio. #CONTAINED #YouthJustice #JusticeReinvestment`,
     },
   ];
 

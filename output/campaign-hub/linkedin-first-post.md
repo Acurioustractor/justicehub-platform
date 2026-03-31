@@ -8,7 +8,7 @@
 
 ## Post Content
 
-Australia spends $548K per year to detain one young person.
+Australia spends $1.33M per year to detain one young person (Productivity Commission ROGS 2024-25).
 
 Community alternatives cost $170K on average (median across 824 verified models).
 

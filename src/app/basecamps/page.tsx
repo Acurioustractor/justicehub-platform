@@ -24,6 +24,26 @@ export default async function BasecampsPage() {
     .or('partner_tier.eq.basecamp,type.eq.basecamp')
     .order('state');
 
+  // Fetch hero photos for basecamps
+  const basecampIds = (basecamps || []).map((b: any) => b.id);
+  const { data: basecampPhotos } = basecampIds.length > 0
+    ? await supabase
+        .from('partner_photos')
+        .select('organization_id, photo_url, thumbnail_url, photo_type')
+        .in('organization_id', basecampIds)
+        .in('photo_type', ['hero', 'card_thumbnail'])
+        .order('photo_type', { ascending: true })
+    : { data: [] };
+
+  // Build org→photo map (card_thumbnail preferred over hero)
+  const orgPhotoMap: Record<string, string> = {};
+  for (const p of basecampPhotos || []) {
+    // card_thumbnail takes priority (sorted first), hero is fallback
+    if (!orgPhotoMap[p.organization_id] || p.photo_type === 'card_thumbnail') {
+      orgPhotoMap[p.organization_id] = p.thumbnail_url || p.photo_url;
+    }
+  }
+
   // Get network stats
   const [interventionCount, fundingCount, orgCount] = await Promise.all([
     supabase
@@ -163,27 +183,40 @@ export default async function BasecampsPage() {
 
                   {hasBasecamp ? (
                     <div className="space-y-3">
-                      {stateBasecamps.map((bc: any) => (
-                        <Link
-                          key={bc.id}
-                          href={`/sites/${bc.slug}`}
-                          className="flex items-center gap-3 group"
-                        >
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#0A0A0A] text-white">
-                            <Users className="w-4 h-4" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="font-semibold text-sm group-hover:underline">
-                              {bc.name}
-                            </p>
-                            <p className="text-xs text-[#0A0A0A]/50 flex items-center gap-1">
-                              <MapPin className="w-3 h-3" /> {STATE_NAMES[bc.state]}
-                              {bc.is_indigenous_org && ' · Indigenous-led'}
-                            </p>
-                          </div>
-                          <ArrowRight className="w-4 h-4 text-[#0A0A0A]/20 group-hover:text-[#0A0A0A]/60 transition-colors" />
-                        </Link>
-                      ))}
+                      {stateBasecamps.map((bc: any) => {
+                        const photoUrl = orgPhotoMap[bc.id];
+                        return (
+                          <Link
+                            key={bc.id}
+                            href={`/sites/${bc.slug}`}
+                            className="flex items-center gap-3 group"
+                          >
+                            {photoUrl ? (
+                              <div className="h-10 w-10 shrink-0 rounded-lg overflow-hidden border border-[#0A0A0A]/10">
+                                <img
+                                  src={photoUrl}
+                                  alt={bc.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            ) : (
+                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#0A0A0A] text-white">
+                                <Users className="w-4 h-4" />
+                              </div>
+                            )}
+                            <div className="min-w-0 flex-1">
+                              <p className="font-semibold text-sm group-hover:underline">
+                                {bc.name}
+                              </p>
+                              <p className="text-xs text-[#0A0A0A]/50 flex items-center gap-1">
+                                <MapPin className="w-3 h-3" /> {STATE_NAMES[bc.state]}
+                                {bc.is_indigenous_org && ' · Indigenous-led'}
+                              </p>
+                            </div>
+                            <ArrowRight className="w-4 h-4 text-[#0A0A0A]/20 group-hover:text-[#0A0A0A]/60 transition-colors" />
+                          </Link>
+                        );
+                      })}
                     </div>
                   ) : (
                     <div>
@@ -204,8 +237,38 @@ export default async function BasecampsPage() {
             })}
           </div>
 
+          {/* Playbook CTA */}
+          <section className="mt-16">
+            <Link
+              href="/basecamps/playbook"
+              className="block bg-[#0A0A0A] text-white rounded-xl p-8 md:p-10 hover:bg-[#0A0A0A]/90 transition-colors group"
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <p
+                    className="text-xs uppercase tracking-[0.3em] text-white/40 mb-2"
+                    style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                  >
+                    Basecamp Playbook
+                  </p>
+                  <h3
+                    className="text-2xl font-bold text-white mb-2"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  >
+                    From 1 to 20. Here&apos;s how.
+                  </h3>
+                  <p className="text-white/60 max-w-xl">
+                    How Mounty Yarns built a youth-led organisation from one person in Mount Druitt.
+                    The playbook for replicating the model in your community.
+                  </p>
+                </div>
+                <ArrowRight className="w-6 h-6 text-white/30 group-hover:text-white/70 transition-colors mt-2" />
+              </div>
+            </Link>
+          </section>
+
           {/* What is a Basecamp */}
-          <section className="mt-20">
+          <section className="mt-16">
             <h2
               className="text-2xl font-bold tracking-tight mb-8"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
