@@ -897,7 +897,7 @@ export const almaTools = {
 
   search_civic_intelligence: {
     description:
-      'Semantic search across ALL civic intelligence: Hansard speeches, ministerial statements, charter commitments, oversight recommendations, media articles, consultancy spending, and RTI disclosures. Use this to find what politicians said, promised, or spent money on related to youth justice.',
+      'Search 327+ parliamentary speeches from QLD, NSW, VIC and Federal Hansard, plus ministerial statements, consultancy spending, and RTI disclosures. Use this to find what politicians SAID about youth justice topics — raising the age, detention conditions, Aboriginal overrepresentation, funding commitments. Cross-reference results with search_funding to check if words were backed by money.',
     inputSchema: z.object({
       query: z.string().describe('Natural language question (e.g. "What has the QLD government said about raising the age?" or "Who got paid for youth justice consulting?")'),
       source_filter: z.enum(['all', 'hansard', 'statements', 'charter', 'oversight', 'media', 'consultancy', 'rti']).default('all').describe('Filter by source type'),
@@ -972,7 +972,7 @@ export const almaTools = {
 
   query_promise_tracker: {
     description:
-      'Check the status of government charter letter commitments related to youth justice. Shows what politicians promised and whether they delivered, with evidence links.',
+      'Track 75 charter letter commitments from QLD and NSW ministers on youth justice. Shows what politicians formally promised — and whether they delivered, stalled, or abandoned those commitments. Each commitment has status tracking (delivered/in_progress/rejected/unknown) and evidence links. Essential for accountability queries.',
     inputSchema: z.object({
       status_filter: z.enum(['all', 'delivered', 'in_progress', 'not_started', 'rejected']).default('all'),
       youth_justice_only: z.boolean().default(true),
@@ -1014,7 +1014,7 @@ export const almaTools = {
 
   query_oversight_recommendations: {
     description:
-      'Search oversight body recommendations about youth justice — from ombudsmen, human rights commissioners, audit offices, sentencing advisory councils. Shows what experts recommended and whether government acted.',
+      'Search 77 oversight recommendations on youth justice from ombudsmen, human rights commissioners, audit offices, sentencing advisory councils, and the Royal Commission into Aboriginal Deaths in Custody (RCADIC). Includes 21 RCADIC recommendations — many unimplemented after 35 years. Shows what independent experts recommended and whether government acted or ignored them. Filter by status (implemented/partially/not_implemented/unknown) to find rejected recommendations.',
     inputSchema: z.object({
       status_filter: z.enum(['all', 'rejected', 'pending', 'partially_implemented', 'unknown']).default('all'),
       severity_filter: z.enum(['all', 'critical', 'high', 'medium']).default('all'),

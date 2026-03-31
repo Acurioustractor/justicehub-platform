@@ -63,29 +63,49 @@ const modeArg = args.find(a => a.startsWith('--mode='));
 const MODE = modeArg ? modeArg.split('=')[1] : 'all'; // transcripts | submissions | all
 
 // ---------------------------------------------------------------------------
-// Firecrawl client
+// Direct HTML fetching (no Firecrawl dependency)
 // ---------------------------------------------------------------------------
 
-async function firecrawlScrape(url, apiKey, formats = ['markdown']) {
-  const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
-    method: 'POST',
+async function fetchHtml(url) {
+  const response = await fetch(url, {
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
+      'User-Agent': 'Mozilla/5.0 (compatible; JusticeHub/1.0; civic-research)',
+      'Accept': 'text/html,application/xhtml+xml',
     },
-    body: JSON.stringify({ url, formats }),
   });
+  if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
+  return response.text();
+}
 
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Firecrawl error ${response.status}: ${text}`);
-  }
+async function fetchPdfBuffer(url) {
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; JusticeHub/1.0; civic-research)',
+      'Accept': 'application/pdf,*/*',
+    },
+  });
+  if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
+  const arrayBuffer = await response.arrayBuffer();
+  return Buffer.from(arrayBuffer);
+}
 
-  const result = await response.json();
-  if (!result.success) {
-    throw new Error(`Firecrawl scrape failed: ${JSON.stringify(result)}`);
+let getDocumentFn;
+async function extractPdfText(buffer) {
+  if (!getDocumentFn) {
+    const mod = await import('pdfjs-dist/legacy/build/pdf.mjs');
+    getDocumentFn = mod.getDocument;
   }
-  return result.data;
+  const uint8Array = new Uint8Array(buffer);
+  const loadingTask = getDocumentFn({ data: uint8Array, useSystemFonts: true });
+  const doc = await loadingTask.promise;
+  let fullText = '';
+  for (let i = 1; i <= doc.numPages; i++) {
+    const page = await doc.getPage(i);
+    const textContent = await page.getTextContent();
+    const pageText = textContent.items.map(item => item.str).join(' ');
+    fullText += pageText + '\n';
+  }
+  return fullText.trim();
 }
 
 // ---------------------------------------------------------------------------
@@ -302,44 +322,123 @@ export function parseTranscriptSegments(markdown, hearingDate) {
 }
 
 /**
- * Extract submission links from the Submissions markdown page.
- * APH submissions are hosted as PDFs in DocumentStore or similar.
+ * Extract submission links from APH submissions page HTML.
+ * Each row: <td>number</td><td><strong>Name</strong>&nbsp;<a href="/DocumentStore.ashx?...">PDF</a></td>
  */
-export function extractSubmissionLinks(markdown) {
+export function extractSubmissionLinks(html) {
   const submissions = [];
 
-  // Pattern: markdown links to PDFs or DocumentStore
-  // [Submission 1 - Organisation Name](https://www.aph.gov.au/.../DocumentStore/...)
-  const submissionRegex = /\[([^\]]*(?:submission|sub)[^\]]*)\]\((https?:\/\/[^)]+)\)/gi;
-  for (const match of markdown.matchAll(submissionRegex)) {
-    const label = match[1].trim();
-    const url = match[2].trim();
-    submissions.push({ label, url });
-  }
+  // Parse table rows with submission number, name, and PDF link
+  // Pattern: <td>NUMBER</td><td><strong>NAME</strong>&nbsp;<a ... href="URL">
+  const rowRegex = /<td>(\d{1,3})<\/td>\s*<td>\s*<strong>([^<]+)<\/strong>[^]*?<a[^>]*href="([^"]*DocumentStore[^"]*)"[^>]*>/gi;
+  let match;
+  while ((match = rowRegex.exec(html)) !== null) {
+    const number = match[1].trim();
+    const name = match[2].trim();
+    const pdfPath = match[3].trim();
+    const pdfUrl = pdfPath.startsWith('http') ? pdfPath : `https://www.aph.gov.au${pdfPath}`;
 
-  // Also look for numbered submission patterns without "submission" keyword
-  // [1 - Organisation Name](url)  or  [001 - Organisation Name](url)
-  const numberedRegex = /\[(\d{1,3})\s*[-\u2013]\s*([^\]]+)\]\((https?:\/\/[^)]+\.pdf[^)]*)\)/gi;
-  for (const match of markdown.matchAll(numberedRegex)) {
-    const url = match[3].trim();
-    if (!submissions.some(s => s.url === url)) {
+    // Avoid duplicate entries (same URL)
+    if (!submissions.some(s => s.url === pdfUrl)) {
       submissions.push({
-        label: `Submission ${match[1]} - ${match[2].trim()}`,
-        url,
+        label: `Submission ${number} - ${name}`,
+        url: pdfUrl,
+        number: parseInt(number, 10),
+        submitter: name,
       });
     }
   }
 
-  // Generic PDF links from aph.gov.au
-  const aphPdfRegex = /\[([^\]]+)\]\((https?:\/\/www\.aph\.gov\.au[^)]+\.pdf[^)]*)\)/gi;
-  for (const match of markdown.matchAll(aphPdfRegex)) {
-    const url = match[2].trim();
-    if (!submissions.some(s => s.url === url)) {
-      submissions.push({ label: match[1].trim(), url });
+  return submissions;
+}
+
+/**
+ * Extract ASP.NET __doPostBack parameters for pagination.
+ * Returns { viewState, viewStateGenerator, eventValidation } needed for POST.
+ */
+function extractAspNetState(html) {
+  const vs = html.match(/id="__VIEWSTATE"[^>]*value="([^"]*)"/);
+  const vsg = html.match(/id="__VIEWSTATEGENERATOR"[^>]*value="([^"]*)"/);
+  const ev = html.match(/id="__EVENTVALIDATION"[^>]*value="([^"]*)"/);
+  return {
+    viewState: vs ? vs[1] : '',
+    viewStateGenerator: vsg ? vsg[1] : '',
+    eventValidation: ev ? ev[1] : '',
+  };
+}
+
+/**
+ * Fetch all pages of submissions from APH using ASP.NET postback pagination.
+ * Page 1 is a GET, pages 2+ require POST with ViewState.
+ */
+async function fetchAllSubmissionPages() {
+  const allSubmissions = [];
+  const seenUrls = new Set();
+
+  console.log('  Fetching page 1...');
+  let html = await fetchHtml(SUBMISSIONS_URL);
+  let pageSubs = extractSubmissionLinks(html);
+  console.log(`    Page 1: ${pageSubs.length} submissions`);
+  for (const s of pageSubs) {
+    if (!seenUrls.has(s.url)) { seenUrls.add(s.url); allSubmissions.push(s); }
+  }
+
+  // Extract pagination info - how many pages?
+  // APH uses: "items in <strong>7</strong> pages" inside rgInfoPart div
+  const pageCountMatch = html.match(/items?\s+in\s+<strong>(\d+)<\/strong>\s*pages?/i)
+    || html.match(/(\d+)\s*items?\s+in\s+(\d+)\s*pages?/i);
+  const totalPages = pageCountMatch ? parseInt(pageCountMatch[1], 10) : 1;
+  console.log(`  Total pages: ${totalPages}`);
+
+  // Fetch remaining pages via ASP.NET __doPostBack
+  for (let page = 2; page <= totalPages; page++) {
+    await sleep(RATE_LIMIT_MS);
+    console.log(`  Fetching page ${page}...`);
+
+    const aspState = extractAspNetState(html);
+
+    // The event target for page N pager button
+    // Pattern: main_0$content_1$RadGrid1$ctl00$ctl02$ctl00$ctl{NN}
+    // Page 2 = ctl07, Page 3 = ctl09, Page 4 = ctl11, etc.
+    const ctlNum = String(5 + (page - 1) * 2).padStart(2, '0');
+    const eventTarget = `main_0$content_1$RadGrid1$ctl00$ctl02$ctl00$ctl${ctlNum}`;
+
+    const formData = new URLSearchParams({
+      '__EVENTTARGET': eventTarget,
+      '__EVENTARGUMENT': '',
+      '__VIEWSTATE': aspState.viewState,
+      '__VIEWSTATEGENERATOR': aspState.viewStateGenerator,
+      '__EVENTVALIDATION': aspState.eventValidation,
+      'main_0$content_1$rbGroupBy': 'Number',
+    });
+
+    try {
+      const response = await fetch(SUBMISSIONS_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'User-Agent': 'Mozilla/5.0 (compatible; JusticeHub/1.0; civic-research)',
+        },
+        body: formData.toString(),
+      });
+
+      if (!response.ok) {
+        console.error(`    Page ${page} failed: HTTP ${response.status}`);
+        continue;
+      }
+
+      html = await response.text();
+      pageSubs = extractSubmissionLinks(html);
+      console.log(`    Page ${page}: ${pageSubs.length} submissions`);
+      for (const s of pageSubs) {
+        if (!seenUrls.has(s.url)) { seenUrls.add(s.url); allSubmissions.push(s); }
+      }
+    } catch (err) {
+      console.error(`    Page ${page} error: ${err.message}`);
     }
   }
 
-  return submissions;
+  return allSubmissions;
 }
 
 /**
@@ -482,40 +581,55 @@ async function getExistingFindingSources(supabase) {
 }
 
 async function scrapeTranscripts(env, supabase, stats) {
-  console.log('\n--- Scraping Transcripts ---');
+  console.log('\n--- Scraping Transcripts (Direct HTML) ---');
   console.log(`Fetching hearings page: ${HEARINGS_URL}`);
 
-  let hearingsMarkdown;
+  let hearingsHtml;
   try {
-    const data = await firecrawlScrape(HEARINGS_URL, env.FIRECRAWL_API_KEY);
-    hearingsMarkdown = data.markdown;
+    hearingsHtml = await fetchHtml(HEARINGS_URL);
   } catch (err) {
     console.error(`Failed to fetch hearings page: ${err.message}`);
     stats.errors++;
     return;
   }
 
-  if (!hearingsMarkdown) {
+  if (!hearingsHtml) {
     console.log('No content returned from hearings page');
     return;
   }
 
-  console.log(`Hearings page: ${hearingsMarkdown.length} chars`);
+  // Convert HTML to pseudo-markdown for the existing extractTranscriptLinks parser
+  const hearingsMarkdown = stripHtml(hearingsHtml);
 
-  const transcriptLinks = extractTranscriptLinks(hearingsMarkdown);
-  console.log(`Found ${transcriptLinks.length} transcript links`);
+  // Also extract links directly from HTML href attributes
+  const htmlLinks = [];
+  const linkRegex = /<a[^>]*href="([^"]*(?:parlinfo|[Hh]ansard)[^"]*)"[^>]*>([^<]*(?:transcript|hansard|proof)[^<]*)<\/a>/gi;
+  let m;
+  while ((m = linkRegex.exec(hearingsHtml)) !== null) {
+    const url = m[1].startsWith('http') ? m[1] : `https://www.aph.gov.au${m[1]}`;
+    htmlLinks.push({ label: stripHtml(m[2]), url });
+  }
 
-  if (transcriptLinks.length === 0) {
+  const transcriptLinks = [...htmlLinks, ...extractTranscriptLinks(hearingsMarkdown)];
+  // Deduplicate by URL
+  const seen = new Set();
+  const uniqueLinks = transcriptLinks.filter(l => {
+    if (seen.has(l.url)) return false;
+    seen.add(l.url);
+    return true;
+  });
+
+  console.log(`Found ${uniqueLinks.length} transcript links`);
+
+  if (uniqueLinks.length === 0) {
     console.log('No transcript links found. The page structure may have changed.');
-    console.log('First 500 chars of markdown:');
-    console.log(hearingsMarkdown.slice(0, 500));
     return;
   }
 
   const existingUrls = await getExistingHansardUrls(supabase);
   console.log(`Existing senate_committee records: ${existingUrls.size}`);
 
-  for (const link of transcriptLinks) {
+  for (const link of uniqueLinks) {
     console.log(`\nProcessing: ${link.label}`);
     console.log(`  URL: ${link.url}`);
 
@@ -524,32 +638,31 @@ async function scrapeTranscripts(env, supabase, stats) {
 
     await sleep(RATE_LIMIT_MS);
 
-    let transcriptMarkdown;
+    let transcriptHtml;
     try {
-      const data = await firecrawlScrape(link.url, env.FIRECRAWL_API_KEY);
-      transcriptMarkdown = data.markdown;
+      transcriptHtml = await fetchHtml(link.url);
     } catch (err) {
       console.error(`  Failed to fetch transcript: ${err.message}`);
       stats.errors++;
       continue;
     }
 
-    if (!transcriptMarkdown) {
+    if (!transcriptHtml) {
       console.log('  No content in transcript');
       continue;
     }
 
-    console.log(`  Transcript: ${transcriptMarkdown.length} chars`);
+    // Convert HTML to text for segment parsing
+    const transcriptText = stripHtml(transcriptHtml);
+    console.log(`  Transcript: ${transcriptText.length} chars`);
     stats.transcripts_fetched++;
 
-    // Also try to extract date from transcript content itself
-    const effectiveDate = hearingDate || extractDateFromText(transcriptMarkdown.slice(0, 500));
+    const effectiveDate = hearingDate || extractDateFromText(transcriptText.slice(0, 500));
 
-    const segments = parseTranscriptSegments(transcriptMarkdown, effectiveDate);
+    const segments = parseTranscriptSegments(transcriptText, effectiveDate);
     console.log(`  Parsed ${segments.length} testimony segments`);
 
     for (const seg of segments) {
-      // Build a unique-ish source URL per segment
       const segUrl = `${link.url}#${encodeURIComponent(seg.speaker_name || 'unknown')}`;
 
       if (existingUrls.has(segUrl) || existingUrls.has(link.url)) {
@@ -585,42 +698,67 @@ async function scrapeTranscripts(env, supabase, stats) {
   }
 }
 
-async function scrapeSubmissions(env, supabase, stats) {
-  console.log('\n--- Scraping Submissions ---');
-  console.log(`Fetching submissions page: ${SUBMISSIONS_URL}`);
+// Priority submitters to scrape first
+const PRIORITY_SUBMITTERS = [
+  'Australian Human Rights Commission',
+  'Law Council of Australia',
+  'National Legal Aid',
+  'National Justice Project',
+  'SACOSS',
+  'Anti Slavery Australia',
+  'Anti-Slavery Australia',
+  'Change the Record',
+  'Aboriginal Legal Service',
+  'Aboriginal Legal',
+  'Victorian Aboriginal Legal Service',
+  'North Australian Aboriginal Justice Agency',
+  'Legal Aid',
+  'National Aboriginal',
+  'National Association of Community Legal',
+  'Jesuit Social Services',
+  'Queensland Family and Child Commission',
+];
 
-  let submissionsMarkdown;
+function isPriority(submitter) {
+  const lower = (submitter || '').toLowerCase();
+  return PRIORITY_SUBMITTERS.some(p => lower.includes(p.toLowerCase()));
+}
+
+async function scrapeSubmissions(env, supabase, stats) {
+  console.log('\n--- Scraping Submissions (Direct HTML + PDF parsing) ---');
+
+  let allSubmissions;
   try {
-    const data = await firecrawlScrape(SUBMISSIONS_URL, env.FIRECRAWL_API_KEY);
-    submissionsMarkdown = data.markdown;
+    allSubmissions = await fetchAllSubmissionPages();
   } catch (err) {
-    console.error(`Failed to fetch submissions page: ${err.message}`);
+    console.error(`Failed to fetch submissions pages: ${err.message}`);
     stats.errors++;
     return;
   }
 
-  if (!submissionsMarkdown) {
-    console.log('No content returned from submissions page');
-    return;
-  }
+  console.log(`\nTotal submissions found: ${allSubmissions.length}`);
 
-  console.log(`Submissions page: ${submissionsMarkdown.length} chars`);
-
-  const submissionLinks = extractSubmissionLinks(submissionsMarkdown);
-  console.log(`Found ${submissionLinks.length} submission links`);
-
-  if (submissionLinks.length === 0) {
+  if (allSubmissions.length === 0) {
     console.log('No submission links found. The page structure may have changed.');
-    console.log('First 500 chars of markdown:');
-    console.log(submissionsMarkdown.slice(0, 500));
     return;
   }
 
   const existingSources = await getExistingFindingSources(supabase);
   console.log(`Existing parliamentary finding sources: ${existingSources.size}`);
 
-  for (const sub of submissionLinks) {
-    console.log(`\nProcessing: ${sub.label}`);
+  // Sort: priority submitters first
+  allSubmissions.sort((a, b) => {
+    const ap = isPriority(a.submitter) ? 0 : 1;
+    const bp = isPriority(b.submitter) ? 0 : 1;
+    return ap - bp || (a.number || 0) - (b.number || 0);
+  });
+
+  const priorityCount = allSubmissions.filter(s => isPriority(s.submitter)).length;
+  console.log(`Priority submitters: ${priorityCount}`);
+
+  for (const sub of allSubmissions) {
+    const priority = isPriority(sub.submitter) ? ' [PRIORITY]' : '';
+    console.log(`\nProcessing: ${sub.label}${priority}`);
     console.log(`  URL: ${sub.url}`);
 
     if (existingSources.has(sub.url)) {
@@ -633,8 +771,8 @@ async function scrapeSubmissions(env, supabase, stats) {
 
     let pdfText;
     try {
-      const data = await firecrawlScrape(sub.url, env.FIRECRAWL_API_KEY);
-      pdfText = data.markdown;
+      const buffer = await fetchPdfBuffer(sub.url);
+      pdfText = await extractPdfText(buffer);
     } catch (err) {
       console.error(`  Failed to extract PDF: ${err.message}`);
       stats.errors++;
@@ -646,25 +784,28 @@ async function scrapeSubmissions(env, supabase, stats) {
       continue;
     }
 
-    console.log(`  Extracted: ${pdfText.length} chars`);
+    // Truncate very large PDFs to 100K chars
+    const text = pdfText.length > 100000 ? pdfText.slice(0, 100000) : pdfText;
+    console.log(`  Extracted: ${pdfText.length} chars${pdfText.length > 100000 ? ' (truncated to 100K)' : ''}`);
     stats.submissions_fetched++;
 
-    const submitter = extractSubmitterName(sub.label);
+    const submitter = sub.submitter || extractSubmitterName(sub.label);
 
     const record = {
       finding_type: 'parliamentary',
       content: {
-        text: pdfText,
-        submitter: submitter,
+        text,
+        submitter,
         inquiry: 'Senate Legal and Constitutional Affairs Committee - Youth Justice 2025',
         source_label: sub.label,
+        submission_number: sub.number || null,
       },
       sources: [sub.url],
       confidence: 0.9, // High confidence — official parliamentary submission
     };
 
     if (DRY_RUN) {
-      console.log(`  [DRY] ${submitter} | ${pdfText.length} chars`);
+      console.log(`  [DRY] ${submitter} | ${text.length} chars`);
       stats.would_insert++;
     } else {
       const { error } = await supabase.from('alma_research_findings').insert(record);
@@ -684,11 +825,8 @@ async function main() {
 
   console.log('=== Senate Inquiry Scraper (Youth Justice 2025) ===');
   console.log(`Mode: ${MODE} | ${DRY_RUN ? 'DRY RUN' : 'LIVE'}`);
+  console.log('Using direct HTML + pdf-parse (no Firecrawl dependency)\n');
 
-  if (!env.FIRECRAWL_API_KEY) {
-    console.error('FIRECRAWL_API_KEY not set');
-    process.exit(1);
-  }
   if (!env.NEXT_PUBLIC_SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
     console.error('Supabase credentials not set');
     process.exit(1);

@@ -537,15 +537,16 @@ export function AlmaChat({
               </div>
               <h4 className="text-base font-bold text-gray-900 mb-1">Ask ALMA anything</h4>
               <p className="text-sm text-gray-500 max-w-xs mx-auto">
-                826 programs, ROGS spending data, research evidence, and legal cases — all queryable.
+                1,081 programs, 148K funding records, 327+ parliamentary speeches, and oversight recommendations — all queryable.
               </p>
             </div>
             <div className="grid grid-cols-1 gap-2 w-full max-w-sm">
               {(starterQuestions || [
-                'How much does Australia spend on youth detention?',
-                'What programs reduce recidivism?',
-                'Compare NT and VIC youth justice spending',
-                'What campaigns are active for Raise the Age?',
+                'What has QLD parliament said about raising the age?',
+                'Which oversight recommendations has government rejected?',
+                'What alternatives to detention exist near Alice Springs?',
+                'How much does Australia spend on detention vs community programs?',
+                'What did the Royal Commission recommend about Aboriginal youth justice?',
               ]).map((q, i) => (
                 <button
                   key={i}

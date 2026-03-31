@@ -6,6 +6,8 @@ import {
   AlertTriangle, CheckCircle2, Clock, XCircle, Minus,
   Users, DollarSign, Megaphone,
 } from 'lucide-react';
+import RhetoricTimeline from '@/components/intelligence/RhetoricTimeline';
+import AccountabilityLoop from '@/components/intelligence/AccountabilityLoop';
 
 export const dynamic = 'force-dynamic';
 
@@ -814,6 +816,14 @@ export default async function CivicIntelligencePage() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* ── Section 5: Rhetoric Timeline ── */}
+      <RhetoricTimeline />
+
+      {/* ── Section 6: Accountability Cross-Reference ── */}
+      <div className="bg-[#0A0A0A]/[0.03]">
+        <AccountabilityLoop />
       </div>
 
       {/* ── Bottom CTA ── */}

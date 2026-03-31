@@ -32,7 +32,7 @@ export default function ChatPage() {
                     Ask ALMA
                   </h1>
                   <p className="text-xs text-gray-600">
-                    Chat with youth justice AI — evidence, costs, programs
+                    Chat with youth justice AI — civic intelligence, evidence, costs, programs
                   </p>
                 </div>
               </div>
