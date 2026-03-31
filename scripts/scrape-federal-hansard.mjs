@@ -2,13 +2,14 @@
 /**
  * scrape-federal-hansard.mjs
  *
- * Scrapes Federal Hansard speeches about youth justice from the OpenAustralia API
- * and stores them in the civic_hansard table.
+ * Scrapes Federal Hansard (Senate + House of Reps) via OpenAustralia API.
+ * Uses getDebates endpoint (getHansard is "not yet functional").
+ * Iterates through sitting dates, filters for youth justice keywords.
  *
  * Usage:
- *   node scripts/scrape-federal-hansard.mjs
  *   node scripts/scrape-federal-hansard.mjs --dry-run
- *   node scripts/scrape-federal-hansard.mjs --limit=50
+ *   node scripts/scrape-federal-hansard.mjs
+ *   node scripts/scrape-federal-hansard.mjs --days=90
  */
 
 import { readFileSync, existsSync } from 'fs';
@@ -17,63 +18,39 @@ import { fileURLToPath } from 'url';
 import { createClient } from '@supabase/supabase-js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const root = join(__dirname, '..');
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ENV + SETUP
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 function loadEnv() {
   const env = { ...process.env };
-  const envPath = join(root, '.env.local');
-  if (existsSync(envPath)) {
-    try {
-      readFileSync(envPath, 'utf8')
-        .split('\n')
-        .filter((l) => l && !l.startsWith('#') && l.includes('='))
-        .forEach((l) => {
-          const eqIdx = l.indexOf('=');
-          const key = l.slice(0, eqIdx).trim();
-          const val = l.slice(eqIdx + 1).trim();
-          if (!env[key]) env[key] = val;
-        });
-    } catch { /* ignore */ }
+  for (const f of ['.env.local', '.env']) {
+    const p = join(__dirname, '..', f);
+    if (existsSync(p)) {
+      readFileSync(p, 'utf8').split('\n').forEach(line => {
+        const m = line.match(/^\s*([\w.]+)\s*=\s*(.*)$/);
+        if (m) { const [, key, val] = m; if (!env[key]) env[key] = val; }
+      });
+    }
   }
   return env;
 }
 
 const env = loadEnv();
 const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
-
-const API_BASE = 'https://www.openaustralia.org.au/api';
 const API_KEY = env.OPENAUSTRALIA_API_KEY;
-if (!API_KEY) {
-  console.error('Missing OPENAUSTRALIA_API_KEY in environment');
-  process.exit(1);
-}
+const API_BASE = 'https://www.openaustralia.org.au/api';
 
-const KEYWORDS = [
-  'youth justice',
-  'youth detention',
-  'juvenile justice',
-  'young offender',
-  'raising the age',
-  'age of criminal responsibility',
-  'Don Dale',
-  'Banksia Hill',
-  'youth crime',
-  'youth diversion',
-];
-
-const RESULTS_PER_PAGE = 20;
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
-const limitArg = args.find((a) => a.startsWith('--limit='));
-const MAX_RESULTS_PER_KEYWORD = limitArg ? parseInt(limitArg.split('=')[1], 10) : 200;
+const daysArg = args.find(a => a.startsWith('--days='));
+const DAYS_BACK = daysArg ? parseInt(daysArg.split('=')[1]) : 180;
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// HTML STRIPPING
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const YJ_KEYWORDS = [
+  'youth justice', 'youth detention', 'juvenile justice', 'young offender',
+  'raising the age', 'age of criminal responsibility', 'Don Dale', 'Banksia Hill',
+  'youth crime', 'youth diversion', 'child detention', 'youth bail',
+  'children in custody', 'juvenile detention',
+];
+
+const YJ_PATTERN = new RegExp(YJ_KEYWORDS.join('|'), 'i');
 
 function stripHtml(html) {
   if (!html) return '';
@@ -81,177 +58,140 @@ function stripHtml(html) {
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/p>/gi, '\n\n')
     .replace(/<[^>]+>/g, '')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, ' ')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, ' ')
+    .replace(/&#8212;/g, '—').replace(/&#8211;/g, '–')
+    .replace(/\n{3,}/g, '\n\n').trim();
 }
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// API FETCHING
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-async function fetchHansard(keyword, page = 1) {
-  const params = new URLSearchParams({
-    search: keyword,
-    num: String(RESULTS_PER_PAGE),
-    page: String(page),
-    order: 'd',
-    key: API_KEY,
-    output: 'js',
-  });
-
-  const url = `${API_BASE}/getHansard?${params}`;
-  const resp = await fetch(url);
-  if (!resp.ok) {
-    console.error(`  API error ${resp.status} for "${keyword}" page ${page}`);
-    return null;
+function getSittingDates(daysBack) {
+  const dates = [];
+  const now = new Date();
+  for (let i = 0; i < daysBack; i++) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const dow = d.getDay();
+    // Parliament typically sits Mon-Thu
+    if (dow >= 1 && dow <= 4) {
+      dates.push(d.toISOString().split('T')[0]);
+    }
   }
-
-  const data = await resp.json();
-  return data;
+  return dates;
 }
 
-function buildSourceUrl(gid) {
-  // OpenAustralia GIDs look like: uk.org.publicwhip/debate/2024-02-05.123.0
-  // or senate: uk.org.publicwhip/lords/2024-02-05.123.0
-  if (!gid) return null;
-  const isLords = gid.includes('/lords/');
-  const match = gid.match(/\/(?:debate|lords)\/(.+)/);
-  if (!match) return `https://www.openaustralia.org.au/debates/?id=${encodeURIComponent(gid)}`;
+async function fetchDebates(type, date) {
+  const url = `${API_BASE}/getDebates?key=${API_KEY}&type=${type}&date=${date}&output=js`;
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    if (data.error) return [];
+    return Array.isArray(data) ? data : [];
+  } catch { return []; }
+}
 
-  const fragment = match[1];
-  if (isLords) {
-    return `https://www.openaustralia.org.au/senate/?id=${fragment}`;
+function extractSpeeches(debates, date, house) {
+  const speeches = [];
+  for (const debate of debates) {
+    const heading = debate.entry?.body || '';
+    const subs = debate.subs || [];
+    for (const sub of subs) {
+      const text = stripHtml(sub.excerpt || sub.body || '');
+      if (!text || text.length < 50) continue;
+      if (!YJ_PATTERN.test(text) && !YJ_PATTERN.test(heading)) continue;
+
+      const gid = sub.gid || sub.epobject_id;
+      const sourceUrl = sub.listurl
+        ? `https://www.openaustralia.org.au${sub.listurl}`
+        : `https://www.openaustralia.org.au/${house === 'senate' ? 'senate' : 'debates'}/?id=${gid}`;
+
+      speeches.push({
+        subject: stripHtml(heading) || stripHtml(sub.body?.match(/<strong>(.*?)<\/strong>/)?.[1] || ''),
+        body_text: text,
+        speaker_name: sub.speaker?.full_name || sub.speaker?.name || null,
+        party: sub.speaker?.party || null,
+        sitting_date: sub.hdate || date,
+        house,
+        source_url: sourceUrl,
+        jurisdiction: 'federal',
+        scraped_at: new Date().toISOString(),
+      });
+    }
   }
-  return `https://www.openaustralia.org.au/debates/?id=${fragment}`;
+  return speeches;
 }
-
-function determineHouse(gid) {
-  if (!gid) return 'reps';
-  return gid.includes('/lords/') ? 'senate' : 'reps';
-}
-
-function parseRow(row) {
-  const gid = row.gid || row.id || null;
-  const sourceUrl = buildSourceUrl(gid);
-  if (!sourceUrl) return null;
-
-  return {
-    subject: row.body?.match(/<h2>(.*?)<\/h2>/i)?.[1] || row.major_heading || row.minor_heading || 'Unknown',
-    body_text: stripHtml(row.body || ''),
-    speaker_name: row.speaker?.full_name || row.speaker_name || null,
-    party: row.speaker?.party || null,
-    sitting_date: row.hdate || null,
-    house: determineHouse(gid),
-    source_url: sourceUrl,
-    jurisdiction: 'federal',
-    scraped_at: new Date().toISOString(),
-  };
-}
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// DEDUPLICATION
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 async function getExistingUrls() {
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('civic_hansard')
     .select('source_url')
     .eq('jurisdiction', 'federal');
-
-  if (error) {
-    console.error('Error fetching existing URLs:', error.message);
-    return new Set();
-  }
-  return new Set((data || []).map((r) => r.source_url));
+  return new Set((data || []).map(r => r.source_url));
 }
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// MAIN
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 async function main() {
-  console.log('=== Federal Hansard Scraper ===');
+  console.log('=== Federal Hansard Scraper (getDebates) ===');
   console.log(`Mode: ${DRY_RUN ? 'DRY RUN' : 'LIVE'}`);
-  console.log(`Max results per keyword: ${MAX_RESULTS_PER_KEYWORD}`);
-  console.log(`Keywords: ${KEYWORDS.length}\n`);
+  console.log(`Looking back: ${DAYS_BACK} days`);
+  if (!API_KEY) { console.error('OPENAUSTRALIA_API_KEY not set'); process.exit(1); }
 
   const existingUrls = await getExistingUrls();
-  console.log(`Existing federal Hansard records: ${existingUrls.size}\n`);
+  console.log(`Existing federal records: ${existingUrls.size}\n`);
 
-  const stats = { fetched: 0, new: 0, skipped: 0, inserted: 0, errors: 0 };
+  const dates = getSittingDates(DAYS_BACK);
+  console.log(`Checking ${dates.length} potential sitting dates\n`);
+
+  const stats = { dates_checked: 0, fetched: 0, matched: 0, new: 0, inserted: 0, errors: 0 };
   const toInsert = [];
   const seenUrls = new Set();
 
-  for (const keyword of KEYWORDS) {
-    console.log(`Searching: "${keyword}"`);
-    let page = 1;
-    let totalFetched = 0;
+  for (const date of dates) {
+    stats.dates_checked++;
+    const allSpeeches = [];
 
-    while (totalFetched < MAX_RESULTS_PER_KEYWORD) {
-      const data = await fetchHansard(keyword, page);
-      if (!data) break;
+    for (const type of ['senate', 'representatives']) {
+      const debates = await fetchDebates(type, date);
+      if (debates.length === 0) continue;
+      stats.fetched += debates.length;
 
-      const rows = data.rows || data.matches || [];
-      if (rows.length === 0) break;
+      const house = type === 'senate' ? 'senate' : 'reps';
+      const speeches = extractSpeeches(debates, date, house);
+      allSpeeches.push(...speeches);
+      stats.matched += speeches.length;
 
-      for (const row of rows) {
-        stats.fetched++;
-        totalFetched++;
-
-        const parsed = parseRow(row);
-        if (!parsed || !parsed.source_url || !parsed.body_text) {
-          stats.skipped++;
-          continue;
-        }
-
-        // Deduplicate against existing DB records and within this run
-        if (existingUrls.has(parsed.source_url) || seenUrls.has(parsed.source_url)) {
-          stats.skipped++;
-          continue;
-        }
-
-        seenUrls.add(parsed.source_url);
-        toInsert.push(parsed);
-        stats.new++;
-      }
-
-      // If fewer results than page size, no more pages
-      if (rows.length < RESULTS_PER_PAGE) break;
-      page++;
-
-      // Rate limiting: 500ms between API calls
-      await new Promise((r) => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 500)); // Rate limit
     }
 
-    console.log(`  -> ${totalFetched} results fetched, ${stats.new} new so far`);
+    for (const speech of allSpeeches) {
+      if (!speech.source_url || existingUrls.has(speech.source_url) || seenUrls.has(speech.source_url)) {
+        continue;
+      }
+      seenUrls.add(speech.source_url);
+      toInsert.push(speech);
+      stats.new++;
+    }
+
+    if (stats.dates_checked % 20 === 0) {
+      console.log(`  ${stats.dates_checked}/${dates.length} dates | ${stats.matched} YJ matches | ${stats.new} new`);
+    }
   }
 
   console.log(`\nTotal to insert: ${toInsert.length}`);
 
   if (DRY_RUN) {
     console.log('\n[DRY RUN] Sample records:');
-    for (const rec of toInsert.slice(0, 3)) {
-      console.log(`  ${rec.sitting_date} | ${rec.speaker_name} | ${rec.house} | ${rec.subject.slice(0, 60)}`);
-      console.log(`    ${rec.body_text.slice(0, 120)}...`);
-      console.log(`    ${rec.source_url}`);
+    for (const r of toInsert.slice(0, 5)) {
+      console.log(`  ${r.sitting_date} | ${r.house} | ${r.speaker_name || '?'} | ${r.subject?.slice(0, 80)}`);
     }
   } else if (toInsert.length > 0) {
-    // Insert in batches of 50
-    const BATCH_SIZE = 50;
-    for (let i = 0; i < toInsert.length; i += BATCH_SIZE) {
-      const batch = toInsert.slice(i, i + BATCH_SIZE);
-      const { data, error } = await supabase
+    // Batch insert
+    for (let i = 0; i < toInsert.length; i += 50) {
+      const batch = toInsert.slice(i, i + 50);
+      const { error } = await supabase
         .from('civic_hansard')
         .upsert(batch, { onConflict: 'source_url', ignoreDuplicates: true });
-
       if (error) {
-        console.error(`  Batch ${Math.floor(i / BATCH_SIZE) + 1} error:`, error.message);
+        console.error(`  Batch error:`, error.message);
         stats.errors += batch.length;
       } else {
         stats.inserted += batch.length;
@@ -259,15 +199,13 @@ async function main() {
     }
   }
 
-  console.log('\n=== Hansard Scrape Complete ===');
-  console.log(`  Fetched:  ${stats.fetched}`);
-  console.log(`  New:      ${stats.new}`);
-  console.log(`  Skipped:  ${stats.skipped} (duplicates or empty)`);
+  console.log(`\n=== Complete ===`);
+  console.log(`  Dates checked: ${stats.dates_checked}`);
+  console.log(`  Debates fetched: ${stats.fetched}`);
+  console.log(`  YJ matches: ${stats.matched}`);
+  console.log(`  New: ${stats.new}`);
   console.log(`  Inserted: ${stats.inserted}`);
-  console.log(`  Errors:   ${stats.errors}`);
+  console.log(`  Errors: ${stats.errors}`);
 }
 
-main().catch((err) => {
-  console.error('Fatal error:', err);
-  process.exit(1);
-});
+main().catch(err => { console.error('Fatal:', err); process.exit(1); });
