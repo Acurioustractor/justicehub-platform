@@ -139,6 +139,10 @@
     {
       "path": "/api/cron/civic/nsw-hansard",
       "schedule": "0 16 * * 3"
+    },
+    {
+      "path": "/api/cron/civic/qld-hansard",
+      "schedule": "0 17 * * 3"
     }
   ]
 }
