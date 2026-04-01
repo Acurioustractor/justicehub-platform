@@ -5,7 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { MapPin, Calendar, Users, Building2, ChevronLeft, Send, Loader2 } from 'lucide-react';
+import { MapPin, Calendar, Users, Building2, ChevronLeft, Send, Loader2, DollarSign, Landmark, UserCheck, Globe, ExternalLink } from 'lucide-react';
+import { AccessGate } from '@/components/contained/AccessGate';
 
 const TourMap = dynamic(() => import('@/components/contained/TourMap'), {
   ssr: false,
@@ -43,6 +44,80 @@ interface Basecamp {
   image: string | null;
 }
 
+interface StakeholderOrg {
+  name: string;
+  type: string;
+  programs: number;
+  role: string;
+  website?: string;
+  detail: string;
+}
+
+interface StakeholderFunder {
+  name: string;
+  org: string;
+  status: string;
+  ask?: string;
+  detail: string;
+}
+
+interface StakeholderPolitical {
+  name: string;
+  role: string;
+  party: string;
+  priority: string;
+  detail: string;
+}
+
+interface StakeholderContact {
+  name: string;
+  org: string;
+  status: string;
+  detail: string;
+}
+
+interface StakeholderProgram {
+  name: string;
+  cost: number;
+  evidence: string;
+  description: string;
+}
+
+interface FundingFlow {
+  recipient: string;
+  amount: number;
+  funder: string;
+  program: string;
+}
+
+interface BasecampCase {
+  headline: string;
+  national_context: Record<string, { interventions: number; orgs: number; spend_m?: number }>;
+  basecamps: { name: string; type: string; pop: string; state: string; status: string }[];
+  access_gap: string;
+  maranguka_proof: string;
+  media: { title: string; source: string; date: string; detail: string }[];
+  hansard: { bill: string; date: string; house: string; detail: string }[];
+}
+
+interface Stakeholders {
+  orgs?: StakeholderOrg[];
+  funders?: StakeholderFunder[];
+  political?: StakeholderPolitical[];
+  contacts?: StakeholderContact[];
+  local_stats?: Record<string, any>;
+  programs?: StakeholderProgram[];
+  funding_ecosystem?: { total_tracked: number; total_grants: number; flows: FundingFlow[] };
+  basecamp_case?: BasecampCase;
+}
+
+interface LocalOrg {
+  name: string;
+  suburb: string | null;
+  website: string | null;
+  isIndigenous: boolean;
+}
+
 interface StopData {
   stop: {
     city: string;
@@ -66,6 +141,9 @@ interface StopData {
   stories: TourStory[];
   basecamps: Basecamp[];
   stateSpending: { detention_m: number; community_m: number };
+  stakeholders: Stakeholders;
+  localOrgs: LocalOrg[];
+  hasAccess: boolean;
 }
 
 const STATUS_BADGES: Record<string, { label: string; color: string }> = {
@@ -154,12 +232,28 @@ export function StopContent({ slug }: { slug: string }) {
     );
   }
 
-  const { stop, facilities, stories, basecamps, stateSpending } = data;
+  const { stop, facilities, stories, basecamps, stateSpending, stakeholders, localOrgs, hasAccess } = data;
   const badge = STATUS_BADGES[stop.status] || STATUS_BADGES.planning;
   const totalSpend = stateSpending.detention_m + stateSpending.community_m;
   const detPct = totalSpend > 0 ? Math.round((stateSpending.detention_m / totalSpend) * 100) : 0;
 
-  return (
+  const hasStakeholders = stakeholders && (
+    stakeholders.orgs?.length || stakeholders.funders?.length ||
+    stakeholders.political?.length || stakeholders.contacts?.length
+  );
+
+  const STATUS_COLORS: Record<string, string> = {
+    anchor: 'bg-emerald-600',
+    confirmed: 'bg-emerald-600',
+    active: 'bg-emerald-500',
+    'meeting today': 'bg-red-500',
+    warm: 'bg-amber-500',
+    responded: 'bg-blue-500',
+    pending: 'bg-gray-500',
+    target: 'bg-gray-600',
+  };
+
+  const pageContent = (
     <>
       <Navigation />
       <main className="bg-black text-white min-h-screen">
@@ -461,6 +555,473 @@ export function StopContent({ slug }: { slug: string }) {
           </div>
         </section>
 
+        {/* Local Stats Dashboard */}
+        {stakeholders?.local_stats && (
+          <section className="px-4 py-12 border-t border-gray-800">
+            <div className="max-w-4xl mx-auto">
+              <p className="text-sm uppercase tracking-[0.3em] text-red-400 mb-4">
+                {stop.state} Data Dashboard
+              </p>
+              <h2 className="text-3xl font-bold mb-8">The numbers behind {stop.city}</h2>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {stakeholders.local_stats.yj_annual_spend_m && (
+                  <div className="border border-gray-800 p-4">
+                    <div className="text-2xl font-mono font-bold text-red-400">${stakeholders.local_stats.yj_annual_spend_m}M</div>
+                    <div className="text-xs text-gray-500 mt-1">Annual YJ spend</div>
+                  </div>
+                )}
+                {stakeholders.local_stats.detention_cost_per_person && (
+                  <div className="border border-gray-800 p-4">
+                    <div className="text-2xl font-mono font-bold text-red-400">${(stakeholders.local_stats.detention_cost_per_person / 1000).toFixed(0)}K</div>
+                    <div className="text-xs text-gray-500 mt-1">Detention per person/yr</div>
+                  </div>
+                )}
+                {stakeholders.local_stats.cheapest_effective_program && (
+                  <div className="border border-gray-800 p-4">
+                    <div className="text-2xl font-mono font-bold text-emerald-400">${stakeholders.local_stats.cheapest_effective_program.toLocaleString()}</div>
+                    <div className="text-xs text-gray-500 mt-1">Cheapest effective program</div>
+                  </div>
+                )}
+                {stakeholders.local_stats.cost_ratio && (
+                  <div className="border border-gray-800 p-4">
+                    <div className="text-2xl font-mono font-bold text-amber-400">{stakeholders.local_stats.cost_ratio}</div>
+                    <div className="text-xs text-gray-500 mt-1">Cost ratio</div>
+                  </div>
+                )}
+                {stakeholders.local_stats.aboriginal_unsentenced_pct && (
+                  <div className="border border-gray-800 p-4">
+                    <div className="text-2xl font-mono font-bold text-red-400">{stakeholders.local_stats.aboriginal_unsentenced_pct}%</div>
+                    <div className="text-xs text-gray-500 mt-1">Aboriginal youth unsentenced</div>
+                  </div>
+                )}
+                {stakeholders.local_stats.detention_surge_pct && (
+                  <div className="border border-gray-800 p-4">
+                    <div className="text-2xl font-mono font-bold text-red-400">+{stakeholders.local_stats.detention_surge_pct}%</div>
+                    <div className="text-xs text-gray-500 mt-1">Detention surge (bail laws)</div>
+                  </div>
+                )}
+                {stakeholders.local_stats.mapped_programs && (
+                  <div className="border border-gray-800 p-4">
+                    <div className="text-2xl font-mono font-bold text-emerald-400">{stakeholders.local_stats.mapped_programs}</div>
+                    <div className="text-xs text-gray-500 mt-1">Mapped programs</div>
+                  </div>
+                )}
+                {stakeholders.local_stats.philanthropic_indigenous_pct && (
+                  <div className="border border-gray-800 p-4">
+                    <div className="text-2xl font-mono font-bold text-emerald-400">{stakeholders.local_stats.philanthropic_indigenous_pct}%</div>
+                    <div className="text-xs text-gray-500 mt-1">Non-govt funding → Indigenous orgs</div>
+                  </div>
+                )}
+              </div>
+
+              {stakeholders.local_stats.breaking_cycle_total_m != null && (
+                <div className="mt-6 border border-red-900 bg-red-950/20 p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="text-3xl font-mono font-bold text-red-400">$0</div>
+                    <div>
+                      <p className="text-white font-bold">of ${stakeholders.local_stats.breaking_cycle_total_m}M &ldquo;Breaking the Cycle&rdquo; grants goes to ACCOs</p>
+                      <p className="text-sm text-gray-400 mt-1">
+                        Government directs {stakeholders.local_stats.govt_indigenous_pct}% to Indigenous orgs.
+                        Non-government funders direct {stakeholders.local_stats.philanthropic_indigenous_pct}%.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Stakeholder Orgs */}
+        {hasStakeholders && stakeholders.orgs && stakeholders.orgs.length > 0 && (
+          <section className="px-4 py-12 border-t border-gray-800 bg-gray-950">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center gap-2 mb-2">
+                <Users className="w-5 h-5 text-emerald-400" />
+                <p className="text-sm uppercase tracking-[0.3em] text-emerald-400">Local Organisations</p>
+              </div>
+              <h2 className="text-3xl font-bold mb-2">{stakeholders.orgs.length} organisations mapped</h2>
+              <p className="text-gray-400 mb-8">Youth justice programs operating in or near {stop.city}</p>
+
+              {/* Indigenous-led */}
+              {stakeholders.orgs.filter(o => o.type === 'indigenous').length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-4">Indigenous-Led</h3>
+                  <div className="space-y-3">
+                    {stakeholders.orgs.filter(o => o.type === 'indigenous').map((org, i) => (
+                      <div key={i} className="border border-amber-900/50 bg-amber-950/10 p-4 flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-bold text-white">{org.name}</span>
+                            {org.role === 'HOST' && (
+                              <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest bg-emerald-600 text-white">Host</span>
+                            )}
+                            {org.programs > 0 && (
+                              <span className="text-xs text-gray-500">{org.programs} programs</span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-400 mt-1">{org.detail}</p>
+                        </div>
+                        {org.website && (
+                          <a href={org.website} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-white flex-shrink-0">
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Community orgs */}
+              {stakeholders.orgs.filter(o => o.type !== 'indigenous' && o.type !== 'academic').length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">Community &amp; Service Orgs</h3>
+                  <div className="space-y-3">
+                    {stakeholders.orgs.filter(o => o.type !== 'indigenous' && o.type !== 'academic').map((org, i) => (
+                      <div key={i} className="border border-gray-800 p-4 flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-bold text-white">{org.name}</span>
+                            {org.programs > 0 && (
+                              <span className="text-xs text-gray-500">{org.programs} programs</span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-400 mt-1">{org.detail}</p>
+                        </div>
+                        {org.website && (
+                          <a href={org.website} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-white flex-shrink-0">
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Academic */}
+              {stakeholders.orgs.filter(o => o.type === 'academic').length > 0 && (
+                <div>
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-blue-400 mb-4">Academic Partners</h3>
+                  <div className="space-y-3">
+                    {stakeholders.orgs.filter(o => o.type === 'academic').map((org, i) => (
+                      <div key={i} className="border border-blue-900/50 bg-blue-950/10 p-4 flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <span className="font-bold text-white">{org.name}</span>
+                          <p className="text-sm text-gray-400 mt-1">{org.detail}</p>
+                        </div>
+                        {org.website && (
+                          <a href={org.website} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-white flex-shrink-0">
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Funders */}
+        {hasStakeholders && stakeholders.funders && stakeholders.funders.length > 0 && (
+          <section className="px-4 py-12 border-t border-gray-800">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center gap-2 mb-2">
+                <DollarSign className="w-5 h-5 text-emerald-400" />
+                <p className="text-sm uppercase tracking-[0.3em] text-emerald-400">Funders &amp; Partners</p>
+              </div>
+              <h2 className="text-3xl font-bold mb-8">Funding network</h2>
+
+              <div className="space-y-3">
+                {stakeholders.funders.map((f, i) => (
+                  <div key={i} className="border border-gray-800 p-4">
+                    <div className="flex items-center justify-between gap-4 flex-wrap">
+                      <div>
+                        <span className="font-bold text-white">{f.name}</span>
+                        <span className="text-gray-500 ml-2 text-sm">{f.org}</span>
+                      </div>
+                      <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white ${STATUS_COLORS[f.status] || 'bg-gray-600'}`}>
+                        {f.status}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-400 mt-2">{f.detail}</p>
+                    {f.ask && (
+                      <div className="mt-2 px-3 py-2 bg-emerald-950/30 border border-emerald-900/30 text-sm">
+                        <span className="text-emerald-400 font-bold">Ask:</span>{' '}
+                        <span className="text-gray-300">{f.ask}</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Political */}
+        {hasStakeholders && stakeholders.political && stakeholders.political.length > 0 && (
+          <section className="px-4 py-12 border-t border-gray-800 bg-gray-950">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center gap-2 mb-2">
+                <Landmark className="w-5 h-5 text-blue-400" />
+                <p className="text-sm uppercase tracking-[0.3em] text-blue-400">Political Stakeholders</p>
+              </div>
+              <h2 className="text-3xl font-bold mb-8">Political landscape</h2>
+
+              {['tier1', 'tier2', 'tier3'].map(tier => {
+                const people = stakeholders.political!.filter(p => p.priority === tier);
+                if (!people.length) return null;
+                const tierLabel = tier === 'tier1' ? 'Priority — Must Invite' : tier === 'tier2' ? 'High Value' : 'Broader Network';
+                const tierColor = tier === 'tier1' ? 'text-red-400 border-red-900' : tier === 'tier2' ? 'text-amber-400 border-amber-900' : 'text-gray-400 border-gray-800';
+                return (
+                  <div key={tier} className="mb-8">
+                    <h3 className={`text-sm font-bold uppercase tracking-widest ${tierColor.split(' ')[0]} mb-4`}>{tierLabel}</h3>
+                    <div className="space-y-3">
+                      {people.map((p, i) => (
+                        <div key={i} className={`border ${tierColor.split(' ').slice(1).join(' ')} p-4`}>
+                          <div className="flex items-center gap-3 flex-wrap">
+                            <span className="font-bold text-white">{p.name}</span>
+                            <span className="text-xs text-gray-500">{p.role}</span>
+                            {p.party && p.party !== 'n/a' && p.party !== 'various' && (
+                              <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest bg-gray-800 text-gray-300">{p.party}</span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-400 mt-1">{p.detail}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* Contacts */}
+        {hasStakeholders && stakeholders.contacts && stakeholders.contacts.length > 0 && (
+          <section className="px-4 py-12 border-t border-gray-800">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center gap-2 mb-2">
+                <UserCheck className="w-5 h-5 text-emerald-400" />
+                <p className="text-sm uppercase tracking-[0.3em] text-emerald-400">Confirmed Contacts</p>
+              </div>
+              <h2 className="text-3xl font-bold mb-8">People already engaged</h2>
+
+              <div className="grid sm:grid-cols-2 gap-3">
+                {stakeholders.contacts.map((c, i) => (
+                  <div key={i} className="border border-gray-800 p-4">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-bold text-white">{c.name}</span>
+                      <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white ${STATUS_COLORS[c.status] || 'bg-gray-600'}`}>
+                        {c.status}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">{c.org}</p>
+                    <p className="text-sm text-gray-400 mt-2">{c.detail}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Programs Detail */}
+        {stakeholders?.programs && stakeholders.programs.length > 0 && (
+          <section className="px-4 py-12 border-t border-gray-800 bg-gray-950">
+            <div className="max-w-4xl mx-auto">
+              <p className="text-sm uppercase tracking-[0.3em] text-emerald-400 mb-2">Program Evidence</p>
+              <h2 className="text-3xl font-bold mb-2">{stakeholders.programs.length} programs mapped</h2>
+              <p className="text-gray-400 mb-8">
+                Average cost: <span className="font-mono text-emerald-400">
+                  ${Math.round(stakeholders.programs.reduce((s, p) => s + p.cost, 0) / stakeholders.programs.length).toLocaleString()}
+                </span>/year per young person vs <span className="font-mono text-red-400">$939,000</span> detention
+              </p>
+
+              <div className="space-y-3">
+                {stakeholders.programs.map((p, i) => {
+                  const evidenceColor = p.evidence === 'Indigenous-led' ? 'bg-amber-600'
+                    : p.evidence === 'Promising' ? 'bg-emerald-600' : 'bg-gray-600';
+                  return (
+                    <div key={i} className="border border-gray-800 p-5">
+                      <div className="flex items-center justify-between gap-4 flex-wrap mb-2">
+                        <div className="flex items-center gap-3">
+                          <span className="font-bold text-white">{p.name}</span>
+                          <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white ${evidenceColor}`}>
+                            {p.evidence}
+                          </span>
+                        </div>
+                        <span className="font-mono text-emerald-400 text-lg">${p.cost.toLocaleString()}<span className="text-xs text-gray-500">/yr</span></span>
+                      </div>
+                      <p className="text-sm text-gray-400">{p.description}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Funding Ecosystem */}
+        {stakeholders?.funding_ecosystem && (
+          <section className="px-4 py-12 border-t border-gray-800">
+            <div className="max-w-4xl mx-auto">
+              <p className="text-sm uppercase tracking-[0.3em] text-emerald-400 mb-2">Funding Ecosystem</p>
+              <h2 className="text-3xl font-bold mb-2">
+                ${(stakeholders.funding_ecosystem.total_tracked / 1000000).toFixed(1)}M tracked
+              </h2>
+              <p className="text-gray-400 mb-8">
+                {stakeholders.funding_ecosystem.total_grants} grants flowing into the {stop.city} ecosystem
+              </p>
+
+              <div className="space-y-2">
+                {stakeholders.funding_ecosystem.flows.map((f, i) => {
+                  const maxAmount = stakeholders.funding_ecosystem!.flows[0]?.amount || 1;
+                  const pct = Math.max(5, Math.round((f.amount / maxAmount) * 100));
+                  return (
+                    <div key={i} className="flex items-center gap-4">
+                      <div className="w-32 sm:w-48 text-right text-xs text-gray-500 flex-shrink-0 truncate">{f.funder}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="relative h-8 bg-gray-900 overflow-hidden">
+                          <div
+                            className="absolute inset-y-0 left-0 bg-emerald-900/60 border-r border-emerald-500"
+                            style={{ width: `${pct}%` }}
+                          />
+                          <div className="absolute inset-0 flex items-center px-3 gap-2">
+                            <span className="font-mono text-sm text-emerald-400">${(f.amount / 1000000).toFixed(1)}M</span>
+                            <span className="text-xs text-gray-400 truncate">→ {f.recipient}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-xs text-gray-600 mt-4">Source: JusticeHub funding tracker — AusTender, NSW DCJ/FACS, NIAA, PRF, Dusseldorp, Ritchie Foundation</p>
+            </div>
+          </section>
+        )}
+
+        {/* The Basecamp Case */}
+        {stakeholders?.basecamp_case && (
+          <section className="px-4 py-12 border-t border-gray-800 bg-gray-950">
+            <div className="max-w-4xl mx-auto">
+              <p className="text-sm uppercase tracking-[0.3em] text-amber-400 mb-2">Recommended Reading</p>
+              <h2 className="text-3xl font-bold mb-6">{stakeholders.basecamp_case.headline}</h2>
+
+              {/* The access gap callout */}
+              <div className="border border-red-900 bg-red-950/20 p-6 mb-8">
+                <p className="text-sm uppercase tracking-widest text-red-400 mb-2">The Access Gap</p>
+                <p className="text-gray-300">{stakeholders.basecamp_case.access_gap}</p>
+              </div>
+
+              {/* Maranguka proof */}
+              <div className="border border-emerald-900 bg-emerald-950/20 p-6 mb-8">
+                <p className="text-sm uppercase tracking-widest text-emerald-400 mb-2">The Proof Point</p>
+                <p className="text-gray-300">{stakeholders.basecamp_case.maranguka_proof}</p>
+              </div>
+
+              {/* National network */}
+              <div className="mb-8">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">Three Basecamps — Every Context</h3>
+                <div className="grid sm:grid-cols-3 gap-4">
+                  {stakeholders.basecamp_case.basecamps.map((bc, i) => (
+                    <div key={i} className={`border p-5 ${bc.state === stop.state ? 'border-amber-500 bg-amber-950/20' : 'border-gray-800'}`}>
+                      <div className="text-xs uppercase tracking-widest text-gray-500 mb-1">{bc.type}</div>
+                      <div className="font-bold text-white">{bc.name}</div>
+                      <div className="text-sm text-gray-400 mt-1">Pop. {bc.pop} · {bc.state}</div>
+                      <div className={`mt-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest inline-block ${bc.status === 'active' ? 'bg-emerald-600 text-white' : 'bg-gray-700 text-gray-300'}`}>
+                        {bc.status}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* National comparison */}
+              <div className="mb-8">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">State Comparison — Programs Mapped</h3>
+                <div className="space-y-2">
+                  {Object.entries(stakeholders.basecamp_case.national_context)
+                    .sort(([, a], [, b]) => b.interventions - a.interventions)
+                    .map(([state, data]) => {
+                      const maxInt = 495; // QLD max
+                      const pct = Math.max(3, Math.round((data.interventions / maxInt) * 100));
+                      const isCurrentState = state.toUpperCase() === stop.state;
+                      return (
+                        <div key={state} className="flex items-center gap-3">
+                          <div className={`w-10 text-right text-sm font-bold ${isCurrentState ? 'text-amber-400' : 'text-gray-500'}`}>{state.toUpperCase()}</div>
+                          <div className="flex-1 h-7 bg-gray-900 relative overflow-hidden">
+                            <div
+                              className={`absolute inset-y-0 left-0 ${isCurrentState ? 'bg-amber-600/50 border-r border-amber-400' : 'bg-gray-800 border-r border-gray-600'}`}
+                              style={{ width: `${pct}%` }}
+                            />
+                            <div className="absolute inset-0 flex items-center px-3 gap-2">
+                              <span className={`font-mono text-sm ${isCurrentState ? 'text-amber-400' : 'text-gray-400'}`}>{data.interventions}</span>
+                              <span className="text-xs text-gray-500">programs · {data.orgs} orgs{data.spend_m ? ` · $${data.spend_m}M spend` : ''}</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+
+              {/* Hansard mentions */}
+              {stakeholders.basecamp_case.hansard.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-blue-400 mb-4">Parliamentary Record</h3>
+                  <div className="space-y-3">
+                    {stakeholders.basecamp_case.hansard.map((h, i) => (
+                      <div key={i} className="border border-blue-900/50 bg-blue-950/10 p-4">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <Landmark className="w-3 h-3 text-blue-400" />
+                          <span className="text-xs text-blue-400 uppercase tracking-widest">{h.house} · {h.date}</span>
+                        </div>
+                        <p className="font-bold text-white text-sm">{h.bill}</p>
+                        <p className="text-sm text-gray-400 mt-1">{h.detail}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Media trail */}
+              {stakeholders.basecamp_case.media.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-4">Media &amp; Research</h3>
+                  <div className="space-y-3">
+                    {stakeholders.basecamp_case.media.map((m, i) => (
+                      <div key={i} className="border border-gray-800 p-4">
+                        <div className="flex items-center justify-between gap-4 flex-wrap">
+                          <span className="font-bold text-white text-sm">{m.title}</span>
+                          <span className="text-xs text-gray-500">{m.source} · {m.date}</span>
+                        </div>
+                        <p className="text-sm text-gray-400 mt-1">{m.detail}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Other Tour Stops Link */}
+        {hasStakeholders && (
+          <section className="px-4 py-8 border-t border-gray-800 bg-gray-950">
+            <div className="max-w-4xl mx-auto">
+              <p className="text-xs text-gray-600 text-center">
+                This planning page is password-protected and shared with local teams.
+                Data sourced from JusticeHub + CivicScope ({new Date().toLocaleDateString('en-AU')}).
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* What Now CTA */}
         <section className="px-4 py-16 border-t border-gray-800 bg-gray-950">
           <div className="max-w-2xl mx-auto text-center">
@@ -490,4 +1051,11 @@ export function StopContent({ slug }: { slug: string }) {
       <Footer />
     </>
   );
+
+  // Wrap with access gate if password protected
+  if (hasAccess) {
+    return <AccessGate slug={stop.eventSlug}>{pageContent}</AccessGate>;
+  }
+
+  return pageContent;
 }

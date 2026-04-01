@@ -34,8 +34,8 @@ export async function GET(
 
     const state = stop.state;
 
-    // 2-5. Fetch related data in parallel
-    const [facilitiesRes, storiesRes, basecampsRes, facilitiesApiRes] = await Promise.all([
+    // 2-6. Fetch related data in parallel
+    const [facilitiesRes, storiesRes, basecampsRes, facilitiesApiRes, localOrgsRes] = await Promise.all([
       // Detention facilities in this state
       supabase
         .from('youth_detention_facilities')
@@ -63,6 +63,9 @@ export async function GET(
 
       // ROGS state spending (reuse facilities API pattern)
       fetchStateSpending(supabase, state),
+
+      // Local orgs running YJ programs in this state (via RPC or raw query)
+      fetchLocalOrgs(supabase, state),
     ]);
 
     // Filter basecamps to those in this state
@@ -107,10 +110,49 @@ export async function GET(
       stories: storiesRes.data || [],
       basecamps,
       stateSpending: facilitiesApiRes,
+      stakeholders: stop.stakeholders || {},
+      localOrgs: localOrgsRes,
+      hasAccess: !!stop.access_code,
     });
   } catch (error) {
     console.error('Tour stop detail error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+async function fetchLocalOrgs(supabase: any, state: string) {
+  try {
+    // Use a two-step approach: get org IDs with interventions, then fetch org details
+    const { data: interventions } = await supabase
+      .from('alma_interventions')
+      .select('operating_organization_id')
+      .neq('verification_status', 'ai_generated');
+
+    const orgIds = [...new Set(
+      (interventions || [])
+        .map((r: any) => r.operating_organization_id)
+        .filter(Boolean)
+    )];
+
+    if (!orgIds.length) return [];
+
+    const { data: orgs } = await supabase
+      .from('organizations')
+      .select('name, suburb, website, is_indigenous_org')
+      .eq('state', state)
+      .in('id', orgIds)
+      .order('is_indigenous_org', { ascending: false })
+      .order('name')
+      .limit(50);
+
+    return (orgs || []).map((o: any) => ({
+      name: o.name,
+      suburb: o.suburb,
+      website: o.website,
+      isIndigenous: o.is_indigenous_org,
+    }));
+  } catch {
+    return [];
   }
 }
 

@@ -229,7 +229,7 @@ export const tourStops: TourStop[] = [
     description:
       'The national tour kicks off in Western Sydney with Mounty Yarns — a youth-led storytelling space running 7 programs on philanthropic funding alone, while NSW\'s $9.9M reoffending grants reach zero Aboriginal community-controlled organisations.',
     eventSlug: 'contained-mount-druitt-launch',
-    date: 'April 25, 2026',
+    date: 'May 1, 2026',
     status: 'planning',
     lat: -33.74,
     lng: 150.82,
