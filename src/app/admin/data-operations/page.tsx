@@ -156,7 +156,7 @@ export default function DataOperationsPage() {
               </div>
             </section>
             <section>
-              <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><MapPin className="w-5 h-5" />Services by State</h2>
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><MapPin className="w-5 h-5" />Programs by State</h2>
               <div className="border-2 border-black bg-white p-4 h-[300px]">
                 {stateChartData.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">

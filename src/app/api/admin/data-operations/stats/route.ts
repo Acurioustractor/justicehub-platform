@@ -48,15 +48,15 @@ export async function GET() {
       supabase.from('rogs_justice_spending').select('*', { count: 'exact', head: true }),
     ]);
 
-    // Get services by state
-    const { data: servicesByState } = await supabase
-      .from('services')
-      .select('location_state')
-      .not('location_state', 'is', null);
+    // Get programs by state (via org join on alma_interventions)
+    const { data: interventionsByState } = await supabase
+      .from('alma_interventions')
+      .select('operating_organization_id, organizations!alma_interventions_operating_organization_id_fkey(state)')
+      .neq('verification_status', 'ai_generated');
 
     const stateCounts: Record<string, number> = {};
-    servicesByState?.forEach((s) => {
-      const state = s.location_state || 'Unknown';
+    interventionsByState?.forEach((i: any) => {
+      const state = i.organizations?.state || 'Unknown';
       stateCounts[state] = (stateCounts[state] || 0) + 1;
     });
 
