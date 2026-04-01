@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
     const auth = await requireAdminApi();
     if (auth.error) return auth.error;
     const supabase = auth.supabase;
-    }
 
     const searchParams = request.nextUrl.searchParams;
     const days = parseInt(searchParams.get('days') || '30');

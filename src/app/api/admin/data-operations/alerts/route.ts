@@ -17,8 +17,6 @@ export async function GET() {
     const auth = await requireAdminApi();
     if (auth.error) return auth.error;
     const supabase = auth.supabase as any;
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
-    }
 
     const alerts: Alert[] = [];
     const now = new Date();
