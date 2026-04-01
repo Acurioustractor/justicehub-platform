@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server-lite';
+import { requireAdminApi } from '@/lib/admin-api-auth';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import {
   GRANT_MATCH_REVIEW_SOURCE,
@@ -15,15 +15,6 @@ function getServiceClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     serviceRoleKey
   );
-}
-
-async function isAdmin(supabase: any, userId: string): Promise<boolean> {
-  const { data } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .single();
-  return data?.role === 'admin';
 }
 
 function toReviewItem(task: any, orgNames: Map<string, string>) {
@@ -60,16 +51,8 @@ function toReviewItem(task: any, orgNames: Map<string, string>) {
 
 export async function GET(request: NextRequest) {
   try {
-    const authClient = await createClient();
-    const { data: { user } } = await authClient.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    if (!await isAdmin(authClient, user.id)) {
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (auth.error) return auth.error;
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status') || 'pending';
@@ -153,16 +136,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authClient = await createClient();
-    const { data: { user } } = await authClient.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    if (!await isAdmin(authClient, user.id)) {
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (auth.error) return auth.error;
 
     const body = await request.json().catch(() => ({}));
     const taskId = typeof body.taskId === 'string' ? body.taskId : null;

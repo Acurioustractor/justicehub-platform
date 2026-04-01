@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient as createAuthClient } from '@/lib/supabase/server-lite';
+import { requireAdminApi } from '@/lib/admin-api-auth';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { chooseScrapeStrategy } from '@/lib/scraping/strategy-engine';
 
@@ -8,15 +8,6 @@ function getServiceClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
-}
-
-async function isAdmin(supabase: any, userId: string): Promise<boolean> {
-  const { data } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .single();
-  return data?.role === 'admin';
 }
 
 // Funding source configurations
@@ -125,14 +116,8 @@ const RELEVANCE_KEYWORDS = [
 // POST - Trigger a funding scrape
 export async function POST(request: NextRequest) {
   try {
-    const authClient = await createAuthClient();
-    const { data: { user } } = await authClient.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-    if (!await isAdmin(authClient, user.id)) {
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (auth.error) return auth.error;
 
     const supabase = getServiceClient();
     const body = await request.json();
@@ -207,14 +192,8 @@ export async function POST(request: NextRequest) {
 // GET - Get scrape status and stats
 export async function GET(request: NextRequest) {
   try {
-    const authClient = await createAuthClient();
-    const { data: { user } } = await authClient.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-    if (!await isAdmin(authClient, user.id)) {
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (auth.error) return auth.error;
 
     const supabase = getServiceClient();
     const { searchParams } = new URL(request.url);

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server-lite';
+import { requireAdminApi } from '@/lib/admin-api-auth';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import {
   processSystem0QueueWithMode,
@@ -7,26 +7,6 @@ import {
 } from '@/lib/funding/system0-orchestrator';
 import { getSystem0Policy } from '@/lib/funding/system0-policy';
 import { logSystem0Event } from '@/lib/funding/system0-audit';
-
-function getServiceClient() {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceRoleKey) {
-    throw new Error('Missing service role key');
-  }
-  return createServiceClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    serviceRoleKey
-  );
-}
-
-async function isAdmin(supabase: any, userId: string): Promise<boolean> {
-  const { data } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .single();
-  return data?.role === 'admin';
-}
 
 function parsePositiveInt(value: unknown, fallback: number, min: number, max: number): number {
   const parsed = Number(value);
@@ -36,14 +16,8 @@ function parsePositiveInt(value: unknown, fallback: number, min: number, max: nu
 
 export async function POST(request: NextRequest) {
   try {
-    const authClient = await createClient();
-    const { data: { user } } = await authClient.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-    if (!await isAdmin(authClient, user.id)) {
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (auth.error) return auth.error;
 
     const body = await request.json().catch(() => ({}));
     const serviceClient = getServiceClient();
@@ -62,7 +36,7 @@ export async function POST(request: NextRequest) {
     await logSystem0Event(serviceClient, {
       eventType: 'worker_process',
       source: 'admin_worker',
-      actorId: user.id,
+      actorId: auth.userId,
       message: 'System 0 worker processing executed via admin endpoint.',
       payload: {
         drain,

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server-lite';
+import { requireAdminApi } from '@/lib/admin-api-auth';
 
 interface DataSource {
   id: string;
@@ -18,35 +18,11 @@ interface DataSource {
   description: string;
 }
 
-async function isAdmin(
-  supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never,
-  userId: string
-): Promise<boolean> {
-  const { data } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .single();
-  return data?.role === 'admin';
-}
-
 export async function GET(request: NextRequest) {
   try {
-    const authClient = await createClient();
-    const {
-      data: { user },
-    } = await authClient.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    if (!(await isAdmin(authClient, user.id))) {
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
-    }
-
-    // Use the authenticated client (already verified admin above)
-    const supabase = authClient;
+    const auth = await requireAdminApi();
+    if (auth.error) return auth.error;
+    const supabase = auth.supabase;
     const searchParams = request.nextUrl.searchParams;
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '50');

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server-lite';
+import { requireAdminApi } from '@/lib/admin-api-auth';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { runSystem0Scheduler, type System0SchedulerOptions } from '@/lib/funding/system0-scheduler';
 import { logSystem0Event } from '@/lib/funding/system0-audit';
@@ -13,15 +13,6 @@ function getServiceClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     serviceRoleKey
   );
-}
-
-async function isAdmin(supabase: any, userId: string): Promise<boolean> {
-  const { data } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .single();
-  return data?.role === 'admin';
 }
 
 function parseBatchSize(value: unknown): number {
@@ -57,14 +48,8 @@ function parseOptions(input: Record<string, unknown>): System0SchedulerOptions {
 
 export async function POST(request: NextRequest) {
   try {
-    const authClient = await createClient();
-    const { data: { user } } = await authClient.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-    if (!await isAdmin(authClient, user.id)) {
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (auth.error) return auth.error;
 
     const body = await request.json().catch(() => ({}));
     const options = parseOptions((body || {}) as Record<string, unknown>);
@@ -73,7 +58,7 @@ export async function POST(request: NextRequest) {
     await logSystem0Event(serviceClient, {
       eventType: 'scheduler_tick',
       source: 'admin_scheduler',
-      actorId: user.id,
+      actorId: auth.userId,
       runId: result.triggeredRun,
       message: result.skipped
         ? 'Admin scheduler tick skipped by policy.'

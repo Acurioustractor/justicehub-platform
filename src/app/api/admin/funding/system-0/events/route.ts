@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server-lite';
+import { requireAdminApi } from '@/lib/admin-api-auth';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { listSystem0Events, type System0AuditEvent } from '@/lib/funding/system0-audit';
 
@@ -12,15 +12,6 @@ function getServiceClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     serviceRoleKey
   );
-}
-
-async function isAdmin(supabase: any, userId: string): Promise<boolean> {
-  const { data } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .single();
-  return data?.role === 'admin';
 }
 
 function normalizeDateStart(value: string | null): string | undefined {
@@ -67,14 +58,8 @@ function buildEventsCsv(events: System0AuditEvent[]): string {
 
 export async function GET(request: NextRequest) {
   try {
-    const authClient = await createClient();
-    const { data: { user } } = await authClient.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-    if (!await isAdmin(authClient, user.id)) {
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (auth.error) return auth.error;
 
     const url = new URL(request.url);
     const limit = Math.max(1, Math.min(500, Number(url.searchParams.get('limit') || 20)));

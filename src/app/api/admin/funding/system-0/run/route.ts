@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server-lite';
+import { requireAdminApi } from '@/lib/admin-api-auth';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import {
   enqueueSystem0Run,
@@ -19,33 +19,16 @@ function getServiceClient() {
   );
 }
 
-async function isAdmin(supabase: any, userId: string): Promise<boolean> {
-  const { data } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', userId)
-    .single();
-  return data?.role === 'admin';
-}
-
 export async function POST(request: NextRequest) {
   try {
-    const authClient = await createClient();
-    const { data: { user } } = await authClient.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    if (!await isAdmin(authClient, user.id)) {
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (auth.error) return auth.error;
 
     const body = await request.json().catch(() => ({}));
     const config: System0RunConfig = {
       mode: body.mode === 'full' ? 'full' : 'incremental',
       source: 'api',
-      triggerUserId: user.id,
+      triggerUserId: auth.userId,
       organizationIds: Array.isArray(body.organizationIds) ? body.organizationIds : undefined,
     };
 
@@ -54,7 +37,7 @@ export async function POST(request: NextRequest) {
     await logSystem0Event(serviceClient, {
       eventType: 'run_enqueued',
       source: 'admin_run',
-      actorId: user.id,
+      actorId: auth.userId,
       runId: run.runId,
       message: `System 0 run enqueued (${config.mode}).`,
       payload: {
@@ -77,16 +60,8 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const authClient = await createClient();
-    const { data: { user } } = await authClient.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    if (!await isAdmin(authClient, user.id)) {
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
-    }
+    const auth = await requireAdminApi();
+    if (auth.error) return auth.error;
 
     const { searchParams } = new URL(request.url);
     const runId = searchParams.get('runId');
