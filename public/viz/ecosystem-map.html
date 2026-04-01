@@ -207,6 +207,11 @@ body{background:var(--black);color:var(--off-white);font-family:'Space Grotesk',
       <button class="layer-btn active" onclick="toggleLayer('detention',this)"><div class="layer-dot" style="background:var(--detention)"></div>Detention Centres</button>
       <button class="layer-btn" onclick="toggleLayer('funding',this)"><div class="layer-dot" style="background:var(--prf)"></div>Funding Lines</button>
       <button class="layer-btn" onclick="toggleLayer('dusseldorp',this)"><div class="layer-dot" style="background:var(--dusseldorp)"></div>Dusseldorp Network</button>
+      <button class="layer-btn" onclick="toggleLayer('tourRoute',this)"><div class="layer-dot" style="background:#DC2626"></div>CONTAINED Tour</button>
+      <button class="layer-btn" onclick="toggleLayer('accessGap',this)"><div class="layer-dot" style="background:#F59E0B"></div>Access Gap</button>
+      <button class="layer-btn" onclick="toggleLayer('zeroAccos',this)"><div class="layer-dot" style="background:#DC2626"></div>$0 to ACCOs</button>
+      <button class="layer-btn" onclick="toggleLayer('judges',this)"><div class="layer-dot" style="background:#8B5CF6"></div>Judges on Country</button>
+      <button class="layer-btn" onclick="toggleLayer('hansard',this)"><div class="layer-dot" style="background:#F59E0B"></div>Hansard Rhetoric</button>
     </div>
     <div class="map-legend" id="map-legend">
       <h5>Legend</h5>
@@ -217,6 +222,10 @@ body{background:var(--black);color:var(--off-white);font-family:'Space Grotesk',
       <div class="legend-row"><div class="legend-icon square" style="background:var(--detention)"></div><div class="legend-label">Youth detention centre</div></div>
       <div class="legend-row"><div class="legend-icon" style="background:none;border:none;width:14px;height:2px;background:var(--dusseldorp)"></div><div class="legend-label">Dusseldorp network</div></div>
       <div class="legend-row"><div class="legend-icon" style="background:none;border:none;width:14px;height:2px;background:#B8860B"></div><div class="legend-label">PRF funding line</div></div>
+      <div class="legend-row"><div class="legend-icon circle" style="background:#DC2626;border-color:#fff"></div><div class="legend-label">CONTAINED tour stop</div></div>
+      <div class="legend-row"><div class="legend-icon circle" style="background:#F59E0B;border-color:#FCD34D"></div><div class="legend-label">Minister met (access gap)</div></div>
+      <div class="legend-row"><div class="legend-icon circle" style="background:#8B5CF6;border-color:#fff"></div><div class="legend-label">Judges on Country</div></div>
+      <div class="legend-row"><div class="legend-icon" style="background:none;border:none;width:14px;height:2px;background:#DC2626"></div><div class="legend-label">CONTAINED route</div></div>
     </div>
     <div id="leaflet-map"></div>
     <!-- CivicScope Live Feed -->
@@ -434,6 +443,185 @@ const dHQ = [-33.86, 151.21];
   L.circleMarker(p, {radius:4,fillColor:'#6B7F99',fillOpacity:0.6,color:'white',weight:1}).addTo(layers.dusseldorp);
 });
 
+// ═══════ NEW LAYERS ═══════
+
+// ACCESS GAP — ministerial meetings vs community programs
+layers.accessGap = L.layerGroup();
+// Minister met these orgs (gold) — from CivicScope ministerial diaries
+const ministerMet = [
+  {n:'Dept of Youth Justice',lat:-27.47,lon:153.02,type:'dept'},
+  {n:'QLD Corrective Services',lat:-27.47,lon:153.03,type:'dept'},
+  {n:'Dept of Aboriginal Partnerships',lat:-27.47,lon:153.01,type:'dept'},
+  {n:'Ohana for Youth',lat:-27.47,lon:153.04,type:'org'},
+  {n:'Beaudesert Youth Centre',lat:-27.99,lon:153.00,type:'org'},
+  {n:'Cherbourg Aboriginal Shire Council',lat:-26.29,lon:151.95,type:'org'},
+  {n:'QLD Jewish Board of Deputies',lat:-27.48,lon:153.02,type:'org'},
+  {n:'Gummingurru Aboriginal Corp',lat:-27.56,lon:151.95,type:'org'},
+];
+ministerMet.forEach(m => {
+  const isOrg = m.type === 'org';
+  L.circleMarker([m.lat, m.lon], {
+    radius: 6,
+    fillColor: '#F59E0B',
+    fillOpacity: isOrg ? 0.8 : 0.4,
+    color: '#FCD34D',
+    weight: isOrg ? 2 : 1,
+  }).bindPopup(`
+    <div class="pn">${m.n}</div>
+    <div class="pt" style="color:#F59E0B">Minister met this ${m.type}</div>
+  `).addTo(layers.accessGap);
+});
+// The gap label
+L.marker([-22, 148], {
+  icon: L.divIcon({
+    className: '',
+    html: `<div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#F59E0B;text-shadow:0 1px 6px rgba(0,0,0,0.9);white-space:nowrap;background:rgba(10,10,10,0.7);padding:4px 10px;border-radius:3px;border:1px solid rgba(245,158,11,0.3)">ACCESS GAP: Minister met 192 orgs · 678 deliver programs · Overlap = 10 (1.5%)</div>`,
+    iconSize:[0,0]
+  })
+}).addTo(layers.accessGap);
+
+// CONTAINED TOUR ROUTE
+layers.tourRoute = L.layerGroup();
+const tourStops = [
+  {city:'Mt Druitt',lat:-33.74,lng:150.82,date:'May 1',partner:'Mounty Yarns',people:13,status:'planning'},
+  {city:'Brisbane',lat:-27.47,lng:153.03,date:'May 15',partner:'YAC',people:9,status:'planning'},
+  {city:'Adelaide',lat:-34.93,lng:138.60,date:'Jun 15',partner:'JRI',people:3,status:'planning'},
+  {city:'Townsville',lat:-19.27,lng:146.78,date:'Jul 1',partner:'PICC',people:4,status:'new'},
+  {city:'Perth',lat:-31.95,lng:115.86,date:'Aug',partner:'UWA + JRI',people:8,status:'planning'},
+  {city:'Tennant Creek',lat:-23.70,lng:133.88,date:'Sep 15',partner:'Oonchiumpa',people:2,status:'confirmed'},
+];
+// Route line
+const routeCoords = tourStops.map(s => [s.lat, s.lng]);
+L.polyline(routeCoords, {
+  color: '#DC2626', weight: 2.5, opacity: 0.6,
+  dashArray: '12,8', dashOffset: '0',
+  className: 'tour-route-line'
+}).addTo(layers.tourRoute);
+// Stop markers
+tourStops.forEach((s, i) => {
+  const isConfirmed = s.status === 'confirmed';
+  L.marker([s.lat, s.lng], {
+    icon: L.divIcon({
+      className: '',
+      html: `<div style="width:28px;height:28px;background:${isConfirmed?'#DC2626':'rgba(220,38,38,0.7)'};border:3px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;color:white;box-shadow:0 0 16px rgba(220,38,38,0.5)">${i+1}</div>`,
+      iconSize:[28,28], iconAnchor:[14,14]
+    })
+  }).bindPopup(`
+    <div class="pn">CONTAINED — ${s.city}</div>
+    <div class="pt">${s.date} · ${s.partner}</div>
+    <div class="ps">${s.people} people engaged · ${s.status}</div>
+  `).addTo(layers.tourRoute);
+  // City label
+  L.marker([s.lat, s.lng], {
+    icon: L.divIcon({
+      className: '',
+      html: `<div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:10px;color:#DC2626;text-shadow:0 1px 4px rgba(0,0,0,0.9);white-space:nowrap;transform:translate(-50%,-100%);padding-bottom:18px">${s.city} · ${s.date}</div>`,
+      iconSize:[0,0], iconAnchor:[0,14]
+    })
+  }).addTo(layers.tourRoute);
+});
+
+// $0 TO ACCOs MARKERS
+layers.zeroAccos = L.layerGroup();
+const zeroAccoData = [
+  {state:'NSW',lat:-33.87,lon:151.21,label:'$9.9M "Breaking the Cycle"',detail:'NSW DCJ grants — $0 to Aboriginal community-controlled orgs'},
+  {state:'QLD',lat:-27.47,lon:153.02,label:'$650M+ YJ announcements',detail:'QLD Govt 2026 — $0 directed to ACCOs'},
+  {state:'QLD',lat:-27.64,lon:153.11,label:'$40M YJ School Logan',detail:'Government-run facility, not community-controlled'},
+  {state:'VIC',lat:-37.81,lon:144.96,label:'$2.67M/yr per child',detail:'Cherry Creek YJC — most expensive detention in Australia'},
+  {state:'WA',lat:-32.08,lon:115.92,label:'Unit 18: kids in adult prison',detail:'20 children held in adult maximum-security precinct'},
+];
+zeroAccoData.forEach(z => {
+  L.marker([z.lat, z.lon], {
+    icon: L.divIcon({
+      className: '',
+      html: `<div style="background:rgba(220,38,38,0.15);border:2px solid rgba(220,38,38,0.6);border-radius:6px;padding:6px 10px;backdrop-filter:blur(4px);max-width:200px">
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;color:#DC2626">${z.label}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(245,240,232,0.5);margin-top:2px">$0 TO ACCOs</div>
+      </div>`,
+      iconSize:[200,40], iconAnchor:[100,20]
+    })
+  }).bindPopup(`
+    <div class="pn">${z.label}</div>
+    <div class="pt" style="color:#DC2626">$0 to ACCOs</div>
+    <div class="ps">${z.detail}</div>
+  `).addTo(layers.zeroAccos);
+});
+
+// JUDGES ON COUNTRY
+layers.judges = L.layerGroup();
+const judgesTarget = [-23.70, 133.88]; // Oonchiumpa
+const courtCities = [
+  {n:'Sydney',lat:-33.87,lon:151.21},
+  {n:'Melbourne',lat:-37.81,lon:144.96},
+  {n:'Brisbane',lat:-27.47,lon:153.02},
+  {n:'Perth',lat:-31.95,lon:115.86},
+  {n:'Adelaide',lat:-34.93,lon:138.60},
+  {n:'Canberra',lat:-35.28,lon:149.13},
+  {n:'Darwin',lat:-12.46,lon:130.84},
+  {n:'Hobart',lat:-42.88,lon:147.33},
+];
+courtCities.forEach(c => {
+  L.polyline([[c.lat, c.lon], judgesTarget], {
+    color: '#8B5CF6', weight: 1.2, opacity: 0.3, dashArray: '6,6'
+  }).addTo(layers.judges);
+  L.circleMarker([c.lat, c.lon], {
+    radius: 4, fillColor: '#8B5CF6', fillOpacity: 0.5, color: 'white', weight: 1
+  }).addTo(layers.judges);
+});
+// Oonchiumpa judges marker
+L.marker(judgesTarget, {
+  icon: L.divIcon({
+    className: '',
+    html: `<div style="width:36px;height:36px;background:rgba(139,92,246,0.2);border:3px solid #8B5CF6;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 20px rgba(139,92,246,0.4);animation:pulse-gap 3s infinite">⚖️</div>`,
+    iconSize:[36,36], iconAnchor:[18,18]
+  })
+}).bindPopup(`
+  <div class="pn">55 Judges on Country</div>
+  <div class="pt">Oonchiumpa · Mid-April 2026</div>
+  <div class="ps">Judicial immersion — evidence postcards powered by JusticeHub data</div>
+`).addTo(layers.judges);
+// Label
+L.marker([-22.5, 135.5], {
+  icon: L.divIcon({
+    className: '',
+    html: `<div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;color:#8B5CF6;text-shadow:0 1px 4px rgba(0,0,0,0.9);white-space:nowrap;background:rgba(10,10,10,0.7);padding:3px 8px;border-radius:3px;border:1px solid rgba(139,92,246,0.3)">55 JUDGES → OONCHIUMPA</div>`,
+    iconSize:[0,0]
+  })
+}).addTo(layers.judges);
+
+// HANSARD HEATMAP — where politicians talk vs where programs are
+layers.hansard = L.layerGroup();
+const hansardLocations = [
+  {n:'QLD Parliament',lat:-27.475,lon:153.028,speeches:47,topic:'detention',color:'#DC2626'},
+  {n:'QLD Parliament',lat:-27.475,lon:153.032,speeches:10,topic:'alternatives',color:'#059669'},
+  {n:'NSW Parliament',lat:-33.868,lon:151.211,speeches:7,topic:'youth justice bills',color:'#F59E0B'},
+  {n:'Federal (Senate)',lat:-35.308,lon:149.125,speeches:12,topic:'youth justice',color:'#F59E0B'},
+  {n:'VIC Parliament',lat:-37.811,lon:144.973,speeches:6,topic:'youth justice',color:'#F59E0B'},
+];
+hansardLocations.forEach(h => {
+  const sz = Math.max(20, h.speeches * 1.5);
+  L.circleMarker([h.lat, h.lon], {
+    radius: sz / 2,
+    fillColor: h.color,
+    fillOpacity: 0.15,
+    color: h.color,
+    weight: 1.5,
+    opacity: 0.6,
+  }).bindPopup(`
+    <div class="pn">${h.n}</div>
+    <div class="pt">${h.speeches} speeches on ${h.topic}</div>
+    <div class="ps">Rhetoric ratio: 47 mention detention, 10 mention alternatives (5:1)</div>
+  `).addTo(layers.hansard);
+});
+// Rhetoric gap label
+L.marker([-30, 150], {
+  icon: L.divIcon({
+    className: '',
+    html: `<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#F59E0B;text-shadow:0 1px 6px rgba(0,0,0,0.9);background:rgba(10,10,10,0.7);padding:3px 8px;border-radius:3px;border:1px solid rgba(245,158,11,0.3);white-space:nowrap">RHETORIC GAP: 5:1 detention vs alternatives in Hansard</div>`,
+    iconSize:[0,0]
+  })
+}).addTo(layers.hansard);
+
 function toggleLayer(name, btn) {
   btn.classList.toggle('active');
   if (btn.classList.contains('active')) map.addLayer(layers[name]);
@@ -570,12 +758,12 @@ const stories = [
   // 6: The Opportunity
   {
     center: [-25, 134], zoom: 4,
-    header: { kicker: 'The Opportunity', title: 'The platform is built. The data is here. The gap is visible.', lede: 'JusticeHub tracks 1,165 alternatives, $114.9B in funding, and 98,404 organisations. PLACE has the convening power but no data platform. JusticeHub fills that gap.' },
+    header: { kicker: 'The Opportunity', title: 'The platform is built. The data is here. The gap is visible.', lede: 'JusticeHub tracks 1,076 alternatives, $111.7B in funding, and 22,236 organisations. PLACE has the convening power but no data platform. JusticeHub fills that gap.' },
     body: `
       <div class="stat-row">
-        <div class="stat-box"><div class="num emerald">1,076</div><div class="lbl">Alternatives mapped</div></div>
-        <div class="stat-box"><div class="num">$111.7B</div><div class="lbl">Funding tracked</div></div>
-        <div class="stat-box"><div class="num emerald">649</div><div class="lbl">Indigenous orgs</div></div>
+        <div class="stat-box"><div class="num emerald">1,081</div><div class="lbl">Alternatives mapped</div></div>
+        <div class="stat-box"><div class="num">$114.9B</div><div class="lbl">Funding tracked</div></div>
+        <div class="stat-box"><div class="num emerald">1,724</div><div class="lbl">Indigenous orgs</div></div>
       </div>
       <div class="insight"><h4>PLACE — The Shared Table</h4><p>All five target funders sit here: PRF, Dusseldorp, Minderoo, SVA, and government. PLACE visited 53 communities in 2025. They have convening power but no data platform. JusticeHub provides the evidence layer.</p></div>
       <div class="insight"><h4>From Palimaa to JusticeHub</h4><p>Maranguka built Palimaa as a community data dashboard for Bourke. It proved the model. JusticeHub scales it nationally — community-owned data sovereignty at every site.</p></div>
