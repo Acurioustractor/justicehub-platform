@@ -1,19 +1,17 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-lite';
 
-// Known basecamp slugs
-const BASECAMP_SLUGS = ['oonchiumpa', 'bg-fit', 'mounty-yarns', 'picc-townsville'];
-
 export async function GET() {
   const supabase = await createClient();
 
-  // Fetch basecamp organizations by type OR known slugs
+  // Fetch all basecamps by partner_tier (DB-driven, no hardcoded slugs)
   const { data: basecamps, error } = await supabase
     .from('organizations')
     .select(`
       id,
       name,
       slug,
+      state,
       description,
       location,
       latitude,
@@ -30,7 +28,7 @@ export async function GET() {
         is_featured
       )
     `)
-    .or(`type.eq.basecamp,slug.in.(${BASECAMP_SLUGS.join(',')})`)
+    .eq('partner_tier', 'basecamp')
     .order('name');
 
   if (error) {

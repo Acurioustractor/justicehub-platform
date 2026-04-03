@@ -20,9 +20,27 @@ export default async function BasecampsPage() {
 
   const { data: basecamps } = await supabase
     .from('organizations')
-    .select('id, name, slug, state, is_indigenous_org')
-    .or('partner_tier.eq.basecamp,type.eq.basecamp')
+    .select('id, name, slug, state, description, is_indigenous_org')
+    .eq('partner_tier', 'basecamp')
     .order('state');
+
+  // Fetch live metrics per basecamp
+  const basecampMetrics: Record<string, { interventions: number; funding: number }> = {};
+  for (const bc of basecamps || []) {
+    const [intCount, fundSum] = await Promise.all([
+      supabase
+        .from('alma_interventions')
+        .select('id', { count: 'exact', head: true })
+        .eq('operating_organization_id', bc.id)
+        .neq('verification_status', 'ai_generated'),
+      supabase
+        .from('justice_funding')
+        .select('amount_dollars')
+        .eq('alma_organization_id', bc.id),
+    ]);
+    const totalFunding = (fundSum.data || []).reduce((s: number, r: any) => s + (r.amount_dollars || 0), 0);
+    basecampMetrics[bc.id] = { interventions: intCount.count || 0, funding: totalFunding };
+  }
 
   // Fetch hero photos for basecamps
   const basecampIds = (basecamps || []).map((b: any) => b.id);
@@ -185,35 +203,52 @@ export default async function BasecampsPage() {
                     <div className="space-y-3">
                       {stateBasecamps.map((bc: any) => {
                         const photoUrl = orgPhotoMap[bc.id];
+                        const metrics = basecampMetrics[bc.id] || { interventions: 0, funding: 0 };
                         return (
                           <Link
                             key={bc.id}
-                            href={`/sites/${bc.slug}`}
-                            className="flex items-center gap-3 group"
+                            href={`/alma/${bc.slug}`}
+                            className="block group"
                           >
-                            {photoUrl ? (
-                              <div className="h-10 w-10 shrink-0 rounded-lg overflow-hidden border border-[#0A0A0A]/10">
-                                <img
-                                  src={photoUrl}
-                                  alt={bc.name}
-                                  className="w-full h-full object-cover"
-                                />
+                            <div className="flex items-center gap-3">
+                              {photoUrl ? (
+                                <div className="h-10 w-10 shrink-0 rounded-lg overflow-hidden border border-[#0A0A0A]/10">
+                                  <img
+                                    src={photoUrl}
+                                    alt={bc.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#0A0A0A] text-white">
+                                  <Users className="w-4 h-4" />
+                                </div>
+                              )}
+                              <div className="min-w-0 flex-1">
+                                <p className="font-semibold text-sm group-hover:underline">
+                                  {bc.name}
+                                </p>
+                                <p className="text-xs text-[#0A0A0A]/50 flex items-center gap-1">
+                                  <MapPin className="w-3 h-3" /> {STATE_NAMES[bc.state]}
+                                  {bc.is_indigenous_org && ' · Indigenous-led'}
+                                </p>
                               </div>
-                            ) : (
-                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#0A0A0A] text-white">
-                                <Users className="w-4 h-4" />
+                              <ArrowRight className="w-4 h-4 text-[#0A0A0A]/20 group-hover:text-[#0A0A0A]/60 transition-colors" />
+                            </div>
+                            {(metrics.interventions > 0 || metrics.funding > 0) && (
+                              <div className="flex gap-4 mt-2 ml-[52px]">
+                                {metrics.interventions > 0 && (
+                                  <p className="text-xs text-[#0A0A0A]/40" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                                    {metrics.interventions} programs
+                                  </p>
+                                )}
+                                {metrics.funding > 0 && (
+                                  <p className="text-xs text-[#0A0A0A]/40" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                                    ${(metrics.funding / 1000000).toFixed(1)}M tracked
+                                  </p>
+                                )}
                               </div>
                             )}
-                            <div className="min-w-0 flex-1">
-                              <p className="font-semibold text-sm group-hover:underline">
-                                {bc.name}
-                              </p>
-                              <p className="text-xs text-[#0A0A0A]/50 flex items-center gap-1">
-                                <MapPin className="w-3 h-3" /> {STATE_NAMES[bc.state]}
-                                {bc.is_indigenous_org && ' · Indigenous-led'}
-                              </p>
-                            </div>
-                            <ArrowRight className="w-4 h-4 text-[#0A0A0A]/20 group-hover:text-[#0A0A0A]/60 transition-colors" />
                           </Link>
                         );
                       })}

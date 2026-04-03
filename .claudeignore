@@ -1,0 +1,48 @@
+# === Build artifacts & dependencies ===
+node_modules/
+.next/
+dist/
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# === Binary documents (convert to markdown first) ===
+data/pdfs/
+*.pdf
+*.docx
+*.xlsx
+*.xls
+*.pptx
+
+# === Images (Claude doesn't need these in search scope) ===
+output/social-tiles/
+output/campaign-assets/
+output/campaign-hub/*.png
+output/*.png
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.webp
+
+# === Large data files ===
+output/linkedin-*.json
+data/rogs-*.csv
+
+# === Supabase artifacts ===
+supabase/.temp/
+supabase/.branches/
+
+# === IDE & OS ===
+.vscode/
+.DS_Store
+
+# === Old archives (stale context) ===
+docs/archive/
+
+# === Agent cache (stale outputs) ===
+.claude/cache/
+
+# === Lock files ===
+package-lock.json
