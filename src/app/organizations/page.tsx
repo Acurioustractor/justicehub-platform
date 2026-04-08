@@ -31,54 +31,91 @@ interface DetentionFacility {
   partnership_count?: number;
 }
 
-async function fetchLinkedOrgIds(supabase: ReturnType<typeof createServiceClient>) {
-  // Only ALMA-linked orgs bypass the browse filter — funding linkage alone is too broad
-  // (includes construction companies, catering firms, etc. that receive govt money)
+// Hard cap: even after the strict filter, we never serialize more than this
+// many orgs into the SSR payload. Safety net against the data growing.
+const MAX_BROWSABLE = 5000;
+
+async function fetchAlmaLinkedIds(supabase: ReturnType<typeof createServiceClient>) {
+  // Orgs that operate at least one verified ALMA intervention.
+  // These bypass the description requirement (they're directly justice-linked).
   const svc = supabase as any;
-  const { data: almaRes } = await svc
+  const { data } = await svc
     .from('alma_interventions')
     .select('operating_organization_id')
     .neq('verification_status', 'ai_generated')
     .not('operating_organization_id', 'is', null);
 
   const ids = new Set<string>();
-  almaRes?.forEach((r: any) => { if (r.operating_organization_id) ids.add(r.operating_organization_id); });
+  data?.forEach((r: any) => { if (r.operating_organization_id) ids.add(r.operating_organization_id); });
   return ids;
 }
 
 async function fetchAllOrgs(supabase: ReturnType<typeof createServiceClient>) {
-  const PAGE_SIZE = 1000;
-  const allOrgs: Organization[] = [];
-  let offset = 0;
-  let hasMore = true;
+  // Browsable orgs are ones with a real description, tags, or verification —
+  // OR ones linked to a verified ALMA intervention.
+  //
+  // Previously the filter accepted any org with a `type` field, but `type` is
+  // auto-inferred from ABN data on ~70K skeleton records, which made the SSR
+  // HTML payload 21MB and broke the page in browsers.
+  //
+  // The strict filter drops it to ~3,800 real orgs.
 
-  while (hasMore) {
+  const linkedIds = await fetchAlmaLinkedIds(supabase);
+  const linkedArray = Array.from(linkedIds);
+
+  // Query 1: orgs with real content (description / tags / verified)
+  // We do this server-side via SQL filters instead of pulling 98K rows and
+  // filtering in JS.
+  const PAGE_SIZE = 1000;
+  const orgs: Organization[] = [];
+  let offset = 0;
+
+  while (orgs.length < MAX_BROWSABLE) {
     const { data, error } = await supabase
       .from('organizations')
       .select('id, name, slug, type, description, verification_status, city, state, tags')
       .eq('is_active', true)
+      // PostgREST OR: description not null, OR verified, OR tags non-empty
+      .or('description.not.is.null,verification_status.eq.verified,tags.not.is.null')
       .order('name')
       .range(offset, offset + PAGE_SIZE - 1);
 
     if (error) throw error;
     if (!data || data.length === 0) break;
-    allOrgs.push(...data);
-    hasMore = data.length === PAGE_SIZE;
+    orgs.push(...data);
+    if (data.length < PAGE_SIZE) break;
     offset += PAGE_SIZE;
   }
 
-  // Get orgs linked to ALMA interventions or justice funding
-  const linkedIds = await fetchLinkedOrgIds(supabase);
-
-  // Filter out skeleton orgs. An org is "browsable" if it has:
-  // - A type (even without description), OR
-  // - A description (even without type), OR
-  // - Tags, OR
-  // - Is linked to an ALMA intervention (directly justice-related)
-  // Having only a city or only funding linkage is NOT enough.
-  return allOrgs.filter(org =>
-    org.type || org.description || (org.tags && org.tags.length > 0) || linkedIds.has(org.id)
+  // Drop orgs with only a useless short description
+  const filtered = orgs.filter(o =>
+    (o.description && o.description.length > 30) ||
+    o.verification_status === 'verified' ||
+    (o.tags && o.tags.length > 0)
   );
+
+  // Query 2: ALMA-linked orgs that didn't already make it in via content
+  const existingIds = new Set(filtered.map(o => o.id));
+  const missingLinkedIds = linkedArray.filter(id => !existingIds.has(id));
+
+  if (missingLinkedIds.length > 0) {
+    // Chunk to avoid PostgREST URL length limits
+    const CHUNK = 200;
+    for (let i = 0; i < missingLinkedIds.length; i += CHUNK) {
+      const chunk = missingLinkedIds.slice(i, i + CHUNK);
+      const { data } = await supabase
+        .from('organizations')
+        .select('id, name, slug, type, description, verification_status, city, state, tags')
+        .eq('is_active', true)
+        .in('id', chunk);
+      if (data) filtered.push(...data);
+      if (filtered.length >= MAX_BROWSABLE) break;
+    }
+  }
+
+  // Sort and cap
+  filtered.sort((a, b) => a.name.localeCompare(b.name));
+  return filtered.slice(0, MAX_BROWSABLE);
 }
 
 async function fetchFacilitiesWithPartners(supabase: ReturnType<typeof createServiceClient>) {
@@ -116,14 +153,16 @@ async function getOrganizationsData() {
   const supabase = createServiceClient();
 
   try {
-    // Run ALL independent queries in parallel for ~3x speedup
+    // Run independent queries in parallel.
+    // NOTE: organization_claims table does not exist (the actual table is
+    // charity_claims with a different schema) — claim feature is currently
+    // not wired up. Removed the broken query.
     const [
       orgs,
       facilitiesWithPartners,
       { data: programs },
       { data: services },
       { data: teamMembers },
-      { data: verifiedClaims },
       { count: totalOrgCount },
     ] = await Promise.all([
       fetchAllOrgs(supabase).catch(err => {
@@ -134,16 +173,12 @@ async function getOrganizationsData() {
       supabase.from('registered_services').select('organization_id'),
       supabase.from('services').select('organization_id'),
       supabase.from('organizations_profiles').select('organization_id').eq('is_current', true),
-      (supabase as any).from('organization_claims').select('organization_id').eq('status', 'verified'),
       supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('is_active', true),
     ]);
 
     if (orgs.length === 0) {
       return { organizations: [], totalOrgCount: 0, programCounts: {}, serviceCounts: {}, teamCounts: {}, detentionFacilities: [], claimedOrgIds: [] };
     }
-
-    const claimedOrgIds = new Set<string>();
-    verifiedClaims?.forEach((c: { organization_id: string }) => claimedOrgIds.add(c.organization_id));
 
     return {
       organizations: orgs,
@@ -152,7 +187,7 @@ async function getOrganizationsData() {
       serviceCounts: buildCountMap(services),
       teamCounts: buildCountMap(teamMembers),
       detentionFacilities: facilitiesWithPartners,
-      claimedOrgIds: Array.from(claimedOrgIds),
+      claimedOrgIds: [] as string[],
     };
   } catch (error) {
     console.error('Error fetching organizations data:', error);
