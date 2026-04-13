@@ -1,0 +1,3086 @@
+{
+  "version": "2.10",
+  "children": [
+    {
+      "type": "frame",
+      "id": "Vp5JQ",
+      "x": 0,
+      "y": 0,
+      "name": "Judges Postcards Board",
+      "width": 1680,
+      "height": 1120,
+      "fill": "#F6EFE7",
+      "layout": "vertical",
+      "gap": 20,
+      "padding": [
+        28,
+        40,
+        32,
+        40
+      ],
+      "children": [
+        {
+          "type": "frame",
+          "id": "OFpu1",
+          "name": "Header",
+          "width": "fill_container",
+          "justifyContent": "space_between",
+          "children": [
+            {
+              "type": "frame",
+              "id": "n4Nlb",
+              "name": "Header Text",
+              "width": 1320,
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "1vBt0",
+                  "name": "label",
+                  "fill": "#6F655C",
+                  "content": "POSTCARD FIELD KIT / JUDGES ON COUNTRY",
+                  "fontFamily": "IBM Plex Mono",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "4vJE5",
+                  "name": "title",
+                  "fill": "#1A1A1A",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Six actual postcards for the judges trip: designed to carry story, place, and follow-through.",
+                  "lineHeight": 0.96,
+                  "fontFamily": "Playfair Display",
+                  "fontSize": 44,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "83xEG",
+                  "name": "body",
+                  "fill": "#6F655C",
+                  "textGrowth": "fixed-width",
+                  "width": 1120,
+                  "content": "Built around real Oonchiumpa quotes, real Oonchiumpa photos, and live QR routes back to Empathy Ledger, ALMA, and the field guide.",
+                  "lineHeight": 1.22,
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "BaO7R",
+              "name": "Source Chip",
+              "fill": "#C6452D",
+              "cornerRadius": 999,
+              "layout": "vertical",
+              "padding": [
+                10,
+                14
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "blnwr",
+                  "name": "chipText",
+                  "fill": "#FFFFFF",
+                  "content": "EL + ALMA + LOCAL MEDIA",
+                  "fontFamily": "IBM Plex Mono",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "GxH7R",
+          "name": "Row 1",
+          "width": "fill_container",
+          "gap": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "J4rPE",
+              "name": "Card 01 Founders",
+              "width": 520,
+              "height": 320,
+              "fill": "#FFFFFF",
+              "cornerRadius": 28,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#D8CCBD"
+              },
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "PdSWv",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Hero",
+                  "width": 520,
+                  "height": 156,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./assets/oonchiumpa-hero.jpg",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": [
+                    28,
+                    28,
+                    0,
+                    0
+                  ],
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "IGN3E",
+                  "x": 18,
+                  "y": 18,
+                  "name": "Chip",
+                  "fill": "#FFFFFFE8",
+                  "cornerRadius": 999,
+                  "layout": "vertical",
+                  "padding": [
+                    8,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "FYw4j",
+                      "name": "chip1t",
+                      "fill": "#C14E33",
+                      "content": "START HERE / FOUNDERS",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "Z4C8j",
+                  "x": 22,
+                  "y": 173,
+                  "name": "title1",
+                  "fill": "#1A1A1A",
+                  "textGrowth": "fixed-width",
+                  "width": 324,
+                  "content": "Kristy Bloomfield + Tanya Turner",
+                  "lineHeight": 0.98,
+                  "fontFamily": "Playfair Display",
+                  "fontSize": 34,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "hH1C5",
+                  "x": 22,
+                  "y": 246,
+                  "name": "body1",
+                  "fill": "#5F554C",
+                  "textGrowth": "fixed-width",
+                  "width": 312,
+                  "content": "Open the trip from the founders and keep community authority at the front of the route.",
+                  "lineHeight": 1.18,
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "es3cb",
+                  "x": 22,
+                  "y": 286,
+                  "name": "meta1",
+                  "fill": "#C14E33",
+                  "textGrowth": "fixed-width",
+                  "width": 312,
+                  "content": "Founders photo + EL profiles\n/judges-on-country",
+                  "lineHeight": 1.15,
+                  "fontFamily": "IBM Plex Mono",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "33qIN",
+                  "x": 420,
+                  "y": 214,
+                  "name": "QR",
+                  "width": 76,
+                  "height": 76,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./assets/qr-judges.png",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 18,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#1A1A1A"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ecuyL",
+              "name": "Card 02 Tanya",
+              "width": 520,
+              "height": 320,
+              "fill": "#F3EADF",
+              "cornerRadius": 28,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#D8CCBD"
+              },
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "mnwOr",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Hero",
+                  "width": 520,
+                  "height": 156,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./assets/oonchiumpa-tanya.jpg",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": [
+                    28,
+                    28,
+                    0,
+                    0
+                  ],
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "eIPeP",
+                  "x": 18,
+                  "y": 18,
+                  "name": "Chip",
+                  "fill": "#173F34E8",
+                  "cornerRadius": 999,
+                  "layout": "vertical",
+                  "padding": [
+                    8,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "CtWDg",
+                      "name": "chip2t",
+                      "fill": "#DDF3EA",
+                      "content": "TANYA / EL PROFILE",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "BsNAP",
+                  "x": 22,
+                  "y": 173,
+                  "name": "title2",
+                  "fill": "#1A1A1A",
+                  "textGrowth": "fixed-width",
+                  "width": 324,
+                  "content": "“Valued by their own mob.”",
+                  "lineHeight": 0.98,
+                  "fontFamily": "Playfair Display",
+                  "fontSize": 34,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "NlESz",
+                  "x": 22,
+                  "y": 246,
+                  "name": "body2",
+                  "fill": "#5F554C",
+                  "textGrowth": "fixed-width",
+                  "width": 312,
+                  "content": "Tanya keeps legal knowledge and cultural authority in the same field of practice.",
+                  "lineHeight": 1.18,
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "WwJdj",
+                  "x": 22,
+                  "y": 286,
+                  "name": "meta2",
+                  "fill": "#C14E33",
+                  "textGrowth": "fixed-width",
+                  "width": 312,
+                  "content": "Tanya portrait + Empathy Ledger\n/organizations/oonchiumpa",
+                  "lineHeight": 1.15,
+                  "fontFamily": "IBM Plex Mono",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "PGxaB",
+                  "x": 420,
+                  "y": 214,
+                  "name": "QR",
+                  "width": 76,
+                  "height": 76,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./assets/qr-oonchiumpa.png",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 18,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#1A1A1A"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Eebje",
+              "name": "Card 03 Jackquann",
+              "width": 520,
+              "height": 320,
+              "fill": "#174C3F",
+              "cornerRadius": 28,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#A8D8C7"
+              },
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ZUWxO",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Hero",
+                  "width": 520,
+                  "height": 156,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./assets/oonchiumpa-mentoring.jpg",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": [
+                    28,
+                    28,
+                    0,
+                    0
+                  ],
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "erDYq",
+                  "x": 18,
+                  "y": 18,
+                  "name": "Chip",
+                  "fill": "#FFFFFFE8",
+                  "cornerRadius": 999,
+                  "layout": "vertical",
+                  "padding": [
+                    8,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "cbvnN",
+                      "name": "chip3t",
+                      "fill": "#174C3F",
+                      "content": "JACKQUANN / STORY",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "7t170",
+                  "x": 22,
+                  "y": 173,
+                  "name": "title3",
+                  "fill": "#FFFFFF",
+                  "textGrowth": "fixed-width",
+                  "width": 324,
+                  "content": "“Programs.”",
+                  "lineHeight": 0.98,
+                  "fontFamily": "Playfair Display",
+                  "fontSize": 38,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "JOBDs",
+                  "x": 22,
+                  "y": 236,
+                  "name": "body3",
+                  "fill": "#D7EEE6",
+                  "textGrowth": "fixed-width",
+                  "width": 318,
+                  "content": "“Looking after my family.” Context photo from mentoring, not a portrait of Jackquann.",
+                  "lineHeight": 1.18,
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "rjlqq",
+                  "x": 22,
+                  "y": 286,
+                  "name": "meta3",
+                  "fill": "#A9D7C8",
+                  "textGrowth": "fixed-width",
+                  "width": 312,
+                  "content": "Local mentoring photo + ALMA story\n/sites/oonchiumpa",
+                  "lineHeight": 1.15,
+                  "fontFamily": "IBM Plex Mono",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "annJq",
+                  "x": 420,
+                  "y": 214,
+                  "name": "QR",
+                  "width": 76,
+                  "height": 76,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./assets/qr-site.png",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 18,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#FFFFFF"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "7aJf9",
+          "name": "Row 2",
+          "width": "fill_container",
+          "gap": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "z03a0",
+              "name": "Card 04 Nigel",
+              "width": 520,
+              "height": 320,
+              "fill": "#111111",
+              "cornerRadius": 28,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#2D2D2D"
+              },
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "1Glkj",
+                  "x": 18,
+                  "y": 18,
+                  "name": "Chip",
+                  "fill": "#1E5E4B",
+                  "cornerRadius": 999,
+                  "layout": "vertical",
+                  "padding": [
+                    8,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "RnUON",
+                      "name": "chip4t",
+                      "fill": "#DDF3EA",
+                      "content": "NIGEL / ALMA STORY",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "e03er",
+                  "x": 22,
+                  "y": 70,
+                  "name": "title4",
+                  "fill": "#FFFFFF",
+                  "textGrowth": "fixed-width",
+                  "width": 332,
+                  "content": "“Bad. Like, going away from my family and stuff.”",
+                  "lineHeight": 0.95,
+                  "fontFamily": "Playfair Display",
+                  "fontSize": 42,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "Ksr6e",
+                  "x": 22,
+                  "y": 224,
+                  "name": "body4",
+                  "fill": "#D1D1D1",
+                  "textGrowth": "fixed-width",
+                  "width": 324,
+                  "content": "School, footy, family, and daily consistency are the frame here.",
+                  "lineHeight": 1.18,
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "gFFHH",
+                  "x": 22,
+                  "y": 282,
+                  "name": "meta4",
+                  "fill": "#A7D5C7",
+                  "textGrowth": "fixed-width",
+                  "width": 320,
+                  "content": "Nigel, 14 + Oonchiumpa ALMA story\n/alma/oonchiumpa",
+                  "lineHeight": 1.15,
+                  "fontFamily": "IBM Plex Mono",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "lYG1b",
+                  "x": 420,
+                  "y": 214,
+                  "name": "QR",
+                  "width": 76,
+                  "height": 76,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./assets/qr-alma.png",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 18,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#FFFFFF"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "tdAQH",
+              "name": "Card 05 Laquisha",
+              "width": 520,
+              "height": 320,
+              "fill": "#C14E33",
+              "cornerRadius": 28,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#F5D1C8"
+              },
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "7Azzk",
+                  "x": 18,
+                  "y": 18,
+                  "name": "Chip",
+                  "fill": "#F7DDD6",
+                  "cornerRadius": 999,
+                  "layout": "vertical",
+                  "padding": [
+                    8,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "nsFps",
+                      "name": "chip5t",
+                      "fill": "#C14E33",
+                      "content": "LAQUISHA / ALMA STORY",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "edNfH",
+                  "x": 22,
+                  "y": 70,
+                  "name": "title5",
+                  "fill": "#FFFFFF",
+                  "textGrowth": "fixed-width",
+                  "width": 336,
+                  "content": "“I don’t like going to Darwin cause I have no family there.”",
+                  "lineHeight": 0.95,
+                  "fontFamily": "Playfair Display",
+                  "fontSize": 38,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "46pK8",
+                  "x": 22,
+                  "y": 224,
+                  "name": "body5",
+                  "fill": "#FFE7E0",
+                  "textGrowth": "fixed-width",
+                  "width": 326,
+                  "content": "Close with distance, removal, and the word Laquisha used plainly: oppression.",
+                  "lineHeight": 1.18,
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "Zhej0",
+                  "x": 22,
+                  "y": 282,
+                  "name": "meta5",
+                  "fill": "#FFE2DA",
+                  "textGrowth": "fixed-width",
+                  "width": 320,
+                  "content": "Laquisha, 16 + Oonchiumpa ALMA story\n/alma/oonchiumpa",
+                  "lineHeight": 1.15,
+                  "fontFamily": "IBM Plex Mono",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "duZXp",
+                  "x": 420,
+                  "y": 214,
+                  "name": "QR",
+                  "width": 76,
+                  "height": 76,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./assets/qr-alma.png",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 18,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#FFFFFF"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "t6xAG",
+              "name": "Card 06 Trust",
+              "width": 520,
+              "height": 320,
+              "fill": "#FFFFFF",
+              "cornerRadius": 28,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#D8CCBD"
+              },
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "8Uv3D",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Hero",
+                  "width": 520,
+                  "height": 156,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./assets/oonchiumpa-country.jpg",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": [
+                    28,
+                    28,
+                    0,
+                    0
+                  ],
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "iDeuq",
+                  "x": 18,
+                  "y": 18,
+                  "name": "Chip",
+                  "fill": "#FFFFFFE8",
+                  "cornerRadius": 999,
+                  "layout": "vertical",
+                  "padding": [
+                    8,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GvcfH",
+                      "name": "chip6t",
+                      "fill": "#174C3F",
+                      "content": "TRUST / FOLLOW THROUGH",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 10,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "swB53",
+                  "x": 22,
+                  "y": 173,
+                  "name": "title6",
+                  "fill": "#1A1A1A",
+                  "textGrowth": "fixed-width",
+                  "width": 324,
+                  "content": "“He trusts us. We earned that trust.”",
+                  "lineHeight": 0.98,
+                  "fontFamily": "Playfair Display",
+                  "fontSize": 34,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "Vwyxo",
+                  "x": 22,
+                  "y": 246,
+                  "name": "body6",
+                  "fill": "#5F554C",
+                  "textGrowth": "fixed-width",
+                  "width": 312,
+                  "content": "Fred Campbell on Xavier. End the set with trust, work, and follow-through.",
+                  "lineHeight": 1.18,
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "wf75a",
+                  "x": 22,
+                  "y": 286,
+                  "name": "meta6",
+                  "fill": "#C14E33",
+                  "textGrowth": "fixed-width",
+                  "width": 312,
+                  "content": "Country photo + ALMA story\n/judges-on-country#connect",
+                  "lineHeight": 1.15,
+                  "fontFamily": "IBM Plex Mono",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "fblRe",
+                  "x": 420,
+                  "y": 214,
+                  "name": "QR",
+                  "width": 76,
+                  "height": 76,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./assets/qr-connect.png",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 18,
+                  "stroke": {
+                    "thickness": 2,
+                    "fill": "#1A1A1A"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "FPeMm",
+          "name": "note1",
+          "fill": "#7A6E63",
+          "content": "Suggested print: A6 landscape, duplex, trimmed cleanly for chambers packs and field folders.",
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 12,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "R2DbW",
+          "name": "note2",
+          "fill": "#7A6E63",
+          "textGrowth": "fixed-width",
+          "width": 1320,
+          "content": "All QR targets align with the live stack: judges page, Oonchiumpa profile, Atnarpa site, Oonchiumpa ALMA story, and chambers follow-through.",
+          "lineHeight": 1.2,
+          "fontFamily": "Inter",
+          "fontSize": 15,
+          "fontWeight": "500"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "oN1Ou",
+      "x": 0,
+      "y": 1300,
+      "name": "Postcard 01 / Founders",
+      "width": 1480,
+      "height": 1050,
+      "fill": "#FFFFFF",
+      "cornerRadius": 44,
+      "stroke": {
+        "thickness": 2,
+        "fill": "#D8CCBD"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "iAILI",
+          "x": 0,
+          "y": 0,
+          "width": 1480,
+          "height": 500,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./assets/oonchiumpa-hero.jpg",
+            "mode": "fill"
+          },
+          "cornerRadius": [
+            44,
+            44,
+            0,
+            0
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "LpHdC",
+          "x": 44,
+          "y": 44,
+          "fill": "#FFFFFFE8",
+          "cornerRadius": 999,
+          "layout": "vertical",
+          "padding": [
+            14,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "gcA7B",
+              "fill": "#C14E33",
+              "content": "START HERE / FOUNDERS",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "Fl7RA",
+          "x": 56,
+          "y": 556,
+          "fill": "#1A1A1A",
+          "textGrowth": "fixed-width",
+          "width": 960,
+          "content": "Kristy Bloomfield + Tanya Turner",
+          "lineHeight": 0.96,
+          "fontFamily": "Playfair Display",
+          "fontSize": 86,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "aqLC2",
+          "x": 56,
+          "y": 742,
+          "fill": "#5F554C",
+          "textGrowth": "fixed-width",
+          "width": 860,
+          "content": "Open the trip from the founders and keep community authority at the front of the route.",
+          "lineHeight": 1.18,
+          "fontFamily": "Inter",
+          "fontSize": 36,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "hycd9",
+          "x": 56,
+          "y": 932,
+          "fill": "#C14E33",
+          "textGrowth": "fixed-width",
+          "width": 820,
+          "content": "Founders photo + Empathy Ledger profiles\n/judges-on-country",
+          "lineHeight": 1.15,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 22,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "Or1d1",
+          "x": 1216,
+          "y": 738,
+          "width": 180,
+          "height": 180,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./assets/qr-judges.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 3,
+            "fill": "#1A1A1A"
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "FniiC",
+      "x": 1600,
+      "y": 1300,
+      "name": "Postcard 02 / Tanya",
+      "width": 1480,
+      "height": 1050,
+      "fill": "#F3EADF",
+      "cornerRadius": 44,
+      "stroke": {
+        "thickness": 2,
+        "fill": "#D8CCBD"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "rUYzi",
+          "x": 0,
+          "y": 0,
+          "width": 1480,
+          "height": 500,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./assets/oonchiumpa-tanya.jpg",
+            "mode": "fill"
+          },
+          "cornerRadius": [
+            44,
+            44,
+            0,
+            0
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "uDYS8",
+          "x": 44,
+          "y": 44,
+          "fill": "#173F34E8",
+          "cornerRadius": 999,
+          "layout": "vertical",
+          "padding": [
+            14,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "kutAJ",
+              "fill": "#DDF3EA",
+              "content": "TANYA / EL PROFILE",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "SefxN",
+          "x": 56,
+          "y": 556,
+          "fill": "#1A1A1A",
+          "textGrowth": "fixed-width",
+          "width": 950,
+          "content": "“Valued by their own mob.”",
+          "lineHeight": 0.96,
+          "fontFamily": "Playfair Display",
+          "fontSize": 86,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "apNQV",
+          "x": 56,
+          "y": 712,
+          "fill": "#5F554C",
+          "textGrowth": "fixed-width",
+          "width": 860,
+          "content": "Tanya keeps legal knowledge and cultural authority in the same field of practice.",
+          "lineHeight": 1.18,
+          "fontFamily": "Inter",
+          "fontSize": 36,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "Dr35w",
+          "x": 56,
+          "y": 932,
+          "fill": "#C14E33",
+          "textGrowth": "fixed-width",
+          "width": 820,
+          "content": "Tanya portrait + Empathy Ledger\n/organizations/oonchiumpa",
+          "lineHeight": 1.15,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 22,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "B0Ye7",
+          "x": 1216,
+          "y": 738,
+          "width": 180,
+          "height": 180,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./assets/qr-oonchiumpa.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 3,
+            "fill": "#1A1A1A"
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "6eN7p",
+      "x": 0,
+      "y": 2460,
+      "name": "Postcard 03 / Jackquann",
+      "width": 1480,
+      "height": 1050,
+      "fill": "#174C3F",
+      "cornerRadius": 44,
+      "stroke": {
+        "thickness": 2,
+        "fill": "#A8D8C7"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "GXaWh",
+          "x": 0,
+          "y": 0,
+          "width": 1480,
+          "height": 500,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./assets/oonchiumpa-mentoring.jpg",
+            "mode": "fill"
+          },
+          "cornerRadius": [
+            44,
+            44,
+            0,
+            0
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NIX3q",
+          "x": 44,
+          "y": 44,
+          "fill": "#FFFFFFE8",
+          "cornerRadius": 999,
+          "layout": "vertical",
+          "padding": [
+            14,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "oEzgG",
+              "fill": "#174C3F",
+              "content": "JACKQUANN / STORY",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "BLdJC",
+          "x": 56,
+          "y": 556,
+          "fill": "#FFFFFF",
+          "textGrowth": "fixed-width",
+          "width": 940,
+          "content": "“Programs.”",
+          "lineHeight": 0.94,
+          "fontFamily": "Playfair Display",
+          "fontSize": 100,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "KrOmL",
+          "x": 56,
+          "y": 706,
+          "fill": "#D7EEE6",
+          "textGrowth": "fixed-width",
+          "width": 920,
+          "content": "“Looking after my family.” Context photo from mentoring, not a portrait of Jackquann.",
+          "lineHeight": 1.18,
+          "fontFamily": "Inter",
+          "fontSize": 36,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "urp0a",
+          "x": 56,
+          "y": 932,
+          "fill": "#A9D7C8",
+          "textGrowth": "fixed-width",
+          "width": 860,
+          "content": "Local mentoring photo + ALMA story\n/sites/oonchiumpa",
+          "lineHeight": 1.15,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 22,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "kgpuY",
+          "x": 1216,
+          "y": 738,
+          "width": 180,
+          "height": 180,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./assets/qr-site.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 3,
+            "fill": "#FFFFFF"
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ABXUX",
+      "x": 1600,
+      "y": 2460,
+      "name": "Postcard 04 / Nigel",
+      "width": 1480,
+      "height": 1050,
+      "fill": "#111111",
+      "cornerRadius": 44,
+      "stroke": {
+        "thickness": 2,
+        "fill": "#2D2D2D"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "QspuS",
+          "x": 44,
+          "y": 44,
+          "fill": "#1E5E4B",
+          "cornerRadius": 999,
+          "layout": "vertical",
+          "padding": [
+            14,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "VYLoi",
+              "fill": "#DDF3EA",
+              "content": "NIGEL / ALMA STORY",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "EwaiB",
+          "x": 56,
+          "y": 184,
+          "fill": "#FFFFFF",
+          "textGrowth": "fixed-width",
+          "width": 980,
+          "content": "“Bad. Like, going away from my family and stuff.”",
+          "lineHeight": 0.92,
+          "fontFamily": "Playfair Display",
+          "fontSize": 104,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "Sqylr",
+          "x": 56,
+          "y": 690,
+          "fill": "#D1D1D1",
+          "textGrowth": "fixed-width",
+          "width": 900,
+          "content": "School, footy, family, and daily consistency are the frame here.",
+          "lineHeight": 1.18,
+          "fontFamily": "Inter",
+          "fontSize": 36,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "9W3Im",
+          "x": 56,
+          "y": 932,
+          "fill": "#A7D5C7",
+          "textGrowth": "fixed-width",
+          "width": 860,
+          "content": "Nigel, 14 + Oonchiumpa ALMA story\n/alma/oonchiumpa",
+          "lineHeight": 1.15,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 22,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "QL7Zm",
+          "x": 1216,
+          "y": 738,
+          "width": 180,
+          "height": 180,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./assets/qr-alma.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 3,
+            "fill": "#FFFFFF"
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "DATh9",
+      "x": 0,
+      "y": 3620,
+      "name": "Postcard 05 / Laquisha",
+      "width": 1480,
+      "height": 1050,
+      "fill": "#C14E33",
+      "cornerRadius": 44,
+      "stroke": {
+        "thickness": 2,
+        "fill": "#F5D1C8"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "ObTsJ",
+          "x": 44,
+          "y": 44,
+          "fill": "#F7DDD6",
+          "cornerRadius": 999,
+          "layout": "vertical",
+          "padding": [
+            14,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "SAVpT",
+              "fill": "#C14E33",
+              "content": "LAQUISHA / ALMA STORY",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "qnpD2",
+          "x": 56,
+          "y": 184,
+          "fill": "#FFFFFF",
+          "textGrowth": "fixed-width",
+          "width": 1010,
+          "content": "“I don’t like going to Darwin cause I have no family there.”",
+          "lineHeight": 0.92,
+          "fontFamily": "Playfair Display",
+          "fontSize": 96,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "AiYmM",
+          "x": 56,
+          "y": 708,
+          "fill": "#FFE7E0",
+          "textGrowth": "fixed-width",
+          "width": 920,
+          "content": "Close with distance, removal, and the word Laquisha used plainly: oppression.",
+          "lineHeight": 1.18,
+          "fontFamily": "Inter",
+          "fontSize": 36,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "GVLX4",
+          "x": 56,
+          "y": 932,
+          "fill": "#FFE2DA",
+          "textGrowth": "fixed-width",
+          "width": 860,
+          "content": "Laquisha, 16 + Oonchiumpa ALMA story\n/alma/oonchiumpa",
+          "lineHeight": 1.15,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 22,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "yCnSL",
+          "x": 1216,
+          "y": 738,
+          "width": 180,
+          "height": 180,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./assets/qr-alma.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 3,
+            "fill": "#FFFFFF"
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "c9Vio",
+      "x": 1600,
+      "y": 3620,
+      "name": "Postcard 06 / Trust",
+      "width": 1480,
+      "height": 1050,
+      "fill": "#FFFFFF",
+      "cornerRadius": 44,
+      "stroke": {
+        "thickness": 2,
+        "fill": "#D8CCBD"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "uJmxa",
+          "x": 0,
+          "y": 0,
+          "width": 1480,
+          "height": 500,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./assets/oonchiumpa-country.jpg",
+            "mode": "fill"
+          },
+          "cornerRadius": [
+            44,
+            44,
+            0,
+            0
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "YkWNG",
+          "x": 44,
+          "y": 44,
+          "fill": "#FFFFFFE8",
+          "cornerRadius": 999,
+          "layout": "vertical",
+          "padding": [
+            14,
+            20
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "EEdJS",
+              "fill": "#174C3F",
+              "content": "TRUST / FOLLOW THROUGH",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "S03hv",
+          "x": 56,
+          "y": 556,
+          "fill": "#1A1A1A",
+          "textGrowth": "fixed-width",
+          "width": 980,
+          "content": "“He trusts us. We earned that trust.”",
+          "lineHeight": 0.96,
+          "fontFamily": "Playfair Display",
+          "fontSize": 86,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "CHApy",
+          "x": 56,
+          "y": 742,
+          "fill": "#5F554C",
+          "textGrowth": "fixed-width",
+          "width": 860,
+          "content": "Fred Campbell on Xavier. End the set with trust, work, and follow-through.",
+          "lineHeight": 1.18,
+          "fontFamily": "Inter",
+          "fontSize": 36,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "dgv8z",
+          "x": 56,
+          "y": 932,
+          "fill": "#C14E33",
+          "textGrowth": "fixed-width",
+          "width": 860,
+          "content": "Country photo + ALMA story\n/judges-on-country#connect",
+          "lineHeight": 1.15,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 22,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "9hjc8",
+          "x": 1216,
+          "y": 738,
+          "width": 180,
+          "height": 180,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./assets/qr-connect.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 3,
+            "fill": "#1A1A1A"
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "FOTkg",
+      "x": 3200,
+      "y": 1300,
+      "name": "Postcard 01 / Founders Back",
+      "width": 1480,
+      "height": 1050,
+      "fill": "#F5F0E8",
+      "cornerRadius": 44,
+      "stroke": {
+        "thickness": 2,
+        "fill": "#D8CCBD"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "dTxMk",
+          "x": 56,
+          "y": 56,
+          "width": 848,
+          "height": 938,
+          "fill": "#FFF9F0",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#E5D7C5"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "frame",
+          "id": "GKqP4",
+          "x": 56,
+          "y": 56,
+          "width": 270,
+          "height": 52,
+          "fill": "#DC2626",
+          "cornerRadius": 999,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "BnChB",
+              "x": 22,
+              "y": 15,
+              "fill": "#FFF7ED",
+              "textGrowth": "fixed-width",
+              "width": 226,
+              "content": "CARD 01 / FOUNDERS",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "lUwlk",
+          "x": 56,
+          "y": 150,
+          "fill": "#1A1A1A",
+          "textGrowth": "fixed-width",
+          "width": 820,
+          "content": "Start with the people leading the work",
+          "lineHeight": 0.96,
+          "fontFamily": "Playfair Display",
+          "fontSize": 74,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "9zK7f",
+          "x": 56,
+          "y": 316,
+          "fill": "#7B6D61",
+          "textGrowth": "fixed-width",
+          "width": 820,
+          "content": "Kristy Bloomfield and Tanya Turner, Oonchiumpa",
+          "lineHeight": 1.2,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 24,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "xzoq1",
+          "x": 56,
+          "y": 380,
+          "fill": "#4F463F",
+          "textGrowth": "fixed-width",
+          "width": 792,
+          "content": "Oonchiumpa is a 100% Aboriginal community-controlled organisation working across Central Australia. The trip should begin with the people holding cultural authority, family connection, and responsibility to act for their own young people.\n\nThis card sets the frame: community-led practice first, then the wider evidence and route system around it.",
+          "lineHeight": 1.22,
+          "fontFamily": "Inter",
+          "fontSize": 34,
+          "fontWeight": "500"
+        },
+        {
+          "type": "frame",
+          "id": "3em7Q",
+          "x": 56,
+          "y": 710,
+          "width": 792,
+          "height": 190,
+          "fill": "#1A1A1A",
+          "cornerRadius": 28,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "a4Pio",
+              "x": 28,
+              "y": 26,
+              "fill": "#DC2626",
+              "textGrowth": "fixed-width",
+              "width": 736,
+              "content": "WHY THIS CARD COMES FIRST",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "nsBXF",
+              "x": 28,
+              "y": 66,
+              "fill": "#F5F0E8",
+              "textGrowth": "fixed-width",
+              "width": 736,
+              "content": "Before the statistics, before CivicScope, before the search, judges should meet the people leading the work.",
+              "lineHeight": 1.2,
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "OJvQk",
+          "x": 956,
+          "y": 56,
+          "width": 468,
+          "height": 938,
+          "fill": "#F6E2DD",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#E4B8AD"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "NgnpV",
+              "x": 36,
+              "y": 34,
+              "fill": "#9F1D1D",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "SCAN TO OPEN",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "STCFJ",
+              "x": 104,
+              "y": 86,
+              "width": 260,
+              "height": 260,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./assets/qr-judges.png",
+                "mode": "fill"
+              },
+              "cornerRadius": 28,
+              "stroke": {
+                "thickness": 3,
+                "fill": "#1A1A1A"
+              }
+            },
+            {
+              "type": "text",
+              "id": "T7qO1",
+              "x": 36,
+              "y": 384,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Judges field guide",
+              "lineHeight": 0.98,
+              "fontFamily": "Playfair Display",
+              "fontSize": 52,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "OHbRu",
+              "x": 36,
+              "y": 490,
+              "fill": "#7B6D61",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "justicehub.com.au/judges-on-country",
+              "lineHeight": 1.2,
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 22,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "ENHi9",
+              "x": 36,
+              "y": 572,
+              "fill": "#4F463F",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Open the trip route, video, local search, and follow-through prompts.",
+              "lineHeight": 1.22,
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "wm5EE",
+              "x": 36,
+              "y": 760,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Use this card to frame the visit as an encounter with community-led authority rather than an inspection of a program.",
+              "lineHeight": 1.2,
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "1fGDt",
+          "x": 56,
+          "y": 962,
+          "fill": "#8B8178",
+          "textGrowth": "fixed-width",
+          "width": 1368,
+          "content": "justicehub.com.au  |  Empathy Ledger profiles  |  A6 field card reverse",
+          "lineHeight": 1.2,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 20,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "fJVIQ",
+      "x": 4800,
+      "y": 1300,
+      "name": "Postcard 02 / Tanya Back",
+      "width": 1480,
+      "height": 1050,
+      "fill": "#F5F0E8",
+      "cornerRadius": 44,
+      "stroke": {
+        "thickness": 2,
+        "fill": "#D8CCBD"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "FNR6G",
+          "x": 56,
+          "y": 56,
+          "width": 848,
+          "height": 938,
+          "fill": "#FBF7F0",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#D8E7DF"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "frame",
+          "id": "BghWN",
+          "x": 56,
+          "y": 56,
+          "width": 220,
+          "height": 52,
+          "fill": "#1E5E4B",
+          "cornerRadius": 999,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "qOth2",
+              "x": 22,
+              "y": 15,
+              "fill": "#F5F0E8",
+              "textGrowth": "fixed-width",
+              "width": 176,
+              "content": "CARD 02 / TANYA",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "Qgb6M",
+          "x": 56,
+          "y": 150,
+          "fill": "#1A1A1A",
+          "textGrowth": "fixed-width",
+          "width": 820,
+          "content": "Tanya brings legal practice home",
+          "lineHeight": 0.96,
+          "fontFamily": "Playfair Display",
+          "fontSize": 74,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "tI7mQ",
+          "x": 56,
+          "y": 332,
+          "fill": "#4F463F",
+          "textGrowth": "fixed-width",
+          "width": 792,
+          "content": "Tanya Turner is an Eastern Arrernte woman who graduated from UWA law school, worked as an associate at the Supreme Court of Victoria, and came home to build Oonchiumpa with community wisdom at the centre.\n\nFor judges, this matters because legal literacy and cultural authority are not competing things here. They are working together in one field of practice.",
+          "lineHeight": 1.22,
+          "fontFamily": "Inter",
+          "fontSize": 34,
+          "fontWeight": "500"
+        },
+        {
+          "type": "frame",
+          "id": "yVjOp",
+          "x": 56,
+          "y": 746,
+          "width": 792,
+          "height": 154,
+          "fill": "#E3F2EB",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#9FCFBD"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "f2iCe",
+              "x": 28,
+              "y": 26,
+              "fill": "#1E5E4B",
+              "textGrowth": "fixed-width",
+              "width": 736,
+              "content": "Keep this route close when the conversation turns to what culturally grounded legal leadership actually looks like in community.",
+              "lineHeight": 1.2,
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "PxADK",
+          "x": 956,
+          "y": 56,
+          "width": 468,
+          "height": 938,
+          "fill": "#E8F4EF",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#A8D8C7"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "mOm5D",
+              "x": 36,
+              "y": 34,
+              "fill": "#1E5E4B",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "SCAN TO OPEN",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "9Oxuq",
+              "x": 104,
+              "y": 86,
+              "width": 260,
+              "height": 260,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./assets/qr-oonchiumpa.png",
+                "mode": "fill"
+              },
+              "cornerRadius": 28,
+              "stroke": {
+                "thickness": 3,
+                "fill": "#1A1A1A"
+              }
+            },
+            {
+              "type": "text",
+              "id": "wgYOk",
+              "x": 36,
+              "y": 384,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Oonchiumpa basecamp",
+              "lineHeight": 0.98,
+              "fontFamily": "Playfair Display",
+              "fontSize": 52,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "Y099R",
+              "x": 36,
+              "y": 490,
+              "fill": "#587267",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "justicehub.com.au/organizations/oonchiumpa",
+              "lineHeight": 1.2,
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 22,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "kAprc",
+              "x": 36,
+              "y": 572,
+              "fill": "#4F463F",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Open the founders, the core basecamp context, and the local route.",
+              "lineHeight": 1.22,
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "IrS3v",
+              "x": 36,
+              "y": 760,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Scan to open the Oonchiumpa profile and keep the founders context close to the trip.",
+              "lineHeight": 1.2,
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "PQ3sO",
+          "x": 56,
+          "y": 962,
+          "fill": "#8B8178",
+          "textGrowth": "fixed-width",
+          "width": 1368,
+          "content": "justicehub.com.au  |  Oonchiumpa profile  |  A6 field card reverse",
+          "lineHeight": 1.2,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 20,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "1b0xe",
+      "x": 3200,
+      "y": 2460,
+      "name": "Postcard 03 / Jackquann Back",
+      "width": 1480,
+      "height": 1050,
+      "fill": "#F5F0E8",
+      "cornerRadius": 44,
+      "stroke": {
+        "thickness": 2,
+        "fill": "#D8CCBD"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "4sg70",
+          "x": 56,
+          "y": 56,
+          "width": 848,
+          "height": 938,
+          "fill": "#FBF7F0",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#D8E7DF"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "frame",
+          "id": "jouWc",
+          "x": 56,
+          "y": 56,
+          "width": 260,
+          "height": 52,
+          "fill": "#174C3F",
+          "cornerRadius": 999,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "HJwRS",
+              "x": 22,
+              "y": 15,
+              "fill": "#F5F0E8",
+              "textGrowth": "fixed-width",
+              "width": 216,
+              "content": "CARD 03 / JACKQUANN",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "J3qfC",
+          "x": 56,
+          "y": 150,
+          "fill": "#1A1A1A",
+          "textGrowth": "fixed-width",
+          "width": 820,
+          "content": "Jackquann did not ask for harsher punishment",
+          "lineHeight": 0.96,
+          "fontFamily": "Playfair Display",
+          "fontSize": 72,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "HHinz",
+          "x": 56,
+          "y": 316,
+          "fill": "#7B6D61",
+          "textGrowth": "fixed-width",
+          "width": 820,
+          "content": "Mentoring photo shown here is contextual, not a portrait of Jackquann",
+          "lineHeight": 1.2,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 24,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "ix15p",
+          "x": 56,
+          "y": 380,
+          "fill": "#4F463F",
+          "textGrowth": "fixed-width",
+          "width": 792,
+          "content": "Jackquann, 14, told Oonchiumpa that detention is ‘At six o'clock you get locked down. You wait till tomorrow.’ Asked what would stop him getting in trouble, he said ‘Looking after my family.’ Asked what he would tell politicians, he said ‘Programs.’",
+          "lineHeight": 1.22,
+          "fontFamily": "Inter",
+          "fontSize": 34,
+          "fontWeight": "500"
+        },
+        {
+          "type": "frame",
+          "id": "YAcrv",
+          "x": 56,
+          "y": 690,
+          "width": 792,
+          "height": 210,
+          "fill": "#1A1A1A",
+          "cornerRadius": 28,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "VApBV",
+              "x": 28,
+              "y": 26,
+              "fill": "#1BB283",
+              "textGrowth": "fixed-width",
+              "width": 736,
+              "content": "WHAT TO LISTEN FOR",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "NY44f",
+              "x": 28,
+              "y": 66,
+              "fill": "#F5F0E8",
+              "textGrowth": "fixed-width",
+              "width": 736,
+              "content": "Family, programs, and practical support are what he named. This is what judges should be listening for on the trip.",
+              "lineHeight": 1.2,
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "1XqGO",
+          "x": 956,
+          "y": 56,
+          "width": 468,
+          "height": 938,
+          "fill": "#E8F4EF",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#A8D8C7"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "Zs0w1",
+              "x": 36,
+              "y": 34,
+              "fill": "#1E5E4B",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "SCAN TO OPEN",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "8vrNG",
+              "x": 104,
+              "y": 86,
+              "width": 260,
+              "height": 260,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./assets/qr-site.png",
+                "mode": "fill"
+              },
+              "cornerRadius": 28,
+              "stroke": {
+                "thickness": 3,
+                "fill": "#1A1A1A"
+              }
+            },
+            {
+              "type": "text",
+              "id": "Qbsgr",
+              "x": 36,
+              "y": 384,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Atnarpa site page",
+              "lineHeight": 0.98,
+              "fontFamily": "Playfair Display",
+              "fontSize": 52,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "K0RSj",
+              "x": 36,
+              "y": 490,
+              "fill": "#587267",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "justicehub.com.au/sites/oonchiumpa",
+              "lineHeight": 1.2,
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 22,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "AjjKa",
+              "x": 36,
+              "y": 572,
+              "fill": "#4F463F",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Open the on-Country site route, gallery, and place-based program overview.",
+              "lineHeight": 1.22,
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "WvnPY",
+              "x": 36,
+              "y": 760,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Open the Atnarpa site page to keep place and practice in the frame.",
+              "lineHeight": 1.2,
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "I2RgU",
+          "x": 56,
+          "y": 962,
+          "fill": "#8B8178",
+          "textGrowth": "fixed-width",
+          "width": 1368,
+          "content": "justicehub.com.au  |  Atnarpa site route  |  A6 field card reverse",
+          "lineHeight": 1.2,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 20,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "GVswc",
+      "x": 4800,
+      "y": 2460,
+      "name": "Postcard 04 / Nigel Back",
+      "width": 1480,
+      "height": 1050,
+      "fill": "#F5F0E8",
+      "cornerRadius": 44,
+      "stroke": {
+        "thickness": 2,
+        "fill": "#D8CCBD"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "m16MY",
+          "x": 56,
+          "y": 56,
+          "width": 848,
+          "height": 938,
+          "fill": "#FAF7F1",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#DBE7E1"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "frame",
+          "id": "tN1Tt",
+          "x": 56,
+          "y": 56,
+          "width": 220,
+          "height": 52,
+          "fill": "#111111",
+          "cornerRadius": 999,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "GTdnC",
+              "x": 22,
+              "y": 15,
+              "fill": "#F5F0E8",
+              "textGrowth": "fixed-width",
+              "width": 176,
+              "content": "CARD 04 / NIGEL",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "c1CBW",
+          "x": 56,
+          "y": 150,
+          "fill": "#1A1A1A",
+          "textGrowth": "fixed-width",
+          "width": 820,
+          "content": "Nigel named what detention interrupts",
+          "lineHeight": 0.96,
+          "fontFamily": "Playfair Display",
+          "fontSize": 74,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "onwtT",
+          "x": 56,
+          "y": 332,
+          "fill": "#4F463F",
+          "textGrowth": "fixed-width",
+          "width": 792,
+          "content": "Nigel, 14, likes school and wants to be a footy player. He knows he needs to go to school every day to get there. What he described as harmful was not just custody itself, but being taken away from family and home.",
+          "lineHeight": 1.22,
+          "fontFamily": "Inter",
+          "fontSize": 34,
+          "fontWeight": "500"
+        },
+        {
+          "type": "frame",
+          "id": "VZ5rP",
+          "x": 56,
+          "y": 660,
+          "width": 792,
+          "height": 208,
+          "fill": "#FFFFFF",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#C8DDD3"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "JZWo4",
+              "x": 28,
+              "y": 24,
+              "fill": "#1E5E4B",
+              "textGrowth": "fixed-width",
+              "width": 736,
+              "content": "WHAT YOUTH JUSTICE SHOULD PROTECT",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "R53wn",
+              "x": 28,
+              "y": 64,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 736,
+              "content": "Family, school, movement, and a consistent adult are already visible here. Oonchiumpa consistency is the intervention.",
+              "lineHeight": 1.2,
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "tsAUM",
+          "x": 56,
+          "y": 900,
+          "fill": "#1A1A1A",
+          "textGrowth": "fixed-width",
+          "width": 792,
+          "content": "Use this card when the conversation needs to come back to family, schooling, and what support actually looks like in practice.",
+          "lineHeight": 1.2,
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "KOqMZ",
+          "x": 956,
+          "y": 56,
+          "width": 468,
+          "height": 938,
+          "fill": "#E8F4EF",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#A8D8C7"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "ue0Mm",
+              "x": 36,
+              "y": 34,
+              "fill": "#1E5E4B",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "SCAN TO OPEN",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "t1slq",
+              "x": 104,
+              "y": 86,
+              "width": 260,
+              "height": 260,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./assets/qr-alma.png",
+                "mode": "fill"
+              },
+              "cornerRadius": 28,
+              "stroke": {
+                "thickness": 3,
+                "fill": "#1A1A1A"
+              }
+            },
+            {
+              "type": "text",
+              "id": "vrcET",
+              "x": 36,
+              "y": 384,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Oonchiumpa story page",
+              "lineHeight": 0.98,
+              "fontFamily": "Playfair Display",
+              "fontSize": 52,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "fQj5u",
+              "x": 36,
+              "y": 490,
+              "fill": "#587267",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "justicehub.com.au/alma/oonchiumpa",
+              "lineHeight": 1.2,
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 22,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "KvTwQ",
+              "x": 36,
+              "y": 572,
+              "fill": "#4F463F",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Read the longer Oonchiumpa story and the consented youth voices behind the trip.",
+              "lineHeight": 1.22,
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "6zt1W",
+              "x": 36,
+              "y": 760,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Keep this route close when the trip needs to come back to family, school, and consistency.",
+              "lineHeight": 1.2,
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "32sOD",
+          "x": 56,
+          "y": 962,
+          "fill": "#8B8178",
+          "textGrowth": "fixed-width",
+          "width": 1368,
+          "content": "justicehub.com.au  |  ALMA story route  |  A6 field card reverse",
+          "lineHeight": 1.2,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 20,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "px84p",
+      "x": 3200,
+      "y": 3620,
+      "name": "Postcard 05 / Laquisha Back",
+      "width": 1480,
+      "height": 1050,
+      "fill": "#F5F0E8",
+      "cornerRadius": 44,
+      "stroke": {
+        "thickness": 2,
+        "fill": "#E7C7BD"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "Ss1rR",
+          "x": 56,
+          "y": 56,
+          "width": 848,
+          "height": 938,
+          "fill": "#FFF6F2",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#F0C9BD"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "frame",
+          "id": "OinxK",
+          "x": 56,
+          "y": 56,
+          "width": 250,
+          "height": 52,
+          "fill": "#C14E33",
+          "cornerRadius": 999,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "XMvhI",
+              "x": 22,
+              "y": 15,
+              "fill": "#FFF6F2",
+              "textGrowth": "fixed-width",
+              "width": 206,
+              "content": "CARD 05 / LAQUISHA",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "UBtTv",
+          "x": 56,
+          "y": 150,
+          "fill": "#1A1A1A",
+          "textGrowth": "fixed-width",
+          "width": 820,
+          "content": "Laquisha named the structure plainly",
+          "lineHeight": 0.96,
+          "fontFamily": "Playfair Display",
+          "fontSize": 74,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "LwNAw",
+          "x": 56,
+          "y": 332,
+          "fill": "#4F463F",
+          "textGrowth": "fixed-width",
+          "width": 792,
+          "content": "Laquisha, 16, described being sent to Darwin youth detention 1,500km from home. Twelve minute phone calls. Two hour waits between calls. No family there.\n\nWhen she was asked why young people get in trouble, she answered in one word: oppression.",
+          "lineHeight": 1.22,
+          "fontFamily": "Inter",
+          "fontSize": 34,
+          "fontWeight": "500"
+        },
+        {
+          "type": "frame",
+          "id": "Ift9Z",
+          "x": 56,
+          "y": 722,
+          "width": 792,
+          "height": 176,
+          "fill": "#FFF1EC",
+          "cornerRadius": 28,
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "pbsfI",
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 176,
+              "fill": "#C14E33"
+            },
+            {
+              "type": "text",
+              "id": "zvj0M",
+              "x": 36,
+              "y": 34,
+              "fill": "#7A3424",
+              "textGrowth": "fixed-width",
+              "width": 728,
+              "content": "Take this card into CivicScope to trace what governments say about youth justice, what oversight has already recommended, and where removal from family is still being normalised.",
+              "lineHeight": 1.2,
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "oXF6L",
+          "x": 956,
+          "y": 56,
+          "width": 468,
+          "height": 938,
+          "fill": "#F8E2DB",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#E8B7A7"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "6VAwm",
+              "x": 36,
+              "y": 34,
+              "fill": "#9F2E16",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "SCAN TO OPEN",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "cMCKP",
+              "x": 104,
+              "y": 86,
+              "width": 260,
+              "height": 260,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./assets/qr-civic.png",
+                "mode": "fill"
+              },
+              "cornerRadius": 28,
+              "stroke": {
+                "thickness": 3,
+                "fill": "#1A1A1A"
+              }
+            },
+            {
+              "type": "text",
+              "id": "ODrAk",
+              "x": 36,
+              "y": 384,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "CivicScope",
+              "lineHeight": 0.98,
+              "fontFamily": "Playfair Display",
+              "fontSize": 52,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "xt809",
+              "x": 36,
+              "y": 490,
+              "fill": "#7B6D61",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "justicehub.com.au/intelligence/civic",
+              "lineHeight": 1.2,
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 22,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "d30uo",
+              "x": 36,
+              "y": 572,
+              "fill": "#4F463F",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Trace what government said, what oversight recommended, and what still has not changed.",
+              "lineHeight": 1.22,
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "S1og9",
+              "x": 36,
+              "y": 760,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Use this card when the conversation shifts from individual blame to the system producing distance, removal, and harm.",
+              "lineHeight": 1.2,
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "nCclh",
+          "x": 56,
+          "y": 962,
+          "fill": "#8B8178",
+          "textGrowth": "fixed-width",
+          "width": 1368,
+          "content": "justicehub.com.au  |  CivicScope  |  A6 field card reverse",
+          "lineHeight": 1.2,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 20,
+          "fontWeight": "600"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Tudlx",
+      "x": 4800,
+      "y": 3620,
+      "name": "Postcard 06 / Trust Back",
+      "width": 1480,
+      "height": 1050,
+      "fill": "#F5F0E8",
+      "cornerRadius": 44,
+      "stroke": {
+        "thickness": 2,
+        "fill": "#D8CCBD"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "zGszo",
+          "x": 56,
+          "y": 56,
+          "width": 848,
+          "height": 938,
+          "fill": "#FBF7F0",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#D8E7DF"
+          },
+          "layout": "none"
+        },
+        {
+          "type": "frame",
+          "id": "lsuMz",
+          "x": 56,
+          "y": 56,
+          "width": 220,
+          "height": 52,
+          "fill": "#1E5E4B",
+          "cornerRadius": 999,
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "HukhB",
+              "x": 22,
+              "y": 15,
+              "fill": "#F5F0E8",
+              "textGrowth": "fixed-width",
+              "width": 176,
+              "content": "CARD 06 / TRUST",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "3Tu49",
+          "x": 56,
+          "y": 150,
+          "fill": "#1A1A1A",
+          "textGrowth": "fixed-width",
+          "width": 820,
+          "content": "What is next for youth justice and Oonchiumpa",
+          "lineHeight": 0.96,
+          "fontFamily": "Playfair Display",
+          "fontSize": 70,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "5Z2QL",
+          "x": 56,
+          "y": 316,
+          "fill": "#4F463F",
+          "textGrowth": "fixed-width",
+          "width": 792,
+          "content": "Fred Campbell told the Oonchiumpa story page about Xavier, one of the organisation's first clients. Other services distanced from him when the relationship got hard. Oonchiumpa did not.\n\nXavier later led Stretch Bed building work and showed he was capable, proud, and ready to teach other kids. The point of this final card is what happens next: trust, responsibility, family, and real tasks have to change the work after the visit as well.",
+          "lineHeight": 1.2,
+          "fontFamily": "Inter",
+          "fontSize": 31,
+          "fontWeight": "500"
+        },
+        {
+          "type": "frame",
+          "id": "MK59h",
+          "x": 56,
+          "y": 704,
+          "width": 792,
+          "height": 222,
+          "fill": "#F0F8F3",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#B7DACA"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "ceswk",
+              "x": 28,
+              "y": 22,
+              "fill": "#1E5E4B",
+              "textGrowth": "fixed-width",
+              "width": 736,
+              "content": "NEXT MOVES",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 22,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "jdKf8",
+              "x": 28,
+              "y": 62,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 736,
+              "content": "1. Return to the judges field guide\n2. Open the Oonchiumpa basecamp profile\n3. Read the longer Oonchiumpa story\n4. Use CivicScope to track the system story\n5. Search alternatives near your own court",
+              "lineHeight": 1.22,
+              "fontFamily": "Inter",
+              "fontSize": 26,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "wRWnt",
+          "x": 956,
+          "y": 56,
+          "width": 468,
+          "height": 938,
+          "fill": "#E8F4EF",
+          "cornerRadius": 28,
+          "stroke": {
+            "thickness": 2,
+            "fill": "#A8D8C7"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "text",
+              "id": "dJ3fl",
+              "x": 36,
+              "y": 34,
+              "fill": "#1E5E4B",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "SCAN TO OPEN",
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 20,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "RWN7n",
+              "x": 104,
+              "y": 86,
+              "width": 260,
+              "height": 260,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./assets/qr-connect.png",
+                "mode": "fill"
+              },
+              "cornerRadius": 28,
+              "stroke": {
+                "thickness": 3,
+                "fill": "#1A1A1A"
+              }
+            },
+            {
+              "type": "text",
+              "id": "nwPJd",
+              "x": 36,
+              "y": 384,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Take back to chambers",
+              "lineHeight": 0.98,
+              "fontFamily": "Playfair Display",
+              "fontSize": 52,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "J9Lu6",
+              "x": 36,
+              "y": 490,
+              "fill": "#587267",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "justicehub.com.au/judges-on-country#connect",
+              "lineHeight": 1.2,
+              "fontFamily": "IBM Plex Mono",
+              "fontSize": 22,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "PM16G",
+              "x": 36,
+              "y": 572,
+              "fill": "#4F463F",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "Use the field kit, JusticeHub, ALMA, and CivicScope after the visit.",
+              "lineHeight": 1.22,
+              "fontFamily": "Inter",
+              "fontSize": 30,
+              "fontWeight": "500"
+            },
+            {
+              "type": "text",
+              "id": "8s8to",
+              "x": 36,
+              "y": 760,
+              "fill": "#1A1A1A",
+              "textGrowth": "fixed-width",
+              "width": 396,
+              "content": "This last card should leave chambers with a route back to Oonchiumpa, youth justice, and what needs to change next.",
+              "lineHeight": 1.2,
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "9Ig1e",
+          "x": 56,
+          "y": 962,
+          "fill": "#8B8178",
+          "textGrowth": "fixed-width",
+          "width": 1368,
+          "content": "justicehub.com.au  |  Take back to chambers  |  A6 field card reverse",
+          "lineHeight": 1.2,
+          "fontFamily": "IBM Plex Mono",
+          "fontSize": 20,
+          "fontWeight": "600"
+        }
+      ]
+    }
+  ]
+}
