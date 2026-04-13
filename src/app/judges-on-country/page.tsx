@@ -23,7 +23,6 @@ import {
   Sparkles,
   Target,
   Ticket,
-  Video,
 } from 'lucide-react';
 
 interface TourStop {
@@ -85,6 +84,54 @@ interface CampaignOutreachClient {
   };
 }
 
+interface ELStoryteller {
+  id: string;
+  displayName: string;
+  bio: string | null;
+  avatarUrl: string | null;
+  location: string | null;
+  culturalBackground: string[] | null;
+  isElder: boolean;
+  storyCount: number;
+}
+
+interface ELStory {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  imageUrl: string | null;
+  publishedAt: string | null;
+  themes: string[];
+  storytellerId: string | null;
+  storytellerName: string | null;
+  detailUrl: string;
+}
+
+interface ELMedia {
+  id: string;
+  url: string | null;
+  thumbnailUrl: string | null;
+  altText: string | null;
+  location: string | null;
+  galleryId: string | null;
+  contentType: string | null;
+}
+
+interface ELGallery {
+  id: string;
+  title: string | null;
+  coverImage: string | null;
+  photoCount: number;
+}
+
+interface ELVoicesData {
+  storytellers: ELStoryteller[];
+  stories: ELStory[];
+  media: ELMedia[];
+  galleries: ELGallery[];
+  configured: boolean;
+}
+
 const AUSTRALIAN_STATES = [
   { value: 'NSW', label: 'New South Wales' },
   { value: 'VIC', label: 'Victoria' },
@@ -133,58 +180,72 @@ const OONCHIUMPPA_MEDIA = {
   tanya: '/images/orgs/oonchiumpa/team/tanya.jpg',
   country: '/images/orgs/oonchiumpa/homestead.jpg',
   lawStudents: '/images/orgs/oonchiumpa/law-students.jpg',
+  campsite: '/images/orgs/oonchiumpa/atnarpa/campsite/20251103-1E5A4819.jpg',
+  workOnStation: '/images/orgs/oonchiumpa/video-posters/work-on-station-02-light.jpg',
 } as const;
 
-const OONCHIUMPPA_VOICES = [
+const POSTCARD_VOICES = [
   {
-    kicker: 'Founder voice',
-    name: 'Kristy Bloomfield',
-    role: 'Co-Founder & CEO',
-    quote: '“Connection to culture, country, and elders is the foundation of healing.”',
-    supporting:
-      'Kristy grounds the work in community authority, family responsibility, and healing on Country rather than system distance.',
-    imageUrl: OONCHIUMPPA_MEDIA.kristy,
-    imageAlt: 'Kristy Bloomfield from Oonchiumpa',
-    href: '/organizations/oonchiumpa?lens=judiciary',
-    linkLabel: 'Open Oonchiumpa profile',
+    cardNumber: '01',
+    name: 'Kristy & Tanya',
+    role: 'Co-Founders, Oonchiumpa',
+    quote: '”Our young people are just collateral in a bigger issue. The issue doesn\'t sit with them.”',
+    fallbackImage: OONCHIUMPPA_MEDIA.team,
+    imageAlt: 'Kristy Bloomfield and Tanya Turner from Oonchiumpa',
+    elStorytellerId: 'b59a1f4c-94fd-4805-a2c5-cac0922133e0',
+    storySlug: 'start-here-kristy-and-tanya',
   },
   {
-    kicker: 'Founder voice',
-    name: 'Tanya Turner',
-    role: 'Co-Founder & Director',
-    quote: '“Our young people need to know they are valued.”',
-    supporting:
-      'Tanya adds the second line judges should hold onto: “Not by the system, but by their own mob.”',
-    imageUrl: OONCHIUMPPA_MEDIA.tanya,
-    imageAlt: 'Tanya Turner from Oonchiumpa',
-    href: '/alma/oonchiumpa',
-    linkLabel: 'Read the Oonchiumpa story',
+    cardNumber: '02',
+    name: 'Jackquann & Nigel',
+    role: 'Voices used with permission',
+    quote: '”Programs.” “Go to school every day.”',
+    fallbackImage: OONCHIUMPPA_MEDIA.mentoring,
+    imageAlt: 'Jackquann and Nigel from Oonchiumpa',
+    elStorytellerId: '6a86acf2-1701-41a9-96ef-d3bae49d91b3',
+    storySlug: 'jackquann-and-nigel',
   },
   {
-    kicker: 'Youth voice',
+    cardNumber: '03',
     name: 'Jackquann, 14',
     role: 'Voice used with permission',
-    quote: '“Programs.”',
-    supporting:
-      'Asked what would stop him getting in trouble, he answered: “Looking after my family.” Context image shown here is from Oonchiumpa mentoring, not a portrait of Jackquann.',
-    imageUrl: OONCHIUMPPA_MEDIA.mentoring,
-    imageAlt: 'Young people participating in Oonchiumpa mentoring and activity',
-    href: '/sites/oonchiumpa',
-    linkLabel: 'Open the Atnarpa site page',
+    quote: '”Detention. That\'s not my home.”',
+    fallbackImage: OONCHIUMPPA_MEDIA.mentoring,
+    imageAlt: 'Jackquann from Oonchiumpa',
+    elStorytellerId: '6a86acf2-1701-41a9-96ef-d3bae49d91b3',
+    storySlug: 'jackquann-detention-not-my-home',
   },
   {
-    kicker: 'Youth voice',
+    cardNumber: '04',
+    name: 'Nigel, 14',
+    role: 'Voice used with permission',
+    quote: '”When I\'m talking to the judge, I feel like I\'m panicking.”',
+    fallbackImage: OONCHIUMPPA_MEDIA.country,
+    imageAlt: 'Country near Alice Springs',
+    elStorytellerId: '8dab91aa-3a1f-4128-b41d-b89e532be1fa',
+    storySlug: 'nigel-talking-to-the-judge',
+  },
+  {
+    cardNumber: '05',
     name: 'Laquisha, 16',
     role: 'Voice used with permission',
-    quote: '“Oppression.”',
-    supporting:
-      'Laquisha described being sent to Darwin youth detention 1,500km from home. Twelve-minute phone calls. No family there.',
-    imageUrl: null,
-    imageAlt: '',
-    href: '/judges-on-country/alice-springs',
-    linkLabel: 'Open the Alice Springs context page',
+    quote: '”Court is scary because you don\'t know whether you\'re getting out or not.”',
+    fallbackImage: OONCHIUMPPA_MEDIA.country,
+    imageAlt: 'Country near Alice Springs — the home Laquisha was sent 1,500km from',
+    elStorytellerId: '7a0cd28a-ad12-4f70-b900-d869b42c9f88',
+    storySlug: 'laquisha-court-is-scary',
   },
-] as const;
+  {
+    cardNumber: '06',
+    name: 'Fred on Xavier',
+    role: 'Trust earned through consistency',
+    quote: '”He trusts us. We earned that trust.”',
+    fallbackImage: OONCHIUMPPA_MEDIA.country,
+    imageAlt: 'On-country at Atnarpa with the MacDonnell Ranges',
+    elStorytellerId: '4b35b1af-9815-4b66-89ed-84ac0f5b3a2b',
+    storySlug: 'fred-campbell-trust-earned',
+  },
+];
 
 const FEATURED_CASES: FeaturedCase[] = [
   {
@@ -274,6 +335,17 @@ export default function JudgesOnCountryPage() {
   const [contributing, setContributing] = useState(false);
   const [contributed, setContributed] = useState(false);
 
+  const [elData, setElData] = useState<ELVoicesData | null>(null);
+  const [swapMode, setSwapMode] = useState(false);
+  const [swapCard, setSwapCard] = useState<string | null>(null);
+  const [elPhotos, setElPhotos] = useState<{ id: string; url: string; alt: string }[]>([]);
+  const [photoOverrides, setPhotoOverrides] = useState<Record<string, string>>(() => {
+    if (typeof window !== 'undefined') {
+      try { return JSON.parse(localStorage.getItem('joc-photo-overrides') || '{}'); } catch { return {}; }
+    }
+    return {};
+  });
+
   const searchRef = useRef<HTMLDivElement>(null);
   const storiesRef = useRef<HTMLDivElement>(null);
   const contributeRef = useRef<HTMLDivElement>(null);
@@ -284,6 +356,21 @@ export default function JudgesOnCountryPage() {
       .then((response) => response.json())
       .then((data) => setTourStops(Array.isArray(data) ? data : []))
       .catch(() => {});
+
+    fetch('/api/judges-on-country/voices')
+      .then((response) => response.json())
+      .then((data: ELVoicesData) => setElData(data))
+      .catch(() => {});
+
+    // Enable swap mode via ?swap=true
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('swap')) {
+      setSwapMode(true);
+      // Fetch Oonchiumpa org photos only via dedicated API route
+      fetch('/api/judges-on-country/org-media')
+        .then((r) => r.json())
+        .then((data) => setElPhotos(data.photos || []))
+        .catch(() => {});
+    }
   }, []);
 
   async function handleSearch(event: React.FormEvent) {
@@ -388,7 +475,7 @@ export default function JudgesOnCountryPage() {
       <main className="min-h-screen bg-[#F5F0E8]">
         <section
           id="video"
-          className="border-b-2 border-gray-800 bg-[#0A0A0A] px-4 pb-20 pt-32 text-white"
+          className="border-b-2 border-gray-800 bg-[#0A0A0A] px-4 pb-20 pt-44 text-white"
         >
           <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 lg:grid-cols-[0.9fr_1.1fr]">
             <div className="text-left">
@@ -425,22 +512,25 @@ export default function JudgesOnCountryPage() {
 
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
                 <a
-                  href="https://share.descript.com/view/1A29kyrHglp"
+                  href="https://oonchiumpa.com"
                   target="_blank"
                   rel="noreferrer"
-                  className="block border border-white/15 bg-white/5 p-4 transition-colors hover:bg-white/10"
+                  className="block border border-[#DC2626]/40 bg-[#DC2626]/10 p-4 transition-colors hover:bg-[#DC2626]/20"
                 >
-                  <div className="mb-2 flex items-center gap-2 text-[#059669]">
-                    <Video className="h-4 w-4" />
+                  <div className="mb-2 flex items-center gap-2 text-[#DC2626]">
+                    <Globe className="h-4 w-4" />
                     <span className="font-mono text-[11px] uppercase tracking-[0.18em]">
-                      Start Here
+                      Oonchiumpa
                     </span>
                   </div>
                   <p className="mb-0 text-sm text-gray-300">
-                    Watch the Oonchiumpa video — founders, youth workers, and young people from the postcards.
+                    Visit the Oonchiumpa platform — stories, programs, and community from Alice Springs.
                   </p>
                 </a>
-                <div className="border border-white/15 bg-white/5 p-4">
+                <button
+                  onClick={() => searchRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                  className="block border border-white/15 bg-white/5 p-4 text-left transition-colors hover:bg-white/10"
+                >
                   <div className="mb-2 flex items-center gap-2 text-[#059669]">
                     <Scale className="h-4 w-4" />
                     <span className="font-mono text-[11px] uppercase tracking-[0.18em]">
@@ -450,8 +540,11 @@ export default function JudgesOnCountryPage() {
                   <p className="mb-0 text-sm text-gray-300">
                     Search alternatives by state, place, or practice type.
                   </p>
-                </div>
-                <div className="border border-white/15 bg-white/5 p-4">
+                </button>
+                <button
+                  onClick={() => connectRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                  className="block border border-white/15 bg-white/5 p-4 text-left transition-colors hover:bg-white/10"
+                >
                   <div className="mb-2 flex items-center gap-2 text-[#059669]">
                     <Sparkles className="h-4 w-4" />
                     <span className="font-mono text-[11px] uppercase tracking-[0.18em]">
@@ -461,30 +554,41 @@ export default function JudgesOnCountryPage() {
                   <p className="mb-0 text-sm text-gray-300">
                     Carry the postcard kit and use the QR links later in chambers.
                   </p>
-                </div>
+                </button>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="relative aspect-video overflow-hidden border-4 border-gray-800 bg-black shadow-[12px_12px_0px_0px_rgba(5,150,105,1)]">
                 <iframe
-                  src={toEmbedUrl('https://vimeo.com/902992336') || undefined}
+                  src="https://share.descript.com/embed/1A29kyrHglp"
                   className="h-full w-full"
                   allowFullScreen
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  title="Oonchiumpa case study"
+                  title="Judges on Country — Oonchiumpa voices"
                 />
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <a
+                  href="https://oonchiumpa.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border border-[#DC2626]/50 bg-[#DC2626]/10 p-4 transition-colors hover:bg-[#DC2626]/20"
+                >
+                  <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[#DC2626]">
+                    Oonchiumpa.com
+                  </p>
+                  <p className="mb-0 text-sm font-bold text-white">Visit the community platform</p>
+                </a>
                 <Link
                   href="/organizations/oonchiumpa?lens=judiciary"
                   className="border border-[#059669]/40 bg-[#111111] p-4 transition-colors hover:bg-[#171717]"
                 >
                   <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[#059669]">
-                    Basecamp Profile
+                    JusticeHub Profile
                   </p>
-                  <p className="mb-0 text-sm font-bold text-white">Open Oonchiumpa profile</p>
+                  <p className="mb-0 text-sm font-bold text-white">Open Oonchiumpa on ALMA</p>
                 </Link>
                 <Link
                   href="/contained/register"
@@ -493,17 +597,19 @@ export default function JudgesOnCountryPage() {
                   <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[#059669]">
                     Trip Planning
                   </p>
-                  <p className="mb-0 text-sm font-bold text-white">Register for the CONTAINED route</p>
+                  <p className="mb-0 text-sm font-bold text-white">Register for CONTAINED</p>
                 </Link>
-                <button
-                  onClick={() => connectRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                  className="border border-white/15 bg-[#111111] p-4 text-left transition-colors hover:bg-[#171717]"
+                <a
+                  href="https://www.empathyledger.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border border-white/15 bg-[#111111] p-4 transition-colors hover:bg-[#171717]"
                 >
                   <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[#059669]">
-                    Chambers Pack
+                    Empathy Ledger
                   </p>
-                  <p className="mb-0 text-sm font-bold text-white">See the field kit and next steps</p>
-                </button>
+                  <p className="mb-0 text-sm font-bold text-white">Stories and storyteller profiles</p>
+                </a>
               </div>
             </div>
           </div>
@@ -528,108 +634,198 @@ export default function JudgesOnCountryPage() {
           </div>
         </section>
 
+        <section id="ecosystem" className="border-t border-[#0A0A0A]/10 bg-[#F5F0E8] px-4 py-10">
+          <div className="mx-auto max-w-6xl">
+            <p className="mb-6 text-center font-mono text-[11px] uppercase tracking-[0.25em] text-[#0A0A0A]/50">
+              Connected across the ACT ecosystem
+            </p>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+              <Link
+                href="/"
+                className="group border-2 border-[#0A0A0A] bg-white p-4 text-center transition-all hover:bg-[#0A0A0A] hover:text-white hover:shadow-[4px_4px_0px_0px_rgba(220,38,38,1)]"
+              >
+                <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-[#059669] group-hover:text-[#059669]">
+                  Platform
+                </p>
+                <p className="mb-0 text-sm font-bold text-[#0A0A0A] group-hover:text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  JusticeHub
+                </p>
+              </Link>
+              <a
+                href="https://oonchiumpa.com"
+                target="_blank"
+                rel="noreferrer"
+                className="group border-2 border-[#DC2626] bg-white p-4 text-center transition-all hover:bg-[#DC2626] hover:shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]"
+              >
+                <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-[#DC2626] group-hover:text-white/80">
+                  Community
+                </p>
+                <p className="mb-0 text-sm font-bold text-[#0A0A0A] group-hover:text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  Oonchiumpa
+                </p>
+              </a>
+              <a
+                href="https://www.empathyledger.com"
+                target="_blank"
+                rel="noreferrer"
+                className="group border-2 border-[#0A0A0A] bg-white p-4 text-center transition-all hover:bg-[#0A0A0A] hover:text-white hover:shadow-[4px_4px_0px_0px_rgba(5,150,105,1)]"
+              >
+                <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-[#059669] group-hover:text-[#059669]">
+                  Stories
+                </p>
+                <p className="mb-0 text-sm font-bold text-[#0A0A0A] group-hover:text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  Empathy Ledger
+                </p>
+              </a>
+              <a
+                href="https://www.civicscope.com.au"
+                target="_blank"
+                rel="noreferrer"
+                className="group border-2 border-[#0A0A0A] bg-white p-4 text-center transition-all hover:bg-[#0A0A0A] hover:text-white hover:shadow-[4px_4px_0px_0px_rgba(220,38,38,1)]"
+              >
+                <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-[#059669] group-hover:text-[#059669]">
+                  Accountability
+                </p>
+                <p className="mb-0 text-sm font-bold text-[#0A0A0A] group-hover:text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  CivicScope
+                </p>
+              </a>
+              <a
+                href="https://grantscope.com.au"
+                target="_blank"
+                rel="noreferrer"
+                className="group col-span-2 border-2 border-[#0A0A0A] bg-white p-4 text-center transition-all hover:bg-[#0A0A0A] hover:text-white hover:shadow-[4px_4px_0px_0px_rgba(5,150,105,1)] md:col-span-1"
+              >
+                <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.2em] text-[#059669] group-hover:text-[#059669]">
+                  Funding
+                </p>
+                <p className="mb-0 text-sm font-bold text-[#0A0A0A] group-hover:text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  GrantScope
+                </p>
+              </a>
+            </div>
+          </div>
+        </section>
+
         <section id="oonchiumpa-voices" className="bg-[#F1EADF] px-4 py-16">
           <div className="mx-auto max-w-6xl">
-            <div className="mb-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-              <div>
-                <p className="mb-3 font-mono text-sm uppercase tracking-[0.22em] text-[#DC2626]">
-                  Real People, Real Lines
-                </p>
-                <h2
-                  className="mb-4 max-w-3xl text-3xl font-bold text-[#0A0A0A] md:text-4xl"
-                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-                >
-                  Walk into the trip holding the actual people and stories, not a generic model.
-                </h2>
-                <p className="max-w-3xl text-lg text-gray-700">
-                  These names, lines, and story elements come from the live Oonchiumpa material and
-                  the consented story page. They are here so the trip starts with community voice,
-                  family reality, and lived consequence.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="relative min-h-[220px] overflow-hidden border-2 border-[#0A0A0A] bg-[#0A0A0A]">
-                  <Image
-                    src={OONCHIUMPPA_MEDIA.team}
-                    alt="Oonchiumpa team on Country"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 50vw, 280px"
-                  />
-                </div>
-                <div className="relative min-h-[220px] overflow-hidden border-2 border-[#0A0A0A] bg-[#0A0A0A]">
-                  <Image
-                    src={OONCHIUMPPA_MEDIA.lawStudents}
-                    alt="Oonchiumpa leaders with visiting law students on Country"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 50vw, 280px"
-                  />
-                </div>
-              </div>
+            <div className="mb-10 max-w-3xl">
+              <span className="mb-3 block font-mono text-sm uppercase tracking-[0.22em] text-[#DC2626]">
+                Six Voices, Six Stories
+              </span>
+              <h2
+                className="mb-4 text-3xl font-bold text-[#0A0A0A] md:text-4xl"
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              >
+                Each card carries a person, a line, and a story you can read.
+              </h2>
+              <span className="text-lg text-gray-700">
+                These are real people from Oonchiumpa. Each voice links to a story written through{' '}
+                <a href="https://www.empathyledger.com" target="_blank" rel="noreferrer" className="font-bold text-[#059669] underline underline-offset-2">
+                  Empathy Ledger
+                </a>
+                {' '}and syndicated to JusticeHub — acknowledging that the young people are part of this story and deserve to be part of the next phase of success for other kids around Australia.
+              </span>
             </div>
 
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-              {OONCHIUMPPA_VOICES.map((voice) => (
-                <div
-                  key={voice.name}
-                  className="flex h-full flex-col overflow-hidden border-2 border-[#0A0A0A] bg-white"
+            {swapMode && (
+              <div className="mb-4 flex items-center gap-3 border-2 border-[#059669] bg-[#059669]/10 p-3">
+                <span className="inline-block h-3 w-3 rounded-full bg-[#059669] animate-pulse" />
+                <span className="text-sm font-bold text-[#0A0A0A]">Photo swap mode — click any card image to change it</span>
+                <button
+                  onClick={() => { setSwapMode(false); setSwapCard(null); }}
+                  className="ml-auto text-xs font-bold text-gray-500 underline"
                 >
-                  {voice.imageUrl ? (
-                    <div className="relative h-56 w-full border-b-2 border-[#0A0A0A] bg-[#0A0A0A]">
-                      <Image
-                        src={voice.imageUrl}
-                        alt={voice.imageAlt}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 25vw"
-                      />
-                    </div>
-                  ) : (
-                    <div className="border-b-2 border-[#0A0A0A] bg-[#0A0A0A] px-5 py-6 text-white">
-                      <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[#DC2626]">
-                        Youth voice
-                      </p>
-                      <p
-                        className="mb-0 text-3xl font-bold leading-tight"
-                        style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-                      >
-                        {voice.quote}
-                      </p>
-                    </div>
-                  )}
+                  Exit
+                </button>
+              </div>
+            )}
 
-                  <div className="flex flex-1 flex-col p-5">
-                    <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[#059669]">
-                      {voice.kicker}
-                    </p>
-                    <h3
-                      className="mb-1 text-xl font-bold text-[#0A0A0A]"
-                      style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            {swapCard && swapMode && (
+              <div className="mb-6 border-2 border-[#0A0A0A] bg-white p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="font-mono text-xs uppercase tracking-[0.16em] text-[#059669]">
+                    Pick a photo for Card {swapCard}
+                  </span>
+                  <button onClick={() => setSwapCard(null)} className="text-xs font-bold underline">Close</button>
+                </div>
+                <div className="grid max-h-[300px] grid-cols-4 gap-2 overflow-y-auto sm:grid-cols-6 md:grid-cols-8">
+                  {elPhotos.map((photo) => (
+                    <button
+                      key={photo.id}
+                      onClick={() => {
+                        const next = { ...photoOverrides, [swapCard]: photo.url };
+                        setPhotoOverrides(next);
+                        localStorage.setItem('joc-photo-overrides', JSON.stringify(next));
+                        setSwapCard(null);
+                      }}
+                      className="relative aspect-square overflow-hidden border border-[#0A0A0A]/20 hover:border-[#DC2626] hover:ring-2 hover:ring-[#DC2626]"
                     >
-                      {voice.name}
-                    </h3>
-                    <p className="mb-3 text-xs uppercase tracking-[0.14em] text-gray-500">{voice.role}</p>
-                    {voice.imageUrl ? (
-                      <p
-                        className="mb-3 text-2xl font-bold leading-tight text-[#0A0A0A]"
+                      <Image src={photo.url} alt={photo.alt} fill className="object-cover" sizes="80px" unoptimized />
+                    </button>
+                  ))}
+                  {elPhotos.length === 0 && (
+                    <span className="col-span-full py-4 text-center text-sm text-gray-500">Loading Oonchiumpa photos...</span>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {POSTCARD_VOICES.map((card) => {
+                const elMatch = elData?.storytellers.find(
+                  (s) => s.id === card.elStorytellerId
+                );
+                const imageUrl = photoOverrides[card.cardNumber] || elMatch?.avatarUrl || card.fallbackImage;
+                const isExternal = imageUrl.startsWith('http');
+                const cardClassName = "group flex flex-col overflow-hidden border-2 border-[#0A0A0A] bg-white transition-shadow hover:shadow-[6px_6px_0px_0px_rgba(220,38,38,0.4)]";
+                const cardContent = (<>
+                    <div
+                      className={`relative h-52 w-full border-b-2 border-[#0A0A0A] bg-[#0A0A0A] ${swapMode ? 'cursor-pointer ring-2 ring-transparent hover:ring-[#059669]' : ''}`}
+                      onClick={swapMode ? (e) => { e.preventDefault(); setSwapCard(card.cardNumber); } : undefined}
+                    >
+                      <Image
+                        src={imageUrl}
+                        alt={card.imageAlt}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        unoptimized={isExternal}
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-4 pb-3 pt-8">
+                        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/70">
+                          {swapMode ? 'Click to swap photo' : `Card ${card.cardNumber}`}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex flex-1 flex-col p-5">
+                      <h3
+                        className="mb-1 text-lg font-bold text-[#0A0A0A]"
                         style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                       >
-                        {voice.quote}
-                      </p>
-                    ) : null}
-                    <p className="mb-5 flex-1 text-sm leading-relaxed text-gray-700">{voice.supporting}</p>
-                    <Link
-                      href={voice.href}
-                      className="inline-flex items-center gap-2 text-sm font-bold text-[#0A0A0A] underline underline-offset-4 transition-colors hover:text-[#DC2626]"
-                    >
-                      {voice.linkLabel}
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </div>
-                </div>
-              ))}
+                        {card.name}
+                      </h3>
+                      <span className="mb-3 block text-xs uppercase tracking-[0.14em] text-gray-500">
+                        {card.role}
+                      </span>
+                      <span
+                        className="mb-4 block flex-1 text-lg font-bold leading-tight text-[#0A0A0A]"
+                        style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                      >
+                        {card.quote}
+                      </span>
+                      <span className="inline-flex items-center gap-2 text-sm font-bold text-[#059669] group-hover:text-[#047857]">
+                        Read their story <ArrowRight className="h-4 w-4" />
+                      </span>
+                    </div>
+                  </>);
+
+                return swapMode ? (
+                  <div key={card.cardNumber} className={cardClassName}>{cardContent}</div>
+                ) : (
+                  <Link key={card.cardNumber} href={`/stories/empathy-ledger/${card.storySlug}`} className={cardClassName}>{cardContent}</Link>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -959,16 +1155,27 @@ export default function JudgesOnCountryPage() {
                 </h3>
                 <p className="mb-5 text-sm text-gray-300">
                   Civic intelligence tracks what governments promise, what oversight bodies recommend,
-                  and where implementation stalls. Use it to place courtroom decisions inside the
-                  wider system pattern.
+                  and where implementation stalls. CivicScope tracks parliamentary activity.
+                  Together they place courtroom decisions inside the wider system pattern.
                 </p>
-                <Link
-                  href="/intelligence/civic"
-                  className="inline-flex items-center gap-2 border-2 border-white px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-white hover:text-black"
-                >
-                  View oversight map
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="/intelligence/civic"
+                    className="inline-flex items-center gap-2 border-2 border-white px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-white hover:text-black"
+                  >
+                    View oversight map
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <a
+                    href="https://www.civicscope.com.au/power"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 border-2 border-[#059669] px-5 py-3 text-sm font-bold text-[#059669] transition-colors hover:bg-[#059669] hover:text-white"
+                  >
+                    CivicScope Power Map
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div>
               </div>
 
               <div className="border-2 border-[#0A0A0A] p-6">
@@ -990,6 +1197,19 @@ export default function JudgesOnCountryPage() {
                   <li className="flex gap-3">
                     <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#059669]" />
                     Carry the postcard kit back to chambers and share the proof with colleagues.
+                  </li>
+                  <li className="flex gap-3">
+                    <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#059669]" />
+                    Use{' '}
+                    <a
+                      href="https://grantscope.com.au/justice-reinvestment"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-bold text-[#059669] underline underline-offset-2"
+                    >
+                      GrantScope
+                    </a>{' '}
+                    to understand the funding landscape behind each community program.
                   </li>
                 </ul>
               </div>
@@ -1234,14 +1454,14 @@ export default function JudgesOnCountryPage() {
               >
                 Carry the proof with you after the trip.
               </h2>
-              <p className="mx-auto max-w-3xl text-lg text-gray-300">
+              <p className="mx-auto max-w-3xl text-lg" style={{ color: '#ffffff' }}>
                 Use the postcard kit, open the live search, and keep documenting what works so this
                 does not end as a one-day immersion.
               </p>
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <div className="border border-white/10 bg-gray-900 p-8">
+              <div className="border border-white/10 bg-gray-900 p-8 text-white">
                 <Printer className="mb-4 h-8 w-8 text-[#059669]" />
                 <h3
                   className="mb-2 text-xl font-bold text-white"
@@ -1249,7 +1469,7 @@ export default function JudgesOnCountryPage() {
                 >
                   Print the QR postcard set
                 </h3>
-                <p className="mb-6 text-sm text-gray-400">
+                <p className="mb-6 text-sm" style={{ color: '#ffffff' }}>
                   Six A6 cards built from real Oonchiumpa photos, youth voice, founder lines, and
                   QR routes back into the live platform.
                 </p>
@@ -1261,7 +1481,7 @@ export default function JudgesOnCountryPage() {
                 </Link>
               </div>
 
-              <div className="border border-white/10 bg-gray-900 p-8">
+              <div className="border border-white/10 bg-gray-900 p-8 text-white">
                 <Target className="mb-4 h-8 w-8 text-[#059669]" />
                 <h3
                   className="mb-2 text-xl font-bold text-white"
@@ -1269,7 +1489,7 @@ export default function JudgesOnCountryPage() {
                 >
                   Keep searching the live map
                 </h3>
-                <p className="mb-6 text-sm text-gray-400">
+                <p className="mb-6 text-sm" style={{ color: '#ffffff' }}>
                   Open interventions, search by jurisdiction, and request rapid summaries from ALMA
                   when a local matter needs context.
                 </p>
@@ -1289,7 +1509,7 @@ export default function JudgesOnCountryPage() {
                 </div>
               </div>
 
-              <div className="border border-white/10 bg-gray-900 p-8">
+              <div className="border border-white/10 bg-gray-900 p-8 text-white">
                 <BookOpen className="mb-4 h-8 w-8 text-[#059669]" />
                 <h3
                   className="mb-2 text-xl font-bold text-white"
@@ -1297,7 +1517,7 @@ export default function JudgesOnCountryPage() {
                 >
                   Bring more people into the loop
                 </h3>
-                <p className="mb-6 text-sm text-gray-400">
+                <p className="mb-6 text-sm" style={{ color: '#ffffff' }}>
                   Share this page with colleagues, route them into CONTAINED, and add the missing
                   community programs you already know matter.
                 </p>
@@ -1316,6 +1536,50 @@ export default function JudgesOnCountryPage() {
                     Add a program
                   </button>
                 </div>
+              </div>
+            </div>
+
+            <div className="mt-10 border-t border-white/10 pt-8">
+              <p className="mb-4 text-center font-mono text-[11px] uppercase tracking-[0.25em]" style={{ color: '#ffffff' }}>
+                Explore the full ecosystem
+              </p>
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                <a
+                  href="https://oonchiumpa.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border border-[#DC2626]/50 bg-[#DC2626]/10 p-4 text-center text-white transition-colors hover:bg-[#DC2626]/20"
+                >
+                  <p className="mb-0 text-sm font-bold">Oonchiumpa</p>
+                  <p className="mb-0 mt-1 font-mono text-[10px] uppercase tracking-[0.14em] opacity-70">Community platform</p>
+                </a>
+                <a
+                  href="https://www.empathyledger.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border border-white/10 bg-white/5 p-4 text-center text-white transition-colors hover:bg-white/10"
+                >
+                  <p className="mb-0 text-sm font-bold">Empathy Ledger</p>
+                  <p className="mb-0 mt-1 font-mono text-[10px] uppercase tracking-[0.14em] opacity-70">Story archive</p>
+                </a>
+                <a
+                  href="https://www.civicscope.com.au"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border border-white/10 bg-white/5 p-4 text-center text-white transition-colors hover:bg-white/10"
+                >
+                  <p className="mb-0 text-sm font-bold">CivicScope</p>
+                  <p className="mb-0 mt-1 font-mono text-[10px] uppercase tracking-[0.14em] opacity-70">Parliamentary tracking</p>
+                </a>
+                <a
+                  href="https://grantscope.com.au/justice-reinvestment"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border border-white/10 bg-white/5 p-4 text-center text-white transition-colors hover:bg-white/10"
+                >
+                  <p className="mb-0 text-sm font-bold">GrantScope</p>
+                  <p className="mb-0 mt-1 font-mono text-[10px] uppercase tracking-[0.14em] opacity-70">Funding intelligence</p>
+                </a>
               </div>
             </div>
           </div>
@@ -1345,6 +1609,14 @@ export default function JudgesOnCountryPage() {
               >
                 Print Postcards
               </Link>
+              <a
+                href="https://oonchiumpa.com"
+                target="_blank"
+                rel="noreferrer"
+                className="border-2 border-white px-8 py-4 text-lg font-bold text-white transition-colors hover:bg-white/10"
+              >
+                Visit Oonchiumpa
+              </a>
             </div>
           </div>
         </section>
