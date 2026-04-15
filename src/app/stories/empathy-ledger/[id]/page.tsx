@@ -1,4 +1,4 @@
-import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
+import { empathyLedgerClient, empathyLedgerServiceClient } from '@/lib/supabase/empathy-ledger';
 import { notFound } from 'next/navigation';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import Link from 'next/link';
@@ -60,7 +60,9 @@ export default async function EmpathyLedgerStoryPage({ params }: PageProps) {
   // If not found in stories, try articles table (by UUID or slug)
   if (!story) {
     const col = isUUID ? 'id' : 'slug';
-    const { data } = await empathyLedgerClient
+    // Use service client to bypass RLS on articles table
+    const articleClient = empathyLedgerServiceClient || empathyLedgerClient;
+    const { data } = await articleClient
       .from('articles')
       .select('*, content')
       .eq(col, id)

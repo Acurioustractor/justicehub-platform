@@ -43,6 +43,26 @@ export async function GET(request: NextRequest) {
       case 'media': {
         // Actual EL columns: mime_type (not content_type), width/height (not dimensions),
         // collection_id (not gallery_id for filtering), location_name (not location_text)
+        let storytellerStoryIds: string[] | null = null;
+
+        if (storytellerId) {
+          const { data: storytellerStories, error: storyError } = await el
+            .from('stories')
+            .select('id')
+            .eq('storyteller_id', storytellerId)
+            .limit(200);
+
+          if (storyError) throw storyError;
+
+          storytellerStoryIds = (storytellerStories || [])
+            .map((story) => story.id)
+            .filter(Boolean);
+
+          if (storytellerStoryIds.length === 0) {
+            return NextResponse.json({ data: [] });
+          }
+        }
+
         let query = el.from('media_assets')
           .select(`
             id, title, description, filename, mime_type, url,
@@ -57,7 +77,7 @@ export async function GET(request: NextRequest) {
 
         if (galleryId) query = query.eq('collection_id', galleryId);
         if (projectId) query = query.eq('project_id', projectId);
-        if (storytellerId) query = query.eq('story_id', storytellerId); // Filter by story→storyteller later
+        if (storytellerStoryIds) query = query.in('story_id', storytellerStoryIds);
         if (search) query = query.or(`title.ilike.%${search}%,filename.ilike.%${search}%,alt_text.ilike.%${search}%`);
 
         const { data, error } = await query;
@@ -72,11 +92,12 @@ export async function GET(request: NextRequest) {
       }
 
       case 'storytellers': {
-        // EL storytellers: no slug column; has bio, location, public_avatar_url directly
+        // EL storytellers: keep this query conservative because the column set
+        // differs across environments and we only need public identity fields here.
         let query = el.from('storytellers')
           .select(`
-            id, display_name, author_role, is_active, bio, location,
-            public_avatar_url, cultural_background, profile_id
+            id, display_name, is_active, bio, location,
+            public_avatar_url, cultural_background
           `)
           .eq('is_active', true)
           .order('display_name')
@@ -91,11 +112,11 @@ export async function GET(request: NextRequest) {
           data: (data || []).map(s => ({
             id: s.id,
             displayName: s.display_name,
-            role: s.author_role,
+            role: null,
             avatarUrl: s.public_avatar_url || null,
             bio: s.bio || null,
             location: s.location || null,
-            profileId: s.profile_id,
+            profileId: null,
           })),
         });
       }
@@ -206,8 +227,11 @@ export async function GET(request: NextRequest) {
       default:
         return NextResponse.json({ error: `Unknown type: ${type}` }, { status: 400 });
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Media browser error:', err);
-    return NextResponse.json({ error: err.message || 'Server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Server error' },
+      { status: 500 }
+    );
   }
 }

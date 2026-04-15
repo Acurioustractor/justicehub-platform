@@ -31,6 +31,55 @@ type ContentHubArticleDetail = ContentHubArticle & {
 const EL_STORAGE_BASE =
   'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public';
 
+/**
+ * Resolve a featured_image_id (UUID) to its real CDN URL via media_assets.
+ * The id on `articles.featured_image_id` is a FK to `media_assets.id`;
+ * the public URL lives in `media_assets.cdn_url` (or bucket + path).
+ * Returns null if the id is missing, the lookup fails, or the asset has no URL.
+ */
+async function resolveMediaAssetUrl(id: string | null | undefined): Promise<string | null> {
+  if (!id) return null;
+  if (!isEmpathyLedgerWriteConfigured || !empathyLedgerServiceClient) return null;
+  try {
+    const { data, error } = await empathyLedgerServiceClient
+      .from('media_assets')
+      .select('cdn_url, storage_bucket, storage_path')
+      .eq('id', id)
+      .maybeSingle();
+    if (error || !data) return null;
+    if (data.cdn_url) return data.cdn_url;
+    if (data.storage_bucket && data.storage_path) {
+      return `${EL_STORAGE_BASE}/${data.storage_bucket}/${data.storage_path}`;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+async function resolveMediaAssetUrls(ids: string[]): Promise<Record<string, string | null>> {
+  const unique = Array.from(new Set(ids.filter(Boolean)));
+  if (!unique.length || !isEmpathyLedgerWriteConfigured || !empathyLedgerServiceClient) return {};
+  try {
+    const { data, error } = await empathyLedgerServiceClient
+      .from('media_assets')
+      .select('id, cdn_url, storage_bucket, storage_path')
+      .in('id', unique);
+    if (error || !data) return {};
+    return Object.fromEntries(
+      data.map((row: any) => [
+        row.id,
+        row.cdn_url ||
+          (row.storage_bucket && row.storage_path
+            ? `${EL_STORAGE_BASE}/${row.storage_bucket}/${row.storage_path}`
+            : null),
+      ])
+    );
+  } catch {
+    return {};
+  }
+}
+
 export async function fetchContentHubArticles(params: {
   project?: string;
   limit?: number;
@@ -59,7 +108,12 @@ export async function fetchContentHubArticles(params: {
       return [];
     }
 
-    return (data || []).map((a: any) => ({
+    const rows = data || [];
+    const mediaMap = await resolveMediaAssetUrls(
+      rows.map((a: any) => a.featured_image_id).filter(Boolean)
+    );
+
+    return rows.map((a: any) => ({
       id: a.id,
       title: a.title,
       slug: a.slug,
@@ -72,9 +126,7 @@ export async function fetchContentHubArticles(params: {
       tags: a.tags || [],
       themes: a.themes || [],
       visibility: a.visibility,
-      featuredImageUrl: a.featured_image_id
-        ? `${EL_STORAGE_BASE}/media/${a.featured_image_id}`
-        : null,
+      featuredImageUrl: a.featured_image_id ? mediaMap[a.featured_image_id] || null : null,
       featuredImageAlt: a.title,
     }));
   } catch (error) {
@@ -122,9 +174,7 @@ export async function fetchContentHubArticleBySlug(
       tags: data.tags || [],
       themes: data.themes || [],
       visibility: data.visibility,
-      featuredImageUrl: data.featured_image_id
-        ? `${EL_STORAGE_BASE}/media/${data.featured_image_id}`
-        : null,
+      featuredImageUrl: await resolveMediaAssetUrl(data.featured_image_id),
       featuredImageAlt: data.title,
       metaTitle: data.meta_title,
       metaDescription: data.meta_description,

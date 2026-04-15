@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Image, FolderOpen, Users, ExternalLink, RefreshCw, Camera, BookOpen, Quote, Play, MapPin } from 'lucide-react';
+import { ArrowLeft, Image, FolderOpen, Users, ExternalLink, RefreshCw, Camera, BookOpen, Quote, MapPin } from 'lucide-react';
 
 interface Gallery {
   id: string;
@@ -196,14 +196,23 @@ export default function ELContentManager() {
                 Galleries, storytellers, stories, and media from Empathy Ledger — consent-verified, culturally safe, sovereignty-tracked.
               </p>
             </div>
-            <button
-              onClick={refreshAll}
-              disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white border-2 border-black font-bold hover:bg-violet-700 disabled:opacity-50"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/admin/empathy-ledger/postcards"
+                className="flex items-center gap-2 px-4 py-2 bg-white text-earth-900 border-2 border-black font-bold hover:bg-earth-50"
+              >
+                <Quote className="h-4 w-4" />
+                Postcard Editor
+              </Link>
+              <button
+                onClick={refreshAll}
+                disabled={loading}
+                className="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white border-2 border-black font-bold hover:bg-violet-700 disabled:opacity-50"
+              >
+                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                Refresh
+              </button>
+            </div>
           </div>
         </div>
       </section>

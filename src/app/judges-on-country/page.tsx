@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { Navigation, Footer } from '@/components/ui/navigation';
+import { ELPhotoPickerModal } from '@/components/empathy-ledger/ELPhotoPickerModal';
 import {
   ArrowRight,
   BookOpen,
@@ -184,13 +185,18 @@ const OONCHIUMPPA_MEDIA = {
   workOnStation: '/images/orgs/oonchiumpa/video-posters/work-on-station-02-light.jpg',
 } as const;
 
+// EL storage base — hardcoded avatar URLs below point to real EL media for each
+// storyteller so SSR renders the correct photo on first paint (no client-side flash).
+// To update: change the photo in EL admin, then copy the new public URL here.
+const EL_MEDIA_BASE = 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public';
+
 const POSTCARD_VOICES = [
   {
     cardNumber: '01',
     name: 'Kristy & Tanya',
     role: 'Co-Founders, Oonchiumpa',
     quote: '”Our young people are just collateral in a bigger issue. The issue doesn\'t sit with them.”',
-    fallbackImage: OONCHIUMPPA_MEDIA.team,
+    fallbackImage: `${EL_MEDIA_BASE}/profile-images/storytellers/kristy_bloomfield.jpg`,
     imageAlt: 'Kristy Bloomfield and Tanya Turner from Oonchiumpa',
     elStorytellerId: 'b59a1f4c-94fd-4805-a2c5-cac0922133e0',
     storySlug: 'start-here-kristy-and-tanya',
@@ -200,7 +206,7 @@ const POSTCARD_VOICES = [
     name: 'Jackquann & Nigel',
     role: 'Voices used with permission',
     quote: '”Programs.” “Go to school every day.”',
-    fallbackImage: OONCHIUMPPA_MEDIA.mentoring,
+    fallbackImage: `${EL_MEDIA_BASE}/media/bf17d0a9-2b12-4e4a-982e-09a8b1952ec6/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1774073897284-1E5A2215.jpg`,
     imageAlt: 'Jackquann and Nigel from Oonchiumpa',
     elStorytellerId: '6a86acf2-1701-41a9-96ef-d3bae49d91b3',
     storySlug: 'jackquann-and-nigel',
@@ -210,7 +216,7 @@ const POSTCARD_VOICES = [
     name: 'Jackquann, 14',
     role: 'Voice used with permission',
     quote: '”Detention. That\'s not my home.”',
-    fallbackImage: OONCHIUMPPA_MEDIA.mentoring,
+    fallbackImage: `${EL_MEDIA_BASE}/media/bf17d0a9-2b12-4e4a-982e-09a8b1952ec6/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1774073897284-1E5A2215.jpg`,
     imageAlt: 'Jackquann from Oonchiumpa',
     elStorytellerId: '6a86acf2-1701-41a9-96ef-d3bae49d91b3',
     storySlug: 'jackquann-detention-not-my-home',
@@ -220,8 +226,8 @@ const POSTCARD_VOICES = [
     name: 'Nigel, 14',
     role: 'Voice used with permission',
     quote: '”When I\'m talking to the judge, I feel like I\'m panicking.”',
-    fallbackImage: OONCHIUMPPA_MEDIA.country,
-    imageAlt: 'Country near Alice Springs',
+    fallbackImage: `${EL_MEDIA_BASE}/media/projects/81bdb028-7855-4682-b501-b727f24e0d6d/media/1770942256899_Screenshot_2026-02-13_at_10.22.18_am.png`,
+    imageAlt: 'Nigel from Oonchiumpa',
     elStorytellerId: '8dab91aa-3a1f-4128-b41d-b89e532be1fa',
     storySlug: 'nigel-talking-to-the-judge',
   },
@@ -230,8 +236,8 @@ const POSTCARD_VOICES = [
     name: 'Laquisha, 16',
     role: 'Voice used with permission',
     quote: '”Court is scary because you don\'t know whether you\'re getting out or not.”',
-    fallbackImage: OONCHIUMPPA_MEDIA.country,
-    imageAlt: 'Country near Alice Springs — the home Laquisha was sent 1,500km from',
+    fallbackImage: `${EL_MEDIA_BASE}/media/bf17d0a9-2b12-4e4a-982e-09a8b1952ec6/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1774045077303-1E5A2239-2.jpg`,
+    imageAlt: 'Laquisha from Oonchiumpa',
     elStorytellerId: '7a0cd28a-ad12-4f70-b900-d869b42c9f88',
     storySlug: 'laquisha-court-is-scary',
   },
@@ -240,8 +246,8 @@ const POSTCARD_VOICES = [
     name: 'Fred on Xavier',
     role: 'Trust earned through consistency',
     quote: '”He trusts us. We earned that trust.”',
-    fallbackImage: OONCHIUMPPA_MEDIA.country,
-    imageAlt: 'On-country at Atnarpa with the MacDonnell Ranges',
+    fallbackImage: `${EL_MEDIA_BASE}/media/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1775863239871_Screenshot_2026-04-11_at_9.09.45_am.png`,
+    imageAlt: 'Fred from Oonchiumpa',
     elStorytellerId: '4b35b1af-9815-4b66-89ed-84ac0f5b3a2b',
     storySlug: 'fred-campbell-trust-earned',
   },
@@ -339,12 +345,19 @@ export default function JudgesOnCountryPage() {
   const [swapMode, setSwapMode] = useState(false);
   const [swapCard, setSwapCard] = useState<string | null>(null);
   const [elPhotos, setElPhotos] = useState<{ id: string; url: string; alt: string }[]>([]);
-  const [photoOverrides, setPhotoOverrides] = useState<Record<string, string>>(() => {
-    if (typeof window !== 'undefined') {
-      try { return JSON.parse(localStorage.getItem('joc-photo-overrides') || '{}'); } catch { return {}; }
-    }
-    return {};
-  });
+  const [photoOverrides, setPhotoOverrides] = useState<Record<string, string>>({});
+
+  // Load shared overrides from server so every visitor sees the same photos.
+  useEffect(() => {
+    fetch('/api/judges-on-country/photo-overrides?scope=main')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.overrides && typeof data.overrides === 'object') {
+          setPhotoOverrides(data.overrides);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const searchRef = useRef<HTMLDivElement>(null);
   const storiesRef = useRef<HTMLDivElement>(null);
@@ -488,9 +501,19 @@ export default function JudgesOnCountryPage() {
               >
                 A field guide to what works beyond detention.
               </h1>
-              <p className="mb-8 max-w-2xl text-lg leading-relaxed text-gray-300">
-                Start with Oonchiumpa. Search what exists near your court. Carry the postcard set on
-                the trip. Bring the proof back to chambers.
+              <p className="mb-4 max-w-2xl text-lg leading-relaxed text-gray-300">
+                Start with Kristy &amp; Tanya.{' '}
+                <Link
+                  href="/stories/start-here-kristy-and-tanya"
+                  className="font-bold text-[#F5F0E8] underline decoration-[#DC2626] decoration-2 underline-offset-4 hover:text-white"
+                >
+                  “Our young people are just collateral in a bigger issue.”
+                </Link>{' '}
+                That sentence is why we’re going.
+              </p>
+              <p className="mb-8 max-w-2xl text-base leading-relaxed text-gray-400">
+                Read the story, carry the postcard set on the trip, search what exists near your court,
+                and bring the proof back to chambers.
               </p>
 
               <div className="grid gap-3 sm:grid-cols-2">
@@ -728,6 +751,39 @@ export default function JudgesOnCountryPage() {
               </span>
             </div>
 
+            <div className="mb-10 border-2 border-[#0A0A0A] bg-white p-6 md:p-8">
+              <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.22em] text-[#DC2626]">
+                Start here · Card 01
+              </p>
+              <h3
+                className="mb-3 text-2xl font-bold text-[#0A0A0A] md:text-3xl"
+                style={{ fontFamily: 'Space Grotesk, sans-serif', lineHeight: 1.08 }}
+              >
+                “Our young people are just collateral in a bigger issue. The issue doesn’t sit with them.”
+              </h3>
+              <p className="mb-5 text-base leading-relaxed text-gray-700 md:text-lg">
+                Kristy Bloomfield (Central Arrernte TO) and Tanya Turner (ex-Supreme Court of Victoria)
+                built Oonchiumpa from cultural authority — not a grant. Before you read the other cards,
+                read theirs. It’s the frame the whole trip hangs on.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href="/stories/start-here-kristy-and-tanya"
+                  className="inline-flex items-center gap-2 bg-[#DC2626] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-red-700"
+                >
+                  Read the full story
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/organizations/oonchiumpa?lens=judiciary"
+                  className="inline-flex items-center gap-2 border-2 border-[#0A0A0A] px-5 py-3 text-sm font-bold text-[#0A0A0A] transition-colors hover:bg-[#0A0A0A] hover:text-white"
+                >
+                  Open Oonchiumpa basecamp
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+
             {swapMode && (
               <div className="mb-4 flex items-center gap-3 border-2 border-[#059669] bg-[#059669]/10 p-3">
                 <span className="inline-block h-3 w-3 rounded-full bg-[#059669] animate-pulse" />
@@ -742,33 +798,22 @@ export default function JudgesOnCountryPage() {
             )}
 
             {swapCard && swapMode && (
-              <div className="mb-6 border-2 border-[#0A0A0A] bg-white p-4">
-                <div className="mb-3 flex items-center justify-between">
-                  <span className="font-mono text-xs uppercase tracking-[0.16em] text-[#059669]">
-                    Pick a photo for Card {swapCard}
-                  </span>
-                  <button onClick={() => setSwapCard(null)} className="text-xs font-bold underline">Close</button>
-                </div>
-                <div className="grid max-h-[300px] grid-cols-4 gap-2 overflow-y-auto sm:grid-cols-6 md:grid-cols-8">
-                  {elPhotos.map((photo) => (
-                    <button
-                      key={photo.id}
-                      onClick={() => {
-                        const next = { ...photoOverrides, [swapCard]: photo.url };
-                        setPhotoOverrides(next);
-                        localStorage.setItem('joc-photo-overrides', JSON.stringify(next));
-                        setSwapCard(null);
-                      }}
-                      className="relative aspect-square overflow-hidden border border-[#0A0A0A]/20 hover:border-[#DC2626] hover:ring-2 hover:ring-[#DC2626]"
-                    >
-                      <Image src={photo.url} alt={photo.alt} fill className="object-cover" sizes="80px" unoptimized />
-                    </button>
-                  ))}
-                  {elPhotos.length === 0 && (
-                    <span className="col-span-full py-4 text-center text-sm text-gray-500">Loading Oonchiumpa photos...</span>
-                  )}
-                </div>
-              </div>
+              <ELPhotoPickerModal
+                title={`Oonchiumpa — Pick a photo for Card ${swapCard}`}
+                source="oonchiumpa"
+                onPick={(url) => {
+                  const next = { ...photoOverrides, [swapCard]: url };
+                  setPhotoOverrides(next);
+                  // Save to server so the photo applies for every visitor.
+                  fetch('/api/judges-on-country/photo-overrides?scope=main', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ overrides: next }),
+                  }).catch(() => {});
+                  setSwapCard(null);
+                }}
+                onClose={() => setSwapCard(null)}
+              />
             )}
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -776,7 +821,10 @@ export default function JudgesOnCountryPage() {
                 const elMatch = elData?.storytellers.find(
                   (s) => s.id === card.elStorytellerId
                 );
-                const imageUrl = photoOverrides[card.cardNumber] || elMatch?.avatarUrl || card.fallbackImage;
+                // Priority: manual override (localStorage swap mode) > hardcoded EL URL in POSTCARD_VOICES.
+                // Live EL fetch is no longer used to pick the photo — SSR renders the correct image
+                // on first paint, eliminating the flash. To change a photo: update fallbackImage above.
+                const imageUrl = photoOverrides[card.cardNumber] || card.fallbackImage;
                 const isExternal = imageUrl.startsWith('http');
                 const cardClassName = "group flex flex-col overflow-hidden border-2 border-[#0A0A0A] bg-white transition-shadow hover:shadow-[6px_6px_0px_0px_rgba(220,38,38,0.4)]";
                 const cardContent = (<>
@@ -823,7 +871,7 @@ export default function JudgesOnCountryPage() {
                 return swapMode ? (
                   <div key={card.cardNumber} className={cardClassName}>{cardContent}</div>
                 ) : (
-                  <Link key={card.cardNumber} href={`/stories/empathy-ledger/${card.storySlug}`} className={cardClassName}>{cardContent}</Link>
+                  <Link key={card.cardNumber} href={`/stories/${card.storySlug}`} className={cardClassName}>{cardContent}</Link>
                 );
               })}
             </div>
@@ -1587,6 +1635,9 @@ export default function JudgesOnCountryPage() {
 
         <section className="bg-[#DC2626] px-4 py-16">
           <div className="mx-auto max-w-3xl text-center">
+            <p className="mb-3 font-mono text-sm uppercase tracking-[0.22em] text-white/80">
+              Mparntwe · Alice Springs · Sep 15, 2026
+            </p>
             <h2
               className="mb-4 text-3xl font-bold text-white md:text-4xl"
               style={{ fontFamily: 'Space Grotesk, sans-serif' }}
@@ -1594,29 +1645,34 @@ export default function JudgesOnCountryPage() {
               The alternatives are already here. The question is whether we use them.
             </h2>
             <p className="mb-8 text-lg text-white/90">
-              Search the map, print the cards, and keep this evidence moving after the trip ends.
+              Come to Country with Kristy, Tanya, and the Oonchiumpa team. Thirty minutes on the land
+              the postcards come from — then carry the cards, the search, and the evidence back into chambers.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <button
-                onClick={() => searchRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              <Link
+                href="/judges-on-country/alice-springs"
                 className="bg-white px-8 py-4 text-lg font-bold text-[#DC2626] transition-colors hover:bg-gray-100"
               >
-                Search Programs
-              </button>
+                Come to Country — Sep 15
+              </Link>
+              <Link
+                href="/stories/start-here-kristy-and-tanya"
+                className="border-2 border-white px-8 py-4 text-lg font-bold text-white transition-colors hover:bg-white/10"
+              >
+                Read the full story
+              </Link>
               <Link
                 href="/judges-on-country/postcards"
                 className="border-2 border-white px-8 py-4 text-lg font-bold text-white transition-colors hover:bg-white/10"
               >
-                Print Postcards
+                Print postcards
               </Link>
-              <a
-                href="https://oonchiumpa.com"
-                target="_blank"
-                rel="noreferrer"
-                className="border-2 border-white px-8 py-4 text-lg font-bold text-white transition-colors hover:bg-white/10"
+              <button
+                onClick={() => searchRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                className="border-2 border-white/40 px-8 py-4 text-lg font-bold text-white/90 transition-colors hover:bg-white/10"
               >
-                Visit Oonchiumpa
-              </a>
+                Search programs
+              </button>
             </div>
           </div>
         </section>
