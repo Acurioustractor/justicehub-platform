@@ -287,7 +287,7 @@ const FEATURED_CASES: FeaturedCase[] = [
     tagline: 'Community control at service scale',
     description:
       'A community-controlled organisation proving what sustained local infrastructure looks like: family support, cultural connection, enterprise, and practical alternatives to harm.',
-    imageUrl: null,
+    imageUrl: '/images/orgs/picc/stretch-bed-build.jpg',
     color: '#0A0A0A',
     primaryHref: '/stories/at-the-speed-of-ceremony-learning-partnership-on-palm-i',
     primaryLabel: 'Read the Palm Island story',
