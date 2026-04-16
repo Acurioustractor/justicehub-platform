@@ -254,7 +254,7 @@ INSERT INTO partner_videos (organization_id, title, description, video_url, plat
 -- Oonchiumpa - enhanced description
 UPDATE organizations SET
   description = 'Oonchiumpa is an Aboriginal community-controlled organisation based in Alice Springs (Mparntwe), Central Australia. Led by Kristy Bloomfield and Tanya Turner, Oonchiumpa works across 7 language groups within a 150km radius of Alice Springs, partnering with 32+ organisations. Core programs include Youth Mentorship & Cultural Healing (95% reduced anti-social behavior, 72% school re-engagement), True Justice: Deep Listening on Country (with ANU since 2022), Atnarpa Homestead On-Country Experiences, and Cultural Brokerage & Service Navigation. Oonchiumpa proves that culture is medicine and that Aboriginal communities know what works for Aboriginal young people.',
-  website_url = 'https://oonchiumpa.com',
+  website_url = 'https://www.oonchiumpa.com.au/',
   updated_at = NOW()
 WHERE id = '11111111-1111-1111-1111-111111111001';
 
@@ -304,7 +304,7 @@ DELETE FROM partner_external_links WHERE organization_id IN (
 
 -- Oonchiumpa links
 INSERT INTO partner_external_links (organization_id, title, url, link_type, description, display_order) VALUES
-('11111111-1111-1111-1111-111111111001', 'Oonchiumpa Website', 'https://oonchiumpa.com', 'website', 'Official website', 1),
+('11111111-1111-1111-1111-111111111001', 'Oonchiumpa Website', 'https://www.oonchiumpa.com.au/', 'website', 'Official website', 1),
 ('11111111-1111-1111-1111-111111111001', 'ANU True Justice Initiative', 'https://law.anu.edu.au/research/true-justice', 'research', 'Academic partnership for deep listening research', 2),
 ('11111111-1111-1111-1111-111111111001', 'GitHub Repository', 'https://github.com/Acurioustractor/Oonchiumpa', 'website', 'Open-source platform codebase', 3);
 

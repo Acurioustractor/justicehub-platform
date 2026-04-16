@@ -675,7 +675,7 @@ export default async function PowerMapPage() {
                 and cross-system influence scoring for 159K+ entities.
               </p>
               <a
-                href="https://www.civicscope.com.au/power"
+                href="https://civicgraph.app/power"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm font-medium text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded px-4 py-2 transition-colors"

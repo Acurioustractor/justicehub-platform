@@ -8,7 +8,7 @@
       "lat": -23.6980,
       "lng": 133.8807,
       "status": "founding",
-      "keyImpact": "95% reduced anti-social behavior",
+      "keyImpact": "95% diversion success",
       "description": "Aboriginal community-controlled organisation working across 7 language groups within a 150km radius of Alice Springs, partnering with 32+ organisations.",
       "programs": [
         "Youth Mentorship & Cultural Healing",
@@ -18,7 +18,7 @@
       ],
       "metrics": {
         "primaryStat": "95%",
-        "primaryLabel": "Reduced anti-social behavior",
+        "primaryLabel": "Diversion success",
         "secondaryStat": "72%",
         "secondaryLabel": "School re-engagement",
         "languageGroups": 7,
@@ -103,7 +103,7 @@
       "externalLinks": [
         {
           "title": "Oonchiumpa Website",
-          "url": "https://oonchiumpa.com",
+          "url": "https://www.oonchiumpa.com.au/",
           "type": "website"
         },
         {
@@ -271,62 +271,6 @@
           "title": "Backyard Campus Project",
           "url": "https://mountyyarns.org.au/backyard-campus",
           "type": "website"
-        }
-      ]
-    },
-    {
-      "id": "picc-townsville",
-      "name": "PICC Townsville",
-      "location": "Townsville, QLD",
-      "state": "QLD",
-      "lat": -19.2590,
-      "lng": 146.8169,
-      "status": "founding",
-      "keyImpact": "78% diversion success",
-      "description": "Palm Island Community Company supports Bwgcolman (Palm Island) and broader North Queensland Pasifika families through cultural connection, family strengthening, and diversion programs.",
-      "programs": [
-        "Cultural Connection Programs",
-        "Family Strengthening Services",
-        "Youth Diversion Programs",
-        "PICC Station Precinct Hub"
-      ],
-      "metrics": {
-        "primaryStat": "78%",
-        "primaryLabel": "Youth diversion success",
-        "secondaryStat": "300+",
-        "secondaryLabel": "Families served annually",
-        "staff": 197,
-        "connection": "Bwgcolman (Palm Island)"
-      },
-      "storytellers": [
-        {
-          "name": "PICC Leadership Team",
-          "role": "Community Directors",
-          "bio": "PICC (Palm Island Community Company) is led by community members who understand that culture is protection. With 197 staff, they deliver services across North Queensland while maintaining connection to cultural identity.",
-          "quote": "Strong cultural identity protects young people from harm.",
-          "featured": true
-        }
-      ],
-      "videos": [
-        {
-          "title": "PICC Station Precinct Vision",
-          "description": "The transformation of PICC Station Precinct into a regional hub for cultural programs, family services, and community gathering.",
-          "url": "https://www.youtube.com/watch?v=picc-station-vision",
-          "type": "promotional",
-          "duration": 900,
-          "featured": true
-        }
-      ],
-      "externalLinks": [
-        {
-          "title": "Palm Island History",
-          "url": "https://en.wikipedia.org/wiki/Palm_Island,_Queensland",
-          "type": "research"
-        },
-        {
-          "title": "Bwgcolman Indigenous Knowledge Centre",
-          "url": "https://www.slq.qld.gov.au/blog/bwgcolman-indigenous-knowledge-centre",
-          "type": "research"
         }
       ]
     }
@@ -548,7 +492,7 @@
       "dateRange": "2026",
       "funding": "$250K revenue",
       "milestones": [
-        "Launch 4 founding Basecamps",
+        "Launch founding Basecamps",
         "Establish 9 CORE community partnerships",
         "Secure 2 state government licenses (QLD, NSW)",
         "Sign first corporate sponsorship (Atlassian)",
@@ -712,7 +656,6 @@
     }
   ],
   "keyMetrics": {
-    "basecamps": 4,
     "corePartners": 9,
     "networkPartners": 20,
     "year3Revenue": "$1.2M",

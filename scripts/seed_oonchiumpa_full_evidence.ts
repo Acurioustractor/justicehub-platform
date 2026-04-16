@@ -34,7 +34,7 @@ async function main() {
     is_active: true,
     city: 'Alice Springs',
     state: 'NT',
-    website: 'https://oonchiumpa.com',
+    website: 'https://www.oonchiumpa.com.au/',
     verification_status: 'verified',
     type: 'grassroots'
   };

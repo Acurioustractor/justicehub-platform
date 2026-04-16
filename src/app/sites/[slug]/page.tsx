@@ -124,9 +124,9 @@ const ORG_SITE_CONTENT: Record<string, any> = {
       bio: 'Kristy Bloomfield is a visionary leader and passionate advocate for Indigenous empowerment and community. As an Eastern Arrernte Traditional Owner, she brings cultural authority and deep connection to country into everything Oonchiumpa does. Her leadership spans youth mentorship, cultural brokerage, and building bridges between Aboriginal communities and service systems across Central Australia.',
     },
     stats: [
-      { value: '21+', label: 'Young people mentored' },
-      { value: '95%', label: 'School re-engagement' },
-      { value: '90%', label: 'Youth retention rate' },
+      { value: '95%', label: 'Diversion success' },
+      { value: '72%', label: 'School re-engagement' },
+      { value: '97.6%', label: 'Cheaper than detention' },
       { value: '32+', label: 'Partner organisations' },
       { value: '7', label: 'Language groups served' },
       { value: '150km', label: 'Service reach from Mparntwe' },
@@ -135,7 +135,7 @@ const ORG_SITE_CONTENT: Record<string, any> = {
       {
         icon: 'Users',
         title: 'Youth Mentorship & Cultural Healing',
-        description: 'Culturally grounded mentorship for 21+ young people — basketball, on-country experiences, leadership development, and Elder-guided healing with 90% retention.',
+        description: 'Culturally grounded mentorship, basketball, on-country experiences, leadership development, and Elder-guided healing rooted in long-term trust.',
       },
       {
         icon: 'Scale',
@@ -174,16 +174,16 @@ const ORG_SITE_CONTENT: Record<string, any> = {
       response: 'Oonchiumpa proves that culture is medicine and that Aboriginal communities know what works for Aboriginal young people. Through culturally grounded mentorship, on-country healing at Atnarpa, deep listening circles with ANU, and service navigation across 32+ partners, Oonchiumpa creates pathways rooted in cultural authority — not deficit.',
     },
     funding: {
-      name: 'Community Safety & Youth Diversion',
-      funder: 'NIAA (National Indigenous Australians Agency)',
-      amount: 'NIAA-funded',
-      period: 'Ongoing partnership',
+      name: 'NIAA Central Australia Youth Safety',
+      funder: 'National Indigenous Australians Agency (NIAA)',
+      amount: '$1.4M verified in GrantScope',
+      period: '2023-24',
     },
     cta: {
       title: 'Connect with Oonchiumpa',
       description: 'Looking to refer a young person, partner with us, or learn more about our cultural programs in Central Australia? We work across 7 language groups within 150km of Mparntwe (Alice Springs).',
-      email: 'info@oonchiumpa.com',
-      phone: '0400 000 000',
+      email: 'info@oonchiumpa.com.au',
+      phone: null,
     },
   },
   'mounty-yarns': {
@@ -333,6 +333,8 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
   const siteContent = ORG_SITE_CONTENT[params.slug];
   const hasOwnWebsite = org.website_url && !org.website_url.includes('justicehub');
   const isBasecamp = org.type === 'basecamp' || org.partner_tier === 'basecamp';
+  const ctaEmail = org.contact_email || siteContent?.cta?.email || null;
+  const ctaPhone = org.phone || siteContent?.cta?.phone || null;
 
   // Fetch public team members
   const { data: teamLinks } = await (supabase as any)
@@ -854,14 +856,18 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
               <p className="text-lg text-orange-100 max-w-2xl mx-auto mb-8">{siteContent.cta.description}</p>
               <div className="flex flex-wrap justify-center gap-4">
                 <ContactModal orgId={org.id} orgName={org.name} />
-                <a href={`mailto:${siteContent.cta.email}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-orange-700 font-bold rounded-lg hover:bg-orange-50 transition-colors">
-                  <Mail className="w-5 h-5" /> {siteContent.cta.email}
-                </a>
-                <a href={`tel:${siteContent.cta.phone.replace(/\s/g, '')}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 text-white font-bold rounded-lg hover:bg-white/30 transition-colors border border-white/30">
-                  <Phone className="w-5 h-5" /> {siteContent.cta.phone}
-                </a>
+                {ctaEmail && (
+                  <a href={`mailto:${ctaEmail}`}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-white text-orange-700 font-bold rounded-lg hover:bg-orange-50 transition-colors">
+                    <Mail className="w-5 h-5" /> {ctaEmail}
+                  </a>
+                )}
+                {ctaPhone && (
+                  <a href={`tel:${ctaPhone.replace(/\s/g, '')}`}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 text-white font-bold rounded-lg hover:bg-white/30 transition-colors border border-white/30">
+                    <Phone className="w-5 h-5" /> {ctaPhone}
+                  </a>
+                )}
               </div>
             </div>
           </section>

@@ -535,7 +535,7 @@ export default function JudgesOnCountryPage() {
 
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
                 <a
-                  href="https://oonchiumpa.com"
+                  href="https://www.oonchiumpa.com.au/"
                   target="_blank"
                   rel="noreferrer"
                   className="block border border-[#DC2626]/40 bg-[#DC2626]/10 p-4 transition-colors hover:bg-[#DC2626]/20"
@@ -594,13 +594,13 @@ export default function JudgesOnCountryPage() {
 
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <a
-                  href="https://oonchiumpa.com"
+                  href="https://www.oonchiumpa.com.au/"
                   target="_blank"
                   rel="noreferrer"
                   className="border border-[#DC2626]/50 bg-[#DC2626]/10 p-4 transition-colors hover:bg-[#DC2626]/20"
                 >
                   <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[#DC2626]">
-                    Oonchiumpa.com
+                    Oonchiumpa.com.au
                   </p>
                   <p className="mb-0 text-sm font-bold text-white">Visit the community platform</p>
                 </a>
@@ -675,7 +675,7 @@ export default function JudgesOnCountryPage() {
                 </p>
               </Link>
               <a
-                href="https://oonchiumpa.com"
+                href="https://www.oonchiumpa.com.au/"
                 target="_blank"
                 rel="noreferrer"
                 className="group border-2 border-[#DC2626] bg-white p-4 text-center transition-all hover:bg-[#DC2626] hover:shadow-[4px_4px_0px_0px_rgba(10,10,10,1)]"
@@ -701,7 +701,7 @@ export default function JudgesOnCountryPage() {
                 </p>
               </a>
               <a
-                href="https://www.civicscope.com.au"
+                href="https://civicgraph.app"
                 target="_blank"
                 rel="noreferrer"
                 className="group border-2 border-[#0A0A0A] bg-white p-4 text-center transition-all hover:bg-[#0A0A0A] hover:text-white hover:shadow-[4px_4px_0px_0px_rgba(220,38,38,1)]"
@@ -714,7 +714,7 @@ export default function JudgesOnCountryPage() {
                 </p>
               </a>
               <a
-                href="https://grantscope.com.au"
+                href="https://civicgraph.app"
                 target="_blank"
                 rel="noreferrer"
                 className="group col-span-2 border-2 border-[#0A0A0A] bg-white p-4 text-center transition-all hover:bg-[#0A0A0A] hover:text-white hover:shadow-[4px_4px_0px_0px_rgba(5,150,105,1)] md:col-span-1"
@@ -1023,7 +1023,7 @@ export default function JudgesOnCountryPage() {
                         </p>
                       </div>
                       <a
-                        href={`https://grantscope.com.au/justice-reinvestment?state=${searchState}&source=judges-campaign`}
+                        href={`https://civicgraph.app/justice-reinvestment?state=${searchState}&source=judges-campaign`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="whitespace-nowrap bg-[#059669] px-6 py-3 text-sm font-bold text-white shadow-[4px_4px_0px_0px_rgba(10,10,10,1)] transition-colors hover:bg-[#047857]"
@@ -1215,7 +1215,7 @@ export default function JudgesOnCountryPage() {
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                   <a
-                    href="https://www.civicscope.com.au/power"
+                    href="https://civicgraph.app/power"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-2 border-2 border-[#059669] px-5 py-3 text-sm font-bold text-[#059669] transition-colors hover:bg-[#059669] hover:text-white"
@@ -1250,7 +1250,7 @@ export default function JudgesOnCountryPage() {
                     <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#059669]" />
                     Use{' '}
                     <a
-                      href="https://grantscope.com.au/justice-reinvestment"
+                      href="https://civicgraph.app/justice-reinvestment"
                       target="_blank"
                       rel="noreferrer"
                       className="font-bold text-[#059669] underline underline-offset-2"
@@ -1593,7 +1593,7 @@ export default function JudgesOnCountryPage() {
               </p>
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                 <a
-                  href="https://oonchiumpa.com"
+                  href="https://www.oonchiumpa.com.au/"
                   target="_blank"
                   rel="noreferrer"
                   className="border border-[#DC2626]/50 bg-[#DC2626]/10 p-4 text-center text-white transition-colors hover:bg-[#DC2626]/20"
@@ -1611,7 +1611,7 @@ export default function JudgesOnCountryPage() {
                   <p className="mb-0 mt-1 font-mono text-[10px] uppercase tracking-[0.14em] opacity-70">Story archive</p>
                 </a>
                 <a
-                  href="https://www.civicscope.com.au"
+                  href="https://civicgraph.app"
                   target="_blank"
                   rel="noreferrer"
                   className="border border-white/10 bg-white/5 p-4 text-center text-white transition-colors hover:bg-white/10"
@@ -1620,7 +1620,7 @@ export default function JudgesOnCountryPage() {
                   <p className="mb-0 mt-1 font-mono text-[10px] uppercase tracking-[0.14em] opacity-70">Parliamentary tracking</p>
                 </a>
                 <a
-                  href="https://grantscope.com.au/justice-reinvestment"
+                  href="https://civicgraph.app/justice-reinvestment"
                   target="_blank"
                   rel="noreferrer"
                   className="border border-white/10 bg-white/5 p-4 text-center text-white transition-colors hover:bg-white/10"

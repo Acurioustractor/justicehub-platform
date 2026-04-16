@@ -45,7 +45,7 @@ Oonchiumpa is partnering with JusticeHub to support place-based youth justice re
       .update({
         description: oonchiumpaDescription,
         location: 'Alice Springs (Mparntwe), NT',
-        website: 'https://oonchiumpa.com',
+        website: 'https://www.oonchiumpa.com.au/',
         type: 'community'
       })
       .eq('id', oonchiOrg.id);
@@ -63,7 +63,7 @@ Oonchiumpa is partnering with JusticeHub to support place-based youth justice re
         name: 'Oonchiumpa',
         description: oonchiumpaDescription,
         location: 'Alice Springs (Mparntwe), NT',
-        website: 'https://oonchiumpa.com',
+        website: 'https://www.oonchiumpa.com.au/',
         type: 'community'
       });
 

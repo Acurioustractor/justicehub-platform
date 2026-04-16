@@ -194,7 +194,7 @@ DELETE FROM partner_contacts WHERE organization_id IN (
 -- Oonchiumpa Contacts
 INSERT INTO partner_contacts (organization_id, contact_type, label, value, is_primary, display_order) VALUES
 ('11111111-1111-1111-1111-111111111001', 'email', 'General Inquiries', 'info@oonchiumpa.org.au', true, 1),
-('11111111-1111-1111-1111-111111111001', 'website', 'Website', 'https://oonchiumpa.com', false, 2),
+('11111111-1111-1111-1111-111111111001', 'website', 'Website', 'https://www.oonchiumpa.com.au/', false, 2),
 ('11111111-1111-1111-1111-111111111001', 'address', 'Office', 'Alice Springs (Mparntwe), NT 0870', false, 3);
 
 -- BG Fit Contacts

@@ -221,7 +221,7 @@ async function restore() {
   const links = [
     {
       title: 'Oonchiumpa Website',
-      url: 'https://oonchiumpa.com',
+      url: 'https://www.oonchiumpa.com.au/',
       link_type: 'website',
       description: 'Official website',
       display_order: 1
@@ -257,7 +257,7 @@ async function restore() {
     .from('organizations')
     .update({
       description: "Oonchiumpa is an Aboriginal community-controlled organisation based in Alice Springs (Mparntwe), Central Australia. Led by Kristy Bloomfield and Tanya Turner, Oonchiumpa works across 7 language groups within a 150km radius of Alice Springs, partnering with 32+ organisations. Core programs include Youth Mentorship & Cultural Healing (95% reduced anti-social behavior, 72% school re-engagement), True Justice: Deep Listening on Country (with ANU since 2022), Atnarpa Homestead On-Country Experiences, and Cultural Brokerage & Service Navigation. Oonchiumpa proves that culture is medicine and that Aboriginal communities know what works for Aboriginal young people.",
-      website_url: 'https://oonchiumpa.com'
+      website_url: 'https://www.oonchiumpa.com.au/'
     })
     .eq('id', ORG_ID);
 
