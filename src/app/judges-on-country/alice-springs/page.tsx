@@ -130,7 +130,7 @@ const NEXT_ROUTES = [
   {
     title: 'Open the Oonchiumpa profile',
     description: 'Start with the founders, the core service context, and the judiciary lens.',
-    href: '/organizations/oonchiumpa?lens=judiciary',
+    href: '/organizations/oonchiumpa',
   },
   {
     title: 'Read the long-form story',

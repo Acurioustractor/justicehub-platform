@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
+import { requireAdminApi } from '@/lib/admin-api-auth';
 import { resolveJudgesPostcardCards } from '@/lib/judges-postcard-source-resolver';
 
 export async function GET() {
   try {
+    const auth = await requireAdminApi();
+    if ('error' in auth) return auth.error;
+
     const cards = await resolveJudgesPostcardCards();
 
     return NextResponse.json({

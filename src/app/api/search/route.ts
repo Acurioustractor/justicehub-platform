@@ -86,11 +86,20 @@ export async function GET(request: NextRequest) {
   if (typeFilter === 'all' || typeFilter === 'intervention') {
     let interventionQuery = supabase
       .from('alma_interventions')
-      .select('id, name, description, type, metadata', { count: 'exact' })
+      .select(`
+        id, name, description, type, metadata,
+        organizations!alma_interventions_operating_organization_id_fkey (
+          name, state
+        )
+      `, { count: 'exact' })
+      .neq('verification_status', 'ai_generated')
       .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
 
     if (stateFilter) {
-      interventionQuery = interventionQuery.contains('metadata', { state: stateFilter });
+      interventionQuery = interventionQuery.eq(
+        'organizations.state',
+        stateFilter
+      );
     }
 
     const { data: interventions, count } = await interventionQuery.limit(limit);
@@ -98,19 +107,34 @@ export async function GET(request: NextRequest) {
     counts.interventions = count || 0;
 
     if (interventions) {
-      interventions.forEach(item => {
-        results.push({
-          type: 'intervention',
-          id: item.id,
-          name: item.name,
-          description: asOptionalString(item.description)?.substring(0, 200),
-          url: `/intelligence/interventions/${item.id}`,
-          state: asMetadataState(item.metadata),
-          metadata: {
-            type: item.type,
-          },
+      interventions
+        .filter(item => {
+          // When state-filtering via the join, Supabase still returns
+          // rows whose org didn't match — but with organizations = null.
+          // Drop those so only real matches surface.
+          if (!stateFilter) return true;
+          const org = Array.isArray(item.organizations)
+            ? item.organizations[0]
+            : item.organizations;
+          return org?.state === stateFilter;
+        })
+        .forEach(item => {
+          const org = Array.isArray(item.organizations)
+            ? item.organizations[0]
+            : item.organizations;
+          results.push({
+            type: 'intervention',
+            id: item.id,
+            name: item.name,
+            description: asOptionalString(item.description)?.substring(0, 200),
+            url: `/intelligence/interventions/${item.id}`,
+            state: org?.state ?? asMetadataState(item.metadata),
+            metadata: {
+              type: item.type,
+              org: org?.name,
+            },
+          });
         });
-      });
     }
   }
 

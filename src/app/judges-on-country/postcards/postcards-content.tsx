@@ -1402,8 +1402,6 @@ function ScreenHeader({
   );
 }
 
-const POSTCARD_OVERRIDES_STORAGE_KEY = 'judges-postcards-photo-overrides';
-
 /**
  * Shared postcards page body. Two modes:
  *  - 'public' (default, mounted at /judges-on-country/postcards) — print-ready

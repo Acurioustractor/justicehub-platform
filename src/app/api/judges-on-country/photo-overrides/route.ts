@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
+import { requireAdminApi } from '@/lib/admin-api-auth';
 
 /**
  * Shared photo overrides for the Judges on Country surfaces.
@@ -42,6 +43,9 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    const auth = await requireAdminApi();
+    if ('error' in auth) return auth.error;
+
     const key = resolveKey(request);
     if (!key) return NextResponse.json({ error: 'Invalid scope' }, { status: 400 });
 

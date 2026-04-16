@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdminApi } from '@/lib/admin-api-auth';
 import {
   buildJudgesPostcardPublicationMarkdown,
   buildJudgesPostcardPublicationQueue,
@@ -6,6 +7,9 @@ import {
 
 export async function GET(request: NextRequest) {
   try {
+    const auth = await requireAdminApi();
+    if ('error' in auth) return auth.error;
+
     const format = request.nextUrl.searchParams.get('format');
 
     if (format === 'markdown') {

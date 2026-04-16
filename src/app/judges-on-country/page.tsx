@@ -262,7 +262,7 @@ const FEATURED_CASES: FeaturedCase[] = [
       'Community-led, on-country programs where young people reconnect with family, culture, land, and practical responsibility. Start here, then read the longer story and voices behind it.',
     imageUrl: OONCHIUMPPA_MEDIA.team,
     color: '#DC2626',
-    primaryHref: '/organizations/oonchiumpa?lens=judiciary',
+    primaryHref: '/organizations/oonchiumpa',
     primaryLabel: 'Open basecamp profile',
     secondaryHref: '/alma/oonchiumpa',
     secondaryLabel: 'Read the Oonchiumpa story',
@@ -276,7 +276,7 @@ const FEATURED_CASES: FeaturedCase[] = [
     imageUrl:
       'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/mounty-yarns/backyard-workbee/20251210-1E5A8290.jpg',
     color: '#059669',
-    primaryHref: '/organizations/mounty-yarns?lens=judiciary',
+    primaryHref: '/organizations/mounty-yarns',
     primaryLabel: 'Open basecamp profile',
     secondaryHref: '/intelligence/interventions',
     secondaryLabel: 'Browse NSW alternatives',
@@ -302,7 +302,7 @@ const FEATURED_CASES: FeaturedCase[] = [
       'Brodie Germaine and BG Fit show what happens when consistency, culture, and high expectations are built into everyday youth engagement instead of one-off interventions.',
     imageUrl: '/images/orgs/bg-fit/hero.jpg',
     color: '#059669',
-    primaryHref: '/organizations/bg-fit?lens=judiciary',
+    primaryHref: '/organizations/bg-fit',
     primaryLabel: 'Open basecamp profile',
     secondaryHref: '/stories/spotlight-on-changemaker-brodie-germaine',
     secondaryLabel: 'Read the BG Fit story',
@@ -605,7 +605,7 @@ export default function JudgesOnCountryPage() {
                   <p className="mb-0 text-sm font-bold text-white">Visit the community platform</p>
                 </a>
                 <Link
-                  href="/organizations/oonchiumpa?lens=judiciary"
+                  href="/organizations/oonchiumpa"
                   className="border border-[#059669]/40 bg-[#111111] p-4 transition-colors hover:bg-[#171717]"
                 >
                   <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.18em] text-[#059669]">
@@ -775,7 +775,7 @@ export default function JudgesOnCountryPage() {
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  href="/organizations/oonchiumpa?lens=judiciary"
+                  href="/organizations/oonchiumpa"
                   className="inline-flex items-center gap-2 border-2 border-[#0A0A0A] px-5 py-3 text-sm font-bold text-[#0A0A0A] transition-colors hover:bg-[#0A0A0A] hover:text-white"
                 >
                   Open Oonchiumpa basecamp
