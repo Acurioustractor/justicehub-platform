@@ -425,7 +425,7 @@
   async function loadEmpathyLedgerStories() {
     let data;
     try {
-      const r = await fetch('./minderoo-consent-snapshot.json?v=' + Date.now());
+      const r = await fetch('/pitch/minderoo/minderoo-consent-snapshot.json?v=' + Date.now());
       if (!r.ok) throw new Error('snapshot load failed');
       data = await r.json();
     } catch (err) {
@@ -517,7 +517,7 @@
   async function loadGallery() {
     if (__GALLERY__) return __GALLERY__;
     try {
-      const r = await fetch('./minderoo-gallery.json?v=' + Date.now());
+      const r = await fetch('/pitch/minderoo/minderoo-gallery.json?v=' + Date.now());
       if (!r.ok) throw new Error('gallery fetch failed');
       __GALLERY__ = await r.json();
       return __GALLERY__;
