@@ -222,18 +222,16 @@ export interface TourStop {
 
 export const tourStops: TourStop[] = [
   {
-    city: 'Mount Druitt',
+    city: 'Western Sydney',
     state: 'NSW',
     venue: 'Western Sydney',
-    partner: 'Mounty Yarns',
     description:
-      'The national tour kicks off in Western Sydney with Mounty Yarns — a youth-led storytelling space running 7 programs on philanthropic funding alone, while NSW\'s $9.9M reoffending grants reach zero Aboriginal community-controlled organisations.',
+      'The national tour kicks off in Western Sydney, where NSW\'s $9.9M reoffending grants reach zero Aboriginal community-controlled organisations while grassroots youth programs run on philanthropic funding alone.',
     eventSlug: 'contained-mount-druitt-launch',
     date: 'May 1, 2026',
     status: 'planning',
     lat: -33.74,
     lng: 150.82,
-    partnerQuote: 'Young people telling their own stories is the most powerful advocacy there is.',
   },
   {
     city: 'Brisbane',
@@ -390,7 +388,7 @@ const CORE_HASHTAGS = ['#TheContained', '#YouthJustice', '#JusticeHub'];
 export const tourSocialKits: TourSocialKit[] = [
   {
     tourStopSlug: 'contained-mount-druitt-launch',
-    city: 'Mount Druitt, NSW',
+    city: 'Western Sydney, NSW',
     posts: [
       {
         platform: 'twitter',
@@ -399,17 +397,15 @@ export const tourSocialKits: TourSocialKit[] = [
 
 One shipping container, three rooms. Thirty minutes inside youth detention reality, then the alternative.
 
-April 25, Mounty Yarns, Mount Druitt.
-
 This is what $1.55M per child per year looks like. And what we could do instead.`,
-        hashtags: [...CORE_HASHTAGS, '#MountDruitt', '#WesternSydney'],
+        hashtags: [...CORE_HASHTAGS, '#WesternSydney'],
       },
       {
         platform: 'instagram',
         label: 'Launch Post',
         content: `Three rooms. Three realities. Thirty minutes that change how you see youth justice.
 
-THE CONTAINED launches April 25 at Mounty Yarns in Mount Druitt, a youth-led storytelling space in the heart of Western Sydney.
+THE CONTAINED launches in Western Sydney.
 
 Container 1: The reality of youth detention. $4,250/day. 84% reoffending.
 Container 2: The therapeutic alternative. Spain's Diagrama model. 73% success.
@@ -418,14 +414,14 @@ Container 3: Australia's future. Community-led. Culture-centred. Evidence-based.
 This isn't a lecture. It's an experience.
 
 Link in bio to register.`,
-        hashtags: [...CORE_HASHTAGS, '#MountDruitt', '#MountyYarns', '#ImmersiveAdvocacy', '#YouthVoice'],
+        hashtags: [...CORE_HASHTAGS, '#WesternSydney', '#ImmersiveAdvocacy', '#YouthVoice'],
       },
       {
         platform: 'facebook',
         label: 'Community Post',
         content: `What if decision-makers could FEEL what youth detention is actually like?
 
-That's the idea behind THE CONTAINED, an immersive shipping container experience launching April 25 at Mounty Yarns in Mount Druitt.
+That's the idea behind THE CONTAINED, an immersive shipping container experience launching in Western Sydney.
 
 Three rooms tell three stories:
 → The current reality of youth detention in Australia
@@ -434,10 +430,8 @@ Three rooms tell three stories:
 
 Australia spends $1.55 million per child per year on detention. 84% reoffend. Community programs cost a fraction and deliver lasting change.
 
-Come experience it. Bring someone who needs to see it.
-
-Register: justicehub.com.au/events/contained-mount-druitt-launch`,
-        hashtags: [...CORE_HASHTAGS, '#MountDruitt'],
+Come experience it. Bring someone who needs to see it.`,
+        hashtags: [...CORE_HASHTAGS, '#WesternSydney'],
       },
       {
         platform: 'linkedin',
@@ -448,7 +442,7 @@ Meanwhile, therapeutic models like Spain's Diagrama Foundation achieve 73% succe
 
 THE CONTAINED is an immersive experience that puts these numbers into physical reality. One shipping container, three rooms, each telling a different part of Australia's youth justice story.
 
-Launching April 25 at Mounty Yarns in Mount Druitt, Western Sydney. Touring nationally in 2026.
+Launching in Western Sydney. Touring nationally in 2026.
 
 If you work in youth justice, social policy, philanthropy, or community services, this is worth thirty minutes of your time.`,
         hashtags: [...CORE_HASHTAGS, '#SocialPolicy', '#Evidence', '#Reform'],
@@ -492,7 +486,7 @@ This is the conference that could change the conversation.`,
 
 This is where the conversation gets real. Policymakers, researchers, practitioners, and people with lived experience all walking through the same three rooms that make the case for changing how Australia does youth justice.
 
-After the Mount Druitt launch, the tour continues building momentum. Adelaide brings the Justice Reform Initiative and the national reintegration community together.
+After the Western Sydney launch, the tour continues building momentum. Adelaide brings the Justice Reform Initiative and the national reintegration community together.
 
 The evidence is clear. Community-led alternatives work better, cost less, and keep young people connected to family and culture.
 
@@ -623,7 +617,7 @@ export const generalSocialPosts: SocialPost[] = [
 
 Six stops. One shipping container, three rooms. One mission.
 
-Mount Druitt → Brisbane → Adelaide → Townsville → Perth → Tennant Creek
+Western Sydney → Brisbane → Adelaide → Townsville → Perth → Tennant Creek
 
 Thirty minutes inside youth detention reality, and the alternative that already works.
 
@@ -637,7 +631,7 @@ justicehub.com.au/contained`,
 
 Six stops across Australia in 2026. One shipping container, three rooms that make the case for transforming youth justice.
 
-🔴 Mount Druitt, April 25 (Planning)
+🔴 Western Sydney, April 25 (Planning)
 🔴 Brisbane, May 15 (Planning)
 🔴 Adelaide, June 15 + ALP Conference Jul 23-25 (Planning)
 🔴 Townsville / Palm Island, July 1 (Planning)

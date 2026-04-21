@@ -544,8 +544,8 @@ export const basecampLocations: ExcellenceLocation[] = [
     city: 'Alice Springs',
     state: 'NT',
     keyStats: [
-      '95% reduced anti-social behavior',
-      '72% return to education',
+      '95% diversion success',
+      '72% school re-engagement',
       'On-country healing programs'
     ],
     tags: ['Aboriginal-led', 'cultural-healing', 'deep-listening', 'on-country'],
@@ -569,44 +569,6 @@ export const basecampLocations: ExcellenceLocation[] = [
     ],
     tags: ['fitness', 'mentorship', 'diversion', 'regional'],
     detailUrl: '/organizations/bg-fit',
-    featured: true
-  },
-  {
-    id: 'mounty-yarns',
-    name: 'Mounty Yarns',
-    category: 'basecamp',
-    type: 'training',
-    description: 'Youth-led storytelling and media production. Amplifying youth voices and challenging deficit narratives about Western Sydney.',
-    coordinates: { lat: -33.770, lng: 150.820 }, // Western Sydney, NSW
-    country: 'Australia',
-    city: 'Mount Druitt',
-    state: 'NSW',
-    keyStats: [
-      '150+ stories published',
-      '30% into media careers',
-      'Youth-led media production'
-    ],
-    tags: ['youth-voice', 'storytelling', 'media', 'urban'],
-    detailUrl: '/organizations/mounty-yarns',
-    featured: true
-  },
-  {
-    id: 'picc-townsville',
-    name: 'PICC Townsville',
-    category: 'basecamp',
-    type: 'training',
-    description: 'Pacific Islander Community Council supporting Pasifika families through cultural connection and community strength.',
-    coordinates: { lat: -19.26, lng: 146.82 }, // Townsville, QLD
-    country: 'Australia',
-    city: 'Townsville',
-    state: 'QLD',
-    keyStats: [
-      '78% diversion success',
-      '12 Pacific languages supported',
-      'Pasifika family strength'
-    ],
-    tags: ['Pasifika', 'family-centered', 'cultural-connection', 'community'],
-    detailUrl: '/organizations/picc-townsville',
     featured: true
   }
 ];

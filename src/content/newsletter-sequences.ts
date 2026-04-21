@@ -279,7 +279,7 @@ $75/day — cost of community alternatives (Community Services Benchmark)
 
 AUSTRALIAN TOUR 2026
 
-Mount Druitt, NSW — April 2026 (Mounty Yarns)
+Western Sydney, NSW — April 2026
 Adelaide, SA — May 2026 (Reintegration Conference)
 Perth, WA — August 2026 (University of Western Australia)
 Tennant Creek, NT — September 2026 (Community-controlled)
@@ -499,7 +499,7 @@ AS A MEDIA MEMBER, YOU GET:
 - Photo/video access (trauma-informed protocols apply)
 
 TOUR DATES
-Mount Druitt (April), Adelaide (May), Perth (August), Tennant Creek (September)
+Western Sydney (April), Adelaide (May), Perth (August), Tennant Creek (September)
 
 Your media hub will have press kits available before each stop. We'll email you when your state's kit is ready.
 
@@ -580,7 +580,7 @@ Every letter sent through the network gets counted. We're building visible press
       body: `THE CONTAINED is an immersive experience inside a shipping container. Three rooms. Thirty minutes. You walk through Australia's youth justice crisis — and you meet the organisations fixing it.
 
 TOUR STOPS 2026
-Mount Druitt, NSW — April (Mounty Yarns)
+Western Sydney, NSW — April
 Adelaide, SA — May (Reintegration Conference)
 Perth, WA — August (University of Western Australia)
 Tennant Creek, NT — September (Community-controlled)
