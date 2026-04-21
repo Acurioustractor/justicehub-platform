@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Mounty Yarns takedown 2026-04-21 — pages removed, do not crawl or index
+Disallow: /organizations/mounty-yarns
+Disallow: /alma/mounty-yarns
+Disallow: /sites/mounty-yarns
+Disallow: /basecamps/playbook
+Disallow: /wiki/mindaroo-pitch
+Disallow: /pitch/minderoo
