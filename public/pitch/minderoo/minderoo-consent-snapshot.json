@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-04-21",
+  "scope": "minderoo-pitch-curated",
+  "note": "Curated pitch payload for the current confirmed cohort.",
+  "stories": [
+    {
+      "id": "oonchiumpa-founders",
+      "title": "Kristy Bloomfield and Tanya Turner",
+      "organisation": "Oonchiumpa",
+      "image": "/images/orgs/oonchiumpa/founders.jpg",
+      "quote": "Community-led support on Traditional Owner country.",
+      "consent_status": "active"
+    },
+    {
+      "id": "jackquann-programs",
+      "title": "Programs and Looking After My Family",
+      "organisation": "Oonchiumpa",
+      "image": "/images/orgs/oonchiumpa/jackquann.jpg",
+      "quote": "At six o'clock you get locked down. You wait till tomorrow.",
+      "consent_status": "active"
+    },
+    {
+      "id": "bg-fit-brodie",
+      "title": "BG Fit",
+      "organisation": "BG Fit",
+      "image": "/images/orgs/bg-fit/brodie.jpg",
+      "quote": "Sport, culture, and consistency held together.",
+      "consent_status": "active"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
-# Funder Outreach Emails — March 2026
+rd-technical-uncertainty-summaries-fy26# Funder Outreach Emails — March 2026
+
 
 ---
 
@@ -37,30 +38,41 @@ Ben
 
 ---
 
-## Email 2: Lucy Quarterman — Minderoo Foundation
-**Subject:** The data layer behind PLACE-scale investments
+## Email 2: Lucy Stronach — Minderoo Foundation
+**Subject:** The delivery mechanism for the CoLI evidence you supported
 **Send date:** 4 April 2026 (ahead of week-of-April-6 call)
+**Superseded:** 2026-04-25 — reframed for Phase 3 partnership positioning. See `~/.gstack/projects/Acurioustractor-justicehub-platform/ceo-plans/2026-04-25-minderoo-phase-3-integration.md`
 
 Hi Lucy,
 
-PLACE brought together $38.6M from PRF, Ian Potter, Bryan Foundation, Dusseldorp, and the Commonwealth — one of the most ambitious co-investments in Australian place-based work. The challenge with investments at that scale is always the same: how do you know what's actually working across dozens of communities and partners?
+Minderoo supported The Front Project's Cost of Late Intervention research — first in 2019, again in Dr M. O'Connell's 2024 update. That work named Australia's annual late-intervention bill at $22.3B, and the 2024 refresh shows that in the three categories most relevant to the conversation I'd like to have with you — child protection, youth justice, family violence — real-terms spending has risen 74%, 81%, and 110% since 2019. Family violence has more than doubled. The research is devastating, and it has worked: the cost of the problem is legible. What is missing is the community-level delivery mechanism.
 
-That's what we built JusticeHub to solve. It's a national data infrastructure platform tracking 156,937 funding records across 98,404 organisations, with a verified database of 1,165 community-led alternatives to detention. We pair that with CivicScope, a civic intelligence engine that monitors government spending, ministerial commitments, and policy shifts — so funders can see whether public investment is following or contradicting their own.
+That's what we've built JusticeHub to be. It's a national evidence and accountability platform tracking 148K+ funding records across 98K organisations, with a verified community-led database (ALMA) of 1,081 alternatives to detention. Paired with CivicGraph, a civic intelligence layer that monitors hansard, budget, and policy shifts, JusticeHub turns CoLI's "we don't have the data" finding into "here is the data, held at community level, with per-storyteller consent."
 
-The cost gap is staggering. Victoria spends $7,304 per day — $2.67M per year — on a single child in detention. The community programs in our database have a median cost of $170K per year and stronger outcomes evidence. JusticeHub makes that comparison visible, searchable, and accountable at a national level.
+The state-variable cost gap is the sharpest number in CoLI 2024 (Fig 18): Victorian youth detention costs $7,775 per child per day. An averted detention-year in Victoria saves $2.84M. The three-year $2.9M partnership I'm proposing is less than five months of one Victorian child in custody.
 
-We're working with three basecamp communities — Oonchiumpa in Tennant Creek, Palm Island Community Company in QLD, and Mounty Yarns in Mt Druitt — as the first nodes in a network that connects grassroots practice to funder intelligence.
+We're holding four anchor communities as the place-based proof: Oonchiumpa in Mparntwe (Alice Springs), Palm Island Community Company in Townsville, BG Fit in Mount Isa, and Minjerribah Moorgumpin Elders-in-Council on Minjerribah (North Stradbroke Island). Kristy Bloomfield's team at Oonchiumpa achieves a 95% police diversion rate at roughly 2.4% of the cost of detention. On 15 September 2026, 55 judges and magistrates are gathering at Oonchiumpa for a Judges on Country field trip — postcards carrying real young people's stories, QR-linked to Empathy Ledger, designed to travel back to chambers.
 
-CONTAINED is also heading to Perth — Jul/Aug, with UWA and JRI Perth as anchors. Kimberley Wilde is driving it locally, and Hayley Passmore is building an academic consortium with Aboriginal-led orgs. 7 people are already connected to the Perth stop. I've put together a community demand page showing who's involved across all 14 locations:
+What I'd like to propose isn't a transactional grant. It's a named evidence partnership — Minderoo as the first-tranche evidence partner of a six-year community justice proof program. The $2.9M is Year 1–3. The partnership is public. The outputs — a /partners/minderoo live dashboard, a Minderoo Cohort of consented storytellers, post-Alice-Springs impact artefacts — carry your name into the delivery layer the research has been waiting for.
 
-→ justicehub.com.au/contained/community (passcode: contained2026)
+CONTAINED is also heading to Perth — Jul/Aug, with UWA and JRI Perth as anchors. Kimberley Wilde is driving it locally. I'd love you involved — Perth is home.
 
-Could I get 15 minutes during the week of April 6 to show you the platform and the Perth stop? Perth is Minderoo's hometown — it would mean a lot to have you involved.
+Could I get 30 minutes during the week of April 6 to walk you through the platform, the Alice Springs field trip, and what partnership positioning looks like? I've been briefed on a courtesy copy going to Dr M. O'Connell and The Front Project leadership as well — the work they authored is the work this partnership would extend.
 
 Ben
 
 ---
-**Notes for Ben:** Verify Lucy's exact title (lstronach@minderoo.org). The PLACE connection is the strongest hook — show how PLACE partner orgs appear in JusticeHub data. Perth stop is Jul-Aug, UWA + JRI Perth hosting. The community page is passcode protected — "contained2026". If she asks about the tour budget, don't give specific asks — point to the community page and let the scale speak for itself.
+**Notes for Ben (updated 2026-04-25):**
+- Title/email: Lucy Stronach, lstronach@minderoo.org (confirmed)
+- CoLI framing: attribute to **The Front Project (author: Dr M. O'Connell, 2025), supported by Minderoo** — not "Minderoo's research"
+- The 74/81/110 real-terms rise is the sharpest opening stat
+- The Victorian $7,775/day figure is load-bearing — comes from CoLI 2024 Fig 18
+- Anchor correction: Oonchiumpa is in **Mparntwe (Alice Springs)**, NOT Tennant Creek. Previous draft had this wrong.
+- Anchor update: four anchors are **Oonchiumpa, PICC (Palm Island / Townsville), BG Fit (Mount Isa), MMEIC (Minjerribah)**. Mounty Yarns has been removed from public content (takedown April 2026) — do not reference in funder correspondence.
+- Phase 3 pitch reframe: partnership, not grant. First tranche of six-year arc.
+- Perth-as-hometown hook retained
+- Courtesy note: Dr M. O'Connell and The Front Project leadership should receive a copy of the final pitch (relationship opportunity in its own right)
+- Community page passcode unchanged: "contained2026"
 
 ---
 
@@ -117,3 +129,40 @@ Ben
 
 ---
 **Notes for Ben:** Read Kristy's "Power" letter (Feb 2026) before the meeting — it frames PRF's internal reckoning with philanthropic influence and is the emotional underpinning of the email's opening. The 30% indirect cost policy ("Paying What It Costs") is sector-leading — reference it in any proposal or budget conversation, do not lowball. The JR Community of Practice meets monthly and could be a stronger entry point than Kristy alone — find out who coordinates it. The justice portfolio lead is NOT publicly named on PRF's website — may need to ask Kristy's office or find the right person through the CoP. Have PICC's full profile ready: 21 interventions, $67M+ ecosystem, evidence ratings. PRF's Just Futures ($9M via ACF) is a backup angle if JR portfolio framing doesn't land. Be prepared for questions about data methodology and community verification processes — PRF cares deeply about who holds power in evidence-making.
+
+---
+
+## Email 5: Dr M. O'Connell + Leadership — The Front Project [DRAFT — COURTESY NOTE]
+**Subject:** CoLI 2024 has a delivery layer — a courtesy note from JusticeHub
+**Send date:** Propose sending before the Lucy Stronach meeting (by mid-May 2026)
+**Context:** Introduced at 2026-04-25 during Phase 3 Minderoo pitch reframe. Not a funding ask — a relationship opener with the research's authors.
+
+Hi Dr O'Connell (and team at The Front Project),
+
+I'm writing as a courtesy — not to pitch anything, just to let you know that your 2024 Cost of Late Intervention report is doing real work on the ground and has shaped a partnership I'm about to propose to Minderoo.
+
+I'm Ben Knight. I run JusticeHub — a community-justice evidence platform that aggregates funding data, maps community-led alternatives to youth detention, and works alongside Aboriginal community-controlled organisations in Mparntwe, Palm Island, Mount Isa, and Minjerribah. For the last eighteen months we've been trying to build the delivery mechanism that sits between research like yours and the communities who hold children well. CoLI 2024 gave that work its clearest frame.
+
+Three things from your report specifically reshaped a proposal I'm taking to Minderoo:
+
+- The 74% / 81% / 110% real-terms rise since 2019 in child protection, youth justice, and family violence. That is the sharpest single set of numbers anyone working in this field has to answer to right now.
+- The state-variable detention cost (Victoria at $7,775/day, Queensland at $2,162) as a sharper argument than any single national figure.
+- Your four government recommendations mapping cleanly to how four Aboriginal community-controlled organisations actually work — wrap-around models, early intervention, data collection, and the vertical fiscal imbalance argument.
+
+Rather than draft around your work silently, I wanted you to know that the Minderoo conversation we are opening cites CoLI 2024 as the evidence backbone. Minderoo's framing in the proposal is "named evidence partner for a delivery mechanism" — not "fund our work." Your research is the foundation; the partnership we're proposing is the layer that turns it into practice.
+
+If there's any part of the delivery that would be interesting to The Front Project — whether as an evidence observer, a methodological adviser on a three-year outcomes learning layer, or simply a party we keep posted on how the community-level numbers move — I'd be glad to share the pitch document and hear whether there's a useful intersection.
+
+If now isn't the right time, no reply required. This is for your awareness, with gratitude for the work.
+
+Ben Knight
+JusticeHub · A Curious Tractor
+ben@benjamink.com.au
+
+---
+**Notes for Ben:**
+- Low-stakes, relationship opener. Do not attach the full pitch; offer to share it if they express interest.
+- The Front Project is an EARLY CHILDHOOD organisation — frame the intersection accurately. The work they publish crosses into youth justice (the "same kids" bridge from CoLI p.3) but their own lane is earlier.
+- Dr M. O'Connell is the 2024 report author; leadership team at The Front Project is separate and worth identifying before sending. Confirm recipient addressing: "Dr O'Connell and leadership team" or "Dr O'Connell (cc [CEO name])"?
+- Send BEFORE Lucy Stronach conversation — if Lucy asks "have you spoken to the report's author?" the honest answer is "I've sent them a courtesy note."
+- If The Front Project responds warmly, there may be a separate funding or methodological-advisory relationship available in its own right. Not the point of this email, but a legitimate future door.

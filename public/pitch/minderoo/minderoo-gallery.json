@@ -1,0 +1,90 @@
+{
+  "generated_at": "2026-04-21",
+  "scope": "minderoo-pitch-curated",
+  "note": "Media shortlist for the current confirmed cohort.",
+  "organisations": [
+    { "slug": "oonchiumpa", "name": "Oonchiumpa" },
+    { "slug": "bg-fit", "name": "BG Fit" },
+    { "slug": "palm-island-community-company", "name": "Palm Island Community Company" },
+    { "slug": "mmeic", "name": "MMEIC" }
+  ],
+  "stats": {
+    "portraits": 4,
+    "story_heroes": 3,
+    "media_assets": 0,
+    "story_videos": 0
+  },
+  "total_items": 7,
+  "items": [
+    {
+      "id": "oonchiumpa-founders",
+      "type": "image",
+      "title": "Kristy Bloomfield and Tanya Turner",
+      "organisation": "Oonchiumpa",
+      "organisation_slug": "oonchiumpa",
+      "url": "/images/orgs/oonchiumpa/founders.jpg",
+      "caption": "Founders portrait",
+      "consent_status": "active"
+    },
+    {
+      "id": "oonchiumpa-hero",
+      "type": "image",
+      "title": "Oonchiumpa hero",
+      "organisation": "Oonchiumpa",
+      "organisation_slug": "oonchiumpa",
+      "url": "/images/orgs/oonchiumpa/hero.jpg",
+      "caption": "Community scene",
+      "consent_status": "active"
+    },
+    {
+      "id": "oonchiumpa-jackquann",
+      "type": "portrait",
+      "title": "Jackquann",
+      "organisation": "Oonchiumpa",
+      "organisation_slug": "oonchiumpa",
+      "url": "/images/orgs/oonchiumpa/jackquann.jpg",
+      "caption": "Youth portrait",
+      "consent_status": "active"
+    },
+    {
+      "id": "bg-fit-brodie",
+      "type": "portrait",
+      "title": "Brodie Germaine",
+      "organisation": "BG Fit",
+      "organisation_slug": "bg-fit",
+      "url": "/images/orgs/bg-fit/brodie.jpg",
+      "caption": "Founder portrait",
+      "consent_status": "active"
+    },
+    {
+      "id": "bg-fit-hero",
+      "type": "image",
+      "title": "BG Fit hero",
+      "organisation": "BG Fit",
+      "organisation_slug": "bg-fit",
+      "url": "/images/orgs/bg-fit/hero.jpg",
+      "caption": "Mount Isa community image",
+      "consent_status": "active"
+    },
+    {
+      "id": "bg-fit-gallery-1",
+      "type": "image",
+      "title": "BG Fit gallery",
+      "organisation": "BG Fit",
+      "organisation_slug": "bg-fit",
+      "url": "/images/orgs/bg-fit/gallery-1.jpg",
+      "caption": "Additional BG Fit image",
+      "consent_status": "active"
+    },
+    {
+      "id": "three-circles-diagram",
+      "type": "image",
+      "title": "The Three Circles diagram",
+      "organisation": "JusticeHub",
+      "organisation_slug": "justicehub",
+      "url": "/images/proposals/minderoo/three-circles-diagram.png",
+      "caption": "Pitch diagram",
+      "consent_status": "active"
+    }
+  ]
+}
