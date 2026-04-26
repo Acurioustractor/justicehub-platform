@@ -1,11 +1,7 @@
 name: Data Source Health Monitoring
 
 on:
-  schedule:
-    # Run every 6 hours
-    - cron: '0 */6 * * *'
-
-  # Allow manual trigger
+  # Scheduled run disabled — Telegram health pings were noise. Manual trigger only.
   workflow_dispatch:
 
 jobs:
