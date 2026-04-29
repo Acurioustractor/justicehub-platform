@@ -44,6 +44,7 @@ interface DetentionFacility {
 interface DetentionCentreMapProps {
   facilities: DetentionFacility[];
   height?: string;
+  showControls?: boolean;
 }
 
 const AUSTRALIA_CENTER: [number, number] = [-25.5, 134.5];
@@ -72,7 +73,7 @@ function markerRadius(capacityBeds: number | null) {
   return Math.max(7, Math.min(16, Math.round(capacityBeds / 12)));
 }
 
-export function DetentionCentreMap({ facilities, height = '500px' }: DetentionCentreMapProps) {
+export function DetentionCentreMap({ facilities, height = '500px', showControls = true }: DetentionCentreMapProps) {
   const [selectedState, setSelectedState] = useState('');
   const mappedFacilities = useMemo(
     () => facilities.filter(hasCoordinates),
@@ -90,41 +91,53 @@ export function DetentionCentreMap({ facilities, height = '500px' }: DetentionCe
     }, {});
   }, [mappedFacilities]);
   const selectedView = selectedState ? STATE_VIEWS[selectedState] : undefined;
+  const singleFacilityCenter = visibleFacilities.length === 1
+    ? [visibleFacilities[0].latitude as number, visibleFacilities[0].longitude as number] as [number, number]
+    : undefined;
   const mapBounds = visibleFacilities.length > 1
     ? visibleFacilities.map((facility) => [facility.latitude as number, facility.longitude as number] as [number, number])
     : undefined;
 
   return (
     <div className="border-2 border-black bg-white">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-black bg-white p-3">
-        <div className="flex flex-wrap items-center gap-3">
-          <select
-            value={selectedState}
-            onChange={(event) => setSelectedState(event.target.value)}
-            className="border-2 border-black bg-white px-3 py-2 text-sm font-bold"
-            aria-label="Filter detention centre map by state"
-          >
-            <option value="">All states</option>
-            {Object.entries(STATE_VIEWS).map(([code, view]) => (
-              <option key={code} value={code}>{view.label}</option>
-            ))}
-          </select>
-          <div className="flex items-center gap-2 text-sm font-bold">
-            <Building2 className="h-4 w-4 text-red-600" />
-            {visibleFacilities.length} centre{visibleFacilities.length === 1 ? '' : 's'}
+      {showControls && (
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-black bg-white p-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <select
+              value={selectedState}
+              onChange={(event) => setSelectedState(event.target.value)}
+              className="border-2 border-black bg-white px-3 py-2 text-sm font-bold"
+              aria-label="Filter detention centre map by state"
+            >
+              <option value="">All states</option>
+              {Object.entries(STATE_VIEWS).map(([code, view]) => (
+                <option key={code} value={code}>{view.label}</option>
+              ))}
+            </select>
+            <div className="flex items-center gap-2 text-sm font-bold">
+              <Building2 className="h-4 w-4 text-red-600" />
+              {visibleFacilities.length} centre{visibleFacilities.length === 1 ? '' : 's'}
+            </div>
+          </div>
+          <div className="text-xs font-bold uppercase tracking-wide text-earth-500">
+            Pan, zoom, and click markers for details
           </div>
         </div>
-        <div className="text-xs font-bold uppercase tracking-wide text-earth-500">
-          Pan, zoom, and click markers for details
+      )}
+
+      {!showControls && (
+        <div className="flex items-center gap-2 border-b-2 border-black bg-white p-3 text-sm font-bold">
+          <Building2 className="h-4 w-4 text-red-600" />
+          Centre location
         </div>
-      </div>
+      )}
 
       <div className="relative" style={{ height }}>
         <MapContainer
           key={selectedState || 'all-states'}
-          center={selectedView?.center || AUSTRALIA_CENTER}
-          zoom={selectedView?.zoom || 4}
-          bounds={mapBounds || (selectedState ? undefined : AUSTRALIA_BOUNDS)}
+          center={singleFacilityCenter || selectedView?.center || AUSTRALIA_CENTER}
+          zoom={singleFacilityCenter ? 9 : selectedView?.zoom || 4}
+          bounds={mapBounds || (selectedState || singleFacilityCenter ? undefined : AUSTRALIA_BOUNDS)}
           boundsOptions={{ padding: [42, 42], maxZoom: selectedState ? 8 : 5 }}
           maxBounds={AUSTRALIA_BOUNDS}
           minZoom={3}
@@ -185,6 +198,12 @@ export function DetentionCentreMap({ facilities, height = '500px' }: DetentionCe
                     {facility.government_department && (
                       <div className="mt-2 text-xs text-gray-600">{facility.government_department}</div>
                     )}
+                    <a
+                      href={`/centres/${facility.slug || facility.id}`}
+                      className="mt-3 inline-block border border-black bg-black px-3 py-1.5 text-xs font-bold text-white"
+                    >
+                      Open centre profile
+                    </a>
                   </div>
                 </Popup>
               </CircleMarker>
@@ -207,7 +226,8 @@ export function DetentionCentreMap({ facilities, height = '500px' }: DetentionCe
           </div>
         </div>
 
-        <div className="absolute right-4 top-4 z-[400] hidden max-w-[220px] border-2 border-black bg-white p-3 text-xs shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:block">
+        {showControls && (
+          <div className="absolute right-4 top-4 z-[400] hidden max-w-[220px] border-2 border-black bg-white p-3 text-xs shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] md:block">
           <div className="mb-2 font-bold uppercase tracking-wide">State count</div>
           <div className="space-y-1">
             {Object.entries(stateCounts).sort().map(([state, count]) => (
@@ -217,7 +237,8 @@ export function DetentionCentreMap({ facilities, height = '500px' }: DetentionCe
               </div>
             ))}
           </div>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

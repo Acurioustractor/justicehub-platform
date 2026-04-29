@@ -1,7 +1,9 @@
+import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
 import { Building2, ListFilter, Map as MapIcon, MapPin, Network } from 'lucide-react';
 import { DetentionCentreMap } from '@/components/organizations/DetentionCentreMap';
+import { FALLBACK_DETENTION_FACILITIES } from '@/lib/organizations/fallback-detention-centres';
 import { OrganizationsPageContent } from './page-content';
 
 export const dynamic = 'force-dynamic';
@@ -48,9 +50,10 @@ interface OrganizationsData {
   teamCounts: Record<string, number>;
   detentionFacilities: DetentionFacility[];
   claimedOrgIds: string[];
+  dataStatus: 'live' | 'partial';
 }
 
-type RelatedData = [DetentionFacility[], CountRow[], CountRow[], CountRow[], string[]];
+type RelatedData = [CountRow[], CountRow[], CountRow[], string[]];
 
 // Hard cap for the SSR payload and all supporting relationship queries.
 // Keep the public directory fast; deeper discovery happens through search/claim flows.
@@ -71,6 +74,7 @@ function emptyOrganizationsData(): OrganizationsData {
     teamCounts: {},
     detentionFacilities: [] as DetentionFacility[],
     claimedOrgIds: [] as string[],
+    dataStatus: 'partial',
   };
 }
 
@@ -221,6 +225,16 @@ async function getOrganizationsData(): Promise<OrganizationsData> {
   const supabase = createServiceClient();
 
   try {
+    const facilitiesWithPartners = await withTimeout(
+      'Fetching detention facilities',
+      fetchFacilitiesWithPartners(supabase).catch(err => {
+        console.error('Error fetching detention facilities:', err);
+        return FALLBACK_DETENTION_FACILITIES;
+      }),
+      FALLBACK_DETENTION_FACILITIES,
+      1500
+    );
+
     const orgs = await withTimeout(
       'Fetching organizations directory',
       fetchAllOrgs(supabase).catch(err => {
@@ -231,7 +245,11 @@ async function getOrganizationsData(): Promise<OrganizationsData> {
     );
 
     if (orgs.length === 0) {
-      return emptyOrganizationsData();
+      return {
+        ...emptyOrganizationsData(),
+        detentionFacilities: facilitiesWithPartners.length > 0 ? facilitiesWithPartners : FALLBACK_DETENTION_FACILITIES,
+        dataStatus: 'partial',
+      };
     }
 
     const orgIds = orgs.map(org => org.id);
@@ -240,10 +258,6 @@ async function getOrganizationsData(): Promise<OrganizationsData> {
     const relatedData = await withTimeout<RelatedData>(
       'Fetching organizations related counts',
       Promise.all([
-        fetchFacilitiesWithPartners(supabase).catch(err => {
-          console.error('Error fetching detention facilities:', err);
-          return [] as DetentionFacility[];
-        }),
         fetchRelationshipRows(supabase, 'registered_services', relatedOrgIds),
         fetchRelationshipRows(supabase, 'services', relatedOrgIds),
         (supabase as any)
@@ -262,7 +276,6 @@ async function getOrganizationsData(): Promise<OrganizationsData> {
         fetchClaimedOrgIds(supabase, relatedOrgIds),
       ]),
       [
-        [] as DetentionFacility[],
         [] as CountRow[],
         [] as CountRow[],
         [] as CountRow[],
@@ -270,7 +283,7 @@ async function getOrganizationsData(): Promise<OrganizationsData> {
       ]
     );
 
-    const [facilitiesWithPartners, programs, services, teamMembers, claimedOrgIds] = relatedData;
+    const [programs, services, teamMembers, claimedOrgIds] = relatedData;
     const metrics = await fetchOrganizationsMetrics(supabase, orgs);
 
     return {
@@ -283,15 +296,20 @@ async function getOrganizationsData(): Promise<OrganizationsData> {
       teamCounts: buildCountMap(teamMembers),
       detentionFacilities: facilitiesWithPartners,
       claimedOrgIds,
+      dataStatus: 'live',
     };
   } catch (error) {
     console.error('Error fetching organizations data:', error);
-    return emptyOrganizationsData();
+    return {
+      ...emptyOrganizationsData(),
+      detentionFacilities: FALLBACK_DETENTION_FACILITIES,
+      dataStatus: 'partial',
+    };
   }
 }
 
 export default async function OrganizationsPage() {
-  const { organizations, totalOrgCount, grantScopeLinkedCount, abnBackedCount, programCounts, serviceCounts, teamCounts, detentionFacilities, claimedOrgIds } = await getOrganizationsData();
+  const { organizations, totalOrgCount, grantScopeLinkedCount, abnBackedCount, programCounts, serviceCounts, teamCounts, detentionFacilities, claimedOrgIds, dataStatus } = await getOrganizationsData();
 
   const verifiedCount = organizations.filter(
     (org: Organization) => org.verification_status === 'verified'
@@ -314,17 +332,17 @@ export default async function OrganizationsPage() {
         <section className="bg-gradient-to-br from-ochre-50 via-sand-50 to-eucalyptus-50 py-16 border-b-2 border-black">
           <div className="container-justice">
             <h1 className="text-5xl md:text-6xl font-bold text-earth-900 mb-4">
-              Organization Directory
+              Justice System Directory
             </h1>
             <p className="text-xl text-earth-700 max-w-3xl mb-8">
-              Browse the loaded JusticeHub and CivicGraph records, then follow ABN and GrantScope links into the wider funding graph.
+              Start with detention centres as fixed places, then follow the organizations, services, ABNs, GrantScope records, stories, and funding flows around them.
             </p>
 
             {/* Stats */}
             <div className="flex flex-wrap gap-8 pt-6 border-t-2 border-black/10">
               <div>
                 <div className="text-4xl font-bold text-ochre-600 mb-1">
-                  {totalOrgCount.toLocaleString()}
+                  {dataStatus === 'partial' && organizations.length === 0 ? '—' : totalOrgCount.toLocaleString()}
                 </div>
                 <p className="text-sm uppercase tracking-wide text-earth-600 font-medium">
                   Source Records
@@ -332,7 +350,7 @@ export default async function OrganizationsPage() {
               </div>
               <div>
                 <div className="text-4xl font-bold text-ochre-600 mb-1">
-                  {organizations.length.toLocaleString()}
+                  {dataStatus === 'partial' && organizations.length === 0 ? '—' : organizations.length.toLocaleString()}
                 </div>
                 <p className="text-sm uppercase tracking-wide text-earth-600 font-medium">
                   Loaded Profiles
@@ -340,7 +358,7 @@ export default async function OrganizationsPage() {
               </div>
               <div>
                 <div className="text-4xl font-bold text-eucalyptus-600 mb-1">
-                  {verifiedCount}
+                  {dataStatus === 'partial' && organizations.length === 0 ? '—' : verifiedCount}
                 </div>
                 <p className="text-sm uppercase tracking-wide text-earth-600 font-medium">
                   Verified Profiles
@@ -358,7 +376,7 @@ export default async function OrganizationsPage() {
               )}
               <div>
                 <div className="text-4xl font-bold text-blue-700 mb-1">
-                  {grantScopeLinkedCount.toLocaleString()}
+                  {dataStatus === 'partial' && organizations.length === 0 ? '—' : grantScopeLinkedCount.toLocaleString()}
                 </div>
                 <p className="text-sm uppercase tracking-wide text-earth-600 font-medium">
                   Loaded GrantScope
@@ -366,7 +384,7 @@ export default async function OrganizationsPage() {
               </div>
               <div>
                 <div className="text-4xl font-bold text-earth-600 mb-1">
-                  {abnBackedCount.toLocaleString()}
+                  {dataStatus === 'partial' && organizations.length === 0 ? '—' : abnBackedCount.toLocaleString()}
                 </div>
                 <p className="text-sm uppercase tracking-wide text-earth-600 font-medium">
                   Loaded ABN
@@ -390,6 +408,12 @@ export default async function OrganizationsPage() {
               </div>
             </div>
 
+            {dataStatus === 'partial' && (
+              <div className="mt-6 border-2 border-amber-600 bg-amber-50 p-4 text-sm text-earth-800">
+                <strong>Live organization data is temporarily unavailable.</strong> Centre mapping is still available from the local baseline, and the directory will repopulate when CivicGraph/Supabase responds again.
+              </div>
+            )}
+
             <div className="mt-10 flex flex-wrap gap-3">
               <a href="#centre-map" className="inline-flex items-center gap-2 border-2 border-black bg-white px-4 py-2 text-sm font-bold hover:bg-black hover:text-white transition-colors">
                 <MapIcon className="w-4 h-4" />
@@ -407,6 +431,28 @@ export default async function OrganizationsPage() {
                 <Network className="w-4 h-4" />
                 Claim pathway
               </a>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b-2 border-black bg-white py-8">
+          <div className="container-justice">
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="border-2 border-black p-4">
+                <div className="mb-2 text-xs font-bold uppercase tracking-wide text-red-600">Place anchor</div>
+                <h2 className="text-xl font-bold text-earth-900">Centres show where the system concentrates power.</h2>
+                <p className="mt-2 text-sm text-earth-600">Each centre profile can gather capacity, department ownership, active partnerships, and the services connected to young people leaving custody.</p>
+              </div>
+              <div className="border-2 border-black p-4">
+                <div className="mb-2 text-xs font-bold uppercase tracking-wide text-blue-700">Actor layer</div>
+                <h2 className="text-xl font-bold text-earth-900">Organizations claim and enrich their record.</h2>
+                <p className="mt-2 text-sm text-earth-600">The directory links JusticeHub profiles with CivicGraph, ABN, and GrantScope identities so programs, contacts, and evidence can become visible.</p>
+              </div>
+              <div className="border-2 border-black p-4">
+                <div className="mb-2 text-xs font-bold uppercase tracking-wide text-eucalyptus-700">Story and funding layer</div>
+                <h2 className="text-xl font-bold text-earth-900">The useful view is the relationship between place, money, and lived experience.</h2>
+                <p className="mt-2 text-sm text-earth-600">This becomes the base for funders, media, community leaders, and young people to see what exists, what is missing, and who is already doing the work.</p>
+              </div>
             </div>
           </div>
         </section>
@@ -466,7 +512,11 @@ export default async function OrganizationsPage() {
 
             <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
               {detentionFacilities.map((facility) => (
-                <article key={facility.id} className="bg-white border-2 border-black p-4 min-h-[180px] flex flex-col">
+                <Link
+                  key={facility.id}
+                  href={`/centres/${facility.slug || facility.id}`}
+                  className="bg-white border-2 border-black p-4 min-h-[190px] flex flex-col hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all"
+                >
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <h3 className="font-bold text-lg leading-tight text-earth-900">{facility.name}</h3>
                     <span className={`shrink-0 text-[10px] uppercase tracking-wide font-bold px-2 py-1 border ${
@@ -486,8 +536,9 @@ export default async function OrganizationsPage() {
                       <div className="border border-earth-200 p-2">{facility.capacity_beds || 0} beds</div>
                       <div className="border border-earth-200 p-2">{facility.partnership_count || 0} partners</div>
                     </div>
+                    <div className="text-xs font-bold uppercase tracking-wide text-blue-700">More information →</div>
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
           </div>
@@ -499,12 +550,12 @@ export default async function OrganizationsPage() {
             programCounts={programCounts}
             serviceCounts={serviceCounts}
             teamCounts={teamCounts}
-            detentionFacilities={detentionFacilities}
             claimedOrgIds={claimedOrgIds}
+            dataStatus={dataStatus}
           />
         </section>
 
-        {organizations.length === 0 && (
+        {organizations.length === 0 && dataStatus === 'live' && (
           <section className="py-16">
             <div className="container-justice text-center">
               <p className="text-xl text-earth-600">No organizations found.</p>

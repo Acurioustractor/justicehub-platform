@@ -9,8 +9,10 @@ import {
   Users,
   MapPin,
   Link2,
-  Building2,
-  AlertTriangle,
+  ArrowUpRight,
+  CheckCircle2,
+  LayoutGrid,
+  List as ListIcon,
   X,
 } from 'lucide-react';
 
@@ -28,35 +30,25 @@ interface Organization {
   tags: string[] | null;
 }
 
-interface DetentionFacility {
-  id: string;
-  name: string;
-  slug: string | null;
-  city: string | null;
-  state: string | null;
-  capacity_beds: number | null;
-  operational_status: string | null;
-  government_department: string | null;
-  security_level: string | null;
-  partnership_count?: number;
-}
-
 interface OrganizationsPageContentProps {
   organizations: Organization[];
   programCounts: Record<string, number>;
   serviceCounts: Record<string, number>;
   teamCounts: Record<string, number>;
-  detentionFacilities: DetentionFacility[];
   claimedOrgIds: string[];
+  dataStatus?: 'live' | 'partial';
 }
+
+type DirectoryView = 'cards' | 'list';
+type QuickFilter = 'all' | 'linked' | 'claimed' | 'with-services' | 'needs-profile';
 
 export function OrganizationsPageContent({
   organizations,
   programCounts,
   serviceCounts,
   teamCounts,
-  detentionFacilities,
   claimedOrgIds,
+  dataStatus = 'live',
 }: OrganizationsPageContentProps) {
   const claimedSet = useMemo(() => new Set(claimedOrgIds), [claimedOrgIds]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,6 +56,8 @@ export function OrganizationsPageContent({
   const [typeFilter, setTypeFilter] = useState('all');
   const [verificationFilter, setVerificationFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name-asc');
+  const [viewMode, setViewMode] = useState<DirectoryView>('cards');
+  const [quickFilter, setQuickFilter] = useState<QuickFilter>('all');
 
   // Derive unique states and types from data
   const states = useMemo(() => {
@@ -85,7 +79,11 @@ export function OrganizationsPageContent({
   const [visibleCount, setVisibleCount] = useState(30);
 
   const hasActiveFilters =
-    searchQuery || stateFilter !== 'all' || typeFilter !== 'all' || verificationFilter !== 'all';
+    searchQuery ||
+    stateFilter !== 'all' ||
+    typeFilter !== 'all' ||
+    verificationFilter !== 'all' ||
+    quickFilter !== 'all';
 
   const filtered = useMemo(() => {
     const query = searchQuery.toLowerCase();
@@ -97,6 +95,10 @@ export function OrganizationsPageContent({
             org.name,
             org.description,
             org.city,
+            org.state,
+            org.type,
+            org.abn,
+            org.gs_entity_id,
             ...(org.tags || []),
           ]
             .filter(Boolean)
@@ -112,6 +114,11 @@ export function OrganizationsPageContent({
         if (verificationFilter === 'verified' && org.verification_status !== 'verified') return false;
         if (verificationFilter === 'claimed' && !claimedSet.has(org.id)) return false;
         if (verificationFilter === 'unverified' && org.verification_status === 'verified') return false;
+        // Quick filters
+        if (quickFilter === 'linked' && !(org.gs_entity_id || org.abn)) return false;
+        if (quickFilter === 'claimed' && !claimedSet.has(org.id)) return false;
+        if (quickFilter === 'with-services' && !((programCounts[org.id] || 0) + (serviceCounts[org.id] || 0))) return false;
+        if (quickFilter === 'needs-profile' && (claimedSet.has(org.id) || org.verification_status === 'verified')) return false;
         return true;
       })
       .sort((a, b) => {
@@ -139,10 +146,10 @@ export function OrganizationsPageContent({
             return a.name.localeCompare(b.name);
         }
       });
-  }, [organizations, searchQuery, stateFilter, typeFilter, verificationFilter, sortBy, programCounts, serviceCounts, claimedSet]);
+  }, [organizations, searchQuery, stateFilter, typeFilter, verificationFilter, quickFilter, sortBy, programCounts, serviceCounts, claimedSet]);
 
   // Reset pagination when filters change
-  useEffect(() => { setVisibleCount(30); }, [searchQuery, stateFilter, typeFilter, verificationFilter]);
+  useEffect(() => { setVisibleCount(30); }, [searchQuery, stateFilter, typeFilter, verificationFilter, quickFilter, sortBy, viewMode]);
 
   const visibleOrgs = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
@@ -152,22 +159,44 @@ export function OrganizationsPageContent({
     setStateFilter('all');
     setTypeFilter('all');
     setVerificationFilter('all');
+    setQuickFilter('all');
     setSortBy('name-asc');
   };
-
-  // Detention facilities (not filtered)
-  const operationalFacilities = detentionFacilities.filter(
-    (f) => f.operational_status === 'operational'
-  );
-  const closedFacilities = detentionFacilities.filter(
-    (f) => f.operational_status === 'closed'
-  );
 
   return (
     <>
       {/* Filter Bar */}
       <section className="py-6 border-b-2 border-black bg-white sticky top-0 z-30">
         <div className="container-justice">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-bold text-earth-900">Organization Directory</h2>
+              <p className="text-sm text-earth-600">
+                Search the loaded profile set, then open a record to build out programs, services, stories, funding, and claim status.
+              </p>
+            </div>
+            <div className="flex border-2 border-black bg-white">
+              <button
+                type="button"
+                onClick={() => setViewMode('cards')}
+                className={`inline-flex items-center gap-2 px-3 py-2 text-sm font-bold ${viewMode === 'cards' ? 'bg-black text-white' : 'bg-white text-black hover:bg-sand-50'}`}
+                aria-pressed={viewMode === 'cards'}
+              >
+                <LayoutGrid className="h-4 w-4" />
+                Cards
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('list')}
+                className={`inline-flex items-center gap-2 border-l-2 border-black px-3 py-2 text-sm font-bold ${viewMode === 'list' ? 'bg-black text-white' : 'bg-white text-black hover:bg-sand-50'}`}
+                aria-pressed={viewMode === 'list'}
+              >
+                <ListIcon className="h-4 w-4" />
+                List
+              </button>
+            </div>
+          </div>
+
           {/* Search + Filters Row */}
           <div className="flex flex-wrap gap-3 items-center">
             {/* Search */}
@@ -175,7 +204,7 @@ export function OrganizationsPageContent({
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-earth-400" />
               <input
                 type="text"
-                placeholder="Search organizations..."
+                placeholder="Search name, place, ABN, GrantScope, tags..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border-2 border-black text-sm focus:outline-none focus:ring-2 focus:ring-ochre-400"
@@ -246,6 +275,29 @@ export function OrganizationsPageContent({
             )}
           </div>
 
+          <div className="mt-3 flex flex-wrap gap-2">
+            {[
+              { key: 'all', label: 'All records' },
+              { key: 'linked', label: 'ABN / GrantScope linked' },
+              { key: 'claimed', label: 'Claimed' },
+              { key: 'with-services', label: 'Programs or services' },
+              { key: 'needs-profile', label: 'Needs profile work' },
+            ].map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => setQuickFilter(item.key as QuickFilter)}
+                className={`border px-3 py-1.5 text-xs font-bold uppercase tracking-wide transition-colors ${
+                  quickFilter === item.key
+                    ? 'border-black bg-black text-white'
+                    : 'border-earth-300 bg-white text-earth-700 hover:border-black'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+
           {/* Result Count */}
           <div className="mt-3 text-sm text-earth-600 font-medium">
             Showing{' '}
@@ -263,6 +315,7 @@ export function OrganizationsPageContent({
         <div className="container-justice">
           {filtered.length > 0 ? (
             <>
+            {viewMode === 'cards' ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {visibleOrgs.map((org) => {
                 const isVerified = org.verification_status === 'verified';
@@ -382,6 +435,56 @@ export function OrganizationsPageContent({
                 );
               })}
             </div>
+            ) : (
+              <div className="overflow-hidden border-2 border-black bg-white">
+                {visibleOrgs.map((org) => {
+                  const isVerified = org.verification_status === 'verified';
+                  const isClaimed = claimedSet.has(org.id);
+                  const hasGrantScope = Boolean(org.gs_entity_id || org.abn);
+                  const linkedCount =
+                    (programCounts[org.id] || 0) +
+                    (serviceCounts[org.id] || 0) +
+                    (teamCounts[org.id] || 0);
+
+                  return (
+                    <Link
+                      key={org.id}
+                      href={`/organizations/${org.slug || org.id}`}
+                      className="grid gap-3 border-b border-earth-200 p-4 transition-colors last:border-b-0 hover:bg-sand-50 md:grid-cols-[minmax(0,1.4fr)_minmax(160px,0.4fr)_minmax(220px,0.7fr)_auto]"
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-bold text-earth-900">{org.name}</h3>
+                          {isClaimed && <CheckCircle2 className="h-4 w-4 text-purple-700" />}
+                        </div>
+                        <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-earth-500">
+                          {org.type && <span className="font-bold uppercase tracking-wide">{org.type.replace('-', ' ')}</span>}
+                          {org.abn && <span>ABN {org.abn}</span>}
+                          {org.gs_entity_id && <span>GrantScope linked</span>}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1 text-sm text-earth-600">
+                        <MapPin className="h-4 w-4" />
+                        {[org.city, org.state].filter(Boolean).join(', ') || 'Location open'}
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 text-xs font-bold">
+                        {isVerified && <span className="border border-eucalyptus-700 bg-eucalyptus-50 px-2 py-1 text-eucalyptus-800">Verified</span>}
+                        {isClaimed && <span className="border border-purple-700 bg-purple-50 px-2 py-1 text-purple-800">Claimed</span>}
+                        {hasGrantScope && <span className="border border-blue-700 bg-blue-50 px-2 py-1 text-blue-800">Civic graph</span>}
+                        <span className="border border-earth-300 bg-white px-2 py-1 text-earth-700">{linkedCount} linked items</span>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-1 text-sm font-bold text-blue-700">
+                        Open
+                        <ArrowUpRight className="h-4 w-4" />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
 
             {/* Load More */}
             {hasMore && (
@@ -397,129 +500,33 @@ export function OrganizationsPageContent({
             </>
           ) : (
             <div className="text-center py-16">
-              <p className="text-xl text-earth-600 mb-4">
-                No organizations match your filters.
-              </p>
-              <button
-                onClick={clearFilters}
-                className="px-4 py-2 border-2 border-black bg-ochre-100 text-ochre-800 font-bold hover:bg-ochre-200 transition-colors"
-              >
-                Clear all filters
-              </button>
+              {dataStatus === 'partial' && organizations.length === 0 ? (
+                <>
+                  <p className="text-xl font-bold text-earth-900 mb-2">
+                    Organization records are temporarily unavailable.
+                  </p>
+                  <p className="mx-auto max-w-2xl text-earth-600">
+                    The centre map and cards remain available. Organization search will repopulate when the CivicGraph/Supabase source responds again.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-xl text-earth-600 mb-4">
+                    No organizations match your filters.
+                  </p>
+                  <button
+                    onClick={clearFilters}
+                    className="px-4 py-2 border-2 border-black bg-ochre-100 text-ochre-800 font-bold hover:bg-ochre-200 transition-colors"
+                  >
+                    Clear all filters
+                  </button>
+                </>
+              )}
             </div>
           )}
         </div>
       </section>
 
-      {/* Youth Detention Facilities Section */}
-      {detentionFacilities.length > 0 && (
-        <section className="py-12 border-t-2 border-black bg-gradient-to-br from-red-50 via-orange-50 to-sand-50">
-          <div className="container-justice">
-            <div className="mb-8">
-              <h2 className="text-4xl font-bold text-earth-900 mb-2 flex items-center gap-3">
-                <Building2 className="w-10 h-10 text-red-600" />
-                Youth Detention Facilities
-              </h2>
-              <p className="text-lg text-earth-600">
-                {operationalFacilities.length} operational detention centres
-                across Australia
-                {closedFacilities.length > 0 && (
-                  <span className="ml-2 text-earth-500">
-                    ({closedFacilities.length} recently closed)
-                  </span>
-                )}
-              </p>
-            </div>
-
-            {/* Operational Facilities */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {operationalFacilities.map((facility) => (
-                <div
-                  key={facility.id}
-                  className="block bg-white border-2 border-black p-5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
-                >
-                  <div className="flex items-start justify-between gap-2 mb-3">
-                    <h3 className="font-bold text-lg text-earth-900">
-                      {facility.name}
-                    </h3>
-                    <span className="flex-shrink-0 px-2 py-0.5 bg-green-100 border border-green-600 text-green-800 text-xs font-bold uppercase tracking-wide">
-                      Operational
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm text-earth-600 mb-3">
-                    <MapPin className="w-4 h-4" />
-                    {facility.city}, {facility.state}
-                  </div>
-                  <div className="space-y-2 mb-4">
-                    {facility.capacity_beds && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-earth-600">Capacity:</span>
-                        <span className="font-bold">
-                          {facility.capacity_beds} beds
-                        </span>
-                      </div>
-                    )}
-                    {facility.security_level && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-earth-600">Security:</span>
-                        <span className="font-bold capitalize">
-                          {facility.security_level}
-                        </span>
-                      </div>
-                    )}
-                    {facility.government_department && (
-                      <div className="text-xs text-earth-500 mt-2">
-                        {facility.government_department}
-                      </div>
-                    )}
-                  </div>
-                  {facility.partnership_count !== undefined &&
-                    facility.partnership_count > 0 && (
-                      <div className="pt-3 border-t border-earth-200">
-                        <div className="flex items-center gap-1 text-xs font-bold text-blue-700">
-                          <Link2 className="w-3 h-3" />
-                          {facility.partnership_count} partnership
-                          {facility.partnership_count !== 1 ? 's' : ''}
-                        </div>
-                      </div>
-                    )}
-                </div>
-              ))}
-            </div>
-
-            {/* Closed Facilities */}
-            {closedFacilities.length > 0 && (
-              <div className="mt-8">
-                <h3 className="text-xl font-bold text-earth-700 mb-4 flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5 text-amber-600" />
-                  Recently Closed Facilities
-                </h3>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {closedFacilities.map((facility) => (
-                    <div
-                      key={facility.id}
-                      className="bg-gray-100 border-2 border-gray-300 p-4 opacity-75"
-                    >
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <h4 className="font-bold text-earth-700">
-                          {facility.name}
-                        </h4>
-                        <span className="flex-shrink-0 px-2 py-0.5 bg-gray-200 border border-gray-400 text-gray-600 text-xs font-bold uppercase tracking-wide">
-                          Closed
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-earth-500">
-                        <MapPin className="w-4 h-4" />
-                        {facility.city}, {facility.state}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
     </>
   );
 }
