@@ -105,13 +105,14 @@ export function SimpleEcosystemMap({
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
 
+  const [mounted, setMounted] = useState(false);
   const [mapReady, setMapReady] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [internalState, setInternalState] = useState('');
-  const [facilities, setFacilities] = useState<Facility[]>([]);
-  const [programs, setPrograms] = useState<Program[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [facilities, setFacilities] = useState<Facility[]>(data?.facilities || []);
+  const [programs, setPrograms] = useState<Program[]>(data?.programs || []);
+  const [services, setServices] = useState<Service[]>(data?.services || []);
+  const [organizations, setOrganizations] = useState<Organization[]>(data?.organizations || []);
   const [loading, setLoading] = useState(!data);
   const [layerVisibility, setLayerVisibility] = useState<LayerVisibility>({
     facilities: true,
@@ -123,6 +124,10 @@ export function SimpleEcosystemMap({
   // Use external state if provided, otherwise internal
   const selectedState = externalState !== undefined ? externalState : internalState;
   const setSelectedState = onStateChange || setInternalState;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Use provided data or fetch
   useEffect(() => {
@@ -410,10 +415,14 @@ export function SimpleEcosystemMap({
   };
 
   // Counts with visibility
-  const visibleFacilitiesCount = layerVisibility.facilities ? facilities.filter(f => f.latitude).length : 0;
-  const visibleProgramsCount = layerVisibility.programs ? programs.filter(p => p.latitude).length : 0;
-  const visibleServicesCount = layerVisibility.services ? services.filter(s => s.latitude).length : 0;
-  const visibleOrgsCount = layerVisibility.organizations ? organizations.filter(o => o.latitude).length : 0;
+  const facilitiesCount = facilities.filter(f => f.latitude).length;
+  const programsCount = programs.filter(p => p.latitude).length;
+  const servicesCount = services.filter(s => s.latitude).length;
+  const orgsCount = organizations.filter(o => o.latitude).length;
+  const visibleFacilitiesCount = layerVisibility.facilities ? facilitiesCount : 0;
+  const visibleProgramsCount = layerVisibility.programs ? programsCount : 0;
+  const visibleServicesCount = layerVisibility.services ? servicesCount : 0;
+  const visibleOrgsCount = layerVisibility.organizations ? orgsCount : 0;
 
   const ControlsBar = () => (
     <div className="bg-white border-2 border-black border-b-0 p-3 flex flex-wrap items-center justify-between gap-3">
@@ -439,54 +448,62 @@ export function SimpleEcosystemMap({
 
       {/* Layer toggles */}
       <div className="flex flex-wrap items-center gap-2">
-        <button
-          onClick={() => toggleLayer('facilities')}
-          className={`flex items-center gap-1.5 px-2 py-1 text-xs font-bold border-2 transition-all ${
-            layerVisibility.facilities
-              ? 'border-red-600 bg-red-50 text-red-700'
-              : 'border-gray-300 bg-gray-100 text-gray-400'
-          }`}
-        >
-          <Building2 className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Detention</span>
-          <span className="font-mono">({facilities.filter(f => f.latitude).length})</span>
-        </button>
-        <button
-          onClick={() => toggleLayer('programs')}
-          className={`flex items-center gap-1.5 px-2 py-1 text-xs font-bold border-2 transition-all ${
-            layerVisibility.programs
-              ? 'border-green-600 bg-green-50 text-green-700'
-              : 'border-gray-300 bg-gray-100 text-gray-400'
-          }`}
-        >
-          <Heart className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Programs</span>
-          <span className="font-mono">({programs.filter(p => p.latitude).length})</span>
-        </button>
-        <button
-          onClick={() => toggleLayer('services')}
-          className={`flex items-center gap-1.5 px-2 py-1 text-xs font-bold border-2 transition-all ${
-            layerVisibility.services
-              ? 'border-blue-600 bg-blue-50 text-blue-700'
-              : 'border-gray-300 bg-gray-100 text-gray-400'
-          }`}
-        >
-          <Briefcase className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Services</span>
-          <span className="font-mono">({services.filter(s => s.latitude).length})</span>
-        </button>
-        <button
-          onClick={() => toggleLayer('organizations')}
-          className={`flex items-center gap-1.5 px-2 py-1 text-xs font-bold border-2 transition-all ${
-            layerVisibility.organizations
-              ? 'border-purple-600 bg-purple-50 text-purple-700'
-              : 'border-gray-300 bg-gray-100 text-gray-400'
-          }`}
-        >
-          <Users className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">Orgs</span>
-          <span className="font-mono">({organizations.filter(o => o.latitude).length})</span>
-        </button>
+        {facilitiesCount > 0 && (
+          <button
+            onClick={() => toggleLayer('facilities')}
+            className={`flex items-center gap-1.5 px-2 py-1 text-xs font-bold border-2 transition-all ${
+              layerVisibility.facilities
+                ? 'border-red-600 bg-red-50 text-red-700'
+                : 'border-gray-300 bg-gray-100 text-gray-400'
+            }`}
+          >
+            <Building2 className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Detention</span>
+            <span className="font-mono">({facilitiesCount})</span>
+          </button>
+        )}
+        {programsCount > 0 && (
+          <button
+            onClick={() => toggleLayer('programs')}
+            className={`flex items-center gap-1.5 px-2 py-1 text-xs font-bold border-2 transition-all ${
+              layerVisibility.programs
+                ? 'border-green-600 bg-green-50 text-green-700'
+                : 'border-gray-300 bg-gray-100 text-gray-400'
+            }`}
+          >
+            <Heart className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Programs</span>
+            <span className="font-mono">({programsCount})</span>
+          </button>
+        )}
+        {servicesCount > 0 && (
+          <button
+            onClick={() => toggleLayer('services')}
+            className={`flex items-center gap-1.5 px-2 py-1 text-xs font-bold border-2 transition-all ${
+              layerVisibility.services
+                ? 'border-blue-600 bg-blue-50 text-blue-700'
+                : 'border-gray-300 bg-gray-100 text-gray-400'
+            }`}
+          >
+            <Briefcase className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Services</span>
+            <span className="font-mono">({servicesCount})</span>
+          </button>
+        )}
+        {orgsCount > 0 && (
+          <button
+            onClick={() => toggleLayer('organizations')}
+            className={`flex items-center gap-1.5 px-2 py-1 text-xs font-bold border-2 transition-all ${
+              layerVisibility.organizations
+                ? 'border-purple-600 bg-purple-50 text-purple-700'
+                : 'border-gray-300 bg-gray-100 text-gray-400'
+            }`}
+          >
+            <Users className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Orgs</span>
+            <span className="font-mono">({orgsCount})</span>
+          </button>
+        )}
       </div>
 
       <button
@@ -503,25 +520,25 @@ export function SimpleEcosystemMap({
     <div className="absolute bottom-4 left-4 bg-white border-2 border-black p-3 z-10 shadow-lg">
       <div className="text-xs font-bold mb-2 text-gray-600 uppercase tracking-wide">Legend</div>
       <div className="space-y-1.5 text-xs">
-        {layerVisibility.facilities && (
+        {visibleFacilitiesCount > 0 && (
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-red-600 rounded-sm border border-white shadow"></div>
             <span>Detention Centres ({visibleFacilitiesCount})</span>
           </div>
         )}
-        {layerVisibility.programs && (
+        {visibleProgramsCount > 0 && (
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-600 rounded-full border border-white shadow"></div>
             <span>Community Programs ({visibleProgramsCount})</span>
           </div>
         )}
-        {layerVisibility.services && (
+        {visibleServicesCount > 0 && (
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-blue-600 border border-white shadow rounded-sm"></div>
             <span>Support Services ({visibleServicesCount})</span>
           </div>
         )}
-        {layerVisibility.organizations && (
+        {visibleOrgsCount > 0 && (
           <div className="flex items-center gap-2">
             <div className="w-0 h-0" style={{ borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderBottom: '9px solid #9333ea' }}></div>
             <span>Organizations ({visibleOrgsCount})</span>
@@ -533,6 +550,19 @@ export function SimpleEcosystemMap({
       </div>
     </div>
   );
+
+  if (!mounted) {
+    return (
+      <div className={isFullscreen ? 'fixed inset-0 z-50 bg-white flex flex-col' : ''}>
+        <div
+          className="border-2 border-black bg-white flex items-center justify-center text-sm font-bold text-earth-600"
+          style={{ height }}
+        >
+          Loading ecosystem map...
+        </div>
+      </div>
+    );
+  }
 
   // Use CSS-based fullscreen to keep the same DOM structure - this prevents map from unmounting
   return (

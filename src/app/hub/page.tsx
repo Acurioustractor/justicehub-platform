@@ -27,12 +27,27 @@ export default async function HubPage() {
     .select('organization_id, role, status, organizations(id, name, slug, state, city)')
     .eq('user_id', user.id)
     .limit(1)
-    .single();
+    .maybeSingle();
+
+  const { data: pendingClaim } = membership?.status === 'active'
+    ? { data: null }
+    : await (service as any)
+      .from('organization_claims')
+      .select('id, status, organizations(id, name, slug, state, city)')
+      .eq('user_id', user.id)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
   // If user has active org membership, offer a link but still show personal hub
   const orgSlug = membership?.status === 'active'
     ? (membership.organizations as any)?.slug
     : null;
+  const orgRecord = membership?.status === 'active'
+    ? (membership.organizations as any)
+    : (pendingClaim?.organizations as any);
+  const orgStatus = membership?.status || pendingClaim?.status || null;
 
   // Get member type from role_tags
   const roleTags: string[] = publicProfile?.role_tags || [];
@@ -97,10 +112,10 @@ export default async function HubPage() {
   }
 
   // Pipeline-by-city: org claims per state + funding per state
-  const { data: orgClaimsRaw } = await service
-    .from('organization_members')
+  const { data: orgClaimsRaw } = await (service as any)
+    .from('organization_claims')
     .select('organizations(state)')
-    .in('status', ['active', 'pending']);
+    .in('status', ['verified', 'pending']);
 
   const orgClaimsByState: Record<string, number> = {};
   for (const state of tourStopStates) orgClaimsByState[state] = 0;
@@ -140,8 +155,8 @@ export default async function HubPage() {
       userState={userState}
       matchedStop={matchedStop || null}
       orgSlug={orgSlug}
-      orgName={(membership?.organizations as any)?.name || null}
-      orgStatus={membership?.status || null}
+      orgName={orgRecord?.name || null}
+      orgStatus={orgStatus}
       communityCounts={communityCounts}
       tourStops={tourStops}
       fundingCount={fundingCount}

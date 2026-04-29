@@ -59,6 +59,11 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   async headers() {
+    const staticAssetCacheControl =
+      process.env.NODE_ENV === 'production'
+        ? 'public, max-age=31536000, immutable'
+        : 'no-store, must-revalidate';
+
     return [
       {
         source: '/el-media-picker.html',
@@ -104,7 +109,16 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: staticAssetCacheControl,
+          },
+        ],
+      },
+      {
+        source: '/organizations',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, must-revalidate',
           },
         ],
       },

@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServiceClient();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any).from('page_views').insert({
+    void (supabase as any).from('page_views').insert({
       path,
       referrer: referrer || request.headers.get('referer') || null,
       utm_source: utm_source || null,
@@ -18,6 +18,8 @@ export async function POST(request: NextRequest) {
       utm_campaign: utm_campaign || null,
       user_agent: request.headers.get('user-agent') || null,
       country: request.headers.get('x-vercel-ip-country') || null,
+    }).then(({ error }: { error: unknown }) => {
+      if (error) console.error('Page view tracking failed:', error);
     });
 
     return NextResponse.json({ ok: true });

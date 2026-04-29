@@ -86,10 +86,20 @@ export function PersonalDashboard({
 
   // Org search state
   const [orgQuery, setOrgQuery] = useState('');
-  const [orgResults, setOrgResults] = useState<Array<{ id: string; name: string; slug: string | null; state: string | null; city: string | null; abn: string | null; source?: 'justicehub' | 'grantscope' }>>([]);
+  const [orgResults, setOrgResults] = useState<Array<{
+    id: string;
+    name: string;
+    slug: string | null;
+    state: string | null;
+    city: string | null;
+    abn: string | null;
+    gs_entity_id?: string | null;
+    source?: 'justicehub' | 'civicgraph';
+  }>>([]);
   const [orgSearching, setOrgSearching] = useState(false);
   const [claimingOrg, setClaimingOrg] = useState(false);
   const [claimSuccess, setClaimSuccess] = useState(false);
+  const [claimError, setClaimError] = useState<string | null>(null);
 
   const supabase = createClient();
 
@@ -97,43 +107,18 @@ export function PersonalDashboard({
     if (query.length < 2) { setOrgResults([]); return; }
     setOrgSearching(true);
     try {
-      // Search JusticeHub orgs first
-      const { data: jhOrgs } = await supabase
-        .from('organizations')
-        .select('id, name, slug, state, city, abn')
-        .ilike('name', `%${query}%`)
-        .eq('is_active', true)
-        .order('name')
-        .limit(8);
-
-      const results: typeof orgResults = (jhOrgs || []).map(o => ({ ...o, source: 'justicehub' as const }));
-      const jhAbns = new Set(results.map(r => r.abn).filter(Boolean));
-
-      // Fill from gs_entities if needed
-      if (results.length < 8) {
-        const { data: gsOrgs } = await (supabase as any)
-          .from('gs_entities')
-          .select('id, canonical_name, abn, state, lga_name')
-          .ilike('canonical_name', `%${query}%`)
-          .order('canonical_name')
-          .limit(8 - results.length) as { data: Array<{ id: string; canonical_name: string; abn: string | null; state: string | null; lga_name: string | null }> | null };
-
-        if (gsOrgs) {
-          for (const gs of gsOrgs) {
-            if (gs.abn && jhAbns.has(gs.abn)) continue;
-            results.push({
-              id: gs.id, name: gs.canonical_name, slug: null,
-              state: gs.state, city: gs.lga_name, abn: gs.abn,
-              source: 'grantscope' as const,
-            });
-          }
-        }
+      const params = new URLSearchParams({ q: query });
+      if (userState) params.set('state', userState);
+      const res = await fetch(`/api/hub/search-orgs?${params.toString()}`, { cache: 'no-store' });
+      if (!res.ok) {
+        setOrgResults([]);
+        return;
       }
-
-      setOrgResults(results);
+      const data = await res.json();
+      setOrgResults(Array.isArray(data.results) ? data.results : []);
     } catch { /* non-critical */ }
     finally { setOrgSearching(false); }
-  }, [supabase]);
+  }, [userState]);
 
   useEffect(() => {
     const timeout = setTimeout(() => { if (orgQuery) searchOrgs(orgQuery); }, 300);
@@ -142,46 +127,34 @@ export function PersonalDashboard({
 
   async function handleClaimOrg(org: typeof orgResults[0]) {
     setClaimingOrg(true);
+    setClaimError(null);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      let orgId = org.id;
-
-      // If from GS, create in organizations table first
-      if (org.source === 'grantscope') {
-        const { data: newOrg } = await supabase
-          .from('organizations')
-          .insert({
-            name: org.name,
-            abn: org.abn,
-            state: org.state,
-            city: org.city,
-            is_active: true,
-            type: 'community-service',
-          })
-          .select('id')
-          .single();
-        if (newOrg) orgId = newOrg.id;
-      }
-
-      await supabase.from('organization_members').insert({
-        user_id: user.id,
-        organization_id: orgId,
-        role: 'member',
-        status: 'pending',
-        joined_at: new Date().toISOString(),
+      const res = await fetch('/api/hub/claim-org', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          organization_id: org.source === 'justicehub' ? org.id : undefined,
+          gs_entity_id: org.gs_entity_id || (org.source === 'civicgraph' ? org.id : undefined),
+          abn: org.abn,
+          name: org.name,
+          contact_name: userName,
+          role_at_org: 'member',
+          message: 'Claim submitted from the JusticeHub member hub.',
+        }),
       });
 
-      await supabase.from('profiles')
-        .update({ primary_organization_id: orgId })
-        .eq('id', user.id);
+      const payload = await res.json();
+      if (!res.ok && res.status !== 409) {
+        setClaimError(payload.error || 'Claim failed. Please try again.');
+        return;
+      }
 
       setClaimSuccess(true);
       setOrgResults([]);
       setOrgQuery('');
     } catch (err) {
       console.error('Claim failed:', err);
+      setClaimError('Claim failed. Please try again.');
     } finally {
       setClaimingOrg(false);
     }
@@ -679,7 +652,7 @@ export function PersonalDashboard({
               <div className="border border-[#F5F0E8]/10 bg-[#F5F0E8]/[0.02] p-5">
                 <h2 className="font-mono text-xs text-[#F5F0E8]/40 mb-3 uppercase tracking-wider">Claim Your Organisation</h2>
                 <p className="text-xs text-[#F5F0E8]/50 mb-3">
-                  Find your org to unlock funding data, connections, and grants
+                  Find your org in JusticeHub or CivicGraph to unlock funding data, stories, programs, services, and grants.
                 </p>
                 <div className="relative">
                   <Search className="absolute left-3 top-3 w-4 h-4 text-[#F5F0E8]/30" />
@@ -703,7 +676,7 @@ export function PersonalDashboard({
                       >
                         <p className="font-bold text-xs text-[#F5F0E8]">
                           {org.name}
-                          {org.source === 'grantscope' && <span className="ml-1.5 text-[9px] font-mono text-blue-400 bg-blue-400/10 px-1 py-0.5">ABR</span>}
+                          {org.source === 'civicgraph' && <span className="ml-1.5 text-[9px] font-mono text-blue-400 bg-blue-400/10 px-1 py-0.5">CIVICGRAPH</span>}
                         </p>
                         <p className="text-[10px] text-[#F5F0E8]/40 font-mono">
                           {org.abn ? `ABN ${org.abn}` : ''}
@@ -712,6 +685,9 @@ export function PersonalDashboard({
                       </button>
                     ))}
                   </div>
+                )}
+                {claimError && (
+                  <p className="mt-3 text-xs text-red-300 font-mono">{claimError}</p>
                 )}
               </div>
             )}
@@ -723,7 +699,7 @@ export function PersonalDashboard({
                   <h2 className="font-bold text-sm">Organisation Claimed</h2>
                 </div>
                 <p className="text-xs text-[#F5F0E8]/50 font-mono">
-                  Pending verification. You&apos;ll get full hub access once confirmed.
+                  Pending verification. We&apos;ve linked the claim to the CivicGraph identity record where available; full org hub access opens once confirmed.
                 </p>
               </div>
             )}

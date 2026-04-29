@@ -59,11 +59,6 @@ export function useNavigationAuth() {
 
                     const isAdmin = authProfile?.role === 'admin';
 
-                    if (publicProfileError && publicProfileError.code !== 'PGRST116') {
-                        // PGRST116 = no rows returned, which is OK for users without public profile
-                        console.error('Error fetching profile:', publicProfileError);
-                    }
-
                     if (publicProfile) {
                         setUserProfile({
                             slug: publicProfile.slug || '',
