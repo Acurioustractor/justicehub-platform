@@ -263,6 +263,24 @@ export default function CentreOfExcellencePage() {
           id="harvest"
           className="border-b-2 border-[#0A0A0A] bg-white"
         >
+          <div className="relative h-[320px] w-full border-b-2 border-[#0A0A0A] bg-[#0A0A0A] md:h-[460px]">
+            <Image
+              src="/images/harvest/seed-house.jpg"
+              alt="The Harvest at Witta on Jinibara Country, Sunshine Coast hinterland. The former Green Harvest seed house at dusk, surrounded by garden and bushland."
+              fill
+              priority
+              className="object-cover"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 md:px-10 md:pb-8">
+              <div className="mx-auto max-w-6xl">
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/80">
+                  The Harvest · Witta QLD · Jinibara Country
+                </p>
+              </div>
+            </div>
+          </div>
           <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
             <p className="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-[#059669]">
               The physical centre
