@@ -1,7 +1,6 @@
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
-import { Map as MapIcon } from 'lucide-react';
-import { SimpleEcosystemMap } from '@/components/SimpleEcosystemMap';
+import { Building2, MapPin } from 'lucide-react';
 import { OrganizationsPageContent } from './page-content';
 
 export const dynamic = 'force-dynamic';
@@ -59,66 +58,6 @@ const RELATED_ROWS_LIMIT = 5000;
 const RELATED_ORG_ID_LIMIT = 80;
 const SSR_DATA_TIMEOUT_MS = 2500;
 const COUNT_TIMEOUT_MS = 900;
-
-function facilityCoordinates(facility: DetentionFacility) {
-  if (facility.latitude && facility.longitude) {
-    return { latitude: facility.latitude, longitude: facility.longitude };
-  }
-
-  const name = facility.name.toLowerCase();
-  const city = (facility.city || '').toLowerCase();
-  const state = (facility.state || '').toUpperCase();
-
-  if (name.includes('brisbane') || name.includes('west moreton') || city.includes('wacol')) {
-    return { latitude: -27.591, longitude: 152.924 };
-  }
-  if (name.includes('cleveland') || city.includes('townsville')) {
-    return { latitude: -19.259, longitude: 146.817 };
-  }
-  if (name.includes('banksia') || city.includes('canning vale')) {
-    return { latitude: -32.069, longitude: 115.919 };
-  }
-  if (name.includes('ashley') || city.includes('deloraine')) {
-    return { latitude: -41.525, longitude: 146.657 };
-  }
-  if (name.includes('holtze') || name.includes('don dale') || city.includes('darwin')) {
-    return { latitude: -12.444, longitude: 130.945 };
-  }
-  if (name.includes('alice springs')) {
-    return { latitude: -23.698, longitude: 133.881 };
-  }
-  if (name.includes('cobham') || city.includes('st marys')) {
-    return { latitude: -33.766, longitude: 150.775 };
-  }
-  if (name.includes('frank baxter') || city.includes('kariong')) {
-    return { latitude: -33.439, longitude: 151.293 };
-  }
-  if (name.includes('reiby') || city.includes('airds')) {
-    return { latitude: -34.085, longitude: 150.827 };
-  }
-  if (name.includes('malmsbury')) {
-    return { latitude: -37.188, longitude: 144.384 };
-  }
-  if (name.includes('parkville')) {
-    return { latitude: -37.784, longitude: 144.947 };
-  }
-  if (name.includes('kurlana') || city.includes('cavan')) {
-    return { latitude: -34.829, longitude: 138.599 };
-  }
-
-  const stateCentres: Record<string, { latitude: number; longitude: number }> = {
-    ACT: { latitude: -35.281, longitude: 149.13 },
-    NSW: { latitude: -33.868, longitude: 151.209 },
-    NT: { latitude: -12.463, longitude: 130.845 },
-    QLD: { latitude: -27.47, longitude: 153.026 },
-    SA: { latitude: -34.928, longitude: 138.6 },
-    TAS: { latitude: -42.882, longitude: 147.327 },
-    VIC: { latitude: -37.814, longitude: 144.963 },
-    WA: { latitude: -31.952, longitude: 115.861 },
-  };
-
-  return stateCentres[state] || null;
-}
 
 function emptyOrganizationsData(): OrganizationsData {
   return {
@@ -447,45 +386,43 @@ export default async function OrganizationsPage() {
           </div>
         </section>
 
-        {/* Interactive Map Section */}
+        {/* Lightweight facilities overview. Keep this server-rendered so the
+            directory never blocks on WebGL, map tiles, or client map hydration. */}
         <section className="py-12 border-b-2 border-black bg-gradient-to-br from-blue-50 via-green-50 to-sand-50">
           <div className="container-justice">
             <div className="mb-6">
               <h2 className="text-3xl font-bold text-earth-900 mb-2 flex items-center gap-3">
-                <MapIcon className="w-8 h-8 text-blue-600" />
-                Ecosystem Map
+                <Building2 className="w-8 h-8 text-red-600" />
+                Detention Centre Overview
               </h2>
               <p className="text-earth-600">
-                Explore detention facilities, community programs, and support services.
-                Use fullscreen mode for detailed filtering and exploration.
+                A fast view of youth detention facilities. Program and service discovery now lives in the directory and claim search so this page can load cleanly.
               </p>
             </div>
-            <SimpleEcosystemMap
-              height="520px"
-              data={{
-                facilities: detentionFacilities
-                  .map(facility => {
-                    const coordinates = facilityCoordinates(facility);
-                    if (!coordinates) return null;
-                    return {
-                      id: facility.id,
-                      name: facility.name,
-                      slug: facility.slug || undefined,
-                      city: facility.city || '',
-                      state: facility.state || '',
-                      latitude: coordinates.latitude,
-                      longitude: coordinates.longitude,
-                      capacity_beds: facility.capacity_beds || undefined,
-                      partnership_count: facility.partnership_count,
-                      operational_status: facility.operational_status || undefined,
-                    };
-                  })
-                  .filter((facility): facility is NonNullable<typeof facility> => Boolean(facility)),
-                services: [],
-                programs: [],
-                organizations: [],
-              }}
-            />
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {detentionFacilities.map((facility) => (
+                <div key={facility.id} className="bg-white border-2 border-black p-4">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <h3 className="font-bold text-earth-900 leading-tight">{facility.name}</h3>
+                    <span className={`text-[10px] uppercase tracking-wide font-bold px-2 py-1 border ${
+                      facility.operational_status === 'operational'
+                        ? 'bg-red-50 text-red-700 border-red-600'
+                        : 'bg-gray-100 text-gray-600 border-gray-400'
+                    }`}>
+                      {facility.operational_status || 'unknown'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm text-earth-600 mb-3">
+                    <MapPin className="w-4 h-4" />
+                    {facility.city || 'Unknown'}, {facility.state || 'AU'}
+                  </div>
+                  <div className="flex gap-4 text-xs font-bold text-earth-700">
+                    <span>{facility.capacity_beds || 0} beds</span>
+                    <span>{facility.partnership_count || 0} partners</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
