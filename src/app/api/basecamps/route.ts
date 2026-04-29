@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-lite';
 
+// Cache the basecamp list for 5 minutes. Basecamps change rarely and the
+// underlying query joins partner_photos and partner_impact_metrics, so each
+// uncached call costs real disk IO. 5 minutes is the right tradeoff between
+// freshness for the CoE landing page and IO budget on the Micro tier.
+export const revalidate = 300;
+
 export async function GET() {
   const supabase = await createClient();
 
@@ -29,6 +35,11 @@ export async function GET() {
       )
     `)
     .eq('partner_tier', 'basecamp')
+    .eq('is_active', true)
+    .eq('verification_status', 'verified')
+    .not('slug', 'is', null)
+    .not('latitude', 'is', null)
+    .not('longitude', 'is', null)
     .order('name');
 
   if (error) {
@@ -54,8 +65,8 @@ export async function GET() {
       region: org.location,
       description: org.description,
       coordinates: {
-        lat: org.latitude || 0,
-        lng: org.longitude || 0,
+        lat: Number(org.latitude),
+        lng: Number(org.longitude),
       },
       image: featuredPhoto?.photo_url || null,
       stats: featuredMetrics.map((m: any) => ({

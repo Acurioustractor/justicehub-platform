@@ -6,7 +6,7 @@
   "crons": [
     {
       "path": "/api/cron/funding/system-0",
-      "schedule": "*/10 * * * *"
+      "schedule": "0 * * * *"
     },
     {
       "path": "/api/cron/alma?batch=20",
@@ -126,7 +126,7 @@
     },
     {
       "path": "/api/cron/orchestrator?max=10",
-      "schedule": "*/5 * * * *"
+      "schedule": "*/30 * * * *"
     },
     {
       "path": "/api/cron/civic/court-judgments",
