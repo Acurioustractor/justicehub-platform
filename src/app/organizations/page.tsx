@@ -1,6 +1,7 @@
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
 import { Building2, ListFilter, Map as MapIcon, MapPin, Network } from 'lucide-react';
+import { DetentionCentreMap } from '@/components/organizations/DetentionCentreMap';
 import { OrganizationsPageContent } from './page-content';
 
 export const dynamic = 'force-dynamic';
@@ -58,22 +59,6 @@ const RELATED_ROWS_LIMIT = 5000;
 const RELATED_ORG_ID_LIMIT = 80;
 const SSR_DATA_TIMEOUT_MS = 2500;
 const COUNT_TIMEOUT_MS = 900;
-
-function facilityMarkerPosition(facility: DetentionFacility) {
-  if (!facility.latitude || !facility.longitude) return null;
-
-  const minLng = 112;
-  const maxLng = 154;
-  const minLat = -44;
-  const maxLat = -10;
-  const left = ((facility.longitude - minLng) / (maxLng - minLng)) * 100;
-  const top = ((maxLat - facility.latitude) / (maxLat - minLat)) * 100;
-
-  return {
-    left: `${Math.max(4, Math.min(96, left))}%`,
-    top: `${Math.max(6, Math.min(92, top))}%`,
-  };
-}
 
 function emptyOrganizationsData(): OrganizationsData {
   return {
@@ -314,9 +299,6 @@ export default async function OrganizationsPage() {
 
   const operationalFacilities = detentionFacilities.filter(f => f.operational_status === 'operational');
   const totalCapacity = operationalFacilities.reduce((sum, f) => sum + (f.capacity_beds || 0), 0);
-  const mappedFacilities = detentionFacilities
-    .map(facility => ({ facility, position: facilityMarkerPosition(facility) }))
-    .filter((item): item is { facility: DetentionFacility; position: { left: string; top: string } } => Boolean(item.position));
   const facilityStateCounts = detentionFacilities.reduce<Record<string, number>>((counts, facility) => {
     const state = facility.state || 'Unknown';
     counts[state] = (counts[state] || 0) + 1;
@@ -442,34 +424,7 @@ export default async function OrganizationsPage() {
             </div>
 
             <div className="grid lg:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.6fr)] gap-6 items-stretch">
-              <div className="relative min-h-[420px] border-2 border-black bg-[#E7F4F7] overflow-hidden">
-                <div className="absolute inset-6 rounded-[48%_52%_46%_54%/58%_45%_55%_42%] bg-[#F7F4EC] border-2 border-black/20 shadow-inner" />
-                <div className="absolute left-[42%] top-[10%] h-[76%] border-l border-black/10" />
-                <div className="absolute left-[22%] top-[49%] w-[54%] border-t border-black/10" />
-                <div className="absolute right-4 top-4 border-2 border-black bg-white px-3 py-2 text-xs font-bold uppercase tracking-wide">
-                  {mappedFacilities.length} mapped centres
-                </div>
-
-                {mappedFacilities.map(({ facility, position }) => (
-                  <div
-                    key={facility.id}
-                    className="group absolute -translate-x-1/2 -translate-y-1/2"
-                    style={position}
-                  >
-                    <div className={`h-4 w-4 border-2 border-white shadow-[0_2px_8px_rgba(0,0,0,0.35)] ${
-                      facility.operational_status === 'operational' ? 'bg-red-600' : 'bg-gray-500'
-                    }`} />
-                    <div className="pointer-events-none absolute left-5 top-1/2 z-20 hidden w-56 -translate-y-1/2 border-2 border-black bg-white p-3 text-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:block">
-                      <div className="font-bold text-sm leading-tight">{facility.name}</div>
-                      <div className="mt-1 text-earth-600">{facility.city}, {facility.state}</div>
-                      <div className="mt-2 flex gap-3 font-bold">
-                        <span>{facility.capacity_beds || 0} beds</span>
-                        <span>{facility.partnership_count || 0} partners</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <DetentionCentreMap facilities={detentionFacilities} height="500px" />
 
               <aside className="border-2 border-black bg-white p-5">
                 <h3 className="text-xl font-bold mb-4">System Snapshot</h3>
