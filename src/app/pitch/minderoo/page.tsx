@@ -896,6 +896,97 @@ export default function MinderooPitchPage() {
         </div>
       </section>
 
+      {/* SECTION 4.5 · WHERE THE WORK GATHERS */}
+      <section className="bg-[#f5ecd9] border-y border-[#dec9a9]">
+        <div className="mx-auto max-w-7xl px-6 py-16 md:px-10 md:py-20">
+          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+            <div>
+              <div className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#8d6a44]">
+                Where the work gathers
+              </div>
+              <h2
+                className="mt-3 text-4xl leading-tight md:text-5xl"
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}
+              >
+                A physical centre at Witta. A virtual ring across the country.
+              </h2>
+              <div className="mt-6 space-y-4 text-base leading-7 text-[#3a2a1c] md:text-[17px] md:leading-8">
+                <p>
+                  The four anchors do not work alone. They gather at the Harvest, in Witta,
+                  Sunshine Coast hinterland, on Jinibara Country. The Centre of Excellence is the
+                  physical home for cohort weeks, training cohorts, editorial work, and the long
+                  exchange between the basecamps. <span className="italic">Country visits Country.</span>
+                </p>
+                <p>
+                  The first worked example is already booked. The Oonchiumpa team flies east from
+                  Mparntwe to spend a week at the Harvest, sit with Quandamooka Elders from MMEIC,
+                  and exchange practice with BG Fit and Palm Island Community Company. Cultural
+                  authority leads in both directions.
+                </p>
+                <p>
+                  And the centre is broader than youth justice. It centres the young person, then
+                  works across justice, child protection, education, and disability as four sides
+                  of one room. The system gives a young person four file numbers. Community gives
+                  them one name.
+                </p>
+              </div>
+              <a
+                href="/centre-of-excellence"
+                className="mt-8 inline-flex items-center gap-2 rounded-full border border-[#5a3a2a] px-5 py-2.5 text-sm font-medium text-[#5a3a2a] transition-colors hover:bg-[#5a3a2a] hover:text-[#fbf5e9]"
+              >
+                Open the Centre of Excellence
+                <span aria-hidden>→</span>
+              </a>
+            </div>
+
+            <div className="relative">
+              <div className="rounded-[28px] border border-[#dec9a9] bg-[#fbf5e9] p-8 shadow-[0_16px_40px_rgba(122,46,34,0.06)]">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#8d6a44]">
+                  The ring, named
+                </div>
+                <ul className="mt-5 space-y-4 text-[15px] leading-6 text-[#3a2a1c]">
+                  <li className="flex gap-3">
+                    <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-[#5a3a2a]" />
+                    <span>
+                      <span className="font-semibold">Witta, QLD.</span> Jinibara Country. The
+                      physical centre. Eat. Gather. Make. Grow.
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-[#7a2e22]" />
+                    <span>
+                      <span className="font-semibold">Oonchiumpa.</span> Mparntwe. Eastern Arrernte
+                      Country. 95% diversion. 21 active young people.
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-[#7a2e22]" />
+                    <span>
+                      <span className="font-semibold">Palm Island Community Company.</span> The
+                      Centre, Townsville. Bwgcolman / Manbarra Country. Stretch Beds enterprise live.
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-[#7a2e22]" />
+                    <span>
+                      <span className="font-semibold">BG Fit.</span> Mount Isa. Kalkadoon Country.
+                      85% diversion. 400+ young people each year.
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-[#7a2e22]" />
+                    <span>
+                      <span className="font-semibold">MMEIC.</span> Minjerribah / North Stradbroke
+                      Island. Quandamooka Country. Elder-led cultural authority.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* SECTION 5 · THE ASK */}
       <section className="bg-[#5a3a2a] text-[#fbf5e9]">
         <div className="mx-auto max-w-7xl px-6 py-16 md:px-10 md:py-20">

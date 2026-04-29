@@ -3,7 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Globe, Shield, Activity, FileText, MapPin, ExternalLink } from 'lucide-react';
+import {
+  ArrowRight,
+  BookOpen,
+  Building2,
+  Globe,
+  Heart,
+  MapPin,
+  Sparkles,
+  Sprout,
+  Users,
+} from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 
 // Basecamp location type
@@ -11,59 +21,122 @@ interface BasecampLocation {
   slug: string;
   name: string;
   region: string;
+  country: string;
   description: string;
   coordinates: { lat: number; lng: number };
   stats?: { label: string; value: string }[];
   image?: string;
 }
 
-// Fallback basecamp data (used if API fails or during initial load)
+// Fallback basecamp data, the four anchor communities.
+// DB-side: organizations.partner_tier='basecamp' must be set on each for the
+// /api/basecamps response to match this list. If the API returns fewer than four,
+// the merge below preserves the canonical fallback so the centre always shows
+// the full ring.
 const FALLBACK_BASECAMPS: BasecampLocation[] = [
   {
     slug: 'oonchiumpa',
     name: 'Oonchiumpa',
-    region: 'Central Australia (NT)',
-    description: 'Cultural healing and deep listening on country. Supporting young Aboriginal people to stay strong in culture.',
-    coordinates: { lat: -23.698, lng: 133.880 },
+    region: 'Mparntwe / Alice Springs',
+    country: 'Eastern Arrernte Country (NT)',
+    description:
+      'Cultural authority leads, legal knowledge follows. Kristy Bloomfield and Tanya Turner hold young people on Country at Atnarpa, on Loves Creek Station, an hour and a half east of Mparntwe.',
+    coordinates: { lat: -23.698, lng: 133.88 },
     stats: [
-      { label: 'Reduced anti-social behavior', value: '95% reduced anti-social behavior' },
-      { label: 'Return to education', value: '72% return to education' }
+      { label: 'Diversion success', value: '95% diversion success' },
+      { label: 'School re-engagement', value: '72% school re-engagement' },
     ],
+    image: '/images/orgs/oonchiumpa/hero.jpg',
+  },
+  {
+    slug: 'palm-island-community-company',
+    name: 'Palm Island Community Company',
+    region: 'The Centre, Townsville',
+    country: 'Bwgcolman / Manbarra Country (QLD)',
+    description:
+      "Palm Island's community-controlled organisation, working from The Centre in Townsville. Stretch Beds, family work, and the long thread of trust that turns one released young person into the builder who teaches the next.",
+    coordinates: { lat: -19.258, lng: 146.818 },
+    stats: [
+      { label: 'Programs delivered', value: 'PICC delivers seven programs' },
+      { label: 'Stretch Bed builds', value: 'Stretch Bed enterprise live' },
+    ],
+    image: '/images/orgs/picc/hero.jpg',
   },
   {
     slug: 'bg-fit',
     name: 'BG Fit',
-    region: 'North West Queensland',
-    description: 'Fitness-based youth engagement in Mount Isa. Using sport and discipline to redirect young people toward positive futures.',
+    region: 'Mount Isa',
+    country: 'Kalkadoon Country (QLD)',
+    description:
+      'Sport, discipline, and a daily rhythm that gives young people in Mount Isa a place to be that is not the watch house. Fitness as the entry point. Belonging as the outcome.',
     coordinates: { lat: -20.725, lng: 139.498 },
     stats: [
       { label: 'Diversion rate', value: '85% diversion rate' },
-      { label: 'Youth engaged', value: '400+ youth engaged/year' }
+      { label: 'Youth engaged', value: '400+ youth engaged each year' },
     ],
+    image: '/images/orgs/bg-fit/hero.jpg',
   },
   {
-    slug: 'mounty-yarns',
-    name: 'Mounty Yarns',
-    region: 'Western Sydney (NSW)',
-    description: 'Youth-led storytelling and media production. Amplifying youth voices and challenging deficit narratives about Western Sydney.',
-    coordinates: { lat: -33.770, lng: 150.820 },
+    slug: 'mmeic',
+    name: 'Minjerribah Moorgumpin Elders-in-Council',
+    region: 'Minjerribah / North Stradbroke Island',
+    country: 'Quandamooka Country (QLD)',
+    description:
+      'Quandamooka Elders holding cultural authority on Minjerribah and Moorgumpin. The first voice in the room when the question is what young people from these islands need.',
+    coordinates: { lat: -27.49, lng: 153.42 },
     stats: [
-      { label: 'Stories published', value: '150+ stories published' },
-      { label: 'Into media careers', value: '30% into media careers' }
+      { label: 'Cultural authority', value: 'Elder-led' },
+      { label: 'Country', value: 'Quandamooka' },
     ],
+    image: '/images/orgs/mmeic/hero.jpg',
   },
-  {
-    slug: 'picc-townsville',
-    name: 'PICC Townsville',
-    region: 'North Queensland',
-    description: 'Pacific Islander Community Council supporting Pasifika families through cultural connection and community strength.',
-    coordinates: { lat: -19.26, lng: 146.82 },
-    stats: [
-      { label: 'Diversion success', value: '78% diversion success' },
-      { label: 'Pacific languages', value: '12 Pacific languages' }
-    ],
-  }
 ];
+
+const CROSS_DOMAIN_SUPPORTS = [
+  {
+    icon: Heart,
+    label: 'Justice',
+    note: 'Diversion, sentencing alternatives, on-Country accompaniment.',
+  },
+  {
+    icon: Users,
+    label: 'Child protection',
+    note: 'Family work, kinship care, keeping children close.',
+  },
+  {
+    icon: BookOpen,
+    label: 'Education',
+    note: 'Re-engagement, alternative learning, cultural curriculum.',
+  },
+  {
+    icon: Sparkles,
+    label: 'Disability',
+    note: 'Recognition, support, the system getting out of the way.',
+  },
+] as const;
+
+const WHAT_HAPPENS_HERE = [
+  {
+    icon: Sprout,
+    title: 'Innovation in practice',
+    body: "Organisations bring the work they're already doing and prototype the next version of it together. Not pilot-fatigue. Refinement.",
+  },
+  {
+    icon: Users,
+    title: 'Training the people who hold young people',
+    body: 'Sector workers, youth workers, case workers, magistrates, teachers, support staff, trained by community, alongside community, in the practice of holding well.',
+  },
+  {
+    icon: Globe,
+    title: 'Indigenous knowledges centred',
+    body: "Cultural authority is not a guest speaker. It's the curriculum, the methodology, and the assessment criteria. Country teaches, Elders correct, the centre listens.",
+  },
+  {
+    icon: Building2,
+    title: 'Reporting flows inward, evidence flows outward',
+    body: 'The basecamps send what they are doing to the centre. The centre carries that proof into the rooms where decisions get made: courtrooms, cabinet rooms, foundation boards.',
+  },
+] as const;
 
 export default function CentreOfExcellencePage() {
   const [basecamps, setBasecamps] = useState<BasecampLocation[]>(FALLBACK_BASECAMPS);
@@ -75,8 +148,9 @@ export default function CentreOfExcellencePage() {
         if (res.ok) {
           const data = await res.json();
           if (data && data.length > 0) {
-            // Merge API data with fallback (API takes precedence)
-            const merged = FALLBACK_BASECAMPS.map(fallback => {
+            // Merge API data with fallback (API takes precedence on overlap;
+            // missing slugs fall back to canonical four).
+            const merged = FALLBACK_BASECAMPS.map((fallback) => {
               const fromApi = data.find((d: BasecampLocation) => d.slug === fallback.slug);
               return fromApi ? { ...fallback, ...fromApi } : fallback;
             });
@@ -91,363 +165,499 @@ export default function CentreOfExcellencePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-black font-sans">
+    <div className="min-h-screen bg-[#F5F0E8] text-[#0A0A0A]">
       <Navigation />
 
-      <main className="header-offset bg-gradient-to-br from-eucalyptus-50 via-white to-blue-50">
-        {/* Hero Section */}
-        <section className="section-padding border-b-2 border-black">
-          <div className="container-justice">
-            <div className="inline-block px-4 py-2 bg-black text-white border-2 border-black mb-6">
-              <span className="font-bold">CENTRE OF EXCELLENCE</span>
-            </div>
-
-            <h1 className="headline-truth mb-6">
-              Australia's Hub for Youth Justice
-            </h1>
-
-            <p className="text-xl text-gray-700 max-w-4xl mb-8 leading-relaxed">
-              Join the network proving what works. Access peer-reviewed research, connect with experts, and learn from international best practice. <span className="font-bold border-b-2 border-black">Community works better than detention.</span>
+      <main className="header-offset">
+        {/* Hero. The reframe. */}
+        <section className="border-b-2 border-[#0A0A0A] bg-[#0A0A0A] text-white">
+          <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
+            <p className="mb-4 font-mono text-sm uppercase tracking-[0.28em] text-[#059669]">
+              Centre of Excellence · The Harvest, Witta QLD
             </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Link href="#basecamps" className="cta-primary">
-                MEET THE BASECAMPS
+            <h1
+              className="mb-6 text-4xl font-black leading-[1.05] tracking-tight md:text-6xl lg:text-7xl"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
+              Centring the young person.
+              <br />
+              <span className="text-[#F5F0E8]/70">Fixing the system around them.</span>
+            </h1>
+            <p className="mb-8 max-w-3xl text-lg leading-relaxed text-white/80 md:text-xl">
+              Not a youth justice centre. A place built on the obvious truth that young people who
+              come into contact with the system are the same young people who already touch
+              disability, child protection, education, and family services. The centre is what
+              happens when the people doing this work hold each other in one place, on one
+              piece of Country, with one shared method.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="#harvest"
+                className="inline-flex items-center justify-center gap-2 bg-[#DC2626] px-6 py-3 text-sm font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-red-700"
+              >
+                The Harvest at Witta <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link href="/centre-of-excellence/research" className="cta-secondary">
-                RESEARCH LIBRARY
-              </Link>
-              <Link href="/centre-of-excellence/people" className="cta-secondary">
-                MEET THE EXPERTS
+              <Link
+                href="#basecamps"
+                className="inline-flex items-center justify-center gap-2 border-2 border-white px-6 py-3 text-sm font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-white hover:text-[#0A0A0A]"
+              >
+                The four basecamps <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
+          </div>
+        </section>
 
-            {/* Key Stats - Honest Metrics */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="border-2 border-black p-4 bg-white text-center">
-                <div className="text-3xl font-black text-blue-600">27</div>
-                <div className="text-sm font-bold">Research Items</div>
-                <div className="text-xs text-gray-500">Peer-reviewed</div>
+        {/* The reframe. Cross-domain. */}
+        <section className="border-b-2 border-[#0A0A0A]">
+          <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+            <div className="grid gap-10 md:grid-cols-[1.1fr_0.9fr]">
+              <div>
+                <p className="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-[#DC2626]">
+                  The reframe
+                </p>
+                <h2
+                  className="mb-5 text-3xl font-black leading-tight md:text-4xl"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                >
+                  Not built on fear. Built on support.
+                </h2>
+                <div className="space-y-4 text-base leading-relaxed text-gray-800 md:text-lg">
+                  <p>
+                    The young people whose names appear on a postcard from Atnarpa, on a remand
+                    record at Holtze, on a school suspension list at St Joseph's, on a child
+                    protection file in Rockhampton, on a disability assessment in Townsville, are
+                    almost always the same young people. The system gives them four different file
+                    numbers. Community gives them one name.
+                  </p>
+                  <p>
+                    The Centre of Excellence works at that one name. It treats justice, child
+                    protection, education, and disability as four sides of one room rather than
+                    four buildings on four streets. It centres the young person and asks the
+                    system to fit around them, not the other way.
+                  </p>
+                </div>
               </div>
-              <div className="border-2 border-black p-4 bg-white text-center">
-                <div className="text-3xl font-black text-green-600">4</div>
-                <div className="text-sm font-bold">Australian Frameworks</div>
-                <div className="text-xs text-gray-500">State models</div>
-              </div>
-              <div className="border-2 border-black p-4 bg-white text-center">
-                <div className="text-3xl font-black text-purple-600">16</div>
-                <div className="text-sm font-bold">International Models</div>
-                <div className="text-xs text-gray-500">Global best practice</div>
-              </div>
-              <div className="border-2 border-black p-4 bg-white text-center">
-                <div className="text-3xl font-black text-ochre-600">4</div>
-                <div className="text-sm font-bold">Basecamp Partners</div>
-                <div className="text-xs text-gray-500">Founding network</div>
+              <div className="grid grid-cols-2 gap-3 self-center">
+                {CROSS_DOMAIN_SUPPORTS.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div
+                      key={item.label}
+                      className="border-2 border-[#0A0A0A] bg-white p-5"
+                    >
+                      <Icon className="mb-3 h-6 w-6 text-[#059669]" />
+                      <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#DC2626]">
+                        {item.label}
+                      </p>
+                      <p className="mt-2 text-sm leading-snug text-gray-700">{item.note}</p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
         </section>
 
-        {/* Network Hubs - Basecamps (NOW AT TOP) */}
-        <section id="basecamps" className="section-padding bg-ochre-50">
-          <div className="container-justice">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+        {/* The Harvest at Witta. The physical centre. */}
+        <section
+          id="harvest"
+          className="border-b-2 border-[#0A0A0A] bg-white"
+        >
+          <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+            <p className="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-[#059669]">
+              The physical centre
+            </p>
+            <h2
+              className="mb-5 text-3xl font-black leading-tight md:text-5xl"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
+              The Harvest, Witta, on Jinibara Country.
+            </h2>
+            <div className="grid gap-10 md:grid-cols-[1fr_1fr]">
+              <div className="space-y-4 text-base leading-relaxed text-gray-800 md:text-lg">
+                <p>
+                  The Harvest sits on Jinibara Country in the Sunshine Coast hinterland, postcode
+                  4552, on the former Green Harvest organic seed and gardening site. Two thousand
+                  cars pass through Witta every weekend on their way somewhere else. The centre
+                  asks them to stop.
+                </p>
+                <p>
+                  This is the physical home of the Centre of Excellence. Seasonal kitchen,
+                  garden, workshop, gathering ground. The basecamps come here to work, train,
+                  rest, and exchange practice. Young people come here. Elders come here. People
+                  who work in the sector come here, alongside the people who hold young people in
+                  community, and the line between them gets thinner.
+                </p>
+                <p className="font-medium text-[#0A0A0A]">
+                  Eat. Gather. Make. Grow. The method the building is built on.
+                </p>
+              </div>
+              <div className="border-2 border-[#0A0A0A] bg-[#F5F0E8] p-6">
+                <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.18em] text-[#DC2626]">
+                  What lives here
+                </p>
+                <ul className="space-y-3 text-sm leading-relaxed text-gray-800">
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-[#059669]" />
+                    <span>Working kitchen and gathering hall for cohort-scale visits.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-[#059669]" />
+                    <span>Stretch Bed workshop and shared making space.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-[#059669]" />
+                    <span>
+                      Garden centre and training plot, where land-based learning is the curriculum,
+                      not a metaphor.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-[#059669]" />
+                    <span>
+                      Quiet rooms for the writing, recording, and editorial work that turns practice
+                      into evidence the rest of the system can read.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-[#059669]" />
+                    <span>
+                      Accommodation for visiting basecamp teams, so a week on Country here is a real
+                      week, not a day-trip.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* The four basecamps */}
+        <section id="basecamps" className="border-b-2 border-[#0A0A0A] bg-[#F5F0E8]">
+          <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+            <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <div className="inline-block px-4 py-2 bg-ochre-100 border-2 border-black mb-4">
-                  <span className="font-bold">FOUNDING BASECAMPS</span>
-                </div>
-                <h2 className="headline-truth mb-2">
-                  Meet the Basecamps
+                <p className="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-[#DC2626]">
+                  The basecamps
+                </p>
+                <h2
+                  className="mb-3 text-3xl font-black leading-tight md:text-5xl"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                >
+                  Four anchor communities.
+                  <br />
+                  One ring.
                 </h2>
-                <p className="text-lg text-gray-600 max-w-2xl">
-                  The 4 founding organizations anchoring the Centre of Excellence network. They hold local knowledge, launch initiatives, and ground our work in community.
+                <p className="max-w-2xl text-base leading-relaxed text-gray-700 md:text-lg">
+                  Mparntwe, Townsville, Mount Isa, Minjerribah. Four community-controlled
+                  organisations holding young people in place, on Country, with cultural authority
+                  leading the work. Witta is the centre. The basecamps are the ring.
                 </p>
               </div>
               <Link
                 href="/centre-of-excellence/map?category=basecamp"
-                className="cta-secondary flex items-center gap-2 shrink-0"
+                className="inline-flex items-center gap-2 self-start border-2 border-[#0A0A0A] bg-white px-5 py-3 text-sm font-bold uppercase tracking-[0.16em] text-[#0A0A0A] transition-colors hover:bg-[#0A0A0A] hover:text-white md:self-end"
               >
-                <MapPin className="w-5 h-5" />
-                VIEW ON MAP
+                <MapPin className="h-4 w-4" /> View on map
               </Link>
             </div>
 
-            {/* Basecamp Map Summary (stable fallback for local/dev) */}
-            <div className="mb-8 border-2 border-black bg-white p-6">
-              <div className="flex items-center justify-between gap-4 flex-wrap">
-                <div>
-                  <h3 className="text-xl font-black mb-2">Basecamp Footprint Snapshot</h3>
-                  <p className="text-gray-600">
-                    Explore the live interactive map from the dedicated map page.
-                  </p>
-                </div>
-                <Link
-                  href="/centre-of-excellence/map?category=basecamp"
-                  className="cta-secondary flex items-center gap-2"
-                >
-                  <MapPin className="w-5 h-5" />
-                  OPEN INTERACTIVE MAP
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
-                {basecamps.map((basecamp) => (
-                  <div
-                    key={`map-summary-${basecamp.slug}`}
-                    className="border border-black bg-gray-50 px-4 py-3"
-                  >
-                    <div className="font-bold text-black">{basecamp.name}</div>
-                    <div className="text-sm text-gray-600">{basecamp.region}</div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      {basecamp.coordinates.lat.toFixed(3)}, {basecamp.coordinates.lng.toFixed(3)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Basecamp Grid with Images */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               {basecamps.map((basecamp) => (
                 <Link
                   key={basecamp.slug}
                   href={`/organizations/${basecamp.slug}`}
-                  className="border-2 border-black bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group overflow-hidden"
+                  className="group flex flex-col overflow-hidden border-2 border-[#0A0A0A] bg-white transition-shadow hover:shadow-[6px_6px_0px_0px_rgba(220,38,38,0.4)]"
                 >
-                  {/* Image Container */}
-                  <div className="relative h-48 bg-gray-200 border-b-2 border-black overflow-hidden">
+                  <div className="relative h-52 w-full border-b-2 border-[#0A0A0A] bg-[#0A0A0A]">
                     {basecamp.image ? (
                       <Image
                         src={basecamp.image}
                         alt={basecamp.name}
                         fill
                         unoptimized
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          // Fallback to placeholder on error
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.parentElement!.innerHTML = `
-                            <div class="absolute inset-0 bg-gradient-to-br from-ochre-100 to-ochre-200 flex items-center justify-center">
-                              <span class="text-4xl font-black text-ochre-600">${basecamp.name.charAt(0)}</span>
-                            </div>
-                          `;
-                        }}
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 50vw"
                       />
                     ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-ochre-100 to-ochre-200 flex items-center justify-center">
-                        <span className="text-4xl font-black text-ochre-600">{basecamp.name.charAt(0)}</span>
+                      <div className="flex h-full items-center justify-center bg-gradient-to-br from-[#0A0A0A] to-gray-700">
+                        <span className="text-5xl font-black text-white/30">
+                          {basecamp.name.charAt(0)}
+                        </span>
                       </div>
                     )}
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <div className="inline-block px-2 py-1 bg-ochre-600 text-white text-xs font-bold uppercase tracking-wider mb-2">
-                          Founding Basecamp
-                        </div>
-                        <div className="text-xs font-bold text-ochre-600 uppercase tracking-wider mb-1">{basecamp.region}</div>
-                        <h3 className="text-2xl font-black">{basecamp.name}</h3>
-                      </div>
-                      <MapPin className="w-6 h-6 text-gray-400 group-hover:text-ochre-600 transition-colors" />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/75 to-transparent px-4 pb-3 pt-10">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/70">
+                        {basecamp.region}
+                      </p>
                     </div>
-                    <p className="text-gray-600 mb-4">
+                  </div>
+                  <div className="flex flex-1 flex-col p-6">
+                    <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.16em] text-[#059669]">
+                      {basecamp.country}
+                    </p>
+                    <h3
+                      className="mb-3 text-2xl font-black"
+                      style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                    >
+                      {basecamp.name}
+                    </h3>
+                    <p className="mb-4 flex-1 text-sm leading-relaxed text-gray-700">
                       {basecamp.description}
                     </p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {basecamp.stats?.map((stat, idx) => (
-                        <span
-                          key={idx}
-                          className={`text-xs font-bold px-2 py-1 ${idx === 0 ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}
-                        >
-                          {stat.value}
-                        </span>
-                      ))}
-                    </div>
-                    <span className="font-bold text-ochre-600">View profile →</span>
+                    {basecamp.stats && basecamp.stats.length > 0 && (
+                      <div className="mb-4 flex flex-wrap gap-2">
+                        {basecamp.stats.map((stat, idx) => (
+                          <span
+                            key={idx}
+                            className="border border-[#0A0A0A] bg-[#F5F0E8] px-2 py-1 font-mono text-[11px] uppercase tracking-[0.12em] text-[#0A0A0A]"
+                          >
+                            {stat.value}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <span className="inline-flex items-center gap-2 text-sm font-bold text-[#0A0A0A] group-hover:text-[#DC2626]">
+                      Open the basecamp <ArrowRight className="h-4 w-4" />
+                    </span>
                   </div>
                 </Link>
               ))}
             </div>
-
-            {/* Expansion Note */}
-            <div className="mt-8 p-6 bg-white border-2 border-black text-center">
-              <p className="text-gray-600 mb-4">
-                We're building the network. Interested in becoming a basecamp partner?
-              </p>
-              <Link href="/contact" className="font-bold text-ochre-600 hover:underline">
-                Get in touch →
-              </Link>
-            </div>
           </div>
         </section>
 
-        {/* The Opportunity - Brutalist Data */}
-        <section id="mission" className="section-padding bg-black text-white">
-          <div className="container-justice">
-            <div className="border-2 border-white p-8 md:p-12 text-center max-w-4xl mx-auto">
-              <h2 className="text-xl md:text-2xl font-bold uppercase tracking-widest mb-4">
-                Total Net Present Safety (NPS)
-              </h2>
-              <div className="font-mono text-6xl md:text-9xl font-bold mb-4">
-                $1.1B
+        {/* Country visits Country. Oonchiumpa to SEQ as worked example. */}
+        <section className="border-b-2 border-[#0A0A0A] bg-[#0A0A0A] text-white">
+          <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+            <p className="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-[#059669]">
+              How the centre works in practice
+            </p>
+            <h2
+              className="mb-6 text-3xl font-black leading-tight md:text-5xl"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
+              Country visits Country.
+            </h2>
+            <div className="grid gap-10 md:grid-cols-[1.05fr_0.95fr]">
+              <div className="space-y-4 text-base leading-relaxed text-white/85 md:text-lg">
+                <p>
+                  The first worked example. The Oonchiumpa team flies east from Mparntwe to South
+                  East Queensland. Kristy Bloomfield, Tanya Turner, Fred Campbell, the youth
+                  workers, the young people who choose to come. They land at Witta. They stay at
+                  the Harvest. They spend a week on Jinibara Country.
+                </p>
+                <p>
+                  They sit with Quandamooka Elders from MMEIC. They visit BG Fit on the way back.
+                  They share the practice that holds 21 active young people across seven language
+                  groups within 150 kilometres of Mparntwe, and they hear the practice that holds
+                  young people in Mount Isa, on Palm Island, on Minjerribah. The exchange is the
+                  evidence.
+                </p>
+                <p className="font-medium text-white">
+                  Cultural authority leads in both directions. Country teaches Country. The centre
+                  holds the room for the conversation that the system has never made space for.
+                </p>
               </div>
-              <p className="text-lg md:text-xl max-w-2xl mx-auto text-gray-300">
-                This is not a projection. This is the calculated economic value of 939+ catalogued community programs currently operating without adequate funding.
-              </p>
+              <div className="border-2 border-white/30 bg-white/5 p-6">
+                <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.18em] text-[#059669]">
+                  What the visit produces
+                </p>
+                <ul className="space-y-3 text-sm leading-relaxed text-white/85">
+                  <li className="flex items-start gap-3">
+                    <span className="font-mono text-[10px] text-[#DC2626]">01</span>
+                    <span>
+                      A shared method, refined by the people who carry it, not designed for them.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="font-mono text-[10px] text-[#DC2626]">02</span>
+                    <span>
+                      Photographs, recordings, and stories captured under Empathy Ledger consent
+                      for use across the four basecamps and the wider sector.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="font-mono text-[10px] text-[#DC2626]">03</span>
+                    <span>
+                      A training cohort drawn from sector workers across the country, taught by the
+                      basecamps, on Country, in practice rather than slides.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="font-mono text-[10px] text-[#DC2626]">04</span>
+                    <span>
+                      A book chapter. A field note. A submission. The evidence the rest of the
+                      system can read, written from inside the work.
+                    </span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Global Map Preview */}
-        <section className="section-padding bg-white">
-          <div className="container-justice">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+        {/* What the centre does */}
+        <section className="border-b-2 border-[#0A0A0A] bg-white">
+          <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+            <p className="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-[#DC2626]">
+              What the centre does
+            </p>
+            <h2
+              className="mb-10 max-w-3xl text-3xl font-black leading-tight md:text-5xl"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
+              Innovation, training, Indigenous knowledges, evidence.
+            </h2>
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+              {WHAT_HAPPENS_HERE.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={item.title}
+                    className="border-2 border-[#0A0A0A] bg-[#F5F0E8] p-7"
+                  >
+                    <Icon className="mb-4 h-8 w-8 text-[#DC2626]" />
+                    <h3
+                      className="mb-3 text-xl font-black"
+                      style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                    >
+                      {item.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-gray-800 md:text-base">
+                      {item.body}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* Global learning map preview */}
+        <section className="border-b-2 border-[#0A0A0A] bg-[#F5F0E8]">
+          <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
+            <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <h2 className="headline-truth max-w-2xl mb-2">
-                  Global Excellence Map
+                <p className="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-[#059669]">
+                  Reading the room beyond Australia
+                </p>
+                <h2
+                  className="mb-3 max-w-2xl text-3xl font-black leading-tight md:text-4xl"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                >
+                  What works elsewhere, read carefully.
                 </h2>
-                <p className="text-lg text-gray-600">
-                  Explore 16 international models, 4 Australian frameworks, and key research sources
+                <p className="max-w-2xl text-base leading-relaxed text-gray-700">
+                  The centre keeps a long view of community-led practice across sixteen
+                  international models, four Australian frameworks, and the research that informs
+                  them. Read selectively. Adapt with cultural authority. Never lift wholesale.
                 </p>
               </div>
-              <Link href="/centre-of-excellence/map" className="cta-primary flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
-                OPEN FULL MAP
+              <Link
+                href="/centre-of-excellence/map"
+                className="inline-flex items-center gap-2 self-start bg-[#0A0A0A] px-5 py-3 text-sm font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-gray-800 md:self-end"
+              >
+                <MapPin className="h-4 w-4" /> Open the full map
               </Link>
             </div>
 
-            {/* Map Preview Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* International Models */}
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
               <Link
-                href="/centre-of-excellence/map?category=international-model"
-                className="border-2 border-black p-6 bg-purple-50 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group"
+                href="/centre-of-excellence/global-insights"
+                className="group border-2 border-[#0A0A0A] bg-white p-6 transition-shadow hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
               >
-                <Globe className="w-10 h-10 mb-4 text-purple-600" />
-                <div className="text-4xl font-black text-purple-600 mb-2">16</div>
-                <h3 className="text-xl font-bold mb-2">International Models</h3>
-                <p className="text-gray-600 mb-4">
-                  Spain, New Zealand, Finland, Scotland, Missouri and more
+                <Globe className="mb-4 h-8 w-8 text-[#0A0A0A]" />
+                <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.16em] text-[#DC2626]">
+                  Sixteen international models
                 </p>
-                <span className="font-bold text-purple-600 flex items-center gap-1">
-                  View on map <ExternalLink className="w-4 h-4" />
+                <h3 className="mb-2 text-2xl font-black" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  Spain. Aotearoa. Finland. Scotland. Missouri.
+                </h3>
+                <p className="mb-4 text-sm leading-relaxed text-gray-700">
+                  What recidivism looks like when the system invests in community first. Read with
+                  context, not as templates.
+                </p>
+                <span className="inline-flex items-center gap-2 text-sm font-bold text-[#0A0A0A] group-hover:text-[#DC2626]">
+                  Open <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
 
-              {/* Australian Frameworks */}
               <Link
-                href="/centre-of-excellence/map?category=australian-framework"
-                className="border-2 border-black p-6 bg-green-50 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group"
+                href="/centre-of-excellence/best-practice"
+                className="group border-2 border-[#0A0A0A] bg-white p-6 transition-shadow hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
               >
-                <MapPin className="w-10 h-10 mb-4 text-green-600" />
-                <div className="text-4xl font-black text-green-600 mb-2">4</div>
-                <h3 className="text-xl font-bold mb-2">Australian Frameworks</h3>
-                <p className="text-gray-600 mb-4">
-                  Queensland, NSW, Victoria, Western Australia
+                <Building2 className="mb-4 h-8 w-8 text-[#0A0A0A]" />
+                <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.16em] text-[#DC2626]">
+                  Four Australian frameworks
                 </p>
-                <span className="font-bold text-green-600 flex items-center gap-1">
-                  View on map <ExternalLink className="w-4 h-4" />
+                <h3 className="mb-2 text-2xl font-black" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  QLD. NSW. VIC. WA.
+                </h3>
+                <p className="mb-4 text-sm leading-relaxed text-gray-700">
+                  Each state's approach, named honestly, with what the policy intended and what the
+                  outcomes actually show.
+                </p>
+                <span className="inline-flex items-center gap-2 text-sm font-bold text-[#0A0A0A] group-hover:text-[#DC2626]">
+                  Open <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
 
-              {/* Research Sources */}
               <Link
-                href="/centre-of-excellence/map?category=research-source"
-                className="border-2 border-black p-6 bg-blue-50 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group"
+                href="/centre-of-excellence/research"
+                className="group border-2 border-[#0A0A0A] bg-white p-6 transition-shadow hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
               >
-                <FileText className="w-10 h-10 mb-4 text-blue-600" />
-                <div className="text-4xl font-black text-blue-600 mb-2">5+</div>
-                <h3 className="text-xl font-bold mb-2">Research Sources</h3>
-                <p className="text-gray-600 mb-4">
-                  Key institutions and evidence bases worldwide
+                <BookOpen className="mb-4 h-8 w-8 text-[#0A0A0A]" />
+                <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.16em] text-[#DC2626]">
+                  Twenty-seven peer-reviewed pieces
                 </p>
-                <span className="font-bold text-blue-600 flex items-center gap-1">
-                  View on map <ExternalLink className="w-4 h-4" />
-                </span>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* What You'll Find - Grid Layout */}
-        <section id="network" className="section-padding border-t-2 border-black bg-gray-50">
-          <div className="container-justice">
-            <h2 className="headline-truth mb-6 text-center">
-              What You'll Find Here
-            </h2>
-            <p className="text-xl text-gray-600 text-center max-w-3xl mx-auto mb-16">
-              Everything you need to understand, advocate for, and implement evidence-based youth justice
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Research */}
-              <Link href="/centre-of-excellence/research" className="border-2 border-black bg-white p-8 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
-                <Globe className="w-12 h-12 mb-6 text-blue-600" />
-                <h3 className="text-2xl font-bold mb-4 uppercase">Research Library</h3>
-                <p className="mb-4 text-lg leading-relaxed text-gray-700">
-                  27 peer-reviewed studies on trauma-informed care, Indigenous diversion, restorative justice, and more. Searchable, categorised, and growing.
+                <h3 className="mb-2 text-2xl font-black" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  The research library.
+                </h3>
+                <p className="mb-4 text-sm leading-relaxed text-gray-700">
+                  Trauma-informed care, Indigenous diversion, restorative practice, disability
+                  intersections. Searchable, annotated, growing.
                 </p>
-                <span className="font-bold text-blue-600 text-lg">
-                  BROWSE RESEARCH →
-                </span>
-              </Link>
-
-              {/* Best Practice */}
-              <Link href="/centre-of-excellence/best-practice" className="border-2 border-black bg-white p-8 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
-                <Shield className="w-12 h-12 mb-6 text-green-600" />
-                <h3 className="text-2xl font-bold mb-4 uppercase">Australian Frameworks</h3>
-                <p className="mb-4 text-lg leading-relaxed text-gray-700">
-                  Learn from Queensland, NSW, Victoria, and Western Australia. Each state's approach analysed with outcomes, strengths, and challenges.
-                </p>
-                <span className="font-bold text-green-600 text-lg">
-                  EXPLORE FRAMEWORKS →
-                </span>
-              </Link>
-
-              {/* Global */}
-              <Link href="/centre-of-excellence/global-insights" className="border-2 border-black bg-white p-8 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
-                <Activity className="w-12 h-12 mb-6 text-purple-600" />
-                <h3 className="text-2xl font-bold mb-4 uppercase">International Models</h3>
-                <p className="mb-4 text-lg leading-relaxed text-gray-700">
-                  16 global programs from Spain, New Zealand, Finland, Scotland, and more. See what recidivism rates are possible when you invest in community.
-                </p>
-                <span className="font-bold text-purple-600 text-lg">
-                  VIEW GLOBAL →
-                </span>
-              </Link>
-
-              {/* People */}
-              <Link href="/centre-of-excellence/people" className="border-2 border-black bg-white p-8 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all group">
-                <FileText className="w-12 h-12 mb-6 text-ochre-600" />
-                <h3 className="text-2xl font-bold mb-4 uppercase">Expert Network</h3>
-                <p className="mb-4 text-lg leading-relaxed text-gray-700">
-                  Connect with researchers, practitioners, and advocates. Our growing network includes Indigenous leaders, academics, and frontline workers.
-                </p>
-                <span className="font-bold text-ochre-600 text-lg">
-                  MEET EXPERTS →
+                <span className="inline-flex items-center gap-2 text-sm font-bold text-[#0A0A0A] group-hover:text-[#DC2626]">
+                  Open <ArrowRight className="h-4 w-4" />
                 </span>
               </Link>
             </div>
           </div>
         </section>
 
-        {/* Final CTA */}
-        <section className="section-padding bg-black text-white">
-          <div className="container-justice text-center">
-            <h2 className="headline-truth mb-6">
-              Join the Network
-            </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-8">
-              Whether you're a researcher, practitioner, funder, or community organisation — there's a place for you in Australia's youth justice centre of excellence.
+        {/* Closing. Get involved. */}
+        <section className="bg-[#0A0A0A] text-white">
+          <div className="mx-auto max-w-5xl px-6 py-20 text-center md:py-24">
+            <p className="mb-4 font-mono text-xs uppercase tracking-[0.28em] text-[#059669]">
+              Join the work
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/contact" className="bg-white text-black px-8 py-4 font-bold uppercase tracking-wider hover:bg-gray-200 transition-colors">
-                GET INVOLVED
+            <h2
+              className="mb-6 text-3xl font-black leading-tight md:text-5xl"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
+              The four basecamps are already doing the work.
+              <br />
+              <span className="text-white/70">The centre is what makes it visible.</span>
+            </h2>
+            <p className="mx-auto mb-10 max-w-2xl text-base leading-relaxed text-white/80 md:text-lg">
+              For organisations doing community-led work in justice, child protection, education,
+              or disability. For sector workers ready to be trained by community. For funders ready
+              to back the long thread. For Elders, researchers, practitioners, and people who have
+              been through the system and want to shape what comes next.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 bg-[#DC2626] px-7 py-4 text-sm font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-red-700"
+              >
+                Get involved <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link href="/stewards" className="border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-colors">
-                BECOME A STEWARD
+              <Link
+                href="/stewards"
+                className="inline-flex items-center justify-center gap-2 border-2 border-white px-7 py-4 text-sm font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-white hover:text-[#0A0A0A]"
+              >
+                Become a steward
               </Link>
             </div>
           </div>
