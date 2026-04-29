@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-lite';
 
-// Cache the basecamp list for 5 minutes. Basecamps change rarely and the
-// underlying query joins partner_photos and partner_impact_metrics, so each
-// uncached call costs real disk IO. 5 minutes is the right tradeoff between
-// freshness for the CoE landing page and IO budget on the Micro tier.
-export const revalidate = 300;
+// Force dynamic so Next does not try to pre-render this route at build time.
+// The basecamp list changes rarely but the underlying client uses cookies()
+// (request-scoped), so a static-with-revalidate config conflicts at build.
+// We cache the response for 5 min via a Cache-Control header instead.
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const supabase = await createClient();
@@ -76,5 +76,11 @@ export async function GET() {
     };
   });
 
-  return NextResponse.json(transformed || []);
+  return NextResponse.json(transformed || [], {
+    headers: {
+      // Cache at the CDN edge for 5 min, allow stale for another hour while
+      // a fresh fetch revalidates in the background. Drops repeat-load IO to zero.
+      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+    },
+  });
 }
