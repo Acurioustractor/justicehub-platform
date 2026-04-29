@@ -168,7 +168,7 @@ export default function CentreOfExcellencePage() {
     <div className="min-h-screen bg-[#F5F0E8] text-[#0A0A0A]">
       <Navigation />
 
-      <main className="header-offset">
+      <main className="header-offset bg-[#0A0A0A]">
         {/* Hero. The reframe. */}
         <section className="border-b-2 border-[#0A0A0A] bg-[#0A0A0A] text-white">
           <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">

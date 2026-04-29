@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -136,6 +136,11 @@
     outline: none !important;
     margin: 0 !important;
     padding: 0 !important;
+    /* Default page surface — matches DESIGN.md off-white #F5F0E8.
+       Prevents any stray dark band above the fixed nav from body/html
+       overscroll or rendering gaps in dark-mode browsers. Pages with
+       dark hero sections still set their own bg on the page wrapper. */
+    background-color: #F5F0E8;
   }
   
   /* Only target HTML/body for browser artifacts - leave everything else alone */
