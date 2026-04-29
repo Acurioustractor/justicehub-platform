@@ -1,6 +1,6 @@
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
-import { Building2, MapPin } from 'lucide-react';
+import { Building2, ListFilter, Map as MapIcon, MapPin, Network } from 'lucide-react';
 import { OrganizationsPageContent } from './page-content';
 
 export const dynamic = 'force-dynamic';
@@ -58,6 +58,22 @@ const RELATED_ROWS_LIMIT = 5000;
 const RELATED_ORG_ID_LIMIT = 80;
 const SSR_DATA_TIMEOUT_MS = 2500;
 const COUNT_TIMEOUT_MS = 900;
+
+function facilityMarkerPosition(facility: DetentionFacility) {
+  if (!facility.latitude || !facility.longitude) return null;
+
+  const minLng = 112;
+  const maxLng = 154;
+  const minLat = -44;
+  const maxLat = -10;
+  const left = ((facility.longitude - minLng) / (maxLng - minLng)) * 100;
+  const top = ((maxLat - facility.latitude) / (maxLat - minLat)) * 100;
+
+  return {
+    left: `${Math.max(4, Math.min(96, left))}%`,
+    top: `${Math.max(6, Math.min(92, top))}%`,
+  };
+}
 
 function emptyOrganizationsData(): OrganizationsData {
   return {
@@ -298,6 +314,14 @@ export default async function OrganizationsPage() {
 
   const operationalFacilities = detentionFacilities.filter(f => f.operational_status === 'operational');
   const totalCapacity = operationalFacilities.reduce((sum, f) => sum + (f.capacity_beds || 0), 0);
+  const mappedFacilities = detentionFacilities
+    .map(facility => ({ facility, position: facilityMarkerPosition(facility) }))
+    .filter((item): item is { facility: DetentionFacility; position: { left: string; top: string } } => Boolean(item.position));
+  const facilityStateCounts = detentionFacilities.reduce<Record<string, number>>((counts, facility) => {
+    const state = facility.state || 'Unknown';
+    counts[state] = (counts[state] || 0) + 1;
+    return counts;
+  }, {});
 
   return (
     <>
@@ -383,28 +407,114 @@ export default async function OrganizationsPage() {
                 </p>
               </div>
             </div>
+
+            <div className="mt-10 flex flex-wrap gap-3">
+              <a href="#centre-map" className="inline-flex items-center gap-2 border-2 border-black bg-white px-4 py-2 text-sm font-bold hover:bg-black hover:text-white transition-colors">
+                <MapIcon className="w-4 h-4" />
+                Map view
+              </a>
+              <a href="#centre-list" className="inline-flex items-center gap-2 border-2 border-black bg-white px-4 py-2 text-sm font-bold hover:bg-black hover:text-white transition-colors">
+                <Building2 className="w-4 h-4" />
+                Centre cards
+              </a>
+              <a href="#organization-directory" className="inline-flex items-center gap-2 border-2 border-black bg-white px-4 py-2 text-sm font-bold hover:bg-black hover:text-white transition-colors">
+                <ListFilter className="w-4 h-4" />
+                Organization directory
+              </a>
+              <a href="/hub" className="inline-flex items-center gap-2 border-2 border-black bg-white px-4 py-2 text-sm font-bold hover:bg-black hover:text-white transition-colors">
+                <Network className="w-4 h-4" />
+                Claim pathway
+              </a>
+            </div>
           </div>
         </section>
 
-        {/* Lightweight facilities overview. Keep this server-rendered so the
-            directory never blocks on WebGL, map tiles, or client map hydration. */}
-        <section className="py-12 border-b-2 border-black bg-gradient-to-br from-blue-50 via-green-50 to-sand-50">
+        <section id="centre-map" className="py-12 border-b-2 border-black bg-gradient-to-br from-blue-50 via-green-50 to-sand-50">
           <div className="container-justice">
             <div className="mb-6">
               <h2 className="text-3xl font-bold text-earth-900 mb-2 flex items-center gap-3">
-                <Building2 className="w-8 h-8 text-red-600" />
-                Detention Centre Overview
+                <MapIcon className="w-8 h-8 text-blue-600" />
+                Ecosystem Map
               </h2>
               <p className="text-earth-600">
-                A fast view of youth detention facilities. Program and service discovery now lives in the directory and claim search so this page can load cleanly.
+                Detention centres are fixed points in the system. The organization directory below is the working layer for claims, services, ABNs, and CivicGraph links.
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+            <div className="grid lg:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.6fr)] gap-6 items-stretch">
+              <div className="relative min-h-[420px] border-2 border-black bg-[#E7F4F7] overflow-hidden">
+                <div className="absolute inset-6 rounded-[48%_52%_46%_54%/58%_45%_55%_42%] bg-[#F7F4EC] border-2 border-black/20 shadow-inner" />
+                <div className="absolute left-[42%] top-[10%] h-[76%] border-l border-black/10" />
+                <div className="absolute left-[22%] top-[49%] w-[54%] border-t border-black/10" />
+                <div className="absolute right-4 top-4 border-2 border-black bg-white px-3 py-2 text-xs font-bold uppercase tracking-wide">
+                  {mappedFacilities.length} mapped centres
+                </div>
+
+                {mappedFacilities.map(({ facility, position }) => (
+                  <div
+                    key={facility.id}
+                    className="group absolute -translate-x-1/2 -translate-y-1/2"
+                    style={position}
+                  >
+                    <div className={`h-4 w-4 border-2 border-white shadow-[0_2px_8px_rgba(0,0,0,0.35)] ${
+                      facility.operational_status === 'operational' ? 'bg-red-600' : 'bg-gray-500'
+                    }`} />
+                    <div className="pointer-events-none absolute left-5 top-1/2 z-20 hidden w-56 -translate-y-1/2 border-2 border-black bg-white p-3 text-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:block">
+                      <div className="font-bold text-sm leading-tight">{facility.name}</div>
+                      <div className="mt-1 text-earth-600">{facility.city}, {facility.state}</div>
+                      <div className="mt-2 flex gap-3 font-bold">
+                        <span>{facility.capacity_beds || 0} beds</span>
+                        <span>{facility.partnership_count || 0} partners</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <aside className="border-2 border-black bg-white p-5">
+                <h3 className="text-xl font-bold mb-4">System Snapshot</h3>
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  <div className="border border-black p-3">
+                    <div className="text-2xl font-bold text-red-600">{operationalFacilities.length}</div>
+                    <div className="text-xs uppercase tracking-wide">operational</div>
+                  </div>
+                  <div className="border border-black p-3">
+                    <div className="text-2xl font-bold">{totalCapacity.toLocaleString()}</div>
+                    <div className="text-xs uppercase tracking-wide">beds</div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  {Object.entries(facilityStateCounts).sort().map(([state, count]) => (
+                    <div key={state} className="flex items-center justify-between border-b border-earth-200 pb-2 text-sm">
+                      <span className="font-bold">{state}</span>
+                      <span>{count} centre{count === 1 ? '' : 's'}</span>
+                    </div>
+                  ))}
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+
+        <section id="centre-list" className="py-12 border-b-2 border-black bg-white">
+          <div className="container-justice">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 className="text-3xl font-bold text-earth-900 mb-2 flex items-center gap-3">
+                  <Building2 className="w-8 h-8 text-red-600" />
+                  Centre Cards
+                </h2>
+                <p className="text-earth-600">Operational status, beds, location, and partner count at scan speed.</p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
               {detentionFacilities.map((facility) => (
-                <div key={facility.id} className="bg-white border-2 border-black p-4">
+                <article key={facility.id} className="bg-white border-2 border-black p-4 min-h-[180px] flex flex-col">
                   <div className="flex items-start justify-between gap-3 mb-3">
-                    <h3 className="font-bold text-earth-900 leading-tight">{facility.name}</h3>
-                    <span className={`text-[10px] uppercase tracking-wide font-bold px-2 py-1 border ${
+                    <h3 className="font-bold text-lg leading-tight text-earth-900">{facility.name}</h3>
+                    <span className={`shrink-0 text-[10px] uppercase tracking-wide font-bold px-2 py-1 border ${
                       facility.operational_status === 'operational'
                         ? 'bg-red-50 text-red-700 border-red-600'
                         : 'bg-gray-100 text-gray-600 border-gray-400'
@@ -412,29 +522,32 @@ export default async function OrganizationsPage() {
                       {facility.operational_status || 'unknown'}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 text-sm text-earth-600 mb-3">
-                    <MapPin className="w-4 h-4" />
-                    {facility.city || 'Unknown'}, {facility.state || 'AU'}
+                  <div className="mt-auto space-y-3">
+                    <div className="flex items-center gap-1 text-sm text-earth-600">
+                      <MapPin className="w-4 h-4" />
+                      {facility.city || 'Unknown'}, {facility.state || 'AU'}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-xs font-bold text-earth-800">
+                      <div className="border border-earth-200 p-2">{facility.capacity_beds || 0} beds</div>
+                      <div className="border border-earth-200 p-2">{facility.partnership_count || 0} partners</div>
+                    </div>
                   </div>
-                  <div className="flex gap-4 text-xs font-bold text-earth-700">
-                    <span>{facility.capacity_beds || 0} beds</span>
-                    <span>{facility.partnership_count || 0} partners</span>
-                  </div>
-                </div>
+                </article>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Filterable Organizations + Detention Facilities */}
-        <OrganizationsPageContent
-          organizations={organizations}
-          programCounts={programCounts}
-          serviceCounts={serviceCounts}
-          teamCounts={teamCounts}
-          detentionFacilities={detentionFacilities}
-          claimedOrgIds={claimedOrgIds}
-        />
+        <section id="organization-directory">
+          <OrganizationsPageContent
+            organizations={organizations}
+            programCounts={programCounts}
+            serviceCounts={serviceCounts}
+            teamCounts={teamCounts}
+            detentionFacilities={detentionFacilities}
+            claimedOrgIds={claimedOrgIds}
+          />
+        </section>
 
         {organizations.length === 0 && (
           <section className="py-16">
