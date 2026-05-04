@@ -103,7 +103,7 @@ function Slide({
 }
 
 export default function MinderooDeckPage() {
-  const total = 16;
+  const total = 17;
   const cormorant = { fontFamily: "'Cormorant Garamond', Georgia, serif" } as const;
 
   return (
@@ -249,8 +249,22 @@ export default function MinderooDeckPage() {
           </div>
         </Slide>
 
-        {/* 05 — THREE RINGS as chapters of the STAY series */}
-        <Slide n={5} total={total}>
+        {/* 05 — KEEPING CHILDREN CLOSE infographic, full-bleed */}
+        <Slide n={5} total={total} bg="#fbf5e9">
+          <div className="flex items-center justify-center w-full">
+            <figure className="w-full max-w-7xl">
+              <img
+                src="/images/stay/keeping-children-close-infographic.png"
+                alt="Keeping children close. Changing futures. STAY model with the problem ($22.3B), three rings (CARRY, SEE, HOLD) around community at the centre, and the impact (fewer children in costly systems, better outcomes, return on investment)."
+                className="w-full h-auto"
+                loading="lazy"
+              />
+            </figure>
+          </div>
+        </Slide>
+
+        {/* 06 — THREE RINGS as chapters of the STAY series */}
+        <Slide n={6} total={total}>
           <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#8d6a44] mb-4">
             How it works
           </div>
@@ -291,7 +305,7 @@ export default function MinderooDeckPage() {
         </Slide>
 
         {/* 06 — HOLD · with mentoring photo */}
-        <Slide n={6} total={total} bg="#f6e3d8">
+        <Slide n={7} total={total} bg="#f6e3d8">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-10 items-center">
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#a04a3a] mb-4">
@@ -319,7 +333,7 @@ export default function MinderooDeckPage() {
         </Slide>
 
         {/* 07 — SEE · with empathy ledger image */}
-        <Slide n={7} total={total} bg="#f4e6c8">
+        <Slide n={8} total={total} bg="#f4e6c8">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-10 items-center">
             <figure className="rounded-[28px] overflow-hidden border border-[#dec9a9] bg-white shadow-[0_16px_40px_rgba(122,46,34,0.08)]">
               <img
@@ -351,7 +365,7 @@ export default function MinderooDeckPage() {
         </Slide>
 
         {/* 08 — CARRY · with library shelf */}
-        <Slide n={8} total={total} bg="#dde3cc">
+        <Slide n={9} total={total} bg="#dde3cc">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-10 items-center">
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#3d5a3a] mb-4">
@@ -380,7 +394,7 @@ export default function MinderooDeckPage() {
         </Slide>
 
         {/* 09 — CENTRE OF EXCELLENCE · big harvest photo */}
-        <Slide n={9} total={total}>
+        <Slide n={10} total={total}>
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-center">
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#8d6a44] mb-4">
@@ -410,7 +424,7 @@ export default function MinderooDeckPage() {
         </Slide>
 
         {/* 10 — TRIPS · aerial Country */}
-        <Slide n={10} total={total} bg="#f5ecd9">
+        <Slide n={11} total={total} bg="#f5ecd9">
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-center">
             <figure className="rounded-[28px] overflow-hidden border border-[#dec9a9] bg-white shadow-[0_16px_40px_rgba(122,46,34,0.08)]">
               <img
@@ -447,7 +461,7 @@ export default function MinderooDeckPage() {
         </Slide>
 
         {/* 11 — PROOF POINT · split with portraits row */}
-        <Slide n={11} total={total} bg="#fbf5e9">
+        <Slide n={12} total={total} bg="#fbf5e9">
           <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#8d6a44] mb-4">
             Already running
           </div>
@@ -492,7 +506,7 @@ export default function MinderooDeckPage() {
         </Slide>
 
         {/* 12 — DATA SOVEREIGNTY · with empathy ledger accent */}
-        <Slide n={12} total={total} bg="#f5ecd9">
+        <Slide n={13} total={total} bg="#f5ecd9">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#8d6a44] mb-4">
@@ -523,7 +537,7 @@ export default function MinderooDeckPage() {
         </Slide>
 
         {/* 13 — INTERNATIONAL · scrapbook map */}
-        <Slide n={13} total={total}>
+        <Slide n={14} total={total}>
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-center">
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#8d6a44] mb-4">
@@ -558,7 +572,7 @@ export default function MinderooDeckPage() {
         </Slide>
 
         {/* 14 — ACTION PATH */}
-        <Slide n={14} total={total} bg="#f5ecd9">
+        <Slide n={15} total={total} bg="#f5ecd9">
           <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#8d6a44] mb-4">
             When and how
           </div>
@@ -576,7 +590,7 @@ export default function MinderooDeckPage() {
         </Slide>
 
         {/* 15 — THE ASK · per-year menu, agile, no total */}
-        <Slide n={15} total={total} bg="#fbf5e9">
+        <Slide n={16} total={total} bg="#fbf5e9">
           <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#8d6a44] mb-4">
             How the dollars can land
           </div>
@@ -629,7 +643,7 @@ export default function MinderooDeckPage() {
         </Slide>
 
         {/* 16 — WHY THIS TEAM + CLOSE · with founders portrait */}
-        <Slide n={16} total={total} bg="#5a3a2a">
+        <Slide n={17} total={total} bg="#5a3a2a">
           <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#d4b07a] mb-4">
