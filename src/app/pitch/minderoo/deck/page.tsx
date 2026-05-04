@@ -558,8 +558,8 @@ export default function MinderooDeckPage() {
             </div>
             <figure className="rounded-[28px] overflow-hidden border border-[#dec9a9] bg-white shadow-[0_16px_40px_rgba(122,46,34,0.08)]">
               <img
-                src="/screenshots/empathy-ledger-desktop.png"
-                alt="Empathy Ledger 'Where We're Going' world map: storytelling work across continents feeds the platform"
+                src="/images/maps/empathy-ledger-where-we-are-going.png"
+                alt="Empathy Ledger 'Where We're Going' interactive world map: storytelling work across Africa, Asia, and Oceania feeds the platform"
                 className="w-full h-auto"
                 loading="lazy"
               />
