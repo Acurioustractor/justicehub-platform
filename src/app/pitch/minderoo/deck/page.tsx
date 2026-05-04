@@ -162,13 +162,13 @@ export default function MinderooDeckPage() {
           <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 items-center">
             <figure className="rounded-[28px] overflow-hidden border border-[#dec9a9] bg-white shadow-[0_16px_40px_rgba(122,46,34,0.08)]">
               <img
-                src="/images/maps/two-australias.png"
-                alt="Two maps: cost of detention by state on the left, community-controlled organisations holding children on the right"
-                className="w-full h-auto"
+                src="/images/judges-on-country/april-2026.jpg"
+                alt="Fifty-five judges on Country at Mparntwe, 17 April 2026"
+                className="w-full h-[460px] object-cover"
               />
               <figcaption className="px-5 py-3 bg-white border-t border-[#dec9a9]">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a]">Two Australias</div>
-                <div className="text-base mt-0.5 text-[#2a1f15]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}>Cost of acting too late · Work already happening</div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a]">17 April 2026</div>
+                <div className="text-base mt-0.5 text-[#2a1f15]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}>Judges on Country at Mparntwe · Fifty-five gathered, day on Country</div>
               </figcaption>
             </figure>
             <div>
@@ -323,14 +323,14 @@ export default function MinderooDeckPage() {
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-10 items-center">
             <figure className="rounded-[28px] overflow-hidden border border-[#dec9a9] bg-white shadow-[0_16px_40px_rgba(122,46,34,0.08)]">
               <img
-                src="/screenshots/mindaroo-pitch/platform/platform-organizations-list.png"
-                alt="JusticeHub: organisations directory and the data infrastructure underneath SEE"
-                className="w-full h-[480px] object-cover object-top"
+                src="/images/maps/two-australias.png"
+                alt="Two Australias: cost of detention by state on the left, community-controlled organisations holding children on the right"
+                className="w-full h-auto"
                 loading="lazy"
               />
               <figcaption className="px-5 py-3 bg-white border-t border-[#dec9a9]">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a]">JusticeHub</div>
-                <div className="text-base mt-0.5 text-[#2a1f15]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}>The platform that makes the work indexable</div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a]">Two Australias</div>
+                <div className="text-base mt-0.5 text-[#2a1f15]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}>Cost of acting too late · Work already happening</div>
               </figcaption>
             </figure>
             <div>
@@ -542,13 +542,17 @@ export default function MinderooDeckPage() {
                 The international extension is input to the platform, not export from it.
               </p>
             </div>
-            <figure className="rounded-[28px] overflow-hidden border border-[#dec9a9] bg-white p-6">
+            <figure className="rounded-[28px] overflow-hidden border border-[#dec9a9] bg-white shadow-[0_16px_40px_rgba(122,46,34,0.08)]">
               <img
-                src="/images/proposals/minderoo/generated-books/australia-scrapbook-map.png"
-                alt="The pattern travels without flattening place"
+                src="/screenshots/empathy-ledger-desktop.png"
+                alt="Empathy Ledger 'Where We're Going' world map: storytelling work across continents feeds the platform"
                 className="w-full h-auto"
                 loading="lazy"
               />
+              <figcaption className="px-5 py-3 bg-white border-t border-[#dec9a9]">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a]">Empathy Ledger · Where we're going</div>
+                <div className="text-base mt-0.5 text-[#2a1f15]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}>The international layer feeds the platform first</div>
+              </figcaption>
             </figure>
           </div>
         </Slide>
