@@ -938,13 +938,22 @@ export default function MinderooPitchPage() {
                   that lets community-led practice travel without flattening place.
                 </p>
               </div>
-              <a
-                href="/centre-of-excellence"
-                className="mt-8 inline-flex items-center gap-2 rounded-full border border-[#5a3a2a] px-5 py-2.5 text-sm font-medium text-[#5a3a2a] transition-colors hover:bg-[#5a3a2a] hover:text-[#fbf5e9]"
-              >
-                Open the Centre of Excellence
-                <span aria-hidden>→</span>
-              </a>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a
+                  href="/centre-of-excellence"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#5a3a2a] px-5 py-2.5 text-sm font-medium text-[#5a3a2a] transition-colors hover:bg-[#5a3a2a] hover:text-[#fbf5e9]"
+                >
+                  Open the Centre of Excellence
+                  <span aria-hidden>→</span>
+                </a>
+                <a
+                  href="/centre-of-excellence/system-map"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#5a3a2a] px-5 py-2.5 text-sm font-medium text-[#fbf5e9] transition-colors hover:bg-[#7a2e22]"
+                >
+                  See the system map
+                  <span aria-hidden>→</span>
+                </a>
+              </div>
             </div>
 
             <div className="relative">

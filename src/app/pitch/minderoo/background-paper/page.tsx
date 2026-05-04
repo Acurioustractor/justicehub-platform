@@ -269,6 +269,11 @@ export default function MinderooBackgroundPaperPage() {
                 Centre of Excellence at Witta
               </Link>
             </li>
+            <li>
+              <Link href="/centre-of-excellence/system-map" className="underline decoration-[#d4b07a] underline-offset-4 hover:decoration-2">
+                The system map: how the stack carries the work
+              </Link>
+            </li>
           </ul>
           <p className="mt-10 text-sm leading-6 text-[#d4b07a]">
             CoLI 2024 attribution: Front Project, Dr Mary O&apos;Connell, supported by Minderoo
