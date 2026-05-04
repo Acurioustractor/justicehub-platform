@@ -835,7 +835,7 @@ export default function SystemMapPage() {
                 </h2>
                 <p className="text-lg text-gray-700 leading-relaxed mb-3">
                   The cost case, partnership shapes, governance, and the action path are held in
-                  the partnership pitch and the seventeen-page background paper. Both are
+                  the partnership pitch and the companion brief. Both are
                   password-protected.
                 </p>
                 <p className="text-base text-gray-600">

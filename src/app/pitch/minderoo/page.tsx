@@ -1638,7 +1638,7 @@ export default function MinderooPitchPage() {
                 className="mt-3 text-5xl leading-tight md:text-6xl"
                 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}
               >
-                A 17-page background paper for after the meeting.
+                A companion brief for after the meeting.
               </h2>
               <p className="mt-5 text-base leading-7 text-[#5a3f2a]">
                 The deeper detail lives in a publication-quality paper that any Minderoo

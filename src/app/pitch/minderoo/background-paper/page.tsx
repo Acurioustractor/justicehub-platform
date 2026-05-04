@@ -143,9 +143,35 @@ export default function MinderooBackgroundPaperPage() {
             className="mt-6 text-xl leading-relaxed text-[#5a3f2a] md:text-2xl"
             style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: 'italic' }}
           >
-            A companion to the STAY pitch. The pitch shows what is built. This paper shows why
-            the partnership lands here, and not somewhere else that has been tried before.
+            A companion brief to the STAY pitch. The pitch shows what is built. This brief
+            shows why the partnership lands here, and not somewhere else that has been tried
+            before.
           </p>
+          <div className="mt-6 max-w-3xl">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a] mb-2">
+              Executive summary
+            </div>
+            <p className="text-base leading-7 text-[#3a2a1c]">
+              In 2024 the Front Project, supported by Minderoo Foundation, named the cost of
+              acting too late at $22.3B every year. Most of it sits in child protection and
+              youth justice. The next dollar should not fund another report. It should fund
+              the demonstration of acting earlier, in four communities, with the data
+              infrastructure to make the work travel.
+            </p>
+            <p className="mt-3 text-base leading-7 text-[#3a2a1c]">
+              STAY is that demonstration. Year 1 Standard is $1.1M. Four Aboriginal
+              community-controlled anchors held: Oonchiumpa, Palm Island Community Company,
+              BG Fit, and the Minjerribah Moorgumpin Elders-in-Council. Forty-eight cents in
+              the first dollar lands directly on community as untied support. The data layer
+              is built and audited. Three reversibility gates over three years. Year 1
+              deliverables stand on their own at every gate.
+            </p>
+            <p className="mt-3 text-base leading-7 text-[#3a2a1c]">
+              This brief sits beside the pitch and the slide deck. The pitch shows what is
+              built. The deck shows the shape of the partnership. This brief shows why ACT,
+              and not someone else, is positioned to hold the demonstration.
+            </p>
+          </div>
           <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-[#5a3f2a]">
             <Link
               href="/pitch/minderoo"
@@ -154,7 +180,7 @@ export default function MinderooBackgroundPaperPage() {
               <span aria-hidden>←</span> Back to the pitch
             </Link>
             <span className="text-xs text-[#8d6a44]">
-              Reading time 10 to 15 minutes · For internal Minderoo review
+              Companion brief · ~2,000 words · For internal Minderoo review · Version 1, May 2026
             </span>
           </div>
         </div>
@@ -251,6 +277,91 @@ export default function MinderooBackgroundPaperPage() {
           </div>
         </section>
       ))}
+
+      {/* REFERENCES */}
+      <section className="border-b border-[#dec9a9] bg-[#fbf5e9]">
+        <div className="mx-auto max-w-4xl px-6 py-14 md:px-10 md:py-16">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#a04a3a] mb-4">
+            References and sources
+          </div>
+          <h2 className="text-3xl leading-tight text-[#2a1f15] md:text-4xl mb-6" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}>
+            Where the figures and claims come from.
+          </h2>
+          <ol className="space-y-4 text-sm leading-7 text-[#3a2a1c] list-decimal list-outside ml-5">
+            <li>
+              <strong>The Front Project (2024).</strong> Cost of Late Intervention 2024, supported by
+              Minderoo Foundation, prepared by Dr Mary O&apos;Connell.{' '}
+              <a href="https://www.thefrontproject.org.au" target="_blank" rel="noopener noreferrer" className="underline decoration-[#8d6a44] decoration-1 underline-offset-4">thefrontproject.org.au</a>.
+              Source for the $22.3B annual late-intervention cost figure.
+            </li>
+            <li>
+              <strong>Productivity Commission (2025).</strong> Report on Government Services 2024-25,
+              Table 17A.20: Cost per young person subject to detention-based supervision.{' '}
+              <a href="https://www.pc.gov.au/research/ongoing/report-on-government-services" target="_blank" rel="noopener noreferrer" className="underline decoration-[#8d6a44] decoration-1 underline-offset-4">pc.gov.au/rogs</a>.
+              Source for state-by-state detention costs ($939K NSW to $2.67M VIC) and the
+              $1.33M national average.
+            </li>
+            <li>
+              <strong>Coalition of Peaks and Australian Government (2020, updated 2024).</strong>{' '}
+              National Agreement on Closing the Gap, Priority Reform 2: Building the
+              Community-Controlled Sector.{' '}
+              <a href="https://www.closingthegap.gov.au" target="_blank" rel="noopener noreferrer" className="underline decoration-[#8d6a44] decoration-1 underline-offset-4">closingthegap.gov.au</a>.
+              Source for the Priority Reform 2 framing referenced throughout.
+            </li>
+            <li>
+              <strong>First Nations Information Governance Centre (FNIGC).</strong> The First
+              Nations Principles of OCAP: Ownership, Control, Access, Possession.{' '}
+              <a href="https://fnigc.ca/ocap-training/" target="_blank" rel="noopener noreferrer" className="underline decoration-[#8d6a44] decoration-1 underline-offset-4">fnigc.ca</a>.
+              Source for the OCAP framing applied in the Empathy Ledger consent architecture.
+            </li>
+            <li>
+              <strong>Northern Territory Government, Operation Luna (2023-24).</strong>{' '}
+              Multi-agency youth safety taskforce records. Source for Oonchiumpa diversion
+              outcome data: 21 young people referred, 1 remaining on case management by
+              December 2024.
+            </li>
+            <li>
+              <strong>NIAA (National Indigenous Australians Agency).</strong> Central Australia
+              Youth Safety Plan, 2023-25. Source for the $9.2M youth safety allocation inside
+              the $250M Central Australia Plan, and Oonchiumpa&apos;s $1.4M tranche.
+            </li>
+            <li>
+              <strong>JusticeHub Australian Living Map of Alternatives (2026).</strong>{' '}
+              Internal register, accessed May 2026. Source for the count of 1,977 Aboriginal
+              and Torres Strait Islander community-controlled organisations across the
+              jurisdictions in scope.
+            </li>
+            <li>
+              <strong>Australian Charities and Not-for-profits Commission (ACNC).</strong>{' '}
+              Public charity register.{' '}
+              <a href="https://www.acnc.gov.au" target="_blank" rel="noopener noreferrer" className="underline decoration-[#8d6a44] decoration-1 underline-offset-4">acnc.gov.au</a>.
+              Source for organisation verification cross-references in CivicGraph.
+            </li>
+            <li>
+              <strong>Anchor source-of-record.</strong> Direct interviews and program records
+              from Oonchiumpa (Mparntwe), Palm Island Community Company (Townsville), BG Fit
+              (Mount Isa), and the Minjerribah Moorgumpin Elders-in-Council (Minjerribah),
+              March-April 2026. Source for participant numbers, program success rates, and
+              cultural authority quotes.
+            </li>
+          </ol>
+
+          <div className="mt-10 border-t border-[#dec9a9] pt-6">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a] mb-2">
+              Methodology note
+            </div>
+            <p className="text-sm leading-6 text-[#3a2a1c]">
+              This brief draws on public-record statistics, government program documentation,
+              and direct relationships with each of the four anchor organisations. Cost
+              figures are sourced from the Productivity Commission and named primary research.
+              Outcome claims for each anchor are sourced from the anchor organisation directly
+              and cross-referenced with funder records where available. The brief has not been
+              independently peer-reviewed; it is offered as a partnership-grade companion to
+              the STAY pitch, not as academic literature.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* FOOTER */}
       <section className="bg-[#5a3a2a] text-[#fbf5e9]">

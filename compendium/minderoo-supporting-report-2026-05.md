@@ -9,7 +9,7 @@ status: Draft v1, ready for Ben/Nick review
 
 # The next dollar
 
-A supporting report for Minderoo Foundation, written to sit beside the STAY pitch and the seventeen-page background paper. The pitch shows what is built. The background paper shows the working. This report shows why the partnership lands here, and not somewhere else that has been tried before.
+A supporting report for Minderoo Foundation, written to sit beside the STAY pitch and the companion brief. The pitch shows what is built. The background paper shows the working. This report shows why the partnership lands here, and not somewhere else that has been tried before.
 
 ---
 
@@ -131,7 +131,7 @@ That is the sentence. Everything else in this report exists to back it.
 ## Appendix · Companion documents
 
 - **Pitch page (canonical):** `/pitch/minderoo`
-- **Background paper:** seventeen pages, internal Minderoo review only
+- **Companion brief:** roughly 2,000 words, internal Minderoo review only
 - **Centre of Excellence:** `/centre-of-excellence`
 - **Cohort scoping document:** `compendium/minderoo-cohort-scoping.md`
 - **Engagement tracker:** `compendium/contained-tour-engagement-tracker.md`
