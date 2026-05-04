@@ -34,6 +34,38 @@ type OrganizationCapabilityProfileInsert =
 type FundingMatchRecommendationInsert =
   Database['public']['Tables']['funding_match_recommendations']['Insert'];
 
+function isMissingCapabilitySignalsTableError(error: { code?: string | null; message?: string | null } | null | undefined) {
+  const message = String(error?.message || '').toLowerCase();
+  return (
+    error?.code === 'PGRST205' ||
+    (message.includes('organization_capability_signals') &&
+      (message.includes('schema cache') || message.includes('does not exist')))
+  );
+}
+
+function isMissingFundingDiscoverySharedShortlistTableError(error: { code?: string | null; message?: string | null } | null | undefined) {
+  const message = String(error?.message || '').toLowerCase();
+  return (
+    error?.code === 'PGRST205' ||
+    (message.includes('funding_discovery_shared_shortlist') &&
+      (message.includes('schema cache') || message.includes('does not exist')))
+  );
+}
+
+function isMissingOptionalFundingTableError(
+  error: { code?: string | null; message?: string | null } | null | undefined,
+  tableName: string
+) {
+  const message = String(error?.message || '').toLowerCase();
+  const normalizedTableName = tableName.toLowerCase();
+  return (
+    message.includes(normalizedTableName) &&
+    (error?.code === 'PGRST205' ||
+      message.includes('schema cache') ||
+      message.includes('does not exist'))
+  );
+}
+
 export type FundingOsIngestOptions = {
   opportunityIds?: string[];
   statuses?: string[];
@@ -2599,6 +2631,9 @@ export async function listFundingOutcomeCommitments(filters: {
 
   const { data, error } = await query;
   if (error) {
+    if (isMissingOptionalFundingTableError(error, 'funding_outcome_commitments')) {
+      return [];
+    }
     throw new Error(error.message || 'Failed to load outcome commitments');
   }
 
@@ -2618,23 +2653,31 @@ export async function listFundingOutcomeCommitments(filters: {
     { data: outcomeDefinitions, error: outcomeDefinitionError },
     { data: updates, error: updateError },
   ] = await Promise.all([
-    serviceClient
-      .from('organizations')
-      .select('id, name, slug, city, state')
-      .in('id', organizationIds),
-    serviceClient
-      .from('funding_awards')
-      .select('id, award_status, amount_awarded, amount_disbursed, funding_program_id, community_report_due_at, updated_at')
-      .in('id', awardIds),
-    serviceClient
-      .from('community_outcome_definitions')
-      .select('id, name, outcome_domain, unit, description')
-      .in('id', outcomeDefinitionIds),
-    serviceClient
-      .from('funding_outcome_updates')
-      .select('id, commitment_id, update_type, reported_value, reported_at, confidence_score, narrative, created_at, updated_at')
-      .in('commitment_id', commitmentIds)
-      .order('reported_at', { ascending: false }),
+    organizationIds.length > 0
+      ? serviceClient
+          .from('organizations')
+          .select('id, name, slug, city, state')
+          .in('id', organizationIds)
+      : Promise.resolve({ data: [], error: null }),
+    awardIds.length > 0
+      ? serviceClient
+          .from('funding_awards')
+          .select('id, award_status, amount_awarded, amount_disbursed, funding_program_id, community_report_due_at, updated_at')
+          .in('id', awardIds)
+      : Promise.resolve({ data: [], error: null }),
+    outcomeDefinitionIds.length > 0
+      ? serviceClient
+          .from('community_outcome_definitions')
+          .select('id, name, outcome_domain, unit, description')
+          .in('id', outcomeDefinitionIds)
+      : Promise.resolve({ data: [], error: null }),
+    commitmentIds.length > 0
+      ? serviceClient
+          .from('funding_outcome_updates')
+          .select('id, commitment_id, update_type, reported_value, reported_at, confidence_score, narrative, created_at, updated_at')
+          .in('commitment_id', commitmentIds)
+          .order('reported_at', { ascending: false })
+      : Promise.resolve({ data: [], error: null }),
   ]);
 
   if (organizationError) {
@@ -2645,11 +2688,17 @@ export async function listFundingOutcomeCommitments(filters: {
     throw new Error(awardError.message || 'Failed to load awards for commitments');
   }
 
-  if (outcomeDefinitionError) {
+  if (
+    outcomeDefinitionError &&
+    !isMissingOptionalFundingTableError(outcomeDefinitionError, 'community_outcome_definitions')
+  ) {
     throw new Error(outcomeDefinitionError.message || 'Failed to load outcome definitions');
   }
 
-  if (updateError) {
+  if (
+    updateError &&
+    !isMissingOptionalFundingTableError(updateError, 'funding_outcome_updates')
+  ) {
     throw new Error(updateError.message || 'Failed to load outcome updates');
   }
 
@@ -2664,11 +2713,11 @@ export async function listFundingOutcomeCommitments(filters: {
   }
 
   const outcomeDefinitionMap = new Map<string, Record<string, any>>();
-  for (const definition of (outcomeDefinitions || []) as Array<Record<string, any>>) {
+  for (const definition of (outcomeDefinitionError ? [] : outcomeDefinitions || []) as Array<Record<string, any>>) {
     outcomeDefinitionMap.set(String(definition.id), definition);
   }
 
-  const updateRows = (updates || []) as Array<Record<string, any>>;
+  const updateRows = (updateError ? [] : updates || []) as Array<Record<string, any>>;
   const updateIds = uniqueStrings(updateRows.map((update) => update.id));
   let validationRows: Array<Record<string, any>> = [];
 
@@ -2678,11 +2727,14 @@ export async function listFundingOutcomeCommitments(filters: {
       .select('id, update_id, validation_status, trust_rating, impact_rating, validated_at')
       .in('update_id', updateIds);
 
-    if (validationError) {
+    if (
+      validationError &&
+      !isMissingOptionalFundingTableError(validationError, 'community_outcome_validations')
+    ) {
       throw new Error(validationError.message || 'Failed to load outcome validations');
     }
 
-    validationRows = (validations || []) as Array<Record<string, any>>;
+    validationRows = (validationError ? [] : validations || []) as Array<Record<string, any>>;
   }
 
   const latestUpdateMap = new Map<string, Record<string, any>>();
@@ -6338,9 +6390,6 @@ export async function getFundingDiscoveryOrganizationDetail(organizationId: stri
   }
 
   const profileRow = (profile || null) as Record<string, any> | null;
-  if (!profileRow) {
-    return null;
-  }
 
   const { data: organization, error: organizationError } = await serviceClient
     .from('organizations')
@@ -6357,17 +6406,22 @@ export async function getFundingDiscoveryOrganizationDetail(organizationId: stri
     return null;
   }
 
-  const { data: signals, error: signalsError } = await serviceClient
-    .from('organization_capability_signals')
-    .select(
-      'id, capability_profile_id, signal_type, signal_name, signal_score, signal_weight, source_kind, evidence_url, evidence_note, recorded_at, expires_at, updated_at'
-    )
-    .eq('capability_profile_id', String(profileRow.id))
-    .order('signal_weight', { ascending: false })
-    .limit(12);
+  let signalRows: Array<Record<string, any>> = [];
+  if (profileRow) {
+    const { data: signals, error: signalsError } = await serviceClient
+      .from('organization_capability_signals')
+      .select(
+        'id, capability_profile_id, signal_type, signal_name, signal_score, signal_weight, source_kind, evidence_url, evidence_note, recorded_at, expires_at, updated_at'
+      )
+      .eq('capability_profile_id', String(profileRow.id))
+      .order('signal_weight', { ascending: false })
+      .limit(12);
 
-  if (signalsError) {
-    throw new Error(signalsError.message || 'Failed to load capability signals for funder discovery');
+    if (signalsError && !isMissingCapabilitySignalsTableError(signalsError)) {
+      throw new Error(signalsError.message || 'Failed to load capability signals for funder discovery');
+    }
+
+    signalRows = (signals || []) as Array<Record<string, any>>;
   }
 
   const { data: recommendations, error: recommendationsError } = await serviceClient
@@ -6512,27 +6566,27 @@ export async function getFundingDiscoveryOrganizationDetail(organizationId: stri
   });
 
   return {
-    id: String(profileRow.id),
+    id: profileRow ? String(profileRow.id) : normalizedOrganizationId,
     organizationId: normalizedOrganizationId,
     organization: organizationRow,
-    capabilityTags: asArray(profileRow.capability_tags),
-    serviceGeographies: asArray(profileRow.service_geographies),
-    priorityPopulations: asArray(profileRow.priority_populations),
-    operatingModels: asArray(profileRow.operating_models),
-    firstNationsLed: profileRow.first_nations_led === true,
-    livedExperienceLed: profileRow.lived_experience_led === true,
-    fundingReadinessScore: clampScore(profileRow.funding_readiness_score),
-    complianceReadinessScore: clampScore(profileRow.compliance_readiness_score),
-    deliveryConfidenceScore: clampScore(profileRow.delivery_confidence_score),
-    communityTrustScore: clampScore(profileRow.community_trust_score),
-    evidenceMaturityScore: clampScore(profileRow.evidence_maturity_score),
-    reportingToCommunityScore: clampScore(profileRow.reporting_to_community_score),
-    canManageGovernmentContracts: profileRow.can_manage_government_contracts === true,
-    canManagePhilanthropicGrants: profileRow.can_manage_philanthropic_grants !== false,
+    capabilityTags: asArray(profileRow?.capability_tags),
+    serviceGeographies: asArray(profileRow?.service_geographies),
+    priorityPopulations: asArray(profileRow?.priority_populations),
+    operatingModels: asArray(profileRow?.operating_models),
+    firstNationsLed: profileRow?.first_nations_led === true,
+    livedExperienceLed: profileRow?.lived_experience_led === true,
+    fundingReadinessScore: clampScore(profileRow?.funding_readiness_score),
+    complianceReadinessScore: clampScore(profileRow?.compliance_readiness_score),
+    deliveryConfidenceScore: clampScore(profileRow?.delivery_confidence_score),
+    communityTrustScore: clampScore(profileRow?.community_trust_score),
+    evidenceMaturityScore: clampScore(profileRow?.evidence_maturity_score),
+    reportingToCommunityScore: clampScore(profileRow?.reporting_to_community_score),
+    canManageGovernmentContracts: profileRow?.can_manage_government_contracts === true,
+    canManagePhilanthropicGrants: profileRow?.can_manage_philanthropic_grants !== false,
     capabilityNotes:
-      typeof profileRow.capability_notes === 'string' ? profileRow.capability_notes : null,
-    updatedAt: profileRow.updated_at || null,
-    signals: ((signals || []) as Array<Record<string, any>>).map((signal) => ({
+      typeof profileRow?.capability_notes === 'string' ? profileRow.capability_notes : null,
+    updatedAt: profileRow?.updated_at || null,
+    signals: signalRows.map((signal) => ({
       id: String(signal.id),
       signalType: typeof signal.signal_type === 'string' ? signal.signal_type : 'signal',
       signalName: typeof signal.signal_name === 'string' ? signal.signal_name : null,
@@ -6589,11 +6643,14 @@ export async function getFundingOrganizationWorkspaceDetail(organizationId: stri
       .limit(8),
   ]);
 
-  if (applicationsError) {
+  if (
+    applicationsError &&
+    !isMissingOptionalFundingTableError(applicationsError, 'alma_funding_applications')
+  ) {
     throw new Error(applicationsError.message || 'Failed to load funding applications');
   }
 
-  const applicationRows = (applications || []) as Array<Record<string, any>>;
+  const applicationRows = (applicationsError ? [] : applications || []) as Array<Record<string, any>>;
   const opportunityIds = uniqueStrings(applicationRows.map((row) => row.opportunity_id));
   const opportunityMap = new Map<string, Record<string, any>>();
 
@@ -11288,6 +11345,9 @@ export async function listFundingDiscoveryReviewWorkspace(organizationIds?: stri
 
   const { data, error } = await query;
   if (error) {
+    if (isMissingOptionalFundingTableError(error, 'funding_discovery_review_workspace')) {
+      return [];
+    }
     throw new Error(error.message || 'Failed to load funding discovery review workspace');
   }
 
@@ -11315,7 +11375,7 @@ export async function listFundingDiscoverySharedShortlist() {
     .order('sort_index', { ascending: true })
     .order('updated_at', { ascending: false });
 
-  if (error) {
+  if (error && !isMissingFundingDiscoverySharedShortlistTableError(error)) {
     throw new Error(error.message || 'Failed to load funding discovery shared shortlist');
   }
 

@@ -48,7 +48,7 @@ export async function getEntityEnrichment(
     .from('gs_relationships')
     .select('amount, year, source_entity_id')
     .eq('target_entity_id', gsEntityId)
-    .eq('relationship_type', 'funded')
+    .in('relationship_type', ['grant', 'contract', 'donation'])
     .not('amount', 'is', null)
     .order('amount', { ascending: false })
     .limit(5);
@@ -58,7 +58,7 @@ export async function getEntityEnrichment(
     .from('gs_relationships')
     .select('amount, year, target_entity_id')
     .eq('source_entity_id', gsEntityId)
-    .eq('relationship_type', 'funded')
+    .in('relationship_type', ['grant', 'contract', 'donation'])
     .not('amount', 'is', null)
     .order('amount', { ascending: false })
     .limit(5);
@@ -117,4 +117,23 @@ export async function getEntityEnrichment(
       })),
     },
   };
+}
+
+export async function getEntityEnrichmentByAbn(
+  abn: string | null | undefined,
+): Promise<EntityEnrichment | null> {
+  const sanitizedAbn = String(abn || '').replace(/\s/g, '');
+  if (!/^\d{11}$/.test(sanitizedAbn)) return null;
+
+  const supabase = createServiceClient() as any;
+  const { data: entity, error } = await supabase
+    .from('gs_entities')
+    .select('id')
+    .eq('abn', sanitizedAbn)
+    .order('source_count', { ascending: false, nullsFirst: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !entity?.id) return null;
+  return getEntityEnrichment(entity.id);
 }
