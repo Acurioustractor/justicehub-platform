@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { PrintButton } from './PrintButton';
 
 export const metadata = {
   title: 'Slide Deck · STAY × Minderoo Foundation',
@@ -124,9 +125,7 @@ export default function MinderooDeckPage() {
         >
           Back to pitch
         </Link>
-        <span className="rounded-full border border-[#5a3a2a] bg-[#fbf5e9] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#5a3a2a]">
-          Press cmd-P to save as PDF
-        </span>
+        <PrintButton />
       </div>
 
       <div className="deck-scroll">
@@ -606,7 +605,7 @@ export default function MinderooDeckPage() {
               { ring: 'HOLD', tone: '#a04a3a', name: 'Cross-site exchange · Country visits Country', perYear: '$25K per exchange', body: 'One anchor-to-anchor visit. Co-signed by both ends. The September Oonchiumpa trip east is the first worked example.' },
               { ring: 'SEE', tone: '#c08a3e', name: 'Engagement, storytelling, and capture', perYear: '$45K per anchor / year', body: 'Local support to engage with young people, families, and Elders on Country. Filmmakers, photographers, transcription, consent workflow. Per-storyteller, withdrawable.' },
               { ring: 'SEE', tone: '#c08a3e', name: 'JusticeHub platform · data and evidence', perYear: '$160K / year', body: 'Australian Living Map of Alternatives, CivicGraph, JusticeHub case studies, consent UI, hosting, and the external technical audit published in month 10.' },
-              { ring: 'CARRY', tone: '#6b8a5a', name: 'Book, postcards, and exhibition', perYear: '$140K per cycle', body: 'STAY series book co-authored with the four anchors. Postcards send to chambers, philanthropy, and government rooms. An exhibition stop each year, building toward the Year 3 national exhibition at the Harvest.' },
+              { ring: 'CARRY', tone: '#6b8a5a', name: 'Book, postcards, and exhibition', perYear: '$140K per cycle', body: 'STAY series book and postcards co-authored with the four anchors, designed to travel into chambers, philanthropy, and government rooms. An exhibition stop each year, building toward the Year 3 national exhibition at the Harvest.' },
               { ring: 'CARRY', tone: '#6b8a5a', name: 'Contained tour stop', perYear: '$30K per stop', body: 'A live tour stop carrying STAY images, postcards, and journals into the room. Perth, Mt Druitt, Adelaide, Tennant Creek, Brisbane.' },
               { ring: 'EXTEND', tone: '#5a3a2a', name: 'International trip (if available)', perYear: '$80K one-off', body: 'July to August 2026: Africa and Europe storytelling work feeds the platform. Australia in the conversation, not consuming it. Adds breadth to Year 1.' },
             ].map((row, i) => (
