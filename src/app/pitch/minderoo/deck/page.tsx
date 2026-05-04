@@ -143,16 +143,15 @@ export default function MinderooDeckPage() {
                 <span className="italic">Changing futures.</span>
               </h1>
               <p className="text-xl md:text-2xl leading-relaxed text-[#5a3f2a]" style={{ ...cormorant, fontStyle: 'italic' }}>
-                STAY: a three-year partnership backing four Aboriginal
-                community-controlled anchors. $1.1M Year 1 Standard. Four reversibility gates.
-                Country at the centre.
+                STAY: a three-year partnership backing four Aboriginal community-controlled
+                anchors. Country at the centre.
               </p>
             </div>
             <figure className="rounded-[28px] overflow-hidden border border-[#dec9a9] bg-white shadow-[0_18px_46px_rgba(122,46,34,0.08)]">
               <img
-                src="/images/orgs/oonchiumpa/atnarpa/originals/20251103-DJI_0271.jpg"
-                alt="Atnarpa Homestead, Eastern Arrernte Country, where the work is grounded"
-                className="w-full h-[480px] object-cover"
+                src="/images/orgs/oonchiumpa/march-2026/cover-boys-drone.jpg"
+                alt="Two young people from Mparntwe with a drone on Country"
+                className="w-full h-[520px] object-cover"
               />
             </figure>
           </div>
@@ -163,13 +162,13 @@ export default function MinderooDeckPage() {
           <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 items-center">
             <figure className="rounded-[28px] overflow-hidden border border-[#dec9a9] bg-white shadow-[0_16px_40px_rgba(122,46,34,0.08)]">
               <img
-                src="/images/judges-on-country/april-2026.jpg"
-                alt="Fifty-five judges on Country at Mparntwe, 17 April 2026"
-                className="w-full h-[460px] object-cover"
+                src="/images/maps/two-australias.png"
+                alt="Two maps: cost of detention by state on the left, community-controlled organisations holding children on the right"
+                className="w-full h-auto"
               />
               <figcaption className="px-5 py-3 bg-white border-t border-[#dec9a9]">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a]">17 April 2026</div>
-                <div className="text-base mt-0.5 text-[#2a1f15]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}>Judges on Country at Mparntwe</div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a]">Two Australias</div>
+                <div className="text-base mt-0.5 text-[#2a1f15]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}>Cost of acting too late · Work already happening</div>
               </figcaption>
             </figure>
             <div>
@@ -415,13 +414,13 @@ export default function MinderooDeckPage() {
           <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-10 items-center">
             <figure className="rounded-[28px] overflow-hidden border border-[#dec9a9] bg-white shadow-[0_16px_40px_rgba(122,46,34,0.08)]">
               <img
-                src="/images/orgs/oonchiumpa/homestead.jpg"
-                alt="The Oonchiumpa team at Atnarpa Homestead, where the trip begins and ends"
+                src="/images/orgs/oonchiumpa/team-true-justice-mural.jpg"
+                alt="The Oonchiumpa team in front of the True Justice Indigenous Perspective and Deep Listening on Country mural"
                 className="w-full h-[520px] object-cover"
                 loading="lazy"
               />
               <figcaption className="px-5 py-3 bg-white border-t border-[#dec9a9]">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a]">Atnarpa Homestead · Eastern Arrernte Country</div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a]">True Justice · Eastern Arrernte Country</div>
                 <div className="text-base mt-0.5 text-[#2a1f15]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}>The Oonchiumpa team, before the trip east</div>
               </figcaption>
             </figure>
@@ -455,38 +454,38 @@ export default function MinderooDeckPage() {
           <h2 className="max-w-5xl text-4xl md:text-6xl leading-tight mb-10" style={{ ...cormorant, fontWeight: 500 }}>
             <span className="italic">Fifty-five judges. Ninety-five per cent diversion. Eighty-six people on tour.</span>
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 items-center max-w-7xl mb-6">
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { src: '/images/judges-on-country/qr-front-judges.png', alt: 'Postcard front: judges' },
-                { src: '/images/judges-on-country/qr-back-jackquann-nigel.png', alt: 'Postcard back: Jackquann and Nigel' },
-                { src: '/images/judges-on-country/qr-back-laquisha.png', alt: 'Postcard back: Laquisha' },
-                { src: '/images/judges-on-country/qr-back-founders.png', alt: 'Postcard back: Kristy and Tanya' },
-              ].map((p) => (
-                <figure key={p.src} className="rounded-[18px] overflow-hidden border border-[#dec9a9] bg-white shadow-[0_10px_28px_rgba(122,46,34,0.08)]">
-                  <img src={p.src} alt={p.alt} className="w-full h-44 object-cover" loading="lazy" />
-                </figure>
-              ))}
-            </div>
+          <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_0.6fr] gap-8 items-center max-w-7xl mb-6">
+            <figure className="rounded-[24px] overflow-hidden border border-[#dec9a9] bg-white shadow-[0_14px_36px_rgba(122,46,34,0.08)]">
+              <img
+                src="/images/judges-on-country/postcards-grid.png"
+                alt="The full set of STAY postcards: front and back, twelve cards in total"
+                className="w-full h-auto"
+                loading="lazy"
+              />
+              <figcaption className="px-5 py-3 bg-white border-t border-[#dec9a9]">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a]">September 2026</div>
+                <div className="text-base mt-0.5 text-[#2a1f15]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}>The first STAY public artefact, on the move</div>
+              </figcaption>
+            </figure>
             <div>
-              <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="space-y-5 mb-6">
                 <div>
                   <div className="text-5xl" style={{ ...cormorant, fontWeight: 500 }}>55</div>
-                  <p className="text-xs text-[#5a3f2a] mt-1 leading-5">Judges on Country at Mparntwe, 17 April 2026.</p>
+                  <p className="text-sm text-[#5a3f2a] mt-1 leading-6">Judges on Country at Mparntwe, 17 April 2026.</p>
                 </div>
                 <div>
                   <div className="text-5xl" style={{ ...cormorant, fontWeight: 500 }}>95%</div>
-                  <p className="text-xs text-[#5a3f2a] mt-1 leading-5">Operation Luna diversion. 20 of 21 referrals diverted by Dec 2024.</p>
+                  <p className="text-sm text-[#5a3f2a] mt-1 leading-6">Operation Luna diversion. 20 of 21 referrals diverted by Dec 2024.</p>
                 </div>
                 <div>
                   <div className="text-5xl" style={{ ...cormorant, fontWeight: 500 }}>86</div>
-                  <p className="text-xs text-[#5a3f2a] mt-1 leading-5">People across fifteen locations have reached out about the Contained tour.</p>
+                  <p className="text-sm text-[#5a3f2a] mt-1 leading-6">People across fifteen locations have reached out about the Contained tour.</p>
                 </div>
               </div>
-              <p className="text-base text-[#5a3f2a] leading-7">
-                In September 2026 the postcards travel from Atnarpa to the fifty-five judges who
-                sat on Country in April. Each postcard carries a young person, an Elder, or a
-                place. The first STAY artefact, on the move.
+              <p className="text-sm text-[#5a3f2a] leading-6">
+                Each postcard carries a young person, an Elder, or a place. The first STAY
+                artefact, designed to land in chambers, philanthropy rooms, and government
+                rooms.
               </p>
             </div>
           </div>
@@ -572,57 +571,56 @@ export default function MinderooDeckPage() {
           </ol>
         </Slide>
 
-        {/* 15 — THE ASK · plain cost breakdown */}
+        {/* 15 — THE ASK · per-year menu, agile, no total */}
         <Slide n={15} total={total} bg="#fbf5e9">
           <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#8d6a44] mb-4">
-            The ask
+            How the dollars can land
           </div>
-          <h2 className="max-w-4xl text-5xl md:text-7xl leading-tight mb-4" style={{ ...cormorant, fontWeight: 500 }}>
-            $1.1M Year 1.
+          <h2 className="max-w-5xl text-4xl md:text-6xl leading-tight mb-4" style={{ ...cormorant, fontWeight: 500 }}>
+            A menu of moves, <span className="italic">per year.</span>
           </h2>
-          <p className="max-w-3xl text-lg leading-relaxed text-[#5a3f2a] mb-8">
-            Six line items. Six concrete things the dollar buys. Four reversibility gates over
-            three years. Year 1 deliverables stand on their own at every gate.
+          <p className="max-w-3xl text-lg leading-relaxed text-[#5a3f2a] mb-2">
+            This is not a fixed package. It is the way to frame the work so Minderoo can move
+            dollars into the form that fits best. Pick any of these. Combine them. Shape Year 1
+            against where the partnership most wants to land.
+          </p>
+          <p className="max-w-3xl text-base text-[#8d6a44] italic mb-8">
+            Agile, relational, and reversible. Every line stands on its own at every gate.
           </p>
 
-          <div className="border-2 border-[#5a3a2a] bg-white max-w-5xl">
+          <div className="border-2 border-[#5a3a2a] bg-white max-w-6xl">
             {[
-              { ring: 'HOLD', tone: '#a04a3a', name: 'Holding four anchors well', body: 'Untied support across Oonchiumpa, PICC, BG Fit, MMEIC. Cultural authority paid.', cost: '$420K' },
-              { ring: 'HOLD', tone: '#a04a3a', name: 'Cross-site exchanges', body: 'Anchor-to-anchor visits. Annual STAY gathering at the Harvest. The September trip.', cost: '$110K' },
-              { ring: 'SEE', tone: '#c08a3e', name: 'Story capture and editorial', body: 'Filmmakers, photographers, transcription, consent workflow. Per-storyteller.', cost: '$180K' },
-              { ring: 'SEE', tone: '#c08a3e', name: 'JusticeHub platform layer', body: 'Living Map, CivicGraph, case studies, hosting, the external technical audit.', cost: '$160K' },
-              { ring: 'CARRY', tone: '#6b8a5a', name: 'September postcards + first artefact', body: 'Send to the fifty-five judges. First STAY public artefact, co-authored.', cost: '$140K' },
-              { ring: 'CARRY', tone: '#6b8a5a', name: 'Contained tour as a vehicle', body: 'Perth, Mt Druitt, Adelaide, Tennant Creek, Brisbane. Postcards + STAY artefacts travel.', cost: '$90K' },
+              { ring: 'HOLD', tone: '#a04a3a', name: 'Anchor support', perYear: '$100K per anchor / year', body: 'Untied support to a community-controlled organisation. Cultural authority paid. Travel and protocol covered. Quarterly sense-making.' },
+              { ring: 'HOLD', tone: '#a04a3a', name: 'Cross-site exchange', perYear: '$25K per exchange', body: 'One anchor-to-anchor visit. Country visits Country. Co-signed by both ends. The September Oonchiumpa trip is one example.' },
+              { ring: 'SEE', tone: '#c08a3e', name: 'Storytelling residency', perYear: '$45K per anchor / year', body: 'Two to three storytelling trips per anchor. Filmmakers, photographers, transcription, consent workflow. Per-storyteller, withdrawable.' },
+              { ring: 'SEE', tone: '#c08a3e', name: 'Platform layer', perYear: '$160K / year', body: 'Australian Living Map of Alternatives, CivicGraph, JusticeHub case studies, consent UI, hosting, and the external technical audit published in month 10.' },
+              { ring: 'CARRY', tone: '#6b8a5a', name: 'Public artefact', perYear: '$70K per artefact', body: 'One STAY artefact, co-authored across the four anchors, designed to travel into chambers, philanthropy, and government rooms.' },
+              { ring: 'CARRY', tone: '#6b8a5a', name: 'Contained tour stop', perYear: '$30K per stop', body: 'A tour stop where STAY images, postcards, and journals travel. Perth, Mt Druitt, Adelaide, Tennant Creek, Brisbane.' },
+              { ring: 'CARRY', tone: '#6b8a5a', name: 'September postcards send', perYear: '$60K one-off', body: 'The send to the fifty-five judges who sat on Country at Mparntwe on 17 April 2026. The first major Carry deliverable.' },
+              { ring: 'EXTEND', tone: '#5a3a2a', name: 'International learning trip', perYear: '$80K one-off', body: 'July to August 2026: Africa and Europe storytelling work feeds the platform. Australia in the conversation, not consuming it.' },
             ].map((row, i) => (
-              <div key={row.name} className={`grid grid-cols-[110px_1fr_auto] items-center gap-4 px-5 py-4 ${i > 0 ? 'border-t border-[#dec9a9]' : ''}`}>
+              <div key={row.name} className={`grid grid-cols-[100px_1fr_180px] items-start gap-4 px-5 py-4 ${i > 0 ? 'border-t border-[#dec9a9]' : ''}`}>
                 <span
-                  className="text-[10px] font-semibold uppercase tracking-[0.22em] px-2 py-1 inline-block text-white"
+                  className="text-[10px] font-semibold uppercase tracking-[0.22em] px-2 py-1 inline-block text-white text-center"
                   style={{ background: row.tone }}
                 >
                   {row.ring}
                 </span>
                 <div>
                   <div className="text-base font-semibold text-[#2a1f15]">{row.name}</div>
-                  <div className="text-xs text-[#5a3f2a] leading-5 mt-0.5">{row.body}</div>
+                  <div className="text-xs text-[#5a3f2a] leading-5 mt-1">{row.body}</div>
                 </div>
-                <div className="text-2xl text-[#5a3a2a]" style={{ ...cormorant, fontWeight: 500 }}>{row.cost}</div>
+                <div className="text-right">
+                  <div className="text-xl text-[#5a3a2a]" style={{ ...cormorant, fontWeight: 500 }}>{row.perYear}</div>
+                </div>
               </div>
             ))}
-            <div className="grid grid-cols-[110px_1fr_auto] items-center gap-4 px-5 py-5 bg-[#5a3a2a] text-[#fbf5e9]">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.22em] px-2 py-1 inline-block bg-[#fbf5e9] text-[#5a3a2a]">
-                Total
-              </span>
-              <div>
-                <div className="text-base font-semibold">Year 1 Standard</div>
-                <div className="text-xs text-[#e7d4b3] mt-0.5">Four anchors. Postcards send. First STAY artefact. Contained Perth stop.</div>
-              </div>
-              <div className="text-3xl" style={{ ...cormorant, fontWeight: 500 }}>$1.1M</div>
-            </div>
           </div>
 
-          <p className="mt-6 max-w-3xl text-sm text-[#8d6a44]">
-            Light entry $600K (2 anchors). Lean-in $1.6M (4 anchors + Africa and Europe). Flex
-            shapes for Years 2 and 3 are detailed in the background paper.
+          <p className="mt-6 max-w-4xl text-sm text-[#8d6a44]">
+            How the dollars activate the system change. Minderoo picks the shape that fits the
+            partnership. The partnership flexes year on year as the work and the relationship
+            travel.
           </p>
         </Slide>
 
