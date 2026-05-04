@@ -822,157 +822,69 @@ export default function SystemMapPage() {
           </div>
         </section>
 
-        {/* WHAT THIS COSTS: flex menu for funders */}
+        {/* For partners and funders: discreet pointer, no costs on the public page */}
         <section className="py-16 bg-gray-50 border-y-2 border-black">
           <div className="container-justice">
-            <div className="max-w-4xl mb-10">
-              <div className="inline-block bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-4">
-                What this costs and how it flexes
-              </div>
-              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4">
-                The Minderoo partnership ask, three shapes
-              </h2>
-              <p className="text-xl text-gray-700 leading-relaxed mb-3">
-                Standard tier in Year 1 is $1.1M for the four anchors. The partnership flexes
-                up to $1.6M with international learning, or down to $600K on two anchors. Four
-                reversibility gates over three years. Conclude at any month-10 review with the
-                deliverables standing on their own.
-              </p>
-              <p className="text-base text-gray-600">
-                Aligns to the Minderoo Communities pillar, Strategic Impact Fund, and Generation
-                One. The full case sits on the pitch page; the seventeen-page background paper
-                walks through the cost case, governance, and partnership pathways.
-              </p>
-            </div>
-
-            {/* Three tiers */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
-              {/* Light */}
-              <article className="bg-white border-2 border-black p-6 flex flex-col">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-gray-600 mb-2">
-                  Tier 01 · Light
+            <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-8 items-start">
+              <div>
+                <div className="inline-block bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-4">
+                  For partners and funders
                 </div>
-                <div className="text-4xl font-black tracking-tighter mb-1">$600K</div>
-                <div className="text-sm font-bold text-gray-700 mb-4">Year 1 · 2 anchors</div>
-                <p className="text-sm text-gray-700 mb-4 leading-relaxed">
-                  Lowest-commitment entry. Two anchors held. September postcards send to the 55 judges.
+                <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4">
+                  The partnership detail lives in the pitch
+                </h2>
+                <p className="text-lg text-gray-700 leading-relaxed mb-3">
+                  The cost case, partnership shapes, governance, and the action path are held in
+                  the partnership pitch and the seventeen-page background paper. Both are
+                  password-protected.
                 </p>
-                <ul className="text-sm text-gray-700 space-y-2 mt-auto">
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-emerald-700 mt-0.5 flex-shrink-0" />HOLD: 2 anchors + 1 cross-site exchange ($290K)</li>
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-emerald-700 mt-0.5 flex-shrink-0" />SEE: core platform + storytelling ($190K)</li>
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-emerald-700 mt-0.5 flex-shrink-0" />CARRY: postcards send only ($120K)</li>
-                </ul>
-              </article>
-
-              {/* Standard recommended */}
-              <article className="bg-emerald-600 text-white border-2 border-black p-6 flex flex-col shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] relative">
-                <div className="absolute -top-3 left-4 bg-black text-white px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
-                  Recommended
-                </div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-100 mb-2">
-                  Tier 02 · Standard
-                </div>
-                <div className="text-4xl font-black tracking-tighter mb-1">$1.1M</div>
-                <div className="text-sm font-bold text-emerald-100 mb-4">Year 1 · 4 anchors</div>
-                <p className="text-sm text-emerald-50 mb-4 leading-relaxed">
-                  Full Year 1 anchor across all four communities. Postcards, first STAY artefact, Contained Perth stop.
-                </p>
-                <ul className="text-sm text-emerald-50 space-y-2 mt-auto">
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-white mt-0.5 flex-shrink-0" />HOLD: 4 anchors + cross-site exchanges ($530K)</li>
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-white mt-0.5 flex-shrink-0" />SEE: platform + editorial for 4 anchors ($340K)</li>
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-white mt-0.5 flex-shrink-0" />CARRY: postcards + first artefact + Contained Perth ($230K)</li>
-                </ul>
-              </article>
-
-              {/* Lean-in */}
-              <article className="bg-white border-2 border-black p-6 flex flex-col">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-gray-600 mb-2">
-                  Tier 03 · Lean-in
-                </div>
-                <div className="text-4xl font-black tracking-tighter mb-1">$1.6M</div>
-                <div className="text-sm font-bold text-gray-700 mb-4">Year 1 · 4 anchors + global</div>
-                <p className="text-sm text-gray-700 mb-4 leading-relaxed">
-                  Lead the movement. Africa and Europe learning trip integrated. Extended Contained tour.
-                </p>
-                <ul className="text-sm text-gray-700 space-y-2 mt-auto">
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-emerald-700 mt-0.5 flex-shrink-0" />HOLD: 4 anchors + extended protocol ($770K)</li>
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-emerald-700 mt-0.5 flex-shrink-0" />SEE: platform + Africa/Europe integration ($500K)</li>
-                  <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-emerald-700 mt-0.5 flex-shrink-0" />CARRY: postcards + 2 artefacts + extended tour ($330K)</li>
-                </ul>
-              </article>
-            </div>
-
-            {/* Three-year envelopes */}
-            <div className="border-2 border-black bg-white">
-              <div className="px-5 py-4 border-b-2 border-black bg-gray-50">
-                <h3 className="font-black text-lg uppercase tracking-tighter">Three-year envelopes · four reversibility shapes</h3>
-                <p className="text-sm text-gray-700 mt-1">
-                  Decide at any month-10 review which way the partnership flexes. Year 1 deliverables stand on their own at every gate.
+                <p className="text-base text-gray-600">
+                  If you are a funder, philanthropic partner, or government stakeholder and
+                  would like access, request a password from{' '}
+                  <a href="mailto:partners@justicehub.com.au" className="font-bold underline hover:text-black">
+                    partners@justicehub.com.au
+                  </a>{' '}
+                  or get in touch through the Centre of Excellence.
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 divide-y-2 md:divide-y-0 md:divide-x-2 divide-black">
-                <div className="p-5">
-                  <div className="text-2xl font-black tracking-tighter">↗ Lift</div>
-                  <div className="text-xl font-black text-emerald-700 mt-1">~$3.6M</div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-gray-500 mt-2">3-year total</div>
-                  <p className="text-sm text-gray-700 mt-2 leading-relaxed">Y2 grows into 6 anchors. Y3 lands the national exhibition. Trigger: Y1 outcomes strong, two artefacts public.</p>
-                </div>
-                <div className="p-5">
-                  <div className="text-2xl font-black tracking-tighter">↔ Steady</div>
-                  <div className="text-xl font-black text-blue-700 mt-1">~$3.3M</div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-gray-500 mt-2">3-year total</div>
-                  <p className="text-sm text-gray-700 mt-2 leading-relaxed">Hold at Y1 level for Y2 and Y3. Predictability over growth. Trigger: solid outcomes, four anchors retained.</p>
-                </div>
-                <div className="p-5">
-                  <div className="text-2xl font-black tracking-tighter">↘ Taper</div>
-                  <div className="text-xl font-black text-orange-700 mt-1">~$2.5M</div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-gray-500 mt-2">3-year total</div>
-                  <p className="text-sm text-gray-700 mt-2 leading-relaxed">Y2 at 75%, Y3 at 50%. Cohort narrows with the funding. Trigger: scope tightens, no cliff.</p>
-                </div>
-                <div className="p-5">
-                  <div className="text-2xl font-black tracking-tighter">✕ Conclude</div>
-                  <div className="text-xl font-black text-gray-700 mt-1">$1.1M</div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-gray-500 mt-2">Y1 only</div>
-                  <p className="text-sm text-gray-700 mt-2 leading-relaxed">Year 1 stands as the partnership outcome. Available at any month-10 review.</p>
-                </div>
-              </div>
-            </div>
 
-            {/* Funder-facing CTAs */}
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Link
-                href="/pitch/minderoo"
-                className="bg-black text-white p-6 hover:bg-gray-900 transition-colors group flex flex-col"
-              >
-                <div className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-2">For Minderoo</div>
-                <div className="text-xl font-black uppercase tracking-tighter mb-2 group-hover:underline">The full pitch</div>
-                <p className="text-sm text-gray-300 leading-relaxed mb-3">The four anchors, the three rings, the action path, the September postcards. Read it cold or after the meeting.</p>
-                <div className="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
-                  Open pitch <ArrowRight className="w-4 h-4" />
-                </div>
-              </Link>
-              <Link
-                href="/pitch/minderoo/background-paper"
-                className="bg-white border-2 border-black p-6 hover:bg-gray-50 transition-colors group flex flex-col"
-              >
-                <div className="text-xs font-bold uppercase tracking-widest text-gray-600 mb-2">After the meeting</div>
-                <div className="text-xl font-black uppercase tracking-tighter mb-2 group-hover:underline">The background paper</div>
-                <p className="text-sm text-gray-700 leading-relaxed mb-3">Seventeen pages. Cost case, platform stack, governance, the five partnership pathway shapes for the November conversation.</p>
-                <div className="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-700">
-                  Open paper <ArrowRight className="w-4 h-4" />
-                </div>
-              </Link>
-              <Link
-                href="/funding/workspace/5f038d59-9bf2-439b-b018-249790dfb41b"
-                className="bg-emerald-50 border-2 border-black p-6 hover:bg-emerald-100 transition-colors group flex flex-col"
-              >
-                <div className="text-xs font-bold uppercase tracking-widest text-emerald-700 mb-2">A worked workspace</div>
-                <div className="text-xl font-black uppercase tracking-tighter mb-2 group-hover:underline">Oonchiumpa funding workspace</div>
-                <p className="text-sm text-gray-700 leading-relaxed mb-3">Live example: Oonchiumpa's working note, partner asks, blockers, and five outcome commitments tied to the NIAA and Snow awards.</p>
-                <div className="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-700">
-                  Open workspace <ArrowRight className="w-4 h-4" />
-                </div>
-              </Link>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Link
+                  href="/pitch/minderoo"
+                  className="bg-black text-white p-6 hover:bg-gray-900 transition-colors group flex flex-col"
+                >
+                  <div className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-2">
+                    Partnership pitch
+                  </div>
+                  <div className="text-xl font-black uppercase tracking-tighter mb-2 group-hover:underline">
+                    Open the pitch
+                  </div>
+                  <p className="text-sm text-gray-300 leading-relaxed mb-3">
+                    The full case for the partnership. Four anchors, three rings, action path.
+                    Password required.
+                  </p>
+                  <div className="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-400">
+                    Continue to login <ArrowRight className="w-4 h-4" />
+                  </div>
+                </Link>
+                <Link
+                  href="/centre-of-excellence"
+                  className="bg-white border-2 border-black p-6 hover:bg-gray-50 transition-colors group flex flex-col"
+                >
+                  <div className="text-xs font-bold uppercase tracking-widest text-gray-600 mb-2">
+                    Public overview
+                  </div>
+                  <div className="text-xl font-black uppercase tracking-tighter mb-2 group-hover:underline">
+                    Centre of Excellence
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed mb-3">
+                    The four anchors, the Harvest at Witta, and the broader Centre of Excellence.
+                  </p>
+                  <div className="mt-auto inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-emerald-700">
+                    Open <ArrowRight className="w-4 h-4" />
+                  </div>
+                </Link>
+              </div>
             </div>
           </div>
         </section>
