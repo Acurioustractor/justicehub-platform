@@ -619,6 +619,154 @@ export default function SystemMapPage() {
           </div>
         </section>
 
+        {/* TWO AUSTRALIAS: cost of waiting vs work already happening */}
+        <section className="py-16 bg-white border-y-2 border-black">
+          <div className="container-justice">
+            <div className="max-w-4xl mb-10">
+              <div className="inline-block bg-black text-white px-3 py-1 text-xs font-bold uppercase tracking-widest mb-4">
+                Two Australias
+              </div>
+              <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-4">
+                The cost of waiting. The work already happening.
+              </h2>
+              <p className="text-xl text-gray-700 leading-relaxed">
+                On the left, what every state spends to lock up one child for one year. On the
+                right, the community-controlled organisations that have already chosen another
+                way. Same country. Two stories. The funding still mostly flows to the first map.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Left: Cost of detention */}
+              <div className="border-2 border-black bg-white">
+                <div className="p-5 border-b-2 border-black bg-red-50">
+                  <div className="text-xs font-bold uppercase tracking-widest text-red-700 mb-1">
+                    Cost of acting too late
+                  </div>
+                  <h3 className="text-xl font-black uppercase tracking-tighter">
+                    What each state pays per child per year in detention
+                  </h3>
+                  <p className="text-sm text-gray-700 mt-2">
+                    Source: Productivity Commission ROGS 2024-25, Table 17A.20.
+                  </p>
+                </div>
+                <div className="relative aspect-[4/5] bg-red-50/40">
+                  <div
+                    className="absolute inset-0 bg-no-repeat bg-center bg-contain opacity-30"
+                    style={{ backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Australia_location_map.svg/1200px-Australia_location_map.svg.png)' }}
+                  />
+                  {[
+                    { code: 'NSW', x: 84, y: 62, cost: '$939K' },
+                    { code: 'VIC', x: 80, y: 78, cost: '$2.67M' },
+                    { code: 'QLD', x: 85, y: 35, cost: '$990K' },
+                    { code: 'WA', x: 22, y: 45, cost: '$1.53M' },
+                    { code: 'SA', x: 58, y: 58, cost: '$1.19M' },
+                    { code: 'NT', x: 52, y: 22, cost: '$1.26M' },
+                    { code: 'TAS', x: 83, y: 94, cost: '$1.87M' },
+                    { code: 'ACT', x: 87, y: 65, cost: '$1.51M' },
+                  ].map((s) => {
+                    const cost = parseFloat(s.cost.replace(/[^\d.]/g, '')) * (s.cost.includes('K') ? 1000 : 1000000);
+                    const size = Math.max(28, Math.min(64, Math.round(28 + (cost / 2670000) * 36)));
+                    return (
+                      <div
+                        key={s.code}
+                        className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+                        style={{ left: `${s.x}%`, top: `${s.y}%` }}
+                      >
+                        <div
+                          className="rounded-full border-2 border-black bg-red-600 text-white flex items-center justify-center font-black text-xs shadow-md"
+                          style={{ width: size, height: size }}
+                        >
+                          {s.code}
+                        </div>
+                        <div className="mt-1 px-2 py-0.5 bg-white border border-black text-[10px] font-black whitespace-nowrap shadow">
+                          {s.cost}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="p-5 border-t-2 border-black text-sm text-gray-700">
+                  <p className="font-bold mb-2">National average: $1.33M per child per year.</p>
+                  <p>That is more than the median Australian house deposit. Spent on one child. Per year. And the public conversation still asks whether community-led work is &quot;value for money&quot;.</p>
+                </div>
+              </div>
+
+              {/* Right: Community-led work already happening */}
+              <div className="border-2 border-black bg-white">
+                <div className="p-5 border-b-2 border-black bg-emerald-50">
+                  <div className="text-xs font-bold uppercase tracking-widest text-emerald-700 mb-1">
+                    Work already happening
+                  </div>
+                  <h3 className="text-xl font-black uppercase tracking-tighter">
+                    Community-controlled organisations holding children
+                  </h3>
+                  <p className="text-sm text-gray-700 mt-2">
+                    The four anchors are named. The numbers count Aboriginal and Torres Strait Islander community-controlled organisations across the JusticeHub register.
+                  </p>
+                </div>
+                <div className="relative aspect-[4/5] bg-emerald-50/40">
+                  <div
+                    className="absolute inset-0 bg-no-repeat bg-center bg-contain opacity-30"
+                    style={{ backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Australia_location_map.svg/1200px-Australia_location_map.svg.png)' }}
+                  />
+                  {[
+                    { code: 'NSW', x: 84, y: 62, count: 370 },
+                    { code: 'VIC', x: 80, y: 78, count: 125 },
+                    { code: 'QLD', x: 85, y: 35, count: 659, anchors: ['PICC', 'BG Fit', 'MMEIC'] },
+                    { code: 'WA', x: 22, y: 45, count: 386 },
+                    { code: 'SA', x: 58, y: 58, count: 94 },
+                    { code: 'NT', x: 52, y: 22, count: 298, anchors: ['Oonchiumpa'] },
+                    { code: 'TAS', x: 83, y: 94, count: 18 },
+                    { code: 'ACT', x: 87, y: 65, count: 27 },
+                  ].map((s) => {
+                    const size = Math.max(24, Math.min(60, Math.round(24 + (s.count / 660) * 36)));
+                    const isAnchor = s.anchors && s.anchors.length > 0;
+                    return (
+                      <div
+                        key={s.code}
+                        className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+                        style={{ left: `${s.x}%`, top: `${s.y}%` }}
+                      >
+                        <div
+                          className={`rounded-full border-2 border-black flex items-center justify-center font-black text-xs shadow-md ${
+                            isAnchor ? 'bg-emerald-600 text-white' : 'bg-white text-emerald-700'
+                          }`}
+                          style={{ width: size, height: size }}
+                        >
+                          {s.code}
+                        </div>
+                        <div className="mt-1 px-2 py-0.5 bg-white border border-black text-[10px] font-black whitespace-nowrap shadow">
+                          {s.count.toLocaleString()} orgs
+                        </div>
+                        {isAnchor && (
+                          <div className="mt-1 px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-black whitespace-nowrap shadow">
+                            ★ {s.anchors!.join(' · ')}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="p-5 border-t-2 border-black text-sm text-gray-700">
+                  <p className="font-bold mb-2">1,977 community-controlled organisations across Australia.</p>
+                  <p>Most have never received philanthropic dollars. The four anchors mark the deep work in three states. The Australian Living Map of Alternatives + CivicGraph surface the rest. Any of them can claim a JusticeHub page tomorrow.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-10 max-w-3xl">
+              <p className="text-base text-gray-700 leading-relaxed">
+                When a community connects to JusticeHub, three things happen on this map. The
+                org claims a page on their terms. Their stories travel through Empathy Ledger
+                with consent. CivicGraph reads the funding map against the work map and starts
+                the conversation with funders that fit. The cost-of-waiting numbers stay where
+                they are. The community-led numbers grow.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* National + international */}
         <section className="py-16">
           <div className="container-justice max-w-4xl">
