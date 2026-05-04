@@ -500,11 +500,30 @@ export default function SystemMapPage() {
             <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
               Where the work comes home
             </h2>
-            <p className="text-xl text-gray-700 mb-12 max-w-3xl">
+            <p className="text-xl text-gray-700 mb-8 max-w-3xl">
               The Harvest at Witta on Jinibara Country is the place all of this returns to.
               Cohort weeks. Editorial residencies. An annual STAY gathering across the four
               anchors. Country visits Country.
             </p>
+
+            <figure className="mb-12 border-2 border-black bg-white overflow-hidden">
+              <div className="relative w-full aspect-[21/9]">
+                <img
+                  src="/images/harvest/seed-house.jpg"
+                  alt="The Harvest at Witta on Jinibara Country, the physical centre where the cohort gathers"
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 mb-1">
+                    The Harvest
+                  </div>
+                  <div className="text-xl md:text-2xl font-black text-white tracking-tighter">
+                    Witta · Jinibara Country · Sunshine Coast hinterland
+                  </div>
+                </div>
+              </div>
+            </figure>
 
             <div className="border-2 border-black bg-white">
               {harvestRing.map((r, i) => (
