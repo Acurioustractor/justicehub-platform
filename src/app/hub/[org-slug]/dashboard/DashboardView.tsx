@@ -20,34 +20,34 @@ export function DashboardView({ summary }: DashboardViewProps) {
     <div className="space-y-8">
       {/* Page header */}
       <div>
-        <h2 className="text-2xl font-black">This Week</h2>
-        <p className="text-sm text-gray-500 font-medium mt-1">Your grants at a glance</p>
+        <h2 className="text-2xl font-black">This week</h2>
+        <p className="text-sm text-gray-500 font-medium mt-1">Where your funding stands right now</p>
       </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard
           icon={Activity}
-          label="Active Grants"
+          label="Grants you're running"
           value={String(summary.activeGrants)}
           color="bg-green-50"
         />
         <StatCard
           icon={DollarSign}
-          label="Total Spent"
+          label="Money put to work"
           value={formatCurrency(summary.totalSpent)}
-          sub={`of ${formatCurrency(summary.totalBudget)} budget`}
+          sub={`of ${formatCurrency(summary.totalBudget)} approved`}
           color="bg-blue-50"
         />
         <StatCard
           icon={CalendarClock}
-          label="Due This Week"
+          label="Due this week"
           value={String(summary.deadlinesDueThisWeek)}
           color={summary.deadlinesDueThisWeek > 0 ? 'bg-orange-50' : 'bg-gray-50'}
         />
         <StatCard
           icon={AlertTriangle}
-          label="Flagged Issues"
+          label="Things to look at"
           value={String(summary.flaggedIssues.length)}
           color={summary.flaggedIssues.length > 0 ? 'bg-red-50' : 'bg-gray-50'}
         />
@@ -59,10 +59,10 @@ export function DashboardView({ summary }: DashboardViewProps) {
         <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg p-6">
           <h3 className="text-lg font-black flex items-center gap-2 mb-4">
             <AlertTriangle className="h-5 w-5 text-red-500" />
-            Flagged Issues
+            Things to look at
           </h3>
           {summary.flaggedIssues.length === 0 ? (
-            <p className="text-sm text-gray-500">No issues flagged. Looking good!</p>
+            <p className="text-sm text-gray-500">All clear. Nothing flagged on your grants right now.</p>
           ) : (
             <div className="space-y-3">
               {summary.flaggedIssues.map((issue) => (
@@ -94,10 +94,10 @@ export function DashboardView({ summary }: DashboardViewProps) {
         <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg p-6">
           <h3 className="text-lg font-black flex items-center gap-2 mb-4">
             <Clock className="h-5 w-5 text-ochre-600" />
-            Upcoming Deadlines
+            What's coming up
           </h3>
           {summary.upcomingDeadlines.length === 0 ? (
-            <p className="text-sm text-gray-500">No upcoming deadlines.</p>
+            <p className="text-sm text-gray-500">No deadlines in the next two weeks. Breathe out.</p>
           ) : (
             <div className="space-y-3">
               {summary.upcomingDeadlines.map((deadline) => {
@@ -134,48 +134,59 @@ export function DashboardView({ summary }: DashboardViewProps) {
 
       {/* Grant health cards */}
       <div>
-        <h3 className="text-lg font-black mb-4">Grant Health</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {summary.grantHealth.map((grant) => {
-            const pct = getSpendPercentage(Number(grant.total_spent), Number(grant.approved_amount));
-            const health = getHealthStatus(Number(grant.total_spent), Number(grant.approved_amount));
-            return (
-              <div
-                key={grant.id}
-                className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg p-5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p className="font-black">{grant.grant_name}</p>
-                    <p className="text-xs text-gray-500">{grant.funder_name}</p>
+        <h3 className="text-lg font-black mb-4">How your grants are tracking</h3>
+        {summary.grantHealth.length === 0 ? (
+          <div className="border-2 border-black bg-white p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <p className="text-sm font-bold">No grants are being tracked here yet.</p>
+            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-gray-600">
+              When you add a grant you have applied for or won, it will show up here. The funding
+              workspace is where you keep notes, track deadlines, and watch the money you have
+              coming in.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {summary.grantHealth.map((grant) => {
+              const pct = getSpendPercentage(Number(grant.total_spent), Number(grant.approved_amount));
+              const health = getHealthStatus(Number(grant.total_spent), Number(grant.approved_amount));
+              return (
+                <div
+                  key={grant.id}
+                  className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg p-5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <p className="font-black">{grant.grant_name}</p>
+                      <p className="text-xs text-gray-500">{grant.funder_name}</p>
+                    </div>
+                    <span className={`text-xs font-bold ${health.color}`}>{health.label}</span>
                   </div>
-                  <span className={`text-xs font-bold ${health.color}`}>{health.label}</span>
-                </div>
 
-                {/* Progress bar */}
-                <div className="w-full bg-gray-200 rounded-full h-3 mb-2 border border-black/10">
-                  <div
-                    className={`h-full rounded-full transition-all ${
-                      pct > 90 ? 'bg-red-500' : pct > 70 ? 'bg-orange-400' : 'bg-green-500'
-                    }`}
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <span>{formatCurrency(Number(grant.total_spent))} spent</span>
-                  <span>{pct}% of {formatCurrency(Number(grant.approved_amount))}</span>
-                </div>
-
-                {Number(grant.issues_count) > 0 && (
-                  <div className="mt-2 text-xs text-red-600 font-bold">
-                    {grant.issues_count} issue{Number(grant.issues_count) !== 1 ? 's' : ''} flagged
+                  {/* Progress bar */}
+                  <div className="w-full bg-gray-200 rounded-full h-3 mb-2 border border-black/10">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        pct > 90 ? 'bg-red-500' : pct > 70 ? 'bg-orange-400' : 'bg-green-500'
+                      }`}
+                      style={{ width: `${pct}%` }}
+                    />
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+
+                  <div className="flex items-center justify-between text-xs font-mono">
+                    <span>{formatCurrency(Number(grant.total_spent))} spent</span>
+                    <span>{pct}% of {formatCurrency(Number(grant.approved_amount))}</span>
+                  </div>
+
+                  {Number(grant.issues_count) > 0 && (
+                    <div className="mt-2 text-xs text-red-600 font-bold">
+                      {grant.issues_count} issue{Number(grant.issues_count) !== 1 ? 's' : ''} flagged
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

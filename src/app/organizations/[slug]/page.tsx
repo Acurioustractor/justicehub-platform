@@ -4,8 +4,27 @@ import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { ClaimOrgButton } from '@/components/claims/ClaimOrgButton';
-import { getEntityEnrichment, type EntityEnrichment } from '@/lib/grantscope/entity-enrichment';
+import { OrganizationSupportPathway } from '@/components/organizations/OrganizationSupportPathway';
 import {
+  GrantScopePartnerMapPanel,
+  OrganizationDataSourcesPanel,
+  WhyClaimOrganizationPanel,
+  type GrantScopePartnerMapData,
+  type OrganizationDataSource,
+} from '@/components/organizations/OrganizationJourneyPanels';
+import {
+  getEntityEnrichment,
+  getEntityEnrichmentByAbn,
+  type EntityEnrichment,
+} from '@/lib/grantscope/entity-enrichment';
+import {
+  getOrganizationDossier,
+  type DossierFundingRecord,
+  type DossierRelationship,
+  type OrganizationDossier,
+} from '@/lib/grantscope/org-dossier';
+import {
+  ArrowRight,
   Building2,
   MapPin,
   Globe,
@@ -37,7 +56,13 @@ import {
   ImageIcon,
   BarChart3,
   MapPinned,
-  DollarSign
+  DollarSign,
+  Handshake,
+  Landmark,
+  Network,
+  UserCheck,
+  Lock,
+  Clock
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -55,6 +80,7 @@ interface Organization {
   website: string | null;
   email: string | null;
   phone: string | null;
+  abn?: string | null;
   tags: string[] | null;
   created_at: string | null;
 }
@@ -225,10 +251,13 @@ async function getOrganization(slugOrId: string): Promise<(Organization & { gs_e
   return data;
 }
 
-async function getOrgEnrichment(gsEntityId: string | null | undefined): Promise<EntityEnrichment | null> {
-  if (!gsEntityId) return null;
+async function getOrgEnrichment(
+  gsEntityId: string | null | undefined,
+  abn: string | null | undefined,
+): Promise<EntityEnrichment | null> {
   try {
-    return await getEntityEnrichment(gsEntityId);
+    if (gsEntityId) return await getEntityEnrichment(gsEntityId);
+    return await getEntityEnrichmentByAbn(abn);
   } catch {
     return null;
   }
@@ -265,6 +294,30 @@ async function getOrganizationServices(orgId: string): Promise<Service[]> {
   }
 
   return data || [];
+}
+
+type LatestClaim = {
+  id: string;
+  status: 'pending' | 'verified' | 'rejected' | 'revoked';
+  contact_name: string | null;
+  contact_email: string | null;
+  role_at_org: string | null;
+  verified_at: string | null;
+  created_at: string;
+};
+
+async function getLatestOrgClaim(orgId: string): Promise<LatestClaim | null> {
+  const supabase = createServiceClient();
+  const { data } = await (supabase as any)
+    .from('organization_claims')
+    .select('id, status, contact_name, contact_email, role_at_org, verified_at, created_at')
+    .eq('organization_id', orgId)
+    .in('status', ['pending', 'verified'])
+    .order('verified_at', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return (data as LatestClaim | null) ?? null;
 }
 
 async function getOrganizationTeam(orgId: string): Promise<TeamMember[]> {
@@ -437,20 +490,486 @@ function getIcon(iconName: string | null) {
   return icons[iconName || ''] || Star;
 }
 
-// Founding Basecamps - the 4 anchor organizations of the Centre of Excellence
+function formatMoney(amount: number | null | undefined) {
+  if (!amount || !Number.isFinite(amount)) return 'Not recorded';
+  const abs = Math.abs(amount);
+  if (abs >= 1_000_000_000) return `$${(amount / 1_000_000_000).toFixed(1)}B`;
+  if (abs >= 1_000_000) return `$${(amount / 1_000_000).toFixed(1)}M`;
+  if (abs >= 1_000) return `$${(amount / 1_000).toFixed(0)}K`;
+  return `$${amount.toLocaleString()}`;
+}
+
+function formatLabel(value: string | null | undefined) {
+  return value ? value.replace(/_/g, ' ') : 'Not recorded';
+}
+
+function formatSource(value: string | null | undefined) {
+  if (!value) return 'source';
+  return value.replace(/[_-]/g, ' ');
+}
+
+function uniqueValues(values: Array<string | null | undefined>) {
+  return Array.from(new Set(values.filter((value): value is string => Boolean(value))));
+}
+
+function uniqueFundingItems(items: Array<DossierRelationship | DossierFundingRecord>) {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const key = 'otherName' in item
+      ? `${item.otherName}|${item.type}|${item.amount || 0}|${item.year || ''}`
+      : `${item.source}|${item.programName}|${item.amount || 0}|${item.financialYear || ''}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function sourceStatus(hasData: boolean, hasPartial = false): OrganizationDataSource['status'] {
+  if (hasData) return 'ready';
+  return hasPartial ? 'partial' : 'missing';
+}
+
+function buildPartnerMapData(dossier: OrganizationDossier): GrantScopePartnerMapData {
+  const topFunding = uniqueFundingItems([...dossier.fundingReceived, ...dossier.justiceFunding])
+    .sort((a, b) => ((b as any).amount || 0) - ((a as any).amount || 0));
+
+  const bestGrants = topFunding.slice(0, 4).map((item) => {
+    const isRelationship = 'otherName' in item;
+    return {
+      label: isRelationship ? item.otherName : item.source,
+      detail: isRelationship
+        ? [formatLabel(item.type), item.year ? String(item.year) : null, formatSource(item.dataset)].filter(Boolean).join(' · ')
+        : [item.programName, item.financialYear, item.state].filter(Boolean).join(' · '),
+      amount: item.amount ? formatMoney(item.amount) : null,
+      href: isRelationship ? item.sourceUrl : item.sourceUrl,
+      tone: 'green' as const,
+    };
+  });
+
+  const governmentPathways = [
+    ...dossier.contracts.map((contract) => ({
+      label: contract.buyerName || contract.title || 'Government contract',
+      detail: [contract.title, contract.procurementMethod, contract.contractEnd ? `to ${contract.contractEnd}` : null]
+        .filter(Boolean)
+        .join(' · '),
+      amount: contract.contractValue ? formatMoney(contract.contractValue) : null,
+      href: contract.sourceUrl,
+      tone: 'blue' as const,
+    })),
+    ...dossier.justiceFunding.slice(0, 3).map((funding) => ({
+      label: funding.source || 'Justice funding',
+      detail: [funding.programName, funding.financialYear, funding.state].filter(Boolean).join(' · '),
+      amount: funding.amount ? formatMoney(funding.amount) : null,
+      href: funding.sourceUrl,
+      tone: 'blue' as const,
+    })),
+  ].slice(0, 4);
+
+  const foundationFits = dossier.fundingReceived
+    .filter((relationship) => {
+      const text = `${relationship.otherName} ${relationship.type}`.toLowerCase();
+      return (
+        text.includes('foundation') ||
+        text.includes('trust') ||
+        text.includes('philanth') ||
+        text.includes('donation') ||
+        relationship.type === 'donation'
+      );
+    })
+    .slice(0, 4)
+    .map((relationship) => ({
+      label: relationship.otherName,
+      detail: [formatLabel(relationship.type), relationship.year ? String(relationship.year) : null].filter(Boolean).join(' · '),
+      amount: relationship.amount ? formatMoney(relationship.amount) : null,
+      href: relationship.sourceUrl,
+      tone: 'purple' as const,
+    }));
+
+  const likelyPartners = [
+    ...dossier.centrePartnerships.slice(0, 4).map((partnership) => ({
+      label: partnership.centreName,
+      detail: [partnership.partnershipType, partnership.centreCity, partnership.centreState].filter(Boolean).join(' · '),
+      amount: partnership.participantsServed ? `${partnership.participantsServed} participants` : null,
+      href: partnership.centreSlug ? `/centres/${partnership.centreSlug}` : null,
+      tone: 'red' as const,
+    })),
+    ...dossier.networkLinks.slice(0, 4).map((relationship) => ({
+      label: relationship.otherName,
+      detail: [formatLabel(relationship.type), relationship.otherType, relationship.year ? String(relationship.year) : null]
+        .filter(Boolean)
+        .join(' · '),
+      amount: relationship.amount ? formatMoney(relationship.amount) : null,
+      href: relationship.sourceUrl,
+      tone: 'ochre' as const,
+    })),
+  ].slice(0, 6);
+
+  const readinessBlockers = [
+    dossier.entity ? null : 'Identity is not fully linked to a CivicScope entity yet.',
+    dossier.summary.interventionCount > 0 ? null : 'Programs or ALMA interventions still need to be attached.',
+    dossier.summary.fundingRecordCount > 0 ? null : 'Funding history is not yet visible from GrantScope.',
+    dossier.summary.boardRoleCount > 0 ? null : 'Governance and board role data is not yet resolved.',
+  ].filter((item): item is string => Boolean(item));
+
+  return {
+    bestGrants,
+    governmentPathways,
+    foundationFits,
+    likelyPartners,
+    readinessBlockers,
+    nextAction:
+      readinessBlockers.length > 0
+        ? 'Claim the record, confirm identity, and complete the funding workspace.'
+        : 'Use the funding workspace to shortlist the best current opportunity.',
+  };
+}
+
+function DossierStat({
+  label,
+  value,
+  tone = 'text-earth-900',
+}: {
+  label: string;
+  value: string | number;
+  tone?: string;
+}) {
+  return (
+    <div className="border-2 border-black bg-white p-4">
+      <div className={`text-2xl md:text-3xl font-black ${tone}`}>{value}</div>
+      <div className="mt-1 text-[11px] font-bold uppercase tracking-wider text-earth-600">{label}</div>
+    </div>
+  );
+}
+
+function FactRow({ label, value }: { label: string; value: string | number | null | undefined }) {
+  return (
+    <div className="flex items-start justify-between gap-4 border-b border-black/10 py-2 last:border-b-0">
+      <span className="text-xs font-bold uppercase tracking-wider text-earth-500">{label}</span>
+      <span className="max-w-[65%] text-right text-sm font-bold text-earth-900">{value || 'Not recorded'}</span>
+    </div>
+  );
+}
+
+function FundingLine({ item }: { item: DossierRelationship | DossierFundingRecord }) {
+  const isRelationship = 'otherName' in item;
+  const name = isRelationship ? item.otherName : item.source;
+  const detail = isRelationship
+    ? [formatLabel(item.type), item.year ? String(item.year) : null, formatSource(item.dataset)].filter(Boolean).join(' · ')
+    : [item.programName, item.financialYear, item.state].filter(Boolean).join(' · ');
+  const amount = isRelationship ? item.amount : item.amount;
+  const sourceUrl = isRelationship ? item.sourceUrl : item.sourceUrl;
+
+  return (
+    <div className="grid gap-3 border-b border-black/10 py-3 last:border-b-0 md:grid-cols-[1fr_auto]">
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <p className="truncate font-bold text-earth-900">{name}</p>
+          {sourceUrl && (
+            <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="shrink-0 text-earth-400 hover:text-ochre-600">
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          )}
+        </div>
+        {detail && <p className="mt-1 text-xs font-medium uppercase tracking-wide text-earth-500">{detail}</p>}
+        {!isRelationship && item.projectDescription && (
+          <p className="mt-2 line-clamp-2 text-sm text-earth-600">{item.projectDescription}</p>
+        )}
+      </div>
+      <div className="text-left text-lg font-black text-eucalyptus-700 md:text-right">
+        {amount ? formatMoney(amount) : 'Amount not published'}
+      </div>
+    </div>
+  );
+}
+
+function DossierEmpty({ label }: { label: string }) {
+  return (
+    <div className="border-2 border-dashed border-earth-300 bg-white p-5 text-sm font-medium text-earth-500">
+      {label}
+    </div>
+  );
+}
+
+function CivicScopeDossier({ dossier, orgName }: { dossier: OrganizationDossier; orgName: string }) {
+  const entity = dossier.entity;
+  const topFunding = uniqueFundingItems([...dossier.fundingReceived, ...dossier.justiceFunding])
+    .sort((a, b) => ((b.amount || 0) - (a.amount || 0)))
+    .slice(0, 8);
+  const centreNames = uniqueValues(dossier.centrePartnerships.map((partnership) => partnership.centreName));
+  const programNames = dossier.interventions.slice(0, 6);
+  const hasDossierData = Boolean(
+    entity ||
+    dossier.justiceFunding.length ||
+    dossier.contracts.length ||
+    dossier.relationships.length ||
+    dossier.boardRoles.length ||
+    dossier.interventions.length ||
+    dossier.centrePartnerships.length,
+  );
+
+  if (!hasDossierData) return null;
+
+  return (
+    <section className="border-b-2 border-black bg-white py-12">
+      <div className="container-justice">
+        <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <div className="mb-3 inline-flex items-center gap-2 border-2 border-black bg-blue-50 px-3 py-1 text-xs font-black uppercase tracking-wider text-blue-800">
+              <Network className="h-4 w-4" />
+              CivicScope Dossier
+            </div>
+            <h2 className="text-3xl font-black md:text-4xl">Money, People, Programs & Relationships</h2>
+          </div>
+          {entity?.sourceDatasets && entity.sourceDatasets.length > 0 && (
+            <div className="max-w-xl text-sm font-medium text-earth-600 lg:text-right">
+              {entity.sourceDatasets.slice(0, 5).map(formatSource).join(' · ')}
+              {entity.sourceDatasets.length > 5 ? ` · +${entity.sourceDatasets.length - 5}` : ''}
+            </div>
+          )}
+        </div>
+
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+          <DossierStat label="Known funding" value={formatMoney(dossier.summary.knownFundingTotal)} tone="text-eucalyptus-700" />
+          <DossierStat label="Funding records" value={dossier.summary.fundingRecordCount} tone="text-eucalyptus-700" />
+          <DossierStat label="Relationships" value={dossier.summary.relationshipCount} tone="text-blue-700" />
+          <DossierStat label="Board roles" value={dossier.summary.boardRoleCount} tone="text-ochre-700" />
+          <DossierStat label="Centres linked" value={dossier.summary.centreCount} tone="text-red-700" />
+          <DossierStat label="Interventions" value={dossier.summary.interventionCount} tone="text-purple-700" />
+        </div>
+
+        <div className="mb-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+          <div className="border-2 border-black bg-sand-50 p-6">
+            <div className="mb-5 flex items-center gap-3">
+              <Building2 className="h-6 w-6 text-earth-700" />
+              <div>
+                <h3 className="text-2xl font-black">Identity & Location</h3>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-earth-600">via CivicScope</span>
+              </div>
+            </div>
+            <FactRow label="Canonical name" value={entity?.canonicalName || orgName} />
+            <FactRow label="Type" value={formatLabel(entity?.entityType)} />
+            <FactRow label="Sector" value={[entity?.sector, entity?.subSector].filter(Boolean).join(' · ') || null} />
+            <FactRow label="ABN / ACN" value={[entity?.abn, entity?.acn].filter(Boolean).join(' / ') || null} />
+            <FactRow label="GS ID" value={entity?.gsId} />
+            <FactRow label="Location" value={[entity?.state, entity?.postcode, entity?.lgaName].filter(Boolean).join(' · ') || null} />
+            <FactRow label="Place context" value={[entity?.remoteness, entity?.seifaDecile ? `SEIFA ${entity.seifaDecile}/10` : null].filter(Boolean).join(' · ') || null} />
+            <FactRow label="Controlled" value={entity?.isCommunityControlled ? 'Community controlled' : null} />
+            <FactRow label="Source count" value={entity?.sourceCount} />
+            <FactRow label="Confidence" value={formatLabel(entity?.confidence)} />
+          </div>
+
+          <div className="border-2 border-black bg-white p-6">
+            <div className="mb-5 flex items-center gap-3">
+              <DollarSign className="h-6 w-6 text-eucalyptus-700" />
+              <div>
+                <h3 className="text-2xl font-black">Funding Received</h3>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-earth-600">via GrantScope · CivicScope</span>
+              </div>
+            </div>
+            <div className="mb-4 grid grid-cols-3 gap-3">
+              <div className="border border-black p-3">
+                <div className="text-lg font-black text-eucalyptus-700">{formatMoney(dossier.summary.justiceFundingTotal)}</div>
+                <div className="text-[10px] font-bold uppercase text-earth-500">Justice Programs</div>
+              </div>
+              <div className="border border-black p-3">
+                <div className="text-lg font-black text-eucalyptus-700">{formatMoney(dossier.summary.contractTotal)}</div>
+                <div className="text-[10px] font-bold uppercase text-earth-500">Public Contracts</div>
+              </div>
+              <div className="border border-black p-3">
+                <div className="text-lg font-black text-eucalyptus-700">{formatMoney(dossier.summary.relationshipFundingTotal)}</div>
+                <div className="text-[10px] font-bold uppercase text-earth-500">Donor & Foundation Flow</div>
+              </div>
+            </div>
+            {topFunding.length > 0 ? (
+              <div>
+                {topFunding.map((item) => (
+                  <FundingLine key={'otherName' in item ? `rel-${item.id}` : `fund-${item.id}`} item={item} />
+                ))}
+              </div>
+            ) : (
+              <DossierEmpty label="No public funding records are linked yet." />
+            )}
+          </div>
+        </div>
+
+        <div className="mb-8 border-2 border-black bg-blue-50 p-6">
+          <div className="mb-6 flex items-center gap-3">
+            <Landmark className="h-6 w-6 text-blue-700" />
+            <h3 className="text-2xl font-black">Money & Relationship Map</h3>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-stretch">
+            <div className="border-2 border-black bg-white p-4">
+              <div className="mb-3 text-xs font-black uppercase tracking-wider text-earth-500">Funders / buyers</div>
+              <div className="space-y-2">
+                {topFunding.slice(0, 5).map((item) => (
+                  <div key={'otherName' in item ? `map-rel-${item.id}` : `map-fund-${item.id}`} className="border-b border-black/10 pb-2 last:border-b-0">
+                    <div className="font-bold text-earth-900">{'otherName' in item ? item.otherName : item.source}</div>
+                    <div className="text-xs font-bold uppercase text-eucalyptus-700">{formatMoney(item.amount)}</div>
+                  </div>
+                ))}
+                {topFunding.length === 0 && <p className="text-sm text-earth-500">No linked funders yet.</p>}
+              </div>
+            </div>
+
+            <div className="hidden items-center justify-center lg:flex">
+              <ArrowRight className="h-8 w-8 text-blue-700" />
+            </div>
+
+            <div className="border-2 border-black bg-white p-4">
+              <div className="mb-3 text-xs font-black uppercase tracking-wider text-earth-500">Organization</div>
+              <div className="text-xl font-black text-earth-900">{orgName}</div>
+              <div className="mt-2 text-sm text-earth-600">{formatLabel(entity?.entityType)}</div>
+              {entity?.latestRevenue && (
+                <div className="mt-4 border-t border-black/10 pt-3 text-sm">
+                  <span className="font-black">{formatMoney(entity.latestRevenue)}</span>
+                  <span className="text-earth-500"> revenue {entity.financialYear ? `(${entity.financialYear})` : ''}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="hidden items-center justify-center lg:flex">
+              <ArrowRight className="h-8 w-8 text-blue-700" />
+            </div>
+
+            <div className="border-2 border-black bg-white p-4">
+              <div className="mb-3 text-xs font-black uppercase tracking-wider text-earth-500">Programs / places</div>
+              <div className="space-y-2">
+                {programNames.map((program) => (
+                  <div key={`intervention-${program.id}`} className="border-b border-black/10 pb-2 last:border-b-0">
+                    <div className="font-bold text-earth-900">{program.name}</div>
+                    <div className="text-xs font-bold uppercase text-earth-500">{formatLabel(program.type)}</div>
+                  </div>
+                ))}
+                {programNames.length === 0 && centreNames.slice(0, 5).map((centre) => (
+                  <div key={`centre-map-${centre}`} className="border-b border-black/10 pb-2 last:border-b-0 font-bold text-earth-900">
+                    {centre}
+                  </div>
+                ))}
+                {programNames.length === 0 && centreNames.length === 0 && <p className="text-sm text-earth-500">No linked delivery places yet.</p>}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {(dossier.centrePartnerships.length > 0 || dossier.boardRoles.length > 0 || dossier.networkLinks.length > 0) && (
+          <div className="grid gap-6 lg:grid-cols-3">
+            {dossier.centrePartnerships.length > 0 && (
+              <div className="border-2 border-black bg-white p-6">
+                <div className="mb-5 flex items-center gap-3">
+                  <MapPin className="h-6 w-6 text-red-700" />
+                  <div>
+                    <h3 className="text-xl font-black">Centres & Places</h3>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-earth-600">via Centre of Excellence</span>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  {dossier.centrePartnerships.slice(0, 8).map((partnership) => (
+                    <Link
+                      key={partnership.id}
+                      href={`/centres/${partnership.centreSlug || partnership.centreId}`}
+                      className="block border-b border-black/10 pb-3 last:border-b-0"
+                    >
+                      <div className="font-black text-earth-900 hover:text-red-700">{partnership.centreName}</div>
+                      <div className="mt-1 text-xs font-bold uppercase tracking-wide text-red-700">
+                        {formatLabel(partnership.partnershipType)}
+                      </div>
+                      {(partnership.centreCity || partnership.centreState) && (
+                        <div className="mt-1 text-sm text-earth-600">
+                          {[partnership.centreCity, partnership.centreState].filter(Boolean).join(', ')}
+                        </div>
+                      )}
+                      {partnership.description && <p className="mt-2 line-clamp-2 text-sm text-earth-600">{partnership.description}</p>}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {dossier.boardRoles.length > 0 && (
+              <div className="border-2 border-black bg-white p-6">
+                <div className="mb-5 flex items-center gap-3">
+                  <UserCheck className="h-6 w-6 text-ochre-700" />
+                  <div>
+                    <h3 className="text-xl font-black">Board & Governance</h3>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-earth-600">via CivicScope · ACNC</span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {dossier.boardRoles.slice(0, 10).map((role) => (
+                    <div key={role.id} className="border-b border-black/10 pb-3 last:border-b-0">
+                      <div className="font-black text-earth-900">{role.personName}</div>
+                      <div className="mt-1 text-xs font-bold uppercase tracking-wide text-ochre-700">
+                        {formatLabel(role.roleType)}
+                        {role.cessationDate ? ' · former' : ''}
+                      </div>
+                      <div className="mt-1 text-xs text-earth-500">{formatSource(role.source)} · {formatLabel(role.confidence)}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {dossier.networkLinks.length > 0 && (
+              <div className="border-2 border-black bg-white p-6">
+                <div className="mb-5 flex items-center gap-3">
+                  <Handshake className="h-6 w-6 text-blue-700" />
+                  <div>
+                    <h3 className="text-xl font-black">Network Links</h3>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-earth-600">via CivicGraph</span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {dossier.networkLinks.slice(0, 10).map((relationship) => (
+                    <div key={relationship.id} className="border-b border-black/10 pb-3 last:border-b-0">
+                      <div className="font-black text-earth-900">{relationship.otherName}</div>
+                      <div className="mt-1 text-xs font-bold uppercase tracking-wide text-blue-700">
+                        {relationship.direction === 'incoming' ? 'from' : 'to'} · {formatLabel(relationship.type)}
+                      </div>
+                      <div className="mt-1 text-xs text-earth-500">{formatSource(relationship.dataset)} · {formatLabel(relationship.confidence)}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// Founding Basecamps in the current Centre of Excellence org set
 const FOUNDING_BASECAMPS = [
-  { slug: 'oonchiumpa', name: 'Oonchiumpa', region: 'Alice Springs, NT' },
+  { slug: 'oonchiumpa', name: 'Oonchiumpa', region: 'Mparntwe (Alice Springs), NT' },
+  { slug: 'palm-island-community-company', name: 'Palm Island Community Company', region: 'Townsville, QLD' },
   { slug: 'bg-fit', name: 'BG Fit', region: 'Mount Isa, QLD' },
-  { slug: 'mounty-yarns', name: 'Mounty Yarns', region: 'Western Sydney, NSW' },
-  { slug: 'picc-townsville', name: 'PICC Townsville', region: 'Townsville, QLD' },
+  { slug: 'mmeic', name: 'MMEIC', region: 'Minjerribah, QLD' },
 ];
 
 function isFoundingBasecamp(slug: string): boolean {
   return FOUNDING_BASECAMPS.some(bc => bc.slug === slug);
 }
 
-function getOtherBasecamps(currentSlug: string) {
-  return FOUNDING_BASECAMPS.filter(bc => bc.slug !== currentSlug);
+async function getExistingFoundingBasecamps() {
+  const supabase = createServiceClient();
+  const { data, error } = await supabase
+    .from('organizations')
+    .select('slug')
+    .in('slug', FOUNDING_BASECAMPS.map((basecamp) => basecamp.slug))
+    .eq('is_active', true);
+
+  if (error) {
+    console.error('Error fetching founding basecamps:', error);
+    return FOUNDING_BASECAMPS;
+  }
+
+  const activeSlugs = new Set(
+    (data || [])
+      .map((row) => row.slug)
+      .filter((slug): slug is string => typeof slug === 'string' && slug.length > 0)
+  );
+
+  return FOUNDING_BASECAMPS.filter((basecamp) => activeSlugs.has(basecamp.slug));
 }
 
 export async function generateMetadata({
@@ -484,7 +1003,7 @@ export default async function OrganizationPage({
   }
 
   // Fetch all related data in parallel
-  const [programs, services, team, storytellers, videos, stories, goals, impactMetrics, externalLinks, contacts, photos, enrichment] = await Promise.all([
+  const [programs, services, team, storytellers, videos, stories, goals, impactMetrics, externalLinks, contacts, photos, enrichment, dossier, foundingBasecamps, latestClaim] = await Promise.all([
     getOrganizationPrograms(org.id),
     getOrganizationServices(org.id),
     getOrganizationTeam(org.id),
@@ -496,13 +1015,102 @@ export default async function OrganizationPage({
     getExternalLinks(org.id),
     getContacts(org.id),
     getPhotos(org.id),
-    getOrgEnrichment((org as any).gs_entity_id),
+    getOrgEnrichment((org as any).gs_entity_id, org.abn),
+    getOrganizationDossier({
+      orgId: org.id,
+      orgName: org.name,
+      gsEntityId: (org as any).gs_entity_id,
+      abn: org.abn,
+    }),
+    getExistingFoundingBasecamps(),
+    getLatestOrgClaim(org.id),
   ]);
 
   // Separate goals by type
   const mission = goals.find(g => g.goal_type === 'mission');
   const vision = goals.find(g => g.goal_type === 'vision');
   const values = goals.filter(g => g.goal_type === 'value');
+  const otherBasecamps = org.slug
+    ? foundingBasecamps.filter((basecamp) => basecamp.slug !== org.slug)
+    : [];
+  const profileReadiness = {
+    hasIdentity: Boolean(org.abn || (org as any).gs_entity_id || dossier.entity),
+    hasSummary: Boolean(org.description),
+    hasProgramsOrServices: programs.length > 0 || services.length > 0 || dossier.interventions.length > 0,
+    hasPeopleOrStories: team.length > 0 || storytellers.length > 0 || stories.length > 0,
+    hasFundingData:
+      dossier.summary.fundingRecordCount > 0 ||
+      dossier.summary.knownFundingTotal > 0 ||
+      Boolean(enrichment?.relationshipSummary?.totalRelationships),
+    hasPublicSite: Boolean(org.slug),
+  };
+  const dataSources: OrganizationDataSource[] = [
+    {
+      key: 'identity',
+      label: 'Identity and ABN',
+      status: sourceStatus(profileReadiness.hasIdentity, Boolean(org.abn || (org as any).gs_entity_id)),
+      detail: org.abn
+        ? `ABN ${org.abn}${dossier.entity ? ' is linked to CivicScope.' : ' is present and ready to link.'}`
+        : dossier.entity
+          ? 'CivicScope entity is linked.'
+          : 'ABN or CivicScope identity needs confirmation.',
+    },
+    {
+      key: 'programs',
+      label: 'Programs and services',
+      status: sourceStatus(profileReadiness.hasProgramsOrServices),
+      detail: `${programs.length + dossier.interventions.length} program/intervention record${programs.length + dossier.interventions.length === 1 ? '' : 's'} and ${services.length} service record${services.length === 1 ? '' : 's'} currently attached.`,
+      href: org.slug ? `/hub/${org.slug}` : undefined,
+    },
+    {
+      key: 'places',
+      label: 'Centre and place links',
+      status: sourceStatus(dossier.summary.centreCount > 0),
+      detail: dossier.summary.centreCount > 0
+        ? `${dossier.summary.centreCount} detention centre link${dossier.summary.centreCount === 1 ? '' : 's'} resolved.`
+        : 'No active centre partnerships are attached yet.',
+    },
+    {
+      key: 'money',
+      label: 'Money and grants',
+      status: sourceStatus(profileReadiness.hasFundingData),
+      detail: dossier.summary.fundingRecordCount > 0
+        ? `${dossier.summary.fundingRecordCount} funding record${dossier.summary.fundingRecordCount === 1 ? '' : 's'} totalling ${formatMoney(dossier.summary.knownFundingTotal)} are visible.`
+        : 'GrantScope has not resolved funding history for this record yet.',
+      href: `/funding/workspace/${org.id}`,
+    },
+    {
+      key: 'people',
+      label: 'People and governance',
+      status: sourceStatus(team.length > 0 || dossier.summary.boardRoleCount > 0),
+      detail: `${team.length} public team link${team.length === 1 ? '' : 's'} and ${dossier.summary.boardRoleCount} governance role${dossier.summary.boardRoleCount === 1 ? '' : 's'} are visible.`,
+    },
+    {
+      key: 'stories',
+      label: 'Stories and media',
+      status: sourceStatus(stories.length > 0 || storytellers.length > 0 || videos.length > 0 || photos.length > 0),
+      detail: `${stories.length} story record${stories.length === 1 ? '' : 's'}, ${storytellers.length} storyteller link${storytellers.length === 1 ? '' : 's'}, and ${photos.length + videos.length} media asset${photos.length + videos.length === 1 ? '' : 's'} are attached.`,
+    },
+    {
+      key: 'claim',
+      label: 'Claim and access',
+      status: sourceStatus(org.verification_status === 'verified' || org.verification_status === 'acnc_verified', Boolean(org.verification_status)),
+      detail: org.verification_status
+        ? `Current verification status: ${formatLabel(org.verification_status)}.`
+        : 'No verified organization owner is visible yet.',
+      href: org.slug ? `/organizations/${org.slug}#claim-organization` : undefined,
+    },
+    {
+      key: 'public-output',
+      label: 'Public outputs',
+      status: sourceStatus(Boolean(org.slug)),
+      detail: org.slug
+        ? 'Public organization profile, site, and funder surfaces can use this slug.'
+        : 'A stable public slug is needed before publishing linked proof surfaces.',
+      href: org.slug ? `/sites/${org.slug}` : undefined,
+    },
+  ];
+  const partnerMapData = buildPartnerMapData(dossier);
 
   return (
     <div className="min-h-screen bg-white">
@@ -544,13 +1152,30 @@ export default async function OrganizationPage({
                 </div>
               )}
 
-              {/* Verification Badge */}
-              {org.verification_status === 'verified' && (
-                <div className="inline-flex items-center gap-2 bg-eucalyptus-100 text-eucalyptus-800 px-3 py-1 border border-black text-sm font-bold uppercase tracking-wider mb-4">
-                  <CheckCircle className="w-4 h-4" />
-                  Verified Organization
-                </div>
-              )}
+              {/* Verification + Claim Badges */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {org.verification_status === 'verified' && (
+                  <div className="inline-flex items-center gap-2 bg-eucalyptus-100 text-eucalyptus-800 px-3 py-1 border border-black text-sm font-bold uppercase tracking-wider">
+                    <CheckCircle className="w-4 h-4" />
+                    Verified Organization
+                  </div>
+                )}
+                {latestClaim?.status === 'verified' && (
+                  <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 border border-black text-sm font-bold uppercase tracking-wider" title={latestClaim.contact_name ? `Claimed by ${latestClaim.contact_name}` : 'Community-claimed organisation'}>
+                    <Lock className="w-4 h-4" />
+                    Community-Claimed
+                    {latestClaim.contact_name && (
+                      <span className="font-normal normal-case tracking-normal text-blue-700">· {latestClaim.contact_name}</span>
+                    )}
+                  </div>
+                )}
+                {latestClaim?.status === 'pending' && (
+                  <div className="inline-flex items-center gap-2 bg-ochre-100 text-ochre-800 px-3 py-1 border border-black text-sm font-bold uppercase tracking-wider">
+                    <Clock className="w-4 h-4" />
+                    Claim Pending Review
+                  </div>
+                )}
+              </div>
 
               <h1 className="text-5xl md:text-6xl font-black text-earth-900 mb-4">
                 {org.name}
@@ -601,19 +1226,7 @@ export default async function OrganizationPage({
               </div>
 
               {/* Contact Links */}
-              <div className="flex flex-wrap gap-4">
-                {org.id && (
-                  <Link
-                    href={`/funding/workspace/${org.id}`}
-                    prefetch={false}
-                    className="inline-flex items-center gap-2 bg-eucalyptus-600 text-white px-6 py-3 font-bold border-2 border-black hover:bg-eucalyptus-700 transition-colors"
-                  >
-                    <Briefcase className="w-5 h-5" />
-                    {org.slug && isFoundingBasecamp(org.slug)
-                      ? 'Open Business & Funding Workspace'
-                      : 'Open Funding Workspace'}
-                  </Link>
-                )}
+              <div id="claim-organization" className="flex flex-wrap gap-4">
                 {org.slug && (
                   <Link
                     href={`/sites/${org.slug}`}
@@ -653,21 +1266,19 @@ export default async function OrganizationPage({
                     Call
                   </a>
                 )}
-                <ClaimOrgButton orgId={org.id} orgSlug={org.slug || org.id} />
+                <ClaimOrgButton
+                  orgId={org.id}
+                  orgSlug={org.slug || org.id}
+                  fundingWorkspaceHref={`/funding/workspace/${org.id}`}
+                  isBusinessWorkspace={Boolean(org.slug && isFoundingBasecamp(org.slug))}
+                />
               </div>
 
-              <div className="mt-6 text-sm text-gray-700 leading-relaxed max-w-3xl">
-                <p>
-                  This workspace now bridges BG Fit's accounting, impact commitments, and
-                  grant-readiness work into the funding operating system: the same shared notes,
-                  draft reviews, and business-support signals you see here sync directly to the
-                  admin pipelines, application drafts, and community-review tasks that power the
-                  BG Fit funding flow.
-                </p>
-                <p className="mt-3">
-                  Use the workspace button above to keep your support letters, partner asks,
-                  and blockers in one live place that feeds the draft, review, and downstream
-                  relationship workflow.
+              <div className="mt-6 max-w-3xl">
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  Preview the funding workspace above. Once {org.name} claims this profile, the
+                  same surface becomes the live operating space for partnerships, drafts, and
+                  funding pipeline.
                 </p>
               </div>
 
@@ -687,6 +1298,58 @@ export default async function OrganizationPage({
             </div>
           </div>
         </section>
+
+        <OrganizationSupportPathway
+          mode="profile"
+          orgId={org.id}
+          orgSlug={org.slug}
+          orgName={org.name}
+          readiness={profileReadiness}
+        />
+        <WhyClaimOrganizationPanel
+          orgName={org.name}
+          claimHref={`/organizations/${org.slug || org.id}#claim-organization`}
+          variant="profile"
+        />
+        <OrganizationDataSourcesPanel sources={dataSources} />
+        <GrantScopePartnerMapPanel
+          orgName={org.name}
+          data={partnerMapData}
+          workspaceHref={`/funding/workspace/${org.id}`}
+        />
+
+        {/* Lived Experience Impact Section */}
+        {impactMetrics && impactMetrics.length > 0 && (
+          <section className="py-12 border-b-2 border-black bg-black text-white">
+            <div className="container-justice">
+              <div className="flex items-center gap-3 mb-8">
+                <Target className="h-8 w-8 text-ochre-400" />
+                <h2 className="text-3xl font-black">Demonstrated Impact</h2>
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {impactMetrics.map((metric) => (
+                  <div key={metric.id} className="p-6 border-2 border-white/20 bg-white/5 hover:bg-white/10 transition-colors">
+                    <div className="flex items-center justify-between mb-4">
+                      {metric.icon && <span className="text-2xl">{metric.icon}</span>}
+                      {metric.is_featured && <Star className="w-5 h-5 text-ochre-400 fill-ochre-400" />}
+                    </div>
+                    <div className="text-4xl md:text-5xl font-black text-white mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                      {metric.metric_value}
+                    </div>
+                    <div className="font-bold text-lg text-ochre-400 tracking-tight leading-tight">
+                      {metric.metric_name}
+                    </div>
+                    {metric.metric_context && (
+                      <div className="mt-4 text-sm text-white/60">
+                        {metric.metric_context}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Data Insights Section — from GrantScope entity graph */}
         {enrichment && (
@@ -765,6 +1428,8 @@ export default async function OrganizationPage({
           </section>
         )}
 
+        <CivicScopeDossier dossier={dossier} orgName={org.name} />
+
         {/* Team Section */}
         {team.length > 0 && (
           <section className="py-12 border-b-2 border-black">
@@ -811,34 +1476,6 @@ export default async function OrganizationPage({
                     )}
                   </Link>
                 ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Impact Metrics Section */}
-        {impactMetrics.length > 0 && (
-          <section className="py-12 border-b-2 border-black bg-eucalyptus-50">
-            <div className="container-justice">
-              <div className="flex items-center gap-3 mb-8">
-                <TrendingDown className="h-8 w-8 text-eucalyptus-600" />
-                <h2 className="text-3xl font-black">Impact</h2>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {impactMetrics.map((metric) => {
-                  const IconComponent = getIcon(metric.icon);
-                  return (
-                    <div key={metric.id} className="bg-white p-6 border-2 border-black">
-                      <IconComponent className="w-8 h-8 mb-3 text-eucalyptus-600" />
-                      <div className="text-4xl font-black text-eucalyptus-700 mb-1">{metric.metric_value}</div>
-                      <div className="font-bold text-sm uppercase tracking-wide text-earth-900">{metric.metric_name}</div>
-                      {metric.metric_context && (
-                        <div className="text-sm text-earth-600 mt-1">{metric.metric_context}</div>
-                      )}
-                    </div>
-                  );
-                })}
               </div>
             </div>
           </section>
@@ -902,48 +1539,57 @@ export default async function OrganizationPage({
 
         {/* Key People / Storytellers Section */}
         {storytellers.length > 0 && (
-          <section className="py-12 border-b-2 border-black bg-sand-50">
+          <section className="py-16 border-b-2 border-black bg-sand-50">
             <div className="container-justice">
-              <div className="flex items-center gap-3 mb-8">
+              <div className="flex items-center gap-3 mb-10">
                 <Mic className="h-8 w-8 text-ochre-600" />
-                <h2 className="text-3xl font-black">Key People</h2>
+                <h2 className="text-3xl lg:text-4xl font-black">Storytellers & Elders</h2>
+                <div className="ml-4 h-px flex-1 bg-black/10"></div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
                 {storytellers.map((person) => (
-                  <div key={person.id} className="bg-white border-2 border-black p-6">
-                    <div className="flex items-start gap-4">
+                  <div key={person.id} className="bg-white border-2 border-black hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all flex flex-col h-full rounded-xl overflow-hidden">
+                    <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 flex-1">
                       {person.avatar_url ? (
-                        <img
-                          src={person.avatar_url}
-                          alt={person.display_name}
-                          className="w-20 h-20 rounded-full border-2 border-black object-cover"
-                        />
+                        <div className="shrink-0 w-24 h-24 md:w-32 md:h-32">
+                          <img
+                            src={person.avatar_url}
+                            alt={person.display_name}
+                            className="w-full h-full rounded-full border-4 border-black object-cover"
+                          />
+                        </div>
                       ) : (
-                        <div className="w-20 h-20 rounded-full border-2 border-black bg-ochre-100 flex items-center justify-center">
-                          <Users className="w-8 h-8 text-ochre-600" />
+                        <div className="shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-black bg-ochre-100 flex items-center justify-center">
+                          <Users className="w-12 h-12 text-ochre-600" />
                         </div>
                       )}
-                      <div className="flex-1">
-                        <h3 className="font-bold text-xl">{person.display_name}</h3>
-                        {person.role_at_org && (
-                          <p className="text-ochre-600 font-medium">{person.role_at_org}</p>
-                        )}
+
+                      <div className="flex-1 min-w-0">
                         {person.is_featured && (
-                          <span className="inline-flex items-center gap-1 text-xs font-bold text-eucalyptus-600 mt-1">
-                            <Star className="w-3 h-3" />
-                            Featured
-                          </span>
+                          <div className="mb-2">
+                             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-eucalyptus-100 border border-eucalyptus-200 text-[10px] font-bold uppercase tracking-wider text-eucalyptus-800 rounded-full">
+                               <Star className="w-3 h-3 fill-eucalyptus-600 text-eucalyptus-600" />
+                               Lived Experience Leader
+                             </span>
+                          </div>
+                        )}
+                        <h3 className="font-black text-2xl md:text-3xl tracking-tight mb-1 truncate">{person.display_name}</h3>
+                        {person.role_at_org && (
+                          <p className="text-earth-600 font-bold uppercase tracking-wider text-sm mb-4">{person.role_at_org}</p>
+                        )}
+                        {person.bio_excerpt && (
+                          <p className="text-earth-700 text-base leading-relaxed mb-6">{person.bio_excerpt}</p>
                         )}
                       </div>
                     </div>
-                    {person.bio_excerpt && (
-                      <p className="text-earth-700 mt-4">{person.bio_excerpt}</p>
-                    )}
+
                     {person.quote && (
-                      <div className="mt-4 border-l-4 border-ochre-500 pl-4 py-2 bg-ochre-50">
-                        <Quote className="w-5 h-5 text-ochre-400 mb-1" />
-                        <p className="italic text-earth-700">"{person.quote}"</p>
+                      <div className="border-t-2 border-black bg-ochre-50 p-6 md:px-8 shrink-0">
+                        <Quote className="w-6 h-6 text-ochre-400 mb-3 opacity-50" />
+                        <blockquote className="text-lg md:text-xl font-serif italic text-earth-900 leading-snug">
+                          "{person.quote}"
+                        </blockquote>
                       </div>
                     )}
                   </div>
@@ -990,55 +1636,90 @@ export default async function OrganizationPage({
           </section>
         )}
 
-        {/* Videos Section */}
+        {/* Documentaries & Media Section */}
         {videos.length > 0 && (
-          <section className="py-12 border-b-2 border-black">
+          <section className="py-16 border-b-2 border-black bg-black text-white">
             <div className="container-justice">
-              <div className="flex items-center gap-3 mb-8">
-                <Play className="h-8 w-8 text-red-600" />
-                <h2 className="text-3xl font-black">Videos</h2>
+              <div className="flex items-center gap-3 mb-12">
+                <Play className="h-8 w-8 text-ochre-400" />
+                <h2 className="text-3xl lg:text-4xl font-black">Documentaries & Media</h2>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                {videos.map((video) => (
+              {/* Featured Video (Top 1) */}
+              {videos.length > 0 && (
+                <div className="mb-8 relative group">
                   <a
-                    key={video.id}
-                    href={video.video_url || '#'}
+                    href={videos[0].video_url || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group border-2 border-black overflow-hidden hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+                    className="block relative aspect-video w-full overflow-hidden border-2 border-white/20 hover:border-white/40 transition-all rounded-xl"
                   >
-                    <div className="aspect-video bg-gray-900 flex items-center justify-center relative">
-                      {video.thumbnail_url ? (
-                        <img src={video.thumbnail_url} alt={video.title || ''} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="text-white/50 text-6xl">▶</div>
-                      )}
-                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                        <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <Play className="w-8 h-8 text-white ml-1" fill="white" />
-                        </div>
+                    {videos[0].thumbnail_url ? (
+                      <img src={videos[0].thumbnail_url} alt={videos[0].title || ''} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    ) : (
+                      <div className="w-full h-full bg-[#111] flex items-center justify-center text-white/50 text-6xl">▶</div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent flex flex-col justify-end p-6 md:p-10">
+                      <div className="mb-4">
+                        <span className="inline-block px-3 py-1 bg-red-600 text-white text-xs font-bold uppercase tracking-wider rounded-sm">
+                          {videos[0].video_type || 'Documentary'}
+                        </span>
                       </div>
-                      {video.duration_seconds && (
-                        <div className="absolute bottom-2 right-2 bg-black/80 text-white px-2 py-1 text-xs">
-                          {Math.floor(video.duration_seconds / 60)}:{(video.duration_seconds % 60).toString().padStart(2, '0')}
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-4 bg-white">
-                      <span className="inline-block px-2 py-1 bg-red-100 text-red-800 border border-black text-xs font-bold uppercase mb-2">
-                        {video.video_type}
-                      </span>
-                      <h3 className="font-bold text-lg group-hover:text-red-600 transition-colors">
-                        {video.title}
+                      <h3 className="font-bold text-3xl md:text-5xl text-white mb-2 leading-tight" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                        {videos[0].title}
                       </h3>
-                      {video.description && (
-                        <p className="text-earth-600 text-sm mt-1 line-clamp-2">{video.description}</p>
+                      {videos[0].description && (
+                         <p className="text-white/80 text-lg max-w-3xl line-clamp-2 md:line-clamp-3">{videos[0].description}</p>
                       )}
+
+                      {/* Play Button Overlay */}
+                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 md:w-24 md:h-24 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center group-hover:scale-110 group-hover:bg-red-600 transition-all duration-300">
+                         <Play className="w-10 h-10 md:w-12 md:h-12 text-white ml-2" fill="white" />
+                      </div>
                     </div>
                   </a>
-                ))}
-              </div>
+                </div>
+              )}
+
+              {/* Remaining Videos */}
+              {videos.length > 1 && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {videos.slice(1).map((video) => (
+                    <a
+                      key={video.id}
+                      href={video.video_url || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block border border-white/10 rounded-xl overflow-hidden hover:border-white/30 transition-all bg-white/5"
+                    >
+                      <div className="aspect-video bg-[#111] relative overflow-hidden">
+                        {video.thumbnail_url ? (
+                          <img src={video.thumbnail_url} alt={video.title || ''} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-white/50 text-3xl">▶</div>
+                        )}
+                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" />
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 border border-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:bg-red-600 group-hover:scale-110 transition-all">
+                          <Play className="w-5 h-5 text-white ml-1" fill="white" />
+                        </div>
+                        {video.duration_seconds && (
+                          <div className="absolute bottom-2 right-2 bg-black/80 text-white/90 px-2 py-1 text-xs rounded-md backdrop-blur-sm font-mono">
+                            {Math.floor(video.duration_seconds / 60)}:{(video.duration_seconds % 60).toString().padStart(2, '0')}
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-4">
+                        <span className="text-red-500 text-[10px] font-bold uppercase tracking-widest mb-1 block">
+                          {video.video_type}
+                        </span>
+                        <h4 className="font-bold text-white group-hover:text-red-400 transition-colors line-clamp-2">
+                          {video.title}
+                        </h4>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
         )}
@@ -1313,7 +1994,7 @@ export default async function OrganizationPage({
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
-                {getOtherBasecamps(org.slug!).map((basecamp) => (
+                {otherBasecamps.map((basecamp) => (
                   <Link
                     key={basecamp.slug}
                     href={`/organizations/${basecamp.slug}`}

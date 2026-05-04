@@ -290,12 +290,12 @@ const insideY1 = [
     amount: '$160K',
     pct: '15%',
     detail:
-      'Engineering and infrastructure that keeps the See ring alive. Platform support, consent UI, hosting, monitoring, restore procedures, and the technical audit that lands as a public artefact in month 10.',
+      'The infrastructure that lets the See ring scale beyond the four anchors. The Australian Living Map of Alternatives holds the national database of community-led models, indexed on the terms of the people doing the work. CivicGraph reads the funding map against the Living Map to surface the communities currently overlooked: the organisations holding children every day who have never received philanthropic dollars. JusticeHub publishes the case studies that keep the model legible, with the community, owned by the community, withdrawable by the community. Data sovereignty is not a clause in a consent form. It is a publishing practice.',
     pieces: [
-      'Platform engineering FTE, consent UI maintenance, ALMA database stewardship',
-      'Hosting, domains, monitoring, backup and restore procedures (Vercel + Supabase)',
-      'External technical audit of the consent layer, published as a partnership artefact',
-      'Cross-anchor discovery features: searchable evidence across the cohort',
+      'Australian Living Map of Alternatives stewardship: every community-led model indexed on the terms of the people doing the work, the national reference for what is already working',
+      'CivicGraph discovery layer: the funding map read against the work map, so the next four anchors are chosen on evidence, not proximity',
+      'JusticeHub case studies: one per anchor, per year, co-authored, withdrawable, the community-owned model made legible to system stewards',
+      'Platform engineering, consent UI, hosting, monitoring, restore procedures, and the external technical audit published as a partnership artefact in month 10',
     ],
   },
   {
@@ -929,6 +929,14 @@ export default function MinderooPitchPage() {
                   of one room. The system gives a young person four file numbers. Community gives
                   them one name.
                 </p>
+                <p>
+                  Year 1 advances three things at the Harvest at once. The first three cohort
+                  weeks. The editorial residency that holds the journals. And a tour rhythm that
+                  carries Witta out to the basecamps. Perth in July. Mt Druitt in spring. Adelaide
+                  and Tennant Creek through summer. Brisbane in autumn 2027. Place-based, in
+                  Minderoo&apos;s sense of the word. The Centre is not a building. It is a rhythm
+                  that lets community-led practice travel without flattening place.
+                </p>
               </div>
               <a
                 href="/centre-of-excellence"
@@ -982,6 +990,112 @@ export default function MinderooPitchPage() {
                   </li>
                 </ul>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4.7 · WHY THIS TEAM (vs JRI / researchers / framework-builders) */}
+      <section className="bg-[#fbf5e9] border-y border-[#dec9a9]">
+        <div className="mx-auto max-w-7xl px-6 py-16 md:px-10 md:py-20">
+          <div className="max-w-3xl">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#8d6a44]">
+              Why this team. Why now.
+            </div>
+            <h2
+              className="mt-3 text-4xl leading-tight md:text-5xl"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}
+            >
+              Justice Reform Initiative writes submissions. Researchers write proposals. A Curious Tractor shows you a thing already running.
+            </h2>
+            <p className="mt-5 text-base leading-7 text-[#5a3f2a]">
+              Minderoo has already funded the report on what acting too late costs. The next dollar
+              should not fund another report. It should fund the demonstration of acting earlier,
+              in four communities, with the infrastructure to make it travel.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 lg:grid-cols-3">
+            {[
+              {
+                kicker: 'Already running',
+                title: 'Not a proposal. A practice.',
+                body: 'Fifty-five judges sat on Country at Oonchiumpa on 17 April. The Contained tour is moving with eighty-six people across fifteen locations. Four anchors are holding children right now. ACT is asking Minderoo to back the next twelve months of a thing that is already breathing.',
+              },
+              {
+                kicker: 'Money lands on community',
+                title: '48% direct. Untied. No project compliance.',
+                body: 'Forty-eight cents of every Year 1 dollar lands on Oonchiumpa, PICC, BG Fit, and MMEIC as untied support. Cultural authority is paid. Aunties and Elders are paid. A research grant of similar size sends most of itself to staff and reports. ACT inverts that ratio on purpose.',
+              },
+              {
+                kicker: 'The data layer is built',
+                title: 'Sovereignty as architecture, not as a clause.',
+                body: 'JusticeHub. Empathy Ledger. CivicGraph. The Australian Living Map of Alternatives. Per-storyteller consent. Withdrawable. OCAP-aligned. External technical audit lands as a public artefact in month 10. JRI does not have this layer. Researchers would need a year and a million dollars to build a worse version. ACT brings it on day one.',
+              },
+              {
+                kicker: 'Frameworks are downstream',
+                title: 'The model already exists in community practice.',
+                body: 'Researchers ask: fund us to develop a framework. ACT says: the framework already exists in community practice, fund us to make it visible, indexed, and able to travel. The Living Map is not a literature review of what should work. It is the registry of what is already working, on the terms of the people doing it.',
+              },
+              {
+                kicker: 'A real public vehicle',
+                title: 'A tour, not a launch event.',
+                body: 'Contained moves through Perth, Mt Druitt, Adelaide, Tennant Creek, Brisbane. STAY images, postcards, journals travel with it. JRI runs forums. Universities run symposia. ACT runs a tour that arrives in chambers, galleries, and community halls where the conversation already is.',
+              },
+              {
+                kicker: 'Speed of community',
+                title: 'Founder-held relationships, no institutional drag.',
+                body: 'Ben and Nic carry the relationships personally, in a small Pty structure with a charitable arm. No university IP committee. No grant subcommittee. No press office. Decisions move at the speed Mparntwe or Bwgcolman or Kalkadoon Country move.',
+              },
+            ].map((card) => (
+              <article
+                key={card.title}
+                className="rounded-[28px] border border-[#dec9a9] bg-white p-7 shadow-[0_14px_36px_rgba(122,46,34,0.06)]"
+              >
+                <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#a04a3a]">
+                  {card.kicker}
+                </div>
+                <h3
+                  className="mt-3 text-2xl leading-tight text-[#2a1f15]"
+                  style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}
+                >
+                  {card.title}
+                </h3>
+                <p className="mt-3 text-sm leading-6 text-[#3a2a1c]">{card.body}</p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-12 grid gap-6 lg:grid-cols-[1fr_1fr]">
+            <div className="rounded-[28px] border border-[#dec9a9] bg-white p-7">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#7c5a2a]">
+                What ACT does not claim
+              </div>
+              <p className="mt-3 text-sm leading-6 text-[#3a2a1c]">
+                Justice Reform Initiative has policy reach into Canberra ACT does not match.
+                Researchers carry peer-reviewed credibility ACT does not match. The honest pitch
+                is not that ACT replaces them. ACT is the connective tissue that lets community
+                work feed JRI&apos;s policy ask and the researchers&apos; evidence base, with the
+                data sovereignty layer none of them was going to build.
+              </p>
+            </div>
+            <div className="rounded-[28px] border border-[#5a3a2a] bg-[#5a3a2a] p-7 text-[#fbf5e9]">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#d4b07a]">
+                The reframe to walk in with
+              </div>
+              <p
+                className="mt-3 text-2xl leading-tight"
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 500, fontStyle: 'italic' }}
+              >
+                The next dollar should not fund another report. It should fund the demonstration of acting earlier, in four communities, with the infrastructure to make it travel.
+              </p>
+              <a
+                href="/pitch/minderoo/background-paper"
+                className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#d4b07a] underline decoration-[#d4b07a] decoration-1 underline-offset-4 hover:decoration-2"
+              >
+                Read the full case in the background paper
+                <span aria-hidden>→</span>
+              </a>
             </div>
           </div>
         </div>
@@ -1490,6 +1604,14 @@ export default function MinderooPitchPage() {
                 method becomes legible, and the learning can move across the country without
                 turning communities into branches of the same program.
               </p>
+              <p className="mt-4 text-sm leading-6 text-[#5a3f2a]">
+                And the volumes do not wait for a launch event to become public. As the Contained
+                tour moves through Perth, Mt Druitt, Adelaide, Tennant Creek, and Brisbane, the
+                STAY images, postcards, and journals travel with it. The book is one form. The
+                gallery wall is another. The journal in a young person&apos;s hands is a third.
+                Each stop is a place where the environments surrounding a young person become
+                visible to the room, which is the work the Communities pillar is asking for.
+              </p>
             </div>
           </div>
         </div>
@@ -1520,6 +1642,13 @@ export default function MinderooPitchPage() {
                 <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#c08a3e]" />Appendix: cost case, platform stack, governance, partnership pathways, the people.</li>
                 <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#6b8a5a]" />References: CoLI 2024, ROGS, OCAP, Closing the Gap PR2, Front Project.</li>
               </ul>
+              <a
+                href="/pitch/minderoo/background-paper"
+                className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#5a3a2a] px-6 py-3 text-sm font-medium text-[#fbf5e9] transition-colors hover:bg-[#7a2e22]"
+              >
+                Open the background paper
+                <span aria-hidden>→</span>
+              </a>
             </div>
             <aside className="rounded-[28px] border border-[#dec9a9] bg-white p-6 shadow-[0_16px_44px_rgba(122,46,34,0.06)]">
               <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8d6a44]">

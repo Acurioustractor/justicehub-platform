@@ -203,12 +203,18 @@ export default function CentreOfExcellencePage() {
               >
                 The four basecamps <ArrowRight className="h-4 w-4" />
               </Link>
+              <Link
+                href="/centre-of-excellence/system-map"
+                className="inline-flex items-center justify-center gap-2 border-2 border-white px-6 py-3 text-sm font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-white hover:text-[#0A0A0A]"
+              >
+                System map <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
         </section>
 
         {/* The reframe. Cross-domain. */}
-        <section className="border-b-2 border-[#0A0A0A]">
+        <section className="border-b-2 border-[#0A0A0A] bg-[#F5F0E8]">
           <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
             <div className="grid gap-10 md:grid-cols-[1.1fr_0.9fr]">
               <div>

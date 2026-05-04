@@ -345,43 +345,59 @@ export default function FundingOperatingSystemPage() {
       criticalPendingParams.set('reviewStatus', 'pending');
       criticalPendingParams.set('recentDays', '30');
 
-      const [profilesRes, matchesRes, workflowsRes, relationshipsRes, conversationsRes, publicSubmissionsRes, alertsRes, digestsRes, criticalPendingRes] = await Promise.all([
-        fetch('/api/admin/funding/os/capability-profiles?limit=12'),
-        fetch('/api/admin/funding/os/matches?limit=20'),
-        fetch('/api/admin/funding/os/workflows?limit=12'),
-        fetch('/api/admin/funding/os/relationships?limit=60&status=all'),
-        fetch('/api/admin/funding/os/conversations?limit=60&status=all'),
-        fetch('/api/admin/funding/os/public-submissions?limit=80'),
-        fetch('/api/admin/funding/os/alerts?limit=4'),
-        fetch(`/api/admin/funding/os/alerts/digests?${digestParams.toString()}`),
-        fetch(`/api/admin/funding/os/alerts/digests?${criticalPendingParams.toString()}`),
-      ]);
+      const endpoints = [
+        { key: 'profiles', url: '/api/admin/funding/os/capability-profiles?limit=12' },
+        { key: 'matches', url: '/api/admin/funding/os/matches?limit=20' },
+        { key: 'workflows', url: '/api/admin/funding/os/workflows?limit=12' },
+        { key: 'relationships', url: '/api/admin/funding/os/relationships?limit=60&status=all' },
+        { key: 'conversations', url: '/api/admin/funding/os/conversations?limit=60&status=all' },
+        { key: 'publicSubmissions', url: '/api/admin/funding/os/public-submissions?limit=80' },
+        { key: 'alerts', url: '/api/admin/funding/os/alerts?limit=4' },
+        { key: 'digests', url: `/api/admin/funding/os/alerts/digests?${digestParams.toString()}` },
+        { key: 'criticalPending', url: `/api/admin/funding/os/alerts/digests?${criticalPendingParams.toString()}` },
+      ] as const;
 
-      if (!profilesRes.ok || !matchesRes.ok || !workflowsRes.ok || !relationshipsRes.ok || !conversationsRes.ok || !publicSubmissionsRes.ok || !alertsRes.ok || !digestsRes.ok || !criticalPendingRes.ok) {
-        throw new Error('Failed to load Funding OS review data');
+      const settled = await Promise.allSettled(
+        endpoints.map((endpoint) =>
+          fetch(endpoint.url).then(async (response) => {
+            if (!response.ok) {
+              const payloadText = await response.text().catch(() => '');
+              throw new Error(`HTTP ${response.status}${payloadText ? ` — ${payloadText.slice(0, 120)}` : ''}`);
+            }
+            return response.json();
+          })
+        )
+      );
+
+      const failed: string[] = [];
+      const payloads: Record<string, any> = {};
+      settled.forEach((result, index) => {
+        const key = endpoints[index].key;
+        if (result.status === 'fulfilled') {
+          payloads[key] = result.value;
+        } else {
+          payloads[key] = null;
+          failed.push(`${key} (${result.reason instanceof Error ? result.reason.message : String(result.reason)})`);
+        }
+      });
+
+      setProfiles(payloads.profiles?.data || []);
+      setMatches(payloads.matches?.data || []);
+      setWorkflows(payloads.workflows?.data || []);
+      setRelationships(payloads.relationships?.data || []);
+      setConversations(payloads.conversations?.data || []);
+      setPublicSubmissions(payloads.publicSubmissions?.data || []);
+      setAlerts(payloads.alerts?.data || null);
+      setAlertDigests(payloads.digests?.data || []);
+      setCriticalPendingDigestCount(
+        Array.isArray(payloads.criticalPending?.data) ? payloads.criticalPending.data.length : 0
+      );
+
+      if (failed.length === endpoints.length) {
+        setError('Failed to load Funding OS review data. All endpoints returned errors.');
+      } else if (failed.length > 0) {
+        setError(`Partial load. ${failed.length} of ${endpoints.length} endpoints failed: ${failed.join('; ')}`);
       }
-
-      const [profilesPayload, matchesPayload, workflowsPayload, relationshipsPayload, conversationsPayload, publicSubmissionsPayload, alertsPayload, digestsPayload, criticalPendingPayload] = await Promise.all([
-        profilesRes.json(),
-        matchesRes.json(),
-        workflowsRes.json(),
-        relationshipsRes.json(),
-        conversationsRes.json(),
-        publicSubmissionsRes.json(),
-        alertsRes.json(),
-        digestsRes.json(),
-        criticalPendingRes.json(),
-      ]);
-
-      setProfiles(profilesPayload.data || []);
-      setMatches(matchesPayload.data || []);
-      setWorkflows(workflowsPayload.data || []);
-      setRelationships(relationshipsPayload.data || []);
-      setConversations(conversationsPayload.data || []);
-      setPublicSubmissions(publicSubmissionsPayload.data || []);
-      setAlerts(alertsPayload.data || null);
-      setAlertDigests(digestsPayload.data || []);
-      setCriticalPendingDigestCount(Array.isArray(criticalPendingPayload.data) ? criticalPendingPayload.data.length : 0);
     } catch (fetchError) {
       setError(fetchError instanceof Error ? fetchError.message : 'Failed to load data');
     } finally {
@@ -655,186 +671,89 @@ export default function FundingOperatingSystemPage() {
 
       <div className="pt-8 pb-16">
         <div className="container-justice">
-          <div className="flex flex-col gap-6 mb-8 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <Link
-                href="/admin/funding"
-                className="inline-flex items-center gap-2 px-3 py-2 mb-4 bg-white border-2 border-black text-sm font-bold hover:bg-gray-100 transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back to Funding
-              </Link>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="flex h-12 w-12 items-center justify-center bg-emerald-500 text-white border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                  <Network className="w-6 h-6" />
-                </div>
-                <div>
-                  <h1 className="text-4xl font-black text-black">Funding OS Review</h1>
-                  <p className="text-base text-gray-600">
-                    Review basecamp-aware capability profiles, agent workflows, and live match recommendations.
-                  </p>
+          {/* Header */}
+          <div className="mb-6">
+            <Link
+              href="/admin/funding"
+              className="inline-flex items-center gap-2 px-3 py-2 mb-4 bg-white border-2 border-black text-sm font-bold hover:bg-gray-100 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Funding
+            </Link>
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center bg-emerald-500 text-white border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                <Network className="w-6 h-6" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-black text-black">Funding OS · Control Room</h1>
+                <p className="text-base text-gray-600 max-w-3xl mt-1">
+                  Cross-organisation control room for the JusticeHub Funding Operating System.
+                  Three jobs done here: run the next agent cycle, check what needs your attention,
+                  drill into a specific data table when you need to.
+                </p>
+                {criticalPendingDigestCount > 0 && (
                   <div className="mt-3 inline-flex items-center gap-2 px-3 py-2 bg-[#fff1f2] border-2 border-black text-xs font-black text-[#be123c]">
                     {criticalPendingDigestCount} unresolved critical digest{criticalPendingDigestCount === 1 ? '' : 's'}
                   </div>
-                </div>
+                )}
               </div>
             </div>
+          </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <Link
-                href="/admin/funding/os/pipeline"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#eef4ff] border-2 border-black font-bold hover:bg-[#dbeafe] transition-colors"
-              >
-                <Workflow className="w-4 h-4" />
-                Open Pipeline Board
-              </Link>
-              <Link
-                href="/admin/funding/os/followups"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#fff1f2] border-2 border-black font-bold hover:bg-[#ffe4e6] transition-colors"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                Follow-up Queue
-              </Link>
-              <Link
-                href="/admin/funding/os/conversations"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#eef8f7] border-2 border-black font-bold hover:bg-[#d7f0ee] transition-colors"
-              >
-                <Network className="w-4 h-4" />
-                Conversation Requests
-              </Link>
-              <Link
-                href="/admin/funding/os/relationships"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#f5f3ff] border-2 border-black font-bold hover:bg-[#ede9fe] transition-colors"
-              >
-                <Network className="w-4 h-4" />
-                Relationships
-              </Link>
-              <Link
-                href="/admin/funding/os/relationships/stage-tasks"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#ecfeff] border-2 border-black font-bold hover:bg-[#cffafe] transition-colors"
-              >
-                <Workflow className="w-4 h-4" />
-                Relationship Actions
-              </Link>
-              <Link
-                href="/admin/funding/os/relationships/pathway-tasks"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#fef3c7] border-2 border-black font-bold hover:bg-[#fde68a] transition-colors"
-              >
-                <Workflow className="w-4 h-4" />
-                Funding Pathway Tasks
-              </Link>
-              <Link
-                href="/funding/accountability"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#e7f8ee] border-2 border-black font-bold hover:bg-[#d2f4de] transition-colors"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                Community Accountability
-              </Link>
-              <Link
-                href="/funding/discovery"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#eef8f7] border-2 border-black font-bold hover:bg-[#d7f0ee] transition-colors"
+          {/* Zone 1: Run the cycle (primary action zone) */}
+          <section className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-8">
+            <div className="px-5 py-4 border-b-2 border-black bg-[#f8fafc] flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-black text-black">Run the cycle</h2>
+                <p className="text-sm text-gray-700 mt-1">
+                  Trigger the agent loop that produces matches, alerts, and digests across every org.
+                </p>
+              </div>
+            </div>
+            <div className="p-5 flex flex-wrap items-center gap-3">
+              <button
+                onClick={runBootstrap}
+                disabled={bootstrapping || runningCycle}
+                className="inline-flex items-center gap-2 px-6 py-4 bg-emerald-600 text-white border-2 border-black font-black uppercase tracking-widest text-sm hover:bg-emerald-700 transition-colors disabled:opacity-50 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
               >
                 <Sparkles className="w-4 h-4" />
-                Funder Discovery
-              </Link>
-              <Link
-                href="/admin/funding/os/discovery-workspace"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#f5f3ff] border-2 border-black font-bold hover:bg-[#ede9fe] transition-colors"
-              >
-                <Sparkles className="w-4 h-4" />
-                Shared Discovery Workspace
-              </Link>
-              <Link
-                href="/admin/funding/os/application-drafts"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#eef4ff] border-2 border-black font-bold hover:bg-[#dbeafe] transition-colors"
-              >
-                <Workflow className="w-4 h-4" />
-                Application Drafts
-              </Link>
-              <Link
-                href="/admin/funding/os/application-draft-reviews"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#eff6ff] border-2 border-black font-bold hover:bg-[#dbeafe] transition-colors"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                Application Draft Reviews
-              </Link>
-              <Link
-                href="/admin/funding/os/discovery-candidates"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#ecfeff] border-2 border-black font-bold hover:bg-[#cffafe] transition-colors"
-              >
-                <Sparkles className="w-4 h-4" />
-                Discovery Cohort Candidates
-              </Link>
-              <Link
-                href="/admin/funding/os/community-reporting"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#fff7e6] border-2 border-black font-bold hover:bg-[#ffefc2] transition-colors"
-              >
-                <Bot className="w-4 h-4" />
-                Community Reporting
-              </Link>
-              <Link
-                href="/admin/funding/os/public-submissions"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#fff4e6] border-2 border-black font-bold hover:bg-[#ffe7c2] transition-colors"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                Public Evidence Review
-              </Link>
-              <Link
-                href="/admin/funding/os/outcome-definitions"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#eef8f7] border-2 border-black font-bold hover:bg-[#d7f0ee] transition-colors"
-              >
-                <Target className="w-4 h-4" />
-                Outcome Definitions
-              </Link>
-              <Link
-                href="/admin/funding/os/spending"
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#f3f8ec] border-2 border-black font-bold hover:bg-[#e7f2d8] transition-colors"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                Spending Ledger
-              </Link>
-              <button
-                onClick={() => sendAlertDigest(false)}
-                disabled={sendingAlertDigest || runningCycle || bootstrapping}
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#fff7e6] text-[#b45309] border-2 border-black font-bold hover:bg-[#ffefc2] transition-colors disabled:opacity-50"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                {sendingAlertDigest ? 'Sending Digest…' : 'Send Alert Digest'}
-              </button>
-              <button
-                onClick={() => sendAlertDigest(true)}
-                disabled={sendingAlertDigest || runningCycle || bootstrapping}
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#fff1f2] text-[#be123c] border-2 border-black font-bold hover:bg-[#ffe4e6] transition-colors disabled:opacity-50"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                {sendingAlertDigest ? 'Sending Digest…' : 'Force Send'}
-              </button>
-              <button
-                onClick={() => fetchData(true)}
-                disabled={refreshing || bootstrapping || runningCycle}
-                className="inline-flex items-center gap-2 px-4 py-3 bg-white border-2 border-black font-bold hover:bg-gray-100 transition-colors disabled:opacity-50"
-              >
-                <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-                Refresh
+                {bootstrapping ? 'Running Bootstrap…' : 'Run Bootstrap'}
               </button>
               <button
                 onClick={runCycle}
                 disabled={runningCycle || bootstrapping}
-                className="inline-flex items-center gap-2 px-4 py-3 bg-[#dbeafe] text-[#1e3a8a] border-2 border-black font-bold hover:bg-[#bfdbfe] transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-5 py-4 bg-[#dbeafe] text-[#1e3a8a] border-2 border-black font-bold hover:bg-[#bfdbfe] transition-colors disabled:opacity-50"
               >
                 <Bot className="w-4 h-4" />
                 {runningCycle ? 'Running Cycle…' : 'Run Cycle'}
               </button>
               <button
-                onClick={runBootstrap}
-                disabled={bootstrapping || runningCycle}
-                className="inline-flex items-center gap-2 px-4 py-3 bg-emerald-600 text-white border-2 border-black font-bold hover:bg-emerald-700 transition-colors disabled:opacity-50 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                onClick={() => fetchData(true)}
+                disabled={refreshing || bootstrapping || runningCycle}
+                className="inline-flex items-center gap-2 px-5 py-4 bg-white border-2 border-black font-bold hover:bg-gray-100 transition-colors disabled:opacity-50"
               >
-                <Sparkles className="w-4 h-4" />
-                {bootstrapping ? 'Running Bootstrap…' : 'Run Bootstrap'}
+                <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                Refresh
+              </button>
+              <div className="flex-grow" />
+              <button
+                onClick={() => sendAlertDigest(false)}
+                disabled={sendingAlertDigest || runningCycle || bootstrapping}
+                className="inline-flex items-center gap-2 px-4 py-3 bg-[#fff7e6] text-[#b45309] border-2 border-black font-bold text-sm hover:bg-[#ffefc2] transition-colors disabled:opacity-50"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                {sendingAlertDigest ? 'Sending…' : 'Send Alert Digest'}
+              </button>
+              <button
+                onClick={() => sendAlertDigest(true)}
+                disabled={sendingAlertDigest || runningCycle || bootstrapping}
+                className="inline-flex items-center gap-2 px-4 py-3 bg-[#fff1f2] text-[#be123c] border-2 border-black font-bold text-sm hover:bg-[#ffe4e6] transition-colors disabled:opacity-50"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                Force Send
               </button>
             </div>
-          </div>
+          </section>
 
           {notice && (
             <div
@@ -856,136 +775,155 @@ export default function FundingOperatingSystemPage() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-11 gap-5 mb-8">
-            <div className="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs uppercase font-bold text-gray-600">Profiles</span>
-                <Gauge className="w-5 h-5 text-emerald-600" />
+          {/* Zone 2: Health at a glance — three grouped summaries */}
+          <section className="mb-8">
+            <h2 className="text-xl font-black text-black mb-4">Health at a glance</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {/* Health */}
+              <div className="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center gap-2 mb-4">
+                  <Gauge className="w-5 h-5 text-emerald-600" />
+                  <h3 className="text-sm font-black uppercase tracking-widest">Health</h3>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-baseline justify-between border-b border-gray-200 pb-2">
+                    <span className="text-gray-600">Profiles loaded</span>
+                    <span className="text-2xl font-black">{metrics.profileCount}</span>
+                  </div>
+                  <div className="flex items-baseline justify-between border-b border-gray-200 pb-2">
+                    <span className="text-gray-600">Avg readiness</span>
+                    <span className="text-2xl font-black text-blue-700">{metrics.avgReadiness}</span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-gray-600">Strong matches (80+)</span>
+                    <span className="text-2xl font-black text-indigo-700">{metrics.strongMatches}</span>
+                  </div>
+                </div>
               </div>
-              <div className="text-4xl font-black text-black">{metrics.profileCount}</div>
-              <div className="text-xs text-gray-500 mt-1">capability records loaded</div>
+
+              {/* Activity */}
+              <div className="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center gap-2 mb-4">
+                  <Workflow className="w-5 h-5 text-amber-600" />
+                  <h3 className="text-sm font-black uppercase tracking-widest">Activity</h3>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-baseline justify-between border-b border-gray-200 pb-2">
+                    <span className="text-gray-600">Recent workflows</span>
+                    <span className="text-2xl font-black">{metrics.workflowCount}</span>
+                  </div>
+                  <div className="flex items-baseline justify-between border-b border-gray-200 pb-2">
+                    <span className="text-gray-600">Completed</span>
+                    <span className="text-2xl font-black text-emerald-700">{metrics.completedWorkflows}</span>
+                  </div>
+                  <Link
+                    href="/admin/funding/os/relationships?promotion=success"
+                    className="flex items-baseline justify-between hover:underline"
+                  >
+                    <span className="text-gray-600">Rel to pipeline</span>
+                    <span className="text-2xl font-black text-emerald-700">{metrics.successfulRelationshipPromotions}</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Backlog */}
+              <div className="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center gap-2 mb-4">
+                  <ShieldCheck className="w-5 h-5 text-red-600" />
+                  <h3 className="text-sm font-black uppercase tracking-widest">Backlog</h3>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <Link
+                    href="/admin/funding/os/relationships?promotion=failed"
+                    className="flex items-baseline justify-between border-b border-gray-200 pb-2 hover:underline"
+                  >
+                    <span className="text-gray-600">Rel failures</span>
+                    <span className="text-2xl font-black text-red-700">{metrics.failedRelationshipPromotions}</span>
+                  </Link>
+                  <Link
+                    href="/admin/funding/os/conversations?reply=relationship"
+                    className="flex items-baseline justify-between border-b border-gray-200 pb-2 hover:underline"
+                  >
+                    <span className="text-gray-600">Replies awaiting review</span>
+                    <span className="text-2xl font-black text-[#5b21b6]">{metrics.relationshipRepliesAwaitingReview}</span>
+                  </Link>
+                  <Link
+                    href="/admin/funding/os/public-submissions?focus=urgent-contactable"
+                    className="flex items-baseline justify-between hover:underline"
+                  >
+                    <span className="text-gray-600">Urgent + contact</span>
+                    <span className="text-2xl font-black text-[#b45309]">{metrics.urgentContactablePublicSubmissions}</span>
+                  </Link>
+                </div>
+              </div>
             </div>
+          </section>
 
-            <div className="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs uppercase font-bold text-gray-600">Avg Readiness</span>
-                <Target className="w-5 h-5 text-blue-600" />
+          {/* Zone 3: Browse data tables — collapsed disclosure */}
+          <details className="mb-8 border-2 border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group">
+            <summary className="px-5 py-4 cursor-pointer bg-gray-50 border-b-2 border-black group-open:border-b-2 flex items-center justify-between hover:bg-gray-100">
+              <div>
+                <h2 className="text-xl font-black text-black">Browse data tables</h2>
+                <p className="text-sm text-gray-700 mt-1">
+                  Drill into any of the 15 sub-pages: pipeline, follow-ups, conversations, drafts, evidence, spending, and more.
+                </p>
               </div>
-              <div className="text-4xl font-black text-blue-700">{metrics.avgReadiness}</div>
-              <div className="text-xs text-gray-500 mt-1">funding readiness score</div>
+              <span className="text-sm font-bold text-gray-600 group-open:hidden">Open ↓</span>
+              <span className="text-sm font-bold text-gray-600 hidden group-open:inline">Close ↑</span>
+            </summary>
+            <div className="p-5">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <Link href="/admin/funding/os/pipeline" className="inline-flex items-center gap-2 px-4 py-3 bg-[#eef4ff] border-2 border-black font-bold hover:bg-[#dbeafe] transition-colors">
+                  <Workflow className="w-4 h-4" /> Open Pipeline Board
+                </Link>
+                <Link href="/admin/funding/os/followups" className="inline-flex items-center gap-2 px-4 py-3 bg-[#fff1f2] border-2 border-black font-bold hover:bg-[#ffe4e6] transition-colors">
+                  <ShieldCheck className="w-4 h-4" /> Follow-up Queue
+                </Link>
+                <Link href="/admin/funding/os/conversations" className="inline-flex items-center gap-2 px-4 py-3 bg-[#eef8f7] border-2 border-black font-bold hover:bg-[#d7f0ee] transition-colors">
+                  <Network className="w-4 h-4" /> Conversation Requests
+                </Link>
+                <Link href="/admin/funding/os/relationships" className="inline-flex items-center gap-2 px-4 py-3 bg-[#f5f3ff] border-2 border-black font-bold hover:bg-[#ede9fe] transition-colors">
+                  <Network className="w-4 h-4" /> Relationships
+                </Link>
+                <Link href="/admin/funding/os/relationships/stage-tasks" className="inline-flex items-center gap-2 px-4 py-3 bg-[#ecfeff] border-2 border-black font-bold hover:bg-[#cffafe] transition-colors">
+                  <Workflow className="w-4 h-4" /> Relationship Actions
+                </Link>
+                <Link href="/admin/funding/os/relationships/pathway-tasks" className="inline-flex items-center gap-2 px-4 py-3 bg-[#fef3c7] border-2 border-black font-bold hover:bg-[#fde68a] transition-colors">
+                  <Workflow className="w-4 h-4" /> Funding Pathway Tasks
+                </Link>
+                <Link href="/funding/accountability" className="inline-flex items-center gap-2 px-4 py-3 bg-[#e7f8ee] border-2 border-black font-bold hover:bg-[#d2f4de] transition-colors">
+                  <ShieldCheck className="w-4 h-4" /> Community Accountability
+                </Link>
+                <Link href="/funding/discovery" className="inline-flex items-center gap-2 px-4 py-3 bg-[#eef8f7] border-2 border-black font-bold hover:bg-[#d7f0ee] transition-colors">
+                  <Sparkles className="w-4 h-4" /> Funder Discovery
+                </Link>
+                <Link href="/admin/funding/os/discovery-workspace" className="inline-flex items-center gap-2 px-4 py-3 bg-[#f5f3ff] border-2 border-black font-bold hover:bg-[#ede9fe] transition-colors">
+                  <Sparkles className="w-4 h-4" /> Shared Discovery Workspace
+                </Link>
+                <Link href="/admin/funding/os/application-drafts" className="inline-flex items-center gap-2 px-4 py-3 bg-[#eef4ff] border-2 border-black font-bold hover:bg-[#dbeafe] transition-colors">
+                  <Workflow className="w-4 h-4" /> Application Drafts
+                </Link>
+                <Link href="/admin/funding/os/application-draft-reviews" className="inline-flex items-center gap-2 px-4 py-3 bg-[#eff6ff] border-2 border-black font-bold hover:bg-[#dbeafe] transition-colors">
+                  <CheckCircle2 className="w-4 h-4" /> Application Draft Reviews
+                </Link>
+                <Link href="/admin/funding/os/discovery-candidates" className="inline-flex items-center gap-2 px-4 py-3 bg-[#ecfeff] border-2 border-black font-bold hover:bg-[#cffafe] transition-colors">
+                  <Sparkles className="w-4 h-4" /> Discovery Cohort Candidates
+                </Link>
+                <Link href="/admin/funding/os/community-reporting" className="inline-flex items-center gap-2 px-4 py-3 bg-[#fff7e6] border-2 border-black font-bold hover:bg-[#ffefc2] transition-colors">
+                  <Bot className="w-4 h-4" /> Community Reporting
+                </Link>
+                <Link href="/admin/funding/os/public-submissions" className="inline-flex items-center gap-2 px-4 py-3 bg-[#fff4e6] border-2 border-black font-bold hover:bg-[#ffe7c2] transition-colors">
+                  <ShieldCheck className="w-4 h-4" /> Public Evidence Review
+                </Link>
+                <Link href="/admin/funding/os/outcome-definitions" className="inline-flex items-center gap-2 px-4 py-3 bg-[#eef8f7] border-2 border-black font-bold hover:bg-[#d7f0ee] transition-colors">
+                  <Target className="w-4 h-4" /> Outcome Definitions
+                </Link>
+                <Link href="/admin/funding/os/spending" className="inline-flex items-center gap-2 px-4 py-3 bg-[#f3f8ec] border-2 border-black font-bold hover:bg-[#e7f2d8] transition-colors">
+                  <CheckCircle2 className="w-4 h-4" /> Spending Ledger
+                </Link>
+              </div>
             </div>
-
-            <div className="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs uppercase font-bold text-gray-600">Strong Matches</span>
-                <Sparkles className="w-5 h-5 text-indigo-600" />
-              </div>
-              <div className="text-4xl font-black text-indigo-700">{metrics.strongMatches}</div>
-              <div className="text-xs text-gray-500 mt-1">80+ score recommendations</div>
-            </div>
-
-            <div className="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs uppercase font-bold text-gray-600">Workflows</span>
-                <Workflow className="w-5 h-5 text-amber-600" />
-              </div>
-              <div className="text-4xl font-black text-black">{metrics.workflowCount}</div>
-              <div className="text-xs text-gray-500 mt-1">recent workflow runs</div>
-            </div>
-
-            <div className="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs uppercase font-bold text-gray-600">Completed</span>
-                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-              </div>
-              <div className="text-4xl font-black text-emerald-700">{metrics.completedWorkflows}</div>
-              <div className="text-xs text-gray-500 mt-1">completed recent workflows</div>
-            </div>
-
-            <Link
-              href="/admin/funding/os/relationships?promotion=success"
-              className="block bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-emerald-50 transition-colors"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs uppercase font-bold text-gray-600">Rel to Pipeline</span>
-                <Network className="w-5 h-5 text-emerald-600" />
-              </div>
-              <div className="text-4xl font-black text-emerald-700">
-                {metrics.successfulRelationshipPromotions}
-              </div>
-              <div className="text-xs text-gray-500 mt-1">successful relationship promotions</div>
-            </Link>
-
-            <Link
-              href="/admin/funding/os/relationships?promotion=failed"
-              className="block bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-red-50 transition-colors"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs uppercase font-bold text-gray-600">Rel Failures</span>
-                <Network className="w-5 h-5 text-red-600" />
-              </div>
-              <div className="text-4xl font-black text-red-700">
-                {metrics.failedRelationshipPromotions}
-              </div>
-              <div className="text-xs text-gray-500 mt-1">relationship promotion failures</div>
-            </Link>
-
-            <Link
-              href="/admin/funding/os/conversations?reply=relationship"
-              className="block bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#f5f3ff] transition-colors"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs uppercase font-bold text-gray-600">Rel Replies</span>
-                <MessageSquare className="w-5 h-5 text-[#5b21b6]" />
-              </div>
-              <div className="text-4xl font-black text-[#5b21b6]">
-                {metrics.relationshipRepliesAwaitingReview}
-              </div>
-              <div className="text-xs text-gray-500 mt-1">relationship replies awaiting review</div>
-            </Link>
-
-            <Link
-              href="/admin/funding/os/conversations?reply=relationship&status=running"
-              className="block bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#eef4ff] transition-colors"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs uppercase font-bold text-gray-600">Rel Reply Live</span>
-                <MessageSquare className="w-5 h-5 text-[#1d4ed8]" />
-              </div>
-              <div className="text-4xl font-black text-[#1d4ed8]">
-                {metrics.relationshipRepliesRunning}
-              </div>
-              <div className="text-xs text-gray-500 mt-1">relationship replies already reopened</div>
-            </Link>
-
-            <Link
-              href="/admin/funding/os/public-submissions?focus=urgent-contactable"
-              className="block bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#fff7e6] transition-colors"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs uppercase font-bold text-gray-600">Urgent + Contact</span>
-                <ShieldCheck className="w-5 h-5 text-[#b45309]" />
-              </div>
-              <div className="text-4xl font-black text-[#b45309]">
-                {metrics.urgentContactablePublicSubmissions}
-              </div>
-              <div className="text-xs text-gray-500 mt-1">urgent public submissions with follow-up consent</div>
-            </Link>
-
-            <Link
-              href="/admin/funding/os/public-submissions?focus=contact-outreach"
-              className="block bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#eef8f7] transition-colors"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs uppercase font-bold text-gray-600">Contact Tasks</span>
-                <MessageSquare className="w-5 h-5 text-[#0f766e]" />
-              </div>
-              <div className="text-4xl font-black text-[#0f766e]">
-                {metrics.publicEvidenceContactTasks}
-              </div>
-              <div className="text-xs text-gray-500 mt-1">live contributor outreach tasks</div>
-            </Link>
-          </div>
+          </details>
 
           <section className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-8">
             <div className="px-5 py-4 border-b-2 border-black bg-[#f8fafc]">
