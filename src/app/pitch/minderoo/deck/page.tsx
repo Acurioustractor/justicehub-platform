@@ -103,7 +103,7 @@ function Slide({
 }
 
 export default function MinderooDeckPage() {
-  const total = 17;
+  const total = 16;
   const cormorant = { fontFamily: "'Cormorant Garamond', Georgia, serif" } as const;
 
   return (
@@ -571,26 +571,8 @@ export default function MinderooDeckPage() {
           </div>
         </Slide>
 
-        {/* 14 — ACTION PATH */}
-        <Slide n={15} total={total} bg="#f5ecd9">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#8d6a44] mb-4">
-            When and how
-          </div>
-          <h2 className="max-w-4xl text-5xl md:text-6xl leading-tight mb-10" style={{ ...cormorant, fontWeight: 500 }}>
-            From now to Year 1 begins.
-          </h2>
-          <ol className="max-w-4xl space-y-3">
-            {actionPath.map((step) => (
-              <li key={step.when} className="grid grid-cols-[180px_1fr] gap-6 border-l-2 border-[#dec9a9] pl-5 py-1">
-                <span className="text-sm font-semibold uppercase tracking-[0.18em] text-[#a04a3a]">{step.when}</span>
-                <span className="text-base leading-7 text-[#3a2a1c]">{step.what}</span>
-              </li>
-            ))}
-          </ol>
-        </Slide>
-
         {/* 15 — THE ASK · per-year menu, agile, no total */}
-        <Slide n={16} total={total} bg="#fbf5e9">
+        <Slide n={15} total={total} bg="#fbf5e9">
           <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#8d6a44] mb-4">
             How the dollars can land
           </div>
@@ -643,7 +625,7 @@ export default function MinderooDeckPage() {
         </Slide>
 
         {/* 16 — WHY THIS TEAM + CLOSE · with founders portrait */}
-        <Slide n={17} total={total} bg="#5a3a2a">
+        <Slide n={16} total={total} bg="#5a3a2a">
           <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#d4b07a] mb-4">
