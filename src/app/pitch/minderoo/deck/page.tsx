@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { PrintButton } from './PrintButton';
 
 export const metadata = {
   title: 'Slide Deck · STAY × Minderoo Foundation',
@@ -125,7 +124,6 @@ export default function MinderooDeckPage() {
         >
           Back to pitch
         </Link>
-        <PrintButton />
       </div>
 
       <div className="deck-scroll">
