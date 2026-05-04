@@ -652,8 +652,8 @@ export default function SystemMapPage() {
                 </div>
                 <div className="relative aspect-[4/5] bg-red-50/40">
                   <div
-                    className="absolute inset-0 bg-no-repeat bg-center bg-contain opacity-30"
-                    style={{ backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Australia_location_map.svg/1200px-Australia_location_map.svg.png)' }}
+                    className="absolute inset-0 bg-no-repeat bg-center bg-contain opacity-60"
+                    style={{ backgroundImage: 'url(/images/maps/australia-outline.svg)' }}
                   />
                   {[
                     { code: 'NSW', x: 84, y: 62, cost: '$939K' },
@@ -707,8 +707,8 @@ export default function SystemMapPage() {
                 </div>
                 <div className="relative aspect-[4/5] bg-emerald-50/40">
                   <div
-                    className="absolute inset-0 bg-no-repeat bg-center bg-contain opacity-30"
-                    style={{ backgroundImage: 'url(https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Australia_location_map.svg/1200px-Australia_location_map.svg.png)' }}
+                    className="absolute inset-0 bg-no-repeat bg-center bg-contain opacity-60"
+                    style={{ backgroundImage: 'url(/images/maps/australia-outline.svg)' }}
                   />
                   {[
                     { code: 'NSW', x: 84, y: 62, count: 370 },
