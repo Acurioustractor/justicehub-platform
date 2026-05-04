@@ -574,29 +574,41 @@ export default function MinderooDeckPage() {
         {/* 15 — THE ASK · per-year menu, agile, no total */}
         <Slide n={15} total={total} bg="#fbf5e9">
           <div className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#8d6a44] mb-4">
-            How the dollars can land
+            The ask
           </div>
-          <h2 className="max-w-5xl text-4xl md:text-6xl leading-tight mb-4" style={{ ...cormorant, fontWeight: 500 }}>
-            A menu of moves, <span className="italic">per year.</span>
-          </h2>
-          <p className="max-w-3xl text-lg leading-relaxed text-[#5a3f2a] mb-2">
-            This is not a fixed package. It is the way to frame the work so Minderoo can move
-            dollars into the form that fits best. Pick any of these. Combine them. Shape Year 1
-            against where the partnership most wants to land.
-          </p>
-          <p className="max-w-3xl text-base text-[#8d6a44] italic mb-8">
-            Agile, relational, and reversible. Every line stands on its own at every gate.
-          </p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-8 items-end mb-10 max-w-6xl">
+            <div>
+              <h2 className="text-5xl md:text-7xl leading-[0.95] mb-3" style={{ ...cormorant, fontWeight: 500 }}>
+                $1.1M
+                <br />
+                <span className="italic">a year.</span>
+              </h2>
+              <p className="text-base text-[#5a3f2a]" style={{ ...cormorant, fontStyle: 'italic' }}>
+                Year 1 Standard. Four anchors held. The work that travels.
+              </p>
+            </div>
+            <div>
+              <p className="text-lg leading-relaxed text-[#5a3f2a] mb-3">
+                Below is the breakdown. Not a fixed package. It is how Minderoo can move
+                dollars into the form that fits the partnership best. Pick any of these.
+                Combine them. Shape Year 1 against where the work most wants to land.
+              </p>
+              <p className="text-base text-[#8d6a44] italic">
+                Agile, relational, reversible. Every line stands on its own at every gate.
+              </p>
+            </div>
+          </div>
 
           <div className="border-2 border-[#5a3a2a] bg-white max-w-6xl">
             {[
-              { ring: 'HOLD', tone: '#a04a3a', name: 'Anchor support', perYear: '$100K per anchor / year', body: 'Untied support to a community-controlled organisation. Cultural authority paid. Travel and protocol covered. Quarterly sense-making.' },
-              { ring: 'HOLD', tone: '#a04a3a', name: 'Cross-site exchange', perYear: '$25K per exchange', body: 'One anchor-to-anchor visit. Country visits Country. Co-signed by both ends. The September Oonchiumpa trip is one example.' },
-              { ring: 'SEE', tone: '#c08a3e', name: 'Storytelling residency', perYear: '$45K per anchor / year', body: 'Two to three storytelling trips per anchor. Filmmakers, photographers, transcription, consent workflow. Per-storyteller, withdrawable.' },
-              { ring: 'SEE', tone: '#c08a3e', name: 'Platform layer', perYear: '$160K / year', body: 'Australian Living Map of Alternatives, CivicGraph, JusticeHub case studies, consent UI, hosting, and the external technical audit published in month 10.' },
-              { ring: 'CARRY', tone: '#6b8a5a', name: 'Book, send, and exhibition', perYear: '$140K per cycle', body: 'STAY series book co-authored with the four anchors. Distribution to chambers, philanthropy, and government rooms. An exhibition stop each year, building toward the Year 3 national exhibition at the Harvest.' },
-              { ring: 'CARRY', tone: '#6b8a5a', name: 'Contained tour stop', perYear: '$30K per stop', body: 'A tour stop where STAY images, postcards, and journals travel. Perth, Mt Druitt, Adelaide, Tennant Creek, Brisbane.' },
-              { ring: 'EXTEND', tone: '#5a3a2a', name: 'International learning trip', perYear: '$80K one-off', body: 'July to August 2026: Africa and Europe storytelling work feeds the platform. Australia in the conversation, not consuming it.' },
+              { ring: 'HOLD', tone: '#a04a3a', name: 'Anchor support · local funding to do the work', perYear: '$100K per anchor / year', body: 'Untied support to a community-controlled organisation. Cultural authority paid. Travel and protocol covered. The local funding that keeps the work running on Country.' },
+              { ring: 'HOLD', tone: '#a04a3a', name: 'Cross-site exchange · Country visits Country', perYear: '$25K per exchange', body: 'One anchor-to-anchor visit. Co-signed by both ends. The September Oonchiumpa trip east is the first worked example.' },
+              { ring: 'SEE', tone: '#c08a3e', name: 'Engagement, storytelling, and capture', perYear: '$45K per anchor / year', body: 'Local support to engage with young people, families, and Elders on Country. Filmmakers, photographers, transcription, consent workflow. Per-storyteller, withdrawable.' },
+              { ring: 'SEE', tone: '#c08a3e', name: 'JusticeHub platform · data and evidence', perYear: '$160K / year', body: 'Australian Living Map of Alternatives, CivicGraph, JusticeHub case studies, consent UI, hosting, and the external technical audit published in month 10.' },
+              { ring: 'CARRY', tone: '#6b8a5a', name: 'Book, postcards, and exhibition', perYear: '$140K per cycle', body: 'STAY series book co-authored with the four anchors. Postcards send to chambers, philanthropy, and government rooms. An exhibition stop each year, building toward the Year 3 national exhibition at the Harvest.' },
+              { ring: 'CARRY', tone: '#6b8a5a', name: 'Contained tour stop', perYear: '$30K per stop', body: 'A live tour stop carrying STAY images, postcards, and journals into the room. Perth, Mt Druitt, Adelaide, Tennant Creek, Brisbane.' },
+              { ring: 'EXTEND', tone: '#5a3a2a', name: 'International trip (if available)', perYear: '$80K one-off', body: 'July to August 2026: Africa and Europe storytelling work feeds the platform. Australia in the conversation, not consuming it. Adds breadth to Year 1.' },
             ].map((row, i) => (
               <div key={row.name} className={`grid grid-cols-[100px_1fr_180px] items-start gap-4 px-5 py-4 ${i > 0 ? 'border-t border-[#dec9a9]' : ''}`}>
                 <span
