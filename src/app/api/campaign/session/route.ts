@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   const sessionId = request.nextUrl.searchParams.get('id')
@@ -9,6 +11,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const stripe = getStripe()
     const session = await stripe.checkout.sessions.retrieve(sessionId)
 
     if (session.metadata?.type !== 'donation') {

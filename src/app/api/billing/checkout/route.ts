@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
-import { stripe, TIERS, type TierKey } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
+import { TIERS, type TierKey } from '@/lib/billing/tiers'
+
+// Mark dynamic so Next.js doesn't try to collect page data at build time —
+// the page-data collector probes the module and triggers the Stripe SDK init,
+// which throws when STRIPE_SECRET_KEY isn't in the build env (it shouldn't be).
+export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
@@ -59,6 +65,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Organization not found' }, { status: 404 })
     }
 
+    const stripe = getStripe()
     let stripeCustomerId = org.stripe_customer_id
 
     if (!stripeCustomerId) {

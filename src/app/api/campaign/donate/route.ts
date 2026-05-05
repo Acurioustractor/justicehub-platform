@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
+
+export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,6 +18,7 @@ export async function POST(request: NextRequest) {
 
     const amountCents = Math.round(amount * 100)
     const appUrl = process.env.NEXTAUTH_URL || 'http://localhost:3004'
+    const stripe = getStripe()
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',

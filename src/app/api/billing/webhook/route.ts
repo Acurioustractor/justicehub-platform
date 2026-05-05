@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { createServiceClient } from '@/lib/supabase/service'
 import type Stripe from 'stripe'
+
+export const dynamic = 'force-dynamic'
 
 export const runtime = 'nodejs'
 
@@ -19,6 +21,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 })
   }
 
+  const stripe = getStripe()
   let event: Stripe.Event
 
   try {

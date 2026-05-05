@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
+
+export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,6 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3004'
+    const stripe = getStripe()
     const session = await stripe.billingPortal.sessions.create({
       customer: org.stripe_customer_id,
       return_url: `${appUrl}/portal/${organizationId}`,
