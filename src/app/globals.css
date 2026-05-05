@@ -203,10 +203,37 @@
     line-height: var(--reading-line-height);
   }
 
-  /* Ensure paragraphs on dark backgrounds inherit text color */
-  .bg-black p, .bg-gray-900 p, .bg-gray-950 p, .bg-amber-900 p,
-  .text-white p, .text-\[\#F5F0E8\] p, .bg-\[\#0A0A0A\] p, .dark-section p {
-    color: inherit !important;
+  /* Ensure paragraphs on dark backgrounds inherit text color.
+     NOTE: removed the bg-[#0A0A0A] / text-[#F5F0E8] selectors that were
+     forcing `color: inherit !important` and overriding every per-element
+     opacity class on the Contained surfaces. Now scoped to legacy classes only. */
+  .bg-black p, .bg-gray-900 p, .bg-gray-950 p, .bg-amber-900 p, .dark-section p {
+    color: inherit;
+  }
+
+  /* RECURRING BUG GUARD — Contained brand hex bg-[#0A0A0A].
+     The body default sets text to near-black for the cream off-white surface.
+     Any descendant on a Contained dark wrapper that forgets a text colour
+     class inherits black and becomes invisible on the dark surface.
+     This sets a sane cream baseline so missing-class bugs degrade to readable
+     text instead of disappearing. Components that explicitly set their own
+     colour (text-[#F5F0E8], text-[#DC2626], etc.) still win because their
+     class specificity beats this descendant rule. */
+  .bg-\[\#0A0A0A\],
+  [style*="background-color: #0A0A0A"],
+  [style*="background:#0A0A0A"],
+  [style*="background: #0A0A0A"] {
+    color: #F5F0E8;
+  }
+
+  /* Force-dark text on light-background callouts inside dark-rooted pages.
+     Wrapper sets dark; descendants tagged data-keep-color stay red. */
+  .force-dark-text,
+  .force-dark-text *:not([data-keep-color]) {
+    color: #0A0A0A !important;
+  }
+  .force-dark-text [data-keep-color] {
+    color: #DC2626 !important;
   }
 
   /* Improved text contrast classes */

@@ -781,20 +781,19 @@ function StopList({
 // Funding Tracker (sidebar bottom)
 // ---------------------------------------------------------------------------
 function FundingTracker({ stops }: { stops: TourStopIntel[] }) {
-  // Per-stop costs — MVP "rock up and do it" model, $30K-$50K per stop.
-  const STOP_COSTS: Record<string, number> = {
-    adelaide: 50000,
-    perth: 50000,
-    mparntwe: 50000,
-    brisbane: 40000,
-    'northern-rivers': 35000,
-    sydney: 40000,
-    canberra: 35000,
-    melbourne: 40000,
-    hobart: 40000,
+  // Read each stop's cost from the API (e.g. "$130K", "$1.2M") — single source
+  // of truth lives in TOUR_STOPS_CONFIG so we don't get drift between the
+  // intel sidebar and the per-stop pages.
+  const parseCost = (s: string): number => {
+    const m = String(s).match(/\$?\s*([\d.]+)\s*([KM])?/i);
+    if (!m) return 0;
+    const n = parseFloat(m[1]);
+    const mult = m[2]?.toUpperCase() === 'M' ? 1_000_000 : m[2]?.toUpperCase() === 'K' ? 1_000 : 1;
+    return Math.round(n * mult);
   };
+  const stopCosts = stops.map((s) => ({ id: s.id, city: s.city, cost: parseCost(s.cost) }));
   const BACKBONE = 120000; // travelling team + editorial + coordination + bound book + admin
-  const tourTotal = stops.reduce((sum, s) => sum + (STOP_COSTS[s.id] ?? 100000), 0);
+  const tourTotal = stopCosts.reduce((sum, s) => sum + s.cost, 0);
   const grandTotal = tourTotal + BACKBONE;
 
   // No stops funded yet — confirmed status means event booked, not funded
@@ -830,16 +829,15 @@ function FundingTracker({ stops }: { stops: TourStopIntel[] }) {
 
       {/* Breakdown */}
       <div className="space-y-1.5">
-        {stops.map((stop) => {
+        {stopCosts.map((stop) => {
           const secured = false; // No stops funded yet
-          const cost = STOP_COSTS[stop.id] ?? 100000;
           return (
             <div key={stop.id} className="flex items-center justify-between">
               <span className={`text-[12px] ${secured ? 'text-[#059669]' : 'text-[#F5F0E8]/95'}`} style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                 {secured ? '✓' : '○'} {stop.city}
               </span>
               <span className={`text-[12px] font-bold ${secured ? 'text-[#059669]' : 'text-[#F5F0E8]/95'}`} style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                ${Math.round(cost / 1000)}K
+                ${Math.round(stop.cost / 1000)}K
               </span>
             </div>
           );
