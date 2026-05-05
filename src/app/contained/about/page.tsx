@@ -4,10 +4,10 @@ import { ArrowRight } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'About Contained — A Curious Tractor | JusticeHub',
-  description: 'A shipping container. Three rooms. Built as an art piece in Mount Druitt by Ben Knight and Nic Marchesi. Now it travels.',
+  description: 'A shipping container. Three rooms. Built through young people, Diagrama practice, and local organisations. The route starts with Mount Druitt, then launches publicly at Tandanya in Adelaide.',
   openGraph: {
     title: 'About Contained — A Curious Tractor',
-    description: 'A shipping container. Three rooms. Built as an art piece in Mount Druitt. Now it travels.',
+    description: 'A shipping container. Three rooms. Mount Druitt small gathering, then Tandanya Adelaide public launch.',
     type: 'website',
     url: '/contained/about',
   },
@@ -30,7 +30,7 @@ export default function ContainedAboutPage() {
           An art piece<br />that travels
         </h1>
         <p className="mt-8 text-lg md:text-xl max-w-3xl text-[#F5F0E8]/95 leading-relaxed">
-          A shipping container. Three rooms. Thirty minutes. Built first in Mount Druitt by Ben Knight and Nic Marchesi as an art piece. Now it&apos;s a national tour, paid for by foundations, hosted by Aboriginal community-controlled organisations, and led through by the young people who built it.
+          A shipping container. Three rooms. Thirty minutes. Built by Ben Knight and Nic Marchesi with young people carrying the first room, David from Diagrama helping hold the alternative, and local organisations building the room that shows what already works. The route starts with a Mount Druitt small gathering, then launches publicly at Tandanya in Adelaide.
         </p>
         <div className="mt-10 flex flex-wrap gap-4">
           <Link href="/contained/how-it-works" className="bg-[#DC2626] text-white px-6 py-3 text-sm font-bold uppercase tracking-[0.2em] hover:bg-[#b91c1c] transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
@@ -61,7 +61,7 @@ export default function ContainedAboutPage() {
               Detention costs roughly $1.33 million per child per year, varying by state (ROGS 2024-25). 84% of children who go through detention return.
             </p>
             <p className="text-[#F5F0E8]/95 leading-relaxed">
-              Community-led alternatives, where families and Elders carry decision-making, run for a fraction of the cost and produce diversion outcomes above 85% in the strongest cases. Oonchiumpa in Mparntwe runs at 95%.
+              Community-led alternatives, where families and Elders carry decision-making, run for a fraction of the cost and produce diversion outcomes above 85% in the strongest cases. Oonchiumpa in Alice Springs / Central Australia runs at 95%.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -123,13 +123,13 @@ export default function ContainedAboutPage() {
         <div className="grid md:grid-cols-2 gap-12">
           <div className="space-y-4">
             <p className="text-[#F5F0E8]/95 leading-relaxed">
-              The container is not a museum and it is not a press release. It is a third place where the conversation about youth justice can happen with everyone in the same room — a 14-year-old from Mparntwe, a magistrate from Adelaide, a Member of Parliament, a foundation officer, a journalist, a parent.
+              The container is not a museum and it is not a press release. It is a third place where the conversation about youth justice can happen with everyone in the same room: a young person from Brisbane who helped build the first room, a magistrate from Adelaide, a Member of Parliament, a foundation officer, a journalist, a parent.
             </p>
             <p className="text-[#F5F0E8]/95 leading-relaxed">
               Every walk-through is led by a young person who has been through the system. They are paid for it. The expertise is the wage.
             </p>
             <p className="text-[#F5F0E8]/95 leading-relaxed">
-              Every stop builds a Room 3 with a local Aboriginal community-controlled organisation. The room shows their model. The room stays in the year-end exhibition. The room becomes part of the public record.
+              Mount Druitt gives the process a small first gathering. The Adelaide public launch gives Room 3 to local organisations speaking about their programs, what they cost, what evidence they hold, and what they need funded. Every stop rebuilds that room with the host community. The room stays in the year-end exhibition. The room becomes part of the public record.
             </p>
             <Link href="/contained/how-it-works" className="inline-flex items-center gap-2 mt-4 text-sm font-bold uppercase tracking-[0.2em] text-[#DC2626] hover:text-white transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
               Read the full structure <ArrowRight className="w-4 h-4" />
@@ -137,9 +137,9 @@ export default function ContainedAboutPage() {
           </div>
 
           <div className="border border-white/10 bg-gray-950 p-6 space-y-4">
-            <Row n="01" hue="#DC2626" title="The cell" body="Built by young people + local youth support org." />
-            <Row n="02" hue="#f59e0b" title="What works" body="In partnership with Diagrama Foundation, Spain." />
-            <Row n="03" hue="#059669" title="What's already running" body="Built by a local Aboriginal community-controlled org or frontline org." />
+            <Row n="01" hue="#DC2626" title="The cell" body="Carried first by Brisbane young people who supported the build, then rebuilt with local young people at each stop." />
+            <Row n="02" hue="#f59e0b" title="What works" body="Held with David from Diagrama and the therapeutic practice evidence from Spain." />
+            <Row n="03" hue="#059669" title="What's already running" body="Built with local organisations showing their programs, costs, evidence, and support needs." />
           </div>
         </div>
       </section>
@@ -180,18 +180,18 @@ export default function ContainedAboutPage() {
           The vision
         </p>
         <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight mb-8">
-          Nine cities. Twelve months. $500K.
+          Flexible route. Nine stops. $500K.
         </h2>
         <div className="grid md:grid-cols-2 gap-12 items-start">
           <div className="space-y-4">
             <p className="text-[#F5F0E8]/95 leading-relaxed">
-              The tour opens at Tandanya in Adelaide alongside the Reintegration Puzzle Conference in late June 2026. It closes in Hobart in June 2027 with DarkLab and the Prevention Not Detention coalition.
+              The route starts with a small Mount Druitt gathering in May/June, then launches publicly at Tandanya in Adelaide at the end of June 2026. Brisbane young people carry the build story, David from Diagrama helps hold Room 2, and Adelaide organisations use Room 3 to put their programs in front of delegates, MPs, universities, and funders. The route remains flexible as communities and partners ask for it.
             </p>
             <p className="text-[#F5F0E8]/95 leading-relaxed">
-              Adelaide. Perth + surrounds. Mparntwe + Tennant Creek. Brisbane. Northern Rivers. Sydney. Canberra. Melbourne. Hobart. One container. One travelling team of young facilitators. Nine partner organisations on the ground.
+              Mount Druitt. Adelaide. Perth + surrounds. Brisbane. Northern Rivers. Alice Springs / Central Australia. Sydney + Canberra. Victoria. Tasmania. One container. One travelling team of young facilitators. Nine partner organisations on the ground.
             </p>
             <p className="text-[#F5F0E8]/95 leading-relaxed">
-              Each stop costs $30K-$50K. The tour-wide backbone (travelling team, editorial, coordination, the year-end bound book) is $120K. Whole twelve-month national arc: $500K.
+              Mount Druitt is a smaller $20K gathering. Adelaide is a $50K public launch. Flexible stops range from $30K-$60K. The tour-wide backbone (travelling team, editorial, coordination, the year-end bound book) is $120K. Whole national arc: $500K.
             </p>
           </div>
           <div className="border border-[#DC2626]/40 bg-[#DC2626]/5 p-6">
@@ -227,8 +227,8 @@ export default function ContainedAboutPage() {
             />
             <CTACard
               href="/contained/help"
-              title="Back a stop"
-              body="$30K to rock up. $50K for a fully built stop. $500K for the national arc."
+              title="Back the launch"
+              body="$50K for Adelaide. $30K-$50K per stop. $500K for the national arc."
             />
             <CTACard
               href="/contained/tour/intelligence"

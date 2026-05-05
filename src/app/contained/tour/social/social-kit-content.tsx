@@ -223,13 +223,13 @@ export function SocialKitContent() {
                   <div className="space-y-4">
                     <div className="border-l-2 border-red-600 pl-4">
                       <p className="text-sm text-gray-300 mb-1">Instagram / Facebook</p>
-                      <p className="text-white">&ldquo;This is THE CONTAINED. One shipping container. Three rooms. This image shows two of them: detention reality and the therapeutic alternative. The third room asks what we fund next. Mount Druitt, April 25.&rdquo;</p>
-                      <CopyButton text="This is THE CONTAINED. One shipping container. Three rooms. This image shows two of them: detention reality and the therapeutic alternative. The third room asks what we fund next. Mount Druitt, April 25.\n\n#TheContained #YouthJustice #JusticeHub" />
+                      <p className="text-white">&ldquo;This is THE CONTAINED. One shipping container. Three rooms. This image shows two of them: detention reality and the therapeutic alternative. The third room asks what we fund next. Route starts with Mount Druitt, then the public launch at Tandanya, Adelaide.&rdquo;</p>
+                      <CopyButton text="This is THE CONTAINED. One shipping container. Three rooms. This image shows two of them: detention reality and the therapeutic alternative. The third room asks what we fund next. Route starts with Mount Druitt, then the public launch at Tandanya, Adelaide.\n\n#TheContained #YouthJustice #JusticeHub" />
                     </div>
                     <div className="border-l-2 border-red-600 pl-4">
                       <p className="text-sm text-gray-300 mb-1">X / Twitter</p>
-                      <p className="text-white">&ldquo;Left: therapeutic care. Right: detention reality. THE CONTAINED puts both inside one shipping container, then asks what we back next. First public stop: Mount Druitt, April 25.&rdquo;</p>
-                      <CopyButton text="Left: therapeutic care. Right: detention reality. THE CONTAINED puts both inside one shipping container, then asks what we back next. First public stop: Mount Druitt, April 25. #TheContained #YouthJustice" />
+                      <p className="text-white">&ldquo;Left: therapeutic care. Right: detention reality. THE CONTAINED puts both inside one shipping container, then asks what we back next. Mount Druitt first gathering, Tandanya Adelaide public launch.&rdquo;</p>
+                      <CopyButton text="Left: therapeutic care. Right: detention reality. THE CONTAINED puts both inside one shipping container, then asks what we back next. Mount Druitt first gathering, Tandanya Adelaide public launch. #TheContained #YouthJustice" />
                     </div>
                   </div>
                 </div>

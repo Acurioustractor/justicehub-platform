@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-lite';
+import { tourStops as staticTourStops } from '@/content/campaign';
 
 export const revalidate = 300;
 
@@ -20,19 +21,24 @@ export async function GET(
 
   try {
     const supabase = await createClient();
+    const staticStop = staticTourStops.find((s) => s.eventSlug === slug);
 
     // 1. Fetch the tour stop
     const { data: stop, error: stopError } = await supabase
       .from('tour_stops')
       .select('*')
       .eq('event_slug', slug)
-      .single();
+      .maybeSingle();
 
-    if (stopError || !stop) {
+    if (stopError && !staticStop) {
       return NextResponse.json({ error: 'Tour stop not found' }, { status: 404 });
     }
 
-    const state = stop.state;
+    const state = staticStop?.state || stop?.state;
+    const city = staticStop?.city || stop?.city;
+    if (!state || !city) {
+      return NextResponse.json({ error: 'Tour stop not found' }, { status: 404 });
+    }
 
     // 2-6. Fetch related data in parallel
     const [facilitiesRes, storiesRes, basecampsRes, facilitiesApiRes, localOrgsRes] = await Promise.all([
@@ -50,15 +56,17 @@ export async function GET(
         .select('id, name, tour_stop, story, status, is_public, created_at')
         .eq('status', 'approved')
         .eq('is_public', true)
-        .or(`tour_stop.eq.${stop.city},tour_stop.ilike.%${stop.city}%`)
+        .or(`tour_stop.eq.${city},tour_stop.ilike.%${city}%`)
         .order('created_at', { ascending: false })
         .limit(20),
 
-      // Community orgs in this state
+      // Community orgs in this state — anchor basecamps + any partner_tier='basecamp' org.
       supabase
         .from('organizations')
         .select('name, slug, description, location, partner_photos(photo_url, is_featured, photo_type)')
-        .or(`type.eq.basecamp,slug.in.(oonchiumpa,bg-fit,mounty-yarns,picc-townsville)`)
+        .or(`partner_tier.eq.basecamp,type.eq.basecamp`)
+        .eq('is_active', true)
+        .eq('verification_status', 'verified')
         .order('name'),
 
       // ROGS state spending (reuse facilities API pattern)
@@ -68,10 +76,16 @@ export async function GET(
       fetchLocalOrgs(supabase, state),
     ]);
 
-    // Filter basecamps to those in this state
+    // Filter basecamps to those in this state.
+    // Bug fix: previously used loc.includes(state) which matched "Mount Isa, QLD" → "SA"
+    // because "ISA" contains "SA". Now match by tokenised segment so the state code
+    // must appear as a standalone token (e.g. ", QLD" or "SA").
+    const stateUpper = (state || '').toUpperCase();
     const stateBasecamps = (basecampsRes.data || []).filter((org: any) => {
       const loc = (org.location || '').toUpperCase();
-      return loc.includes(state);
+      // Split on commas, slashes, parentheses, and whitespace — match state as exact token.
+      const tokens = loc.split(/[,\s/()]+/).map((t: string) => t.trim()).filter(Boolean);
+      return tokens.includes(stateUpper);
     });
 
     // Transform basecamps
@@ -89,30 +103,30 @@ export async function GET(
 
     return NextResponse.json({
       stop: {
-        city: stop.city,
-        state: stop.state,
-        venue: stop.venue,
-        partner: stop.partner,
-        description: stop.description,
-        eventSlug: stop.event_slug,
-        date: stop.date,
-        status: stop.status,
-        lat: Number(stop.lat) || 0,
-        lng: Number(stop.lng) || 0,
-        partnerQuote: stop.partner_quote || null,
-        localStats: stop.local_stats || null,
-        heroImageUrl: stop.hero_image_url || null,
-        videoUrl: stop.video_url || null,
-        interviewNotes: stop.interview_notes || null,
-        servicesHighlighted: stop.services_highlighted || [],
+        city,
+        state,
+        venue: staticStop?.venue || stop?.venue || '',
+        partner: staticStop?.partner || stop?.partner || '',
+        description: staticStop?.description || stop?.description || '',
+        eventSlug: staticStop?.eventSlug || stop?.event_slug || slug,
+        date: staticStop?.date || stop?.date || '',
+        status: staticStop?.status || stop?.status || 'planning',
+        lat: Number(staticStop?.lat ?? stop?.lat) || 0,
+        lng: Number(staticStop?.lng ?? stop?.lng) || 0,
+        partnerQuote: staticStop?.partnerQuote || stop?.partner_quote || null,
+        localStats: stop?.local_stats || null,
+        heroImageUrl: stop?.hero_image_url || null,
+        videoUrl: stop?.video_url || null,
+        interviewNotes: stop?.interview_notes || null,
+        servicesHighlighted: stop?.services_highlighted || [],
       },
       facilities: facilitiesRes.data || [],
       stories: storiesRes.data || [],
       basecamps,
       stateSpending: facilitiesApiRes,
-      stakeholders: stop.stakeholders || {},
+      stakeholders: stop?.stakeholders || {},
       localOrgs: localOrgsRes,
-      hasAccess: !!stop.access_code,
+      hasAccess: !!stop?.access_code,
     });
   } catch (error) {
     console.error('Tour stop detail error:', error);

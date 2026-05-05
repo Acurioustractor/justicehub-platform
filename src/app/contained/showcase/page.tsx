@@ -52,7 +52,7 @@ const TOUR_SURFACES: Surface[] = [
   {
     href: '/contained/tour',
     title: 'Per-stop pages',
-    body: 'One page per city — Adelaide, Perth, Tennant Creek, Townsville, Hobart. Each includes state spending, detention facilities, basecamp orgs, civic intelligence, experience packages, and share-your-story.',
+    body: 'One page per stop, led by the Mount Druitt small gathering, Adelaide public launch, and the flexible nine-stop Australian route. Each includes state spending, detention facilities, basecamp orgs, civic intelligence, experience packages, and share-your-story.',
   },
   {
     href: '/contained/community',
@@ -93,7 +93,7 @@ const FUNDING_SURFACES: Surface[] = [
   {
     href: '/contained/invest',
     title: 'Back the tour — full pitch',
-    body: 'The pitch page. The investment case, the five tour stops, the five funding tiers ($50–70K container build / $50K stop / $200K full tour / $500K platform underwrite / Bespoke pop-up).',
+    body: 'The pitch page. The investment case, the Mount Druitt gathering, Adelaide launch, the nine-stop Australian route, and the funding tiers ($20K gathering / $50K launch / $30K-$60K stop / $120K backbone / $500K full tour / Bespoke pop-up).',
   },
   {
     href: '/contained/invest/one-pager',
@@ -178,7 +178,7 @@ export default function ContainedShowcasePage() {
       <Group
         kicker="02"
         title="The tour"
-        intro="Twelve months. Five confirmed stops. Adelaide opens in June 2026. Hobart closes the loop in June 2027. Open to wherever it&apos;s needed most. The intelligence dashboard, the per-stop pages, and the community demand map sit here."
+        intro="Flexible route. Mount Druitt small gathering in May/June, Adelaide public launch at Tandanya at the end of June, then Perth, Brisbane, Northern Rivers, Central Australia, Sydney + Canberra, Victoria, and Tasmania. The intelligence dashboard, the per-stop pages, and the community demand map sit here."
         surfaces={TOUR_SURFACES}
         bg
       />
@@ -246,7 +246,7 @@ export default function ContainedShowcasePage() {
             <CTACard
               href="/contained/invest"
               title="Back the tour"
-              body="$50K a stop. $200K the full tour. $500K platform underwrite. Bespoke on request."
+              body="$20K for Mount Druitt. $50K for Adelaide. $30K-$60K per stop. $120K backbone. $500K full tour."
             />
           </div>
         </div>

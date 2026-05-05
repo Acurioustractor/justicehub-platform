@@ -116,11 +116,11 @@ interface StateSpendingEntry {
   cost_per_day: number | null;
 }
 
-// Four anchor communities — Oonchiumpa, Palm Island Community Company, BG Fit, MMEIC.
+// Fallback program partners if the live basecamp feed is unavailable.
 const FALLBACK_ORGS = [
-  { name: 'Oonchiumpa', region: 'Mparntwe, NT', stat: '95% diversion success', slug: 'oonchiumpa', image: campaignMedia.orgHeros.oonchiumpa },
+  { name: 'Oonchiumpa', region: 'Alice Springs / Central Australia, NT', stat: '95% diversion success', slug: 'oonchiumpa', image: campaignMedia.orgHeros.oonchiumpa },
   { name: 'BG Fit', region: 'Mount Isa, QLD', stat: '400+ young people yearly', slug: 'bg-fit', image: campaignMedia.orgHeros.bgfit },
-  { name: 'Palm Island Community Company', region: 'The Centre, Townsville, QLD', stat: '21 programs · 200 staff', slug: 'palm-island-community-company', image: null },
+  { name: 'Palm Island Community Company', region: 'Palm Island / Townsville, QLD', stat: '21 programs · 200 staff', slug: 'palm-island-community-company', image: null },
   { name: 'MMEIC', region: 'Minjerribah, QLD (Quandamooka)', stat: 'Elders-in-Council · 40 years on Country', slug: 'mmeic', image: null },
 ];
 
@@ -1259,7 +1259,7 @@ const TourMapSection = forwardRef<HTMLElement, { active: boolean; tourStops: Tou
 
         {/* Tour stop list */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-          {stops.slice(0, 6).map(stop => {
+          {stops.map(stop => {
             const statusColor = stop.status === 'confirmed' ? 'bg-green-600' : stop.status === 'planning' ? 'bg-amber-600' : 'bg-gray-600';
             return (
               <button

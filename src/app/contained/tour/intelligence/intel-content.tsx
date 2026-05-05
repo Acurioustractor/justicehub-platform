@@ -115,6 +115,24 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   demand: { label: 'Community Demand', color: '#DC2626', bg: 'bg-[#DC2626]/10' },
 };
 
+const MONTH_RE = /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/g;
+
+function dateEndpoint(date: string, edge: 'start' | 'end') {
+  const label = date.split('·')[0]?.trim() || date;
+  const months = Array.from(label.matchAll(MONTH_RE)).map((m) => m[1]);
+  const years = Array.from(label.matchAll(/\b20\d{2}\b/g)).map((m) => m[0]);
+  const year = edge === 'end' ? years.at(-1) : years[0];
+  const month = edge === 'end' ? months.at(-1) : months[0];
+  return month && year ? `${month} ${year}` : label;
+}
+
+function tourDateWindow(stops: TourStopIntel[]) {
+  if (stops.length === 0) return 'Dates pending';
+  const first = dateEndpoint(stops[0].date, 'start');
+  const last = dateEndpoint(stops[stops.length - 1].date, 'end');
+  return first === last ? first : `${first}-${last}`;
+}
+
 // ---------------------------------------------------------------------------
 // Stat Tile
 // ---------------------------------------------------------------------------
@@ -614,7 +632,7 @@ function StopPanel({ stop, onClose }: { stop: TourStopIntel; onClose: () => void
           className="block w-full bg-[#DC2626] text-[#F5F0E8] text-center py-3 text-xs font-bold uppercase tracking-[0.2em] hover:bg-[#b91c1c] transition-colors"
           style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         >
-          Back {stop.city} &middot; $30K per stop
+          Back {stop.city} &middot; $30K-$50K per stop
         </Link>
       </div>
 
@@ -653,7 +671,7 @@ function SummaryBar({ summary }: { summary: IntelData['summary'] }) {
       value: tourStops.toString(),
       label: 'Tour stops',
       meaning: 'Cities mapped + costed',
-      source: 'tour_stops table where campaign_slug = the-contained',
+      source: 'Contained campaign route configuration',
     },
     {
       value: fmt(programs),
@@ -940,7 +958,7 @@ export function TourIntelligenceContent() {
         <div className={`w-56 flex-shrink-0 border-r border-white/10 overflow-y-auto bg-[#0A0A0A] ${showPanel ? 'hidden md:block' : ''}`}>
           <div className="p-3 border-b border-white/10">
             <div className="text-[12px] text-[#F5F0E8]/95 uppercase tracking-[0.15em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-              8 Stops &middot; Apr–Nov 2026
+              {data.stops.length} Stops &middot; {tourDateWindow(data.stops)}
             </div>
           </div>
           <StopList stops={data.stops} activeId={activeStop} onSelect={handleStopSelect} />

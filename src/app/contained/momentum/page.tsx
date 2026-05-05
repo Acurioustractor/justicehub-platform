@@ -111,7 +111,7 @@ export default function MomentumPage() {
         <div className="mm-hero">
           <div className="mm-date">MOMENTUM REPORT — MARCH 2026</div>
           <h1>CONTAINED is building a movement.</h1>
-          <p className="mm-subtitle">Three LinkedIn posts. 4,200+ reactions. 285 comments. 56 senior leaders. 30 offers to host, fund, or amplify. 10+ cities requesting tour stops. This is what happened when we stopped asking for permission and started building pressure.</p>
+          <p className="mm-subtitle">Three LinkedIn posts. 4,200+ reactions. 285 comments. 56 senior leaders. 30 offers to host, fund, or amplify. 10+ cities requesting tour stops. The route now starts with a Mount Druitt small gathering, then launches publicly in Adelaide, with the Brisbane build story, David from Diagrama, and local organisations carried into the process.</p>
         </div>
 
         <div className="mm-section">
@@ -136,7 +136,7 @@ export default function MomentumPage() {
               <div className="mm-period">October 2025 · Launch announcement</div>
               <div className="mm-compare-stat"><span className="mm-label">Reactions</span><span className="mm-value">2,195</span></div>
               <div className="mm-compare-stat"><span className="mm-label">Comments</span><span className="mm-value">166</span></div>
-              <div className="mm-compare-stat"><span className="mm-label">Tour stops confirmed</span><span className="mm-value">1 (Sydney)</span></div>
+              <div className="mm-compare-stat"><span className="mm-label">Tour stops confirmed</span><span className="mm-value">1 proof build</span></div>
               <div className="mm-compare-stat"><span className="mm-label">Funding partners</span><span className="mm-value">0</span></div>
               <div className="mm-compare-stat"><span className="mm-label">Hosting offers</span><span className="mm-value">5</span></div>
               <div className="mm-compare-stat"><span className="mm-label">Status</span><span className="mm-value" style={{color:'#D97706'}}>Concept</span></div>
@@ -146,7 +146,7 @@ export default function MomentumPage() {
               <div className="mm-period">March 2026 · National tour announcement</div>
               <div className="mm-compare-stat"><span className="mm-label">Reactions</span><span className="mm-value" style={{color:'#059669'}}>2,043+</span></div>
               <div className="mm-compare-stat"><span className="mm-label">Comments</span><span className="mm-value" style={{color:'#059669'}}>166+</span></div>
-              <div className="mm-compare-stat"><span className="mm-label">Tour stops confirmed</span><span className="mm-value" style={{color:'#059669'}}>5 cities</span></div>
+              <div className="mm-compare-stat"><span className="mm-label">Tour arc</span><span className="mm-value" style={{color:'#059669'}}>Mount Druitt gathering + Adelaide launch + 9-stop route</span></div>
               <div className="mm-compare-stat"><span className="mm-label">Funding partners</span><span className="mm-value" style={{color:'#059669'}}>3 in pipeline</span></div>
               <div className="mm-compare-stat"><span className="mm-label">Hosting offers</span><span className="mm-value" style={{color:'#059669'}}>8+ cities</span></div>
               <div className="mm-compare-stat"><span className="mm-label">Status</span><span className="mm-value" style={{color:'#059669'}}>Tour Locked</span></div>
@@ -157,13 +157,13 @@ export default function MomentumPage() {
         <div className="mm-section">
           <div className="mm-section-title">Where People Want CONTAINED</div>
           <div className="mm-city-grid">
-            <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Sydney</div><div className="mm-city-count">8 mentions · Launch city</div><div className="mm-city-quote"><span className="mm-name">Joy Woods</span>, Founder: &quot;What are the details for Sydney? Keen to show my support!&quot;</div></div>
-            <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Brisbane</div><div className="mm-city-count">2 mentions · YAC hosting</div><div className="mm-city-quote"><span className="mm-name">Jonty Bush</span>, QLD MP: &quot;I love this concept, where is it touring in Queensland?&quot;</div></div>
+            <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Mount Druitt</div><div className="mm-city-count">May/June · small gathering</div><div className="mm-city-quote">Western Sydney build proof and community relationships shape what travels next.</div></div>
+            <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Adelaide</div><div className="mm-city-count">End June · Tandanya public launch</div><div className="mm-city-quote"><span className="mm-name">Hannah March</span>, JRI: &quot;The 2026 Reintegration Puzzle Conference is in Tandanya, Adelaide. It would be amazing to host the Container there.&quot;</div></div>
             <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Perth</div><div className="mm-city-count">8 mentions · UWA partnership</div><div className="mm-city-quote"><span className="mm-name">Hayley Passmore</span>, Criminology Lecturer: &quot;We can&apos;t wait to have this in Perth!!!&quot;</div></div>
-            <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Adelaide</div><div className="mm-city-count">3 mentions · Reintegration Conference</div><div className="mm-city-quote"><span className="mm-name">Kirsty Stark</span>: &quot;Yes, bring this to Adelaide!!&quot;</div></div>
-            <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Alice Springs</div><div className="mm-city-count">Oonchiumpa partnership</div><div className="mm-city-quote">Indigenous community-led activation with Oonchiumpa Aboriginal Corporation</div></div>
-            <div className="mm-city-card mm-demand"><div className="mm-city-name">Canberra</div><div className="mm-city-count">10 mentions · Highest demand</div><div className="mm-city-quote"><span className="mm-name">Robert Tickner</span>, JRI Chair: &quot;Don&apos;t forget the drive to Canberra to deliver a message to the PM&quot;</div><div className="mm-city-quote"><span className="mm-name">Rebecca Minty</span>, Inspector of Custodial Services: &quot;Govt recently committed to a new model of care&quot;</div></div>
-            <div className="mm-city-card mm-demand"><div className="mm-city-name">Melbourne</div><div className="mm-city-count">8 mentions</div><div className="mm-city-quote"><span className="mm-name">Nadja Kostich</span>, Artistic Director: &quot;This needs to be seen in Melbourne. Overwhelming community support.&quot;</div></div>
+            <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Brisbane</div><div className="mm-city-count">Build story · YAC hosting</div><div className="mm-city-quote"><span className="mm-name">Jonty Bush</span>, QLD MP: &quot;I love this concept, where is it touring in Queensland?&quot;</div></div>
+            <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Alice Springs / Central Australia</div><div className="mm-city-count">November · Oonchiumpa partnership</div><div className="mm-city-quote">Community-led activation with Oonchiumpa Aboriginal Corporation</div></div>
+            <div className="mm-city-card mm-demand"><div className="mm-city-name">Sydney + Canberra</div><div className="mm-city-count">Dec/Jan · state and federal route</div><div className="mm-city-quote"><span className="mm-name">Joy Woods</span>, Founder: &quot;What are the details for Sydney? Keen to show my support!&quot;</div><div className="mm-city-quote"><span className="mm-name">Robert Tickner</span>, JRI Chair: &quot;Don&apos;t forget the drive to Canberra to deliver a message to the PM&quot;</div></div>
+            <div className="mm-city-card mm-demand"><div className="mm-city-name">Victoria</div><div className="mm-city-count">Feb/Mar 2027 · 8 mentions</div><div className="mm-city-quote"><span className="mm-name">Nadja Kostich</span>, Artistic Director: &quot;This needs to be seen in Melbourne. Overwhelming community support.&quot;</div></div>
             <div className="mm-city-card mm-demand"><div className="mm-city-name">Tasmania</div><div className="mm-city-count">2 mentions</div><div className="mm-city-quote"><span className="mm-name">Ruth Forrest</span>, Member of Parliament: &quot;Can you also bring it to Tasmania?&quot;</div></div>
             <div className="mm-city-card mm-demand"><div className="mm-city-name">International</div><div className="mm-city-count">13 mentions · NZ, UK, US</div><div className="mm-city-quote"><span className="mm-name">Gemma Livingston</span> (NZ): &quot;We have the same issue with youth detention in NZ&quot;</div></div>
           </div>
@@ -217,15 +217,15 @@ export default function MomentumPage() {
           <div className="mm-section-title">The Opportunity</div>
           <div style={{maxWidth: 800}}>
             <p style={{fontSize: '1.1rem', lineHeight: 1.8, color: '#ccc', marginBottom: 24}}>CONTAINED is not a campaign looking for an audience. The audience is already here — asking where, when, and how they can help. The demand outstrips our capacity to deliver.</p>
-            <p style={{fontSize: '1.1rem', lineHeight: 1.8, color: '#ccc', marginBottom: 24}}>Five cities are confirmed. Eight more are requesting. Two state MPs have publicly asked for tour dates. A former Chief Medical Officer called the current system &quot;delusional.&quot;</p>
+            <p style={{fontSize: '1.1rem', lineHeight: 1.8, color: '#ccc', marginBottom: 24}}>Mount Druitt starts the process and Adelaide launches it publicly. Perth, Brisbane, Northern Rivers, Central Australia, Sydney + Canberra, Victoria, and Tasmania are supported by demand signals, host conversations, and local program evidence. Two state MPs have publicly asked for tour dates. A former Chief Medical Officer called the current system &quot;delusional.&quot;</p>
             <p style={{fontSize: '1.1rem', lineHeight: 1.8, color: '#ccc', marginBottom: 24}}>Behind the Container sits <strong>ALMA</strong> — 981 verified community alternatives to youth detention, mapped nationally with cost data. And <strong>JusticeHub</strong> — tracking $71M+ in youth justice funding across every state.</p>
-            <p style={{fontSize: '1.1rem', lineHeight: 1.8, color: '#F5F0E8', fontWeight: 500}}>Each tour stop costs $30–50K. Each one generates measurable community engagement, coalition formation, and policy pressure. The infrastructure exists. The demand is proven. The coalition is forming. We need partners who want to accelerate it.</p>
+            <p style={{fontSize: '1.1rem', lineHeight: 1.8, color: '#F5F0E8', fontWeight: 500}}>Mount Druitt is a smaller $20K gathering. Flexible tour stops cost $30–60K. Each one generates measurable community engagement, coalition formation, and policy pressure. The infrastructure exists. The demand is proven. The coalition is forming. We need partners who want to accelerate it.</p>
           </div>
         </div>
 
         <div className="mm-cta">
           <h2>Join the Coalition</h2>
-          <p>CONTAINED starts in Sydney end of April 2026. Then Adelaide. Then Perth. Then wherever communities are ready.</p>
+          <p>CONTAINED starts with Mount Druitt in May/June, launches publicly at Tandanya in Adelaide at the end of June, then moves through Perth, Brisbane, Northern Rivers, Central Australia, Sydney + Canberra, Victoria, and Tasmania, with every stop linked back to JusticeHub.</p>
           <a href="https://www.justicehub.com.au/contained">SEE THE TOUR →</a>
         </div>
 

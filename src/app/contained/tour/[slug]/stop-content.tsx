@@ -152,7 +152,7 @@ interface StopData {
 // Same narrative pattern as /judges-on-country — every stop needs: local quote,
 // local card 01, local story, local closing CTA. Fill a slug here to light it up.
 interface StopThesis {
-  kicker: string;           // e.g. "Start here · Mount Druitt"
+  kicker: string;           // e.g. "Start here · Adelaide"
   quote: string;            // the local sentence — the lens for the stop
   author: string;           // who said it
   role: string;             // their role / org
@@ -163,25 +163,41 @@ interface StopThesis {
   closingSubhead: string;   // red-band closing CTA subhead
   closingPrimaryLabel: string;
   closingPrimaryHref: string;
-  closingDate: string;      // e.g. "Western Sydney · Apr 25, 2026"
+  closingDate: string;      // e.g. "Adelaide · End Jun 2026"
 }
 
 const STOP_THESIS: Record<string, StopThesis> = {
-  'contained-mount-druitt-launch': {
-    kicker: 'Start here · Mount Druitt',
-    quote: 'Young people telling their own stories is the most powerful advocacy there is.',
-    author: 'Daniel Daylight',
-    role: 'Mounty Yarns · Western Sydney',
+  'contained-mount-druitt-gathering': {
+    kicker: 'Start small · Mount Druitt',
+    quote: 'Western Sydney build proof and community relationships shape what travels next.',
+    author: 'Mounty Yarns + Just Reinvest network',
+    role: 'Western Sydney',
     body:
-      'NSW\'s "Breaking the Cycle" reoffending grants reach zero Aboriginal community-controlled organisations. Mounty Yarns runs 7 programs on philanthropic funding alone. Daniel\'s sentence is why we launch here — the young people are the advocates, not the problem.',
-    storyHref: '/stories/mounty-yarns-daniel-daylight',
-    basecampHref: '/organizations/mounty-yarns',
-    closingHeadline: 'The launch is where the frame goes public.',
+      'Mount Druitt is not the public launch; it is the small gathering that lets young people, Mounty Yarns, Just Reinvest relationships, and local organisers shape what the container carries into the national route.',
+    storyHref: '/contained/about',
+    basecampHref: '/contained/community',
+    closingHeadline: 'The process starts before the public launch.',
     closingSubhead:
-      'Come to Western Sydney on Apr 25. Walk through the container at Mounty Yarns, meet the young people whose stories it carries, and leave with the deck.',
-    closingPrimaryLabel: 'Register — Apr 25',
+      'Come into the Mount Druitt gathering as a local proof point: what should Room 1 carry, what should Room 3 show, and what should funders understand before the tour moves to Adelaide?',
+    closingPrimaryLabel: 'Register · Mount Druitt',
     closingPrimaryHref: '/contained/register?stop=mount-druitt',
-    closingDate: 'Western Sydney · Apr 25, 2026',
+    closingDate: 'Mount Druitt · May-Jun 2026',
+  },
+  'contained-adelaide-tandanya': {
+    kicker: 'Launch here · Adelaide',
+    quote: 'The 2026 Reintegration Puzzle Conference is in Tandanya, Adelaide. It would be amazing to host the Container there.',
+    author: 'Hannah March',
+    role: 'Justice Reform Initiative · Adelaide',
+    body:
+      'Adelaide is the public Australian tour launch after the Mount Druitt small gathering. Brisbane young people who supported the build carry Room 1 into the public process. David from Diagrama helps anchor Room 2. Local Adelaide organisations use Room 3 to show their programs, costs, evidence, and funding needs to conference delegates, MPs, universities, and funders.',
+    storyHref: '/contained/about',
+    basecampHref: '/organizations/justice-reform-initiative',
+    closingHeadline: 'The launch is where the whole process becomes public.',
+    closingSubhead:
+      'Come to Tandanya in late June. Walk through the container during the Reintegration Puzzle Conference and leave with the evidence, local program asks, and JusticeHub links.',
+    closingPrimaryLabel: 'Register · Adelaide',
+    closingPrimaryHref: '/contained/register?stop=adelaide',
+    closingDate: 'Adelaide · End Jun 2026',
   },
   'contained-brisbane': {
     kicker: 'Start here · Brisbane',
@@ -194,10 +210,10 @@ const STOP_THESIS: Record<string, StopThesis> = {
     basecampHref: '/organizations/yac-youth-advocacy-centre',
     closingHeadline: 'Brisbane is where the sector steps forward.',
     closingSubhead:
-      'Come to YAC on May 15. See what $765M of announcements has not funded, meet the 14 programs running without government support, and hear from Futures Radio broadcasting from inside detention.',
-    closingPrimaryLabel: 'Register — May 15',
+      'Come to YAC when the tour returns to Queensland. See what $765M of announcements has not funded, meet the local programs doing the work, and connect the Brisbane build story back to the national arc.',
+    closingPrimaryLabel: 'Register · Brisbane',
     closingPrimaryHref: '/contained/register?stop=brisbane',
-    closingDate: 'Brisbane · May 15, 2026',
+    closingDate: 'Brisbane · Sep 2026',
   },
 };
 

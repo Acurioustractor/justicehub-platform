@@ -2,7 +2,7 @@ export const campaignMetadata = {
   name: "CONTAINED",
   tagline: "Transform Youth Justice Through Immersive Advocacy",
   launchDate: "2026",
-  location: "Starting in Western Sydney",
+  location: "Mount Druitt gathering, then Tandanya Adelaide launch",
   primaryCta: {
     label: "Nominate a Leader",
     href: "#nominate",
@@ -23,7 +23,7 @@ export const campaignMetadata = {
     current: 47,
   },
   description:
-    "Thirty minutes inside one shipping container, three rooms. The reality of youth detention, the evidence for change, and the community-led alternatives already doing the work.",
+    "Thirty minutes inside one shipping container, three rooms. The tour starts with a flexible Mount Druitt gathering, then launches publicly in Adelaide with the Brisbane build story, David from Diagrama's practice lens, and local organisations showing what already works.",
 };
 
 export const journeyContainers = [
@@ -33,7 +33,7 @@ export const journeyContainers = [
     title: "Current Reality",
     headline: "Designed by Young People",
     summary:
-      "At every tour stop, young people from the local community design this room. They are the experts. They know what detention feels like. They decide what the public needs to see.",
+      "Young people who supported the build carry the first Room 1 story into a flexible Mount Druitt gathering and then the Adelaide public launch. At every stop, local young people then shape the room from their own place and decide what the public needs to see.",
     stats: [
       { label: "Daily Cost", value: "$4,250" },
       { label: "Annual Cost", value: "$1.55M" },
@@ -49,7 +49,7 @@ export const journeyContainers = [
     title: "What Works",
     headline: "Diagrama Foundation, Spain",
     summary:
-      "We visited Diagrama's youth justice centres in Spain. Kids get education, therapy, and connection instead of concrete walls. 1:1 staffing, family visits every week, and a recidivism rate of just 13.6%. This room recreates what we saw there.",
+      "David from Diagrama helps anchor the practice lens for Room 2. The room is grounded in what we saw inside Diagrama's youth justice centres in Spain: education, therapy, family contact, 1:1 staffing, and a recidivism rate of just 13.6%.",
     stats: [
       { label: "Recidivism", value: "13.6%" },
       { label: "Staff Ratio", value: "1:1" },
@@ -65,7 +65,7 @@ export const journeyContainers = [
     title: "The Organisations Already Doing It",
     headline: "Changes Every Stop",
     summary:
-      "This container celebrates the grassroots organisations and the people doing the work. Indigenous-led and community orgs that aren't being valued, reported on, or funded the way they should be. At each tour stop, the local host organisation fills this space with their story.",
+      "Room 3 is where local organisations show the programs already working and name what they need funded. Mount Druitt gives the process a small first gathering, Adelaide gives it a public launch during the Reintegration Puzzle Conference, then every stop rebuilds it with local hosts.",
     stats: [
       { label: "Community Programs", value: "$75/day" },
       { label: "Reoffending", value: "3%" },
@@ -151,7 +151,7 @@ export const evidenceHighlights: EvidenceHighlight[] = [
   {
     label: "Tour stops",
     value: "9",
-    source: "CONTAINED Campaign — Mt Druitt, Brisbane, Adelaide, Townsville, Perth, Tennant Creek + demand signals",
+    source: "CONTAINED Australian Tour — Mount Druitt, Adelaide, Perth, Brisbane, Northern Rivers, Central Australia, Sydney + Canberra, Victoria, Tasmania",
   },
 ];
 
@@ -204,7 +204,7 @@ export const campaignMedia = {
   }>,
 };
 
-export type TourStopStatus = 'confirmed' | 'planning' | 'tentative' | 'exploring';
+export type TourStopStatus = 'funded' | 'confirmed' | 'planning' | 'tentative' | 'exploring';
 
 export interface TourStop {
   city: string;
@@ -222,14 +222,28 @@ export interface TourStop {
 
 export const tourStops: TourStop[] = [
   {
+    city: 'Mount Druitt',
+    state: 'NSW',
+    venue: 'Mounty Yarns · Western Sydney small gathering',
+    partner: 'Mounty Yarns + Just Reinvest NSW',
+    description:
+      'A flexible May/June small gathering in Western Sydney before the public launch. Mount Druitt holds the early proof: young people, Mounty Yarns, Just Reinvest relationships, and the first local conversation about how Room 1 and Room 3 should travel.',
+    eventSlug: 'contained-mount-druitt-gathering',
+    date: 'May-Jun 2026 · small gathering',
+    status: 'planning',
+    lat: -33.74,
+    lng: 150.82,
+    partnerQuote: 'Western Sydney build proof and community reflections are the first small gathering.',
+  },
+  {
     city: 'Adelaide',
     state: 'SA',
     venue: 'Tandanya · Reintegration Puzzle Conference',
     partner: 'Justice Reform Initiative + Tandanya',
     description:
-      'The tour opens at Tandanya alongside the Reintegration Puzzle Conference in late June. Diagrama\'s CEO is attending. The container holds the room for two months — the conference week, then a month of public open weeks, school groups, and a politicians day.',
+      'The public launch lands at Tandanya at the end of June alongside the Reintegration Puzzle Conference. Brisbane young people who supported the build carry the first Room 1 story. David from Diagrama anchors the Room 2 practice lens. Adelaide organisations use Room 3 to show their programs, evidence, costs, and what they need funded.',
     eventSlug: 'contained-adelaide-tandanya',
-    date: 'Jun–Jul 2026 · 2 months',
+    date: 'Late Jun 2026 · public launch',
     status: 'planning',
     lat: -34.93,
     lng: 138.60,
@@ -241,26 +255,13 @@ export const tourStops: TourStop[] = [
     venue: 'University of Western Australia + regional drop-in',
     partner: 'UWA + Reconciliation WA + Department of Justice WA',
     description:
-      'Two months in Perth with a regional drop-in to Broome or Kalgoorlie. UWA and Reconciliation WA carry the academic and civic spine. The container becomes the public priming layer for the Department of Justice WA delegated-authority pilot communities.',
+      'July/August in Perth and surrounds, with a regional drop-in to Broome or Kalgoorlie. UWA and Reconciliation WA carry the academic and civic spine. The container becomes the public priming layer for the Department of Justice WA delegated-authority pilot communities.',
     eventSlug: 'contained-perth-uwa',
-    date: 'Aug–Sep 2026 · 2 months',
+    date: 'Jul-Aug 2026 · Perth + surrounds',
     status: 'planning',
     lat: -31.95,
     lng: 115.86,
     partnerQuote: "We can't wait to have this in Perth!!! — Hayley Passmore, Criminology Lecturer",
-  },
-  {
-    city: 'Mparntwe + Tennant Creek',
-    state: 'NT',
-    venue: 'Oonchiumpa + community spaces',
-    partner: 'Oonchiumpa Aboriginal Corporation',
-    description:
-      'Six weeks community-controlled across Mparntwe and Tennant Creek. Oonchiumpa runs a 95% diversion rate through Central Arrernte-designed programs. The container, the build, and the public weeks all happen on community terms.',
-    eventSlug: 'contained-mparntwe',
-    date: 'Oct–Nov 2026 · 6 weeks',
-    status: 'confirmed',
-    lat: -23.70,
-    lng: 133.88,
   },
   {
     city: 'Brisbane',
@@ -270,7 +271,7 @@ export const tourStops: TourStop[] = [
     description:
       'YAC is hosting. Queensland has the strongest demand signal nationally — a sitting state MP has asked publicly where the container is touring. One month of public weeks, MP days, and university partnerships.',
     eventSlug: 'contained-brisbane',
-    date: 'Dec 2026 · 1 month',
+    date: 'Sep 2026 · Brisbane',
     status: 'planning',
     lat: -27.47,
     lng: 153.03,
@@ -284,62 +285,61 @@ export const tourStops: TourStop[] = [
     description:
       'A month in the Northern Rivers in partnership with The Buttery. Therapeutic-community lineage, lived-experience pathways, and a regional public the metro circuit does not reach.',
     eventSlug: 'contained-northern-rivers',
-    date: 'Feb 2027 · 1 month',
+    date: 'Oct 2026 · Northern Rivers',
     status: 'tentative',
     lat: -28.81,
     lng: 153.27,
   },
   {
-    city: 'Sydney',
-    state: 'NSW',
-    venue: 'Uniting + University of Sydney',
-    partner: 'Uniting + USyd',
+    city: 'Alice Springs · Central Australia',
+    state: 'NT',
+    venue: 'Oonchiumpa + Central Australian community spaces',
+    partner: 'Oonchiumpa Aboriginal Corporation',
     description:
-      'A month in Sydney carried by Uniting\'s advocacy team and the University of Sydney. NSW MPs invited on dedicated days. Public access through the city centre.',
-    eventSlug: 'contained-sydney',
-    date: 'Mar 2027 · 1 month',
+      'November in Alice Springs and Central Australia. Oonchiumpa runs a 95% diversion rate through Central Arrernte-designed programs. The container, the build, and the public weeks happen on community terms.',
+    eventSlug: 'contained-alice-springs-central-australia',
+    date: 'Nov 2026 · Central Australia',
+    status: 'confirmed',
+    lat: -23.70,
+    lng: 133.88,
+  },
+  {
+    city: 'Sydney + Canberra',
+    state: 'NSW',
+    venue: 'Sydney civic venue + Parliament-facing Canberra days',
+    partner: 'Uniting + University of Sydney + ACT civic partners',
+    description:
+      'A flexible December/January NSW and ACT run. Sydney carries the advocacy and research spine through Uniting and the University of Sydney. Canberra gives the same evidence a federal-facing moment with MPs, territory leaders, and the press gallery.',
+    eventSlug: 'contained-sydney-canberra',
+    date: 'Dec 2026-Jan 2027 · Sydney + Canberra',
     status: 'tentative',
-    lat: -33.87,
-    lng: 151.21,
+    lat: -34.62,
+    lng: 150.15,
     partnerQuote: 'Hoping some NSW MPs come and look — Emma Maiden, Director Advocacy, Uniting',
   },
   {
-    city: 'Canberra',
-    state: 'ACT',
-    venue: 'Lawns of Parliament House',
-    partner: 'ACT Inspector of Custodial Services + civic partners',
-    description:
-      'Three weeks on the lawns of Parliament House. ACT government has committed publicly to a new model of care for youth detention — the timing is the point. Federal MPs invited, territory-level audience, and the press gallery on its doorstep.',
-    eventSlug: 'contained-canberra',
-    date: 'Apr 2027 · 3 weeks',
-    status: 'tentative',
-    lat: -35.31,
-    lng: 149.13,
-    partnerQuote: 'Lawns of Parliament House? — Margo Marchbank',
-  },
-  {
-    city: 'Melbourne',
+    city: 'Victoria',
     state: 'VIC',
-    venue: 'St Martins Youth Arts Centre',
-    partner: 'St Martins YAC + RMIT',
+    venue: 'Melbourne / regional Victoria venue TBC',
+    partner: 'St Martins YAC + RMIT + Victorian partners',
     description:
-      'A month in Melbourne carried by St Martins Youth Arts Centre. Public access, a youth arts collaboration on Room 3, and an academic spine through RMIT. The container lands in the middle of the Melbourne arts season.',
-    eventSlug: 'contained-melbourne',
-    date: 'May 2027 · 1 month',
+      'February/March 2027 in Victoria. A youth arts collaboration, public access, local Room 3 program partners, and an academic spine through RMIT or aligned Victorian partners.',
+    eventSlug: 'contained-victoria',
+    date: 'Feb-Mar 2027 · Victoria',
     status: 'tentative',
     lat: -37.81,
     lng: 144.96,
     partnerQuote: 'This needs to be seen in Melbourne. We work with young people — Nadja Kostich, CEO St Martins YAC',
   },
   {
-    city: 'Hobart',
+    city: 'Tasmania',
     state: 'TAS',
-    venue: 'DarkLab / MONA + Prevention Not Detention coalition',
+    venue: 'Hobart / Tasmania venue TBC',
     partner: 'DarkLab + Prevention Not Detention Tasmania',
     description:
-      'The tour closes in Hobart with DarkLab and the Prevention Not Detention coalition. Cultural institution, organised activist coalition, and a Department of Children and Young People contact in one room.',
-    eventSlug: 'contained-hobart',
-    date: 'Jun 2027 · 1 month',
+      'April 2027 in Tasmania. The tour closes with Prevention Not Detention Tasmania, cultural institution interest, coalition organising, and the year-end public record.',
+    eventSlug: 'contained-tasmania',
+    date: 'Apr 2027 · Tasmania',
     status: 'tentative',
     lat: -42.88,
     lng: 147.33,
@@ -353,49 +353,49 @@ export const campaignFundraising = {
   currency: 'AUD',
   milestones: [
     {
-      amount: 50000,
-      label: 'Adelaide · Tandanya · 2 months',
-      description: 'Reintegration Puzzle Conference week + month of public weeks, MP days, school groups. Move + activation bundled.',
+      amount: 20000,
+      label: 'Mount Druitt · May-Jun · small gathering',
+      description: 'Flexible Western Sydney gathering, young people paid, Mounty Yarns and Just Reinvest relationships held, first local proof captured.',
     },
     {
       amount: 50000,
-      label: 'Perth + surrounds · 2 months',
+      label: 'Adelaide · Tandanya · end of June',
+      description: 'Public launch alongside the Reintegration Puzzle Conference. Brisbane build story, Diagrama practice lens, Adelaide organisations, documentation, and JusticeHub publishing.',
+    },
+    {
+      amount: 50000,
+      label: 'Perth + surrounds · Jul-Aug',
       description: 'UWA + Reconciliation WA + regional drop-in to Broome or Kalgoorlie. The container becomes the public priming layer for the Department of Justice WA delegated-authority pilot.',
     },
     {
-      amount: 50000,
-      label: 'Mparntwe + Tennant Creek · 6 weeks',
-      description: 'Oonchiumpa-led, cultural authority paid, two locations on community terms.',
-    },
-    {
       amount: 40000,
-      label: 'Brisbane · 1 month',
+      label: 'Brisbane · September',
       description: 'YAC hosts. EPIC Pathways and Queensland MPs in the room.',
     },
     {
       amount: 35000,
-      label: 'Northern Rivers · 1 month',
+      label: 'Northern Rivers · October',
       description: 'The Buttery partnership. Therapeutic-community lineage and a regional public the metro circuit does not reach.',
     },
     {
+      amount: 50000,
+      label: 'Alice Springs · Central Australia · November',
+      description: 'Oonchiumpa-led, cultural authority paid, Central Australian community terms, local program evidence captured.',
+    },
+    {
+      amount: 60000,
+      label: 'Sydney + Canberra · Dec-Jan',
+      description: 'Sydney advocacy and research spine, then Parliament-facing Canberra days for federal MPs, territory leaders, and the press gallery.',
+    },
+    {
       amount: 40000,
-      label: 'Sydney · 1 month',
-      description: 'Uniting carries advocacy spine, USyd carries research spine. NSW MPs invited.',
+      label: 'Victoria · Feb-Mar',
+      description: 'Victorian youth arts collaboration, public access, academic spine, and local Room 3 program partners.',
     },
     {
       amount: 35000,
-      label: 'Canberra · 3 weeks',
-      description: 'Lawns of Parliament House. Federal MPs and the press gallery on the doorstep.',
-    },
-    {
-      amount: 40000,
-      label: 'Melbourne · 1 month',
-      description: 'St Martins Youth Arts Centre + RMIT academic spine.',
-    },
-    {
-      amount: 40000,
-      label: 'Hobart · 1 month',
-      description: 'DarkLab + Prevention Not Detention Tasmania coalition. Sea freight included.',
+      label: 'Tasmania · April',
+      description: 'Prevention Not Detention Tasmania coalition, cultural institution interest, and year-end public record.',
     },
     {
       amount: 120000,
@@ -460,123 +460,86 @@ const CORE_HASHTAGS = ['#TheContained', '#YouthJustice', '#JusticeHub'];
 
 export const tourSocialKits: TourSocialKit[] = [
   {
-    tourStopSlug: 'contained-mount-druitt-launch',
-    city: 'Western Sydney, NSW',
+    tourStopSlug: 'contained-mount-druitt-gathering',
+    city: 'Mount Druitt, NSW',
+    posts: [
+      {
+        platform: 'twitter',
+        label: 'Small Gathering',
+        content: `THE CONTAINED starts with a small Mount Druitt gathering in May/June.
+
+Young people, Mounty Yarns, Just Reinvest relationships, and Western Sydney build proof help shape what travels next.
+
+Then the public launch lands at Tandanya in Adelaide.`,
+        hashtags: [...CORE_HASHTAGS, '#MountDruitt', '#WesternSydney'],
+      },
+      {
+        platform: 'linkedin',
+        label: 'Process Signal',
+        content: `Before THE CONTAINED launches publicly in Adelaide, the process starts with a smaller Mount Druitt gathering.
+
+That matters. The tour is not a fixed roadshow dropped into communities. It is a flexible process: young people and local organisations help shape what the container carries, what evidence is shown, and what funders are asked to back next.`,
+        hashtags: [...CORE_HASHTAGS, '#CommunityLed', '#YouthJustice'],
+      },
+    ],
+  },
+  {
+    tourStopSlug: 'contained-adelaide-tandanya',
+    city: 'Adelaide, SA',
     posts: [
       {
         platform: 'twitter',
         label: 'Announcement',
-        content: `THE CONTAINED launches in Western Sydney.
+        content: `THE CONTAINED public launch lands at Tandanya in Adelaide.
 
-One shipping container, three rooms. Thirty minutes inside youth detention reality, then the alternative.
+One shipping container. Three rooms. Thirty minutes.
 
-This is what $1.55M per child per year looks like. And what we could do instead.`,
-        hashtags: [...CORE_HASHTAGS, '#WesternSydney'],
-      },
-      {
-        platform: 'instagram',
-        label: 'Launch Post',
-        content: `Three rooms. Three realities. Thirty minutes that change how you see youth justice.
-
-THE CONTAINED launches in Western Sydney.
-
-Container 1: The reality of youth detention. $4,250/day. 84% reoffending.
-Container 2: The therapeutic alternative. Spain's Diagrama model. 73% success.
-Container 3: Australia's future. Community-led. Culture-centred. Evidence-based.
-
-This isn't a lecture. It's an experience.
-
-Link in bio to register.`,
-        hashtags: [...CORE_HASHTAGS, '#WesternSydney', '#ImmersiveAdvocacy', '#YouthVoice'],
+Mount Druitt starts the process. Brisbane young people carry the build story. David from Diagrama anchors Room 2. Adelaide organisations show what is already working.`,
+        hashtags: [...CORE_HASHTAGS, '#Adelaide', '#Reintegration'],
       },
       {
         platform: 'facebook',
         label: 'Community Post',
-        content: `What if decision-makers could FEEL what youth detention is actually like?
+        content: `What if decision-makers could feel what youth detention is actually like?
 
-That's the idea behind THE CONTAINED, an immersive shipping container experience launching in Western Sydney.
+That is the idea behind THE CONTAINED, an immersive shipping container experience publicly launching its Australian tour at Tandanya in Adelaide after a small Mount Druitt gathering.
 
-Three rooms tell three stories:
-→ The current reality of youth detention in Australia
-→ A therapeutic alternative that actually works (Spain's Diagrama model, 73% success rate)
-→ A future we can build together
-
-Australia spends $1.55 million per child per year on detention. 84% reoffend. Community programs cost a fraction and deliver lasting change.
-
-Come experience it. Bring someone who needs to see it.`,
-        hashtags: [...CORE_HASHTAGS, '#WesternSydney'],
+Three rooms tell the story: detention reality, the therapeutic alternative shaped with David from Diagrama, and the local future held by Adelaide organisations talking about their programs, costs, and support needs.`,
+        hashtags: [...CORE_HASHTAGS, '#Adelaide'],
       },
       {
         platform: 'linkedin',
         label: 'Professional',
-        content: `Australia spends $1.55M per child per year on youth detention. The reoffending rate is 84%.
+        content: `The process starts with a small Mount Druitt gathering, then the public tour launches at Tandanya in Adelaide alongside the Reintegration Puzzle Conference.
 
-Meanwhile, therapeutic models like Spain's Diagrama Foundation achieve 73% success rates at a fraction of the cost.
-
-THE CONTAINED is an immersive experience that puts these numbers into physical reality. One shipping container, three rooms, each telling a different part of Australia's youth justice story.
-
-Launching in Western Sydney. Touring nationally in 2026.
-
-If you work in youth justice, social policy, philanthropy, or community services, this is worth thirty minutes of your time.`,
+Brisbane young people who supported the build carry the first room. David from Diagrama anchors the practice lens. Adelaide organisations use Room 3 to show the programs already working and the support they need to grow.`,
         hashtags: [...CORE_HASHTAGS, '#SocialPolicy', '#Evidence', '#Reform'],
       },
     ],
   },
   {
-    tourStopSlug: 'contained-adelaide-reintegration',
-    city: 'Adelaide',
+    tourStopSlug: 'contained-brisbane',
+    city: 'Brisbane',
     posts: [
       {
         platform: 'twitter',
         label: 'Announcement',
-        content: `THE CONTAINED is coming to Adelaide.
+        content: `Brisbane helped build the first CONTAINED story.
 
-At the national Reintegration Conference. Policymakers, practitioners, and people with lived experience walking through the same three rooms.
+Young people who supported the build carry Room 1 into the Australian tour.
 
-June 15, Adelaide Convention Centre.
-
-The evidence is overwhelming. Time to act on it.`,
-        hashtags: [...CORE_HASHTAGS, '#Adelaide', '#Reintegration'],
+The container reaches Queensland in September with YAC, EPIC Pathways, MPs, universities, and community programs in the room.`,
+        hashtags: [...CORE_HASHTAGS, '#Brisbane', '#YouthVoice'],
       },
       {
         platform: 'instagram',
-        label: 'Conference Post',
-        content: `Adelaide. June 15. The Reintegration Conference.
+        label: 'Build Story',
+        content: `The tour process starts in Mount Druitt, launches publicly in Adelaide, and the build story runs through Brisbane.
 
-THE CONTAINED brings its one shipping container, three rooms to the national stage, where the people who make policy meet the people who live with its consequences.
+Young people from Brisbane helped shape the first CONTAINED build. Their work carries into Room 1, then each city rebuilds the room with its own young people and local organisations.
 
-Policymakers. Practitioners. People with lived experience. Same containers. Same thirty minutes. Same unavoidable truth.
-
-Youth detention costs $1.55M per child. It fails 84% of the time. The alternative exists. It works. It costs less.
-
-This is the conference that could change the conversation.`,
-        hashtags: [...CORE_HASHTAGS, '#Adelaide', '#Reintegration', '#JusticeReform', '#PolicyChange'],
-      },
-      {
-        platform: 'facebook',
-        label: 'Community Post',
-        content: `THE CONTAINED is heading to Adelaide for the national Reintegration Conference on June 15.
-
-This is where the conversation gets real. Policymakers, researchers, practitioners, and people with lived experience all walking through the same three rooms that make the case for changing how Australia does youth justice.
-
-After the Western Sydney launch, the tour continues building momentum. Adelaide brings the Justice Reform Initiative and the national reintegration community together.
-
-The evidence is clear. Community-led alternatives work better, cost less, and keep young people connected to family and culture.
-
-Register now: justicehub.com.au/events/contained-adelaide-reintegration`,
-        hashtags: [...CORE_HASHTAGS, '#Adelaide', '#SouthAustralia'],
-      },
-      {
-        platform: 'linkedin',
-        label: 'Professional',
-        content: `THE CONTAINED arrives at the national Reintegration Conference in Adelaide, June 15.
-
-An immersive shipping container experience making the evidence-based case for therapeutic youth justice, now touring nationally after launching in Western Sydney.
-
-For conference delegates: this is thirty minutes that reframes the entire conversation about youth detention, reoffending, and community alternatives.
-
-Partnering with the Justice Reform Initiative to bring policymakers face-to-face with the evidence.`,
-        hashtags: [...CORE_HASHTAGS, '#Reintegration', '#JusticeReform', '#Evidence'],
+When the container lands in Brisbane in September, YAC and EPIC Pathways bring the Queensland sector into the room.`,
+        hashtags: [...CORE_HASHTAGS, '#Brisbane', '#Queensland', '#YouthJustice'],
       },
     ],
   },
@@ -587,95 +550,39 @@ Partnering with the Justice Reform Initiative to bring policymakers face-to-face
       {
         platform: 'twitter',
         label: 'Announcement',
-        content: `THE CONTAINED is coming to Perth.
+        content: `THE CONTAINED is coming to Perth and surrounds.
 
-University of Western Australia. August 2026. Academic rigour meets immersive advocacy.
-
-Researchers, students, and community, experiencing the evidence together.`,
+University of Western Australia. July/August 2026. Academic rigour meets immersive advocacy.`,
         hashtags: [...CORE_HASHTAGS, '#Perth', '#UWA'],
-      },
-      {
-        platform: 'instagram',
-        label: 'Campus Post',
-        content: `Perth. August. University of Western Australia.
-
-THE CONTAINED brings its immersive shipping container experience to campus, where WA's leading youth justice researchers, students, and community members can experience the evidence firsthand.
-
-This is what happens when academic rigour meets advocacy. When data becomes physical. When the people studying the system walk through what it actually feels like.
-
-More details coming soon.`,
-        hashtags: [...CORE_HASHTAGS, '#Perth', '#UWA', '#Research', '#WesternAustralia'],
-      },
-      {
-        platform: 'facebook',
-        label: 'Community Post',
-        content: `THE CONTAINED is heading to Perth in August, partnering with the University of Western Australia.
-
-The third stop on the national tour brings the immersive experience to campus, where youth justice researchers, social work students, and the broader Perth community can walk through three rooms that make the case for change.
-
-WA has its own youth justice challenges. THE CONTAINED connects the national evidence with local action.
-
-Stay tuned for dates and registration.`,
-        hashtags: [...CORE_HASHTAGS, '#Perth', '#WesternAustralia'],
       },
       {
         platform: 'linkedin',
         label: 'Professional',
-        content: `THE CONTAINED partners with the University of Western Australia for the third stop on its national tour, August 2026.
+        content: `THE CONTAINED partners with the University of Western Australia for the Western Australian stop on its Australian tour, July/August 2026.
 
-An academic partnership exploring therapeutic alternatives to youth detention, bringing researchers, students, and community together through immersive experience.
-
-The tour continues building the national evidence base for what works in youth justice.`,
+After Mount Druitt and Adelaide, the tour brings the immersive experience to campus and surrounds, where youth justice researchers, students, and community can walk through three rooms that make the case for change.`,
         hashtags: [...CORE_HASHTAGS, '#UWA', '#Research', '#YouthJustice'],
       },
     ],
   },
   {
-    tourStopSlug: 'contained-tennant-creek',
-    city: 'Tennant Creek',
+    tourStopSlug: 'contained-alice-springs-central-australia',
+    city: 'Alice Springs · Central Australia',
     posts: [
       {
         platform: 'twitter',
         label: 'Announcement',
-        content: `THE CONTAINED goes to the heart of the NT.
+        content: `THE CONTAINED goes to Central Australia.
 
-Tennant Creek. September 2026. Community-controlled. Culture-centred.
-
-First Nations families and leaders shaping the conversation about youth justice alternatives.`,
-        hashtags: [...CORE_HASHTAGS, '#TennantCreek', '#NT', '#FirstNations'],
-      },
-      {
-        platform: 'instagram',
-        label: 'Community Post',
-        content: `Tennant Creek. September. The heart of the Northern Territory.
-
-THE CONTAINED's final Australian tour stop is community-controlled from the ground up. First Nations families and leaders shaping how the experience arrives, who it speaks to, and what comes next.
-
-This isn't about bringing something to a community. It's about a community using a tool for their own advocacy.
-
-Indigenous young people are 23x overrepresented in detention. The communities most affected deserve the biggest say in what replaces it.`,
-        hashtags: [...CORE_HASHTAGS, '#TennantCreek', '#FirstNations', '#CommunityLed', '#NorthernTerritory'],
-      },
-      {
-        platform: 'facebook',
-        label: 'Community Post',
-        content: `The final stop on THE CONTAINED Australian Tour: Tennant Creek, Northern Territory. September 2026.
-
-This one is different. Community-controlled from the start. First Nations families and leaders deciding how the immersive experience works in their community.
-
-Indigenous young people are 23x overrepresented in youth detention nationally. The communities most affected by this system deserve the loudest voice in changing it.
-
-THE CONTAINED in Tennant Creek centres culture, community authority, and self-determination. Because the best youth justice alternatives already exist in community. They just need to be resourced.`,
-        hashtags: [...CORE_HASHTAGS, '#TennantCreek', '#FirstNations', '#SelfDetermination'],
+Alice Springs and Central Australia. November 2026. Community-controlled. Culture-centred.`,
+        hashtags: [...CORE_HASHTAGS, '#CentralAustralia', '#NT', '#FirstNations'],
       },
       {
         platform: 'linkedin',
         label: 'Professional',
-        content: `THE CONTAINED's national tour concludes in Tennant Creek, NT. September 2026.
+        content: `THE CONTAINED travels to Alice Springs and Central Australia in November 2026.
 
-A community-controlled activation centring First Nations leadership in youth justice reform. Indigenous young people are 23x overrepresented in detention. The communities most affected must lead the conversation about alternatives.
-
-This stop demonstrates what community-controlled advocacy looks like in practice: cultural safety, self-determination, and local authority over how the evidence is presented and acted upon.`,
+A community-controlled activation centring First Nations leadership in youth justice reform. The communities most affected must lead the conversation about alternatives.`,
         hashtags: [...CORE_HASHTAGS, '#FirstNations', '#CommunityLed', '#SelfDetermination'],
       },
     ],
@@ -686,13 +593,11 @@ export const generalSocialPosts: SocialPost[] = [
   {
     platform: 'twitter',
     label: 'Tour Overview',
-    content: `THE CONTAINED: Australian Tour 2026.
+    content: `THE CONTAINED: Australian Tour 2026-27.
 
-Six stops. One shipping container, three rooms. One mission.
+Mount Druitt small gathering. Adelaide public launch. Nine-stop national arc.
 
-Western Sydney → Brisbane → Adelaide → Townsville → Perth → Tennant Creek
-
-Thirty minutes inside youth detention reality, and the alternative that already works.
+Mount Druitt -> Adelaide -> Perth + surrounds -> Brisbane -> Northern Rivers -> Alice Springs / Central Australia -> Sydney + Canberra -> Victoria -> Tasmania
 
 justicehub.com.au/contained`,
     hashtags: CORE_HASHTAGS,
@@ -702,21 +607,17 @@ justicehub.com.au/contained`,
     label: 'Tour Overview',
     content: `THE CONTAINED is going national.
 
-Six stops across Australia in 2026. One shipping container, three rooms that make the case for transforming youth justice.
+May/June: Mount Druitt small gathering
+End of June: Adelaide public launch
+July/August: Perth and surrounds
+September: Brisbane
+October: Northern Rivers
+November: Alice Springs / Central Australia
+December/January: Sydney + Canberra
+February/March 2027: Victoria
+April 2027: Tasmania
 
-🔴 Western Sydney, April 25 (Planning)
-🔴 Brisbane, May 15 (Planning)
-🔴 Adelaide, June 15 + ALP Conference Jul 23-25 (Planning)
-🔴 Townsville / Palm Island, July 1 (Planning)
-🟡 Perth, August (Planning)
-🟢 Tennant Creek, September 15 (Confirmed)
-
-$1.55M per child per year on detention. 84% reoffend.
-$75/day for community alternatives. 88% success rate.
-
-The numbers are clear. The containers make you feel them.
-
-Link in bio to register and follow the tour.`,
+The route is flexible because the process follows community need, partner readiness, and the funders willing to back each place.`,
     hashtags: [...CORE_HASHTAGS, '#AustralianTour', '#ImmersiveAdvocacy'],
   },
   {
@@ -727,20 +628,20 @@ Link in bio to register and follow the tour.`,
 
 Community programs: $75/day. 88% success rate.
 
-THE CONTAINED makes you feel these numbers. Australian Tour 2026.`,
+THE CONTAINED makes you feel these numbers. Australian Tour 2026-27.`,
     hashtags: CORE_HASHTAGS,
   },
   {
     platform: 'twitter',
     label: 'Fundraising',
-    content: `$100K to tour THE CONTAINED across Australia.
+    content: `$500K funds THE CONTAINED Australian Tour.
 
-$25K → Build the containers
-$50K → Adelaide + Perth
-$75K → Tennant Creek
-$100K → Full tour + documentation
+$20K -> Mount Druitt small gathering
+$50K -> Adelaide public launch at Tandanya
+$30K-$60K -> one tour stop
+$120K -> tour-wide backbone
 
-Every dollar builds the case for change.
+Every dollar links the container experience to JusticeHub, the public evidence layer.
 
 justicehub.com.au/contained/tour`,
     hashtags: [...CORE_HASHTAGS, '#FundTheMovement'],

@@ -84,7 +84,8 @@ export default function DecisionMakerBriefPage() {
                 You have been nominated to experience THE CONTAINED — a 30-minute immersive walk
                 through youth detention reality, international alternatives, and the community
                 organisations already doing what works. This brief summarises the evidence for
-                your jurisdiction.
+                your jurisdiction. The route starts with a small Mount Druitt gathering, publicly launches at Tandanya in Adelaide, then links
+                every stop back to JusticeHub as the public evidence layer.
               </p>
             </div>
 
@@ -118,22 +119,25 @@ export default function DecisionMakerBriefPage() {
                 <div className="border-l-4 border-[#DC2626] pl-4">
                   <h4 className="font-bold">Room 1 — Current Reality</h4>
                   <p className="text-sm text-gray-600">
-                    10 minutes inside the reality of youth detention. Designed by young people who have
-                    lived through the system. $3,640/day. $1.33M/year. 84% reoffend.
+                    10 minutes inside the reality of youth detention. The first build story is carried
+                    by Brisbane young people, then rebuilt locally by young people who have lived through
+                    the system. $3,640/day. $1.33M/year. 84% reoffend.
                   </p>
                 </div>
                 <div className="border-l-4 border-[#059669] pl-4">
                   <h4 className="font-bold">Room 2 — The Alternative (Diagrama, Spain)</h4>
                   <p className="text-sm text-gray-600">
-                    10 minutes experiencing the therapeutic model. 1:1 staffing, weekly family engagement,
-                    73% success rate, &euro;5.64 returned per &euro;1 invested. Proven at scale.
+                    10 minutes experiencing the therapeutic model, with David from Diagrama helping hold
+                    the practice lens. 1:1 staffing, weekly family engagement, 73% success rate,
+                    &euro;5.64 returned per &euro;1 invested. Proven at scale.
                   </p>
                 </div>
                 <div className="border-l-4 border-[#0A0A0A] pl-4">
                   <h4 className="font-bold">Room 3 — Community Organisations Already Doing It</h4>
                   <p className="text-sm text-gray-600">
-                    10 minutes with the local organisations delivering results. $75/day. 88% restorative
-                    justice success. Changes at every tour stop — local community tells local story.
+                    10 minutes with the local organisations delivering results. From Mount Druitt through the Adelaide launch,
+                    local organisations talk about their programs, costs, evidence, and support needs.
+                    Changes at every tour stop, with local community telling the local story.
                   </p>
                 </div>
               </div>

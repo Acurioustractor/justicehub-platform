@@ -22,7 +22,7 @@ const STATS: Record<string, { value: string; label: string; subtext: string; sou
   community_heroes: { value: '$0', label: 'government funding', subtext: 'Just Reinvest NSW runs 9 evidence-rated programs with zero government funding. They work anyway.', source: 'ALMA Program Catalogue + JusticeHub Funding Database' },
   indigenous_gap: { value: '10.8%', label: 'of funding reaches Indigenous orgs', subtext: 'Indigenous organisations receive 10.8% of justice funding. Indigenous youth are 23x overrepresented in detention.', source: 'JusticeHub Funding Database + ROGS 2024-25' },
   what_works: { value: '981', label: 'alternatives catalogued', subtext: "981 community-led alternatives. 54.9% evidence-backed. They work. They're not funded.", source: 'ALMA Evidence Database — JusticeHub' },
-  tour_demand: { value: '230', label: 'people said bring it here', subtext: 'Perth. Melbourne. Canberra. Sydney. 230 Australians said bring the container to their city.', source: 'CONTAINED Campaign — JusticeHub' },
+  tour_demand: { value: '230', label: 'people said bring it here', subtext: 'Mount Druitt. Adelaide. Perth. Brisbane. Northern Rivers. Central Australia. Sydney + Canberra. Victoria. Tasmania.', source: 'CONTAINED Campaign — JusticeHub' },
 }
 
 const FORMATS: Record<string, { width: number; height: number }> = {

@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
+import {
+  campaignFundraising,
+  tourStops as campaignTourStops,
+  type TourStopStatus,
+} from '@/content/campaign';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -85,10 +90,10 @@ const STATE_OPPORTUNITIES: Record<string, Array<{
   score: number;
 }>> = {
   NSW: [
-    { name: 'Mounty Yarns Team', org: 'Mounty Yarns', role: 'Community Partner', quote: 'Working closely on Mounty launch — photos and reflections from the team ready to share.', source: 'partner', score: 95 },
+    { name: 'Mounty Yarns Team', org: 'Mounty Yarns', role: 'Community Partner', quote: 'Western Sydney build proof and community reflections remain available as a NSW demand signal.', source: 'partner', score: 95 },
     { name: 'Teya Dusseldorp', org: 'Dusseldorp Forum', role: 'Director', quote: 'Meeting scheduled Fri 20 Mar. "Let\'s make a time to talk."', source: 'ally', score: 95 },
-    { name: 'Nicole Mekler', org: 'Just Reinvest', role: 'Youth Advocacy & Implementation Lead, Mt Druitt', quote: '"Copy us in and we will attend if we can."', source: 'partner', score: 93 },
-    { name: 'Daniel Daylight', org: 'Just Reinvest', role: 'Program Lead', quote: 'Key connection between Just Reinvest and Mount Druitt community.', source: 'partner', score: 90 },
+    { name: 'Nicole Mekler', org: 'Just Reinvest', role: 'Youth Advocacy & Implementation Lead', quote: '"Copy us in and we will attend if we can." Western Sydney relationship for NSW delegation days.', source: 'partner', score: 93 },
+    { name: 'Daniel Daylight', org: 'Just Reinvest', role: 'Program Lead', quote: 'Key Just Reinvest relationship for Western Sydney community proof.', source: 'partner', score: 90 },
     { name: 'Jessica Duffy', org: 'Dusseldorp Forum', role: 'Program Manager', quote: '"Would be great to hear more" — joining Fri 20 Mar call.', source: 'ally', score: 88 },
     { name: 'Margot Beach', org: 'Dusseldorp Forum', role: 'Team', quote: 'Accepted meeting invite for Fri 20 Mar CONTAINED discussion.', source: 'ally', score: 85 },
     { name: 'Ariane Dozer', org: 'The Justice Project / UTS', role: 'Partnership Lead', quote: '"Love this — looking forward to circling back to your ideas."', source: 'ally', score: 82 },
@@ -152,10 +157,10 @@ const STATE_POLITICIANS: Record<string, Politician[]> = {
     // Oversight
     { name: 'Fiona Rafter', role: 'Inspector of Custodial Services', party: 'Independent', level: 'oversight', relevance: 'Conducted youth justice centre inspections in 2025. Departing April 2026.' },
     { name: 'Katherine McKernan', role: 'Advocate for Children and Young People', party: 'Independent', level: 'oversight', relevance: 'Appointed Jan 2026, five-year term. Leads Office for Youth.' },
-    // Local MPs (Mount Druitt)
-    { name: 'Edmond Atalla', role: 'Member for Mount Druitt', party: 'Labor', level: 'state', relevance: 'Local state MP since 2015, Parliamentary Secretary for Police.' },
+    // Western Sydney MPs held as NSW demand-signal context, not confirmed tour stops.
+    { name: 'Edmond Atalla', role: 'Member for Mount Druitt', party: 'Labor', level: 'state', relevance: 'Western Sydney demand-signal context. Local state MP since 2015, Parliamentary Secretary for Police.' },
     // Federal (Western Sydney)
-    { name: 'Ed Husic', role: 'Member for Chifley (covers Mount Druitt)', party: 'Labor', level: 'federal', relevance: 'Federal MP since 2010, covers Mount Druitt area.' },
+    { name: 'Ed Husic', role: 'Member for Chifley', party: 'Labor', level: 'federal', relevance: 'Western Sydney demand-signal context. Federal MP since 2010.' },
   ],
   QLD: [
     // State Government
@@ -216,9 +221,32 @@ const STATE_POLITICIANS: Record<string, Politician[]> = {
   NT: [
     { name: 'Marie-Clare Boothby', role: 'Attorney-General', party: 'CLP', level: 'state', portfolio: 'Justice', relevance: 'NT Attorney General under CLP government.' },
     { name: 'Gerard Maley', role: 'Deputy CM, Minister for Correctional Services', party: 'CLP', level: 'state', portfolio: 'Corrections', relevance: 'Deputy Chief Minister overseeing corrections including Don Dale.' },
-    { name: 'Steve Edgington', role: 'Minister for Aboriginal Affairs & Member for Barkly', party: 'CLP', level: 'state', portfolio: 'Aboriginal Affairs', relevance: 'Holds Aboriginal Affairs AND is the Member for Barkly (Tennant Creek electorate). Single most relevant local political figure.' },
+    { name: 'Steve Edgington', role: 'Minister for Aboriginal Affairs', party: 'CLP', level: 'state', portfolio: 'Aboriginal Affairs', relevance: 'NT Aboriginal Affairs portfolio holder. Relevant statewide figure for the Alice Springs / Central Australia stop.' },
     { name: 'Shahleena Musk', role: 'Children\'s Commissioner', party: 'Independent', level: 'oversight', relevance: 'Larrakia woman. Outspoken critic of CLP\'s rollback of Don Dale Royal Commission recommendations.' },
   ],
+};
+
+const FULL_STATE_NAMES: Record<string, string> = {
+  NSW: 'New South Wales',
+  VIC: 'Victoria',
+  QLD: 'Queensland',
+  WA: 'Western Australia',
+  SA: 'South Australia',
+  TAS: 'Tasmania',
+  ACT: 'Australian Capital Territory',
+  NT: 'Northern Territory',
+};
+
+const STORY_ARCS: Record<string, string> = {
+  'contained-mount-druitt-gathering': '"Start small. Let Western Sydney shape what travels."',
+  'contained-adelaide-tandanya': '"The public launch lands on Kaurna Yarta with local programs in the room."',
+  'contained-perth-uwa': '"The evidence goes academic, civic, and regional."',
+  'contained-brisbane': '"The build story returns to Queensland with the sector in the room."',
+  'contained-northern-rivers': '"The conversation reaches the regions that already know the work."',
+  'contained-alice-springs-central-australia': '"Community authority. Community control. Their story, their way."',
+  'contained-sydney-canberra': '"The evidence moves from state centre to national doorstep."',
+  'contained-victoria': '"Young people making art about the system that failed them."',
+  'contained-tasmania': '"The tour closes as civic memory, not a one-off event."',
 };
 
 const TOUR_STOPS_CONFIG: Array<{
@@ -226,16 +254,31 @@ const TOUR_STOPS_CONFIG: Array<{
   lat: number; lng: number; status: TourStopIntel['status'];
   date: string; partner: string; venue: string; cost: string;
   description: string; storyArc: string;
-}> = [
-  { id: 'mount-druitt', city: 'Mount Druitt', state: 'New South Wales', stateCode: 'NSW', lat: -33.74, lng: 150.82, status: 'planning', date: 'April 2026', partner: 'Mounty Yarns', venue: 'Mounty Yarns', cost: '$30,000', description: 'Western Sydney launch — young people designing Room 1 for the first time.', storyArc: '"It starts here. Young people design Room 1."' },
-  { id: 'brisbane', city: 'Brisbane', state: 'Queensland', stateCode: 'QLD', lat: -27.47, lng: 153.03, status: 'demand', date: 'May 2026', partner: 'Youth Advocacy Centre (YAC)', venue: 'YAC Brisbane', cost: '$30,000', description: 'Queensland has the most community alternatives in Australia. YAC wants to host.', storyArc: '"Queensland has 261 alternatives. YAC is one. They want the container."' },
-  { id: 'adelaide', city: 'Adelaide', state: 'South Australia', stateCode: 'SA', lat: -34.93, lng: 138.60, status: 'confirmed', date: 'June 24-25 2026', partner: 'Reintegration Puzzle Conference @ Tandanya', venue: 'Tandanya National Aboriginal Cultural Institute', cost: '$30,000', description: 'National conference — delegates walk through between sessions. The Mayor supports it.', storyArc: '"The national conversation changes. On Kaurna Yarta."' },
-  { id: 'canberra', city: 'Canberra', state: 'Australian Capital Territory', stateCode: 'ACT', lat: -35.28, lng: 149.13, status: 'demand', date: 'July 2026', partner: 'TBD — Inspector of Custodial Services endorses', venue: 'TBD (Parliament House lawns suggested)', cost: '$30,000', description: 'The people who inspect the system say it\'s broken. ACT committed to new model.', storyArc: '"The Inspector walked through. Then she wrote a report."' },
-  { id: 'perth', city: 'Perth', state: 'Western Australia', stateCode: 'WA', lat: -31.95, lng: 115.86, status: 'exploring', date: 'August 2026', partner: 'UWA + Reconciliation WA', venue: 'University of Western Australia', cost: '$30,000', description: 'Academic research meets advocacy. Reconciliation WA CEO endorses.', storyArc: '"The evidence goes academic. Reconciliation WA says: invited."' },
-  { id: 'tasmania', city: 'Hobart', state: 'Tasmania', stateCode: 'TAS', lat: -42.88, lng: 147.33, status: 'demand', date: 'September 2026', partner: 'Prevention Not Detention TAS + DarkLab/MONA', venue: 'TBD (DarkLab/MONA connection)', cost: '$30,000', description: 'The coalition that said enough. MONA connection. Government decision-maker on board.', storyArc: '"A coalition, a museum, and a government official walk into a container."' },
-  { id: 'melbourne', city: 'Melbourne', state: 'Victoria', stateCode: 'VIC', lat: -37.81, lng: 144.96, status: 'demand', date: 'October 2026', partner: 'St Martins Youth Arts Centre', venue: 'St Martins Youth Arts Centre', cost: '$30,000', description: 'Youth arts venue offered. Melbourne Design Week connection. 8 demand signals.', storyArc: '"Young people making art about the system that failed them."' },
-  { id: 'tennant-creek', city: 'Tennant Creek', state: 'Northern Territory', stateCode: 'NT', lat: -19.65, lng: 134.19, status: 'exploring', date: 'November 2026', partner: 'Community-controlled', venue: 'Community Space', cost: '$30,000', description: 'Community authority. Community control. 96.2x Indigenous overrepresentation.', storyArc: '"Community authority. Community control. Their story, their way."' },
-];
+}> = campaignTourStops.map((stop, index) => {
+  const cost = campaignFundraising.milestones[index]?.amount ?? 0;
+  return {
+    id: stop.eventSlug.replace(/^contained-/, ''),
+    city: stop.city,
+    state: FULL_STATE_NAMES[stop.state] || stop.state,
+    stateCode: stop.state,
+    lat: stop.lat,
+    lng: stop.lng,
+    status: toIntelStatus(stop.status),
+    date: stop.date,
+    partner: stop.partner || '',
+    venue: stop.venue,
+    cost: cost > 0 ? `$${cost.toLocaleString()}` : '$30,000-$50,000',
+    description: stop.description,
+    storyArc: STORY_ARCS[stop.eventSlug] || '"The container makes the local choice visible."',
+  };
+});
+
+function toIntelStatus(status: TourStopStatus): TourStopIntel['status'] {
+  if (status === 'funded' || status === 'confirmed') return 'confirmed';
+  if (status === 'planning') return 'planning';
+  if (status === 'exploring') return 'exploring';
+  return 'demand';
+}
 
 export async function GET() {
   const sb = createServiceClient();
@@ -514,7 +557,7 @@ export async function GET() {
     stops,
     summary: {
       // New decision-grade keys (read by current UI)
-      tourStops: s.tour_stops ?? 9,
+      tourStops: stops.length,
       programsCatalogued: s.programs_catalogued ?? 0,
       strongEvidenceCount: s.strong_evidence_count ?? 0,
       orgsIndexed: s.orgs_indexed ?? 0,
@@ -528,7 +571,7 @@ export async function GET() {
       totalEvidence: s.strong_evidence_count ?? 570,
       totalStories: 50,
       totalPhotos: 261,
-      totalStopCost: '$1,650,000',
+      totalStopCost: `$${campaignFundraising.goal.toLocaleString()}`,
       raised: '$0',
     },
     generatedAt: new Date().toISOString(),

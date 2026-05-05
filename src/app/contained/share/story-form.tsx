@@ -8,8 +8,13 @@ import { Check, PenLine, Share2 } from 'lucide-react';
 const TOUR_STOPS = [
   'Mount Druitt',
   'Adelaide',
-  'Perth',
-  'Tennant Creek',
+  'Perth + surrounds',
+  'Brisbane',
+  'Northern Rivers',
+  'Alice Springs / Central Australia',
+  'Sydney + Canberra',
+  'Victoria',
+  'Tasmania',
 ];
 
 const SITE_URL = 'https://justicehub.com.au';

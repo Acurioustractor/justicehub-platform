@@ -17,21 +17,22 @@ const CommunityDemandMap = dynamic(() => import('@/components/contained/Communit
 });
 
 // Real lat/lng so the map plots correctly.
-const MAP_POINTS: { city: string; lat: number; lng: number; people: number; status: 'confirmed' | 'demand' }[] = [
-  { city: 'Mount Druitt',    lat: -33.74, lng: 150.82, people: 15, status: 'confirmed' },
-  { city: 'Brisbane',        lat: -27.47, lng: 153.03, people:  9, status: 'confirmed' },
-  { city: 'Adelaide',        lat: -34.93, lng: 138.60, people:  5, status: 'confirmed' },
-  { city: 'Townsville',      lat: -19.27, lng: 146.78, people:  4, status: 'confirmed' },
-  { city: 'Perth',           lat: -31.95, lng: 115.86, people:  8, status: 'confirmed' },
-  { city: 'Tennant Creek',   lat: -19.65, lng: 134.19, people:  2, status: 'confirmed' },
-  { city: 'Melbourne',       lat: -37.81, lng: 144.96, people:  9, status: 'demand' },
-  { city: 'Canberra',        lat: -35.31, lng: 149.13, people:  3, status: 'demand' },
-  { city: 'Hobart',          lat: -42.88, lng: 147.33, people:  2, status: 'demand' },
-  { city: 'Armidale',        lat: -30.51, lng: 151.67, people:  1, status: 'demand' },
-  { city: 'Rockhampton',     lat: -23.38, lng: 150.51, people:  1, status: 'demand' },
-  { city: 'Cairns',          lat: -16.92, lng: 145.77, people:  1, status: 'demand' },
-  { city: 'Doomadgee',       lat: -17.93, lng: 138.82, people:  2, status: 'demand' },
-  { city: 'Broome',          lat: -17.96, lng: 122.24, people:  1, status: 'demand' },
+const MAP_POINTS: { city: string; lat: number; lng: number; x: number; y: number; people: number; status: 'confirmed' | 'demand' }[] = [
+  { city: 'Mount Druitt',    lat: -33.74, lng: 150.82, x: 300, y: 214, people: 15, status: 'confirmed' },
+  { city: 'Adelaide',        lat: -34.93, lng: 138.60, x: 245, y: 215, people:  5, status: 'confirmed' },
+  { city: 'Perth + surrounds', lat: -31.95, lng: 115.86, x: 115, y: 190, people:  8, status: 'confirmed' },
+  { city: 'Brisbane',        lat: -27.47, lng: 153.03, x: 315, y: 170, people:  9, status: 'confirmed' },
+  { city: 'Northern Rivers', lat: -28.81, lng: 153.27, x: 310, y: 188, people:  2, status: 'demand' },
+  { city: 'Alice Springs / Central Australia', lat: -23.70, lng: 133.88, x: 205, y: 155, people:  2, status: 'confirmed' },
+  { city: 'Sydney + Canberra', lat: -34.62, lng: 150.15, x: 292, y: 222, people: 18, status: 'demand' },
+  { city: 'Victoria',        lat: -37.81, lng: 144.96, x: 276, y: 248, people:  9, status: 'demand' },
+  { city: 'Tasmania',        lat: -42.88, lng: 147.33, x: 292, y: 272, people:  2, status: 'demand' },
+  { city: 'Townsville',      lat: -19.27, lng: 146.78, x: 296, y: 120, people:  4, status: 'demand' },
+  { city: 'Armidale',        lat: -30.51, lng: 151.67, x: 305, y: 190, people:  1, status: 'demand' },
+  { city: 'Rockhampton',     lat: -23.38, lng: 150.51, x: 312, y: 145, people:  1, status: 'demand' },
+  { city: 'Cairns',          lat: -16.92, lng: 145.77, x: 288, y: 100, people:  1, status: 'demand' },
+  { city: 'Doomadgee',       lat: -17.93, lng: 138.82, x: 248, y: 115, people:  2, status: 'demand' },
+  { city: 'Broome',          lat: -17.96, lng: 122.24, x: 135, y: 115, people:  1, status: 'demand' },
 ];
 
 // ── Location data with orgs, politicians, quotes, community interest ──
@@ -52,8 +53,8 @@ interface LocationInfo {
 
 const LOCATIONS: LocationInfo[] = [
   {
-    city: 'Mount Druitt', state: 'NSW', status: 'confirmed', date: 'Week of Apr 21', partner: 'Mounty Yarns',
-    people: 15, headline: 'Youth-led storytelling in Room 3',
+    city: 'Mount Druitt', state: 'NSW', status: 'confirmed', date: 'May-Jun 2026', partner: 'Mounty Yarns',
+    people: 15, headline: 'Small gathering and Western Sydney build proof',
     quotes: [
       { name: 'Christine Thomas', org: 'Calmer Kids', text: 'Heart overflowing.' },
       { name: 'Nicole Mekler', org: 'JustReinvest Mt Druitt', text: 'Will attend.' },
@@ -88,8 +89,8 @@ const LOCATIONS: LocationInfo[] = [
     ],
   },
   {
-    city: 'Adelaide', state: 'SA', status: 'confirmed', date: 'Jun 15 + Jul 23-25', partner: 'JRI + ALP Conference',
-    people: 5, headline: 'Dual activation: community conference + ALP National Conference',
+    city: 'Adelaide', state: 'SA', status: 'confirmed', date: 'End Jun 2026', partner: 'JRI + Tandanya',
+    people: 5, headline: 'Public launch: Reintegration Puzzle Conference at Tandanya',
     quotes: [
       { name: 'Hannah March', org: 'JRI', text: 'The 2026 Reintegration Puzzle Conference is in Tandanya, Adelaide. It would be amazing to host the Container there.' },
     ],
@@ -102,11 +103,11 @@ const LOCATIONS: LocationInfo[] = [
       { name: 'SouthStart', detail: 'Adelaide tech community. Interest via Eloise Hall.' },
     ],
     politicians: [
-      { name: 'ALP Conference delegates', role: 'Federal Labor MPs', angle: 'Jul 23-25. Container outside convention centre. Every delegate walks past.' },
-      { name: 'Nikki Boyd', role: 'ALP MP Pine Rivers QLD', angle: 'YJ opposition voice. Will be at ALP Conference.' },
+      { name: 'Reintegration Puzzle Conference delegates', role: 'Sector, government, university, and funder audience', angle: 'End of June at Tandanya. Delegates walk through the Adelaide launch between sessions.' },
+      { name: 'Nikki Boyd', role: 'Queensland MP', angle: 'Youth justice opposition voice. Potential political contact for Brisbane and Adelaide engagement.' },
     ],
     drivers: [
-      { name: 'Hannah March', org: 'JRI', role: 'Adelaide host partner. Proposed ALP Conference dual-activation idea.' },
+      { name: 'Hannah March', org: 'JRI', role: 'Adelaide host partner connected to the Tandanya launch opportunity.' },
       { name: 'Tracey Newman', org: 'Services', role: 'Making calls to get Container there. Send info pack.' },
       { name: 'Sophie Bretag', org: 'City of Onkaparinga', role: 'Local government champion.' },
     ],
@@ -116,7 +117,7 @@ const LOCATIONS: LocationInfo[] = [
     ],
   },
   {
-    city: 'Perth', state: 'WA', status: 'confirmed', date: 'Jul-Aug', partner: 'UWA + JRI Perth',
+    city: 'Perth + surrounds', state: 'WA', status: 'confirmed', date: 'Jul-Aug 2026', partner: 'UWA + JRI Perth',
     people: 8, headline: 'Unit 18 / Banksia Hill — kids in adult prison',
     quotes: [
       { name: 'Mark McPartland', org: null, text: 'Where in Perth? Forest Chase?' },
@@ -143,7 +144,7 @@ const LOCATIONS: LocationInfo[] = [
     ],
   },
   {
-    city: 'Tennant Creek', state: 'NT', status: 'confirmed', date: 'Aug-Sep', partner: 'Oonchiumpa',
+    city: 'Alice Springs / Central Australia', state: 'NT', status: 'confirmed', date: 'Nov 2026', partner: 'Oonchiumpa',
     people: 2, headline: '95% diversion rate. On-Country programs.',
     quotes: [],
     orgs: [
@@ -158,13 +159,13 @@ const LOCATIONS: LocationInfo[] = [
       { name: 'Tanya Turner', org: 'Oonchiumpa', role: 'Co-founder. UWA law. Came home to build this.' },
     ],
     community: [
-      { name: 'Patricia Ann Miller AO', org: null, what: 'On the ground in Tennant Creek.' },
+      { name: 'Patricia Ann Miller AO', org: null, what: 'Central Australia community connection.' },
       { name: 'Prof Helen Milroy', org: null, what: 'On the ground. Connected to Oonchiumpa.' },
       { name: 'Max Bloomfield', org: 'Oonchiumpa', what: 'On the ground.' },
     ],
   },
   {
-    city: 'Townsville / Palm Island', state: 'QLD', status: 'confirmed', date: 'Sep', partner: 'PICC',
+    city: 'Townsville / Palm Island', state: 'QLD', status: 'demand', date: null, partner: 'PICC',
     people: 4, headline: '21 programs, 200 staff, zero philanthropy',
     quotes: [],
     orgs: [
@@ -186,8 +187,8 @@ const LOCATIONS: LocationInfo[] = [
     ],
   },
   {
-    city: 'Brisbane', state: 'QLD', status: 'confirmed', date: 'Sep-Oct', partner: 'YAC',
-    people: 9, headline: 'QLD community orgs vs $765M in govt announcements',
+    city: 'Brisbane', state: 'QLD', status: 'confirmed', date: 'Sep 2026', partner: 'YAC',
+    people: 9, headline: 'Brisbane build story + QLD community orgs vs $765M in govt announcements',
     quotes: [
       { name: 'Katherine Hayes', org: 'YAC', text: 'We would love to host this at YAC!!!' },
       { name: 'Toby Gowland', org: 'Kalianah Outdoors', text: 'Talk to me boys, what can I do, how can I help?' },
@@ -216,14 +217,14 @@ const LOCATIONS: LocationInfo[] = [
     ],
     community: [
       { name: 'Prof Selena Bartlett', org: 'Thriving Minds podcast', what: 'Podcast interview offer. Brisbane academic.' },
-      { name: 'Jonty Bush', org: 'QLD Government MP', what: 'Yarning with YAC about end of April.' },
+      { name: 'Jonty Bush', org: 'QLD Government MP', what: 'Queensland MP demand signal connected to YAC and the Brisbane stop.' },
       { name: 'MMAD', org: 'Musicians Making A Difference', what: 'Futures Radio runs 24/7 inside detention. Live from Container.' },
       { name: 'Toby Gowland', org: 'Kalianah Outdoors', what: '"Talk to me boys, what can I do, how can I help?"' },
       { name: 'Rhian Miller', org: 'EPIC Pathways', what: 'Brisbane youth pathways org. Website form Oct 2025.' },
     ],
   },
   {
-    city: 'Melbourne', state: 'VIC', status: 'demand', date: null, partner: null,
+    city: 'Victoria', state: 'VIC', status: 'demand', date: 'Feb-Mar 2027', partner: null,
     people: 9, headline: 'Cherry Creek: $7,304/day — most expensive detention in Australia',
     quotes: [
       { name: 'Jess Lilley', org: 'The Open Arms', text: "It's a long shot but would love to host CONTAINED as part of the Footscray West Writers Fest. The theme is Words & Action. CONTAINED would fit perfectly." },
@@ -252,7 +253,7 @@ const LOCATIONS: LocationInfo[] = [
     ],
   },
   {
-    city: 'Canberra', state: 'ACT', status: 'demand', date: null, partner: null,
+    city: 'Sydney + Canberra', state: 'NSW/ACT', status: 'demand', date: 'Dec 2026-Jan 2027', partner: null,
     people: 3, headline: 'Federal Parliament. Container outside during sitting week.',
     quotes: [
       { name: 'Rebecca Minty', org: 'ACT Government', text: 'ACT committed to new model of care for youth detention.' },
@@ -270,7 +271,7 @@ const LOCATIONS: LocationInfo[] = [
     ],
   },
   {
-    city: 'Tasmania', state: 'TAS', status: 'demand', date: null, partner: null,
+    city: 'Tasmania', state: 'TAS', status: 'demand', date: 'Apr 2027', partner: null,
     people: 2, headline: 'Ashley YDC closure. Prevention Not Detention coalition.',
     quotes: [
       { name: 'Loic Fery', org: 'Prevention Not Detention', text: 'We are a coalition of individuals who work in and interact with the youth space across the island with a committed agenda to advocating and dismantling this system that keeps our young people down.' },
@@ -659,8 +660,8 @@ export default function CommunityPage() {
               ))}
             </div>
             <p style={{ fontSize: '1.1rem', color: '#999', lineHeight: 1.8 }}>
-              It launched in Sydney in October 2025. Within weeks, 29 people filled out the website form asking for
-              it in their community. We didn&apos;t go looking for them. They found us.
+              The first container proof went public in October 2025. Within weeks, 29 people filled out the website form asking for
+              it in their community. The Australian route now starts with a small Mount Druitt gathering, then launches publicly at Tandanya in Adelaide, with the Brisbane build story, Diagrama practice, and local program evidence held together.
             </p>
           </div>
         </section>
@@ -797,12 +798,12 @@ export default function CommunityPage() {
         {/* First stop callout */}
         <section style={{ maxWidth: 1000, margin: '0 auto', padding: '0 40px 40px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 24, alignItems: 'center', background: '#111', border: '1px solid #333', padding: 24 }}>
-            <img src="/images/contained/tour-mount-druitt.png" alt="Mount Druitt — The CONTAINED launches 2026" style={{ width: '100%', borderRadius: 4 }} />
+            <img src="/images/contained/poster-tour.png" alt="Mount Druitt gathering and Adelaide launch — THE CONTAINED Australian tour 2026" style={{ width: '100%', borderRadius: 4 }} />
             <div>
-              <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#DC2626', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>First stop</p>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: 8, color: '#F5F0E8' }}>Mount Druitt, Western Sydney</h3>
+              <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#DC2626', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>First gathering</p>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: 8, color: '#F5F0E8' }}>Mount Druitt, then Tandanya</h3>
               <p style={{ fontSize: '0.9rem', color: '#888', lineHeight: 1.5 }}>
-                Week of April 21. Mounty Yarns hosting. Room 3: youth-led storytelling with Just Reinvest, BackTrack, and Uniting.
+                May/June 2026 starts with a small Mount Druitt gathering. End of June is the Tandanya public launch, where Room 1 carries the Brisbane build story, Room 2 is anchored by David from Diagrama, and Room 3 is where Adelaide organisations talk about their programs.
               </p>
             </div>
           </div>
@@ -811,7 +812,7 @@ export default function CommunityPage() {
         {/* Confirmed stops */}
         <section style={{ maxWidth: 1000, margin: '0 auto', padding: '0 40px 60px' }}>
           <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', color: '#666', marginBottom: 20, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
-            Confirmed stops — {confirmed.length} cities, Apr–Oct 2026
+            Confirmed and launch stops — {confirmed.length} cities, May 2026-Apr 2027
           </p>
           {confirmed.map((loc, i) => <LocationSection key={i} loc={loc} />)}
         </section>
@@ -850,7 +851,7 @@ export default function CommunityPage() {
                 <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> VIC: Cherry Creek — $7,304/day, most expensive in Australia</p>
                 <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> TAS: Ashley YDC closure — live political issue</p>
                 <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> ACT: Government insider says system is changing</p>
-                <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> ALP National Conference Jul 23-25 Adelaide</p>
+                <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> Tandanya Adelaide launch at end of June</p>
               </div>
             </div>
           </div>
@@ -862,7 +863,7 @@ export default function CommunityPage() {
                 { type: 'Venues', items: ['YAC Brisbane', 'Good Bank Gallery SA', 'Footscray Writers Fest', 'Design Week Melbourne', 'Canberra hosting'] },
                 { type: 'Partnerships', items: ['Lady Tradies — jobs pipeline', 'Uni of Sydney — research', 'YOPE Amsterdam', 'EPIC Pathways', 'MMAD — radio in detention'] },
                 { type: 'Media', items: ['3CR Radio interview', 'FN News op-ed', 'Thriving Minds podcast', 'Impact Boom feature'] },
-                { type: 'Government', items: ['ACT Govt insider', 'QLD Dept of Youth Justice', 'ALP Conference activation'] },
+                { type: 'Government', items: ['ACT Govt insider', 'QLD Dept of Youth Justice', 'Adelaide launch activation'] },
               ].map((g, i) => (
                 <div key={i}>
                   <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#888', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{g.type}</p>
@@ -921,10 +922,11 @@ export default function CommunityPage() {
               { date: 'Oct-Nov 2025', text: 'Requests from Tasmania, Cairns, Doomadgee, Armidale, Rockhampton, Brisbane, Melbourne, Adelaide. Amsterdam.' },
               { date: 'Jan-Feb 2026', text: 'QLD government announces $765M in youth justice spending. Zero to Aboriginal community-controlled organisations.' },
               { date: 'Mar 2026', text: '225+ contacts. YAC offers to host Brisbane. 86 people across 15 locations. JusticeHub maps 1,117 programs.' },
-              { date: 'Apr 2026', text: 'Tour begins — Mount Druitt. Room 3: Mounty Yarns, Just Reinvest, BackTrack.' },
-              { date: 'Jun-Jul 2026', text: 'Adelaide: Reintegration Conference + ALP National Conference. Container outside the convention centre.' },
-              { date: 'Jul-Oct 2026', text: 'Perth, Tennant Creek, Townsville, Brisbane. Community by community.' },
-              { date: 'Late 2026', text: 'JusticeHub launches publicly. Stories, organisations, data — continuing to drive national discussion through community.' },
+              { date: 'May-Jun 2026', text: 'Small Mount Druitt gathering. Western Sydney build proof and local relationships shape what travels next.' },
+              { date: 'End Jun 2026', text: 'Public launch at Tandanya in Adelaide. Brisbane young people carry Room 1, David from Diagrama holds Room 2, and Adelaide organisations build Room 3.' },
+              { date: 'Jul-Nov 2026', text: 'Perth + surrounds, Brisbane, Northern Rivers, then Alice Springs / Central Australia. Community by community.' },
+              { date: 'Dec 2026-Apr 2027', text: 'Sydney + Canberra, Victoria, then Tasmania. The tour links each stop back to JusticeHub.' },
+              { date: '2027', text: 'JusticeHub carries the public record. Stories, organisations, data, and program evidence keep driving the national discussion through community.' },
             ].map((t, i) => (
               <div key={i} style={{ marginBottom: 24, position: 'relative' }}>
                 <div style={{ position: 'absolute', left: -31, top: 4, width: 12, height: 12, borderRadius: '50%', background: i >= 4 ? '#DC2626' : '#333' }} />

@@ -12,14 +12,14 @@ import {
 const supabase = createClient();
 
 const STATES = [
-  { value: 'NSW', label: 'New South Wales', tourCity: 'Sydney' },
+  { value: 'NSW', label: 'New South Wales', tourCity: 'Mount Druitt / Northern Rivers / Sydney' },
   { value: 'QLD', label: 'Queensland', tourCity: 'Brisbane' },
   { value: 'SA', label: 'South Australia', tourCity: 'Adelaide' },
   { value: 'WA', label: 'Western Australia', tourCity: 'Perth' },
   { value: 'NT', label: 'Northern Territory', tourCity: 'Alice Springs' },
-  { value: 'VIC', label: 'Victoria', tourCity: 'Melbourne' },
-  { value: 'ACT', label: 'Australian Capital Territory', tourCity: 'Canberra' },
-  { value: 'TAS', label: 'Tasmania', tourCity: 'Hobart' },
+  { value: 'VIC', label: 'Victoria', tourCity: 'Victoria' },
+  { value: 'ACT', label: 'Australian Capital Territory', tourCity: 'Sydney + Canberra' },
+  { value: 'TAS', label: 'Tasmania', tourCity: 'Tasmania' },
 ] as const;
 
 const MEMBER_ROLES = [

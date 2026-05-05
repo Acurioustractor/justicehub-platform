@@ -37,14 +37,18 @@ export default function ContainedRegisterPage() {
   });
 
   const firstStop = tourStops[0];
-  const eventDetails = {
-    title: `CONTAINED: ${firstStop.city}`,
-    date: firstStop.date.startsWith('TBC') ? firstStop.date : new Date(firstStop.date).toLocaleDateString('en-AU', {
+  const parsedDate = new Date(firstStop.date);
+  const displayDate = Number.isNaN(parsedDate.getTime()) || firstStop.date.startsWith('TBC')
+    ? firstStop.date
+    : parsedDate.toLocaleDateString('en-AU', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
       year: 'numeric',
-    }),
+    });
+  const eventDetails = {
+    title: `CONTAINED: ${firstStop.city}`,
+    date: displayDate,
     time: 'Date and session details confirmed after registration',
     venue: firstStop.venue,
     address: `${firstStop.city}, ${firstStop.state}`,

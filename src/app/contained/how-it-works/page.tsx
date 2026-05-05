@@ -111,7 +111,7 @@ export default function HowItWorksPage() {
           How it<br />works
         </h1>
         <p className="mt-8 text-lg md:text-xl max-w-3xl text-[#F5F0E8]/95 leading-relaxed">
-          Three rooms. Three builders. Ten minutes per room. The container is built by the people it is for, then walked through by everyone else. The walk-through is the point. So is the build.
+          Three rooms. Three builders. Ten minutes per room. Brisbane young people carry the first build story. David from Diagrama helps hold the therapeutic alternative. Adelaide organisations open the tour by showing their programs, costs, evidence, and support needs.
         </p>
         <div className="mt-10 flex flex-wrap gap-4">
           <Link href="/contained/enroll" className="bg-[#DC2626] text-white px-6 py-3 text-sm font-bold uppercase tracking-[0.2em] hover:bg-[#b91c1c] transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
@@ -134,7 +134,7 @@ export default function HowItWorksPage() {
           Three rooms. Three builders.
         </h2>
         <p className="max-w-3xl text-[#F5F0E8]/95 leading-relaxed mb-12">
-          The container is not a museum. Each room is built before each city, with the people from that city. The first room remembers detention. The second room shows the alternative. The third room hands the conversation to the community already doing the work.
+          The container is not a museum. Each room is built before each city, with the people from that city. The first room remembers detention. The second room shows the alternative. The third room hands the conversation to the community already doing the work. In Adelaide, that means local organisations talking about their programs inside the launch week at Tandanya.
         </p>
 
         <RoomsGrid />
@@ -252,7 +252,7 @@ export default function HowItWorksPage() {
         <div className="grid md:grid-cols-2 gap-12">
           <div className="space-y-4">
             <p className="text-[#F5F0E8]/95 leading-relaxed">
-              Four young people per stop, paid <span className="font-bold text-white">$1,500 per week × six weeks</span>. They learn trades, art, and trauma-informed storytelling. They build Room 1. They build Room 3 with the host org. They lead the walk-through. They take the journal home.
+              Four young people per stop, paid <span className="font-bold text-white">$1,500 per week × six weeks</span>. The first build story is carried by Brisbane young people who supported the container. At each stop, local young people learn trades, art, and trauma-informed storytelling. They build Room 1. They build Room 3 with the host org. They lead the walk-through. They take the journal home.
             </p>
             <p className="text-[#F5F0E8]/95 leading-relaxed">
               Art is not decoration. Art is the curatorial spine. Every program has a pillar of art — film, play, painting, immersive room, exhibition — because art is what carries the work into rooms a report cannot reach.

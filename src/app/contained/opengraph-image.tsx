@@ -137,7 +137,7 @@ export default async function Image() {
           <span style={{ color: '#dc2626' }}>→</span>
           <span>Perth</span>
           <span style={{ color: '#dc2626' }}>→</span>
-          <span>Tennant Creek</span>
+          <span>Brisbane</span>
         </div>
 
         {/* URL */}

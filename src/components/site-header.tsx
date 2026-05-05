@@ -6,11 +6,12 @@ import Link from "next/link";
 import { CTAButton } from "./cta-button";
 
 const navItems = [
+  { label: "How it works", href: "/contained/how-it-works" },
+  { label: "Full pack", href: "/contained/showcase" },
   { label: "Journey", href: "/contained#journey" },
   { label: "Stories", href: "/contained#stories" },
   { label: "Evidence", href: "/contained#evidence" },
   { label: "Register", href: "/contained/register" },
-  { label: "Nominate", href: "/contained#nominate" },
   { label: "Book", href: "/contained#book" },
 ];
 

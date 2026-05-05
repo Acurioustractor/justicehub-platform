@@ -856,7 +856,7 @@ export function TourContent() {
                 {
                   Icon: Heart,
                   title: 'Fund a Stop',
-                  desc: 'Each tour stop costs $30K to stage. Your contribution gets the container to a new community.',
+                  desc: 'Stops are flexible: $20K for Mount Druitt, $50K for Adelaide, and $30K-$60K for later stops. Your contribution gets the container to a new community.',
                   cta: 'Back This',
                   href: '/contained/help',
                 },
