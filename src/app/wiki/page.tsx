@@ -32,7 +32,7 @@ export default function WikiHomePage() {
                 and implementation roadmap. 5 comprehensive documents ready for presentation.
               </p>
               <Link
-                href="/wiki/mindaroo-pitch"
+                href="/pitch/minderoo"
                 className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded font-semibold transition-colors text-sm"
               >
                 View Complete Pitch Package
@@ -43,7 +43,7 @@ export default function WikiHomePage() {
             {/* Quick Access Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
               <Link
-                href="/wiki/mindaroo-pitch/one-pager"
+                href="/wiki/minderoo-one-pager"
                 className="bg-gray-50 hover:bg-gray-100 p-5 rounded border border-gray-200 transition-colors"
               >
                 <div className="text-2xl mb-2">📄</div>
@@ -52,7 +52,7 @@ export default function WikiHomePage() {
               </Link>
 
               <Link
-                href="/wiki/mindaroo-pitch/budget-breakdown"
+                href="/wiki/minderoo-budget-breakdown"
                 className="bg-gray-50 hover:bg-gray-100 p-5 rounded border border-gray-200 transition-colors"
               >
                 <div className="text-2xl mb-2">💰</div>
@@ -61,7 +61,7 @@ export default function WikiHomePage() {
               </Link>
 
               <Link
-                href="/wiki/mindaroo-pitch/sovereignty-flywheel"
+                href="/wiki/sovereignty-flywheel-visual"
                 className="bg-gray-50 hover:bg-gray-100 p-5 rounded border border-gray-200 transition-colors"
               >
                 <div className="text-2xl mb-2">🎯</div>

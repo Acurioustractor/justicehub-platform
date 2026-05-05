@@ -198,7 +198,7 @@ export default async function SpendingLandingPage() {
               Explore Funding Database
             </Link>
             <Link
-              href="/justice-spending"
+              href="/spending"
               className="font-mono text-xs text-[#0A0A0A] underline"
             >
               ROGS Raw Data

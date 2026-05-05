@@ -69,7 +69,7 @@ const tools = [
   {
     name: 'CivicScope',
     description: 'Political intelligence for communities. Ministerial statements, Hansard, budget moves — so community orgs are never blindsided.',
-    href: '/civicscope',
+    href: '/intelligence/civic',
   },
 ];
 
@@ -224,7 +224,7 @@ export default function VisionPage() {
               </p>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-                <Link href="/interventions" className="group">
+                <Link href="/intelligence/interventions" className="group">
                   <div className="text-3xl md:text-4xl font-bold font-mono text-white group-hover:text-[#059669] transition-colors">
                     {stats.programs_documented.toLocaleString()}
                   </div>
@@ -242,7 +242,7 @@ export default function VisionPage() {
                   </div>
                 </Link>
 
-                <Link href="/funding" className="group">
+                <Link href="/intelligence/funding" className="group">
                   <div className="text-3xl md:text-4xl font-bold font-mono text-white group-hover:text-[#059669] transition-colors">
                     {stats.total_funding_grants.toLocaleString()}
                   </div>
@@ -251,7 +251,7 @@ export default function VisionPage() {
                   </div>
                 </Link>
 
-                <Link href="/evidence" className="group">
+                <Link href="/intelligence/evidence" className="group">
                   <div className="text-3xl md:text-4xl font-bold font-mono text-white group-hover:text-[#059669] transition-colors">
                     {stats.total_evidence.toLocaleString()}
                   </div>

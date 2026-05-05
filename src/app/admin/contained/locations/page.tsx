@@ -263,7 +263,7 @@ export default function ContainedLocationsPage() {
             </p>
           </div>
           <Link
-            href="/viz/ecosystem-map.html"
+            href="/figma-exports/network-map-simple.html"
             target="_blank"
             className="bg-[#0A0A0A] text-white px-4 py-2 text-sm font-bold hover:bg-gray-800 transition-colors flex items-center gap-2"
           >
