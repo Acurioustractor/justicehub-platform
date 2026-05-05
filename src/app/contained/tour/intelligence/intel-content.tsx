@@ -628,39 +628,53 @@ function StopPanel({ stop, onClose }: { stop: TourStopIntel; onClose: () => void
 // Summary Bar
 // ---------------------------------------------------------------------------
 function SummaryBar({ summary }: { summary: IntelData['summary'] }) {
-  // Decision-grade YJ-filtered stats. Each one is one SQL query away from being defended.
-  // Honest framing: "Programs catalogued" (1,697) for scope; "Strong-evidence" (73) for citable claims.
-  const fundingLabel = summary.fundingTrackedBillions >= 1
-    ? `$${summary.fundingTrackedBillions.toFixed(1)}B`
-    : `$${(summary.fundingTrackedBillions * 1000).toFixed(0)}M`;
+  // Defensive readers: the API contract has drifted historically (totalOrgs vs
+  // orgsIndexed, etc.) and one undefined.toString() takes the whole page down.
+  // Coalesce + cast so the UI degrades gracefully when a key is missing or stale.
+  const s = (summary || {}) as Record<string, unknown>;
+  const num = (key: string, fallback = 0): number => {
+    const v = s[key];
+    return typeof v === 'number' && Number.isFinite(v) ? v : fallback;
+  };
+  const fmt = (n: number) => n.toLocaleString();
+
+  const tourStops = num('tourStops', 9);
+  const programs = num('programsCatalogued') || num('totalInterventions');
+  const strongEvidence = num('strongEvidenceCount') || num('totalEvidence');
+  const orgsIndexed = num('orgsIndexed') || num('totalOrgs');
+  const indigenousLed = num('indigenousLedOrgs');
+  const fundingBillions = num('fundingTrackedBillions');
+  const fundingLabel = fundingBillions > 0
+    ? (fundingBillions >= 1 ? `$${fundingBillions.toFixed(1)}B` : `$${(fundingBillions * 1000).toFixed(0)}M`)
+    : '—';
 
   const items = [
     {
-      value: summary.tourStops.toString(),
+      value: tourStops.toString(),
       label: 'Tour stops',
       meaning: 'Cities mapped + costed',
       source: 'tour_stops table where campaign_slug = the-contained',
     },
     {
-      value: summary.programsCatalogued.toLocaleString(),
+      value: fmt(programs),
       label: 'Programs catalogued',
       meaning: 'YJ programs indexed from public sources (govt sites, ACNC, AusTender)',
       source: 'alma_interventions where verification_status != ai_generated',
     },
     {
-      value: summary.strongEvidenceCount.toLocaleString(),
+      value: fmt(strongEvidence),
       label: 'Strong evidence',
       meaning: 'Programs with RCT/Effective/Indigenous-led evidence — peer-citable',
       source: "evidence_level IN ('Proven','Effective','Indigenous-led')",
     },
     {
-      value: summary.orgsIndexed.toLocaleString(),
+      value: fmt(orgsIndexed),
       label: 'Orgs indexed',
       meaning: 'Organisations with at least one program recorded',
       source: 'distinct operating_organization_id from alma_interventions',
     },
     {
-      value: summary.indigenousLedOrgs.toLocaleString(),
+      value: fmt(indigenousLed),
       label: 'Indigenous-led',
       meaning: 'Aboriginal community-controlled orgs delivering YJ programs',
       source: 'organizations.is_indigenous_org = true ∩ delivering interventions',
