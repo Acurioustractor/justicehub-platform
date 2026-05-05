@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, BookOpen, Clock, KeyRound, Users, Camera, GraduationCap, Landmark, Scale, Building2, Newspaper, Flame } from 'lucide-react';
+import { RoomsGrid } from './rooms-grid';
 
 export const metadata: Metadata = {
   title: 'How Contained Works — The Tour | JusticeHub',
@@ -12,33 +13,6 @@ export const metadata: Metadata = {
     url: '/contained/how-it-works',
   },
 };
-
-const ROOMS = [
-  {
-    n: 1,
-    title: 'The cell',
-    builder: 'Young people + local youth support org',
-    hue: '#DC2626',
-    body: 'The first room is a detention cell, recreated by young people with lived experience and the local youth support organisation. They decide what it should look like, what it should feel like, what should be on the walls. It is built from memory, not from a brief.',
-    program: '5 days · co-design + build · paid as expertise',
-  },
-  {
-    n: 2,
-    title: 'What works',
-    builder: 'In partnership with Diagrama Foundation, Spain',
-    hue: '#f59e0b',
-    body: 'The second room holds the alternative. Spain\'s Diagrama Foundation runs the model the rest of the world is moving toward — therapeutic centres, family contact, education at the centre. The base room stays consistent. Local context can be layered in.',
-    program: 'Locally adaptable · co-developed with Diagrama',
-  },
-  {
-    n: 3,
-    title: 'What\'s already running',
-    builder: 'Local frontline org + young people + their staff',
-    hue: '#059669',
-    body: 'The third room is built by an Aboriginal community-controlled organisation or a frontline organisation already running youth-justice work in that city. Their model. Their voice. What they need to keep going. What sustainability looks like for them.',
-    program: '5 days · co-design + build · the org owns the room',
-  },
-];
 
 const WALK_THROUGH = [
   { icon: Clock, label: '30 minutes total · 10 in each room' },
@@ -163,32 +137,7 @@ export default function HowItWorksPage() {
           The container is not a museum. Each room is built before each city, with the people from that city. The first room remembers detention. The second room shows the alternative. The third room hands the conversation to the community already doing the work.
         </p>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {ROOMS.map((room) => (
-            <div key={room.n} className="border border-white/10 bg-gray-950 p-6 flex flex-col">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-3xl font-bold" style={{ color: room.hue }}>0{room.n}</span>
-                <span className="text-xs uppercase tracking-[0.2em] text-[#F5F0E8]/85" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                  Room {room.n}
-                </span>
-              </div>
-              <h3 className="text-xl font-bold uppercase mb-2" style={{ letterSpacing: '-0.01em' }}>
-                {room.title}
-              </h3>
-              <div className="text-xs uppercase tracking-[0.15em] mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", color: room.hue }}>
-                {room.builder}
-              </div>
-              <p className="text-sm text-[#F5F0E8]/95 leading-relaxed mb-4 flex-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                {room.body}
-              </p>
-              <div className="border-t border-white/10 pt-3">
-                <div className="text-[11px] uppercase tracking-[0.15em] text-[#F5F0E8]/85" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                  {room.program}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <RoomsGrid />
       </section>
 
       <Divider />

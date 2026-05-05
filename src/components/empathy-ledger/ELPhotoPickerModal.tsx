@@ -23,7 +23,7 @@ export interface ELPhoto {
  * To add a new scoped source, create an endpoint that returns either
  * `{ photos: [{ id, url, alt? }] }` or the media-browser shape.
  */
-export type ELPhotoPickerSource = 'all' | 'oonchiumpa';
+export type ELPhotoPickerSource = 'all' | 'oonchiumpa' | { project: string };
 
 export function ELPhotoPickerModal({
   onPick,
@@ -61,15 +61,27 @@ export function ELPhotoPickerModal({
           return;
         }
 
-        const galRes = await fetch('/api/empathy-ledger/media-browser?type=galleries&limit=100');
-        const galData = await galRes.json();
-        if (galData.data) {
-          setGalleries(
-            galData.data.map((g: { id: string; title: string }) => ({ id: g.id, title: g.title }))
-          );
+        const projectSlug = typeof source === 'object' ? source.project : null;
+
+        // Skip the gallery filter row when locked to a project — every photo is
+        // already in scope so the tabs would just confuse.
+        if (!projectSlug && galleries.length === 0) {
+          const galRes = await fetch('/api/empathy-ledger/media-browser?type=galleries&limit=200');
+          const galData = await galRes.json();
+          if (galData.data) {
+            setGalleries(
+              galData.data
+                .filter((g: { mediaCount?: number }) => (g.mediaCount ?? 0) > 0)
+                .map((g: { id: string; title: string }) => ({ id: g.id, title: g.title }))
+            );
+          }
         }
 
-        const mediaRes = await fetch('/api/empathy-ledger/media-browser?type=media&limit=500');
+        const params = new URLSearchParams({ type: 'media', limit: '500' });
+        if (projectSlug) params.set('project', projectSlug);
+        if (activeGallery) params.set('galleryId', activeGallery);
+        if (search.trim()) params.set('search', search.trim());
+        const mediaRes = await fetch(`/api/empathy-ledger/media-browser?${params.toString()}`);
         const mediaData = await mediaRes.json();
         if (mediaData.data) {
           setPhotos(
@@ -83,18 +95,27 @@ export function ELPhotoPickerModal({
                 (m: {
                   id: string;
                   title?: string;
-                  filename?: string;
+                  filename?: string | null;
                   url?: string;
                   cdn_url?: string;
-                  thumbnail_url?: string;
-                  medium_url?: string;
-                  collection_id?: string;
+                  thumbnail_url?: string | null;
+                  medium_url?: string | null;
+                  collection_id?: string | null;
                 }) => {
-                  const src = m.cdn_url || m.url || '';
+                  const rawSrc = m.cdn_url || m.url || '';
+                  const isHeic = /\.heic($|\?)/i.test(rawSrc) || /\.heic$/i.test(m.filename || '');
+                  // EL stores HEIC originals; browsers can't render them.
+                  // Route through the local sharp/heic-convert proxy.
+                  const src = isHeic
+                    ? `/api/empathy-ledger/heic-proxy?id=${m.id}&url=${encodeURIComponent(rawSrc)}`
+                    : rawSrc;
+                  const thumb = isHeic
+                    ? `/api/empathy-ledger/heic-proxy?id=${m.id}&w=400&url=${encodeURIComponent(rawSrc)}`
+                    : (m.thumbnail_url || m.medium_url || src);
                   return {
                     id: m.id,
                     src,
-                    thumb: m.thumbnail_url || m.medium_url || src,
+                    thumb,
                     label: m.title || m.filename || 'Untitled',
                     galleryId: m.collection_id || undefined,
                   };
@@ -108,14 +129,13 @@ export function ELPhotoPickerModal({
         setLoading(false);
       }
     }
-    load();
-  }, [source]);
+    setLoading(true);
+    const t = setTimeout(load, search ? 250 : 0);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typeof source === 'object' ? source.project : source, activeGallery, search]);
 
-  const filtered = photos.filter((p) => {
-    if (activeGallery && p.galleryId !== activeGallery) return false;
-    if (search && !p.label.toLowerCase().includes(search.toLowerCase())) return false;
-    return true;
-  });
+  const filtered = photos;
 
   return (
     <div

@@ -24,22 +24,22 @@ const CASE_SURFACES: Surface[] = [
   {
     href: '/contained',
     title: 'The main page',
-    body: 'The front door. Three rooms, the evidence, the nine stops, the tour map, the stat strip, the stories. Where most visitors land first.',
+    body: 'The front door. Three rooms, the evidence, the tour map, the stat strip, the stories. Where most visitors land first.',
   },
   {
     href: '/contained/about',
     title: 'About Contained',
-    body: 'The project narrative. Who built it (Ben Knight, Nic Marchesi). Why it exists. Where it sits inside JusticeHub, Empathy Ledger, the Australian Living Map of Alternatives, and Diagrama.',
+    body: 'The project narrative. Who built it (Ben Knight, Nic Marchesi). Why it exists. Where it sits inside JusticeHub, Empathy Ledger, the Australian Living Map of Alternatives.',
   },
   {
     href: '/contained/how-it-works',
     title: 'How it works',
-    body: 'The structural overview. Three rooms, three builders. Ten minutes per room. Nine audience pathways from family to magistrate. The build is the program. The expertise is the wage.',
+    body: 'The structural overview. Three rooms, three builders. Ten minutes per room. The build is the program. The expertise is the wage.',
   },
   {
     href: '/contained/experience',
     title: 'Virtual walk-through',
-    body: 'A scroll-driven version of what happens inside. Room 1 cell, Room 2 Diagrama, Room 3 community. For people who cannot get to a stop, or want to know what they are walking into before they arrive.',
+    body: 'A scroll-driven version of what happens inside. Room 1 cell, Room 2 therapeutic alternative, Room 3 community-led. For people who cannot get to a stop, or want to know what they are walking into before they arrive.',
   },
 ];
 
@@ -47,12 +47,12 @@ const TOUR_SURFACES: Surface[] = [
   {
     href: '/contained/tour/intelligence',
     title: 'Tour intelligence',
-    body: 'The civic intelligence dashboard. Nine stops on a CARTO dark-tile map. Click any stop for the right-rail panel: demand signals, key delivery orgs, political holders, philanthropic targets, source-of-truth tooltips on every stat.',
+    body: 'The civic intelligence dashboard. Stops on a CARTO dark-tile map. Click any stop for the right-rail panel: demand signals, key delivery orgs, political holders, philanthropic targets, source-of-truth tooltips on every stat.',
   },
   {
-    href: '/contained/tour/contained-adelaide-tandanya',
-    title: 'Per-stop pages (×9)',
-    body: 'One page per city — Adelaide, Perth, Mparntwe, Brisbane, Northern Rivers, Sydney, Canberra, Melbourne, Hobart. Each includes state spending, detention facilities, basecamp orgs, civic intelligence, experience packages, and share-your-story.',
+    href: '/contained/tour',
+    title: 'Per-stop pages',
+    body: 'One page per city — Adelaide, Perth, Tennant Creek, Townsville, Hobart. Each includes state spending, detention facilities, basecamp orgs, civic intelligence, experience packages, and share-your-story.',
   },
   {
     href: '/contained/community',
@@ -91,23 +91,23 @@ const PARTICIPATION_SURFACES: Surface[] = [
 
 const FUNDING_SURFACES: Surface[] = [
   {
-    href: '/contained/help',
-    title: 'Back a stop',
-    body: 'The funding ask. $30K to rock up. $50K for a fully built stop. $500K for the twelve-month national arc. Who fund and why per tier.',
-  },
-  {
     href: '/contained/invest',
-    title: 'Investment thesis',
-    body: 'Long-form for foundations and major donors. The case for Contained as the demonstration layer alongside policy advocacy and community storytelling.',
+    title: 'Back the tour — full pitch',
+    body: 'The pitch page. The investment case, the five tour stops, the five funding tiers ($50–70K container build / $50K stop / $200K full tour / $500K platform underwrite / Bespoke pop-up).',
   },
   {
     href: '/contained/invest/one-pager',
-    title: 'One-pager',
-    body: 'The single-page summary version of the investment thesis. Print or hand-deliver.',
+    title: 'One-pager (print or PDF)',
+    body: 'The single-page funder brief. Two-rooms photo, problem stats, solution stats, tier table, links. Designed to print to A4 and attach to an email.',
+  },
+  {
+    href: '/contained/momentum',
+    title: 'Momentum + traction',
+    body: 'Confirmed cities, partner mentions, demand signals, where the work is heading. Proof the tour is already in motion.',
   },
   {
     href: '/contained/brief',
-    title: 'Campaign brief',
+    title: 'Decision-maker brief',
     body: 'The tactical brief for partners, hosts, and inside-the-room collaborators.',
   },
 ];
@@ -116,7 +116,7 @@ const DATA_SURFACES: Surface[] = [
   {
     href: '/intelligence',
     title: 'JusticeHub intelligence layer',
-    body: 'The platform Contained sits on. 1,697 programs catalogued. 822 organisations indexed. 130 Indigenous-led. $14.1B youth-justice funding tracked. 7,022 civic intelligence chunks searchable.',
+    body: 'The platform Contained sits on. 981 verified programs, $72B youth-justice funding tracked, 20,000+ organisations linked.',
   },
   {
     href: '/intelligence/funding-map',
@@ -125,7 +125,7 @@ const DATA_SURFACES: Surface[] = [
   },
   {
     href: '/intelligence/interventions',
-    title: 'Living Map of Alternatives',
+    title: 'Australian Living Map of Alternatives',
     body: 'The full registry of community-led models indexed nationally. Searchable, filterable, queryable.',
   },
 ];
@@ -177,8 +177,8 @@ export default function ContainedShowcasePage() {
 
       <Group
         kicker="02"
-        title="The nine stops"
-        intro="Twelve months. Nine cities. Adelaide opens at Tandanya in late June 2026. Hobart closes the loop in June 2027. The intelligence dashboard, the per-stop pages, and the community demand map sit here."
+        title="The tour"
+        intro="Twelve months. Five confirmed stops. Adelaide opens in June 2026. Hobart closes the loop in June 2027. Open to wherever it&apos;s needed most. The intelligence dashboard, the per-stop pages, and the community demand map sit here."
         surfaces={TOUR_SURFACES}
         bg
       />
@@ -236,7 +236,7 @@ export default function ContainedShowcasePage() {
             <CTACard
               href="/contained/how-it-works"
               title="Read the structure"
-              body="Three rooms, three builders, ten minutes per room, nine audience pathways."
+              body="Three rooms, three builders, ten minutes per room. The build is the program."
             />
             <CTACard
               href="/contained/tour/intelligence"
@@ -244,9 +244,9 @@ export default function ContainedShowcasePage() {
               body="Civic intelligence per stop. Demand signals. Key orgs. Political holders."
             />
             <CTACard
-              href="/contained/help"
-              title="Back a stop"
-              body="$30K to rock up. $500K for the national year. The whole shape costed."
+              href="/contained/invest"
+              title="Back the tour"
+              body="$50K a stop. $200K the full tour. $500K platform underwrite. Bespoke on request."
             />
           </div>
         </div>

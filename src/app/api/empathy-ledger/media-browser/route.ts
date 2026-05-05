@@ -33,6 +33,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search') || '';
     const galleryId = searchParams.get('galleryId');
     const projectId = searchParams.get('projectId');
+    const projectSlug = searchParams.get('project');
     const storytellerId = searchParams.get('storytellerId');
     const bucket = searchParams.get('bucket') || '';
     const prefix = searchParams.get('prefix') || '';
@@ -41,6 +42,38 @@ export async function GET(request: NextRequest) {
 
     switch (type) {
       case 'media': {
+        // Project-slug filter: media_assets.project_id is mostly empty in EL,
+        // so the v2 public API is the only source of truth for project→media.
+        if (projectSlug) {
+          const v2Url = new URL('https://www.empathyledger.com/api/v2/media');
+          v2Url.searchParams.set('project', projectSlug);
+          v2Url.searchParams.set('limit', String(limit));
+          if (offset) v2Url.searchParams.set('page', String(Math.floor(offset / limit) + 1));
+          if (search) v2Url.searchParams.set('search', search);
+          const v2Res = await fetch(v2Url.toString(), {
+            headers: { 'X-API-Key': process.env.EMPATHY_LEDGER_V2_KEY || '' },
+          });
+          if (!v2Res.ok) throw new Error(`v2 media fetch failed: ${v2Res.status}`);
+          const v2Data = await v2Res.json();
+          return NextResponse.json({
+            data: (v2Data.data || []).map((m: {
+              id: string; title: string | null; filename: string | null;
+              url: string; thumbnailUrl: string | null; previewUrl: string | null;
+              contentType: string | null; galleryId: string | null;
+            }) => ({
+              id: m.id,
+              title: m.title,
+              filename: m.filename,
+              url: m.url,
+              cdn_url: m.url,
+              thumbnail_url: m.thumbnailUrl,
+              medium_url: m.previewUrl,
+              content_type: m.contentType?.startsWith('image/') ? m.contentType : `image/${m.contentType || 'jpeg'}`,
+              collection_id: m.galleryId,
+            })),
+          });
+        }
+
         // Actual EL columns: mime_type (not content_type), width/height (not dimensions),
         // collection_id (not gallery_id for filtering), location_name (not location_text)
         let storytellerStoryIds: string[] | null = null;

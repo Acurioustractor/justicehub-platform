@@ -194,7 +194,7 @@ export function OnePagerContent({ media }: { media: OnePagerMedia }) {
                 {
                   amount: '$200K',
                   builds: 'Full 5-city tour + documentation + research',
-                  impact: '2,500+ decision-makers nationally. JusticeHub + ALMA + Empathy Ledger evidence layer published.',
+                  impact: '2,500+ decision-makers nationally. JusticeHub + Australian Living Map + Empathy Ledger evidence layer published.',
                 },
                 {
                   amount: '$500K',

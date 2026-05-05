@@ -6,15 +6,6 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const TOUR_STOPS = [
   {
-    city: 'Mount Druitt',
-    state: 'NSW',
-    date: 'April 2026',
-    partner: 'BG Fit',
-    status: 'Planning',
-    cost: '$50,000',
-    description: 'Western Sydney launch — local mentoring partner anchors the first stop.',
-  },
-  {
     city: 'Adelaide',
     state: 'SA',
     date: 'June–July 2026',
@@ -64,7 +55,7 @@ const TOUR_STOPS = [
 const WHAT_MONEY_BUYS = [
   { amount: '$50–70K', gets: 'Container build (3-room fit-out). Reusable infrastructure — every future stop runs on this asset. ~7 years of tours from one build.' },
   { amount: '$50K', gets: 'One full tour stop. 500+ decision-makers walk through. Anchor partner: Oonchiumpa, PICC, BG Fit, JRI, or DarkLab. Local policy window opens.' },
-  { amount: '$200K', gets: 'Full 5-city tour + documentation + research output. 2,500+ decision-makers nationally. JusticeHub + ALMA + Empathy Ledger evidence layer published.' },
+  { amount: '$200K', gets: 'Full 5-city tour + documentation + research output. 2,500+ decision-makers nationally. JusticeHub + Australian Living Map + Empathy Ledger evidence layer published.' },
   { amount: '$500K', gets: 'Tour + permanent platform underwrite. Above PLUS JusticeHub civic intelligence layer funded for 12 months — ongoing oversight infrastructure beyond the tour.' },
   { amount: 'Bespoke', gets: 'Pop-up Contained, co-designed with you. Custom build for your audience, place, or moment. We co-design rooms, story, and outputs. Priced to scope.' },
 ];
@@ -125,13 +116,14 @@ export default function ContainedInvestPage() {
                 <p className="text-xs text-gray-500 mt-2">Source: Community Services Benchmark Study 2024</p>
               </div>
               <div className="border border-gray-700 p-6">
-                <div className="text-3xl font-black text-white mb-2 font-mono">73%</div>
-                <div className="text-sm text-gray-400 uppercase tracking-widest mb-3">Diagrama success rate</div>
+                <div className="text-3xl font-black text-white mb-2 font-mono">95%</div>
+                <div className="text-sm text-gray-400 uppercase tracking-widest mb-3">Oonchiumpa outcome</div>
                 <p className="text-gray-300 text-sm">
-                  Spain&apos;s Diagrama Foundation achieves 73% success with therapeutic care.
-                  &euro;5.64 returned for every &euro;1 invested.
+                  95% reduction in anti-social behaviour among young people on Country with
+                  Oonchiumpa, Mparntwe (Alice Springs). Aboriginal-led cultural healing,
+                  decades of practice.
                 </p>
-                <p className="text-xs text-gray-500 mt-2">Source: Diagrama Foundation evaluation</p>
+                <p className="text-xs text-gray-500 mt-2">Source: Oonchiumpa program evaluation</p>
               </div>
             </div>
           </div>
@@ -220,23 +212,19 @@ export default function ContainedInvestPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="border-2 border-[#0A0A0A] p-6">
                 <h3 className="font-black text-lg mb-2">CONTAINED</h3>
-                <p className="text-sm text-gray-600 mb-3">The emotional front door. Shows what youth detention feels like.</p>
-                <p className="text-xs text-gray-400">Touring exhibition — 4 cities, 2026</p>
+                <p className="text-sm text-gray-600">The touring exhibition that puts decision-makers inside the choice.</p>
               </div>
               <div className="border-2 border-[#0A0A0A] p-6">
                 <h3 className="font-black text-lg mb-2">JusticeHub</h3>
-                <p className="text-sm text-gray-600 mb-3">The public evidence layer. 981 verified programs, $72B funding tracked.</p>
-                <p className="text-xs text-gray-400">Permanent infrastructure — open access</p>
+                <p className="text-sm text-gray-600">The public evidence layer for youth justice in Australia.</p>
               </div>
               <div className="border-2 border-[#0A0A0A] p-6">
-                <h3 className="font-black text-lg mb-2">ALMA</h3>
-                <p className="text-sm text-gray-600 mb-3">The evidence intelligence engine. Keeps the system current, verified, actionable.</p>
-                <p className="text-xs text-gray-400">13 data tools — real-time queries</p>
+                <h3 className="font-black text-lg mb-2">Australian Living Map of Alternatives</h3>
+                <p className="text-sm text-gray-600">The civic intelligence engine that makes the system legible.</p>
               </div>
               <div className="border-2 border-[#0A0A0A] p-6">
                 <h3 className="font-black text-lg mb-2">Empathy Ledger</h3>
-                <p className="text-sm text-gray-600 mb-3">Consent, story, and community authority layer. 226 storytellers, cultural protocols.</p>
-                <p className="text-xs text-gray-400">Community-controlled — always</p>
+                <p className="text-sm text-gray-600">The consent layer for community storytelling.</p>
               </div>
             </div>
           </div>
