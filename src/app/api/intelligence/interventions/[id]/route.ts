@@ -125,7 +125,11 @@ export async function GET(
       await Promise.all([
         supabase.from('alma_intervention_evidence').select('evidence_id').eq('intervention_id', interventionId),
         supabase.from('alma_intervention_outcomes').select('outcome_id').eq('intervention_id', interventionId),
-        supabase.from('alma_intervention_contexts').select('context_id').eq('intervention_id', interventionId),
+        // alma_intervention_contexts may not exist in the deployed schema — handle gracefully.
+        supabase.from('alma_intervention_contexts').select('context_id').eq('intervention_id', interventionId).then(
+          (res) => res,
+          () => ({ data: [], error: null }),
+        ),
         supabase
           .from('alma_interventions')
           .select('*')
@@ -136,7 +140,8 @@ export async function GET(
 
     if (evidenceLinksResult.error) throw new Error(evidenceLinksResult.error.message);
     if (outcomeLinksResult.error) throw new Error(outcomeLinksResult.error.message);
-    if (contextLinksResult.error) throw new Error(contextLinksResult.error.message);
+    // contextLinksResult: tolerate missing table — treat as empty.
+    const contextLinks = contextLinksResult.error ? [] : (contextLinksResult.data ?? []);
     if (similarInterventionsResult.error) throw new Error(similarInterventionsResult.error.message);
 
     const evidenceIds = Array.from(
@@ -157,8 +162,8 @@ export async function GET(
 
     const contextIds = Array.from(
       new Set(
-        (contextLinksResult.data || [])
-          .map((row: { context_id: string | null }) => row.context_id)
+        (contextLinks as Array<{ context_id: string | null }>)
+          .map((row) => row.context_id)
           .filter((id): id is string => Boolean(id))
       )
     );

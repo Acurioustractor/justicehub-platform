@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { PortfolioScoreCard, ConsentIndicator } from '@/components/alma';
+import { Navigation, Footer } from '@/components/ui/navigation';
+import { createServiceClient } from '@/lib/supabase/service';
+import { Award, Building2, ExternalLink, MapPin } from 'lucide-react';
 
 // Define types inline to avoid supabase type issues
 type Intervention = {
@@ -105,8 +108,13 @@ export default async function InterventionDetailPage({ params }: InterventionDet
   const metadata = intervention.metadata as any;
   const isCommunityControlled = intervention.consent_level === 'Community Controlled';
 
+  // Pull enriched org info via the canonical chain so the detail page reads consistently
+  // with the OrgDetailPanel and the OrgsAndProgramsExplorer.
+  const orgInfo = await getOrgInfo((intervention as any).operating_organization_id);
+
   return (
     <div className="min-h-screen bg-white">
+      <Navigation />
       {/* Breadcrumb */}
       <section className="border-b-2 border-black bg-white">
         <div className="container-justice py-4">
@@ -179,6 +187,9 @@ export default async function InterventionDetailPage({ params }: InterventionDet
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Column */}
             <div className="lg:col-span-2 space-y-8">
+              {/* Delivered-by org block — full canonical detail */}
+              {orgInfo && <OrgInfoBlock org={orgInfo} />}
+
               {/* Description */}
               <div className="border-2 border-black p-8 bg-white">
                 <h2 className="text-2xl font-bold text-black mb-6 uppercase tracking-wider">
@@ -387,6 +398,156 @@ export default async function InterventionDetailPage({ params }: InterventionDet
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
+}
+
+// ─── Canonical org enrichment ────────────────────────────────────────────────
+
+interface OrgInfo {
+  id: string;
+  name: string;
+  abn: string | null;
+  state: string | null;
+  postcode: string | null;
+  locality: string | null;
+  lga_name: string | null;
+  remoteness: string | null;
+  sector: string | null;
+  community_controlled: boolean;
+  charity_size: string | null;
+  acnc_registered: boolean;
+  ben_aboriginal_tsi: boolean;
+  ben_youth: boolean;
+  is_oric_corporation: boolean;
+  website: string | null;
+}
+
+async function getOrgInfo(orgId: string | null | undefined): Promise<OrgInfo | null> {
+  if (!orgId) return null;
+  try {
+    const sb = createServiceClient();
+    const { data: org } = await sb
+      .from('organizations')
+      .select('id, name, gs_entity_id, website')
+      .eq('id', orgId)
+      .single();
+    if (!org) return null;
+
+    let gs: any = null;
+    if (org.gs_entity_id) {
+      const { data } = await sb
+        .from('gs_entities')
+        .select('canonical_name, abn, state, postcode, lga_name, remoteness, sector, is_community_controlled, website')
+        .eq('id', org.gs_entity_id)
+        .single();
+      gs = data;
+    }
+
+    let acnc: any = null;
+    if (gs?.abn) {
+      const { data } = await sb
+        .from('acnc_charities')
+        .select('charity_size, ben_aboriginal_tsi, ben_youth, is_oric_corporation')
+        .eq('abn', gs.abn)
+        .maybeSingle();
+      acnc = data;
+    }
+
+    let geoLocality: string | null = null;
+    if (gs?.postcode) {
+      const { data } = await sb
+        .from('postcode_geo')
+        .select('locality, lga_name, remoteness_2021')
+        .eq('postcode', gs.postcode)
+        .not('latitude', 'is', null)
+        .limit(1)
+        .maybeSingle();
+      geoLocality = (data as any)?.locality || null;
+    }
+
+    return {
+      id: org.id,
+      name: gs?.canonical_name || org.name,
+      abn: gs?.abn ?? null,
+      state: gs?.state ?? null,
+      postcode: gs?.postcode ?? null,
+      locality: geoLocality,
+      lga_name: gs?.lga_name ?? null,
+      remoteness: gs?.remoteness ?? null,
+      sector: gs?.sector ?? null,
+      community_controlled: !!gs?.is_community_controlled,
+      charity_size: acnc?.charity_size ?? null,
+      acnc_registered: !!acnc,
+      ben_aboriginal_tsi: !!acnc?.ben_aboriginal_tsi,
+      ben_youth: !!acnc?.ben_youth,
+      is_oric_corporation: !!acnc?.is_oric_corporation,
+      website: gs?.website || org.website || null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function OrgInfoBlock({ org }: { org: OrgInfo }) {
+  return (
+    <div className="border-2 border-black bg-emerald-50 p-6 mb-8">
+      <div className="flex items-center gap-2 mb-4">
+        <Building2 className="w-4 h-4 text-emerald-700" />
+        <span className="text-[11px] uppercase tracking-[0.25em] text-emerald-700 font-bold">Delivered by</span>
+      </div>
+      <h2 className="text-xl md:text-2xl font-black text-black mb-2 leading-tight">{org.name}</h2>
+      <div className="flex flex-wrap gap-2 mb-3">
+        {org.community_controlled && <Badge color="bg-red-600">Community-controlled</Badge>}
+        {org.is_oric_corporation && <Badge color="bg-emerald-600">ORIC</Badge>}
+        {org.ben_aboriginal_tsi && <Badge color="bg-gray-700">First Nations beneficiaries</Badge>}
+        {org.ben_youth && <Badge color="bg-gray-700">Youth</Badge>}
+        {org.charity_size && <BadgeOutline>{org.charity_size} ACNC charity</BadgeOutline>}
+        {org.sector && <BadgeOutline>{org.sector}</BadgeOutline>}
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4 font-mono text-xs">
+        <Field icon={MapPin} label="Location" value={[org.locality, org.state, org.postcode].filter(Boolean).join(' · ')} />
+        {org.lga_name && <Field label="LGA" value={org.lga_name} />}
+        {org.remoteness && <Field label="Remoteness" value={org.remoteness} />}
+        {org.abn && <Field label="ABN" value={org.abn} />}
+      </div>
+      <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-emerald-200">
+        <Link href={`/intelligence/interventions?org=${org.id}`} className="text-xs font-bold uppercase tracking-widest text-emerald-700 hover:text-emerald-900 flex items-center gap-1">
+          View all programs from this org →
+        </Link>
+        {org.website && (
+          <a href={org.website.startsWith('http') ? org.website : `https://${org.website}`} target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-emerald-700 hover:text-emerald-900 ml-auto flex items-center gap-1">
+            <ExternalLink className="w-3 h-3" />
+            {org.website.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+          </a>
+        )}
+        {org.abn && (
+          <a href={`https://www.acnc.gov.au/charity/charities?ABN=${org.abn}`} target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-emerald-700 hover:text-emerald-900 flex items-center gap-1">
+            <Award className="w-3 h-3" /> ACNC profile
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Field({ icon: Icon, label, value }: { icon?: any; label: string; value: string }) {
+  return (
+    <div>
+      <div className="text-[10px] uppercase tracking-widest text-gray-500 mb-1 flex items-center gap-1">
+        {Icon && <Icon className="w-3 h-3" />}
+        {label}
+      </div>
+      <div className="text-sm font-bold text-black">{value || '—'}</div>
+    </div>
+  );
+}
+
+function Badge({ color, children }: { color: string; children: React.ReactNode }) {
+  return <span className={`text-[10px] uppercase tracking-wider px-2 py-1 ${color} text-white font-bold font-mono`}>{children}</span>;
+}
+
+function BadgeOutline({ children }: { children: React.ReactNode }) {
+  return <span className="text-[10px] uppercase tracking-wider px-2 py-1 border border-gray-400 text-gray-700 font-bold font-mono">{children}</span>;
 }
