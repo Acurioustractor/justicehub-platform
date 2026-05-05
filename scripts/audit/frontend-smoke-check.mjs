@@ -15,19 +15,28 @@ const BASE_URL_CANDIDATES = [
   'http://127.0.0.1:3003',
   'http://127.0.0.1:3004',
   'http://127.0.0.1:3005',
+  'http://127.0.0.1:3015',
   'http://localhost:3000',
   'http://localhost:3001',
   'http://localhost:3002',
   'http://localhost:3003',
   'http://localhost:3004',
   'http://localhost:3005',
+  'http://localhost:3015',
 ];
 
 const DEFAULT_ROUTE_SET = [
   '/',
+  '/organizations',
   '/services',
   '/community-programs',
   '/community-map',
+  '/basecamps',
+  '/network/alma',
+  '/network/alma/services',
+  '/proof',
+  '/follow-the-money',
+  '/funding/discovery',
   '/intelligence',
   '/intelligence/overview',
   '/intelligence/dashboard',
@@ -35,6 +44,7 @@ const DEFAULT_ROUTE_SET = [
   '/intelligence/status',
   '/intelligence/research',
   '/centre-of-excellence',
+  '/centre-of-excellence/map',
   '/for-community-leaders',
   '/for-funders',
 ];
@@ -55,6 +65,7 @@ const FATAL_MARKERS = [
   'internal server error',
   'unhandled runtime error',
   'something went wrong',
+  'this page could not be found',
 ];
 
 function sanitizeRoute(route) {
@@ -141,8 +152,50 @@ async function fetchJson(url) {
   }
 }
 
+function firstString(...values) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim().length > 0) return value.trim();
+  }
+  return null;
+}
+
 async function discoverDynamicRoutes(baseUrl) {
   const discovered = [];
+
+  const addOrgRoutesFromDirectory = async (query) => {
+    const directory = await fetchJson(`${baseUrl}/api/organizations/directory?${query}`);
+    const organizations = Array.isArray(directory?.organizations) ? directory.organizations : [];
+    for (const org of organizations) {
+      const orgSlug = firstString(org?.slug, org?.id);
+      if (orgSlug) {
+        discovered.push(`/organizations/${encodeURIComponent(orgSlug)}`);
+      }
+    }
+  }
+
+  await addOrgRoutesFromDirectory('limit=2&quick=linked');
+  await addOrgRoutesFromDirectory('limit=2&quick=with-services');
+  await addOrgRoutesFromDirectory('limit=2&quick=centre-partners');
+
+  // This route has a DB-backed first pass and a local fallback baseline, so it
+  // is a stable smoke target for the centre-to-partner journey.
+  discovered.push('/centres/bimberi-yjc');
+
+  const basecamps = await fetchJson(`${baseUrl}/api/basecamps`);
+  const basecamp = Array.isArray(basecamps) ? basecamps.find((item) => firstString(item?.slug)) : null;
+  const basecampSlug = firstString(basecamp?.slug);
+  if (basecampSlug) {
+    discovered.push(`/organizations/${encodeURIComponent(basecampSlug)}`);
+    discovered.push(`/sites/${encodeURIComponent(basecampSlug)}`);
+  }
+
+  const fundingDiscovery = await fetchJson(`${baseUrl}/api/funding/discovery?limit=1`);
+  const fundingOrg = Array.isArray(fundingDiscovery?.data) ? fundingDiscovery.data[0] : null;
+  const fundingOrgId = firstString(fundingOrg?.organizationId);
+  if (fundingOrgId) {
+    discovered.push(`/funding/discovery/${encodeURIComponent(fundingOrgId)}`);
+    discovered.push(`/funding/workspace/${encodeURIComponent(fundingOrgId)}`);
+  }
 
   const services = await fetchJson(`${baseUrl}/api/services?limit=1`);
   const serviceId = services?.data?.[0]?.id;
@@ -178,7 +231,9 @@ async function checkRoute(context, runDir, viewportName, route, baseUrl) {
   const url = `${baseUrl}${route}`;
   const consoleErrors = [];
   const pageErrors = [];
+  const failedResponses = [];
   const startedAt = Date.now();
+  const baseOrigin = new URL(baseUrl).origin;
 
   page.on('console', (msg) => {
     if (msg.type() === 'error') {
@@ -188,6 +243,26 @@ async function checkRoute(context, runDir, viewportName, route, baseUrl) {
 
   page.on('pageerror', (err) => {
     pageErrors.push(err.message || String(err));
+  });
+
+  page.on('response', (response) => {
+    const status = response.status();
+    if (status < 400) return;
+
+    try {
+      const responseUrl = new URL(response.url());
+      if (responseUrl.origin !== baseOrigin) return;
+      if (responseUrl.pathname === '/api/track') return;
+      failedResponses.push({
+        status,
+        url: response.url().replace(baseUrl, ''),
+      });
+    } catch {
+      failedResponses.push({
+        status,
+        url: response.url(),
+      });
+    }
   });
 
   let status = 0;
@@ -203,7 +278,9 @@ async function checkRoute(context, runDir, viewportName, route, baseUrl) {
 
     await page.waitForTimeout(1000);
 
-    const bodyText = (await page.textContent('body')) || '';
+    // Use visible text only. Next.js includes serialized not-found/error
+    // boundary text in script payloads on otherwise healthy pages.
+    const bodyText = await page.locator('body').innerText().catch(() => '');
     const lowered = bodyText.toLowerCase();
     const matchedFatalMarkers = FATAL_MARKERS.filter((marker) => lowered.includes(marker));
     if (matchedFatalMarkers.length > 0) {
@@ -215,6 +292,10 @@ async function checkRoute(context, runDir, viewportName, route, baseUrl) {
 
   if (pageErrors.length > 0) {
     reasons.push(`Page errors: ${pageErrors.length}`);
+  }
+
+  if (failedResponses.length > 0) {
+    reasons.push(`Failed same-origin responses: ${failedResponses.slice(0, 5).map((item) => `${item.status} ${item.url}`).join(', ')}`);
   }
 
   const screenshotFile = `${viewportName}-${sanitizeRoute(route)}.png`;
@@ -239,6 +320,7 @@ async function checkRoute(context, runDir, viewportName, route, baseUrl) {
     reasons,
     consoleErrors,
     pageErrors,
+    failedResponses,
     screenshotFile,
   };
 }

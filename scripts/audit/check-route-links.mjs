@@ -7,6 +7,10 @@ const SRC_ROOT = path.join(PROJECT_ROOT, 'src');
 const PUBLIC_ROOT = path.join(PROJECT_ROOT, 'public');
 const LEGACY_REDIRECTS_FILE = path.join(PROJECT_ROOT, 'config', 'legacy-route-redirects.json');
 
+function isTestFile(absolutePath) {
+  return /(?:^|\/)__tests__\/|\.test\.(ts|tsx|mdx)$/.test(absolutePath.replace(/\\/g, '/'));
+}
+
 async function walkFiles(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   const nested = await Promise.all(entries.map(async (entry) => {
@@ -110,7 +114,9 @@ async function main() {
 
   const legacyRedirectSources = await loadLegacyRedirectSources();
 
-  const srcFiles = (await walkFiles(SRC_ROOT)).filter((file) => /\.(ts|tsx|mdx)$/.test(file));
+  const srcFiles = (await walkFiles(SRC_ROOT)).filter(
+    (file) => /\.(ts|tsx|mdx)$/.test(file) && !isTestFile(file)
+  );
 
   const missing = [];
   const checked = [];

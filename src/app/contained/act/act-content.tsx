@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import {
   ArrowRight,
+  Check,
   Copy,
   Heart,
   Mail,
