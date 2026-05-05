@@ -16,7 +16,7 @@ export function OnePagerContent({ media }: { media: OnePagerMedia }) {
       <div className="print:hidden fixed top-0 left-0 right-0 z-50 bg-[#0A0A0A] text-white">
         <div className="max-w-4xl mx-auto px-6 py-3 flex items-center justify-between">
           <Link
-            href="/contained/invest"
+            href="/contained"
             className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-white"
           >
             <ArrowLeft className="w-4 h-4" /> Back
@@ -48,7 +48,7 @@ export function OnePagerContent({ media }: { media: OnePagerMedia }) {
             <div className="text-right flex-shrink-0 ml-6">
               <div className="text-lg font-black uppercase tracking-tighter">JusticeHub</div>
               <div className="text-[10px] font-mono text-gray-500">justicehub.com.au</div>
-              <div className="text-[10px] font-mono text-gray-500">/contained/invest</div>
+              <div className="text-[10px] font-mono text-gray-500">/contained/invest/one-pager</div>
             </div>
           </div>
 
@@ -97,7 +97,7 @@ export function OnePagerContent({ media }: { media: OnePagerMedia }) {
               <div className="border-l-4 border-[#059669] pl-3">
                 <div className="text-xl font-black font-mono text-[#059669]">95%</div>
                 <div className="text-[11px] text-gray-600 leading-tight">
-                  Reduced anti-social behaviour. Oonchiumpa, Mparntwe &mdash; Aboriginal-led cultural healing.
+                  Reduced anti-social behaviour. Oonchiumpa, Alice Springs / Central Australia &mdash; Aboriginal-led cultural healing.
                 </div>
               </div>
               <div className="border-l-4 border-[#059669] pl-3">
@@ -147,30 +147,31 @@ export function OnePagerContent({ media }: { media: OnePagerMedia }) {
           {/* 2026 National Tour — open route, where it's needed most */}
           <div className="mb-3">
             <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500 font-mono mb-1.5">
-              2026 National Tour
+              2026-27 National Tour
             </h2>
             <p className="text-[12px] text-gray-700 leading-snug mb-2">
-              We&rsquo;re working to bring The Contained to every state. South Australia in June, Western Australia in August, Queensland to follow &mdash; then onwards. Open to wherever it&rsquo;s needed most.
+              The Australian tour starts with a small Mount Druitt gathering in May/June, then publicly launches at Tandanya in Adelaide at the end of June 2026. The route stays flexible around partner readiness and community ask: Perth and surrounds, Brisbane, Northern Rivers, Alice Springs / Central Australia, Sydney + Canberra, Victoria, and Tasmania follow.
             </p>
-            <div className="grid grid-cols-8 gap-1.5 text-[10px]">
+            <div className="grid grid-cols-9 gap-1.5 text-[10px]">
               {[
-                { state: 'SA', month: 'Jun 2026', confirmed: true },
-                { state: 'WA', month: 'Aug 2026', confirmed: true },
-                { state: 'NT', month: 'Sep 2026', confirmed: true },
-                { state: 'QLD', month: 'Late 2026', confirmed: true },
-                { state: 'NSW', month: 'Open', confirmed: false },
-                { state: 'VIC', month: 'Open', confirmed: false },
-                { state: 'ACT', month: 'Open', confirmed: false },
-                { state: 'TAS', month: '2027 close', confirmed: true },
+                { place: 'Mt Druitt', month: 'May/Jun', active: true },
+                { place: 'Adelaide', month: 'End Jun', active: true },
+                { place: 'Perth+', month: 'Jul/Aug', active: true },
+                { place: 'Brisbane', month: 'Sep', active: true },
+                { place: 'N. Rivers', month: 'Oct', active: false },
+                { place: 'Alice/C.A.', month: 'Nov', active: true },
+                { place: 'Syd+CBR', month: 'Dec/Jan', active: false },
+                { place: 'Victoria', month: 'Feb/Mar', active: false },
+                { place: 'Tasmania', month: 'Apr 2027', active: false },
               ].map((s) => (
-                <div key={s.state} className={`border px-1.5 py-1 text-center ${s.confirmed ? 'border-[#0A0A0A]' : 'border-dashed border-gray-400'}`}>
-                  <div className={`font-black text-sm ${s.confirmed ? 'text-[#0A0A0A]' : 'text-gray-500'}`}>{s.state}</div>
+                <div key={s.place} className={`border px-1.5 py-1 text-center ${s.active ? 'border-[#0A0A0A]' : 'border-dashed border-gray-400'}`}>
+                  <div className={`font-black text-[10px] leading-tight ${s.active ? 'text-[#0A0A0A]' : 'text-gray-500'}`}>{s.place}</div>
                   <div className="text-[9px] text-gray-500 font-mono">{s.month}</div>
                 </div>
               ))}
             </div>
             <div className="text-[9px] text-gray-500 font-mono mt-1.5">
-              Solid = confirmed window &middot; dashed = open, scoping with funders &amp; anchor partners
+              Solid = active planning window &middot; dashed = open, scoping with funders &amp; anchor partners
             </div>
           </div>
 
@@ -182,24 +183,29 @@ export function OnePagerContent({ media }: { media: OnePagerMedia }) {
             <div className="divide-y divide-gray-200 border-y border-gray-200">
               {[
                 {
-                  amount: '$50–70K',
-                  builds: 'Container build (3-room fit-out)',
-                  impact: 'Reusable asset. ~7 years of tours from one build.',
+                  amount: '$20K',
+                  builds: 'Mount Druitt small gathering',
+                  impact: 'Young people paid, Western Sydney build proof captured, and first local relationships documented before the public launch.',
                 },
                 {
                   amount: '$50K',
-                  builds: 'One full tour stop',
-                  impact: '500+ decision-makers per stop. Anchor partner: Oonchiumpa / PICC / BG Fit / JRI / DarkLab.',
+                  builds: 'Adelaide public launch at Tandanya',
+                  impact: 'Conference delegates, Brisbane build story, David from Diagrama, and local Room 3 program evidence.',
                 },
                 {
-                  amount: '$200K',
-                  builds: 'Full 5-city tour + documentation + research',
-                  impact: '2,500+ decision-makers nationally. JusticeHub + Australian Living Map + Empathy Ledger evidence layer published.',
+                  amount: '$30K-$60K',
+                  builds: 'One flexible tour stop',
+                  impact: 'Young facilitators paid, local Room 1 and Room 3 built, documentation and reflection journals captured.',
+                },
+                {
+                  amount: '$120K',
+                  builds: 'Tour-wide backbone',
+                  impact: 'Travelling facilitator core, editorial, national coordination, insurance, admin, and year-end bound record.',
                 },
                 {
                   amount: '$500K',
-                  builds: 'Tour + permanent platform underwrite',
-                  impact: 'Above PLUS JusticeHub civic intelligence layer funded for 12 months.',
+                  builds: 'Full Australian tour',
+                  impact: 'Nine-stop national arc plus JusticeHub, Australian Living Map, and Empathy Ledger evidence layer published for 12 months.',
                 },
                 {
                   amount: 'Bespoke',
@@ -232,8 +238,14 @@ export function OnePagerContent({ media }: { media: OnePagerMedia }) {
           {/* Read More — single inline row of clickable links (preserved in print PDF) */}
           <div className="mb-3 flex items-center gap-3 text-[9.5px] font-mono text-gray-700 flex-wrap">
             <span className="font-bold uppercase tracking-[0.2em] text-gray-500">Read More &raquo;</span>
-            <a href="https://justicehub.com.au/contained/invest" className="underline decoration-gray-400 hover:text-[#DC2626]">
-              justicehub.com.au/contained/invest
+            <a href="https://justicehub.com.au/contained" className="underline decoration-gray-400 hover:text-[#DC2626]">
+              justicehub.com.au/contained
+            </a>
+            <a href="https://justicehub.com.au/contained/tour" className="underline decoration-gray-400 hover:text-[#DC2626]">
+              /tour
+            </a>
+            <a href="https://justicehub.com.au/contained/tour/intelligence" className="underline decoration-gray-400 hover:text-[#DC2626]">
+              /tour/intelligence
             </a>
             <a href="https://justicehub.com.au/contained/experience" className="underline decoration-gray-400 hover:text-[#DC2626]">
               /experience
@@ -261,7 +273,7 @@ export function OnePagerContent({ media }: { media: OnePagerMedia }) {
               </div>
             </div>
             <div className="text-right flex-shrink-0 ml-6">
-              <div className="text-3xl font-black font-mono">$200K</div>
+              <div className="text-3xl font-black font-mono">$500K</div>
               <div className="text-[10px] text-gray-500 uppercase tracking-widest">Full Tour Ask</div>
             </div>
           </div>
