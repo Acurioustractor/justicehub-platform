@@ -17,7 +17,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Run linting 
+      # Lint runs with a warnings ratchet (--max-warnings 480 in package.json,
+      # current count ~479). Adding new warnings fails CI; cleaning warnings
+      # is encouraged. Lower the cap as the count drops. Use `lint:strict`
+      # locally for zero-warning runs.
+      - name: Run linting
         run: npm run lint
 
       - name: Check hardcoded Supabase keys
