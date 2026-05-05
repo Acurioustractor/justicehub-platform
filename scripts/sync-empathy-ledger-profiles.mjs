@@ -69,13 +69,17 @@ function isJusticeRelated(story) {
   // Has service link (linked to JusticeHub service)
   if (story.service_id) return true;
 
-  // Has justice theme
-  if (story.themes?.some(theme =>
-    JUSTICE_THEMES.some(jt =>
-      theme.toLowerCase().includes(jt.toLowerCase()) ||
-      jt.toLowerCase().includes(theme.toLowerCase())
-    )
-  )) {
+  // Has justice theme — themes array can contain strings or {name} objects;
+  // skip anything that isn't a non-empty string after coercion.
+  if (story.themes?.some(raw => {
+    const theme = typeof raw === 'string' ? raw : (raw?.name || raw?.label || '');
+    if (!theme) return false;
+    const t = theme.toLowerCase();
+    return JUSTICE_THEMES.some(jt => {
+      const j = jt.toLowerCase();
+      return t.includes(j) || j.includes(t);
+    });
+  })) {
     return true;
   }
 
