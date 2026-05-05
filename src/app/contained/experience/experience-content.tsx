@@ -275,7 +275,7 @@ export function ExperienceContent() {
           {stats && (
             <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto mb-16">
               <div className="border border-gray-700 p-4">
-                <div className="text-2xl md:text-3xl font-mono font-bold">$4,250</div>
+                <div className="text-2xl md:text-3xl font-mono font-bold">$3,640</div>
                 <div className="text-xs text-gray-400 mt-1">Cost per day</div>
               </div>
               <div className="border border-gray-700 p-4">
@@ -417,7 +417,7 @@ const Room1Section = forwardRef<HTMLElement, { active: boolean; room: typeof jou
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <div className="text-7xl md:text-8xl font-mono font-bold text-red-500 mb-4">
-                $4,250
+                $3,640
               </div>
               <p className="text-lg text-gray-400">per child, per day in detention</p>
               <p className="text-3xl font-bold mt-6 text-white">{room.headline}</p>
@@ -648,7 +648,7 @@ const Room2Section = forwardRef<HTMLElement, { active: boolean; room: typeof jou
 
         <h2 className="text-4xl md:text-5xl font-bold mb-4">What if?</h2>
         <p className="text-xl text-gray-300 mb-12 max-w-2xl">
-          What if we spent $1.55M per child on healing instead of harm?
+          What if we spent $1.33M per child on healing instead of harm?
           Spain&apos;s Diagrama Foundation already proved it works.
         </p>
 
@@ -659,7 +659,7 @@ const Room2Section = forwardRef<HTMLElement, { active: boolean; room: typeof jou
               Australian Detention
             </h3>
             <div className="space-y-4">
-              <div><span className="text-2xl font-mono font-bold text-red-400">$4,250</span><span className="text-gray-500 ml-2">per day</span></div>
+              <div><span className="text-2xl font-mono font-bold text-red-400">$3,640</span><span className="text-gray-500 ml-2">per day</span></div>
               <div><span className="text-2xl font-mono font-bold text-red-400">84%</span><span className="text-gray-500 ml-2">reoffend</span></div>
               <div><span className="text-2xl font-mono font-bold text-red-400">18%</span><span className="text-gray-500 ml-2">complete education</span></div>
               <div><span className="text-2xl font-mono font-bold text-red-400">Isolation</span><span className="text-gray-500 ml-2">from family</span></div>
@@ -917,7 +917,7 @@ const FundingRedirectSection = forwardRef<
         {/* Key messages */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <div className="border border-gray-800 p-6">
-            <div className="text-3xl font-mono font-bold text-white mb-2">20x</div>
+            <div className="text-3xl font-mono font-bold text-white mb-2">24x</div>
             <p className="text-gray-400 text-sm">
               For the cost of ONE child in detention, you could fund 20 community programs
             </p>

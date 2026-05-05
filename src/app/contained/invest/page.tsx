@@ -9,16 +9,16 @@ const TOUR_STOPS = [
     city: 'Mount Druitt',
     state: 'NSW',
     date: 'April 2026',
-    partner: 'Mounty Yarns',
+    partner: 'BG Fit',
     status: 'Planning',
-    cost: '$25,000',
-    description: 'Western Sydney launch — young people designing Room 1 for the first time.',
+    cost: '$50,000',
+    description: 'Western Sydney launch — local mentoring partner anchors the first stop.',
   },
   {
     city: 'Adelaide',
     state: 'SA',
-    date: 'May 2026',
-    partner: 'Reintegration Conference + Justice Reform Initiative',
+    date: 'June–July 2026',
+    partner: 'Justice Reform Initiative + ALP Conference',
     status: 'Confirmed',
     cost: '$50,000',
     description: 'National conference integration — delegates walk through between sessions.',
@@ -26,31 +26,47 @@ const TOUR_STOPS = [
   {
     city: 'Perth',
     state: 'WA',
-    date: 'May 2026',
-    partner: 'UWA School of Social Sciences',
-    status: 'Exploring',
+    date: 'July–August 2026',
+    partner: 'UWA + JRI Perth',
+    status: 'Confirmed',
     cost: '$50,000',
-    description: 'University campus deployment — academic research partnership.',
+    description: 'University campus deployment — academic + reform-network anchor.',
   },
   {
     city: 'Tennant Creek',
     state: 'NT',
-    date: 'June 2026',
-    partner: 'Community-controlled',
-    status: 'Exploring',
-    cost: '$75,000',
-    description: 'Community-controlled from start to finish. Only happens if community wants it.',
+    date: 'August–September 2026',
+    partner: 'Oonchiumpa',
+    status: 'Confirmed',
+    cost: '$50,000',
+    description: 'Aboriginal community-controlled stop. Cultural safety, local facilitation, community authority.',
+  },
+  {
+    city: 'Townsville / Palm Island',
+    state: 'QLD',
+    date: 'September 2026',
+    partner: 'Palm Island Community Company (PICC)',
+    status: 'Confirmed',
+    cost: '$50,000',
+    description: 'Far North hosted by PICC — Aboriginal organisation with deep custodial roots.',
+  },
+  {
+    city: 'Hobart',
+    state: 'TAS',
+    date: 'June 2027 — close',
+    partner: 'DarkLab + Prevention Not Detention',
+    status: 'Confirmed',
+    cost: '$50,000',
+    description: 'Tour close — civic memory, public exhibition, legacy.',
   },
 ];
 
 const WHAT_MONEY_BUYS = [
-  { amount: '$5,000', gets: 'Documentation and professional photography at one tour stop' },
-  { amount: '$15,000', gets: 'Full video documentation — shareable for your advocacy and ours' },
-  { amount: '$25,000', gets: 'Fund the container build — custom three-room fit-out' },
-  { amount: '$30,000', gets: 'Fund one complete tour stop — transport, setup, facilitation, documentation' },
-  { amount: '$50,000', gets: 'Build a second CONTAINED unit — more containers, more cities, more pressure across Australia' },
-  { amount: '$75,000', gets: 'Fund the Tennant Creek community-controlled stop — cultural safety, local facilitation, community authority' },
-  { amount: '$200,000', gets: 'Fund the full national tour — five cities, complete documentation, partner activation' },
+  { amount: '$50–70K', gets: 'Container build (3-room fit-out). Reusable infrastructure — every future stop runs on this asset. ~7 years of tours from one build.' },
+  { amount: '$50K', gets: 'One full tour stop. 500+ decision-makers walk through. Anchor partner: Oonchiumpa, PICC, BG Fit, JRI, or DarkLab. Local policy window opens.' },
+  { amount: '$200K', gets: 'Full 5-city tour + documentation + research output. 2,500+ decision-makers nationally. JusticeHub + ALMA + Empathy Ledger evidence layer published.' },
+  { amount: '$500K', gets: 'Tour + permanent platform underwrite. Above PLUS JusticeHub civic intelligence layer funded for 12 months — ongoing oversight infrastructure beyond the tour.' },
+  { amount: 'Bespoke', gets: 'Pop-up Contained, co-designed with you. Custom build for your audience, place, or moment. We co-design rooms, story, and outputs. Priced to scope.' },
 ];
 
 export default function ContainedInvestPage() {
@@ -92,10 +108,10 @@ export default function ContainedInvestPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="border border-gray-700 p-6">
-                <div className="text-3xl font-black text-[#DC2626] mb-2 font-mono">$1.55M</div>
+                <div className="text-3xl font-black text-[#DC2626] mb-2 font-mono">$1.33M</div>
                 <div className="text-sm text-gray-400 uppercase tracking-widest mb-3">Per child/year in detention</div>
                 <p className="text-gray-300 text-sm">
-                  Australia spends $1.55 million per child per year in detention. 84% reoffend within two years.
+                  Australia spends $1.33 million per child per year in detention. 84% reoffend within two years.
                 </p>
                 <p className="text-xs text-gray-500 mt-2">Source: Productivity Commission ROGS 2024-25</p>
               </div>

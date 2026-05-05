@@ -119,7 +119,7 @@ export default function DecisionMakerBriefPage() {
                   <h4 className="font-bold">Room 1 — Current Reality</h4>
                   <p className="text-sm text-gray-600">
                     10 minutes inside the reality of youth detention. Designed by young people who have
-                    lived through the system. $4,250/day. $1.55M/year. 84% reoffend.
+                    lived through the system. $3,640/day. $1.33M/year. 84% reoffend.
                   </p>
                 </div>
                 <div className="border-l-4 border-[#059669] pl-4">
@@ -147,11 +147,11 @@ export default function DecisionMakerBriefPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
                 <div className="flex justify-between border-b border-gray-200 py-1">
                   <span className="text-gray-600">Cost per child/year (detention)</span>
-                  <span className="font-bold">$1.55M</span>
+                  <span className="font-bold">$1.33M</span>
                 </div>
                 <div className="flex justify-between border-b border-gray-200 py-1">
                   <span className="text-gray-600">Cost per day (detention)</span>
-                  <span className="font-bold">$4,250</span>
+                  <span className="font-bold">$3,640</span>
                 </div>
                 <div className="flex justify-between border-b border-gray-200 py-1">
                   <span className="text-gray-600">Detention reoffending rate</span>
@@ -167,7 +167,7 @@ export default function DecisionMakerBriefPage() {
                 </div>
                 <div className="flex justify-between border-b border-gray-200 py-1">
                   <span className="text-gray-600">Indigenous overrepresentation (national)</span>
-                  <span className="font-bold">23x</span>
+                  <span className="font-bold">24x</span>
                 </div>
                 <div className="flex justify-between border-b border-gray-200 py-1">
                   <span className="text-gray-600">Verified interventions on ALMA</span>

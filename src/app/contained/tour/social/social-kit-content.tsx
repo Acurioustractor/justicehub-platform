@@ -473,9 +473,9 @@ export function SocialKitContent() {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { key: 'detention_cost', value: '$1.55M', label: 'per child/year in detention' },
+                { key: 'detention_cost', value: '$1.33M', label: 'per child/year in detention' },
                 { key: 'reoffending', value: '84%', label: 'reoffend within 2 years' },
-                { key: 'indigenous', value: '23.1x', label: 'Indigenous overrepresentation' },
+                { key: 'indigenous', value: '24x', label: 'Indigenous overrepresentation' },
                 { key: 'alternatives', value: '$520M', label: 'community programs' },
                 { key: 'ratio', value: '$15:$1', label: 'punitive vs what works' },
                 { key: 'evidence', value: '489', label: 'evidence items collected' },
