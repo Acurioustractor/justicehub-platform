@@ -117,7 +117,7 @@ function EnrollForm() {
           <h1 className="text-2xl font-bold text-[#F5F0E8]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
             Welcome
           </h1>
-          <p className="text-[#F5F0E8]/70 text-sm">
+          <p className="text-[#F5F0E8]/90 text-sm">
             Enter your enrollment code to begin the experience.
           </p>
 
@@ -126,7 +126,7 @@ function EnrollForm() {
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             placeholder="CONT-XXXX"
-            className="w-full px-4 py-3 bg-[#F5F0E8]/10 border border-[#F5F0E8]/20 rounded-lg text-center text-xl tracking-widest font-mono placeholder:text-[#F5F0E8]/30 focus:outline-none focus:border-[#DC2626] transition-colors"
+            className="w-full px-4 py-3 bg-[#F5F0E8]/10 border border-[#F5F0E8]/20 rounded-lg text-center text-xl tracking-widest font-mono placeholder:text-[#F5F0E8]/95 focus:outline-none focus:border-[#DC2626] transition-colors"
             maxLength={12}
             autoFocus
           />
@@ -147,41 +147,41 @@ function EnrollForm() {
       {step === 'details' && (
         <div className="w-full max-w-sm space-y-6">
           {eventName && (
-            <p className="text-center text-[#F5F0E8]/60 text-sm font-mono">{eventName}</p>
+            <p className="text-center text-[#F5F0E8]/90 text-sm font-mono">{eventName}</p>
           )}
 
           <h2 className="text-xl font-bold text-center text-[#F5F0E8]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
             Tell us a bit about yourself
           </h2>
-          <p className="text-[#F5F0E8]/50 text-xs text-center">All fields are optional.</p>
+          <p className="text-[#F5F0E8]/95 text-xs text-center">All fields are optional.</p>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-[#F5F0E8]/70 mb-1 font-mono">Name</label>
+              <label className="block text-sm text-[#F5F0E8]/90 mb-1 font-mono">Name</label>
               <input
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="First name is fine"
-                className="w-full px-4 py-3 bg-[#F5F0E8]/10 border border-[#F5F0E8]/20 rounded-lg placeholder:text-[#F5F0E8]/30 focus:outline-none focus:border-[#DC2626] transition-colors"
+                className="w-full px-4 py-3 bg-[#F5F0E8]/10 border border-[#F5F0E8]/20 rounded-lg placeholder:text-[#F5F0E8]/95 focus:outline-none focus:border-[#DC2626] transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm text-[#F5F0E8]/70 mb-1 font-mono">Phone</label>
+              <label className="block text-sm text-[#F5F0E8]/90 mb-1 font-mono">Phone</label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Optional — for follow-up only"
-                className="w-full px-4 py-3 bg-[#F5F0E8]/10 border border-[#F5F0E8]/20 rounded-lg placeholder:text-[#F5F0E8]/30 focus:outline-none focus:border-[#DC2626] transition-colors"
+                className="w-full px-4 py-3 bg-[#F5F0E8]/10 border border-[#F5F0E8]/20 rounded-lg placeholder:text-[#F5F0E8]/95 focus:outline-none focus:border-[#DC2626] transition-colors"
               />
             </div>
 
             {!locationConsent ? (
               <button
                 onClick={requestLocation}
-                className="w-full py-2 border border-[#F5F0E8]/20 rounded-lg text-sm text-[#F5F0E8]/60 hover:border-[#F5F0E8]/40 transition-colors"
+                className="w-full py-2 border border-[#F5F0E8]/20 rounded-lg text-sm text-[#F5F0E8]/90 hover:border-[#F5F0E8]/40 transition-colors"
               >
                 Allow location (helps us map our reach)
               </button>
@@ -211,14 +211,14 @@ function EnrollForm() {
           <h2 className="text-2xl font-bold text-[#F5F0E8]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
             You&apos;re in
           </h2>
-          <p className="text-[#F5F0E8]/60 text-sm">
+          <p className="text-[#F5F0E8]/90 text-sm">
             Taking you to the experience...
           </p>
         </div>
       )}
 
       {/* Footer */}
-      <p className="mt-12 text-[#F5F0E8]/30 text-xs text-center max-w-xs">
+      <p className="mt-12 text-[#F5F0E8]/95 text-xs text-center max-w-xs">
         Your device stays enrolled. You can return anytime to submit reflections and recommend others.
       </p>
     </div>
@@ -229,7 +229,7 @@ export default function EnrollPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-        <div className="text-[#F5F0E8]/50">Loading...</div>
+        <div className="text-[#F5F0E8]/95">Loading...</div>
       </div>
     }>
       <EnrollForm />

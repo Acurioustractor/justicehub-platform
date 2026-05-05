@@ -380,11 +380,11 @@ export default function ELContentManager() {
                         </span>
                       </div>
                       <p className="text-sm text-earth-600 mb-3">{g.description}</p>
-                      {g.storytellers.length > 0 && (
+                      {(g.storytellers?.length ?? 0) > 0 && (
                         <div className="flex items-center gap-2 mb-3">
                           <Users className="h-4 w-4 text-earth-500" />
                           <span className="text-sm text-earth-600">
-                            {g.storytellers.map(s => s.displayName).join(', ')}
+                            {g.storytellers!.map(s => s.displayName).join(', ')}
                           </span>
                         </div>
                       )}

@@ -5,8 +5,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { MapPin, Calendar, Users, Building2, ChevronLeft, Send, Loader2, DollarSign, Landmark, UserCheck, Globe, ExternalLink } from 'lucide-react';
+import { MapPin, Calendar, Users, Building2, ChevronLeft, Send, Loader2, DollarSign, Landmark, UserCheck, Globe, ExternalLink, ArrowRight } from 'lucide-react';
 import { AccessGate } from '@/components/contained/AccessGate';
+import { ExperiencePackages } from '@/components/contained/ExperiencePackages';
+import { CivicIntelSection } from '@/components/contained/CivicIntelSection';
 
 const TourMap = dynamic(() => import('@/components/contained/TourMap'), {
   ssr: false,
@@ -146,6 +148,59 @@ interface StopData {
   hasAccess: boolean;
 }
 
+// Per-stop thesis: the local sentence, the local storyteller, the local story link.
+// Same narrative pattern as /judges-on-country — every stop needs: local quote,
+// local card 01, local story, local closing CTA. Fill a slug here to light it up.
+interface StopThesis {
+  kicker: string;           // e.g. "Start here · Mount Druitt"
+  quote: string;            // the local sentence — the lens for the stop
+  author: string;           // who said it
+  role: string;             // their role / org
+  body: string;             // 2-3 lines of why this sentence is the frame
+  storyHref: string;        // full story link (EL) — the polished version
+  basecampHref: string;     // JusticeHub basecamp / org profile
+  closingHeadline: string;  // red-band closing CTA headline
+  closingSubhead: string;   // red-band closing CTA subhead
+  closingPrimaryLabel: string;
+  closingPrimaryHref: string;
+  closingDate: string;      // e.g. "Western Sydney · Apr 25, 2026"
+}
+
+const STOP_THESIS: Record<string, StopThesis> = {
+  'contained-mount-druitt-launch': {
+    kicker: 'Start here · Mount Druitt',
+    quote: 'Young people telling their own stories is the most powerful advocacy there is.',
+    author: 'Daniel Daylight',
+    role: 'Mounty Yarns · Western Sydney',
+    body:
+      'NSW\'s "Breaking the Cycle" reoffending grants reach zero Aboriginal community-controlled organisations. Mounty Yarns runs 7 programs on philanthropic funding alone. Daniel\'s sentence is why we launch here — the young people are the advocates, not the problem.',
+    storyHref: '/stories/mounty-yarns-daniel-daylight',
+    basecampHref: '/organizations/mounty-yarns',
+    closingHeadline: 'The launch is where the frame goes public.',
+    closingSubhead:
+      'Come to Western Sydney on Apr 25. Walk through the container at Mounty Yarns, meet the young people whose stories it carries, and leave with the deck.',
+    closingPrimaryLabel: 'Register — Apr 25',
+    closingPrimaryHref: '/contained/register?stop=mount-druitt',
+    closingDate: 'Western Sydney · Apr 25, 2026',
+  },
+  'contained-brisbane': {
+    kicker: 'Start here · Brisbane',
+    quote: 'We would love to host this at YAC.',
+    author: 'Katherine Hayes',
+    role: 'YAC (Youth Advocacy Centre) · Brisbane',
+    body:
+      'QLD has announced $765M+ in youth justice spending since February 2026 — zero dollars to Aboriginal community-controlled organisations. "Adult Crime, Adult Time" has expanded to 45 offences. Katherine\'s offer is why Brisbane is a stop — the sector is asking the container in.',
+    storyHref: '/stories/yac-katherine-hayes',
+    basecampHref: '/organizations/yac-youth-advocacy-centre',
+    closingHeadline: 'Brisbane is where the sector steps forward.',
+    closingSubhead:
+      'Come to YAC on May 15. See what $765M of announcements has not funded, meet the 14 programs running without government support, and hear from Futures Radio broadcasting from inside detention.',
+    closingPrimaryLabel: 'Register — May 15',
+    closingPrimaryHref: '/contained/register?stop=brisbane',
+    closingDate: 'Brisbane · May 15, 2026',
+  },
+};
+
 const STATUS_BADGES: Record<string, { label: string; color: string }> = {
   confirmed: { label: 'Confirmed', color: 'bg-green-600' },
   planning: { label: 'In Planning', color: 'bg-amber-600' },
@@ -271,13 +326,22 @@ export function StopContent({ slug }: { slug: string }) {
           <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-black" />
 
           <div className="relative max-w-4xl mx-auto">
-            <Link
-              href="/contained/tour"
-              className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-white mb-8 transition-colors"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Back to tour
-            </Link>
+            <div className="flex items-center justify-between mb-8">
+              <Link
+                href="/contained/tour"
+                className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-white transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Back to tour
+              </Link>
+              <Link
+                href="/contained/how-it-works"
+                className="text-xs uppercase tracking-[0.2em] text-[#DC2626] hover:text-white transition-colors border border-[#DC2626]/40 hover:border-white px-3 py-1.5"
+                style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+              >
+                How it works →
+              </Link>
+            </div>
 
             <div className="flex items-center gap-3 mb-4">
               <span className={`px-3 py-1 text-xs font-bold uppercase tracking-widest text-white ${badge.color}`}>
@@ -319,6 +383,45 @@ export function StopContent({ slug }: { slug: string }) {
             )}
           </div>
         </section>
+
+        {/* Start here · local thesis — same pattern as /judges-on-country */}
+        {STOP_THESIS[slug] && (
+          <section className="px-4 py-12 border-b border-gray-800 bg-[#0A0A0A]">
+            <div className="max-w-4xl mx-auto border-2 border-white/10 bg-white text-[#0A0A0A] p-6 md:p-8">
+              <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.22em] text-[#DC2626]">
+                {STOP_THESIS[slug].kicker}
+              </p>
+              <h2
+                className="mb-2 text-2xl font-bold md:text-3xl"
+                style={{ fontFamily: 'Space Grotesk, sans-serif', lineHeight: 1.08 }}
+              >
+                &ldquo;{STOP_THESIS[slug].quote}&rdquo;
+              </h2>
+              <p className="mb-5 text-sm font-bold text-gray-600">
+                {STOP_THESIS[slug].author} · {STOP_THESIS[slug].role}
+              </p>
+              <p className="mb-6 text-base leading-relaxed text-gray-700">
+                {STOP_THESIS[slug].body}
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href={STOP_THESIS[slug].storyHref}
+                  className="inline-flex items-center gap-2 bg-[#DC2626] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-red-700"
+                >
+                  Read the full story
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href={STOP_THESIS[slug].basecampHref}
+                  className="inline-flex items-center gap-2 border-2 border-[#0A0A0A] px-5 py-3 text-sm font-bold text-[#0A0A0A] transition-colors hover:bg-[#0A0A0A] hover:text-white"
+                >
+                  Open basecamp profile
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Mini map */}
         <section className="px-4 pb-12">
@@ -1022,31 +1125,76 @@ export function StopContent({ slug }: { slug: string }) {
           </section>
         )}
 
-        {/* What Now CTA */}
-        <section className="px-4 py-16 border-t border-gray-800 bg-gray-950">
-          <div className="max-w-2xl mx-auto text-center">
-            <p className="text-xs uppercase tracking-[0.3em] text-red-500 mb-4">You&apos;ve seen it</p>
-            <h2 className="text-3xl font-bold mb-4">Now what?</h2>
-            <p className="text-gray-400 mb-8">
-              The container showed you the reality. The alternative exists — 1,165 community
-              models proving it works better and costs less. Pick your lane.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/contained/what-now"
-                className="px-6 py-3 text-sm font-bold uppercase tracking-widest bg-white text-black hover:bg-gray-200 transition-colors"
+        {/* Civic intelligence — demand signals, key orgs, politicians, foundations */}
+        <CivicIntelSection stopCity={stop.city} />
+
+        {/* Experience packages — buyer ladder + public experiences + artefacts */}
+        <ExperiencePackages mode="full" stopName={stop.city} />
+
+        {/* What Now CTA — per-stop thesis when available, fallback to generic */}
+        {STOP_THESIS[slug] ? (
+          <section className="px-4 py-16 bg-[#DC2626]">
+            <div className="max-w-3xl mx-auto text-center">
+              <p className="mb-3 font-mono text-sm uppercase tracking-[0.22em] text-white/80">
+                {STOP_THESIS[slug].closingDate}
+              </p>
+              <h2
+                className="mb-4 text-3xl font-bold text-white md:text-4xl"
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
               >
-                What you can do
-              </Link>
-              <Link
-                href="/contained/register"
-                className="px-6 py-3 text-sm font-bold uppercase tracking-widest border border-gray-700 text-gray-300 hover:border-white hover:text-white transition-colors"
-              >
-                Book your experience
-              </Link>
+                {STOP_THESIS[slug].closingHeadline}
+              </h2>
+              <p className="mb-8 text-lg text-white/90">
+                {STOP_THESIS[slug].closingSubhead}
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <Link
+                  href={STOP_THESIS[slug].closingPrimaryHref}
+                  className="bg-white px-8 py-4 text-lg font-bold text-[#DC2626] transition-colors hover:bg-gray-100"
+                >
+                  {STOP_THESIS[slug].closingPrimaryLabel}
+                </Link>
+                <Link
+                  href={STOP_THESIS[slug].storyHref}
+                  className="border-2 border-white px-8 py-4 text-lg font-bold text-white transition-colors hover:bg-white/10"
+                >
+                  Read the full story
+                </Link>
+                <Link
+                  href="/contained/what-now"
+                  className="border-2 border-white/40 px-8 py-4 text-lg font-bold text-white/90 transition-colors hover:bg-white/10"
+                >
+                  What you can do
+                </Link>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : (
+          <section className="px-4 py-16 border-t border-gray-800 bg-gray-950">
+            <div className="max-w-2xl mx-auto text-center">
+              <p className="text-xs uppercase tracking-[0.3em] text-red-500 mb-4">You&apos;ve seen it</p>
+              <h2 className="text-3xl font-bold mb-4">Now what?</h2>
+              <p className="text-gray-400 mb-8">
+                The container showed you the reality. The alternative exists — 1,165 community
+                models proving it works better and costs less. Pick your lane.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/contained/what-now"
+                  className="px-6 py-3 text-sm font-bold uppercase tracking-widest bg-white text-black hover:bg-gray-200 transition-colors"
+                >
+                  What you can do
+                </Link>
+                <Link
+                  href="/contained/register"
+                  className="px-6 py-3 text-sm font-bold uppercase tracking-widest border border-gray-700 text-gray-300 hover:border-white hover:text-white transition-colors"
+                >
+                  Book your experience
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
       </main>
       <Footer />
     </>

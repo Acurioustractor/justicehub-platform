@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback, FormEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
+import { ELPhotoPickerModal } from '@/components/empathy-ledger/ELPhotoPickerModal';
 import {
   tourStops as staticTourStops,
   journeyContainers,
@@ -183,135 +184,6 @@ function usePhotoOverrides() {
   return { overrides, setOverride, clearOverrides };
 }
 
-interface ELPhoto {
-  id: string;
-  src: string;
-  thumb: string;
-  label: string;
-  galleryId?: string;
-}
-
-function ELPhotoPickerModal({ onPick, onClose }: { onPick: (url: string) => void; onClose: () => void }) {
-  const [photos, setPhotos] = useState<ELPhoto[]>([]);
-  const [galleries, setGalleries] = useState<{ id: string; title: string }[]>([]);
-  const [activeGallery, setActiveGallery] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-
-  useEffect(() => {
-    async function load() {
-      try {
-        // Fetch galleries via the existing JH API proxy
-        const galRes = await fetch('/api/empathy-ledger/media-browser?type=galleries&limit=100');
-        const galData = await galRes.json();
-        if (galData.data) setGalleries(galData.data.map((g: { id: string; title: string }) => ({ id: g.id, title: g.title })));
-
-        // Fetch all media
-        const mediaRes = await fetch('/api/empathy-ledger/media-browser?type=media&limit=500');
-        const mediaData = await mediaRes.json();
-        if (mediaData.data) {
-          setPhotos(mediaData.data
-            .filter((m: { content_type?: string; cdn_url?: string; url?: string }) => {
-              const hasUrl = m.cdn_url || m.url;
-              const isImage = !m.content_type || m.content_type.startsWith('image/');
-              return hasUrl && isImage;
-            })
-            .map((m: { id: string; title?: string; filename?: string; url?: string; cdn_url?: string; thumbnail_url?: string; medium_url?: string; collection_id?: string }) => {
-              const src = m.cdn_url || m.url || '';
-              return {
-                id: m.id,
-                src,
-                thumb: m.thumbnail_url || m.medium_url || src,
-                label: m.title || m.filename || 'Untitled',
-                galleryId: m.collection_id || undefined,
-              };
-            }));
-        }
-      } catch (err) {
-        console.error('EL picker load error:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
-
-  const filtered = photos.filter(p => {
-    if (activeGallery && p.galleryId !== activeGallery) return false;
-    if (search && !p.label.toLowerCase().includes(search.toLowerCase())) return false;
-    return true;
-  });
-
-  return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80" onClick={onClose}>
-      <div className="relative w-[95vw] h-[90vh] bg-[#0A0A0A] border border-white/20 flex flex-col" onClick={e => e.stopPropagation()}>
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 h-12 border-b border-white/10 flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <span className="text-[#059669] text-xs font-bold uppercase tracking-widest" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Empathy Ledger</span>
-            <span className="text-[#F5F0E8]/30 text-xs" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{photos.length} photos</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <input
-              type="text"
-              placeholder="Search..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="bg-white/5 border border-white/10 text-white text-xs px-3 py-1.5 w-48 focus:outline-none focus:border-[#059669]"
-              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-            />
-            <button onClick={onClose} className="text-white/50 hover:text-white text-lg leading-none">&times;</button>
-          </div>
-        </div>
-
-        {/* Gallery filters */}
-        <div className="flex gap-2 px-4 py-2 border-b border-white/10 flex-shrink-0 overflow-x-auto">
-          <button
-            onClick={() => setActiveGallery(null)}
-            className={`px-4 py-2.5 md:px-3 md:py-1 text-xs md:text-[10px] uppercase tracking-wider font-bold border transition-colors flex-shrink-0 ${!activeGallery ? 'border-[#059669] text-[#059669] bg-[#059669]/10' : 'border-white/10 text-white/40 hover:text-white/70'}`}
-            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-          >All</button>
-          {galleries.map(g => (
-            <button
-              key={g.id}
-              onClick={() => setActiveGallery(g.id)}
-              className={`px-4 py-2.5 md:px-3 md:py-1 text-xs md:text-[10px] uppercase tracking-wider font-bold border transition-colors flex-shrink-0 ${activeGallery === g.id ? 'border-[#059669] text-[#059669] bg-[#059669]/10' : 'border-white/10 text-white/40 hover:text-white/70'}`}
-              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-            >{g.title}</button>
-          ))}
-        </div>
-
-        {/* Photo grid */}
-        <div className="flex-1 overflow-y-auto p-3">
-          {loading ? (
-            <div className="flex items-center justify-center h-full">
-              <Loader2 className="w-6 h-6 animate-spin text-[#059669]" />
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="text-center text-white/30 mt-20 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>No photos found</div>
-          ) : (
-            <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
-              {filtered.map(photo => (
-                <button
-                  key={photo.id}
-                  onClick={() => onPick(photo.src)}
-                  className="relative aspect-square overflow-hidden group border-2 border-transparent hover:border-[#059669] transition-colors bg-[#111]"
-                >
-                  <img src={photo.thumb} alt={photo.label} className="w-full h-full object-cover" loading="lazy" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-end">
-                    <span className="text-[11px] md:text-[9px] text-white px-1.5 py-1 opacity-0 group-hover:opacity-100 transition-opacity truncate w-full" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                      {photo.label}
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function SwappablePhoto({
   src,
@@ -344,7 +216,7 @@ function SwappablePhoto({
         </div>
       )}
       {isAdmin && overrides[photoKey] && (
-        <span className="absolute top-1 left-1 bg-[#059669] text-white text-[11px] md:text-[9px] px-1.5 py-0.5 uppercase tracking-wider" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+        <span className="absolute top-1 left-1 bg-[#059669] text-white text-[12px] md:text-[12px] px-1.5 py-0.5 uppercase tracking-wider" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
           Swapped
         </span>
       )}
@@ -577,10 +449,11 @@ export function TourContent() {
             <span className="text-[#F5F0E8] text-xs font-bold uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Contained</span>
           </Link>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#problem" className="text-[#F5F0E8]/70 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Evidence</a>
-            <a href="#rooms" className="text-[#F5F0E8]/70 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Exhibition</a>
-            <a href="#tour" className="text-[#F5F0E8]/70 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Tour</a>
-            <a href="#stories" className="text-[#F5F0E8]/70 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Stories</a>
+            <a href="#problem" className="text-[#F5F0E8]/90 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Evidence</a>
+            <Link href="/contained/how-it-works" className="text-[#F5F0E8]/90 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>How it works</Link>
+            <a href="#tour" className="text-[#F5F0E8]/90 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Tour</a>
+            <a href="#stories" className="text-[#F5F0E8]/90 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Stories</a>
+            <Link href="/contained/showcase" className="text-[#F5F0E8]/90 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Full pack</Link>
             <a href="#tour" className="relative bg-[#DC2626] text-[#F5F0E8] text-xs uppercase font-medium px-6 py-3 hover:bg-[#b91c1c] transition-colors inline-block group overflow-hidden" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>
               <span className="relative z-10">Back This</span>
               <span className="absolute top-0 right-0 w-0 h-0 border-t-[10px] border-t-[#F5F0E8]/20 border-l-[10px] border-l-transparent" />
@@ -592,10 +465,11 @@ export function TourContent() {
         </div>
         {mobileMenuOpen && (
           <div className="md:hidden bg-[#0A0A0A] border-t border-white/10 px-6 py-4 space-y-4">
-            <a href="#problem" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/70 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Evidence</a>
-            <a href="#rooms" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/70 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Exhibition</a>
-            <a href="#tour" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/70 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Tour</a>
-            <a href="#stories" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/70 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Stories</a>
+            <a href="#problem" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/90 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Evidence</a>
+            <Link href="/contained/how-it-works" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/90 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>How it works</Link>
+            <a href="#rooms" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/90 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Exhibition</a>
+            <a href="#tour" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/90 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Tour</a>
+            <a href="#stories" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/90 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Stories</a>
             <a href="#tour" onClick={() => setMobileMenuOpen(false)} className="block bg-[#DC2626] text-[#F5F0E8] text-xs uppercase font-medium px-6 py-3 text-center" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Back This</a>
           </div>
         )}
@@ -614,21 +488,21 @@ export function TourContent() {
                   const json = JSON.stringify(overrides, null, 2);
                   navigator.clipboard.writeText(json);
                 }}
-                className="bg-[#059669] text-white text-xs md:text-[10px] px-3 py-2 font-bold uppercase tracking-wider hover:bg-[#047857] transition-colors"
+                className="bg-[#059669] text-white text-xs md:text-[12px] px-3 py-2 font-bold uppercase tracking-wider hover:bg-[#047857] transition-colors"
                 style={{ fontFamily: "'IBM Plex Mono', monospace" }}
               >
                 Copy {Object.keys(overrides).length} Override{Object.keys(overrides).length > 1 ? 's' : ''}
               </button>
               <button
                 onClick={clearOverrides}
-                className="bg-[#DC2626] text-white text-xs md:text-[10px] px-3 py-2 font-bold uppercase tracking-wider hover:bg-[#b91c1c] transition-colors"
+                className="bg-[#DC2626] text-white text-xs md:text-[12px] px-3 py-2 font-bold uppercase tracking-wider hover:bg-[#b91c1c] transition-colors"
                 style={{ fontFamily: "'IBM Plex Mono', monospace" }}
               >
                 Reset
               </button>
             </>
           )}
-          <span className="bg-[#0A0A0A] border border-white/20 text-[#F5F0E8]/50 text-[11px] md:text-[9px] px-2 py-1.5 uppercase tracking-widest" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+          <span className="bg-[#0A0A0A] border border-white/20 text-[#F5F0E8]/95 text-[12px] md:text-[12px] px-2 py-1.5 uppercase tracking-widest" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
             Admin
           </span>
         </div>
@@ -658,7 +532,7 @@ export function TourContent() {
               <div className="w-px h-16 bg-[#DC2626]" style={{ transform: 'rotate(-35deg)' }} />
             </div>
 
-            <p className="text-[#F5F0E8]/70 text-sm max-w-2xl mx-auto leading-relaxed hero-animate hero-animate-delay-3" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.05em' }}>
+            <p className="text-[#F5F0E8]/90 text-sm max-w-2xl mx-auto leading-relaxed hero-animate hero-animate-delay-3" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.05em' }}>
               One shipping container. Three rooms. Thirty minutes. Touring Australia. We are building it as we go because the people who need to see it cannot wait for perfect.
             </p>
 
@@ -670,8 +544,8 @@ export function TourContent() {
             </div>
 
             <div className="mt-16 hero-animate hero-animate-delay-5">
-              <span className="text-[#F5F0E8]/40 text-xs uppercase block mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.2em' }}>Where We Need Support</span>
-              <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[#F5F0E8]/60 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>
+              <span className="text-[#F5F0E8]/90 text-xs uppercase block mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.2em' }}>Where We Need Support</span>
+              <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-[#F5F0E8]/90 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>
                 {tourStops.slice(0, 3).map((stop, i) => (
                   <span key={stop.eventSlug} className={i === 0 ? 'text-[#F5F0E8]' : ''}>
                     {stop.city} {i === 0 && <span className="text-[#DC2626] ml-1">●</span>}
@@ -702,9 +576,9 @@ export function TourContent() {
                 { label: 'Recidivism Rate', value: '84%', color: 'text-[#F5F0E8]', desc: 'Of children who go through detention will return. The system does not rehabilitate. It entrenches.' },
               ].map((stat) => (
                 <div key={stat.label} className="bg-[#0A0A0A] p-8 relative scanline-overlay">
-                  <span className="text-[#F5F0E8]/40 text-xs uppercase block mb-6 relative z-10" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.2em' }}>{stat.label}</span>
+                  <span className="text-[#F5F0E8]/90 text-xs uppercase block mb-6 relative z-10" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.2em' }}>{stat.label}</span>
                   <span className={`font-bold text-6xl block mb-3 relative z-10 ${stat.color}`} style={{ letterSpacing: '-0.02em' }}>{stat.value}</span>
-                  <p className="text-[#F5F0E8]/60 text-xs relative z-10" style={{ fontFamily: "'IBM Plex Mono', monospace", lineHeight: 1.7, letterSpacing: '0.03em' }}>{stat.desc}</p>
+                  <p className="text-[#F5F0E8]/90 text-xs relative z-10" style={{ fontFamily: "'IBM Plex Mono', monospace", lineHeight: 1.7, letterSpacing: '0.03em' }}>{stat.desc}</p>
                 </div>
               ))}
             </div>
@@ -734,7 +608,7 @@ export function TourContent() {
           <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16">
             <span className="text-[#DC2626] text-xs font-medium uppercase block mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.3em' }}>Inside the Container</span>
             <h2 className="font-bold text-[#F5F0E8] uppercase text-3xl md:text-5xl lg:text-6xl mb-4" style={{ letterSpacing: '-0.02em' }}>Three Rooms</h2>
-            <p className="text-[#F5F0E8]/50 text-xs max-w-xl mb-16" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.05em', lineHeight: 1.8 }}>
+            <p className="text-[#F5F0E8]/95 text-xs max-w-xl mb-16" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.05em', lineHeight: 1.8 }}>
               Thirty minutes. Three rooms. Each one tells a different part of the story.
             </p>
 
@@ -760,14 +634,14 @@ export function TourContent() {
                         <h3 className="font-bold text-[#F5F0E8] text-2xl md:text-4xl lg:text-5xl uppercase mb-4" style={{ letterSpacing: '-0.02em' }}>
                           Room {container.step}: {container.title}
                         </h3>
-                        <p className="text-[#F5F0E8]/70 text-sm leading-relaxed mb-6" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.03em' }}>
+                        <p className="text-[#F5F0E8]/90 text-sm leading-relaxed mb-6" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.03em' }}>
                           {container.summary}
                         </p>
                         <div className="flex gap-8" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                           {stats.map((stat, i) => (
                             <div key={i}>
                               <div className="text-2xl font-bold text-[#F5F0E8]">{stat.value}</div>
-                              <div className="text-xs text-[#F5F0E8]/40 uppercase tracking-wider">{stat.label}</div>
+                              <div className="text-xs text-[#F5F0E8]/90 uppercase tracking-wider">{stat.label}</div>
                             </div>
                           ))}
                         </div>
@@ -789,7 +663,7 @@ export function TourContent() {
                           />
                           <div className="absolute inset-0 bg-[#0A0A0A]/20 group-hover:bg-transparent transition-colors pointer-events-none" />
                           <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-[#0A0A0A]/80 to-transparent pointer-events-none">
-                            <span className="text-xs md:text-xs md:text-[10px] text-[#F5F0E8]/60 uppercase tracking-wider" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{photo.alt}</span>
+                            <span className="text-xs md:text-xs md:text-[12px] text-[#F5F0E8]/90 uppercase tracking-wider" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{photo.alt}</span>
                           </div>
                         </div>
                       ))}
@@ -825,7 +699,7 @@ export function TourContent() {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                       <div className="absolute bottom-0 left-0 right-0 bg-[#0A0A0A]/80 px-2 py-1.5 translate-y-full group-hover:translate-y-0 transition-transform duration-200 pointer-events-none">
-                        <p className="text-[11px] md:text-[9px] font-bold text-white uppercase tracking-wider" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{photo.caption}</p>
+                        <p className="text-[12px] md:text-[12px] font-bold text-white uppercase tracking-wider" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{photo.caption}</p>
                       </div>
                     </div>
                   ))}
@@ -852,12 +726,12 @@ export function TourContent() {
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-6">
                       <div>
-                        <span className="text-[#F5F0E8]/40 text-xs uppercase block mb-2" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.2em' }}>{org.region}</span>
+                        <span className="text-[#F5F0E8]/90 text-xs uppercase block mb-2" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.2em' }}>{org.region}</span>
                         <h3 className="font-bold text-[#F5F0E8] uppercase text-2xl" style={{ letterSpacing: '-0.02em' }}>{org.name}</h3>
                       </div>
                       <span className="font-bold text-[#059669] text-5xl" style={{ letterSpacing: '-0.02em' }}>{org.stat}</span>
                     </div>
-                    <p className="text-[#F5F0E8]/50 text-xs" style={{ fontFamily: "'IBM Plex Mono', monospace", lineHeight: 1.8, letterSpacing: '0.03em' }}>{org.description}</p>
+                    <p className="text-[#F5F0E8]/95 text-xs" style={{ fontFamily: "'IBM Plex Mono', monospace", lineHeight: 1.8, letterSpacing: '0.03em' }}>{org.description}</p>
                   </div>
                 </div>
               ))}
@@ -865,11 +739,11 @@ export function TourContent() {
 
             {/* Typographic callout */}
             <div className="mt-16 text-center max-w-3xl mx-auto">
-              <p className="text-3xl md:text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-tight text-[#0A0A0A]">
+              <div className="force-dark-text text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
                 What if we spent{' '}
-                <span className="text-[#DC2626]">$1.55M</span>{' '}
+                <span data-keep-color>$1.55M</span>{' '}
                 on keeping a kid connected to family, culture, and community?
-              </p>
+              </div>
             </div>
           </div>
         </section>
@@ -882,7 +756,7 @@ export function TourContent() {
           <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16">
             <span className="text-[#DC2626] text-xs font-medium uppercase block mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.3em' }}>The Tour</span>
             <h2 className="font-bold text-[#F5F0E8] uppercase text-3xl md:text-5xl lg:text-6xl mb-4" style={{ letterSpacing: '-0.02em' }}>The Tour</h2>
-            <p className="text-[#F5F0E8]/50 text-xs max-w-xl mb-12" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.05em', lineHeight: 1.8 }}>
+            <p className="text-[#F5F0E8]/95 text-xs max-w-xl mb-12" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.05em', lineHeight: 1.8 }}>
               We have not locked the money to make this happen. Each stop needs local partners, venues, and funding. We need help. We cannot do this on our own.
             </p>
 
@@ -901,22 +775,22 @@ export function TourContent() {
                   >
                     <span className={isFirst
                       ? 'bg-[#DC2626] px-3 py-1 text-[#F5F0E8] text-xs uppercase font-medium inline-block'
-                      : 'border border-[#F5F0E8]/20 px-3 py-1 text-[#F5F0E8]/50 text-xs uppercase font-medium inline-block'}
+                      : 'border border-[#F5F0E8]/20 px-3 py-1 text-[#F5F0E8]/95 text-xs uppercase font-medium inline-block'}
                       style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>
                       {stop.status === 'funded' ? 'Funded' : stop.status === 'confirmed' ? 'Confirmed' : 'Seeking Support'}
                     </span>
                     <h3 className="font-bold text-[#F5F0E8] uppercase text-3xl mt-6 mb-2">{stop.city}</h3>
-                    <p className="text-[#F5F0E8]/40 text-xs mb-4 uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                    <p className="text-[#F5F0E8]/90 text-xs mb-4 uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                       {stop.venue} · {stop.date}
                     </p>
                     {stop.partnerQuote && (
                       <blockquote className="border-l-2 border-[#DC2626] pl-4 mb-6">
-                        <p className="text-sm italic text-[#F5F0E8]/50">&ldquo;{stop.partnerQuote}&rdquo;</p>
+                        <p className="text-sm italic text-[#F5F0E8]/95">&ldquo;{stop.partnerQuote}&rdquo;</p>
                       </blockquote>
                     )}
                     {stateSpending[stop.state] && (
                       <div className="bg-white/5 border border-white/10 p-3 mb-6" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                        <div className="text-xs md:text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">{stop.state} Justice Spending</div>
+                        <div className="text-xs md:text-[12px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">{stop.state} Justice Spending</div>
                         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
                           {stateSpending[stop.state].detention_millions != null && (
                             <div><span className="text-[#DC2626] font-bold">${stateSpending[stop.state].detention_millions}M</span><span className="text-gray-500 ml-1">detention</span></div>
@@ -943,14 +817,14 @@ export function TourContent() {
                     ref={(el) => { tourStopRefs.current[stop.eventSlug] = el; }}
                     className="border border-[#F5F0E8]/10 p-8 hover:border-[#F5F0E8]/25 transition-colors"
                   >
-                    <span className="border border-[#F5F0E8]/20 px-3 py-1 text-[#F5F0E8]/50 text-xs uppercase font-medium inline-block" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>
+                    <span className="border border-[#F5F0E8]/20 px-3 py-1 text-[#F5F0E8]/95 text-xs uppercase font-medium inline-block" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>
                       {stop.status === 'funded' ? 'Funded' : stop.status === 'confirmed' ? 'Confirmed' : 'Seeking Support'}
                     </span>
                     <h3 className="font-bold text-[#F5F0E8] uppercase text-3xl mt-6 mb-2">{stop.city}</h3>
-                    <p className="text-[#F5F0E8]/40 text-xs mb-4 uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{stop.venue} · {stop.date}</p>
+                    <p className="text-[#F5F0E8]/90 text-xs mb-4 uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{stop.venue} · {stop.date}</p>
                     {stateSpending[stop.state] && (
                       <div className="bg-white/5 border border-white/10 p-3 mb-6" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-                        <div className="text-xs md:text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">{stop.state} Justice Spending</div>
+                        <div className="text-xs md:text-[12px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-2">{stop.state} Justice Spending</div>
                         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
                           {stateSpending[stop.state].detention_millions != null && (
                             <div><span className="text-[#DC2626] font-bold">${stateSpending[stop.state].detention_millions}M</span><span className="text-gray-500 ml-1">detention</span></div>
@@ -1005,7 +879,7 @@ export function TourContent() {
                   <div className="relative z-10">
                     <action.Icon className="w-8 h-8 text-[#DC2626] mb-6" />
                     <h3 className="font-bold text-[#F5F0E8] uppercase text-xl mb-3">{action.title}</h3>
-                    <p className="text-[#F5F0E8]/40 text-xs leading-relaxed mb-6" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{action.desc}</p>
+                    <p className="text-[#F5F0E8]/90 text-xs leading-relaxed mb-6" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{action.desc}</p>
                     <span className="inline-flex items-center gap-2 text-[#DC2626] text-xs font-bold uppercase tracking-[0.2em] group-hover:text-[#F5F0E8] transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                       {action.cta} <ArrowRight className="w-3 h-3" />
                     </span>
@@ -1024,7 +898,7 @@ export function TourContent() {
                 <div>
                   <span className="text-[#DC2626] text-xs font-medium uppercase block mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.3em' }}>From the Ground</span>
                   <h2 className="font-bold text-[#F5F0E8] uppercase text-3xl md:text-5xl lg:text-6xl mb-2" style={{ letterSpacing: '-0.02em' }}>Stories</h2>
-                  <p className="text-[#F5F0E8]/50 max-w-xl text-sm" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                  <p className="text-[#F5F0E8]/95 max-w-xl text-sm" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                     Lived experience and reporting from the communities driving change.
                   </p>
                 </div>
@@ -1052,13 +926,13 @@ export function TourContent() {
                         <img src={story.story_image_url} alt={story.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/90 via-[#0A0A0A]/30 to-transparent" />
                         <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
-                          <span className="text-xs md:text-[10px] bg-[#DC2626] text-white px-2 py-1 uppercase tracking-[0.15em] font-bold" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{categoryLabel}</span>
-                          {sourceLabel && <span className="text-xs md:text-[10px] bg-[#0A0A0A]/60 text-white/60 px-2 py-1 uppercase tracking-[0.1em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{sourceLabel}</span>}
+                          <span className="text-xs md:text-[12px] bg-[#DC2626] text-white px-2 py-1 uppercase tracking-[0.15em] font-bold" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{categoryLabel}</span>
+                          {sourceLabel && <span className="text-xs md:text-[12px] bg-[#0A0A0A]/60 text-white/60 px-2 py-1 uppercase tracking-[0.1em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{sourceLabel}</span>}
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                           <h3 className="font-bold text-lg tracking-tight mb-2 uppercase leading-tight">{story.title}</h3>
                           {pullQuote && <p className="text-xs text-white/70 mb-3 line-clamp-2" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{pullQuote}</p>}
-                          {story.author_name && <p className="text-xs md:text-[10px] text-white/40 uppercase tracking-wider mb-2" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{story.author_name}</p>}
+                          {story.author_name && <p className="text-xs md:text-[12px] text-white/90 uppercase tracking-wider mb-2" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{story.author_name}</p>}
                           <span className="inline-flex items-center gap-1 text-[#DC2626] text-xs font-bold uppercase tracking-[0.15em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                             Read <ArrowRight className="w-3 h-3" />
                           </span>
@@ -1072,14 +946,14 @@ export function TourContent() {
                       <div className="p-6 flex flex-col justify-between min-h-[280px]">
                         <div>
                           <div className="flex items-center gap-2 mb-4">
-                            <span className="text-xs md:text-[10px] text-[#DC2626] uppercase tracking-[0.15em] font-bold" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{categoryLabel}</span>
-                            {sourceLabel && <span className="text-xs md:text-[10px] text-[#F5F0E8]/30 uppercase tracking-[0.1em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>/ {sourceLabel}</span>}
+                            <span className="text-xs md:text-[12px] text-[#DC2626] uppercase tracking-[0.15em] font-bold" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{categoryLabel}</span>
+                            {sourceLabel && <span className="text-xs md:text-[12px] text-[#F5F0E8]/95 uppercase tracking-[0.1em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>/ {sourceLabel}</span>}
                           </div>
                           <h3 className="font-bold text-lg tracking-tight text-[#F5F0E8] mb-3 uppercase leading-tight">{story.title}</h3>
-                          {pullQuote && <p className="text-xs text-white/50 line-clamp-3" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{pullQuote}</p>}
+                          {pullQuote && <p className="text-xs text-white/95 line-clamp-3" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{pullQuote}</p>}
                         </div>
                         <div className="flex items-center justify-between mt-4">
-                          {story.author_name && <span className="text-xs md:text-[10px] text-[#F5F0E8]/30 uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{story.author_name}</span>}
+                          {story.author_name && <span className="text-xs md:text-[12px] text-[#F5F0E8]/95 uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{story.author_name}</span>}
                           <span className="inline-flex items-center gap-1 text-[#DC2626] text-xs font-bold uppercase tracking-[0.15em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                             Read <ArrowRight className="w-3 h-3" />
                           </span>
@@ -1120,23 +994,23 @@ export function TourContent() {
           <div className="flex flex-col md:flex-row justify-between items-start gap-12">
             <div>
               <div className="contained-logo-mark text-[#F5F0E8] mb-6" />
-              <p className="text-[#F5F0E8]/30 text-xs max-w-xs leading-relaxed uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.1em' }}>
+              <p className="text-[#F5F0E8]/95 text-xs max-w-xs leading-relaxed uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.1em' }}>
                 Justice infrastructure, not justice tech. Action, art, and intelligence.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-x-16 gap-y-4">
-              <Link href="/contained/act" className="text-[#F5F0E8]/50 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Take Action</Link>
-              <Link href="/intelligence" className="text-[#F5F0E8]/50 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Data</Link>
-              <Link href="/contained/stories" className="text-[#F5F0E8]/50 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Stories</Link>
-              <Link href="/contact" className="text-[#F5F0E8]/50 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Contact</Link>
+              <Link href="/contained/act" className="text-[#F5F0E8]/95 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Take Action</Link>
+              <Link href="/intelligence" className="text-[#F5F0E8]/95 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Data</Link>
+              <Link href="/contained/stories" className="text-[#F5F0E8]/95 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Stories</Link>
+              <Link href="/contact" className="text-[#F5F0E8]/95 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Contact</Link>
             </div>
           </div>
           <div className="mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-[#F5F0E8]/20 text-xs md:text-[10px] uppercase tracking-widest" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>© 2026 CONTAINED. Sovereignty never ceded.</p>
+            <p className="text-[#F5F0E8]/95 text-xs md:text-[12px] uppercase tracking-widest" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>© 2026 CONTAINED. Sovereignty never ceded.</p>
             <div className="flex items-center gap-6" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-              <Link href="/" className="text-[#F5F0E8]/50 text-xs uppercase hover:text-[#F5F0E8] tracking-widest">JusticeHub</Link>
-              <a href="https://www.linkedin.com/in/benknight" target="_blank" rel="noopener noreferrer" className="text-[#F5F0E8]/50 text-xs uppercase hover:text-[#F5F0E8] tracking-widest">LinkedIn</a>
-              <a href="https://www.empathyledger.com" target="_blank" rel="noopener noreferrer" className="text-[#F5F0E8]/40 text-xs md:text-[10px] uppercase hover:text-[#F5F0E8] tracking-widest border border-[#F5F0E8]/20 px-3 py-1.5 hover:border-[#F5F0E8]/40 transition-colors">
+              <Link href="/" className="text-[#F5F0E8]/95 text-xs uppercase hover:text-[#F5F0E8] tracking-widest">JusticeHub</Link>
+              <a href="https://www.linkedin.com/in/benknight" target="_blank" rel="noopener noreferrer" className="text-[#F5F0E8]/95 text-xs uppercase hover:text-[#F5F0E8] tracking-widest">LinkedIn</a>
+              <a href="https://www.empathyledger.com" target="_blank" rel="noopener noreferrer" className="text-[#F5F0E8]/90 text-xs md:text-[12px] uppercase hover:text-[#F5F0E8] tracking-widest border border-[#F5F0E8]/20 px-3 py-1.5 hover:border-[#F5F0E8]/40 transition-colors">
                 Powered by Empathy Ledger
               </a>
             </div>

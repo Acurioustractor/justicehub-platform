@@ -98,9 +98,12 @@ export default function ContainedHelpPage() {
         <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 36, fontWeight: 700, color: '#F5F0E8', lineHeight: 1.15, marginBottom: 12 }}>
           I want to help.
         </h1>
-        <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 14, color: '#F5F0E8', opacity: 0.6, maxWidth: 500, margin: '0 auto' }}>
+        <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 14, color: '#F5F0E8', opacity: 0.6, maxWidth: 500, margin: '0 auto', marginBottom: 16 }}>
           Tell us how. Pick as many as you like.
         </p>
+        <a href="/contained/how-it-works" style={{ display: 'inline-block', fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: '#DC2626', letterSpacing: '0.2em', textTransform: 'uppercase' as const, textDecoration: 'none', border: '1px solid rgba(220, 38, 38, 0.4)', padding: '6px 14px' }}>
+          How it works →
+        </a>
       </div>
 
       <form onSubmit={handleSubmit} style={{ maxWidth: 600, margin: '0 auto', padding: '40px 24px' }}>

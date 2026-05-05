@@ -93,7 +93,7 @@ export default function TourMap({ stops, onStopClick }: TourMapProps) {
                     year: 'numeric',
                   })}
                 </div>
-                <div className="text-xs text-gray-500">{stop.partner.split('+')[0].trim()}</div>
+                {stop.partner && <div className="text-xs text-gray-500">{stop.partner.split('+')[0].trim()}</div>}
               </div>
             </Tooltip>
           </CircleMarker>

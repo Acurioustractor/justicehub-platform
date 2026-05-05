@@ -78,7 +78,7 @@ export default function RegisterInterestPage() {
           <h1 className="text-2xl font-bold mb-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
             Interest Registered
           </h1>
-          <p className="text-sm text-[#F5F0E8]/60 mb-6">
+          <p className="text-sm text-[#F5F0E8]/90 mb-6">
             Thanks {formData.full_name}. We&apos;ll keep you updated on CONTAINED and how you can get involved.
           </p>
           <div className="flex gap-3 justify-center">
@@ -105,7 +105,7 @@ export default function RegisterInterestPage() {
       {/* Header */}
       <div className="border-b border-[#F5F0E8]/10">
         <div className="max-w-2xl mx-auto px-4 py-4">
-          <Link href="/contained" className="inline-flex items-center gap-2 text-sm text-[#F5F0E8]/40 hover:text-[#F5F0E8] transition-colors">
+          <Link href="/contained" className="inline-flex items-center gap-2 text-sm text-[#F5F0E8]/90 hover:text-[#F5F0E8] transition-colors">
             <ArrowLeft className="w-4 h-4" />
             CONTAINED
           </Link>
@@ -117,7 +117,7 @@ export default function RegisterInterestPage() {
           <h1 className="text-3xl font-bold tracking-tight mb-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
             Register Your Interest
           </h1>
-          <p className="text-sm text-[#F5F0E8]/60">
+          <p className="text-sm text-[#F5F0E8]/90">
             Can&apos;t make it to a tour stop? Register here to stay connected with the movement and learn how you can contribute.
           </p>
         </div>
@@ -125,7 +125,7 @@ export default function RegisterInterestPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Role selection */}
           <div>
-            <label className="block font-mono text-xs text-[#F5F0E8]/40 uppercase tracking-wider mb-3">
+            <label className="block font-mono text-xs text-[#F5F0E8]/90 uppercase tracking-wider mb-3">
               I am a... <span className="text-[#DC2626]">*</span>
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -144,10 +144,10 @@ export default function RegisterInterestPage() {
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <Icon className={`w-4 h-4 ${selected ? 'text-[#DC2626]' : 'text-[#F5F0E8]/30'}`} />
+                      <Icon className={`w-4 h-4 ${selected ? 'text-[#DC2626]' : 'text-[#F5F0E8]/95'}`} />
                       <span className="font-bold text-sm">{role.label}</span>
                     </div>
-                    <p className="text-[10px] text-[#F5F0E8]/40 font-mono mt-1">{role.description}</p>
+                    <p className="text-[12px] text-[#F5F0E8]/90 font-mono mt-1">{role.description}</p>
                   </button>
                 );
               })}
@@ -157,7 +157,7 @@ export default function RegisterInterestPage() {
           {/* Name + Email */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block font-mono text-xs text-[#F5F0E8]/40 uppercase tracking-wider mb-1">
+              <label className="block font-mono text-xs text-[#F5F0E8]/90 uppercase tracking-wider mb-1">
                 Full Name <span className="text-[#DC2626]">*</span>
               </label>
               <input
@@ -169,7 +169,7 @@ export default function RegisterInterestPage() {
               />
             </div>
             <div>
-              <label className="block font-mono text-xs text-[#F5F0E8]/40 uppercase tracking-wider mb-1">
+              <label className="block font-mono text-xs text-[#F5F0E8]/90 uppercase tracking-wider mb-1">
                 Email <span className="text-[#DC2626]">*</span>
               </label>
               <input
@@ -185,7 +185,7 @@ export default function RegisterInterestPage() {
           {/* State + Organisation */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block font-mono text-xs text-[#F5F0E8]/40 uppercase tracking-wider mb-1">
+              <label className="block font-mono text-xs text-[#F5F0E8]/90 uppercase tracking-wider mb-1">
                 State
               </label>
               <select
@@ -198,7 +198,7 @@ export default function RegisterInterestPage() {
               </select>
             </div>
             <div>
-              <label className="block font-mono text-xs text-[#F5F0E8]/40 uppercase tracking-wider mb-1">
+              <label className="block font-mono text-xs text-[#F5F0E8]/90 uppercase tracking-wider mb-1">
                 Organisation
               </label>
               <input
@@ -213,7 +213,7 @@ export default function RegisterInterestPage() {
 
           {/* Message */}
           <div>
-            <label className="block font-mono text-xs text-[#F5F0E8]/40 uppercase tracking-wider mb-1">
+            <label className="block font-mono text-xs text-[#F5F0E8]/90 uppercase tracking-wider mb-1">
               How would you like to be involved?
             </label>
             <textarea
@@ -233,7 +233,7 @@ export default function RegisterInterestPage() {
               onChange={(e) => setFormData(f => ({ ...f, newsletter: e.target.checked }))}
               className="w-4 h-4 accent-[#DC2626]"
             />
-            <span className="text-sm text-[#F5F0E8]/60">Keep me updated with campaign news</span>
+            <span className="text-sm text-[#F5F0E8]/90">Keep me updated with campaign news</span>
           </label>
 
           {error && (

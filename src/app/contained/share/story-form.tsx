@@ -58,7 +58,7 @@ export function StoryForm() {
     <div className="min-h-screen bg-white text-black">
       <Navigation />
 
-      <main>
+      <main className="pt-40">
         {/* Hero */}
         <section className="py-16 bg-black text-white">
           <div className="container-justice">

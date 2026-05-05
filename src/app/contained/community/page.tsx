@@ -1,26 +1,37 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { Loader2 } from 'lucide-react';
 
 const PASSCODE = 'contained2026';
 
-// ── Map coordinates (approximate SVG positions for Australia outline) ──
-// x/y are percentage positions on a 400x360 viewBox
-const MAP_POINTS: { city: string; x: number; y: number; people: number; status: 'confirmed' | 'demand' }[] = [
-  { city: 'Mount Druitt', x: 340, y: 195, people: 15, status: 'confirmed' },
-  { city: 'Brisbane', x: 335, y: 155, people: 9, status: 'confirmed' },
-  { city: 'Adelaide', x: 255, y: 215, people: 5, status: 'confirmed' },
-  { city: 'Townsville', x: 310, y: 105, people: 4, status: 'confirmed' },
-  { city: 'Perth', x: 100, y: 200, people: 8, status: 'confirmed' },
-  { city: 'Tennant Creek', x: 230, y: 115, people: 2, status: 'confirmed' },
-  { city: 'Melbourne', x: 290, y: 235, people: 9, status: 'demand' },
-  { city: 'Canberra', x: 315, y: 215, people: 3, status: 'demand' },
-  { city: 'Tasmania', x: 290, y: 275, people: 2, status: 'demand' },
-  { city: 'Armidale', x: 340, y: 170, people: 1, status: 'demand' },
-  { city: 'Rockhampton', x: 325, y: 130, people: 1, status: 'demand' },
-  { city: 'Cairns', x: 300, y: 80, people: 1, status: 'demand' },
-  { city: 'Doomadgee', x: 265, y: 95, people: 2, status: 'demand' },
-  { city: 'Broome', x: 155, y: 100, people: 1, status: 'demand' },
+// Lazy-load the Leaflet map (no SSR).
+const CommunityDemandMap = dynamic(() => import('@/components/contained/CommunityDemandMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full flex items-center justify-center" style={{ height: 480, background: '#0a0a0a', border: '1px solid #1a1a1a' }}>
+      <Loader2 className="w-6 h-6 animate-spin text-gray-600" />
+    </div>
+  ),
+});
+
+// Real lat/lng so the map plots correctly.
+const MAP_POINTS: { city: string; lat: number; lng: number; people: number; status: 'confirmed' | 'demand' }[] = [
+  { city: 'Mount Druitt',    lat: -33.74, lng: 150.82, people: 15, status: 'confirmed' },
+  { city: 'Brisbane',        lat: -27.47, lng: 153.03, people:  9, status: 'confirmed' },
+  { city: 'Adelaide',        lat: -34.93, lng: 138.60, people:  5, status: 'confirmed' },
+  { city: 'Townsville',      lat: -19.27, lng: 146.78, people:  4, status: 'confirmed' },
+  { city: 'Perth',           lat: -31.95, lng: 115.86, people:  8, status: 'confirmed' },
+  { city: 'Tennant Creek',   lat: -19.65, lng: 134.19, people:  2, status: 'confirmed' },
+  { city: 'Melbourne',       lat: -37.81, lng: 144.96, people:  9, status: 'demand' },
+  { city: 'Canberra',        lat: -35.31, lng: 149.13, people:  3, status: 'demand' },
+  { city: 'Hobart',          lat: -42.88, lng: 147.33, people:  2, status: 'demand' },
+  { city: 'Armidale',        lat: -30.51, lng: 151.67, people:  1, status: 'demand' },
+  { city: 'Rockhampton',     lat: -23.38, lng: 150.51, people:  1, status: 'demand' },
+  { city: 'Cairns',          lat: -16.92, lng: 145.77, people:  1, status: 'demand' },
+  { city: 'Doomadgee',       lat: -17.93, lng: 138.82, people:  2, status: 'demand' },
+  { city: 'Broome',          lat: -17.96, lng: 122.24, people:  1, status: 'demand' },
 ];
 
 // ── Location data with orgs, politicians, quotes, community interest ──
@@ -631,8 +642,9 @@ export default function CommunityPage() {
 
           <div style={{ maxWidth: 680 }}>
             <p style={{ fontSize: '1.1rem', color: '#999', lineHeight: 1.8, marginBottom: 16 }}>
-              CONTAINED is a piece of art. A 20-foot shipping container converted into an immersive experience
-              of what youth detention actually looks like in Australia. Three rooms:
+              CONTAINED is a piece of art. A 40-foot shipping container converted into an immersive experience
+              of what youth detention actually looks like in Australia. Three narrative rooms, plus a fourth flex space
+              that opens at both ends for community, conversation, and whatever the local story needs:
             </p>
             <div style={{ display: 'grid', gap: 12, margin: '24px 0 32px', paddingLeft: 16 }}>
               {[
@@ -760,9 +772,9 @@ export default function CommunityPage() {
           </p>
         </section>
 
-        {/* Map */}
+        {/* Map — real Leaflet plot of community demand + confirmed stops */}
         <section style={{ maxWidth: 1000, margin: '0 auto', padding: '0 40px 40px' }}>
-          <AustraliaMap />
+          <CommunityDemandMap points={MAP_POINTS} />
         </section>
 
         {/* Stats strip */}

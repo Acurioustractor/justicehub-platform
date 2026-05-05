@@ -32,7 +32,12 @@ export default async function WhatNowPage() {
   const [modelsRes, costRes, basecampsRes] = await Promise.all([
     supabase.from('alma_interventions').select('id', { count: 'exact', head: true }).neq('verification_status', 'ai_generated'),
     supabase.from('alma_interventions').select('cost_per_young_person').neq('verification_status', 'ai_generated').not('cost_per_young_person', 'is', null).gt('cost_per_young_person', 0).lt('cost_per_young_person', 500000),
-    supabase.from('organizations').select('id, name, state', { count: 'exact' }).or('partner_tier.eq.basecamp,type.eq.basecamp'),
+    supabase
+      .from('organizations')
+      .select('id, name, state', { count: 'exact' })
+      .or('partner_tier.eq.basecamp,type.eq.basecamp')
+      .eq('is_active', true)
+      .eq('verification_status', 'verified'),
   ]);
 
   const modelCount = modelsRes.count || 0;
@@ -73,7 +78,7 @@ export default async function WhatNowPage() {
         <div className="max-w-6xl mx-auto px-6 sm:px-12 py-16 space-y-16">
           {/* The fact */}
           <section className="bg-[#0A0A0A] text-white rounded-xl p-8 text-center">
-            <p className="text-white/40 text-sm mb-3">The fact you just experienced:</p>
+            <p className="text-white/90 text-sm mb-3">The fact you just experienced:</p>
             <p className="text-2xl md:text-3xl font-bold text-white" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
               {modelCount} community alternatives exist.
               They cost <span className="text-[#059669]">{ratio}x less</span> than detention.
@@ -234,7 +239,7 @@ export default async function WhatNowPage() {
                 </div>
               </div>
               <div className="bg-white/5 rounded-xl p-6 border border-white/10">
-                <p className="text-xs uppercase tracking-wider text-white/40 mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                <p className="text-xs uppercase tracking-wider text-white/90 mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                   What happens at every stop
                 </p>
                 <div className="space-y-3">
@@ -246,7 +251,7 @@ export default async function WhatNowPage() {
                     'Art submissions for monthly competition',
                     'Connections to state Basecamp',
                   ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm text-white/50">
+                    <div key={i} className="flex items-center gap-2 text-sm text-white/95">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#059669] shrink-0" />
                       {item}
                     </div>

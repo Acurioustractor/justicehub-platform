@@ -116,23 +116,28 @@ interface StateSpendingEntry {
   cost_per_day: number | null;
 }
 
+// Four anchor communities — Oonchiumpa, Palm Island Community Company, BG Fit, MMEIC.
 const FALLBACK_ORGS = [
-  { name: 'Oonchiumpa', region: 'Alice Springs, NT', stat: '95% reduced anti-social behavior', slug: 'oonchiumpa', image: campaignMedia.orgHeros.oonchiumpa },
+  { name: 'Oonchiumpa', region: 'Mparntwe, NT', stat: '95% diversion success', slug: 'oonchiumpa', image: campaignMedia.orgHeros.oonchiumpa },
   { name: 'BG Fit', region: 'Mount Isa, QLD', stat: '400+ young people yearly', slug: 'bg-fit', image: campaignMedia.orgHeros.bgfit },
-  { name: 'Mounty Yarns', region: 'Mount Druitt, NSW', stat: 'Youth-led storytelling', slug: 'mounty-yarns', image: null },
-  { name: 'Maranguka', region: 'Bourke, NSW', stat: '23% drop in family violence', slug: 'maranguka', image: null },
+  { name: 'Palm Island Community Company', region: 'The Centre, Townsville, QLD', stat: '21 programs · 200 staff', slug: 'palm-island-community-company', image: null },
+  { name: 'MMEIC', region: 'Minjerribah, QLD (Quandamooka)', stat: 'Elders-in-Council · 40 years on Country', slug: 'mmeic', image: null },
 ];
 
+// Curated mix: Ben + Nic's own Spain trip photos lead, then the published Diagrama feature set.
 const DIAGRAMA_IMAGES = [
-  { src: '/images/articles/diagrama-youth-justice-spain.jpg', alt: 'Diagrama therapeutic centre, Spain' },
-  { src: '/images/articles/diagrama-youth-justice-spain-1-e034920e.jpg', alt: 'Young people in Diagrama program' },
-  { src: '/images/articles/diagrama-youth-justice-spain-2-e00356dc.jpg', alt: 'Staff and residents at Diagrama' },
-  { src: '/images/articles/diagrama-youth-justice-spain-3-4bd0f399.jpeg', alt: 'Diagrama educational workshop' },
-  { src: '/images/articles/diagrama-youth-justice-spain-4-caa09f83.jpg', alt: 'Diagrama community activity' },
-  { src: '/images/articles/diagrama-youth-justice-spain-5-3620b6f1.jpeg', alt: 'Diagrama outdoor program' },
-  { src: '/images/articles/diagrama-foundations-impact-on-spains-youth-detention-system.jpg', alt: 'Diagrama Foundation impact' },
+  { src: '/images/articles/spain-diagrama-trip-reflection.jpeg', alt: 'Inside a Diagrama therapeutic centre, Spain' },
+  { src: '/images/articles/spain-diagrama-trip-reflection-1.jpeg', alt: 'Diagrama young people on Country' },
+  { src: '/images/articles/spain-diagrama-trip-reflection-2.jpeg', alt: 'Diagrama family contact day' },
+  { src: '/images/articles/spain-diagrama-trip-reflection-3.jpeg', alt: 'Diagrama education space' },
+  { src: '/images/articles/spain-diagrama-trip-reflection-4.jpeg', alt: 'Diagrama outdoor program' },
+  { src: '/images/articles/from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama.jpg', alt: 'Day 1 with Diagrama' },
+  { src: '/images/articles/from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama-1-c55fb2c2.jpg', alt: 'Diagrama staff and residents' },
+  { src: '/images/articles/from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama-5-4d3f1579.jpg', alt: 'Diagrama therapeutic environment' },
+  { src: '/images/articles/from-punishment-to-potential-lessons-from-spains-innovative-youth-justice-model---day-1-with-diagrama-6-b4826fd7.jpg', alt: 'Diagrama daily life' },
+  { src: '/images/articles/the-diagrama-model-a-transformative-approach-to-youth-justice.jpg', alt: 'The Diagrama model in practice' },
+  { src: '/images/articles/diagrama-youth-justice-spain.jpg', alt: 'Diagrama centre exterior' },
   { src: '/images/articles/diagrama-foundations-impact-on-spains-youth-detention-system-1-81044f0a.jpg', alt: 'Inside a Diagrama facility' },
-  { src: '/images/articles/diagrama-foundations-impact-on-spains-youth-detention-system-2-0a85306d.png', alt: 'Diagrama outcomes data' },
 ];
 
 const DIAGRAMA_ARTICLES = [
@@ -230,13 +235,13 @@ export function ExperienceContent() {
             </Link>
             <Link
               href="/contained/experience#share-story"
-              className="text-white/50 hover:text-white/70 font-medium"
+              className="text-white/95 hover:text-white/70 font-medium"
             >
               Share Story
             </Link>
             <Link
               href="/contained/experience#recommend"
-              className="text-white/50 hover:text-white/70 font-medium"
+              className="text-white/95 hover:text-white/70 font-medium"
             >
               Recommend
             </Link>
@@ -550,19 +555,19 @@ const DetentionMapSection = forwardRef<
                       <h3 className="font-bold text-white text-sm leading-tight">{fac.name}</h3>
                       <p className="text-xs text-gray-500 mt-1">{fac.city}, {fac.state}</p>
                     </div>
-                    <span className={`px-2 py-0.5 text-[10px] font-bold uppercase text-white ${STATE_COLORS[fac.state] || 'bg-gray-600'}`}>
+                    <span className={`px-2 py-0.5 text-[12px] font-bold uppercase text-white ${STATE_COLORS[fac.state] || 'bg-gray-600'}`}>
                       {fac.state}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-3 mt-3">
                     <div>
                       <div className="text-lg font-mono font-bold text-red-400">{fac.capacity_beds}</div>
-                      <div className="text-[10px] text-gray-500 uppercase">Beds</div>
+                      <div className="text-[12px] text-gray-500 uppercase">Beds</div>
                     </div>
                     {costPerDay && (
                       <div>
                         <div className="text-lg font-mono font-bold text-red-400">${costPerDay.toLocaleString()}</div>
-                        <div className="text-[10px] text-gray-500 uppercase">{fac.state} avg/bed/day</div>
+                        <div className="text-[12px] text-gray-500 uppercase">{fac.state} avg/bed/day</div>
                       </div>
                     )}
                   </div>
@@ -636,7 +641,7 @@ const Room2Section = forwardRef<HTMLElement, { active: boolean; room: typeof jou
     <section ref={ref} className="min-h-screen flex items-center justify-center py-20 px-4 border-t border-gray-800">
       <div className={`max-w-5xl w-full transition-all duration-1000 ${active ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
         <div className="mb-8">
-          <span className="inline-block px-3 py-1 text-xs font-bold uppercase tracking-widest bg-yellow-500 text-black">
+          <span className="inline-block px-3 py-1 text-xs font-bold uppercase tracking-widest bg-amber-500 text-black">
             Room {room.step} — {room.title}
           </span>
         </div>
@@ -662,14 +667,14 @@ const Room2Section = forwardRef<HTMLElement, { active: boolean; room: typeof jou
           </div>
 
           {/* Diagrama side */}
-          <div className="border border-yellow-700 bg-yellow-950/20 p-8">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-yellow-400 mb-6">
+          <div className="border border-amber-700 bg-amber-950/20 p-8">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-amber-400 mb-6">
               {room.headline} Model
             </h3>
             <div className="space-y-4">
               {room.stats.map((stat) => (
                 <div key={stat.label}>
-                  <span className="text-2xl font-mono font-bold text-yellow-400">{stat.value}</span>
+                  <span className="text-2xl font-mono font-bold text-amber-400">{stat.value}</span>
                   <span className="text-gray-500 ml-2">{stat.label.toLowerCase()}</span>
                 </div>
               ))}
@@ -678,19 +683,20 @@ const Room2Section = forwardRef<HTMLElement, { active: boolean; room: typeof jou
         </div>
 
         {/* Diagrama photo strip */}
-        <div className="flex gap-2 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-thin scrollbar-thumb-gray-700">
+        <div className="flex gap-3 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-thin scrollbar-thumb-gray-700">
           {DIAGRAMA_IMAGES.slice(0, 6).map((img) => (
-            <div key={img.src} className="flex-none w-40 h-28 relative">
+            <div key={img.src} className="flex-none relative overflow-hidden" style={{ width: '288px', height: '192px' }}>
               <Image
                 src={img.src}
                 alt={img.alt}
                 fill
                 className="object-cover"
-                sizes="160px"
+                sizes="288px"
               />
             </div>
           ))}
         </div>
+        <p className="text-xs text-gray-500 mt-2 italic">Photos from Ben Knight + Nic Marchesi&apos;s 2024 Diagrama study trip across Murcia and Madrid.</p>
 
         <p className="text-sm text-gray-600 mt-8">{room.duration}</p>
       </div>
@@ -703,9 +709,9 @@ Room2Section.displayName = 'Room2Section';
 
 const DiagramaSection = forwardRef<HTMLElement, { active: boolean }>(
   ({ active }, ref) => (
-    <section ref={ref} className="min-h-screen py-20 px-4 border-t border-gray-800 bg-yellow-950/10">
+    <section ref={ref} className="min-h-screen py-20 px-4 border-t border-gray-800 bg-amber-950/10">
       <div className={`max-w-5xl mx-auto w-full transition-all duration-1000 ${active ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-        <p className="text-sm uppercase tracking-[0.3em] text-yellow-400 mb-4">Deep Dive</p>
+        <p className="text-sm uppercase tracking-[0.3em] text-amber-400 mb-4">Deep Dive</p>
         <h2 className="text-4xl md:text-5xl font-bold mb-4">
           The Diagrama Model
         </h2>
@@ -715,8 +721,8 @@ const DiagramaSection = forwardRef<HTMLElement, { active: boolean }>(
         </p>
 
         {/* Key stat callout */}
-        <div className="border border-yellow-700 bg-yellow-950/30 p-8 mb-12 text-center">
-          <div className="text-5xl md:text-6xl font-mono font-bold text-yellow-400 mb-2">
+        <div className="border border-amber-700 bg-amber-950/30 p-8 mb-12 text-center">
+          <div className="text-5xl md:text-6xl font-mono font-bold text-amber-400 mb-2">
             &euro;5.64
           </div>
           <p className="text-lg text-gray-300">return per &euro;1 invested</p>
@@ -726,7 +732,7 @@ const DiagramaSection = forwardRef<HTMLElement, { active: boolean }>(
         {/* Photo gallery */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-12">
           {DIAGRAMA_IMAGES.map((img) => (
-            <div key={img.src} className="aspect-[4/3] relative group overflow-hidden">
+            <div key={img.src} className="relative group overflow-hidden" style={{ aspectRatio: '4 / 3' }}>
               <Image
                 src={img.src}
                 alt={img.alt}
@@ -749,7 +755,7 @@ const DiagramaSection = forwardRef<HTMLElement, { active: boolean }>(
         </div>
 
         {/* Pull quote */}
-        <blockquote className="border-l-4 border-yellow-500 pl-6 py-2 mb-12">
+        <blockquote className="border-l-4 border-amber-500 pl-6 py-2 mb-12">
           <p className="text-xl text-gray-300 italic">
             &ldquo;We don&apos;t treat young people as offenders. We treat them as young people
             who have offended — and who deserve the chance to grow.&rdquo;
@@ -764,9 +770,9 @@ const DiagramaSection = forwardRef<HTMLElement, { active: boolean }>(
             <Link
               key={article.slug}
               href={`/stories/${article.slug}`}
-              className="block border border-gray-800 p-4 hover:border-yellow-600 transition-colors group"
+              className="block border border-gray-800 p-4 hover:border-amber-600 transition-colors group"
             >
-              <span className="text-white group-hover:text-yellow-400 transition-colors">
+              <span className="text-white group-hover:text-amber-400 transition-colors">
                 {article.title}
               </span>
               <span className="text-gray-600 ml-2">→</span>
@@ -1137,7 +1143,7 @@ const FundingRecipientsSection = forwardRef<HTMLElement, { active: boolean; fund
                       />
                     </div>
                     <div className="flex items-center gap-4 mt-2 ml-8">
-                      <span className="text-[10px] text-gray-500">{org.grant_count} grants</span>
+                      <span className="text-[12px] text-gray-500">{org.grant_count} grants</span>
                     </div>
                   </div>
                 ))}
@@ -1157,7 +1163,7 @@ const FundingRecipientsSection = forwardRef<HTMLElement, { active: boolean; fund
               <div className="flex flex-wrap gap-1 mb-4">
                 <button
                   onClick={() => setSelectedState(null)}
-                  className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest border transition-colors ${
+                  className={`px-3 py-1 text-[12px] font-bold uppercase tracking-widest border transition-colors ${
                     !selectedState ? 'bg-white text-black border-white' : 'border-gray-700 text-gray-500 hover:text-white'
                   }`}
                 >
@@ -1167,7 +1173,7 @@ const FundingRecipientsSection = forwardRef<HTMLElement, { active: boolean; fund
                   <button
                     key={st}
                     onClick={() => setSelectedState(st === selectedState ? null : st)}
-                    className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest border transition-colors ${
+                    className={`px-3 py-1 text-[12px] font-bold uppercase tracking-widest border transition-colors ${
                       selectedState === st ? 'bg-white text-black border-white' : 'border-gray-700 text-gray-500 hover:text-white'
                     }`}
                   >
@@ -1192,7 +1198,7 @@ const FundingRecipientsSection = forwardRef<HTMLElement, { active: boolean; fund
                         <div className="bg-red-600 h-full" style={{ width: `${detPct}%` }} />
                         <div className="bg-emerald-600 h-full" style={{ width: `${100 - detPct}%` }} />
                       </div>
-                      <div className="flex justify-between text-[10px]">
+                      <div className="flex justify-between text-[12px]">
                         <span className="text-red-400">${spend.detention_m}M detention ({detPct}%)</span>
                         <span className="text-emerald-400">${spend.community_m}M community</span>
                       </div>
@@ -1328,7 +1334,7 @@ const StoriesSection = forwardRef<HTMLElement, { active: boolean; stories: Story
                     <div className="h-20 bg-gradient-to-r from-gray-900 to-gray-800" />
                   )}
                   <div className="p-5">
-                    <span className={`inline-block px-2 py-0.5 text-[10px] font-bold uppercase text-white ${badge.color} mb-3`}>
+                    <span className={`inline-block px-2 py-0.5 text-[12px] font-bold uppercase text-white ${badge.color} mb-3`}>
                       {badge.label}
                     </span>
                     <h3 className="font-bold text-white text-sm leading-snug mb-2 line-clamp-2">
