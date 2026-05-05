@@ -85,7 +85,8 @@ const STATE_OPPORTUNITIES: Record<string, Array<{
   score: number;
 }>> = {
   NSW: [
-    { name: 'Mounty Yarns Team', org: 'Mounty Yarns', role: 'Community Partner', quote: 'Working closely on Mounty launch — photos and reflections from the team ready to share.', source: 'partner', score: 95 },
+    { name: 'The Buttery', org: 'The Buttery', role: 'Northern Rivers partner', quote: 'Therapeutic-community lineage. Lived-experience pathways. Northern Rivers stop partner for February 2027.', source: 'partner', score: 95 },
+    { name: 'Emma Maiden', org: 'Uniting', role: 'Director Advocacy', quote: '"Hoping some NSW MPs come and look. And think. And act." Sydney stop partner.', source: 'ally', score: 92 },
     { name: 'Teya Dusseldorp', org: 'Dusseldorp Forum', role: 'Director', quote: 'Meeting scheduled Fri 20 Mar. "Let\'s make a time to talk."', source: 'ally', score: 95 },
     { name: 'Nicole Mekler', org: 'Just Reinvest', role: 'Youth Advocacy & Implementation Lead, Mt Druitt', quote: '"Copy us in and we will attend if we can."', source: 'partner', score: 93 },
     { name: 'Daniel Daylight', org: 'Just Reinvest', role: 'Program Lead', quote: 'Key connection between Just Reinvest and Mount Druitt community.', source: 'partner', score: 90 },
@@ -227,39 +228,56 @@ const TOUR_STOPS_CONFIG: Array<{
   date: string; partner: string; venue: string; cost: string;
   description: string; storyArc: string;
 }> = [
-  { id: 'mount-druitt', city: 'Mount Druitt', state: 'New South Wales', stateCode: 'NSW', lat: -33.74, lng: 150.82, status: 'planning', date: 'April 2026', partner: 'Mounty Yarns', venue: 'Mounty Yarns', cost: '$30,000', description: 'Western Sydney launch — young people designing Room 1 for the first time.', storyArc: '"It starts here. Young people design Room 1."' },
-  { id: 'brisbane', city: 'Brisbane', state: 'Queensland', stateCode: 'QLD', lat: -27.47, lng: 153.03, status: 'demand', date: 'May 2026', partner: 'Youth Advocacy Centre (YAC)', venue: 'YAC Brisbane', cost: '$30,000', description: 'Queensland has the most community alternatives in Australia. YAC wants to host.', storyArc: '"Queensland has 261 alternatives. YAC is one. They want the container."' },
-  { id: 'adelaide', city: 'Adelaide', state: 'South Australia', stateCode: 'SA', lat: -34.93, lng: 138.60, status: 'confirmed', date: 'June 24-25 2026', partner: 'Reintegration Puzzle Conference @ Tandanya', venue: 'Tandanya National Aboriginal Cultural Institute', cost: '$30,000', description: 'National conference — delegates walk through between sessions. The Mayor supports it.', storyArc: '"The national conversation changes. On Kaurna Yarta."' },
-  { id: 'canberra', city: 'Canberra', state: 'Australian Capital Territory', stateCode: 'ACT', lat: -35.28, lng: 149.13, status: 'demand', date: 'July 2026', partner: 'TBD — Inspector of Custodial Services endorses', venue: 'TBD (Parliament House lawns suggested)', cost: '$30,000', description: 'The people who inspect the system say it\'s broken. ACT committed to new model.', storyArc: '"The Inspector walked through. Then she wrote a report."' },
-  { id: 'perth', city: 'Perth', state: 'Western Australia', stateCode: 'WA', lat: -31.95, lng: 115.86, status: 'exploring', date: 'August 2026', partner: 'UWA + Reconciliation WA', venue: 'University of Western Australia', cost: '$30,000', description: 'Academic research meets advocacy. Reconciliation WA CEO endorses.', storyArc: '"The evidence goes academic. Reconciliation WA says: invited."' },
-  { id: 'tasmania', city: 'Hobart', state: 'Tasmania', stateCode: 'TAS', lat: -42.88, lng: 147.33, status: 'demand', date: 'September 2026', partner: 'Prevention Not Detention TAS + DarkLab/MONA', venue: 'TBD (DarkLab/MONA connection)', cost: '$30,000', description: 'The coalition that said enough. MONA connection. Government decision-maker on board.', storyArc: '"A coalition, a museum, and a government official walk into a container."' },
-  { id: 'melbourne', city: 'Melbourne', state: 'Victoria', stateCode: 'VIC', lat: -37.81, lng: 144.96, status: 'demand', date: 'October 2026', partner: 'St Martins Youth Arts Centre', venue: 'St Martins Youth Arts Centre', cost: '$30,000', description: 'Youth arts venue offered. Melbourne Design Week connection. 8 demand signals.', storyArc: '"Young people making art about the system that failed them."' },
-  { id: 'tennant-creek', city: 'Tennant Creek', state: 'Northern Territory', stateCode: 'NT', lat: -19.65, lng: 134.19, status: 'exploring', date: 'November 2026', partner: 'Community-controlled', venue: 'Community Space', cost: '$30,000', description: 'Community authority. Community control. 96.2x Indigenous overrepresentation.', storyArc: '"Community authority. Community control. Their story, their way."' },
+  { id: 'adelaide', city: 'Adelaide', state: 'South Australia', stateCode: 'SA', lat: -34.93, lng: 138.60, status: 'planning', date: 'Jun–Jul 2026 · 2 months', partner: 'Justice Reform Initiative + Tandanya', venue: 'Tandanya · Reintegration Puzzle Conference', cost: '$130K', description: 'The tour opens at Tandanya alongside the Reintegration Puzzle Conference. Diagrama\'s CEO is attending. Two months: conference week, then a month of public open weeks, school groups, and a politicians day.', storyArc: '"The national conversation opens on Kaurna Yarta. Diagrama walks through. So do the delegates."' },
+  { id: 'perth', city: 'Perth + surrounds', state: 'Western Australia', stateCode: 'WA', lat: -31.95, lng: 115.86, status: 'planning', date: 'Aug–Sep 2026 · 2 months', partner: 'UWA + Reconciliation WA + Department of Justice WA', venue: 'University of Western Australia + regional drop-in', cost: '$220K', description: 'Two months in Perth with a regional drop-in to Broome or Kalgoorlie. The container becomes the public priming layer for the Department of Justice WA delegated-authority pilot communities.', storyArc: '"Public sentiment lands before the legislation does. Communities tell their own version of the story first."' },
+  { id: 'mparntwe', city: 'Mparntwe + Tennant Creek', state: 'Northern Territory', stateCode: 'NT', lat: -23.70, lng: 133.88, status: 'confirmed', date: 'Oct–Nov 2026 · 6 weeks', partner: 'Oonchiumpa Aboriginal Corporation', venue: 'Oonchiumpa + community spaces', cost: '$170K', description: 'Six weeks community-controlled across Mparntwe and Tennant Creek. Oonchiumpa runs a 95% diversion rate through Central Arrernte-designed programs. The container, the build, and the public weeks all happen on community terms.', storyArc: '"Community authority. Community control. The 95% model speaks for itself."' },
+  { id: 'brisbane', city: 'Brisbane', state: 'Queensland', stateCode: 'QLD', lat: -27.47, lng: 153.03, status: 'planning', date: 'Dec 2026 · 1 month', partner: 'YAC + EPIC Pathways', venue: 'YAC · Youth Advocacy Centre', cost: '$140K', description: 'YAC is hosting. Queensland has the strongest demand signal nationally, including a sitting state MP asking publicly where the container is touring.', storyArc: '"Queensland has the demand. YAC has the room. The MPs walk through."' },
+  { id: 'northern-rivers', city: 'Northern Rivers', state: 'New South Wales', stateCode: 'NSW', lat: -28.81, lng: 153.27, status: 'exploring', date: 'Feb 2027 · 1 month', partner: 'The Buttery', venue: 'The Buttery', cost: '$105K', description: 'A month in the Northern Rivers in partnership with The Buttery. Therapeutic-community lineage, lived-experience pathways, and a regional public the metro circuit does not reach.', storyArc: '"Therapeutic-community lineage meets the container. Lived experience leads the room."' },
+  { id: 'sydney', city: 'Sydney', state: 'New South Wales', stateCode: 'NSW', lat: -33.87, lng: 151.21, status: 'exploring', date: 'Mar 2027 · 1 month', partner: 'Uniting + USyd', venue: 'Uniting + University of Sydney', cost: '$115K', description: 'A month in Sydney carried by Uniting\'s advocacy team and the University of Sydney. NSW MPs invited on dedicated days. Public access through the city centre.', storyArc: '"Hoping some NSW MPs come and look. And think. And act."' },
+  { id: 'canberra', city: 'Canberra', state: 'Australian Capital Territory', stateCode: 'ACT', lat: -35.31, lng: 149.13, status: 'exploring', date: 'Apr 2027 · 3 weeks', partner: 'ACT Inspector of Custodial Services + civic partners', venue: 'Lawns of Parliament House', cost: '$100K', description: 'Three weeks on the lawns of Parliament House. ACT government has committed publicly to a new model of care for youth detention. Federal MPs invited, territory-level audience, and the press gallery on its doorstep.', storyArc: '"The Inspector walked through. Then she wrote a report. Then the federal MPs walked through."' },
+  { id: 'melbourne', city: 'Melbourne', state: 'Victoria', stateCode: 'VIC', lat: -37.81, lng: 144.96, status: 'exploring', date: 'May 2027 · 1 month', partner: 'St Martins YAC + RMIT', venue: 'St Martins Youth Arts Centre', cost: '$130K', description: 'A month in Melbourne carried by St Martins Youth Arts Centre. Public access, a youth arts collaboration on Room 3, and an academic spine through RMIT.', storyArc: '"Young people making art about the system that failed them, in the middle of the Melbourne arts season."' },
+  { id: 'hobart', city: 'Hobart', state: 'Tasmania', stateCode: 'TAS', lat: -42.88, lng: 147.33, status: 'exploring', date: 'Jun 2027 · 1 month', partner: 'DarkLab + Prevention Not Detention Tasmania', venue: 'DarkLab / MONA + coalition spaces', cost: '$120K', description: 'The tour closes in Hobart with DarkLab and the Prevention Not Detention coalition. Cultural institution, organised activist coalition, and a Department of Children and Young People contact in one room.', storyArc: '"A coalition, a museum, and a government decision-maker walk into a container."' },
 ];
 
 export async function GET() {
   const sb = createServiceClient();
   const stops: TourStopIntel[] = [];
 
-  // Pre-fetch: all verified interventions with org IDs (once, reused per state)
-  const [
-    { data: allInterventions },
-    { data: allOrgsWithState },
-  ] = await Promise.all([
-    sb.from('alma_interventions')
-      .select('operating_organization_id')
-      .neq('verification_status', 'ai_generated')
-      .not('operating_organization_id', 'is', null),
-    sb.from('organizations')
-      .select('id, state')
-      .not('state', 'is', null)
-      .limit(25000),
+  // Pre-fetch: all verified interventions with org IDs (once, reused per state).
+  // PostgREST has a server-enforced 1000-row cap; .range(0, N) doesn't override.
+  // Paginate manually so we get the full datasets.
+  async function fetchAll<T>(builder: () => any, pageSize = 1000): Promise<T[]> {
+    const out: T[] = [];
+    let from = 0;
+    // Hard ceiling to avoid runaway loops.
+    while (from < 200000) {
+      const { data, error } = await builder().range(from, from + pageSize - 1);
+      if (error || !data || data.length === 0) break;
+      out.push(...(data as T[]));
+      if (data.length < pageSize) break;
+      from += pageSize;
+    }
+    return out;
+  }
+
+  const [allInterventions, allOrgsWithState] = await Promise.all([
+    fetchAll<{ operating_organization_id: string | null }>(
+      () => sb.from('alma_interventions')
+        .select('operating_organization_id')
+        .neq('verification_status', 'ai_generated')
+        .not('operating_organization_id', 'is', null),
+    ),
+    fetchAll<{ id: string; state: string }>(
+      () => sb.from('organizations')
+        .select('id, state')
+        .not('state', 'is', null),
+    ),
   ]);
 
   // Build org→state lookup and state→orgIds map
   const orgStateMap = new Map<string, string>();
   const stateOrgIds = new Map<string, Set<string>>();
-  for (const o of (allOrgsWithState || [])) {
+  for (const o of allOrgsWithState) {
     orgStateMap.set(o.id, o.state);
     if (!stateOrgIds.has(o.state)) stateOrgIds.set(o.state, new Set());
     stateOrgIds.get(o.state)!.add(o.id);
@@ -267,7 +285,7 @@ export async function GET() {
 
   // Build per-state intervention counts per org
   const stateOrgInterventions = new Map<string, Map<string, number>>();
-  for (const row of (allInterventions || [])) {
+  for (const row of allInterventions) {
     const orgId = row.operating_organization_id;
     const state = orgId ? orgStateMap.get(orgId) : null;
     if (!state) continue;
@@ -294,29 +312,92 @@ export async function GET() {
       sb.from('oric_corporations').select('*', { count: 'exact', head: true }).eq('state', config.stateCode),
     ]);
 
-    // Get orgs with intervention counts for this state (using pre-fetched data)
+    // Get orgs with intervention counts for this state (using pre-fetched data).
+    // Pull ALL orgs in this state — dedup happens BEFORE the top-N slice.
     const interventionsByOrg = stateOrgInterventions.get(config.stateCode) || new Map<string, number>();
-    const orgIdsWithPrograms = Array.from(interventionsByOrg.keys()).slice(0, 30);
+    const allStateOrgIds = Array.from(interventionsByOrg.keys());
 
     let programOrgs: Array<{
       id: string; name: string; is_indigenous_org: boolean;
       website: string | null; acnc_data: Record<string, unknown> | null;
+      gs_entity_id: string | null;
     }> = [];
-    if (orgIdsWithPrograms.length > 0) {
-      const { data } = await sb.from('organizations')
-        .select('id, name, is_indigenous_org, website, acnc_data')
-        .in('id', orgIdsWithPrograms);
-      programOrgs = (data || []) as typeof programOrgs;
+    if (allStateOrgIds.length > 0) {
+      // Paginate to avoid the 1000-row PostgREST cap on large states.
+      const allFetched: typeof programOrgs = [];
+      for (let i = 0; i < allStateOrgIds.length; i += 800) {
+        const batch = allStateOrgIds.slice(i, i + 800);
+        const { data } = await sb.from('organizations')
+          .select('id, name, is_indigenous_org, website, acnc_data, gs_entity_id')
+          .in('id', batch);
+        allFetched.push(...((data || []) as typeof programOrgs));
+      }
+      programOrgs = allFetched;
+    }
+
+    // Dedupe at gs_entity_id level — when multiple org rows point to the same
+    // canonical entity (PCYC has 14, YAC has 4), collapse them and sum program counts.
+    const groupedByEntity = new Map<string, {
+      rep_id: string;
+      rep_name: string;
+      gs_entity_id: string | null;
+      indigenous: boolean;
+      website: string | null;
+      acnc_data: Record<string, unknown> | null;
+      count: number;
+      org_row_count: number;
+    }>();
+    for (const o of programOrgs) {
+      const key = o.gs_entity_id || o.id;
+      const orgCount = interventionsByOrg.get(o.id) || 0;
+      const existing = groupedByEntity.get(key);
+      if (existing) {
+        existing.count += orgCount;
+        existing.org_row_count++;
+        if (orgCount > (interventionsByOrg.get(existing.rep_id) || 0)) {
+          existing.rep_id = o.id;
+          existing.rep_name = o.name;
+        }
+        existing.indigenous = existing.indigenous || (o.is_indigenous_org || false);
+        existing.website = existing.website || o.website;
+        existing.acnc_data = existing.acnc_data || o.acnc_data;
+      } else {
+        groupedByEntity.set(key, {
+          rep_id: o.id,
+          rep_name: o.name,
+          gs_entity_id: o.gs_entity_id,
+          indigenous: o.is_indigenous_org || false,
+          website: o.website,
+          acnc_data: o.acnc_data,
+          count: orgCount,
+          org_row_count: 1,
+        });
+      }
+    }
+
+    // Fetch canonical names from gs_entities for any group with a gs_entity_id.
+    const entityIds = Array.from(groupedByEntity.values()).map((g) => g.gs_entity_id).filter(Boolean) as string[];
+    if (entityIds.length > 0) {
+      const { data: entityRows } = await sb.from('gs_entities')
+        .select('id, canonical_name')
+        .in('id', entityIds);
+      const canonicalById = new Map<string, string>((entityRows ?? []).map((e: any) => [e.id, e.canonical_name]));
+      for (const g of groupedByEntity.values()) {
+        if (g.gs_entity_id && canonicalById.has(g.gs_entity_id)) {
+          g.rep_name = canonicalById.get(g.gs_entity_id)!;
+        }
+      }
     }
 
     // Build ranked list: indigenous first, then by intervention count
-    const rankedOrgs = programOrgs
-      .map(o => ({
-        name: o.name,
-        indigenous: o.is_indigenous_org || false,
-        website: o.website,
-        acnc_data: o.acnc_data,
-        count: interventionsByOrg.get(o.id) || 0,
+    const rankedOrgs = Array.from(groupedByEntity.values())
+      .map(g => ({
+        rep_id: g.rep_id,
+        name: g.rep_name,
+        indigenous: g.indigenous,
+        website: g.website,
+        acnc_data: g.acnc_data,
+        count: g.count,
       }))
       .sort((a, b) => {
         if (a.indigenous !== b.indigenous) return a.indigenous ? -1 : 1;
@@ -328,17 +409,18 @@ export async function GET() {
     if (rankedOrgs.length < 12) {
       const existingNames = new Set(rankedOrgs.map(o => o.name));
       const { data: notableOrgs } = await sb.from('organizations')
-        .select('name, is_indigenous_org, website, acnc_data')
+        .select('id, name, is_indigenous_org, website, acnc_data')
         .eq('state', config.stateCode)
         .not('website', 'is', null)
         .not('acnc_data', 'is', null)
         .limit(20);
       backfillOrgs = ((notableOrgs || []) as Array<{
-        name: string; is_indigenous_org: boolean;
+        id: string; name: string; is_indigenous_org: boolean;
         website: string | null; acnc_data: Record<string, unknown> | null;
       }>)
         .filter(o => !existingNames.has(o.name))
         .map(o => ({
+          rep_id: o.id,
           name: o.name,
           indigenous: o.is_indigenous_org || false,
           website: o.website,
@@ -474,6 +556,7 @@ export async function GET() {
           else if (acts.includes('family') || acts.includes('child')) sector = 'Family Services';
         }
         return {
+          id: o.rep_id,
           name: o.name,
           type: o.indigenous ? 'Indigenous' : 'Community',
           indigenous: o.indigenous,
@@ -494,22 +577,22 @@ export async function GET() {
     });
   }
 
-  // Summary stats
-  const { count: totalOrgs } = await sb.from('organizations').select('*', { count: 'exact', head: true });
-  const { count: totalFunding } = await sb.from('justice_funding').select('*', { count: 'exact', head: true });
-  const { count: totalEntities } = await sb.from('campaign_alignment_entities').select('*', { count: 'exact', head: true });
+  // Summary stats — single Postgres RPC computes all 6 aggregates server-side.
+  // Each value is one SQL query away from being defended in a board meeting.
+  // RPC defined in supabase/migrations/20260505000001_contained_intel_summary_rpc.sql
+  const { data: summaryRows } = await sb.rpc('get_contained_intel_summary');
+  const s = (summaryRows && summaryRows[0]) || {};
 
   return NextResponse.json({
     stops,
     summary: {
-      totalOrgs: totalOrgs || 0,
-      totalFunding: totalFunding || 0,
-      totalEntities: totalEntities || 0,
-      totalInterventions: 883,
-      totalEvidence: 570,
-      totalStories: 50,
-      totalPhotos: 261,
-      totalStopCost: '$380,000',
+      tourStops: s.tour_stops ?? 9,
+      programsCatalogued: s.programs_catalogued ?? 0,
+      strongEvidenceCount: s.strong_evidence_count ?? 0,
+      orgsIndexed: s.orgs_indexed ?? 0,
+      indigenousLedOrgs: s.indigenous_led_orgs ?? 0,
+      fundingTrackedBillions: (Number(s.funding_tracked_dollars) || 0) / 1_000_000_000,
+      totalStopCost: '$1,650,000',
       raised: '$0',
     },
     generatedAt: new Date().toISOString(),
