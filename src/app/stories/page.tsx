@@ -2,7 +2,8 @@ import { Suspense } from 'react';
 import { StoriesPageContent } from './page-content';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
-import { fetchSyndicatedStories, fetchContentHubArticles } from '@/lib/empathy-ledger/syndication';
+import { fetchSyndicatedStories } from '@/lib/empathy-ledger/syndication';
+import { fetchContentHubArticles } from '@/lib/empathy-ledger-content-hub';
 
 export const metadata = {
   title: 'Stories from the Movement - JusticeHub',
@@ -47,7 +48,7 @@ async function getStoriesData() {
     try {
       const [elStories, elContentHubArticles] = await Promise.all([
         fetchSyndicatedStories(),
-        fetchContentHubArticles(),
+        fetchContentHubArticles({ limit: 100 }),
       ]);
 
       // Map syndicated stories (consent-based)

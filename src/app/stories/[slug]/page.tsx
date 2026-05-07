@@ -4,7 +4,7 @@ import { Navigation, Footer } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { Calendar, Clock, Tag, MapPin, User } from 'lucide-react';
 import { PasswordGate } from '@/components/ui/password-gate';
-import { fetchSyndicatedStories, fetchSyndicatedStoryContent, fetchContentHubArticles } from '@/lib/empathy-ledger/syndication';
+import { fetchSyndicatedStories, fetchSyndicatedStoryContent } from '@/lib/empathy-ledger/syndication';
 import { fetchContentHubArticleBySlug } from '@/lib/empathy-ledger-content-hub';
 
 const PASSWORD_PROTECTED_SLUGS: string[] = [];
@@ -20,6 +20,48 @@ const categories = {
 
 function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function wordCount(text: string | null | undefined): number {
+  return (text || '').trim().split(/\s+/).filter(Boolean).length;
+}
+
+function uniqueStrings(values: Array<string | null | undefined>): string[] {
+  return Array.from(
+    new Set(
+      values
+        .map((value) => value?.trim())
+        .filter((value): value is string => Boolean(value))
+    )
+  );
+}
+
+type ContentHubArticle = NonNullable<Awaited<ReturnType<typeof fetchContentHubArticleBySlug>>>;
+
+function mapContentHubArticleToStory(article: ContentHubArticle) {
+  const content = article.content || '';
+  const articleWordCount = wordCount(content);
+
+  return {
+    id: article.id,
+    title: article.title,
+    excerpt: article.excerpt || article.subtitle || '',
+    content,
+    featured_image_url: article.featuredImageUrl || null,
+    featured_image_caption: article.featuredImageAlt || null,
+    published_at: article.publishedAt || null,
+    tags: uniqueStrings([...(article.tags || []), ...(article.themes || [])]),
+    location_tags: [],
+    reading_time_minutes: articleWordCount > 0 ? Math.ceil(articleWordCount / 200) : null,
+    category: null,
+    view_count: 0,
+    public_profiles: article.authorName ? {
+      full_name: article.authorName,
+      slug: null,
+      photo_url: null,
+      bio: article.authorBio || null,
+    } : null,
+  };
 }
 
 /** Simple markdown→HTML for EL article content (no external dependency) */
@@ -64,17 +106,7 @@ function mdToHtml(md: string): string {
 /** Try to find a story from Empathy Ledger syndication API by slug */
 async function fetchELStory(slug: string) {
   try {
-    // Try syndicated stories first (consent-based, has embed tokens)
-    const stories = await fetchSyndicatedStories();
-    const storyMatch = stories.find(
-      (s: any) => slugify(s.title) === slug || s.id === slug
-    );
-    if (storyMatch) {
-      const content = await fetchSyndicatedStoryContent(storyMatch.id, storyMatch.embedToken);
-      return { ...storyMatch, content };
-    }
-
-    // Try EL articles (content hub — the 36+ published articles)
+    // Try EL articles first. They are the full content-hub records used by /blog/[slug].
     const article = await fetchContentHubArticleBySlug(slug);
     if (article) {
       return {
@@ -89,10 +121,20 @@ async function fetchELStory(slug: string) {
         storyteller: article.authorName ? { name: article.authorName, avatar: null } : null,
         content: {
           html: article.content?.startsWith('<') ? article.content : mdToHtml(article.content || ''),
-          wordCount: article.content?.split(/\s+/).length || 0,
+          wordCount: wordCount(article.content),
           imageUrl: article.featuredImageUrl,
         },
       };
+    }
+
+    // Try syndicated stories first (consent-based, has embed tokens)
+    const stories = await fetchSyndicatedStories();
+    const storyMatch = stories.find(
+      (s: any) => slugify(s.title) === slug || s.id === slug
+    );
+    if (storyMatch) {
+      const content = await fetchSyndicatedStoryContent(storyMatch.id, storyMatch.embedToken);
+      return { ...storyMatch, content };
     }
 
     return null;
@@ -104,6 +146,7 @@ async function fetchELStory(slug: string) {
 export default async function StoryPage({ params }: { params: { slug: string } }) {
   const supabase = createServiceClient();
   const { slug } = params;
+  const contentHubArticle = await fetchContentHubArticleBySlug(slug);
 
   // Try to fetch from articles first
   const { data: article } = await supabase
@@ -122,8 +165,8 @@ export default async function StoryPage({ params }: { params: { slug: string } }
     .single();
 
   // If not found in articles, try blog_posts
-  let story = article;
-  let contentType: 'article' | 'blog' | 'empathy-ledger' = 'article';
+  let story: any = contentHubArticle ? mapContentHubArticleToStory(contentHubArticle) : article;
+  let contentType: 'article' | 'blog' | 'empathy-ledger' = contentHubArticle ? 'empathy-ledger' : 'article';
 
   if (!story) {
     const { data: blogPost } = await supabase
@@ -185,7 +228,7 @@ export default async function StoryPage({ params }: { params: { slug: string } }
   }
 
   const author = story.public_profiles;
-  const publishDate = new Date(story.published_at as string);
+  const publishDate = story.published_at ? new Date(story.published_at as string) : new Date();
 
   const needsPassword = PASSWORD_PROTECTED_SLUGS.includes(slug);
 

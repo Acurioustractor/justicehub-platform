@@ -17,39 +17,50 @@ function slugify(title: string): string {
     .replace(/^-|-$/g, '');
 }
 
+function hasReadableContent(content: string | null | undefined): boolean {
+  const visibleText = (content || '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/<[^>]+>/g, ' ');
+  const words = visibleText.trim().match(/[A-Za-z0-9][A-Za-z0-9'’_-]*/g);
+  return Boolean(words && words.length >= 20);
+}
+
 async function fetchSyncedStories() {
   try {
     const supabase = createServiceClient();
     const { data } = await (supabase as any)
       .from('synced_stories')
-      .select('id, title, summary, story_image_url, themes, is_featured, source_published_at, story_category, slug')
+      .select('id, title, summary, content, story_image_url, themes, is_featured, source_published_at, story_category, slug')
       .eq('source', 'empathy_ledger')
       .order('source_published_at', { ascending: false })
       .limit(60);
 
-    return (data || []).map((s: any) => ({
-      id: `synced-${s.id}`,
-      title: s.title,
-      slug: s.slug || slugify(s.title || ''),
-      excerpt: s.summary,
-      authorName: null,
-      publishedAt: s.source_published_at,
-      tags: Array.isArray(s.themes)
-        ? s.themes.map((t: any) => {
-            if (typeof t === 'object' && t?.name) return t.name;
-            if (typeof t === 'string') {
-              // Handle stringified JSON like '{"name":"resilience"}'
-              if (t.startsWith('{')) {
-                try { return JSON.parse(t).name || t; } catch { return t; }
+    return (data || [])
+      .filter((s: any) => hasReadableContent(s.content))
+      .map((s: any) => ({
+        id: `synced-${s.id}`,
+        title: s.title,
+        slug: s.slug || slugify(s.title || ''),
+        excerpt: s.summary,
+        authorName: null,
+        publishedAt: s.source_published_at,
+        tags: Array.isArray(s.themes)
+          ? s.themes.map((t: any) => {
+              if (typeof t === 'object' && t?.name) return t.name;
+              if (typeof t === 'string') {
+                // Handle stringified JSON like '{"name":"resilience"}'
+                if (t.startsWith('{')) {
+                  try { return JSON.parse(t).name || t; } catch { return t; }
+                }
+                return t;
               }
-              return t;
-            }
-            return '';
-          }).filter(Boolean)
-        : [],
-      featuredImageUrl: s.story_image_url,
-      source: 'synced' as const,
-    }));
+              return '';
+            }).filter(Boolean)
+          : [],
+        featuredImageUrl: s.story_image_url,
+        source: 'synced' as const,
+      }));
   } catch {
     return [];
   }

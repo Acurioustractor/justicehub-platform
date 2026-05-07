@@ -31,6 +31,15 @@ type ContentHubArticleDetail = ContentHubArticle & {
 const EL_STORAGE_BASE =
   'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public';
 
+function hasReadableContent(content: string | null | undefined): boolean {
+  const visibleText = (content || '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/<[^>]+>/g, ' ');
+  const words = visibleText.trim().match(/[A-Za-z0-9][A-Za-z0-9'’_-]*/g);
+  return Boolean(words && words.length >= 20);
+}
+
 /**
  * Resolve a featured_image_id (UUID) to its real CDN URL via media_assets.
  * The id on `articles.featured_image_id` is a FK to `media_assets.id`;
@@ -91,7 +100,7 @@ export async function fetchContentHubArticles(params: {
 
     let query = empathyLedgerServiceClient
       .from('articles')
-      .select('id, title, slug, subtitle, excerpt, author_name, article_type, primary_project, published_at, tags, themes, visibility, featured_image_id')
+      .select('id, title, slug, subtitle, excerpt, author_name, article_type, primary_project, published_at, tags, themes, visibility, featured_image_id, content')
       .eq('status', 'published')
       .eq('visibility', 'public')
       .order('published_at', { ascending: false })
@@ -108,7 +117,7 @@ export async function fetchContentHubArticles(params: {
       return [];
     }
 
-    const rows = data || [];
+    const rows = (data || []).filter((article: any) => hasReadableContent(article.content));
     const mediaMap = await resolveMediaAssetUrls(
       rows.map((a: any) => a.featured_image_id).filter(Boolean)
     );
@@ -156,7 +165,7 @@ export async function fetchContentHubArticleBySlug(
       return null;
     }
 
-    if (!data) return null;
+    if (!data || !hasReadableContent(data.content)) return null;
 
     return {
       id: data.id,

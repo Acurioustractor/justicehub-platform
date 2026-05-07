@@ -5,12 +5,20 @@
  * Uses embed tokens for content access — respects storyteller consent.
  *
  * Env vars:
- *   EMPATHY_LEDGER_API_URL — Base URL (e.g. https://empathy-ledger-v2.vercel.app)
- *   EMPATHY_LEDGER_API_KEY — Syndication API key for JusticeHub site
+ *   EMPATHY_LEDGER_SYNDICATION_URL — Base URL (e.g. https://empathy-ledger-v2.vercel.app)
+ *   EMPATHY_LEDGER_SYNDICATION_KEY — Syndication API key for JusticeHub site
  */
 
-const API_URL = process.env.EMPATHY_LEDGER_API_URL || process.env.EMPATHY_LEDGER_V2_URL || '';
-const API_KEY = process.env.EMPATHY_LEDGER_API_KEY || process.env.EMPATHY_LEDGER_V2_KEY || '';
+const API_URL =
+  process.env.EMPATHY_LEDGER_SYNDICATION_URL ||
+  process.env.EMPATHY_LEDGER_API_URL ||
+  process.env.EMPATHY_LEDGER_V2_URL ||
+  '';
+const API_KEY =
+  process.env.EMPATHY_LEDGER_SYNDICATION_KEY ||
+  process.env.EMPATHY_LEDGER_API_KEY ||
+  process.env.EMPATHY_LEDGER_V2_KEY ||
+  '';
 
 export const isSyndicationConfigured = Boolean(API_URL && API_KEY);
 

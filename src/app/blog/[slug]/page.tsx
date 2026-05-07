@@ -25,6 +25,15 @@ function slugify(title: string): string {
     .replace(/^-|-$/g, '');
 }
 
+function hasReadableContent(content: string | null | undefined): boolean {
+  const visibleText = (content || '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/<[^>]+>/g, ' ');
+  const words = visibleText.trim().match(/[A-Za-z0-9][A-Za-z0-9'’_-]*/g);
+  return Boolean(words && words.length >= 20);
+}
+
 /** Normalise themes array — handles strings, objects, and stringified JSON */
 function normalizeThemes(themes: unknown): string[] {
   if (!Array.isArray(themes)) return [];
@@ -56,7 +65,7 @@ async function fetchSyncedStoryBySlug(slug: string) {
       .eq('slug', slug)
       .maybeSingle();
 
-    if (exactMatch) {
+    if (exactMatch && hasReadableContent(exactMatch.content)) {
       const match = exactMatch;
       return {
         id: match.id,
@@ -85,7 +94,7 @@ async function fetchSyncedStoryBySlug(slug: string) {
 
     if (!stories) return null;
 
-    const match = stories.find((s: any) => slugify(s.title || '') === slug);
+    const match = stories.find((s: any) => slugify(s.title || '') === slug && hasReadableContent(s.content));
     if (!match) return null;
 
     // Normalise to same shape as content hub articles
