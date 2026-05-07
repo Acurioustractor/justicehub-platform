@@ -48,7 +48,7 @@ async function getStoriesData() {
     try {
       const [elStories, elContentHubArticles] = await Promise.all([
         fetchSyndicatedStories(),
-        fetchContentHubArticles({ limit: 100 }),
+        fetchContentHubArticles({ project: 'justicehub', limit: 100 }),
       ]);
 
       // Map syndicated stories (consent-based)

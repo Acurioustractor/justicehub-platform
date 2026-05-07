@@ -145,20 +145,28 @@ export async function fetchContentHubArticles(params: {
 }
 
 export async function fetchContentHubArticleBySlug(
-  slug: string
+  slug: string,
+  params: {
+    project?: string;
+  } = {}
 ): Promise<ContentHubArticleDetail | null> {
   try {
     if (!isEmpathyLedgerWriteConfigured || !empathyLedgerServiceClient) {
       return null;
     }
 
-    const { data, error } = await empathyLedgerServiceClient
+    let query = empathyLedgerServiceClient
       .from('articles')
       .select('*')
       .eq('slug', slug)
       .eq('status', 'published')
-      .eq('visibility', 'public')
-      .maybeSingle();
+      .eq('visibility', 'public');
+
+    if (params.project) {
+      query = query.eq('primary_project', params.project);
+    }
+
+    const { data, error } = await query.maybeSingle();
 
     if (error) {
       console.error('EL content hub article query error:', error.message);

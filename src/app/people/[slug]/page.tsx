@@ -186,7 +186,7 @@ export default async function ProfilePage({
   if (profile.empathy_ledger_profile_id) {
     try {
       const { fetchContentHubArticles } = await import('@/lib/empathy-ledger-content-hub');
-      const elArticles = await fetchContentHubArticles({ limit: 100 });
+      const elArticles = await fetchContentHubArticles({ project: 'justicehub', limit: 100 });
       // Content hub articles authored by this person
       elMentions = elArticles
         .filter((a: any) => a.authorName && profile.full_name && a.authorName.includes(profile.full_name.split(' ')[0]))

@@ -31,8 +31,9 @@ async function fetchSyncedStories() {
     const supabase = createServiceClient();
     const { data } = await (supabase as any)
       .from('synced_stories')
-      .select('id, title, summary, content, story_image_url, themes, is_featured, source_published_at, story_category, slug')
+      .select('id, title, summary, content, story_image_url, themes, is_featured, source_published_at, story_category, project_slugs, slug')
       .eq('source', 'empathy_ledger')
+      .contains('project_slugs', ['justicehub'])
       .order('source_published_at', { ascending: false })
       .limit(60);
 

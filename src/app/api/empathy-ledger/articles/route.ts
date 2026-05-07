@@ -11,8 +11,9 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '20');
+    const project = searchParams.get('project') || 'justicehub';
 
-    const articles = await fetchContentHubArticles({ limit });
+    const articles = await fetchContentHubArticles({ project, limit });
 
     return NextResponse.json({ articles, count: articles.length });
   } catch (error) {

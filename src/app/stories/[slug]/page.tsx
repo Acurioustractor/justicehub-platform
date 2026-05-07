@@ -107,7 +107,7 @@ function mdToHtml(md: string): string {
 async function fetchELStory(slug: string) {
   try {
     // Try EL articles first. They are the full content-hub records used by /blog/[slug].
-    const article = await fetchContentHubArticleBySlug(slug);
+    const article = await fetchContentHubArticleBySlug(slug, { project: 'justicehub' });
     if (article) {
       return {
         id: article.id,
@@ -146,7 +146,7 @@ async function fetchELStory(slug: string) {
 export default async function StoryPage({ params }: { params: { slug: string } }) {
   const supabase = createServiceClient();
   const { slug } = params;
-  const contentHubArticle = await fetchContentHubArticleBySlug(slug);
+  const contentHubArticle = await fetchContentHubArticleBySlug(slug, { project: 'justicehub' });
 
   // Try to fetch from articles first
   const { data: article } = await supabase

@@ -63,6 +63,7 @@ async function fetchSyncedStoryBySlug(slug: string) {
       .select('id, empathy_ledger_id, title, summary, content, story_image_url, story_type, story_category, themes, is_featured, source_published_at, project_slugs, slug')
       .eq('source', 'empathy_ledger')
       .eq('slug', slug)
+      .contains('project_slugs', ['justicehub'])
       .maybeSingle();
 
     if (exactMatch && hasReadableContent(exactMatch.content)) {
@@ -89,6 +90,7 @@ async function fetchSyncedStoryBySlug(slug: string) {
       .from('synced_stories')
       .select('id, empathy_ledger_id, title, summary, content, story_image_url, story_type, story_category, themes, is_featured, source_published_at, project_slugs')
       .eq('source', 'empathy_ledger')
+      .contains('project_slugs', ['justicehub'])
       .order('source_published_at', { ascending: false })
       .limit(100);
 
@@ -120,7 +122,7 @@ async function fetchSyncedStoryBySlug(slug: string) {
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = await fetchContentHubArticleBySlug(params.slug)
+  const post = await fetchContentHubArticleBySlug(params.slug, { project: 'justicehub' })
     || await fetchSyncedStoryBySlug(params.slug);
 
   if (!post) return {};
@@ -144,7 +146,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = await fetchContentHubArticleBySlug(params.slug)
+  const post = await fetchContentHubArticleBySlug(params.slug, { project: 'justicehub' })
     || await fetchSyncedStoryBySlug(params.slug);
 
   if (!post) notFound();
