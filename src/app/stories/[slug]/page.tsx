@@ -6,6 +6,12 @@ import { Calendar, Clock, Tag, MapPin, User } from 'lucide-react';
 import { PasswordGate } from '@/components/ui/password-gate';
 import { fetchSyndicatedStories, fetchSyndicatedStoryContent } from '@/lib/empathy-ledger/syndication';
 import { fetchContentHubArticleBySlug } from '@/lib/empathy-ledger-content-hub';
+import {
+  JUDGES_POSTCARD_CARDS,
+  JUDGES_POSTCARD_DESTINATIONS,
+  JUDGES_POSTCARD_VOD_URL,
+  type JudgesPostcardCard,
+} from '@/content/judges-postcards';
 
 const PASSWORD_PROTECTED_SLUGS: string[] = [];
 
@@ -101,6 +107,85 @@ function mdToHtml(md: string): string {
 
     return `<p>${p}</p>`;
   }).join('\n');
+}
+
+/** Build a slug → postcard lookup from JUDGES_POSTCARD_DESTINATIONS so the
+ *  six printed-postcard QR routes never 404, even if the polished EL story
+ *  has not been published yet. The back-of-card content rendered here is
+ *  identical to what is printed on the physical postcards (already approved).
+ */
+function getPostcardBySlug(slug: string): JudgesPostcardCard | null {
+  for (const card of JUDGES_POSTCARD_CARDS) {
+    const dest = JUDGES_POSTCARD_DESTINATIONS[card.back.destination];
+    if (!dest) continue;
+    const destSlug = dest.path.replace(/^\/stories\//, '');
+    if (destSlug === slug) return card;
+  }
+  return null;
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function postcardActionsHtml(card: JudgesPostcardCard): string {
+  const items: string[] = [];
+  if (card.back.actionList && card.back.actionList.length > 0) {
+    for (const a of card.back.actionList) {
+      const path = a.path.startsWith('http')
+        ? a.path
+        : a.path.startsWith('justicehub.com.au')
+        ? `https://${a.path}`
+        : a.path;
+      items.push(`<li><a href="${escapeHtml(path)}">${escapeHtml(a.title)}</a></li>`);
+    }
+  } else if (card.back.action) {
+    items.push(`<li>${escapeHtml(card.back.action)}</li>`);
+  }
+  return items.length ? `<h3>Take it back to chambers</h3><ul>${items.join('')}</ul>` : '';
+}
+
+function mapPostcardToStory(card: JudgesPostcardCard) {
+  const paragraphs = card.back.paragraphs
+    .map((p) => `<p>${escapeHtml(p)}</p>`)
+    .join('\n');
+
+  const callout = card.back.callout
+    ? `<blockquote><p><strong>${escapeHtml(card.back.callout.label)}.</strong> ${escapeHtml(card.back.callout.text)}</p></blockquote>`
+    : '';
+
+  const front = card.front;
+  const openingQuote = `<blockquote><p>${escapeHtml(front.quote)}</p><p><em>${escapeHtml(front.attribution)}</em></p></blockquote>`;
+
+  const fieldGuide = `<h3>Read with Country in mind</h3>
+    <p>This page mirrors the back of postcard ${escapeHtml(card.number)} from the Judges on Country deck. The full polished story will be published once Kristy Bloomfield and Tanya Turner have reviewed it. In the meantime, the postcard's own words sit here as the canonical source.</p>
+    <p><a href="/judges-on-country">Open the Judges on Country field guide</a> · <a href="${escapeHtml(JUDGES_POSTCARD_VOD_URL)}">Watch the Oonchiumpa video</a> · <a href="/organizations/oonchiumpa">Visit the Oonchiumpa basecamp</a></p>`;
+
+  const content = [openingQuote, paragraphs, callout, postcardActionsHtml(card), fieldGuide]
+    .filter(Boolean)
+    .join('\n');
+
+  const featuredImage = front.imageSrc;
+  const title = card.back.title;
+
+  return {
+    id: `judges-postcard-${card.id}`,
+    title,
+    excerpt: card.back.subtitle,
+    content,
+    featured_image_url: featuredImage,
+    featured_image_caption: front.imageAlt,
+    published_at: null,
+    tags: ['Judges on Country', 'Oonchiumpa', `Postcard ${card.number}`],
+    location_tags: ['Mparntwe (Alice Springs)'],
+    reading_time_minutes: 2,
+    category: null,
+    view_count: 0,
+    public_profiles: null,
+  };
 }
 
 /** Try to find a story from Empathy Ledger syndication API by slug */
@@ -212,6 +297,18 @@ export default async function StoryPage({ params }: { params: { slug: string } }
           bio: null,
         } : null,
       } as any;
+      contentType = 'empathy-ledger';
+    }
+  }
+
+  // Judges-on-Country postcard fallback. The six QR codes printed on the
+  // physical postcards route here. Until the polished EL story is published
+  // and signed off by Kristy + Tanya, render the back-of-card content (which
+  // is the same approved text already printed on the cards).
+  if (!story) {
+    const postcard = getPostcardBySlug(slug);
+    if (postcard) {
+      story = mapPostcardToStory(postcard) as any;
       contentType = 'empathy-ledger';
     }
   }
