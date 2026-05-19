@@ -231,18 +231,38 @@ async function processOrg(org) {
   }
 
   const ext = result.json;
+  const fields = [
+    ext.contact_email ? 'email' : null,
+    ext.contact_phone ? 'phone' : null,
+    ext.contact_name ? 'name' : null,
+    ext.annual_report_url ? 'annual-report' : null,
+    ext.logo_url ? 'logo' : null,
+    ext.history_summary ? 'history' : null,
+  ].filter(Boolean);
+
+  const conf = typeof ext.confidence === 'number' ? ext.confidence : 0;
+
+  // Drop zero-confidence / empty extractions — they bloat the review queue
+  // without adding anything. Next pass with a different source will retry.
+  if (conf === 0 || fields.length === 0) {
+    console.log(`  · ${result.provider}: confidence=0 / no fields — dropping (not enqueued)`);
+    return null;
+  }
+
+  // Detect website mismatch (LLM flags when the page is for a different org).
+  // Route these to a data-repair lane instead of the outreach review queue.
+  const notes = String(ext.notes || '').toLowerCase();
+  const isMismatch =
+    notes.includes('not match') ||
+    notes.includes('different org') ||
+    notes.includes('wrong website') ||
+    notes.includes('does not match');
+  const status = isMismatch ? 'pending_data_repair' : 'pending_review';
+
   console.log(
-    `  · ${result.provider}: confidence=${ext.confidence ?? '?'} · ` +
-      [
-        ext.contact_email ? 'email' : null,
-        ext.contact_phone ? 'phone' : null,
-        ext.contact_name ? 'name' : null,
-        ext.annual_report_url ? 'annual-report' : null,
-        ext.logo_url ? 'logo' : null,
-        ext.history_summary ? 'history' : null,
-      ]
-        .filter(Boolean)
-        .join(', ') || 'no fields found'
+    `  · ${result.provider}: confidence=${conf} · ${fields.join(', ') || 'no fields found'}${
+      isMismatch ? ' · MISMATCH → data-repair lane' : ''
+    }`
   );
 
   return {
@@ -252,13 +272,14 @@ async function processOrg(org) {
     platform: 'web',
     raw_data: { homepage_excerpt: body.slice(0, 4000) },
     extracted_fields: ext,
-    confidence: typeof ext.confidence === 'number' ? ext.confidence : null,
-    status: 'pending_review',
+    confidence: conf,
+    status,
     provenance: {
       llm_provider: result.provider,
       llm_model: result.model,
       fetched_at: new Date().toISOString(),
       script: 'alma-org-enrichment.mjs',
+      mismatch_detected: isMismatch,
     },
   };
 }
@@ -303,10 +324,13 @@ async function main() {
     .gte('created_at', new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString());
 
   const recentSet = new Set((existing || []).map((e) => e.entity_id));
-  const todo = candidates.filter((c) => !recentSet.has(c.id)).slice(0, batchSize);
+  const afterDedup = candidates.filter((c) => !recentSet.has(c.id));
+  const dedupedOut = candidates.length - afterDedup.length;
+  const todo = afterDedup.slice(0, batchSize);
+  const trimmed = afterDedup.length - todo.length;
 
   console.log(
-    `Found ${candidates.length} eligible orgs, ${candidates.length - todo.length} skipped (recent candidate exists). Processing ${todo.length}.`
+    `Found ${candidates.length} eligible orgs · ${dedupedOut} already have a candidate from the last 14 days · ${trimmed} held back by batch size · processing ${todo.length}.`
   );
 
   const results = [];
