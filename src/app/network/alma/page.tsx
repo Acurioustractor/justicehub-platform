@@ -17,9 +17,9 @@ import { STATE_NAMES } from '@/lib/constants';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'ALMA Network | JusticeHub',
+  title: 'Australian Living Map of Alternatives | JusticeHub',
   description:
-    'The Alternative Local Models of Australia network — community organisations building the alternative to a broken system.',
+    'The Australian Living Map of Alternatives. Community organisations across the country doing the work that detention has been mistaken for. Searchable, with evidence and cost data.',
 };
 
 export default async function ALMANetworkPage() {
@@ -35,7 +35,9 @@ export default async function ALMANetworkPage() {
     supabase
       .from('organizations')
       .select('id, name, slug, state, is_indigenous_org')
-      .or('partner_tier.eq.basecamp,type.eq.basecamp'),
+      .or('partner_tier.eq.basecamp,type.eq.basecamp')
+      .eq('is_active', true)
+      .eq('verification_status', 'verified'),
     supabase
       .from('network_memberships')
       .select('id', { count: 'exact', head: true })
@@ -72,29 +74,36 @@ export default async function ALMANetworkPage() {
               className="text-sm uppercase tracking-[0.3em] text-[#059669] mb-4"
               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
             >
-              ALMA Network
+              The Network
             </p>
             <h1
               className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-4"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
-              Alternative Local Models
+              Australian Living
               <br />
-              of Australia
+              Map of Alternatives
             </h1>
-            <p className="text-lg text-white/70 max-w-2xl mb-10">
+            <p className="text-lg text-white/70 max-w-2xl mb-6">
               A decentralised network of community organisations proving that
               local models work better, cost less, and keep young people safe.
               Open source. Community validated. Built to replace a broken system.
+            </p>
+            <p className="text-sm text-white/50 max-w-2xl mb-10">
+              Looking for an organisation, a state, or a postcode?
+              {' '}
+              <Link href="/alma" className="text-[#059669] hover:underline font-semibold">
+                Search the Map →
+              </Link>
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
               {[
                 { value: basecamps.length, label: 'Basecamps' },
                 { value: minerCount, label: 'Miners' },
-                { value: interventionCount.toLocaleString(), label: 'ALMA Models' },
+                { value: interventionCount.toLocaleString(), label: 'Mapped models' },
                 { value: validationCount, label: 'Validations' },
-                { value: openOpps, label: 'Open Opportunities' },
+                { value: openOpps, label: 'Open opportunities' },
               ].map((s) => (
                 <div key={s.label}>
                   <p className="text-3xl font-bold text-white" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -258,24 +267,25 @@ export default async function ALMANetworkPage() {
           {/* Thesis */}
           <section className="bg-[#0A0A0A] text-white rounded-xl p-8 md:p-12">
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white mb-6" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-              Why &ldquo;Alternative&rdquo;?
+              Why a Living Map?
             </h2>
             <div className="space-y-4 text-white/80 max-w-3xl">
               <p>
-                Australia spends billions on youth justice systems that don&apos;t work.
-                Detention costs over $1,500 per child per day. Reoffending rates sit
-                above 50%. The money flows to large service providers while community
-                organisations fight for scraps.
+                Australia spends billions on youth justice systems that do not work.
+                Detention costs $4,250 per child per day. $1.55 million per child per
+                year. Reoffending rates sit above 80%. The money flows to large
+                service providers while community organisations fight for scraps.
+                <span className="text-white/40 text-sm"> (Productivity Commission ROGS 2024-25.)</span>
               </p>
               <p>
-                The ALMA Network isn&apos;t asking for permission. We&apos;re building the
-                alternative — community-led models that achieve better outcomes at a
-                fraction of the cost. Every Basecamp, every miner, every story is
-                proof that the system can change.
+                The Australian Living Map of Alternatives is not asking for
+                permission. It is the public record of the community-led models
+                already doing the work that detention has been mistaken for. Every
+                Basecamp, every miner, every story is proof that the system can
+                change.
               </p>
               <p className="text-white font-semibold">
-                This is time for alternative models of Australia to rise up, support
-                our young kids, and build a safer community.
+                Money flows inward. Evidence flows outward. Story stays sovereign at the centre.
               </p>
             </div>
           </section>

@@ -22,9 +22,9 @@ import { getDetentionCosts } from '@/lib/detention-costs';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'The Wall of Proof | ALMA Network | JusticeHub',
+  title: 'The Wall of Proof | Australian Living Map of Alternatives | JusticeHub',
   description:
-    'Every verified alternative model in Australia. Evidence levels, cost data, outcomes. The proof that community-led youth justice works — all in one place.',
+    'Every verified alternative model in Australia. Evidence levels, cost data, outcomes. The proof that community-led youth justice works, all in one place.',
 };
 
 const EVIDENCE_COLORS: Record<string, { bg: string; text: string; icon: any }> = {
