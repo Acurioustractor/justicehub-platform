@@ -30,16 +30,16 @@ export default async function OutreachQueuePage() {
   // Pull candidates with their org context.
   // Skip Indigenous-led orgs — they go through the elder-review queue.
   const { data: candidates } = await supabase
-    .from('enrichment_candidates')
+    .from('alma_org_enrichment_candidates')
     .select(`
-      id, entity_id, source, extracted_fields, confidence, status, provenance, created_at
+      id, organization_id, source, extracted_fields, confidence, status, provenance, created_at
     `)
     .eq('source', 'website_scrape')
-    .eq('status', 'pending_review')
+    .in('status', ['pending_review', 'pending_data_repair'])
     .order('confidence', { ascending: false, nullsFirst: false })
     .limit(200);
 
-  const entityIds = Array.from(new Set((candidates || []).map((c: any) => c.entity_id)));
+  const entityIds = Array.from(new Set((candidates || []).map((c: any) => c.organization_id)));
   let orgsById: Record<string, any> = {};
   let claimsByOrgId: Record<string, any> = {};
   let outreachByOrgId: Record<string, any> = {};
@@ -75,7 +75,7 @@ export default async function OutreachQueuePage() {
 
   const rows: QueueRow[] = (candidates || [])
     .map((c: any) => {
-      const org = orgsById[c.entity_id];
+      const org = orgsById[c.organization_id];
       if (!org) return null;
       if (org.is_indigenous_org) return null; // cultural-authority gate
       return {

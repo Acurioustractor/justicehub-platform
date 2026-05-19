@@ -5,7 +5,7 @@
  * Picks orgs that have a website but are missing rich profile data
  * (contact email, named contact, history, annual report link), fetches
  * the website, runs an LLM extraction, writes candidates to
- * `enrichment_candidates` for human review.
+ * `alma_org_enrichment_candidates` for human review.
  *
  * Usage:
  *   node scripts/alma-org-enrichment.mjs                     # dry-run, 10 orgs
@@ -15,7 +15,7 @@
  * Safety:
  *   - Indigenous-led orgs are SKIPPED. They route through the
  *     basecamp-referral pathway, not auto-enrichment.
- *   - Writes only land in `enrichment_candidates` with status='pending_review'.
+ *   - Writes only land in `alma_org_enrichment_candidates` with status='pending_review'.
  *     Nothing touches `organizations` directly until a human approves.
  *   - Per-host fetch rate-limited to one request every 1500ms.
  */
@@ -266,7 +266,7 @@ async function processOrg(org) {
   );
 
   return {
-    entity_id: org.id,
+    organization_id: org.id,
     source: 'website_scrape',
     source_query: { url: homepage, org_slug: org.slug },
     platform: 'web',
@@ -317,13 +317,13 @@ async function main() {
   // Skip orgs that already have a recent pending candidate
   const ids = candidates.map((c) => c.id);
   const { data: existing } = await supabase
-    .from('enrichment_candidates')
-    .select('entity_id')
-    .in('entity_id', ids)
+    .from('alma_org_enrichment_candidates')
+    .select('organization_id')
+    .in('organization_id', ids)
     .eq('source', 'website_scrape')
     .gte('created_at', new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString());
 
-  const recentSet = new Set((existing || []).map((e) => e.entity_id));
+  const recentSet = new Set((existing || []).map((e) => e.organization_id));
   const afterDedup = candidates.filter((c) => !recentSet.has(c.id));
   const dedupedOut = candidates.length - afterDedup.length;
   const todo = afterDedup.slice(0, batchSize);
@@ -344,7 +344,7 @@ async function main() {
   console.log(`\n${results.length} candidates produced.`);
 
   if (!apply) {
-    console.log('Dry-run: not writing to DB. Pass --apply to insert into enrichment_candidates.');
+    console.log('Dry-run: not writing to DB. Pass --apply to insert into alma_org_enrichment_candidates.');
     console.log('\nSample candidate:\n', JSON.stringify(results[0], null, 2));
     return;
   }
@@ -355,15 +355,15 @@ async function main() {
   }
 
   const { error: insertErr, data: inserted } = await supabase
-    .from('enrichment_candidates')
+    .from('alma_org_enrichment_candidates')
     .insert(results)
-    .select('id, entity_id');
+    .select('id, organization_id');
   if (insertErr) {
     console.error('Insert failed:', insertErr.message);
     process.exit(1);
   }
 
-  console.log(`Inserted ${inserted?.length || 0} candidates into enrichment_candidates.`);
+  console.log(`Inserted ${inserted?.length || 0} candidates into alma_org_enrichment_candidates.`);
   console.log('Review them at /admin/alma/outreach-queue.');
 }
 
