@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { STATE_NAMES } from '@/lib/constants';
 import { stateFromPostcode } from '@/lib/sa3-lookup';
+import { describeMissing, type CompletenessBreakdown } from '@/lib/alma/profile-completeness';
 
 export interface AlmaSearchModel {
   id: string;
@@ -32,6 +33,9 @@ export interface AlmaSearchModel {
     slug: string;
     state: string;
     isIndigenousOrg: boolean;
+    featuredOnMap: boolean;
+    completenessScore: number | null;
+    completenessBreakdown: CompletenessBreakdown | null;
   } | null;
 }
 
@@ -94,6 +98,9 @@ export function AlmaSearchClient({ models, totalCount }: Props) {
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [selectedEvidence, setSelectedEvidence] = useState<string | null>(null);
   const [indigenousOnly, setIndigenousOnly] = useState(false);
+  // Default to exemplars only. Honest first paint: most orgs aren't ready
+  // to be the public face of the Map yet.
+  const [exemplarsOnly, setExemplarsOnly] = useState(true);
   const [geoStatus, setGeoStatus] = useState<'idle' | 'pending' | 'denied' | 'unsupported' | 'done'>(
     'idle'
   );
@@ -115,6 +122,7 @@ export function AlmaSearchClient({ models, totalCount }: Props) {
   // Build filtered set
   const filtered = useMemo(() => {
     return models.filter((m) => {
+      if (exemplarsOnly && !m.org?.featuredOnMap) return false;
       if (selectedState && m.org?.state !== selectedState) return false;
       if (indigenousOnly && !m.org?.isIndigenousOrg) return false;
       if (selectedEvidence && getEvidenceKey(m.evidenceLevel) !== selectedEvidence) return false;
@@ -124,7 +132,7 @@ export function AlmaSearchClient({ models, totalCount }: Props) {
       }
       return true;
     });
-  }, [models, selectedState, indigenousOnly, selectedEvidence, debouncedQuery]);
+  }, [models, exemplarsOnly, selectedState, indigenousOnly, selectedEvidence, debouncedQuery]);
 
   // Recommended: when a state/postcode is set, surface 5 strongest-evidence orgs
   // in that state, prioritising Indigenous-led + Proven/Effective.
@@ -187,7 +195,13 @@ export function AlmaSearchClient({ models, totalCount }: Props) {
     setSelectedState(null);
     setSelectedEvidence(null);
     setIndigenousOnly(false);
+    setExemplarsOnly(true);
   };
+
+  const exemplarCount = useMemo(
+    () => models.filter((m) => m.org?.featuredOnMap).length,
+    [models]
+  );
 
   return (
     <>
@@ -206,9 +220,14 @@ export function AlmaSearchClient({ models, totalCount }: Props) {
           >
             Search the Map.
           </h1>
-          <p className="text-base text-white/70 max-w-2xl mb-8">
+          <p className="text-base text-white/70 max-w-2xl mb-2">
             {totalCount.toLocaleString()} community-led models across Australia. Search by name,
             place, or practice. Enter a postcode to see what is near you.
+          </p>
+          <p className="text-sm text-white/50 max-w-2xl mb-8">
+            By default we show the {exemplarCount} exemplar profiles: orgs with photos, evidence,
+            named contact, and verified claim. Toggle "Show all" to see the long tail we are still
+            working to fill out.
           </p>
 
           {/* Search bar */}
@@ -331,6 +350,19 @@ export function AlmaSearchClient({ models, totalCount }: Props) {
               }`}
             >
               Indigenous-led only
+            </button>
+            <button
+              onClick={() => setExemplarsOnly((v) => !v)}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                exemplarsOnly
+                  ? 'bg-[#059669] text-white'
+                  : 'bg-white/10 text-white/70 hover:bg-white/20'
+              }`}
+              title="Exemplar profiles meet the Map quality bar (logo, photos, evidence, contact, story, history). Toggle off to see the long tail."
+            >
+              {exemplarsOnly
+                ? `Exemplar profiles (${exemplarCount})`
+                : 'Show all (long tail included)'}
             </button>
             {hasFilters && (
               <button
@@ -467,6 +499,20 @@ function ModelCard({ model, compact = false }: { model: AlmaSearchModel; compact
   const EvidenceIcon = style.icon;
   const storyLink = model.org ? STORY_LINKS[model.org.slug] : null;
   const updatedLabel = fmtDate(model.updatedAt);
+  const score = model.org?.completenessScore ?? null;
+  const breakdown = model.org?.completenessBreakdown ?? null;
+  const missing = breakdown
+    ? (Object.keys(breakdown) as Array<keyof CompletenessBreakdown>).filter((k) => !breakdown[k])
+    : [];
+  const completenessPct = score !== null ? Math.round(score * 100) : null;
+  const completenessTone =
+    completenessPct === null
+      ? 'bg-[#0A0A0A]/5 text-[#0A0A0A]/40'
+      : completenessPct >= 50
+      ? 'bg-[#059669]/10 text-[#059669]'
+      : completenessPct >= 30
+      ? 'bg-amber-500/10 text-amber-600'
+      : 'bg-[#0A0A0A]/5 text-[#0A0A0A]/50';
 
   return (
     <div className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors">
@@ -474,12 +520,27 @@ function ModelCard({ model, compact = false }: { model: AlmaSearchModel; compact
         <h3 className="font-bold text-base leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
           {model.name}
         </h3>
-        <span
-          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${style.bg} ${style.text} shrink-0`}
-        >
-          <EvidenceIcon className="w-3 h-3" />
-          {evidenceKey}
-        </span>
+        <div className="flex items-center gap-1.5 shrink-0">
+          {completenessPct !== null && (
+            <span
+              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${completenessTone}`}
+              title={
+                missing.length === 0
+                  ? 'Profile complete.'
+                  : `Missing: ${missing.map((k) => describeMissing(k)).join(', ')}`
+              }
+              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+            >
+              {completenessPct}%
+            </span>
+          )}
+          <span
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${style.bg} ${style.text}`}
+          >
+            <EvidenceIcon className="w-3 h-3" />
+            {evidenceKey}
+          </span>
+        </div>
       </div>
 
       {model.org && (

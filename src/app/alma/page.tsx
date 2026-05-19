@@ -24,7 +24,8 @@ export default async function AlmaSearchPage() {
       id, name, type, description, evidence_level, cost_per_young_person, updated_at,
       operating_organization_id,
       organizations!alma_interventions_operating_organization_id_fkey(
-        name, slug, state, is_indigenous_org
+        name, slug, state, is_indigenous_org,
+        featured_on_map, profile_completeness_score, profile_completeness_breakdown
       )
     `,
       { count: 'exact' }
@@ -48,6 +49,11 @@ export default async function AlmaSearchPage() {
           slug: m.organizations.slug,
           state: m.organizations.state,
           isIndigenousOrg: !!m.organizations.is_indigenous_org,
+          featuredOnMap: !!m.organizations.featured_on_map,
+          completenessScore: m.organizations.profile_completeness_score
+            ? Number(m.organizations.profile_completeness_score)
+            : null,
+          completenessBreakdown: m.organizations.profile_completeness_breakdown || null,
         }
       : null,
   }));
