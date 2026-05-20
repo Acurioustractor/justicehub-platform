@@ -80,19 +80,32 @@ if (PROVIDERS.length === 0) {
 
 const EXTRACTION_PROMPT = `You are extracting structured information from an Australian community organisation's website. The org runs youth justice or community-led work.
 
-From the HTML/text below, extract:
-- contact_email: the best public-facing contact email (NOT staff personal emails). null if not present.
+CRITICAL FIRST STEP — identity check:
+Before extracting any fields, decide whether the website on this page is primarily about the named organisation, or whether the URL on file is wrong (a different org's site, a parent body, an aggregator, a search result, a parked domain, or an unrelated business).
+
+Output an "identity_match" object with:
+- represents_named_org: true ONLY if the page is unambiguously the home or primary web presence of the named organisation. false if any doubt.
+- represented_entity_name: the name of whichever organisation the website actually represents (could be the same name, a parent, a sponsor, or something completely different).
+- reason: one short sentence explaining how you decided.
+
+Then extract the org fields (set them to null if represents_named_org is false — do not extract another org's data and label it as the named one):
+- contact_email: best public-facing contact email (NOT staff personal emails). null if not present.
 - contact_phone: the org's main phone number in any format. null if not present.
 - contact_name: the most senior named public contact (CEO, Director, Program Lead). null if not present.
 - annual_report_url: a direct link to the most recent annual report PDF or page. null if not present.
-- logo_url: an img src URL that looks like the org's logo (small, distinctive, in the header or footer). null if not present.
+- logo_url: an img src URL that looks like the org's logo. null if not present.
 - history_summary: a 2-3 sentence factual summary of when and why the org was founded, drawing only from text on the page. null if not present.
-- confidence: 0.0-1.0 — how confident are you that the extracted fields are accurate.
-- notes: any caveats (e.g., "site is mostly a landing page", "phone is for a different program").
+- confidence: 0.0-1.0 — how confident are you that the extracted fields belong to the NAMED organisation. If represents_named_org is false this MUST be 0.
+- notes: any caveats.
 
 Return ONLY a JSON object. No prose.`;
 
 const EXTRACTION_SCHEMA = {
+  identity_match: {
+    represents_named_org: 'boolean',
+    represented_entity_name: 'string',
+    reason: 'string',
+  },
   contact_email: 'string | null',
   contact_phone: 'string | null',
   contact_name: 'string | null',
@@ -240,28 +253,30 @@ async function processOrg(org) {
     ext.history_summary ? 'history' : null,
   ].filter(Boolean);
 
+  // Identity check is now a structured boolean rather than free-text scan.
+  // The LLM is asked first whether the page primarily represents the named
+  // org. If false, we route to pending_data_repair regardless of how many
+  // fields were extracted — those fields belong to a different entity.
+  const identityMatch = ext.identity_match || {};
+  const representsNamedOrg = identityMatch.represents_named_org !== false; // default true if missing
   const conf = typeof ext.confidence === 'number' ? ext.confidence : 0;
 
-  // Drop zero-confidence / empty extractions — they bloat the review queue
-  // without adding anything. Next pass with a different source will retry.
-  if (conf === 0 || fields.length === 0) {
+  // Drop zero-confidence / empty extractions when the identity check passes.
+  // (A mismatch with extracted fields is still useful — it tells us what
+  // the wrong website actually represents, and we want to repair the org
+  // record, not just discard.)
+  if (representsNamedOrg && (conf === 0 || fields.length === 0)) {
     console.log(`  · ${result.provider}: confidence=0 / no fields — dropping (not enqueued)`);
     return null;
   }
 
-  // Detect website mismatch (LLM flags when the page is for a different org).
-  // Route these to a data-repair lane instead of the outreach review queue.
-  const notes = String(ext.notes || '').toLowerCase();
-  const isMismatch =
-    notes.includes('not match') ||
-    notes.includes('different org') ||
-    notes.includes('wrong website') ||
-    notes.includes('does not match');
-  const status = isMismatch ? 'pending_data_repair' : 'pending_review';
+  const status = representsNamedOrg ? 'pending_review' : 'pending_data_repair';
 
   console.log(
     `  · ${result.provider}: confidence=${conf} · ${fields.join(', ') || 'no fields found'}${
-      isMismatch ? ' · MISMATCH → data-repair lane' : ''
+      representsNamedOrg
+        ? ''
+        : ` · MISMATCH → data-repair lane (site represents: "${identityMatch.represented_entity_name || 'unknown'}")`
     }`
   );
 
@@ -272,14 +287,16 @@ async function processOrg(org) {
     platform: 'web',
     raw_data: { homepage_excerpt: body.slice(0, 4000) },
     extracted_fields: ext,
-    confidence: conf,
+    confidence: representsNamedOrg ? conf : 0,
     status,
     provenance: {
       llm_provider: result.provider,
       llm_model: result.model,
       fetched_at: new Date().toISOString(),
       script: 'alma-org-enrichment.mjs',
-      mismatch_detected: isMismatch,
+      represents_named_org: representsNamedOrg,
+      represented_entity_name: identityMatch.represented_entity_name || null,
+      identity_check_reason: identityMatch.reason || null,
     },
   };
 }
