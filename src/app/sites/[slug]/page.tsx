@@ -702,6 +702,23 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
         {/* Trust signals — show claimed/AI/register tier + freshness */}
         <TrustSignals orgId={(org as any).id} />
 
+        {/* History summary — surfaces enriched history_summary when there's no curated siteContent */}
+        {(org as any).history_summary && !siteContent.founder && (
+          <section className="max-w-6xl mx-auto px-6 py-16">
+            <div className="max-w-3xl mx-auto">
+              <p className="text-xs uppercase tracking-[0.3em] text-[#0A0A0A]/40 mb-3" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                Our Story
+              </p>
+              <h2 className="text-3xl font-black mb-6 text-[#43302b]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                History
+              </h2>
+              <p className="text-[#5c4033] leading-relaxed text-lg whitespace-pre-line">
+                {(org as any).history_summary}
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* Annual-report facts (only renders when extracted) */}
         <AnnualReportFactsSection
           facts={(org as any).acnc_data?.annual_report_facts || null}

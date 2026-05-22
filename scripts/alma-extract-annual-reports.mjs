@@ -134,22 +134,32 @@ async function callLLM(prompt, userContent) {
   return null;
 }
 
-async function fetchPdf(url) {
+async function fetchPdf(url, { allowLandingPageCrawl = true } = {}) {
   try {
     const res = await fetch(url, {
       redirect: 'follow',
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       headers: {
         'User-Agent': 'JusticeHubMapBot/1.0 (+https://justicehub.com.au)',
-        Accept: 'application/pdf,*/*',
+        Accept: 'application/pdf,text/html,*/*',
       },
     });
     if (!res.ok) return { ok: false, reason: `http_${res.status}` };
     const ct = (res.headers.get('content-type') || '').toLowerCase();
-    // Accept application/pdf, application/octet-stream (some hosts mislabel),
-    // reject text/html (annual-report landing pages not PDFs)
+    // HTML landing page — try to discover a PDF link on it before giving up.
+    // Many orgs publish an /annual-reports/ index page rather than a direct
+    // PDF URL, so we parse for the most-recent annual-report link.
     if (ct.includes('text/html')) {
-      return { ok: false, reason: `html_not_pdf` };
+      if (!allowLandingPageCrawl) {
+        return { ok: false, reason: 'html_not_pdf' };
+      }
+      const html = await res.text();
+      const discovered = findAnnualReportPdfLink(html, res.url || url);
+      if (!discovered) {
+        return { ok: false, reason: 'html_no_pdf_links_found' };
+      }
+      console.log(`  · landing page → crawled, trying ${discovered}`);
+      return fetchPdf(discovered, { allowLandingPageCrawl: false });
     }
     const buf = Buffer.from(await res.arrayBuffer());
     if (buf.length > MAX_PDF_BYTES) {
@@ -159,20 +169,48 @@ async function fetchPdf(url) {
     if (buf.slice(0, 4).toString() !== '%PDF') {
       return { ok: false, reason: 'not_a_pdf_file' };
     }
-    return { ok: true, buffer: buf };
+    return { ok: true, buffer: buf, finalUrl: res.url || url };
   } catch (e) {
     return { ok: false, reason: `fetch_failed: ${e.message}` };
   }
 }
 
+// Parse HTML for PDF links that look like annual reports. Picks the one
+// with the highest 4-digit year in its href or anchor text; falls back to
+// the first PDF whose context mentions "annual" or "report".
+function findAnnualReportPdfLink(html, baseUrl) {
+  const linkRe = /<a\b[^>]*href=["']([^"']+\.pdf[^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  const candidates = [];
+  let m;
+  while ((m = linkRe.exec(html)) !== null) {
+    const rawHref = m[1].trim();
+    const text = m[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const hay = `${rawHref} ${text}`.toLowerCase();
+    const hasAnnualSignal = /annual|report|impact|year[\s-]?in[\s-]?review/.test(hay);
+    if (!hasAnnualSignal) continue;
+    const yearMatch = hay.match(/20\d{2}/g);
+    const year = yearMatch ? Math.max(...yearMatch.map(Number)) : 0;
+    let absolute;
+    try {
+      absolute = new URL(rawHref, baseUrl).toString();
+    } catch {
+      continue;
+    }
+    candidates.push({ url: absolute, year, text });
+  }
+  if (candidates.length === 0) return null;
+  candidates.sort((a, b) => b.year - a.year);
+  return candidates[0].url;
+}
+
 async function extractPdfText(buffer) {
   try {
-    // pdf-parse v2 exports default as a CommonJS factory; use dynamic import
-    // and unwrap default if present.
-    const pdfParseMod = await import('pdf-parse');
-    const pdfParse = pdfParseMod.default || pdfParseMod;
-    const result = await pdfParse(buffer);
-    return result.text || '';
+    // pdf-parse v2 ships a named PDFParse class. Construct with { data }
+    // and call getText() to get { text }.
+    const { PDFParse } = await import('pdf-parse');
+    const parser = new PDFParse({ data: buffer });
+    const result = await parser.getText();
+    return result?.text || '';
   } catch (e) {
     console.warn(`  · pdf-parse failed: ${e.message}`);
     return '';

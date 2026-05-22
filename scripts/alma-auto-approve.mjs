@@ -81,12 +81,13 @@ function shouldAutoApprove(candidate, org) {
   if (im.represents_named_org === false) {
     reasons.push('identity mismatch (data-repair lane)');
   }
-  // Check email validation if email is being proposed
-  if (ext.contact_email) {
-    const ev = ext.email_validation || {};
-    if (ev.kind !== 'valid') reasons.push(`email validation ${ev.kind}`);
-    if (ev.generic !== true) reasons.push('email is personal mailbox — needs human consent check');
-  }
+  // Email validation is now a per-field gate (see loop below) so older
+  // candidates without email_validation can still land their safe
+  // non-email fields. The email itself stays withheld until validation is
+  // present and the address is generic.
+  const ev = ext.email_validation || null;
+  const emailValidated =
+    !!ext.contact_email && ev && ev.kind === 'valid' && ev.generic === true;
   // Which fields would we actually apply?
   const fieldsToApply = [];
   const skips = [];
@@ -94,6 +95,10 @@ function shouldAutoApprove(candidate, org) {
     const val = ext[from];
     if (!val || typeof val !== 'string' || !val.trim()) continue;
     if (key === 'email') {
+      if (!emailValidated) {
+        skips.push('email (validation missing or non-generic)');
+        continue;
+      }
       if (org.contact_email || org.email) {
         skips.push(`${key} (org already has)`);
         continue;
@@ -114,9 +119,13 @@ async function autoApprove(candidate, org) {
   const updatePayload = { updated_at: new Date().toISOString() };
   const applied = [];
   const ext = candidate.extracted_fields || {};
+  const ev = ext.email_validation || null;
+  const emailValidated =
+    !!ext.contact_email && ev && ev.kind === 'valid' && ev.generic === true;
   for (const [key, { from, to }] of Object.entries(FIELD_MAP)) {
     const val = ext[from];
     if (!val || typeof val !== 'string' || !val.trim()) continue;
+    if (key === 'email' && !emailValidated) continue;
     if (key === 'email' && (org.contact_email || org.email)) continue;
     if (key !== 'email' && org[to]) continue;
     updatePayload[to] = val.trim();

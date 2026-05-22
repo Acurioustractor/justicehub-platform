@@ -106,22 +106,34 @@ async function main() {
   // Step 1 — pull org IDs to process. Eligibility = not archived. We don't
   // filter Indigenous-led here because they too need a score (just sent
   // through the elder-review path for enrichment, not auto outreach).
-  const limit = all ? 100000 : batchSize;
-  const { data: orgs, error } = await supabase
-    .from('organizations')
-    .select(
-      'id, name, slug, logo_url, website_url, website, tagline, description, history_summary, annual_report_url, el_gallery_ids, profile_completeness_score'
-    )
-    .neq('archived', true)
-    .order('id', { ascending: true })
-    .limit(limit);
-
-  if (error) {
-    console.error('Fetch orgs failed:', error.message);
-    process.exit(1);
+  // Supabase caps every fetch at 1000 rows regardless of .limit() — so we
+  // page with .range() until we hit the requested target (or the table end).
+  const target = all ? 200000 : batchSize;
+  const pageSize = 1000;
+  const orgs = [];
+  let offset = 0;
+  while (orgs.length < target) {
+    const remaining = target - orgs.length;
+    const upper = offset + Math.min(pageSize, remaining) - 1;
+    const { data: page, error } = await supabase
+      .from('organizations')
+      .select(
+        'id, name, slug, logo_url, website_url, website, tagline, description, history_summary, annual_report_url, el_gallery_ids, profile_completeness_score'
+      )
+      .neq('archived', true)
+      .order('id', { ascending: true })
+      .range(offset, upper);
+    if (error) {
+      console.error('Fetch orgs failed:', error.message);
+      process.exit(1);
+    }
+    if (!page || page.length === 0) break;
+    orgs.push(...page);
+    offset += page.length;
+    if (page.length < pageSize) break;
   }
 
-  if (!orgs || orgs.length === 0) {
+  if (orgs.length === 0) {
     console.log('No orgs to score.');
     return;
   }
