@@ -26,8 +26,8 @@ export const metadata: Metadata = {
   },
 };
 
-const REGIONS = ['QLD', 'NT'] as const;
-const COMING_V2_REGIONS = ['NSW', 'VIC', 'WA', 'SA', 'TAS', 'ACT'] as const;
+const REGIONS = ['QLD', 'NT', 'NSW', 'VIC', 'WA', 'SA', 'ACT', 'TAS'] as const;
+const COMING_V2_REGIONS = [] as const;
 
 export default async function CivicIntelligencePage(props: {
   searchParams?: Promise<{ [key: string]: string | undefined }>;

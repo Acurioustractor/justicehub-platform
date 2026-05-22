@@ -4,34 +4,34 @@ import { useEffect, useState, useCallback } from 'react';
 
 interface AccountabilityData {
   summary: {
-    speech_count: number;
-    total_funded: number;
-    program_count: number;
+    speeches_mentioning: number;
+    total_funding_matched: number;
+    programs_found: number;
     recommendations_rejected: number;
-    commitments_broken: number;
+    promises_broken: number;
   };
-  panels: {
+  accountability: {
     said: {
       count: number;
-      excerpts: { speaker: string; text: string; date: string }[];
+      speeches: { speaker: string; excerpt: string; date: string }[];
     };
     funded: {
       total: number;
-      top_records: { recipient: string; amount: number; source: string }[];
+      records: { program: string; amount: number; source: string }[];
     };
     happened: {
       count: number;
-      evidence_levels: Record<string, number>;
+      programs: { name: string; org: string; evidence: string; cost: number }[];
     };
-    oversight: {
+    recommended: {
       count: number;
       rejected: number;
-      items: { body: string; text: string; status: string }[];
+      recommendations: { oversight_body: string; recommendation_text: string; status: string }[];
     };
     promised: {
       count: number;
       broken: number;
-      items: { text: string; status: string; minister: string }[];
+      commitments: { commitment_text: string; status: string; minister_name: string }[];
     };
   };
 }
@@ -153,28 +153,28 @@ export default function AccountabilityLoop() {
             style={{ backgroundColor: 'white' }}
           >
             <SummaryStat
-              value={data.summary.speech_count.toLocaleString()}
+              value={(data.summary.speeches_mentioning || 0).toLocaleString()}
               label="speeches"
             />
             <span className="text-[#0A0A0A]/20 text-lg hidden md:inline">|</span>
             <SummaryStat
-              value={formatDollars(data.summary.total_funded)}
+              value={formatDollars(data.summary.total_funding_matched || 0)}
               label="funded"
             />
             <span className="text-[#0A0A0A]/20 text-lg hidden md:inline">|</span>
             <SummaryStat
-              value={data.summary.program_count.toLocaleString()}
+              value={(data.summary.programs_found || 0).toLocaleString()}
               label="programs"
             />
             <span className="text-[#0A0A0A]/20 text-lg hidden md:inline">|</span>
             <SummaryStat
-              value={data.summary.recommendations_rejected.toLocaleString()}
+              value={(data.summary.recommendations_rejected || 0).toLocaleString()}
               label="recs rejected"
               accent="#DC2626"
             />
             <span className="text-[#0A0A0A]/20 text-lg hidden md:inline">|</span>
             <SummaryStat
-              value={data.summary.commitments_broken.toLocaleString()}
+              value={(data.summary.promises_broken || 0).toLocaleString()}
               label="promises broken"
               accent="#DC2626"
             />
@@ -188,13 +188,13 @@ export default function AccountabilityLoop() {
                 className="text-2xl font-bold tracking-tight mb-3"
                 style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}
               >
-                {data.panels.said.count} speeches
+                {data.accountability.said.count} speeches
               </div>
               <div className="space-y-2">
-                {data.panels.said.excerpts.slice(0, 3).map((e, i) => (
+                {(data.accountability.said.speeches || []).slice(0, 3).map((e, i) => (
                   <div key={i} className="text-xs text-[#0A0A0A]/60">
                     <span className="font-mono text-[#0A0A0A]/40">{e.speaker}</span>
-                    <p className="line-clamp-2 mt-0.5">&ldquo;{e.text}&rdquo;</p>
+                    <p className="line-clamp-2 mt-0.5">&ldquo;{e.excerpt}&rdquo;</p>
                   </div>
                 ))}
               </div>
@@ -208,13 +208,13 @@ export default function AccountabilityLoop() {
                 className="text-2xl font-bold tracking-tight mb-3"
                 style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#059669' }}
               >
-                {formatDollars(data.panels.funded.total)}
+                {formatDollars(data.accountability.funded.total)}
               </div>
               <div className="space-y-2">
-                {data.panels.funded.top_records.slice(0, 3).map((r, i) => (
+                {(data.accountability.funded.records || []).slice(0, 3).map((r, i) => (
                   <div key={i} className="text-xs">
-                    <span className="font-mono text-[#059669]">{formatDollars(r.amount)}</span>
-                    <span className="text-[#0A0A0A]/50 ml-1">{r.recipient}</span>
+                    <span className="font-mono text-[#059669]">{formatDollars(r.amount || 0)}</span>
+                    <span className="text-[#0A0A0A]/50 ml-1 line-clamp-1">{r.program} ({r.source})</span>
                   </div>
                 ))}
               </div>
@@ -228,13 +228,15 @@ export default function AccountabilityLoop() {
                 className="text-2xl font-bold tracking-tight mb-3"
                 style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}
               >
-                {data.panels.happened.count} programs
+                {data.accountability.happened.count} programs
               </div>
-              <div className="space-y-1">
-                {Object.entries(data.panels.happened.evidence_levels).map(([level, count]) => (
-                  <div key={level} className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-[#0A0A0A]/50 truncate mr-2">{level}</span>
-                    <span className="text-[#0A0A0A]/80 font-medium">{count}</span>
+              <div className="space-y-2">
+                {(data.accountability.happened.programs || []).slice(0, 3).map((p, i) => (
+                  <div key={i} className="text-xs">
+                    <div className="font-mono text-[#0A0A0A]/40 line-clamp-1">{p.name}</div>
+                    <div className="flex items-center justify-between mt-0.5">
+                      <span className="text-[#0A0A0A]/80 font-medium">{p.evidence || 'Unverified'}</span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -249,22 +251,22 @@ export default function AccountabilityLoop() {
                   className="text-2xl font-bold tracking-tight"
                   style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}
                 >
-                  {data.panels.oversight.count} recs
+                  {data.accountability.recommended.count} recs
                 </span>
-                {data.panels.oversight.rejected > 0 && (
+                {data.accountability.recommended.rejected > 0 && (
                   <span
                     className="text-sm font-bold font-mono"
                     style={{ color: '#DC2626' }}
                   >
-                    {data.panels.oversight.rejected} rejected
+                    {data.accountability.recommended.rejected} rejected
                   </span>
                 )}
               </div>
               <div className="space-y-2">
-                {data.panels.oversight.items.slice(0, 3).map((item, i) => (
+                {(data.accountability.recommended.recommendations || []).slice(0, 3).map((item, i) => (
                   <div key={i} className="text-xs">
-                    <span className="font-mono text-[#0A0A0A]/40">{item.body}</span>
-                    <p className="text-[#0A0A0A]/60 line-clamp-2 mt-0.5">{item.text}</p>
+                    <span className="font-mono text-[#0A0A0A]/40 line-clamp-1">{item.oversight_body}</span>
+                    <p className="text-[#0A0A0A]/60 line-clamp-2 mt-0.5">{item.recommendation_text}</p>
                     {item.status?.toLowerCase() === 'rejected' && (
                       <span className="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-medium" style={{ backgroundColor: '#DC262620', color: '#DC2626' }}>
                         REJECTED
@@ -284,23 +286,23 @@ export default function AccountabilityLoop() {
                   className="text-2xl font-bold tracking-tight"
                   style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}
                 >
-                  {data.panels.promised.count}
+                  {data.accountability.promised.count}
                 </span>
-                {data.panels.promised.broken > 0 && (
+                {data.accountability.promised.broken > 0 && (
                   <span
                     className="text-sm font-bold font-mono"
                     style={{ color: '#DC2626' }}
                   >
-                    {data.panels.promised.broken} broken
+                    {data.accountability.promised.broken} broken
                   </span>
                 )}
               </div>
               <div className="space-y-2">
-                {data.panels.promised.items.slice(0, 3).map((item, i) => (
+                {(data.accountability.promised.commitments || []).slice(0, 3).map((item, i) => (
                   <div key={i} className="text-xs">
-                    <span className="font-mono text-[#0A0A0A]/40">{item.minister}</span>
-                    <p className="text-[#0A0A0A]/60 line-clamp-2 mt-0.5">{item.text}</p>
-                    {['rejected', 'not_started', 'broken'].includes(item.status?.toLowerCase()) && (
+                    <span className="font-mono text-[#0A0A0A]/40">{item.minister_name}</span>
+                    <p className="text-[#0A0A0A]/60 line-clamp-2 mt-0.5">{item.commitment_text}</p>
+                    {['rejected', 'not_started', 'broken'].includes(item.status?.toLowerCase() || '') && (
                       <span className="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-medium" style={{ backgroundColor: '#DC262620', color: '#DC2626' }}>
                         {item.status.toUpperCase().replace(/_/g, ' ')}
                       </span>

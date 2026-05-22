@@ -13,7 +13,7 @@ interface TopicMonth {
 }
 
 interface TimelineData {
-  months: TopicMonth[];
+  timeline: TopicMonth[];
   total_speeches: number;
 }
 
@@ -71,7 +71,8 @@ export default function RhetoricTimeline() {
     );
   }
 
-  const { months, total_speeches } = data;
+  const { total_speeches = 0 } = data;
+  const months = data.timeline || [];
   const maxTotal = Math.max(
     ...months.map((m) => TOPICS.reduce((sum, t) => sum + ((m[t] as number) || 0), 0)),
     1
@@ -144,11 +145,11 @@ export default function RhetoricTimeline() {
             return (
               <div
                 key={m.month}
-                className="flex-1 flex flex-col justify-end group relative"
+                className="flex-1 flex flex-col justify-end group relative h-full"
                 style={{ minWidth: '20px' }}
               >
                 {/* Tooltip */}
-                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block z-10">
+                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block z-20">
                   <div
                     className="rounded-lg px-3 py-2 text-xs font-mono shadow-lg whitespace-nowrap"
                     style={{ backgroundColor: '#0A0A0A', color: '#F5F0E8' }}
@@ -168,7 +169,10 @@ export default function RhetoricTimeline() {
                 </div>
 
                 {/* Stacked segments */}
-                <div className="flex flex-col justify-end" style={{ height: `${(total / maxTotal) * 100}%` }}>
+                <div 
+                  className="flex flex-col justify-end w-full rounded-t-[3px] overflow-hidden opacity-90 group-hover:opacity-100 transition-opacity drop-shadow-sm" 
+                  style={{ height: `${(total / maxTotal) * 100}%` }}
+                >
                   {TOPICS.map((topic) => {
                     const val = (m[topic] as number) || 0;
                     if (val === 0) return null;

@@ -8,6 +8,8 @@
  */
 
 import { createServiceClient } from '@/lib/supabase/service';
+import { callBackgroundLLM } from '@/lib/ai/model-router';
+import { parseJSON } from '@/lib/ai/parse-json';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -239,10 +241,11 @@ export async function linkToOrgsAndPrograms(
 
     if (!findingId) continue;
 
-    // Extract potential org/program names from text
-    // Simple heuristic: look for capitalized multi-word phrases
     const text = `${mention.title} ${mention.body_snippet}`;
-    const candidates = extractNameCandidates(text);
+    const entities = await extractEntitiesWithAI(text);
+    
+    // Combine orgs and programs for the search pipeline
+    const candidates = [...entities.organizations, ...entities.programs];
 
     for (const candidate of candidates.slice(0, 5)) {
       try {
@@ -293,6 +296,48 @@ export async function linkToOrgsAndPrograms(
 
   console.log(`[CivicBridge] Linked ${linked} findings to orgs/programs`);
   return { linked };
+}
+
+interface ExtractedEntities {
+  organizations: string[];
+  programs: string[];
+  regions: string[];
+}
+
+async function extractEntitiesWithAI(text: string): Promise<ExtractedEntities> {
+  const prompt = `Extract any organizations, community programs, or specific regions/locations mentioned in the following parliamentary text. 
+Return ONLY a valid JSON object matching this structure:
+{
+  "organizations": ["List of organizations"],
+  "programs": ["List of programs"],
+  "regions": ["List of regions or locations"]
+}
+If none are found, return an empty array for that field.
+
+Text:
+${text}
+`;
+
+  try {
+    const raw = await callBackgroundLLM(prompt, {
+      jsonMode: true,
+      maxTokens: 500,
+      temperature: 0.1
+    });
+    const parsed = parseJSON<ExtractedEntities>(raw);
+    return {
+      organizations: Array.isArray(parsed.organizations) ? parsed.organizations : [],
+      programs: Array.isArray(parsed.programs) ? parsed.programs : [],
+      regions: Array.isArray(parsed.regions) ? parsed.regions : [],
+    };
+  } catch (err) {
+    console.warn('[CivicBridge] AI Extraction failed, falling back to basic matching:', err);
+    return {
+      organizations: extractNameCandidates(text),
+      programs: [],
+      regions: []
+    };
+  }
 }
 
 /**
