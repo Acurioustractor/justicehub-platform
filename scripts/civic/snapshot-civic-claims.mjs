@@ -316,6 +316,75 @@ async function main() {
 
   // (Indigenous share moved into the per-state loop above.)
 
+  // ── Detention claims (per-state bed capacity + national total) ──
+  // Seeded by scripts/civic/seed-detention-centres.mjs. Source list lives
+  // in src/lib/organizations/fallback-detention-centres.ts.
+  const detentionRows = [];
+  {
+    let from = 0;
+    const PAGE = 1000;
+    while (true) {
+      const { data, error } = await supabase
+        .from('organizations')
+        .select('id, name, state, acnc_data')
+        .eq('type', 'detention_centre')
+        .neq('archived', true)
+        .range(from, from + PAGE - 1);
+      if (error) throw error;
+      if (!data || data.length === 0) break;
+      detentionRows.push(...data);
+      if (data.length < PAGE) break;
+      from += PAGE;
+    }
+  }
+
+  const capacityByState = new Map();
+  let nationalCapacity = 0;
+  for (const row of detentionRows) {
+    const beds = Number(row.acnc_data?.detention_meta?.capacity_beds || 0);
+    if (!beds) continue;
+    nationalCapacity += beds;
+    capacityByState.set(row.state, (capacityByState.get(row.state) || 0) + beds);
+  }
+
+  await upsertClaim({
+    claim_id: 'access.count.detention_beds.national',
+    display_label: 'National youth detention bed capacity',
+    value_numeric: nationalCapacity,
+    value_text: `${nationalCapacity} youth detention beds across ${detentionRows.length} centres nationally`,
+    unit: 'count',
+    tier: 1,
+    region: 'national',
+    chapter: 'access',
+    methodology:
+      'Sum of organizations.acnc_data.detention_meta.capacity_beds across all rows where type = detention_centre AND is_active = true AND archived = false. Source: AIHW Youth justice in Australia + state corrections data, curated in src/lib/organizations/fallback-detention-centres.ts.',
+    methodology_url: METHODOLOGY_URL,
+    source_record_ids: { detention_centre_ids: detentionRows.map((r) => r.id) },
+    source_doc_urls: [],
+    verification_status: 'snapshot',
+  });
+
+  for (const [state, beds] of capacityByState.entries()) {
+    if (!state) continue;
+    await upsertClaim({
+      claim_id: `access.count.detention_beds.${state.toLowerCase()}`,
+      display_label: `Youth detention bed capacity (${state})`,
+      value_numeric: beds,
+      value_text: `${beds} youth detention beds in ${state}`,
+      unit: 'count',
+      tier: 2,
+      region: state,
+      chapter: 'access',
+      methodology: `Sum of organizations.acnc_data.detention_meta.capacity_beds where type = detention_centre AND state = ${state}.`,
+      methodology_url: METHODOLOGY_URL,
+      source_record_ids: {
+        detention_centre_ids: detentionRows.filter((r) => r.state === state).map((r) => r.id),
+      },
+      source_doc_urls: [],
+      verification_status: 'snapshot',
+    });
+  }
+
   // ── Claim 7: promises tracked ─────────────────────────────────
   const charter = await fetchCount('civic_charter_commitments');
   const hansard = await fetchCount('civic_hansard');
