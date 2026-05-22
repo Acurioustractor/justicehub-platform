@@ -57,6 +57,16 @@ export default async function CivicIntelligencePage(props: {
   const tier1QldClaim = claims['access.count.tier_1_orgs.qld'];
   const tier1NtClaim = claims['access.count.tier_1_orgs.nt'];
 
+  // Detention vs community supervision claims (ROGS 2024-25)
+  const detentionMultipleNational = claims['access.ratio.detention_vs_community_cost.national'];
+  const detentionAnnualNational = claims['access.cost.detention_per_youth.annual.national'];
+  const communityAnnualNational = claims['access.cost.community_per_youth.annual.national'];
+  const detentionTotalNational = claims['access.cost.detention_total.national'];
+  const communityTotalNational = claims['access.cost.community_total.national'];
+  const detentionPopNational = claims['access.count.detention_avg_daily_pop.national'];
+  const communityPopNational = claims['access.count.community_avg_daily_pop.national'];
+  const detentionBedsNational = claims['access.count.detention_beds.national'];
+
   // Commitment stats for Promises chapter
   const commitmentsByStatus = commitments.reduce<Record<string, any[]>>((acc, c) => {
     const key = ((c.status as string) || 'unknown').toLowerCase().replace(/[\s-]+/g, '_');
@@ -127,6 +137,32 @@ export default async function CivicIntelligencePage(props: {
 
       {/* ──────────────────── Chapter 1: Access ──────────────────── */}
       <ChapterShell number="01" name="Access" tagline="Where the money goes when government talks about fixing youth justice.">
+        {/* Detention vs Community comparison — the structural cost gap */}
+        {detentionMultipleNational && (
+          <div className="mb-10 border-2 border-rose-300 bg-rose-50 rounded-lg p-6">
+            <p className="text-xs font-mono uppercase tracking-widest text-rose-700 mb-3">Headline · ROGS 2024-25</p>
+            <SnapshotStatCard claim={detentionMultipleNational} accent="urgent" size="lg" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+              {detentionAnnualNational && <SnapshotStatCard claim={detentionAnnualNational} accent="urgent" />}
+              {communityAnnualNational && <SnapshotStatCard claim={communityAnnualNational} accent="positive" />}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              {detentionTotalNational && <SnapshotStatCard claim={detentionTotalNational} accent="urgent" size="sm" />}
+              {communityTotalNational && <SnapshotStatCard claim={communityTotalNational} accent="positive" size="sm" />}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              {detentionPopNational && <SnapshotStatCard claim={detentionPopNational} accent="urgent" size="sm" />}
+              {communityPopNational && <SnapshotStatCard claim={communityPopNational} accent="positive" size="sm" />}
+              {detentionBedsNational && <SnapshotStatCard claim={detentionBedsNational} size="sm" />}
+            </div>
+            <p className="mt-5 text-sm text-stone-700">
+              Community supervision serves nearly four times as many young people for less than half the spend.
+              The cost gap is not subtle. The numbers are pulled live from the Productivity Commission&apos;s Report
+              on Government Services, table 17A.20 (detention) and 17A.21 (community-based supervision).
+            </p>
+          </div>
+        )}
+
         {headlineRatio && (
           <div className="mb-6">
             <SnapshotStatCard claim={headlineRatio} accent="urgent" size="lg" context="Confirmed funding records, 2026-05-15 snapshot." />
