@@ -400,9 +400,12 @@ async function main() {
     .limit(10);
 
   const latestFy = costRows?.[0]?.financial_year || null;
+  // Hoisted so the later community-vs-detention ratio block can read detention dailies.
+  let detentionDailyRow = null;
   if (latestFy && costRows) {
     const yearRows = costRows.filter((r) => r.financial_year === latestFy);
     const dailyRow = yearRows.find((r) => r.description1 === 'Cost per average day per young person');
+    detentionDailyRow = dailyRow;
     const popRow = yearRows.find((r) => r.unit === 'no.');
     const spendRow = yearRows.find((r) =>
       r.description1 === 'Government real recurrent expenditure' && r.unit === "$'000"
@@ -497,6 +500,197 @@ async function main() {
         methodology: `ROGS Table 17A.20 daily population row, ${latestFy}.`,
         methodology_url: METHODOLOGY_URL,
         source_record_ids: { financial_year: latestFy },
+        source_doc_urls: [],
+        verification_status: 'snapshot',
+      });
+    }
+  }
+
+  // ── Community-based supervision costs (ROGS 17A.21) ─────────
+  // The companion table to 17A.20 — what it costs to supervise a young
+  // person in the community instead of detaining them. Crucial for the
+  // comparative claim.
+  const { data: commCostRows } = await supabase
+    .from('rogs_justice_spending')
+    .select('financial_year, description1, unit, nsw, vic, qld, wa, sa, tas, act, nt, aust')
+    .eq('rogs_table', '17A.21')
+    .eq('service_type', 'Community-based supervision')
+    .order('financial_year', { ascending: false })
+    .limit(10);
+
+  const commLatestFy = commCostRows?.[0]?.financial_year || null;
+  if (commLatestFy && commCostRows) {
+    const yearRows = commCostRows.filter((r) => r.financial_year === commLatestFy);
+    const commDailyRow = yearRows.find((r) => r.description1 === 'Cost per average day per young person');
+    const commPopRow = yearRows.find((r) => r.unit === 'no.');
+    const commSpendRow = yearRows.find((r) =>
+      r.description1 === 'Government real recurrent expenditure' && r.unit === "$'000"
+    );
+
+    const natCommAnnualPerYouth = Math.round(parseFloat(commDailyRow?.aust || '0') * 365);
+    const natCommSpend = parseFloat(commSpendRow?.aust || '0') * 1000;
+    const natCommPop = parseFloat(commPopRow?.aust || '0');
+
+    await upsertClaim({
+      claim_id: 'access.cost.community_per_youth.annual.national',
+      display_label: 'Annual community supervision cost per young person (national)',
+      value_numeric: natCommAnnualPerYouth,
+      value_text: `$${natCommAnnualPerYouth.toLocaleString()} per young person per year for community-based supervision — national average (${commLatestFy})`,
+      unit: 'dollars',
+      tier: 1,
+      region: 'national',
+      chapter: 'access',
+      methodology: `ROGS Table 17A.21, ${commLatestFy}: cost per average day × 365.`,
+      methodology_url: METHODOLOGY_URL,
+      source_record_ids: { financial_year: commLatestFy, rogs_table: '17A.21' },
+      source_doc_urls: [],
+      verification_status: 'snapshot',
+    });
+
+    await upsertClaim({
+      claim_id: 'access.cost.community_total.national',
+      display_label: 'Total government community-based supervision spend (national)',
+      value_numeric: natCommSpend,
+      value_text: `$${(natCommSpend / 1_000_000).toFixed(0)}M total government spend on community-based youth supervision nationally (${commLatestFy})`,
+      unit: 'dollars',
+      tier: 1,
+      region: 'national',
+      chapter: 'access',
+      methodology: `ROGS Table 17A.21, total Australia, ${commLatestFy}.`,
+      methodology_url: METHODOLOGY_URL,
+      source_record_ids: { financial_year: commLatestFy, rogs_table: '17A.21' },
+      source_doc_urls: [],
+      verification_status: 'snapshot',
+    });
+
+    await upsertClaim({
+      claim_id: 'access.count.community_avg_daily_pop.national',
+      display_label: 'Average daily youth community supervision population (national)',
+      value_numeric: natCommPop,
+      value_text: `${natCommPop.toLocaleString()} young people under community-based supervision on the average day (${commLatestFy})`,
+      unit: 'count',
+      tier: 1,
+      region: 'national',
+      chapter: 'access',
+      methodology: `ROGS Table 17A.21 daily population, total Australia, ${commLatestFy}.`,
+      methodology_url: METHODOLOGY_URL,
+      source_record_ids: { financial_year: commLatestFy, rogs_table: '17A.21' },
+      source_doc_urls: [],
+      verification_status: 'snapshot',
+    });
+
+    // ── Headline comparative claim: detention cost vs community cost ──
+    const detentionDailyAust = parseFloat(detentionDailyRow?.aust || '0');
+    const commDailyAust = parseFloat(commDailyRow?.aust || '0');
+    if (detentionDailyAust && commDailyAust) {
+      const costMultiple = detentionDailyAust / commDailyAust;
+      await upsertClaim({
+        claim_id: 'access.ratio.detention_vs_community_cost.national',
+        display_label: 'Detention cost relative to community supervision cost (national)',
+        value_numeric: costMultiple,
+        value_text: `Detaining a young person costs ${costMultiple.toFixed(1)}× more per day than supervising them in the community ($${detentionDailyAust.toFixed(0)}/day vs $${commDailyAust.toFixed(0)}/day, ${commLatestFy})`,
+        unit: 'ratio',
+        tier: 1,
+        region: 'national',
+        chapter: 'access',
+        methodology: `ROGS 17A.20 (detention) daily cost / ROGS 17A.21 (community) daily cost, both for financial year ${commLatestFy}, Australia totals.`,
+        methodology_url: METHODOLOGY_URL,
+        source_record_ids: { financial_year: commLatestFy, detention_daily: detentionDailyAust, community_daily: commDailyAust },
+        source_doc_urls: [],
+        verification_status: 'snapshot',
+      });
+    }
+
+    // Per-state community costs
+    for (const code of STATE_CODES) {
+      const dailyDollar = parseFloat(commDailyRow?.[code] || '0');
+      if (!dailyDollar) continue;
+      const annualPerYouth = Math.round(dailyDollar * 365);
+      const stateUpper = code.toUpperCase();
+      const detentionDailyState = parseFloat(detentionDailyRow?.[code] || '0');
+      const stateMultiple = detentionDailyState && dailyDollar ? detentionDailyState / dailyDollar : null;
+
+      await upsertClaim({
+        claim_id: `access.cost.community_per_youth.annual.${code}`,
+        display_label: `Annual community supervision cost per young person (${stateUpper})`,
+        value_numeric: annualPerYouth,
+        value_text: `$${annualPerYouth.toLocaleString()} per young person per year for community-based supervision in ${stateUpper} (${commLatestFy})`,
+        unit: 'dollars',
+        tier: 2,
+        region: stateUpper,
+        chapter: 'access',
+        methodology: `ROGS Table 17A.21, ${commLatestFy}: $${dailyDollar.toFixed(2)}/day × 365.`,
+        methodology_url: METHODOLOGY_URL,
+        source_record_ids: { financial_year: commLatestFy },
+        source_doc_urls: [],
+        verification_status: 'snapshot',
+      });
+
+      if (stateMultiple) {
+        await upsertClaim({
+          claim_id: `access.ratio.detention_vs_community_cost.${code}`,
+          display_label: `Detention cost relative to community supervision cost (${stateUpper})`,
+          value_numeric: stateMultiple,
+          value_text: `In ${stateUpper}, detaining a young person costs ${stateMultiple.toFixed(1)}× more per day than community supervision ($${detentionDailyState.toFixed(0)} vs $${dailyDollar.toFixed(0)}, ${commLatestFy})`,
+          unit: 'ratio',
+          tier: 2,
+          region: stateUpper,
+          chapter: 'access',
+          methodology: `ROGS 17A.20 / 17A.21 for ${stateUpper}, ${commLatestFy}.`,
+          methodology_url: METHODOLOGY_URL,
+          source_record_ids: { financial_year: commLatestFy },
+          source_doc_urls: [],
+          verification_status: 'snapshot',
+        });
+      }
+    }
+  }
+
+  // ── Returns to youth justice supervision (recidivism, ROGS 17A.26) ──
+  const { data: recidRows } = await supabase
+    .from('rogs_justice_spending')
+    .select('financial_year, unit, nsw, vic, qld, wa, sa, tas, act, nt, aust')
+    .eq('rogs_table', '17A.26')
+    .eq('unit', '%')
+    .order('financial_year', { ascending: false })
+    .limit(1);
+
+  if (recidRows && recidRows.length > 0) {
+    const r = recidRows[0];
+    const recidFy = r.financial_year;
+    const nationalRecid = parseFloat(r.aust || '0');
+    if (nationalRecid) {
+      await upsertClaim({
+        claim_id: 'oversight.rate.return_to_supervision.national',
+        display_label: 'Returns to youth justice supervision within 12 months (national)',
+        value_numeric: nationalRecid / 100,
+        value_text: `${nationalRecid.toFixed(1)}% of young people return to sentenced youth justice supervision within 12 months — national (${recidFy})`,
+        unit: 'fraction',
+        tier: 1,
+        region: 'national',
+        chapter: 'oversight',
+        methodology: `ROGS Table 17A.26, ${recidFy}: proportion of young people who returned to sentenced supervision within 12 months of completing a previous supervised order.`,
+        methodology_url: METHODOLOGY_URL,
+        source_record_ids: { financial_year: recidFy, rogs_table: '17A.26' },
+        source_doc_urls: [],
+        verification_status: 'snapshot',
+      });
+    }
+    for (const code of STATE_CODES) {
+      const v = parseFloat(r[code] || '0');
+      if (!v) continue;
+      await upsertClaim({
+        claim_id: `oversight.rate.return_to_supervision.${code}`,
+        display_label: `Returns to youth justice supervision within 12 months (${code.toUpperCase()})`,
+        value_numeric: v / 100,
+        value_text: `${v.toFixed(1)}% of young people in ${code.toUpperCase()} return to sentenced supervision within 12 months (${recidFy})`,
+        unit: 'fraction',
+        tier: 2,
+        region: code.toUpperCase(),
+        chapter: 'oversight',
+        methodology: `ROGS Table 17A.26, ${recidFy}, ${code.toUpperCase()}.`,
+        methodology_url: METHODOLOGY_URL,
+        source_record_ids: { financial_year: recidFy, rogs_table: '17A.26' },
         source_doc_urls: [],
         verification_status: 'snapshot',
       });
