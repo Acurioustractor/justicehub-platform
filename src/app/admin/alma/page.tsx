@@ -414,6 +414,29 @@ Sun 04:00  alma-org-enrichment.mjs --apply --retry-failed --batch 100`}</pre>
                 Verify interventions
                 <ArrowRight className="w-3 h-3" />
               </Link>
+              <Link
+                href="/admin/alma/audit"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-[#0A0A0A]/20 text-[11px] font-semibold hover:bg-[#0A0A0A]/5"
+              >
+                Audit log
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+              <a
+                href="/api/admin/alma/export?format=csv&onlyApproved=1&limit=5000"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-[#0A0A0A]/20 text-[11px] font-semibold hover:bg-[#0A0A0A]/5"
+                title="Download CSV of all orgs with at least one approved enrichment"
+              >
+                Export approved CSV
+                <ArrowRight className="w-3 h-3" />
+              </a>
+              <a
+                href="/api/admin/alma/export?format=csv&limit=5000"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-[#0A0A0A]/20 text-[11px] font-semibold hover:bg-[#0A0A0A]/5"
+                title="Download CSV of top 5000 eligible orgs by completeness"
+              >
+                Export top 5000 CSV
+                <ArrowRight className="w-3 h-3" />
+              </a>
             </div>
           </div>
         </Section>

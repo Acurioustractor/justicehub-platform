@@ -172,6 +172,28 @@ export function OutreachQueueClient({ rows }: Props) {
   const [error, setError] = useState<{ id: string; message: string } | null>(null);
   const [bulkBusy, setBulkBusy] = useState(false);
   const [bulkResult, setBulkResult] = useState<string | null>(null);
+  // Multi-select for campaign mode — Set of candidateIds the admin has ticked
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [campaignBusy, setCampaignBusy] = useState(false);
+  const [campaignResult, setCampaignResult] = useState<string | null>(null);
+  const toggleSelected = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  const selectAll = (rows: QueueRow[]) =>
+    setSelected((prev) => {
+      // If every row is already selected, deselect them; otherwise add them.
+      const allIncluded = rows.every((r) => prev.has(r.candidateId));
+      const next = new Set(prev);
+      for (const r of rows) {
+        if (allIncluded) next.delete(r.candidateId);
+        else next.add(r.candidateId);
+      }
+      return next;
+    });
 
   const copyToClipboard = async (text: string, id: string) => {
     await navigator.clipboard.writeText(text);
@@ -256,6 +278,85 @@ export function OutreachQueueClient({ rows }: Props) {
       setBulkResult(`Bulk approve failed: ${e?.message || 'unknown error'}`);
     } finally {
       setBulkBusy(false);
+    }
+  }
+
+  function csvEscape(s: string | null | undefined): string {
+    if (s === null || s === undefined) return '';
+    const str = String(s);
+    if (/[",\n]/.test(str)) return `"${str.replace(/"/g, '""')}"`;
+    return str;
+  }
+
+  function exportCampaignCsv(selectedRows: QueueRow[]) {
+    // CSV columns map to typical mail-merge headers (Mailchimp, Mixmax, Postmark
+    // bulk templates). Admin imports → fires once.
+    const lines = [
+      ['org_name', 'org_slug', 'state', 'email', 'subject', 'body', 'claim_url'].join(','),
+    ];
+    for (const r of selectedRows) {
+      const draft = draftOutreach(r);
+      const email = r.extractedFields.contact_email || r.currentEmail || '';
+      const claimUrl = `https://justicehub.com.au/organizations/${r.orgId}/claim`;
+      lines.push(
+        [
+          csvEscape(r.orgName),
+          csvEscape(r.orgSlug),
+          csvEscape(r.state),
+          csvEscape(email),
+          csvEscape(draft.subject),
+          csvEscape(draft.body),
+          csvEscape(claimUrl),
+        ].join(',')
+      );
+    }
+    const csv = lines.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `alma-outreach-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  async function markSelectedSent(selectedRows: QueueRow[]) {
+    if (selectedRows.length === 0) return;
+    setCampaignBusy(true);
+    setCampaignResult(null);
+    try {
+      let logged = 0;
+      let failed = 0;
+      for (const r of selectedRows) {
+        const draft = draftOutreach(r);
+        const email = r.extractedFields.contact_email || r.currentEmail || null;
+        try {
+          const res = await fetch('/api/admin/alma/outreach', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              organization_id: r.orgId,
+              attempt_kind: 'email',
+              email_to: email,
+              email_subject: draft.subject,
+              email_body: draft.body,
+              response_status: 'sent',
+            }),
+          });
+          if (res.ok) logged++;
+          else failed++;
+        } catch {
+          failed++;
+        }
+      }
+      setCampaignResult(`Logged ${logged} outreach attempts · ${failed} failed`);
+      // Clear selection after a successful campaign
+      if (logged > 0) setSelected(new Set());
+      router.refresh();
+    } finally {
+      setCampaignBusy(false);
     }
   }
 
@@ -354,6 +455,70 @@ export function OutreachQueueClient({ rows }: Props) {
         </span>
       </div>
 
+      {/* Campaign toolbar — sticky bottom-of-viewport when ≥1 row is ticked.
+          Solves the 712-clicks problem at the outreach step: select N,
+          download a mail-merge CSV, fire from your mail tool, then log
+          all N as sent in one POST loop. */}
+      {selected.size > 0 && (() => {
+        const selectedRows = liveRows.filter((r) => selected.has(r.candidateId));
+        const withEmail = selectedRows.filter(
+          (r) => r.extractedFields.contact_email || r.currentEmail
+        );
+        return (
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 bg-[#0A0A0A] text-white rounded-lg shadow-xl border border-[#0A0A0A] flex items-center gap-3 px-3 py-2 text-xs max-w-2xl">
+            <span
+              className="font-mono text-[10px] uppercase tracking-[0.15em] text-white/60 shrink-0"
+              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+            >
+              {selected.size} selected
+            </span>
+            <span className="text-[10px] text-white/40">
+              ({withEmail.length} with email)
+            </span>
+            <button
+              onClick={() => exportCampaignCsv(selectedRows)}
+              disabled={campaignBusy}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-white/30 text-[11px] font-semibold hover:bg-white/10 disabled:opacity-40"
+              title="Download a mail-merge CSV (org_name, email, subject, body, claim_url)"
+            >
+              <Copy className="w-3 h-3" />
+              Download mail-merge CSV
+            </button>
+            <button
+              onClick={() => {
+                if (
+                  confirm(
+                    `Mark ${selectedRows.length} candidates as sent? Use this after firing the campaign from your mail tool.`
+                  )
+                ) {
+                  markSelectedSent(selectedRows);
+                }
+              }}
+              disabled={campaignBusy || selectedRows.length === 0}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-amber-500 text-[#0A0A0A] text-[11px] font-semibold hover:bg-amber-400 disabled:opacity-40"
+            >
+              {campaignBusy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+              Mark {selectedRows.length} sent
+            </button>
+            <button
+              onClick={() => setSelected(new Set())}
+              className="text-[10px] text-white/40 hover:text-white"
+              title="Clear selection"
+            >
+              ✕
+            </button>
+            {campaignResult && (
+              <span
+                className="text-[10px] text-amber-300 ml-2"
+                style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+              >
+                {campaignResult}
+              </span>
+            )}
+          </div>
+        );
+      })()}
+
       {/* Bulk-approve toolbar — only shows when the current filter has
           high-confidence review rows. We bulk-apply gap-fill only (no
           overwrites), so the worst case is no-op. */}
@@ -425,6 +590,9 @@ export function OutreachQueueClient({ rows }: Props) {
             callAction={callAction}
             busyId={busyId}
             error={error}
+            selected={selected}
+            toggleSelected={toggleSelected}
+            selectAll={selectAll}
           />
         ) : (
           <RowGrid
@@ -438,6 +606,9 @@ export function OutreachQueueClient({ rows }: Props) {
             callAction={callAction}
             busyId={busyId}
             error={error}
+            selected={selected}
+            toggleSelected={toggleSelected}
+            selectAll={selectAll}
           />
         )}
       </Section>
@@ -474,6 +645,9 @@ export function OutreachQueueClient({ rows }: Props) {
             callAction={callAction}
             busyId={busyId}
             error={error}
+            selected={selected}
+            toggleSelected={toggleSelected}
+            selectAll={selectAll}
           />
         )}
       </Section>
@@ -531,9 +705,14 @@ interface SectionProps {
   ) => Promise<void>;
   busyId: string | null;
   error: { id: string; message: string } | null;
+  selected: Set<string>;
+  toggleSelected: (id: string) => void;
+  selectAll: (rows: QueueRow[]) => void;
 }
 
-function RowTable({ rows, expanded, setExpanded, showEmail, setShowEmail, copied, copyToClipboard, callAction, busyId, error }: SectionProps) {
+function RowTable({ rows, expanded, setExpanded, showEmail, setShowEmail, copied, copyToClipboard, callAction, busyId, error, selected, toggleSelected, selectAll }: SectionProps) {
+  const allSelected = rows.length > 0 && rows.every((r) => selected.has(r.candidateId));
+  const someSelected = !allSelected && rows.some((r) => selected.has(r.candidateId));
   return (
     <div className="bg-white rounded border border-[#0A0A0A]/10 overflow-hidden">
       <table className="w-full text-xs">
@@ -542,6 +721,18 @@ function RowTable({ rows, expanded, setExpanded, showEmail, setShowEmail, copied
             className="bg-[#0A0A0A] text-white text-[10px] uppercase tracking-[0.15em]"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
+            <th className="w-6 px-2">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                ref={(el) => {
+                  if (el) el.indeterminate = someSelected;
+                }}
+                onChange={() => selectAll(rows)}
+                className="w-3 h-3 cursor-pointer"
+                title={allSelected ? 'Deselect all in this view' : 'Select all in this view'}
+              />
+            </th>
             <th className="w-6"></th>
             <th className="w-8"></th>
             <th className="text-left px-3 py-2">Organisation</th>
@@ -560,8 +751,18 @@ function RowTable({ rows, expanded, setExpanded, showEmail, setShowEmail, copied
               <Fragment key={row.candidateId}>
                 <tr
                   onClick={() => setExpanded(isOpen ? null : row.candidateId)}
-                  className={`cursor-pointer hover:bg-[#F5F0E8]/60 ${isOpen ? 'bg-[#F5F0E8]/40' : ''}`}
+                  className={`cursor-pointer hover:bg-[#F5F0E8]/60 ${isOpen ? 'bg-[#F5F0E8]/40' : ''} ${
+                    selected.has(row.candidateId) ? 'bg-amber-50/40' : ''
+                  }`}
                 >
+                  <td className="px-2 align-middle" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={selected.has(row.candidateId)}
+                      onChange={() => toggleSelected(row.candidateId)}
+                      className="w-3 h-3 cursor-pointer"
+                    />
+                  </td>
                   <td className="pl-3 text-[#0A0A0A]/40">
                     {isOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
                   </td>
@@ -622,7 +823,7 @@ function RowTable({ rows, expanded, setExpanded, showEmail, setShowEmail, copied
                 </tr>
                 {isOpen && (
                   <tr className="bg-[#F5F0E8]/30">
-                    <td colSpan={8} className="px-3 pb-4 pt-1">
+                    <td colSpan={9} className="px-3 pb-4 pt-1">
                       <RowExpanded
                         row={row}
                         showEmail={showEmail === row.candidateId}
@@ -736,7 +937,7 @@ function RepairTable({
   );
 }
 
-function RowGrid({ rows, expanded, setExpanded, showEmail, setShowEmail, copied, copyToClipboard, callAction, busyId, error }: SectionProps) {
+function RowGrid({ rows, expanded, setExpanded, showEmail, setShowEmail, copied, copyToClipboard, callAction, busyId, error, selected, toggleSelected }: SectionProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
       {rows.map((row) => {
