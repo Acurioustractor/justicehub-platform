@@ -2,6 +2,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { Metadata } from 'next';
 import { AlmaSearchClient, type AlmaSearchModel } from './AlmaSearchClient';
+import { WhatsNewFeed } from '@/components/alma/WhatsNew';
 
 export const dynamic = 'force-dynamic';
 
@@ -62,6 +63,7 @@ export default async function AlmaSearchPage() {
     <div className="min-h-screen bg-[#F5F0E8] text-[#0A0A0A]">
       <Navigation />
       <main className="header-offset">
+        <WhatsNewFeed limit={10} />
         <AlmaSearchClient models={models} totalCount={count || models.length} />
       </main>
       <Footer />

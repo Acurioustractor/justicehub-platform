@@ -12,6 +12,7 @@ import FundingTransparency from '@/components/sites/FundingTransparency';
 import PeerValidations from '@/components/sites/PeerValidations';
 import { AnnualReportFactsSection } from '@/components/alma/AnnualReportFacts';
 import { DataProvenance } from '@/components/alma/DataProvenance';
+import { TrustSignals } from '@/components/alma/TrustSignals';
 
 // Rich site content per org — will move to DB later
 const ORG_SITE_CONTENT: Record<string, any> = {
@@ -697,6 +698,9 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
             </div>
           </section>
         )}
+
+        {/* Trust signals — show claimed/AI/register tier + freshness */}
+        <TrustSignals orgId={(org as any).id} />
 
         {/* Annual-report facts (only renders when extracted) */}
         <AnnualReportFactsSection

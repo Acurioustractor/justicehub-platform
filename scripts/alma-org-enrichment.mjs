@@ -13,10 +13,13 @@
  *   node scripts/alma-org-enrichment.mjs --apply --batch 200              # 200 orgs per run
  *   node scripts/alma-org-enrichment.mjs --apply --batch 200 --concurrency 4
  *   node scripts/alma-org-enrichment.mjs --apply --retry-failed --batch 50  # re-attempt past fetch failures
+ *   node scripts/alma-org-enrichment.mjs --apply --refresh-stale --batch 50 # re-pull orgs >90 days since last approval
+ *   node scripts/alma-org-enrichment.mjs --apply --refresh-stale --refresh-days 180  # custom staleness window
  *
  * Recommended scaling cadence:
  *   - Daily: `--apply --batch 200 --concurrency 4` (~600 orgs/run, ~10 min wall-clock)
  *   - Weekly: `--retry-failed --apply --batch 100` to recover stuck fetches
+ *   - Monthly: `--refresh-stale --apply --batch 200` to catch drift on older approvals
  *
  * Safety:
  *   - Indigenous-led orgs are SKIPPED. They route through the
@@ -68,6 +71,12 @@ const concurrency = Math.max(1, Math.min(8, parseInt(args.find((_, i) => args[i 
 // extraction_empty, all_llm_providers_failed). The fetch hardening lets us
 // recover ~17% of those without removing them first.
 const retryFailed = args.includes('--retry-failed');
+// Refresh orgs whose latest approved candidate is older than the threshold
+// (default 90 days). Websites change, contacts leave, logos get rebranded —
+// without this the Map slowly rots. The new candidate goes through normal
+// pending_review (not auto-applied) so admin sees the drift before it lands.
+const refreshStale = args.includes('--refresh-stale');
+const refreshDays = parseInt(args.find((_, i) => args[i - 1] === '--refresh-days') || '90', 10);
 
 // Provider order — calibrated against the first ~1400 candidates produced:
 //   cerebras: 0.715 avg confidence, 26% URL-mismatch (best by a wide margin)
@@ -735,13 +744,19 @@ async function main() {
   // Paginate in case the recent set ever exceeds Supabase's 1000-row cap.
   // When --retry-failed is set we exclude skip markers from dedupe so the
   // fetch hardening can take another swing at them.
+  // When --refresh-stale is set we also exclude orgs whose latest approval
+  // is older than refreshDays so we can re-pull and check for drift.
   const FETCH_RETRY_REASONS = new Set([
     'homepage_fetch_failed',
     'extraction_empty',
     'all_llm_providers_failed',
   ]);
   const recentSet = new Set();
+  const staleApprovals = new Set(); // org IDs eligible for stale refresh
   const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+  const refreshCutoff = new Date(Date.now() - refreshDays * 24 * 60 * 60 * 1000).toISOString();
+
+  // First pass — populate recentSet (last 14 days of any activity)
   for (let from = 0; ; from += 1000) {
     const { data: existing, error: existingErr } = await supabase
       .from('alma_org_enrichment_candidates')
@@ -765,6 +780,32 @@ async function main() {
     }
     if (existing.length < 1000) break;
   }
+
+  // Second pass — when --refresh-stale, find orgs whose latest APPROVED
+  // candidate is older than refreshDays. Those become eligible even though
+  // they have a candidate "on record". The fresh extraction will land as a
+  // new pending_review row that admin can compare against current org fields.
+  if (refreshStale) {
+    for (let from = 0; ; from += 1000) {
+      const { data: stale, error: staleErr } = await supabase
+        .from('alma_org_enrichment_candidates')
+        .select('organization_id, reviewed_at')
+        .eq('source', 'website_scrape')
+        .eq('status', 'approved')
+        .lt('reviewed_at', refreshCutoff)
+        .range(from, from + 999);
+      if (staleErr) {
+        console.error('Stale fetch failed:', staleErr.message);
+        process.exit(1);
+      }
+      if (!stale || stale.length === 0) break;
+      for (const row of stale) staleApprovals.add(row.organization_id);
+      if (stale.length < 1000) break;
+    }
+    // For stale orgs, remove them from recentSet so they pass the dedupe filter
+    for (const id of staleApprovals) recentSet.delete(id);
+  }
+
   const afterDedup = candidates.filter((c) => !recentSet.has(c.id));
   const dedupedOut = candidates.length - afterDedup.length;
   const todo = afterDedup.slice(0, batchSize);
@@ -773,7 +814,7 @@ async function main() {
   console.log(
     `Found ${candidates.length} eligible orgs · ${dedupedOut} already have a candidate from the last 14 days · ${trimmed} held back by batch size · processing ${todo.length}${
       retryFailed ? ' · --retry-failed: previous skip markers ignored' : ''
-    }.`
+    }${refreshStale ? ` · --refresh-stale: ${staleApprovals.size} stale orgs queued for refresh (>${refreshDays} days)` : ''}.`
   );
 
   // Worker pool: `concurrency` orgs in flight at once. Each worker pulls
