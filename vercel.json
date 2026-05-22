@@ -65,6 +65,10 @@
       "schedule": "0 2 * * *"
     },
     {
+      "path": "/api/cron/alma/annual-reports?batch=8",
+      "schedule": "0 5 * * *"
+    },
+    {
       "path": "/api/cron/alma/data-sprint?mode=linkage&batch=500",
       "schedule": "0 22 * * *"
     },
