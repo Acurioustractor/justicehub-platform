@@ -10,6 +10,8 @@ import NewsletterSignup from '@/components/NewsletterSignup';
 import SiteGallery from '@/components/sites/SiteGallery';
 import FundingTransparency from '@/components/sites/FundingTransparency';
 import PeerValidations from '@/components/sites/PeerValidations';
+import { AnnualReportFactsSection } from '@/components/alma/AnnualReportFacts';
+import { DataProvenance } from '@/components/alma/DataProvenance';
 
 // Rich site content per org — will move to DB later
 const ORG_SITE_CONTENT: Record<string, any> = {
@@ -696,6 +698,13 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
           </section>
         )}
 
+        {/* Annual-report facts (only renders when extracted) */}
+        <AnnualReportFactsSection
+          facts={(org as any).acnc_data?.annual_report_facts || null}
+          annualReportUrl={(org as any).annual_report_url}
+          orgName={(org as any).name}
+        />
+
         {/* Stories */}
         {stories && stories.length > 0 && (
           <section className="bg-[#fdf8f6] border-y border-orange-100">
@@ -910,6 +919,9 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
           </div>
         </section>
       )}
+
+      {/* Data provenance — only renders when there are signals to show */}
+      <DataProvenance orgId={(org as any).id} />
 
       <footer className="bg-earth-900 text-white">
         <div className="max-w-5xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
