@@ -1,855 +1,400 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { createServiceClient } from '@/lib/supabase/service';
-import {
-  ArrowRight, Building2, Scale, MessageSquare,
-  AlertTriangle, CheckCircle2, Clock, XCircle, Minus,
-  Users, DollarSign, Megaphone,
-} from 'lucide-react';
+import { ArrowRight, ChevronRight } from 'lucide-react';
+
 import RhetoricTimeline from '@/components/intelligence/RhetoricTimeline';
 import AccountabilityLoop from '@/components/intelligence/AccountabilityLoop';
+import OversightList from '@/components/intelligence/OversightList';
+import HansardList from '@/components/intelligence/HansardList';
+import LivedExperienceContrast from '@/components/intelligence/LivedExperienceContrast';
+
+import { SnapshotStatCard } from '@/components/intelligence/civic/SnapshotStatCard';
+import { ChapterCitationsPanel } from '@/components/intelligence/civic/ChapterCitationsPanel';
+import { getAllClaims, getYjHansardSample, getOversightRecommendations, getCharterCommitments, getConfirmedTier1Orgs } from '@/lib/civic-intelligence/queries';
+import { createServiceClient } from '@/lib/supabase/service';
+import { getFeaturedJusticeStories } from '@/lib/supabase/empathy-ledger';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Civic Intelligence: The Accountability Gap | JusticeHub',
+  title: 'Civic Intelligence · Access · Promises · Oversight | JusticeHub',
   description:
-    'What government promised. What oversight recommended. What actually happened. Tracking civic accountability across youth justice.',
+    'Three chapters on what governments said about youth justice, where the money went, and what oversight bodies recommended. Senate-grade citations on every claim.',
   openGraph: {
-    title: 'Civic Intelligence: The Accountability Gap',
-    description:
-      'What government promised. What oversight recommended. What actually happened.',
+    title: 'Civic Intelligence · Access · Promises · Oversight',
+    description: 'Three chapters on what governments said, where the money went, and what oversight recommended.',
   },
 };
 
-/* ── Types ──────────────────────────────────────────────────── */
+const REGIONS = ['QLD', 'NT'] as const;
+const COMING_V2_REGIONS = ['NSW', 'VIC', 'WA', 'SA', 'TAS', 'ACT'] as const;
 
-interface Commitment {
-  minister_name: string | null;
-  portfolio: string | null;
-  commitment_text: string | null;
-  status: string | null;
-  status_evidence: string | null;
-  category: string | null;
-}
-
-interface Recommendation {
-  oversight_body: string | null;
-  report_title: string | null;
-  recommendation_text: string | null;
-  status: string | null;
-  severity: string | null;
-  jurisdiction: string | null;
-  domain: string | null;
-}
-
-interface HansardEntry {
-  id: string;
-  subject: string | null;
-  speaker_name: string | null;
-  party: string | null;
-  date: string | null;
-  body_text: string | null;
-}
-
-/* ── Data fetching ──────────────────────────────────────────── */
-
-async function getAccessGapData() {
-  const supabase = createServiceClient();
-  const sb = supabase as any;
-
-  // Get unique org names from ministerial diaries
-  const { data: diaryOrgs } = await sb
-    .from('civic_ministerial_diaries')
-    .select('organisation');
-
-  const diaryOrgNames = new Set(
-    (diaryOrgs ?? [])
-      .map((d: any) => d.organisation?.toLowerCase()?.trim())
-      .filter(Boolean)
-  );
-
-  // Get organizations delivering programs (those linked to interventions)
-  const { data: programOrgs } = await sb
-    .from('organizations')
-    .select('name')
-    .not('name', 'is', null);
-
-  const programOrgNames = new Set(
-    (programOrgs ?? [])
-      .map((o: any) => o.name?.toLowerCase()?.trim())
-      .filter(Boolean)
-  );
-
-  // Calculate overlap
-  let overlap = 0;
-  for (const name of diaryOrgNames) {
-    if (programOrgNames.has(name)) overlap++;
-  }
-
-  return {
-    programOrgCount: programOrgNames.size,
-    ministerMetCount: diaryOrgNames.size,
-    overlap,
-  };
-}
-
-async function getCommitments(): Promise<Commitment[]> {
-  const supabase = createServiceClient();
-  const sb = supabase as any;
-
-  const { data } = await sb
-    .from('civic_charter_commitments')
-    .select('minister_name, portfolio, commitment_text, status, status_evidence, category')
-    .eq('youth_justice_relevant', true)
-    .order('status');
-
-  return data ?? [];
-}
-
-async function getOversight(): Promise<Recommendation[]> {
-  const supabase = createServiceClient();
-  const sb = supabase as any;
-
-  const { data } = await sb
-    .from('oversight_recommendations')
-    .select('oversight_body, report_title, recommendation_text, status, severity, jurisdiction, domain')
-    .order('severity');
-
-  return data ?? [];
-}
-
-async function getHansard(): Promise<HansardEntry[]> {
-  const supabase = createServiceClient();
-  const sb = supabase as any;
-
-  const { data } = await sb
-    .from('civic_hansard')
-    .select('id, subject, speaker_name, party, date, body_text')
-    .or('subject.ilike.%youth justice%,subject.ilike.%detention%,body_text.ilike.%youth justice%')
-    .order('date', { ascending: false })
-    .limit(20);
-
-  return data ?? [];
-}
-
-/* ── Helper: Status badge ──────────────────────────────────── */
-
-function StatusBadge({ status }: { status: string | null }) {
-  const s = (status ?? 'unknown').toLowerCase().replace(/[\s_-]+/g, '_');
-  const config: Record<string, { bg: string; text: string; icon: React.ElementType; label: string }> = {
-    delivered: { bg: 'bg-emerald-100 border-emerald-200', text: 'text-emerald-800', icon: CheckCircle2, label: 'Delivered' },
-    in_progress: { bg: 'bg-amber-100 border-amber-200', text: 'text-amber-800', icon: Clock, label: 'In Progress' },
-    not_started: { bg: 'bg-gray-100 border-gray-200', text: 'text-gray-600', icon: Minus, label: 'Not Started' },
-    rejected: { bg: 'bg-red-100 border-red-200', text: 'text-red-800', icon: XCircle, label: 'Rejected' },
-    accepted: { bg: 'bg-emerald-100 border-emerald-200', text: 'text-emerald-800', icon: CheckCircle2, label: 'Accepted' },
-    partially_implemented: { bg: 'bg-amber-100 border-amber-200', text: 'text-amber-800', icon: Clock, label: 'Partial' },
-    pending: { bg: 'bg-gray-100 border-gray-200', text: 'text-gray-600', icon: Clock, label: 'Pending' },
-  };
-  const c = config[s] ?? { bg: 'bg-gray-100 border-gray-200', text: 'text-gray-600', icon: Minus, label: status ?? 'Unknown' };
-  const Icon = c.icon;
-
-  return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium border font-mono ${c.bg} ${c.text}`}>
-      <Icon className="w-3 h-3" />
-      {c.label}
-    </span>
-  );
-}
-
-/* ── Helper: Severity badge ────────────────────────────────── */
-
-function SeverityBadge({ severity }: { severity: string | null }) {
-  const s = (severity ?? 'unknown').toLowerCase();
-  const colorMap: Record<string, string> = {
-    critical: 'bg-red-100 text-red-800 border-red-200',
-    high: 'bg-amber-100 text-amber-800 border-amber-200',
-    medium: 'bg-gray-100 text-gray-700 border-gray-200',
-    low: 'bg-gray-50 text-gray-500 border-gray-200',
-  };
-  const cls = colorMap[s] ?? 'bg-gray-100 text-gray-600 border-gray-200';
-
-  return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border font-mono ${cls}`}>
-      {severity ?? 'Unknown'}
-    </span>
-  );
-}
-
-/* ── Helper: Stat card ─────────────────────────────────────── */
-
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  sub,
-  accent,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: string;
-  sub?: string;
-  accent?: string;
+export default async function CivicIntelligencePage(props: {
+  searchParams?: Promise<{ [key: string]: string | undefined }>;
 }) {
-  return (
-    <div className="rounded-xl border border-[#0A0A0A]/10 p-5" style={{ backgroundColor: '#F5F0E8' }}>
-      <div className="flex items-center gap-2 mb-2">
-        <Icon className="w-4 h-4 text-[#0A0A0A]/50" />
-        <span className="text-xs font-mono text-[#0A0A0A]/60 uppercase tracking-wider">{label}</span>
-      </div>
-      <div
-        className="text-2xl font-bold tracking-tight"
-        style={{ fontFamily: 'Space Grotesk, sans-serif', color: accent ?? '#0A0A0A' }}
-      >
-        {value}
-      </div>
-      {sub && <div className="text-xs text-[#0A0A0A]/50 mt-1 font-mono">{sub}</div>}
-    </div>
-  );
-}
+  const params = props.searchParams ? await props.searchParams : {};
+  const region = params?.region;
 
-/* ── Helper: Big stat ──────────────────────────────────────── */
-
-function BigStat({
-  value,
-  label,
-  sub,
-  accent,
-}: {
-  value: string;
-  label: string;
-  sub?: string;
-  accent?: string;
-}) {
-  return (
-    <div className="text-center">
-      <div
-        className="text-5xl md:text-6xl font-bold tracking-tight"
-        style={{ fontFamily: 'Space Grotesk, sans-serif', color: accent ?? '#0A0A0A' }}
-      >
-        {value}
-      </div>
-      <div className="text-sm font-mono text-[#0A0A0A]/60 mt-2 uppercase tracking-wider">{label}</div>
-      {sub && <div className="text-xs text-[#0A0A0A]/40 mt-1 font-mono">{sub}</div>}
-    </div>
-  );
-}
-
-/* ── Main page component ───────────────────────────────────── */
-
-export default async function CivicIntelligencePage() {
-  const [accessGap, commitments, oversight, hansard] = await Promise.all([
-    getAccessGapData(),
-    getCommitments(),
-    getOversight(),
-    getHansard(),
+  const [claims, hansard, oversight, commitments, tier1Qld, tier1Nt, stories] = await Promise.all([
+    getAllClaims(),
+    getYjHansardSample(12),
+    getOversightRecommendations(25),
+    getCharterCommitments(25),
+    getConfirmedTier1Orgs('QLD'),
+    getConfirmedTier1Orgs('NT'),
+    getFeaturedJusticeStories(4).catch(() => []),
   ]);
 
-  // Compute commitment stats
-  const commitmentsByStatus = commitments.reduce<Record<string, Commitment[]>>((acc, c) => {
-    const key = (c.status ?? 'unknown').toLowerCase().replace(/[\s-]+/g, '_');
+  const accessClaims = Object.values(claims).filter((c) => c.chapter === 'access');
+  const promiseClaims = Object.values(claims).filter((c) => c.chapter === 'promises');
+  const oversightClaims = Object.values(claims).filter((c) => c.chapter === 'oversight');
+
+  const headlineRatio = claims['access.ratio.consultancy_vs_tier1_funding.qld'];
+  const consultancySpend = claims['access.sum.consultancy_yj_spend.qld'];
+  const tier1Funding = claims['access.sum.tier_1_grant_inflows.qld'];
+  const meetingAsymmetry = claims['access.ratio.dept_vs_frontline_meetings.qld'];
+  const indigenousShare = claims['access.indigenous_share.qld'];
+  const tier1QldClaim = claims['access.count.tier_1_orgs.qld'];
+  const tier1NtClaim = claims['access.count.tier_1_orgs.nt'];
+
+  // Commitment stats for Promises chapter
+  const commitmentsByStatus = commitments.reduce<Record<string, any[]>>((acc, c) => {
+    const key = ((c.status as string) || 'unknown').toLowerCase().replace(/[\s-]+/g, '_');
     if (!acc[key]) acc[key] = [];
     acc[key].push(c);
     return acc;
   }, {});
 
-  // Compute oversight stats
-  const oversightByStatus = oversight.reduce<Record<string, Recommendation[]>>((acc, r) => {
-    const key = (r.status ?? 'unknown').toLowerCase().replace(/[\s-]+/g, '_');
+  // Oversight by status for Oversight chapter
+  const oversightByStatus = oversight.reduce<Record<string, any[]>>((acc, r) => {
+    const key = ((r.status as string) || 'unknown').toLowerCase().replace(/[\s-]+/g, '_');
     if (!acc[key]) acc[key] = [];
     acc[key].push(r);
     return acc;
   }, {});
 
-  // Hansard rhetoric gap
-  const detentionMentions = hansard.filter(
-    (h) =>
-      h.subject?.toLowerCase().includes('detention') ||
-      h.body_text?.toLowerCase().includes('detention')
-  ).length;
-  const alternativeMentions = hansard.filter(
-    (h) =>
-      h.body_text?.toLowerCase().includes('alternative') ||
-      h.body_text?.toLowerCase().includes('diversion') ||
-      h.body_text?.toLowerCase().includes('community-based')
-  ).length;
-
-  const overlapPct =
-    accessGap.ministerMetCount > 0
-      ? ((accessGap.overlap / accessGap.ministerMetCount) * 100).toFixed(1)
-      : '0';
-
-  // Status ordering for display
-  const statusOrder = ['rejected', 'not_started', 'in_progress', 'partially_implemented', 'pending', 'delivered', 'accepted'];
+  const supabase = createServiceClient() as any;
+  const { count: hansardTotalCount } = await supabase
+    .from('civic_hansard')
+    .select('id', { count: 'exact', head: true });
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F5F0E8' }}>
-      {/* ── Navigation bar ── */}
-      <div className="bg-[#0A0A0A] text-white py-3 px-6 flex items-center justify-between text-sm print:hidden">
-        <Link href="/intelligence" className="flex items-center gap-2 text-white/70 hover:text-white">
-          <ArrowRight className="w-4 h-4 rotate-180" />
-          <span>Intelligence Hub</span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <span className="font-mono text-xs text-white/50">CIVIC INTELLIGENCE</span>
-        </div>
-      </div>
+    <div className="min-h-screen bg-stone-50">
+      <Nav />
 
-      {/* ── Hero section ── */}
-      <div className="bg-[#0A0A0A] text-white">
-        <div className="max-w-6xl mx-auto px-6 py-16 print:py-10">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white/10 text-white/60 font-mono">
-              ACCOUNTABILITY
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[#DC2626]/20 text-[#DC2626] font-mono">
-              TRANSPARENCY ENGINE
-            </span>
-          </div>
-          <h1
-            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 text-white"
-            style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-          >
-            Civic Intelligence:
-            <br />
-            <span style={{ color: '#DC2626' }}>The Accountability Gap</span>
+      {/* Hero */}
+      <section className="bg-stone-900 text-stone-50 px-6 py-20 border-b border-stone-700">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-xs font-mono uppercase tracking-widest text-stone-400 mb-3">Civic Intelligence · v1 · NT + QLD</p>
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-[1.05]">
+            Three chapters on the access gap.
           </h1>
-          <p className="text-lg text-white/70 leading-relaxed max-w-3xl mb-6">
-            What government promised. What oversight recommended. What actually happened.
-            Tracking the distance between political rhetoric and community outcomes
-            across Australia&apos;s youth justice system.
+          <p className="mt-5 max-w-2xl text-lg md:text-xl text-stone-300">
+            What governments said. Where the money went. What oversight bodies recommended.
+            Every claim on this page is anchored to a record you can audit.
           </p>
-          <div className="flex flex-wrap gap-3 text-sm text-white/40 font-mono">
-            <span>{commitments.length} commitments tracked</span>
-            <span>|</span>
-            <span>{oversight.length} oversight recommendations</span>
-            <span>|</span>
-            <span>{hansard.length} Hansard speeches analysed</span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Section 1: The Access Gap ── */}
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="mb-10">
-          <div className="flex items-center gap-2 mb-2">
-            <Building2 className="w-5 h-5 text-[#0A0A0A]/50" />
-            <span className="text-xs font-mono text-[#0A0A0A]/60 uppercase tracking-wider">Section 1</span>
-          </div>
-          <h2
-            className="text-3xl md:text-4xl font-bold tracking-tight mb-3"
-            style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}
-          >
-            The Access Gap
-          </h2>
-          <p className="text-[#0A0A0A]/60 max-w-2xl">
-            Who gets a seat at the table? Comparing the organisations that deliver
-            frontline programs with those that get ministerial access.
-          </p>
-        </div>
-
-        {/* Three big stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="rounded-xl border border-[#0A0A0A]/10 p-8 text-center" style={{ backgroundColor: 'white' }}>
-            <BigStat
-              value={accessGap.programOrgCount.toLocaleString()}
-              label="Orgs Deliver Programs"
-              sub="Community organisations in ALMA database"
-            />
-          </div>
-
-          <div className="rounded-xl border border-[#0A0A0A]/10 p-8 text-center" style={{ backgroundColor: 'white' }}>
-            <BigStat
-              value={accessGap.ministerMetCount.toLocaleString()}
-              label="Met with Ministers"
-              sub="Unique organisations in ministerial diaries"
-            />
-          </div>
-
-          <div className="rounded-xl border-2 border-[#DC2626]/30 p-8 text-center" style={{ backgroundColor: '#FEF2F2' }}>
-            <BigStat
-              value={accessGap.overlap.toString()}
-              label="Overlap"
-              sub={`${overlapPct}% of orgs that met ministers also deliver programs`}
-              accent="#DC2626"
-            />
-          </div>
-        </div>
-
-        {/* Connecting narrative */}
-        <div className="rounded-xl border border-[#0A0A0A]/10 p-6 mb-8" style={{ backgroundColor: 'white' }}>
-          <div className="flex items-center gap-2 mb-4">
-            <AlertTriangle className="w-4 h-4 text-[#DC2626]" />
-            <span className="text-sm font-mono text-[#DC2626] uppercase tracking-wider">Access Gap Analysis</span>
-          </div>
-          <p className="text-[#0A0A0A]/80 leading-relaxed mb-4">
-            The organisations delivering frontline youth justice programs are almost entirely absent
-            from ministerial meeting rooms. Only <strong style={{ color: '#DC2626' }}>{overlapPct}%</strong> of
-            organisations that secured ministerial access are also delivering community programs.
-            Policy is being shaped without the people doing the work.
-          </p>
-        </div>
-
-        {/* Consultancy vs Community + Rhetoric Gap */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="rounded-xl border border-[#0A0A0A]/10 p-6" style={{ backgroundColor: 'white' }}>
-            <div className="flex items-center gap-2 mb-4">
-              <DollarSign className="w-4 h-4 text-[#0A0A0A]/50" />
-              <span className="text-xs font-mono text-[#0A0A0A]/60 uppercase tracking-wider">Consultancy vs Community</span>
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <div
-                  className="text-3xl font-bold tracking-tight"
-                  style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#DC2626' }}
-                >
-                  $1.85M
-                </div>
-                <div className="text-xs font-mono text-[#0A0A0A]/50 mt-1">Avg to 18 consulting firms</div>
-              </div>
-              <div>
-                <div
-                  className="text-3xl font-bold tracking-tight"
-                  style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#059669' }}
-                >
-                  $77K
-                </div>
-                <div className="text-xs font-mono text-[#0A0A0A]/50 mt-1">Median community program</div>
-              </div>
-            </div>
-            <div className="w-full h-3 rounded-full bg-[#0A0A0A]/5 overflow-hidden flex">
-              <div className="h-full" style={{ width: '96%', backgroundColor: '#DC2626' }} />
-              <div className="h-full" style={{ width: '4%', backgroundColor: '#059669' }} />
-            </div>
-            <div className="text-xs text-[#0A0A0A]/40 mt-2 font-mono">24x more to consultants than community programs</div>
-          </div>
-
-          <div className="rounded-xl border border-[#0A0A0A]/10 p-6" style={{ backgroundColor: 'white' }}>
-            <div className="flex items-center gap-2 mb-4">
-              <Megaphone className="w-4 h-4 text-[#0A0A0A]/50" />
-              <span className="text-xs font-mono text-[#0A0A0A]/60 uppercase tracking-wider">Rhetoric Gap</span>
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <div
-                  className="text-3xl font-bold tracking-tight"
-                  style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#DC2626' }}
-                >
-                  {detentionMentions || 47}
-                </div>
-                <div className="text-xs font-mono text-[#0A0A0A]/50 mt-1">Speeches mention detention</div>
-              </div>
-              <div>
-                <div
-                  className="text-3xl font-bold tracking-tight"
-                  style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#059669' }}
-                >
-                  {alternativeMentions || 10}
-                </div>
-                <div className="text-xs font-mono text-[#0A0A0A]/50 mt-1">Mention alternatives</div>
-              </div>
-            </div>
-            <div className="w-full h-3 rounded-full bg-[#0A0A0A]/5 overflow-hidden flex">
-              <div
-                className="h-full"
-                style={{
-                  width: `${Math.round(((detentionMentions || 47) / ((detentionMentions || 47) + (alternativeMentions || 10))) * 100)}%`,
-                  backgroundColor: '#DC2626',
-                }}
-              />
-              <div
-                className="h-full"
-                style={{
-                  width: `${Math.round(((alternativeMentions || 10) / ((detentionMentions || 47) + (alternativeMentions || 10))) * 100)}%`,
-                  backgroundColor: '#059669',
-                }}
-              />
-            </div>
-            <div className="text-xs text-[#0A0A0A]/40 mt-2 font-mono">
-              {Math.round((detentionMentions || 47) / Math.max(alternativeMentions || 10, 1))}:1 ratio -- punishment dominates the discourse
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Section 2: Promise Tracker ── */}
-      <div className="bg-[#0A0A0A]/[0.03]">
-        <div className="max-w-6xl mx-auto px-6 py-16">
-          <div className="mb-10">
-            <div className="flex items-center gap-2 mb-2">
-              <Scale className="w-5 h-5 text-[#0A0A0A]/50" />
-              <span className="text-xs font-mono text-[#0A0A0A]/60 uppercase tracking-wider">Section 2</span>
-            </div>
-            <h2
-              className="text-3xl md:text-4xl font-bold tracking-tight mb-3"
-              style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}
-            >
-              Promise Tracker
-            </h2>
-            <p className="text-[#0A0A0A]/60 max-w-2xl">
-              Youth justice commitments from charter letters and ministerial statements,
-              tracked against delivery.
-            </p>
-          </div>
-
-          {/* Summary stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <StatCard
-              icon={CheckCircle2}
-              label="Delivered"
-              value={(commitmentsByStatus['delivered']?.length ?? 0).toString()}
-              accent="#059669"
-            />
-            <StatCard
-              icon={Clock}
-              label="In Progress"
-              value={(commitmentsByStatus['in_progress']?.length ?? 0).toString()}
-              accent="#F59E0B"
-            />
-            <StatCard
-              icon={Minus}
-              label="Not Started"
-              value={(commitmentsByStatus['not_started']?.length ?? 0).toString()}
-            />
-            <StatCard
-              icon={XCircle}
-              label="Rejected"
-              value={(commitmentsByStatus['rejected']?.length ?? 0).toString()}
-              accent="#DC2626"
-            />
-          </div>
-
-          {/* Commitment cards grouped by status */}
-          <div className="space-y-6">
-            {statusOrder
-              .filter((s) => commitmentsByStatus[s]?.length)
-              .map((statusKey) => (
-                <div key={statusKey}>
-                  <h3 className="text-sm font-mono text-[#0A0A0A]/50 uppercase tracking-wider mb-3">
-                    {statusKey.replace(/_/g, ' ')} ({commitmentsByStatus[statusKey].length})
-                  </h3>
-                  <div className="space-y-3">
-                    {commitmentsByStatus[statusKey].map((c, i) => (
-                      <div
-                        key={`${statusKey}-${i}`}
-                        className="rounded-lg border border-[#0A0A0A]/10 p-4"
-                        style={{
-                          backgroundColor: statusKey === 'rejected' ? '#FEF2F2' : 'white',
-                          borderColor: statusKey === 'rejected' ? '#DC262640' : undefined,
-                        }}
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm text-[#0A0A0A]/80 mb-2">{c.commitment_text}</p>
-                            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[#0A0A0A]/50">
-                              {c.minister_name && <span>{c.minister_name}</span>}
-                              {c.portfolio && (
-                                <>
-                                  <span className="text-[#0A0A0A]/20">|</span>
-                                  <span>{c.portfolio}</span>
-                                </>
-                              )}
-                              {c.category && (
-                                <>
-                                  <span className="text-[#0A0A0A]/20">|</span>
-                                  <span>{c.category}</span>
-                                </>
-                              )}
-                            </div>
-                            {c.status_evidence && (
-                              <p className="text-xs text-[#0A0A0A]/40 mt-2 italic">{c.status_evidence}</p>
-                            )}
-                          </div>
-                          <StatusBadge status={c.status} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-
-            {/* Handle any statuses not in the order list */}
-            {Object.entries(commitmentsByStatus)
-              .filter(([key]) => !statusOrder.includes(key))
-              .map(([statusKey, items]) => (
-                <div key={statusKey}>
-                  <h3 className="text-sm font-mono text-[#0A0A0A]/50 uppercase tracking-wider mb-3">
-                    {statusKey.replace(/_/g, ' ')} ({items.length})
-                  </h3>
-                  <div className="space-y-3">
-                    {items.map((c, i) => (
-                      <div
-                        key={`${statusKey}-${i}`}
-                        className="rounded-lg border border-[#0A0A0A]/10 p-4"
-                        style={{ backgroundColor: 'white' }}
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm text-[#0A0A0A]/80 mb-2">{c.commitment_text}</p>
-                            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[#0A0A0A]/50">
-                              {c.minister_name && <span>{c.minister_name}</span>}
-                              {c.portfolio && (
-                                <>
-                                  <span className="text-[#0A0A0A]/20">|</span>
-                                  <span>{c.portfolio}</span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                          <StatusBadge status={c.status} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-          </div>
-
-          {commitments.length === 0 && (
-            <div className="rounded-xl border border-dashed border-[#0A0A0A]/20 p-12 text-center">
-              <p className="text-[#0A0A0A]/40 font-mono text-sm">No youth justice commitments tracked yet.</p>
-              <p className="text-[#0A0A0A]/30 font-mono text-xs mt-2">Data sourced from civic_charter_commitments</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── Section 3: Oversight Recommendations ── */}
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="mb-10">
-          <div className="flex items-center gap-2 mb-2">
-            <AlertTriangle className="w-5 h-5 text-[#0A0A0A]/50" />
-            <span className="text-xs font-mono text-[#0A0A0A]/60 uppercase tracking-wider">Section 3</span>
-          </div>
-          <h2
-            className="text-3xl md:text-4xl font-bold tracking-tight mb-3"
-            style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}
-          >
-            Oversight Recommendations
-          </h2>
-          <p className="text-[#0A0A0A]/60 max-w-2xl">
-            What independent oversight bodies recommended and whether government acted on it.
-          </p>
-        </div>
-
-        {/* Oversight summary */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <StatCard
-            icon={CheckCircle2}
-            label="Accepted"
-            value={(oversightByStatus['accepted']?.length ?? oversightByStatus['delivered']?.length ?? 0).toString()}
-            accent="#059669"
-          />
-          <StatCard
-            icon={Clock}
-            label="Partially Implemented"
-            value={(oversightByStatus['partially_implemented']?.length ?? oversightByStatus['in_progress']?.length ?? 0).toString()}
-            accent="#F59E0B"
-          />
-          <StatCard
-            icon={XCircle}
-            label="Rejected"
-            value={(oversightByStatus['rejected']?.length ?? 0).toString()}
-            accent="#DC2626"
-          />
-          <StatCard
-            icon={Scale}
-            label="Total"
-            value={oversight.length.toString()}
-          />
-        </div>
-
-        {/* Oversight cards */}
-        <div className="space-y-3">
-          {oversight.map((r, i) => {
-            const isRejected = r.status?.toLowerCase() === 'rejected';
-            return (
-              <div
-                key={i}
-                className="rounded-lg border p-4"
-                style={{
-                  backgroundColor: isRejected ? '#FEF2F2' : 'white',
-                  borderColor: isRejected ? '#DC262640' : '#0A0A0A1A',
-                }}
+          <div className="mt-8 flex flex-wrap gap-3">
+            {REGIONS.map((r) => (
+              <Link
+                key={r}
+                href={r === region ? '/intelligence/civic' : `/intelligence/civic?region=${r}`}
+                className={`px-4 py-2 text-xs font-mono uppercase tracking-widest rounded border ${
+                  r === region
+                    ? 'bg-stone-50 text-stone-900 border-stone-50'
+                    : 'bg-transparent text-stone-300 border-stone-600 hover:border-stone-400'
+                }`}
               >
-                <div className="flex items-start justify-between gap-4 mb-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-[#0A0A0A]/80 mb-2">{r.recommendation_text}</p>
-                    <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[#0A0A0A]/50">
-                      {r.oversight_body && <span className="font-medium text-[#0A0A0A]/70">{r.oversight_body}</span>}
-                      {r.report_title && (
-                        <>
-                          <span className="text-[#0A0A0A]/20">|</span>
-                          <span>{r.report_title}</span>
-                        </>
-                      )}
-                      {r.jurisdiction && (
-                        <>
-                          <span className="text-[#0A0A0A]/20">|</span>
-                          <span>{r.jurisdiction}</span>
-                        </>
-                      )}
-                      {r.domain && (
-                        <>
-                          <span className="text-[#0A0A0A]/20">|</span>
-                          <span>{r.domain}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    <StatusBadge status={r.status} />
-                    <SeverityBadge severity={r.severity} />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {oversight.length === 0 && (
-          <div className="rounded-xl border border-dashed border-[#0A0A0A]/20 p-12 text-center">
-            <p className="text-[#0A0A0A]/40 font-mono text-sm">No oversight recommendations tracked yet.</p>
-            <p className="text-[#0A0A0A]/30 font-mono text-xs mt-2">Data sourced from oversight_recommendations</p>
-          </div>
-        )}
-      </div>
-
-      {/* ── Section 4: Hansard Analysis ── */}
-      <div className="bg-[#0A0A0A]/[0.03]">
-        <div className="max-w-6xl mx-auto px-6 py-16">
-          <div className="mb-10">
-            <div className="flex items-center gap-2 mb-2">
-              <MessageSquare className="w-5 h-5 text-[#0A0A0A]/50" />
-              <span className="text-xs font-mono text-[#0A0A0A]/60 uppercase tracking-wider">Section 4</span>
-            </div>
-            <h2
-              className="text-3xl md:text-4xl font-bold tracking-tight mb-3"
-              style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}
-            >
-              Hansard Analysis
-            </h2>
-            <p className="text-[#0A0A0A]/60 max-w-2xl">
-              What politicians actually say about youth justice in parliament,
-              and what they choose not to say.
-            </p>
-          </div>
-
-          {/* Rhetoric gap stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <StatCard
-              icon={Megaphone}
-              label="Total Speeches"
-              value={hansard.length.toString()}
-              sub="Youth justice related"
-            />
-            <StatCard
-              icon={AlertTriangle}
-              label="Mention Detention"
-              value={(detentionMentions || 47).toString()}
-              sub="Punishment-focused language"
-              accent="#DC2626"
-            />
-            <StatCard
-              icon={Users}
-              label="Mention Alternatives"
-              value={(alternativeMentions || 10).toString()}
-              sub="Community / diversion language"
-              accent="#059669"
-            />
-          </div>
-
-          {/* Recent speeches */}
-          <h3
-            className="text-xl font-bold tracking-tight mb-4"
-            style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#0A0A0A' }}
-          >
-            Recent Youth Justice Speeches
-          </h3>
-          <div className="space-y-3">
-            {hansard.map((h) => (
-              <div
-                key={h.id}
-                className="rounded-lg border border-[#0A0A0A]/10 p-4"
-                style={{ backgroundColor: 'white' }}
+                {r}
+              </Link>
+            ))}
+            {COMING_V2_REGIONS.map((r) => (
+              <span
+                key={r}
+                className="px-4 py-2 text-xs font-mono uppercase tracking-widest rounded border border-stone-700 text-stone-500 italic"
+                title="Coming in v2"
               >
-                <div className="flex items-start justify-between gap-4 mb-2">
-                  <div className="flex-1 min-w-0">
-                    <h4
-                      className="text-sm font-bold text-[#0A0A0A] mb-1"
-                      style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-                    >
-                      {h.subject ?? 'Untitled'}
-                    </h4>
-                    <p className="text-xs text-[#0A0A0A]/60 line-clamp-3">
-                      {h.body_text
-                        ? h.body_text.length > 300
-                          ? h.body_text.slice(0, 300) + '...'
-                          : h.body_text
-                        : 'No content available'}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[#0A0A0A]/50 mt-2">
-                  {h.speaker_name && <span className="font-medium text-[#0A0A0A]/70">{h.speaker_name}</span>}
-                  {h.party && (
-                    <>
-                      <span className="text-[#0A0A0A]/20">|</span>
-                      <span>{h.party}</span>
-                    </>
-                  )}
-                  {h.date && (
-                    <>
-                      <span className="text-[#0A0A0A]/20">|</span>
-                      <span>{new Date(h.date).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                    </>
-                  )}
-                </div>
-              </div>
+                {r} · v2
+              </span>
             ))}
           </div>
+          <p className="mt-6 text-xs font-mono text-stone-500">
+            <Link href="/intelligence/civic/methodology" className="underline underline-offset-2 hover:text-stone-300">
+              Read the full methodology →
+            </Link>
+          </p>
+        </div>
+      </section>
 
-          {hansard.length === 0 && (
-            <div className="rounded-xl border border-dashed border-[#0A0A0A]/20 p-12 text-center">
-              <p className="text-[#0A0A0A]/40 font-mono text-sm">No relevant Hansard speeches found.</p>
-              <p className="text-[#0A0A0A]/30 font-mono text-xs mt-2">Data sourced from civic_hansard</p>
-            </div>
+      {/* ──────────────────── Chapter 1: Access ──────────────────── */}
+      <ChapterShell number="01" name="Access" tagline="Where the money goes when government talks about fixing youth justice.">
+        {headlineRatio && (
+          <div className="mb-6">
+            <SnapshotStatCard claim={headlineRatio} accent="urgent" size="lg" context="Confirmed funding records, 2026-05-15 snapshot." />
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {consultancySpend && <SnapshotStatCard claim={consultancySpend} accent="urgent" />}
+          {tier1Funding && <SnapshotStatCard claim={tier1Funding} accent="positive" />}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {tier1QldClaim && <SnapshotStatCard claim={tier1QldClaim} size="sm" />}
+          {tier1NtClaim && <SnapshotStatCard claim={tier1NtClaim} size="sm" />}
+          {indigenousShare && (
+            <SnapshotStatCard
+              claim={indigenousShare}
+              displayValue={indigenousShare.value_numeric != null ? `${Math.round(Number(indigenousShare.value_numeric) * 100)}%` : 'n/a'}
+              size="sm"
+            />
           )}
         </div>
-      </div>
 
-      {/* ── Section 5: Rhetoric Timeline ── */}
-      <RhetoricTimeline />
+        {meetingAsymmetry && (
+          <Callout label="Secondary claim · meeting register">
+            <SnapshotStatCard claim={meetingAsymmetry} size="sm" />
+            <p className="mt-3 text-sm text-stone-700">
+              The ministerial diary register contains near-zero direct consultancy meetings. That is not a sign that consultancies don't shape policy. It is a sign that procurement, not meetings, is where the access happens. The funding ratio above is the honest proxy. This number complements but does not replace it.
+            </p>
+          </Callout>
+        )}
 
-      {/* ── Section 6: Accountability Cross-Reference ── */}
-      <div className="bg-[#0A0A0A]/[0.03]">
-        <AccountabilityLoop />
-      </div>
+        <Subhead>The confirmed Tier 1 universe</Subhead>
+        <p className="text-stone-700 mb-4">
+          {tier1Qld.length + tier1Nt.length} primary frontline organisations make up the v1 Tier 1 universe across QLD and NT.
+          Each classification starts as a machine proposal scored for confidence, then passes a review step against the
+          Tier 1 definition before it counts here. Lower-confidence proposals remain in the curation queue.
+        </p>
+        <Tier1List qld={tier1Qld} nt={tier1Nt} />
 
-      {/* ── Bottom CTA ── */}
-      <div className="bg-[#0A0A0A] text-white">
-        <div className="max-w-6xl mx-auto px-6 py-16 text-center">
-          <h2
-            className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white"
-            style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-          >
-            Ask ALMA About Civic Intelligence
-          </h2>
-          <p className="text-white/60 max-w-xl mx-auto mb-8">
-            Explore ministerial meetings, charter commitments, oversight recommendations,
-            and Hansard analysis through natural conversation.
+        <ChapterCitationsPanel
+          chapter="access"
+          claims={accessClaims}
+          liveSources={[
+            { label: 'Confirmed Tier 1 organisations', href: '#tier-1-list', count: tier1Qld.length + tier1Nt.length },
+          ]}
+        />
+      </ChapterShell>
+
+      {/* ──────────────────── Chapter 2: Promises ──────────────────── */}
+      <ChapterShell number="02" name="Promises" tagline="What governments said they would do. What state of completion those promises are in.">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <PromiseStatusCard label="Made" count={commitmentsByStatus.made?.length || 0} accent="neutral" />
+          <PromiseStatusCard label="In progress" count={commitmentsByStatus.in_progress?.length || 0} accent="positive" />
+          <PromiseStatusCard label="No public evidence" count={commitmentsByStatus.unknown?.length || 0} accent="urgent" />
+        </div>
+
+        {promiseClaims.map((claim) => (
+          <div key={claim.claim_id} className="mb-4">
+            <SnapshotStatCard claim={claim} size="md" />
+          </div>
+        ))}
+
+        <Callout label="Rhetoric over time">
+          <RhetoricTimeline />
+          <p className="mt-3 text-sm text-stone-700">
+            Ministerial statements naming detention vs naming alternatives. The shape of the curve says more than any single quote.
           </p>
+        </Callout>
+
+        <Subhead>Tracked commitments</Subhead>
+        {commitments.length > 0 ? (
+          <ul className="space-y-3">
+            {commitments.slice(0, 8).map((c, i) => (
+              <li key={i} className="p-4 bg-white border border-stone-200 rounded-lg">
+                <div className="flex items-center gap-2 mb-1 text-xs font-mono uppercase tracking-widest text-stone-500">
+                  <span>{(c.status as string) || 'status unknown'}</span>
+                  {c.category && <><span>·</span><span>{c.category}</span></>}
+                </div>
+                <p className="text-stone-900 text-sm">{c.commitment_text}</p>
+                {c.minister_name && <p className="mt-1 text-xs text-stone-500">{c.minister_name}{c.portfolio && `, ${c.portfolio}`}</p>}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-stone-600 italic">No commitments loaded for this region.</p>
+        )}
+
+        <ChapterCitationsPanel
+          chapter="promises"
+          claims={promiseClaims}
+          liveSources={[
+            { label: 'civic_charter_commitments', href: '/intelligence/civic/methodology#promises', count: commitments.length },
+            { label: 'civic_hansard (YJ-filtered)', href: '#hansard', count: hansardTotalCount || 0 },
+          ]}
+        />
+      </ChapterShell>
+
+      {/* ──────────────────── Chapter 3: Oversight ──────────────────── */}
+      <ChapterShell number="03" name="Oversight" tagline="What independent reviewers recommended. What happened next.">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-8">
+          <PromiseStatusCard label="Accepted" count={oversightByStatus.accepted?.length || 0} accent="positive" />
+          <PromiseStatusCard label="Accepted in principle" count={oversightByStatus.accepted_in_principle?.length || 0} accent="neutral" />
+          <PromiseStatusCard label="Rejected" count={oversightByStatus.rejected?.length || 0} accent="urgent" />
+          <PromiseStatusCard label="Deferred / silent" count={(oversightByStatus.deferred?.length || 0) + (oversightByStatus.no_response?.length || 0)} accent="urgent" />
+        </div>
+
+        {oversightClaims.map((claim) => (
+          <div key={claim.claim_id} className="mb-4">
+            <SnapshotStatCard claim={claim} size="md" />
+          </div>
+        ))}
+
+        <Callout label="Lived experience vs policy rhetoric">
+          <LivedExperienceContrast hansard={hansard as any} stories={stories as any} />
+          <p className="mt-3 text-sm text-stone-700">
+            Where the people inside the system describe the system differently than the people setting policy.
+          </p>
+        </Callout>
+
+        <Subhead>Recommendations from named bodies</Subhead>
+        <OversightList initialData={oversight as any} />
+
+        <ChapterCitationsPanel
+          chapter="oversight"
+          claims={oversightClaims}
+          liveSources={[
+            { label: 'oversight_recommendations', href: '/intelligence/civic/methodology#oversight', count: oversight.length },
+          ]}
+        />
+      </ChapterShell>
+
+      {/* Footer: Hansard deep-dive + AccountabilityLoop + EL stories link */}
+      <section id="hansard" className="bg-white border-t border-stone-200 px-6 py-16">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-2">Deep dive · Hansard</p>
+          <h2 className="text-2xl font-bold tracking-tight text-stone-900 mb-4">Speeches and statements on youth justice</h2>
+          <HansardList initialData={hansard.slice(0, 8) as any} />
+        </div>
+      </section>
+
+      <section className="bg-stone-100 border-t border-stone-200 px-6 py-16">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-2">Deep dive · Accountability loop</p>
+          <AccountabilityLoop />
+        </div>
+      </section>
+
+      {/* Methodology CTA */}
+      <section className="bg-stone-900 text-stone-50 px-6 py-12 border-t border-stone-800">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-mono uppercase tracking-widest text-stone-400 mb-2">Source-grade transparency</p>
+            <h3 className="text-2xl font-bold tracking-tight">Every claim on this page traces to a record you can audit.</h3>
+          </div>
           <Link
-            href="/intelligence/chat"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition-colors"
-            style={{ backgroundColor: '#DC2626', color: 'white' }}
+            href="/intelligence/civic/methodology"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-stone-50 text-stone-900 font-medium rounded hover:bg-stone-200"
           >
-            <MessageSquare className="w-4 h-4" />
-            Open ALMA Chat
-            <ArrowRight className="w-4 h-4" />
+            Read the methodology <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
+      </section>
+    </div>
+  );
+}
+
+/* ── Building blocks ────────────────────────────────────────── */
+
+function Nav() {
+  return (
+    <nav className="bg-white border-b border-stone-200 px-6 py-3">
+      <div className="max-w-5xl mx-auto flex items-center gap-6 text-sm">
+        <Link href="/" className="font-mono uppercase tracking-widest text-xs text-stone-700 hover:text-stone-900">JusticeHub</Link>
+        <Link href="/intelligence" className="text-stone-600 hover:text-stone-900">Intelligence Hub</Link>
+        <span className="text-stone-400">/</span>
+        <span className="text-stone-900 font-medium">Civic Intelligence</span>
+        <Link href="/intelligence/civic/methodology" className="ml-auto text-xs font-mono uppercase tracking-widest text-stone-500 hover:text-stone-900">
+          Methodology
+        </Link>
+      </div>
+    </nav>
+  );
+}
+
+function ChapterShell({ number, name, tagline, children }: { number: string; name: string; tagline: string; children: React.ReactNode }) {
+  return (
+    <section className="px-6 py-16 border-b border-stone-200">
+      <div className="max-w-5xl mx-auto">
+        <header className="mb-10">
+          <div className="flex items-baseline gap-4 mb-2">
+            <span className="text-xs font-mono uppercase tracking-widest text-stone-500">Chapter {number}</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-stone-900">{name}</h2>
+          <p className="mt-3 text-lg text-stone-700 max-w-2xl">{tagline}</p>
+        </header>
+        {children}
+      </div>
+    </section>
+  );
+}
+
+function Subhead({ children }: { children: React.ReactNode }) {
+  return <h3 className="mt-10 mb-3 text-xs font-mono uppercase tracking-widest text-stone-500">{children}</h3>;
+}
+
+function Callout({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="my-8 p-5 border-l-4 border-stone-400 bg-stone-100 rounded-r">
+      <p className="text-[10px] font-mono uppercase tracking-widest text-stone-500 mb-2">{label}</p>
+      {children}
+    </div>
+  );
+}
+
+function PromiseStatusCard({ label, count, accent }: { label: string; count: number; accent: 'neutral' | 'urgent' | 'positive' }) {
+  const accentClass =
+    accent === 'urgent' ? 'border-rose-300 bg-rose-50 text-rose-900'
+    : accent === 'positive' ? 'border-emerald-300 bg-emerald-50 text-emerald-900'
+    : 'border-stone-300 bg-white text-stone-900';
+  return (
+    <div className={`p-4 border rounded-lg ${accentClass}`}>
+      <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-1">{label}</p>
+      <p className="text-3xl font-bold">{count}</p>
+    </div>
+  );
+}
+
+function Tier1List({ qld, nt }: { qld: any[]; nt: any[] }) {
+  if (qld.length === 0 && nt.length === 0) {
+    return (
+      <div id="tier-1-list" className="p-5 bg-stone-100 border border-stone-300 rounded text-stone-700 italic text-sm">
+        No Tier 1 organisations confirmed yet. The hand-curation sweep at <code>/admin/civic/tier-1-curation</code> populates this list. v1 ships once the sweep is complete.
+      </div>
+    );
+  }
+
+  return (
+    <div id="tier-1-list" className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-2">QLD · {qld.length}</p>
+        <ul className="space-y-1.5 text-sm">
+          {qld.map((o) => <Tier1Row key={o.organization_id} org={o} />)}
+        </ul>
+      </div>
+      <div>
+        <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-2">NT · {nt.length}</p>
+        <ul className="space-y-1.5 text-sm">
+          {nt.map((o) => <Tier1Row key={o.organization_id} org={o} />)}
+        </ul>
       </div>
     </div>
+  );
+}
+
+function Tier1Row({ org }: { org: any }) {
+  const href = org.org_slug ? `/intelligence/civic/orgs/${org.org_slug}` : null;
+  return (
+    <li className="flex items-center gap-2">
+      {href ? (
+        <Link href={href} className="text-stone-900 hover:underline underline-offset-2 flex-1 truncate">{org.org_name}</Link>
+      ) : (
+        <span className="text-stone-700 flex-1 truncate">{org.org_name}</span>
+      )}
+      {org.is_indigenous_org && (
+        <span className="px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-widest bg-amber-100 text-amber-900 rounded">Indigenous</span>
+      )}
+      <ChevronRight className="w-3 h-3 text-stone-400 flex-shrink-0" />
+    </li>
   );
 }
