@@ -385,6 +385,124 @@ async function main() {
     });
   }
 
+  // ── Detention costs (ROGS 17A.20 — Cost per young person) ───
+  // Pulls per-state daily cost, average daily population, and total
+  // government recurrent expenditure. Emits one claim per state plus
+  // a national headline.
+  const STATE_CODES = ['nsw', 'vic', 'qld', 'wa', 'sa', 'tas', 'act', 'nt'];
+  const { data: costRows } = await supabase
+    .from('rogs_justice_spending')
+    .select('financial_year, description1, unit, nsw, vic, qld, wa, sa, tas, act, nt, aust')
+    .eq('rogs_table', '17A.20')
+    .eq('measure', 'Cost per young person subject to detention-based supervision')
+    .eq('service_type', 'Detention-based supervision')
+    .order('financial_year', { ascending: false })
+    .limit(10);
+
+  const latestFy = costRows?.[0]?.financial_year || null;
+  if (latestFy && costRows) {
+    const yearRows = costRows.filter((r) => r.financial_year === latestFy);
+    const dailyRow = yearRows.find((r) => r.description1 === 'Cost per average day per young person');
+    const popRow = yearRows.find((r) => r.unit === 'no.');
+    const spendRow = yearRows.find((r) =>
+      r.description1 === 'Government real recurrent expenditure' && r.unit === "$'000"
+    );
+
+    // National headline: total spend + avg per young person
+    const nationalAnnualPerYouth = Math.round(parseFloat(dailyRow?.aust || '0') * 365);
+    const nationalSpend = parseFloat(spendRow?.aust || '0') * 1000; // $'000 → $
+    const nationalPop = parseFloat(popRow?.aust || '0');
+
+    await upsertClaim({
+      claim_id: 'access.cost.detention_per_youth.annual.national',
+      display_label: 'Annual detention cost per young person (national average)',
+      value_numeric: nationalAnnualPerYouth,
+      value_text: `$${nationalAnnualPerYouth.toLocaleString()} per young person per year — average across Australia (${latestFy})`,
+      unit: 'dollars',
+      tier: 1,
+      region: 'national',
+      chapter: 'access',
+      methodology: `ROGS Table 17A.20, financial year ${latestFy}: "Cost per average day per young person" × 365. Source: Productivity Commission Report on Government Services.`,
+      methodology_url: METHODOLOGY_URL,
+      source_record_ids: { financial_year: latestFy, rogs_table: '17A.20' },
+      source_doc_urls: ['https://www.pc.gov.au/ongoing/report-on-government-services'],
+      verification_status: 'snapshot',
+    });
+
+    await upsertClaim({
+      claim_id: 'access.cost.detention_total.national',
+      display_label: 'Total government youth detention spend (national)',
+      value_numeric: nationalSpend,
+      value_text: `$${(nationalSpend / 1_000_000).toFixed(0)}M total government recurrent expenditure on youth detention nationally (${latestFy})`,
+      unit: 'dollars',
+      tier: 1,
+      region: 'national',
+      chapter: 'access',
+      methodology: `ROGS Table 17A.20, "Government real recurrent expenditure" total row for Australia, ${latestFy}.`,
+      methodology_url: METHODOLOGY_URL,
+      source_record_ids: { financial_year: latestFy, rogs_table: '17A.20' },
+      source_doc_urls: ['https://www.pc.gov.au/ongoing/report-on-government-services'],
+      verification_status: 'snapshot',
+    });
+
+    await upsertClaim({
+      claim_id: 'access.count.detention_avg_daily_pop.national',
+      display_label: 'Average daily youth detention population (national)',
+      value_numeric: nationalPop,
+      value_text: `${nationalPop.toLocaleString()} young people detained on the average day in Australia (${latestFy})`,
+      unit: 'count',
+      tier: 1,
+      region: 'national',
+      chapter: 'access',
+      methodology: `ROGS Table 17A.20, "no." row total for Australia, ${latestFy}.`,
+      methodology_url: METHODOLOGY_URL,
+      source_record_ids: { financial_year: latestFy, rogs_table: '17A.20' },
+      source_doc_urls: [],
+      verification_status: 'snapshot',
+    });
+
+    // Per-state claims for daily cost + annual cost
+    for (const code of STATE_CODES) {
+      const dailyDollar = parseFloat(dailyRow?.[code] || '0');
+      const annualPerYouth = Math.round(dailyDollar * 365);
+      const statePop = parseFloat(popRow?.[code] || '0');
+      const stateUpper = code.toUpperCase();
+      if (!dailyDollar) continue;
+
+      await upsertClaim({
+        claim_id: `access.cost.detention_per_youth.annual.${code}`,
+        display_label: `Annual detention cost per young person (${stateUpper})`,
+        value_numeric: annualPerYouth,
+        value_text: `$${annualPerYouth.toLocaleString()} per young person per year in ${stateUpper} detention (${latestFy})`,
+        unit: 'dollars',
+        tier: 1,
+        region: stateUpper,
+        chapter: 'access',
+        methodology: `ROGS Table 17A.20, ${latestFy}: $${dailyDollar.toFixed(2)} per day × 365.`,
+        methodology_url: METHODOLOGY_URL,
+        source_record_ids: { financial_year: latestFy, daily_cost: dailyDollar },
+        source_doc_urls: [],
+        verification_status: 'snapshot',
+      });
+
+      await upsertClaim({
+        claim_id: `access.count.detention_avg_daily_pop.${code}`,
+        display_label: `Average daily youth detention population (${stateUpper})`,
+        value_numeric: statePop,
+        value_text: `${statePop} young people detained on the average day in ${stateUpper} (${latestFy})`,
+        unit: 'count',
+        tier: 1,
+        region: stateUpper,
+        chapter: 'access',
+        methodology: `ROGS Table 17A.20 daily population row, ${latestFy}.`,
+        methodology_url: METHODOLOGY_URL,
+        source_record_ids: { financial_year: latestFy },
+        source_doc_urls: [],
+        verification_status: 'snapshot',
+      });
+    }
+  }
+
   // ── Claim 7: promises tracked ─────────────────────────────────
   const charter = await fetchCount('civic_charter_commitments');
   const hansard = await fetchCount('civic_hansard');
