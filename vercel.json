@@ -69,6 +69,10 @@
       "schedule": "0 5 * * *"
     },
     {
+      "path": "/api/cron/alma/migrate-logos?batch=100",
+      "schedule": "0 6 * * *"
+    },
+    {
       "path": "/api/cron/alma/data-sprint?mode=linkage&batch=500",
       "schedule": "0 22 * * *"
     },
