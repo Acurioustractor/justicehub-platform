@@ -44,7 +44,14 @@ export interface QueueRow {
   candidateCreatedAt: string | null;
   provenance: Record<string, any> | null;
   existingClaim: { status: string; contact_name: string | null; contact_email: string | null } | null;
-  lastOutreach: { attempt_kind: string; response_status: string; sent_at: string } | null;
+  lastOutreach: {
+    id?: string;
+    attempt_kind: string;
+    response_status: string;
+    sent_at: string;
+    responded_at?: string | null;
+    notes?: string | null;
+  } | null;
 }
 
 export interface UntouchedRow {
@@ -1305,10 +1312,38 @@ function RepairUrlProposals({
     | undefined;
 
   const [manual, setManual] = useState('');
+  const [reEnrichState, setReEnrichState] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
+  const [reEnrichResult, setReEnrichResult] = useState<string | null>(null);
 
   const apply = (url: string) => {
     if (!url) return;
     callAction(row.candidateId, { action: 'update_url', url });
+  };
+
+  const reEnrichNow = async () => {
+    setReEnrichState('busy');
+    setReEnrichResult(null);
+    try {
+      const res = await fetch('/api/admin/alma/enrichment/re-enrich', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ organization_id: row.orgId }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok) {
+        throw new Error(json.error || `HTTP ${res.status}`);
+      }
+      const pct = typeof json.confidence === 'number' ? `${Math.round(json.confidence * 100)}%` : '?';
+      setReEnrichResult(
+        json.represents_named_org
+          ? `✓ New candidate created (status: ${json.status}, conf: ${pct})`
+          : `Still a mismatch — site represents a different org. Try another URL.`
+      );
+      setReEnrichState('done');
+    } catch (e: any) {
+      setReEnrichResult(`Failed: ${e?.message || 'unknown'}`);
+      setReEnrichState('error');
+    }
   };
 
   if (!discovery) {
@@ -1396,6 +1431,33 @@ function RepairUrlProposals({
         busy={busy}
         error={error}
       />
+      {row.website && (
+        <div className="mt-3 pt-2 border-t border-[#0A0A0A]/5 flex items-center gap-2">
+          <button
+            onClick={reEnrichNow}
+            disabled={reEnrichState === 'busy'}
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-[#0A0A0A]/20 text-[11px] font-semibold hover:bg-[#0A0A0A]/5 disabled:opacity-40"
+            title="Re-run extraction against the org's current website URL (use after fixing the URL above)"
+          >
+            {reEnrichState === 'busy' ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : (
+              <Send className="w-3 h-3" />
+            )}
+            Re-enrich now
+          </button>
+          {reEnrichResult && (
+            <span
+              className={`text-[10px] ${
+                reEnrichState === 'error' ? 'text-[#DC2626]' : 'text-[#059669]'
+              }`}
+              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+            >
+              {reEnrichResult}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -1417,6 +1479,35 @@ function ClaimInviteButton({ row }: { row: QueueRow }) {
   );
 }
 
+const RESPONSE_OPTIONS: Array<{ value: string; label: string; tone: string }> = [
+  { value: 'sent', label: 'Sent (no reply yet)', tone: 'amber' },
+  { value: 'no_response', label: 'Bounced into the void', tone: 'gray' },
+  { value: 'responded', label: 'Responded', tone: 'green' },
+  { value: 'claimed', label: 'Claimed entry', tone: 'green' },
+  { value: 'declined', label: 'Declined / asked to remove', tone: 'red' },
+  { value: 'bounced', label: 'Email bounced', tone: 'red' },
+  { value: 'requires_cultural_referral', label: 'Needs Elder review', tone: 'amber' },
+];
+
+function statusTone(status: string): string {
+  const opt = RESPONSE_OPTIONS.find((o) => o.value === status);
+  if (!opt) return 'bg-amber-100 text-amber-700';
+  switch (opt.tone) {
+    case 'green':
+      return 'bg-[#059669]/10 text-[#059669]';
+    case 'red':
+      return 'bg-[#DC2626]/10 text-[#DC2626]';
+    case 'gray':
+      return 'bg-[#0A0A0A]/5 text-[#0A0A0A]/60';
+    default:
+      return 'bg-amber-100 text-amber-700';
+  }
+}
+
+function statusLabel(status: string): string {
+  return RESPONSE_OPTIONS.find((o) => o.value === status)?.label || status;
+}
+
 function OutreachMarkSent({
   row,
   draft,
@@ -1424,26 +1515,17 @@ function OutreachMarkSent({
   row: QueueRow;
   draft: { subject: string; body: string };
 }) {
-  const [state, setState] = useState<'idle' | 'busy' | 'done' | 'error'>(
-    row.lastOutreach ? 'done' : 'idle'
-  );
+  // Three lifecycles: idle (no outreach yet) → busy (POST in flight) →
+  // done (one or more outreach rows exist; allow status edits).
+  const initial = row.lastOutreach ?? null;
+  const [outreach, setOutreach] = useState<typeof initial>(initial);
+  const [busy, setBusy] = useState(false);
   const [errMsg, setErrMsg] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
   const router = useRouter();
 
-  if (state === 'done') {
-    return (
-      <span
-        className="inline-flex items-center gap-1 px-2 py-1 text-[10px] text-amber-700 bg-amber-100 rounded"
-        style={{ fontFamily: "'IBM Plex Mono', monospace" }}
-      >
-        <Check className="w-3 h-3" />
-        logged
-      </span>
-    );
-  }
-
-  const onClick = async () => {
-    setState('busy');
+  const markSent = async () => {
+    setBusy(true);
     setErrMsg(null);
     try {
       const email = row.extractedFields.contact_email || row.currentEmail;
@@ -1461,34 +1543,120 @@ function OutreachMarkSent({
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error || `HTTP ${res.status}`);
-      setState('done');
+      setOutreach({
+        id: json.outreach?.id,
+        attempt_kind: 'email',
+        response_status: 'sent',
+        sent_at: json.outreach?.sent_at || new Date().toISOString(),
+        responded_at: null,
+        notes: null,
+      });
       router.refresh();
     } catch (e: any) {
       setErrMsg(e?.message || 'Mark-sent failed');
-      setState('error');
+    } finally {
+      setBusy(false);
     }
   };
 
+  const updateStatus = async (newStatus: string) => {
+    if (!outreach?.id) {
+      // No id means the existing row pre-dates the schema change; we can't
+      // PATCH it without an id. Tell the admin to refresh the page.
+      setErrMsg('Refresh the page to enable status updates');
+      return;
+    }
+    setBusy(true);
+    setErrMsg(null);
+    try {
+      const res = await fetch('/api/admin/alma/outreach', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: outreach.id, response_status: newStatus }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.error || `HTTP ${res.status}`);
+      setOutreach({
+        ...outreach,
+        response_status: newStatus,
+        responded_at: json.outreach?.responded_at || outreach.responded_at,
+      });
+      setEditing(false);
+      router.refresh();
+    } catch (e: any) {
+      setErrMsg(e?.message || 'Status update failed');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (!outreach) {
+    return (
+      <>
+        <button
+          onClick={markSent}
+          disabled={busy}
+          className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-amber-500/40 text-amber-700 text-[11px] font-semibold hover:bg-amber-50 disabled:opacity-40"
+          title="Log that you sent this email so it doesn't show in the queue again"
+        >
+          {busy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+          Mark sent
+        </button>
+        {errMsg && (
+          <span
+            className="text-[10px] text-[#DC2626]"
+            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+          >
+            {errMsg}
+          </span>
+        )}
+      </>
+    );
+  }
+
   return (
-    <>
+    <div className="inline-flex items-center gap-1">
       <button
-        onClick={onClick}
-        disabled={state === 'busy'}
-        className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-amber-500/40 text-amber-700 text-[11px] font-semibold hover:bg-amber-50 disabled:opacity-40"
-        title="Log that you sent this email so it doesn't show in the queue again"
+        onClick={() => setEditing((v) => !v)}
+        disabled={busy}
+        className={`inline-flex items-center gap-1 px-2 py-1 text-[10px] rounded hover:opacity-80 ${statusTone(
+          outreach.response_status
+        )}`}
+        style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+        title="Click to update status"
       >
-        {state === 'busy' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
-        Mark sent
+        {busy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+        {statusLabel(outreach.response_status)}
+        {editing ? (
+          <ChevronDown className="w-3 h-3 opacity-50" />
+        ) : (
+          <ChevronRight className="w-3 h-3 opacity-50" />
+        )}
       </button>
-      {state === 'error' && errMsg && (
+      {editing && (
+        <div className="inline-flex flex-wrap items-center gap-1">
+          {RESPONSE_OPTIONS.filter((o) => o.value !== outreach.response_status).map((o) => (
+            <button
+              key={o.value}
+              onClick={() => updateStatus(o.value)}
+              disabled={busy}
+              className={`px-1.5 py-0.5 text-[10px] rounded hover:opacity-80 ${statusTone(o.value)}`}
+              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+            >
+              → {o.label}
+            </button>
+          ))}
+        </div>
+      )}
+      {errMsg && (
         <span
-          className="text-[10px] text-[#DC2626]"
+          className="text-[10px] text-[#DC2626] ml-1"
           style={{ fontFamily: "'IBM Plex Mono', monospace" }}
         >
           {errMsg}
         </span>
       )}
-    </>
+    </div>
   );
 }
 

@@ -76,7 +76,7 @@ export default async function OutreachQueuePage() {
       fetchInChunks<any>(entityIds, (ids) =>
         supabase
           .from('organization_outreach_log')
-          .select('organization_id, attempt_kind, response_status, sent_at')
+          .select('id, organization_id, attempt_kind, response_status, sent_at, responded_at, notes')
           .in('organization_id', ids)
           .order('sent_at', { ascending: false })
       ),

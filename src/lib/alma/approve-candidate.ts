@@ -1,4 +1,5 @@
 import { scoreOrg } from './profile-completeness';
+import { migrateLogo } from './migrate-logo';
 import type { LooseSupabaseClient } from '@/lib/supabase/service-lite';
 
 export const FIELD_MAP: Record<string, { from: string; to: string }> = {
@@ -89,7 +90,7 @@ export async function approveCandidate(
   const { data: org, error: orgErr } = await supabase
     .from('organizations')
     .select(
-      'id, contact_email, email, phone, logo_url, annual_report_url, history_summary, website_url, website, tagline, description, profile_completeness_score'
+      'id, slug, contact_email, email, phone, logo_url, annual_report_url, history_summary, website_url, website, tagline, description, profile_completeness_score'
     )
     .eq('id', candidate.organization_id)
     .single();
@@ -154,6 +155,22 @@ export async function approveCandidate(
       status: 'error',
       message: orgUpdateErr.message,
     };
+  }
+
+  // If a logo URL just landed, copy it into Supabase Storage so the
+  // org page never breaks when the source host goes down. Best-effort —
+  // a failed copy keeps the remote URL on the row.
+  if (appliedFields.includes('logo') && updatePayload.logo_url) {
+    const orgSlug = ((org as any).slug as string) || candidate.organization_id;
+    const remoteUrl = updatePayload.logo_url as string;
+    const migration = await migrateLogo(supabase, { orgSlug, remoteUrl });
+    if (migration.ok && migration.storageUrl && migration.storageUrl !== remoteUrl) {
+      await supabase
+        .from('organizations')
+        .update({ logo_url: migration.storageUrl })
+        .eq('id', candidate.organization_id);
+      updatePayload.logo_url = migration.storageUrl;
+    }
   }
 
   // Recompute completeness — see [id] route comment for why we skip evidence/media here.
