@@ -61,6 +61,10 @@
       "schedule": "0 11 * * *"
     },
     {
+      "path": "/api/cron/alma/rescore?limit=5000",
+      "schedule": "0 2 * * *"
+    },
+    {
       "path": "/api/cron/alma/data-sprint?mode=linkage&batch=500",
       "schedule": "0 22 * * *"
     },
