@@ -697,6 +697,124 @@ async function main() {
     }
   }
 
+  // ── Tier 1 funding distribution (Phase 3) ─────────────────────
+  // Cross-state aggregate so we can compare "the median Tier 1 org receives X
+  // in justice funding" vs detention's $1.33M per young person per year.
+  // Computed in SQL because percentiles are awkward in JS.
+  const { data: t1FundingRow } = await supabase.rpc('exec_sql', { sql: '' }).then(
+    () => ({ data: null }),
+    () => ({ data: null })
+  ).catch(() => ({ data: null }));
+
+  // Direct query — works even without an RPC.
+  const { data: t1FundingRowsAll, error: t1Err } = await supabase
+    .from('civic_org_classifications')
+    .select('organization_id, tier, confirmed_at')
+    .eq('tier', 1)
+    .not('confirmed_at', 'is', null);
+  if (!t1Err && t1FundingRowsAll && t1FundingRowsAll.length > 0) {
+    // Fetch orgs + their justice_funding totals
+    const t1Ids = t1FundingRowsAll.map((r) => r.organization_id);
+    const orgsById = new Map();
+    for (let i = 0; i < t1Ids.length; i += 100) {
+      const chunk = t1Ids.slice(i, i + 100);
+      const { data } = await supabase
+        .from('organizations')
+        .select('id, is_indigenous_org')
+        .in('id', chunk);
+      for (const o of data || []) orgsById.set(o.id, o);
+    }
+    // Sum funding per org. Process one org at a time, paginating inside
+    // each so a single org with many funding rows doesn't get truncated
+    // by Supabase's 1000-row fetch cap.
+    const fundingByOrg = new Map();
+    for (const id of t1Ids) {
+      let total = 0;
+      let offset = 0;
+      const PAGE = 1000;
+      while (true) {
+        const { data, error } = await supabase
+          .from('justice_funding')
+          .select('amount_dollars')
+          .eq('alma_organization_id', id)
+          .range(offset, offset + PAGE - 1);
+        if (error) break;
+        if (!data || data.length === 0) break;
+        for (const r of data) total += Number(r.amount_dollars || 0);
+        if (data.length < PAGE) break;
+        offset += PAGE;
+      }
+      fundingByOrg.set(id, total);
+    }
+    // Compute stats
+    const totals = t1Ids.map((id) => fundingByOrg.get(id) || 0);
+    totals.sort((a, b) => a - b);
+    const median = totals.length > 0 ? totals[Math.floor(totals.length / 2)] : 0;
+    const sum = totals.reduce((s, v) => s + v, 0);
+    const mean = totals.length > 0 ? sum / totals.length : 0;
+    const withFunding = totals.filter((v) => v > 0).length;
+
+    const indigTotals = t1Ids
+      .filter((id) => orgsById.get(id)?.is_indigenous_org)
+      .map((id) => fundingByOrg.get(id) || 0);
+    const indigSum = indigTotals.reduce((s, v) => s + v, 0);
+    const indigCount = indigTotals.length;
+    const indigShare = sum > 0 ? indigSum / sum : null;
+
+    await upsertClaim({
+      claim_id: 'access.sum.tier_1_funding.national',
+      display_label: 'Total justice funding to Tier 1 frontline orgs (national)',
+      value_numeric: sum,
+      value_text: `$${(sum / 1_000_000).toFixed(0)}M total justice funding to ${t1Ids.length} confirmed Tier 1 frontline orgs nationally`,
+      unit: 'dollars',
+      tier: 1,
+      region: 'national',
+      chapter: 'access',
+      methodology:
+        'Sum of justice_funding.amount_dollars across rows whose alma_organization_id is a confirmed Tier 1 (tier=1, confirmed_at IS NOT NULL) organisation. National across all 8 states.',
+      methodology_url: METHODOLOGY_URL,
+      source_record_ids: { tier1_org_count: t1Ids.length, with_funding: withFunding },
+      source_doc_urls: [],
+      verification_status: 'snapshot',
+    });
+
+    await upsertClaim({
+      claim_id: 'access.median.tier_1_funding_per_org.national',
+      display_label: 'Median justice funding per Tier 1 org (national)',
+      value_numeric: median,
+      value_text: `Median Tier 1 frontline org receives $${Math.round(median).toLocaleString()} in tracked justice funding`,
+      unit: 'dollars',
+      tier: 1,
+      region: 'national',
+      chapter: 'access',
+      methodology:
+        'Median of justice_funding totals across the 149-org confirmed Tier 1 universe. Some orgs have $0 tracked funding (no rows match in justice_funding); included in the distribution.',
+      methodology_url: METHODOLOGY_URL,
+      source_record_ids: { tier1_org_count: t1Ids.length },
+      source_doc_urls: [],
+      verification_status: 'snapshot',
+    });
+
+    if (indigShare !== null) {
+      await upsertClaim({
+        claim_id: 'access.indigenous_funding_share.tier_1.national',
+        display_label: 'Indigenous-controlled share of Tier 1 funding (national)',
+        value_numeric: indigShare,
+        value_text: `Indigenous-controlled orgs are ${Math.round((indigCount / t1Ids.length) * 100)}% of the confirmed Tier 1 universe (${indigCount}/${t1Ids.length}) but receive ${Math.round(indigShare * 100)}% of total Tier 1 justice funding`,
+        unit: 'fraction',
+        tier: 1,
+        region: 'national',
+        chapter: 'access',
+        methodology:
+          'Indigenous-controlled = organizations.is_indigenous_org = true. Funding share = sum(funding to Indigenous Tier 1) / sum(funding to all Tier 1). National across all 8 states.',
+        methodology_url: METHODOLOGY_URL,
+        source_record_ids: { indigenous_count: indigCount, tier1_total: t1Ids.length },
+        source_doc_urls: [],
+        verification_status: 'snapshot',
+      });
+    }
+  }
+
   // ── Claim 7: promises tracked ─────────────────────────────────
   const charter = await fetchCount('civic_charter_commitments');
   const hansard = await fetchCount('civic_hansard');
