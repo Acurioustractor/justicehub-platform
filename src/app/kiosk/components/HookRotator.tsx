@@ -33,7 +33,8 @@ export function HookRotator({ entries }: { entries: HookEntry[] }) {
 
   if (entries.length === 0) return null;
   const entry = entries[idx];
-  const isNumberEntry = entry.slug === null && entry.org === 'The cost asymmetry';
+  const isNumberEntry = entry.kind === 'number';
+  const isLiveCounts = entry.kind === 'live_counts';
 
   return (
     <button
@@ -43,7 +44,7 @@ export function HookRotator({ entries }: { entries: HookEntry[] }) {
       aria-label="Tap anywhere to begin"
     >
       {/* Background image */}
-      {entry.image && !isNumberEntry && (
+      {entry.image && !isNumberEntry && !isLiveCounts && (
         <img
           src={entry.image}
           alt=""
@@ -58,7 +59,23 @@ export function HookRotator({ entries }: { entries: HookEntry[] }) {
 
       {/* Content */}
       <div className="relative z-10 h-full max-w-5xl mx-auto px-8 sm:px-16 py-16 sm:py-24 flex flex-col justify-end">
-        {isNumberEntry ? (
+        {isLiveCounts && entry.liveCounts ? (
+          <div className="space-y-8">
+            <p className="text-xs sm:text-sm font-mono uppercase tracking-[0.4em] text-emerald-400">
+              Centre of Excellence for Youth Justice
+            </p>
+            <p className="text-3xl sm:text-5xl md:text-6xl font-bold leading-tight max-w-4xl" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              Every fact here earns its headline by{' '}
+              <span className="text-emerald-400">multiple independent sources</span>.
+            </p>
+            <ul className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5 pt-2">
+              <CountBox value={entry.liveCounts.triangulated} label="Triangulated claims" />
+              <CountBox value={entry.liveCounts.totalClaims} label="Sourced facts" />
+              <CountBox value={entry.liveCounts.tier1} label="Confirmed Tier 1" />
+              <CountBox value={entry.liveCounts.accos} label="Named ACCOs" />
+            </ul>
+          </div>
+        ) : isNumberEntry ? (
           <div className="space-y-6">
             <p className="text-xs sm:text-sm font-mono uppercase tracking-[0.4em] text-[#DC2626]">
               The cost asymmetry
@@ -91,5 +108,16 @@ export function HookRotator({ entries }: { entries: HookEntry[] }) {
         </p>
       </div>
     </button>
+  );
+}
+
+function CountBox({ value, label }: { value: number; label: string }) {
+  return (
+    <li className="border-l-4 border-emerald-500 pl-3">
+      <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-white" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        {value.toLocaleString()}
+      </p>
+      <p className="mt-1 text-[10px] sm:text-xs font-mono uppercase tracking-[0.3em] text-white/60">{label}</p>
+    </li>
   );
 }

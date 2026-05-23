@@ -16,18 +16,43 @@ import { HOOK_ENTRIES, type HookEntry } from './lib/hook-content';
 export const revalidate = 60;
 
 async function getMergedEntries(): Promise<HookEntry[]> {
-  const slugs = HOOK_ENTRIES.map((e) => e.slug).filter((s): s is string => Boolean(s));
-  if (slugs.length === 0) return HOOK_ENTRIES;
   const supabase = createServiceClient() as any;
-  const { data } = await supabase
-    .from('organizations')
-    .select('slug, hero_photo_url')
-    .in('slug', slugs);
+  const slugs = HOOK_ENTRIES.map((e) => e.slug).filter((s): s is string => Boolean(s));
+
+  const [heroRes, triRes, totalRes, accoRes, tier1Res] = await Promise.all([
+    slugs.length > 0
+      ? supabase.from('organizations').select('slug, hero_photo_url').in('slug', slugs)
+      : Promise.resolve({ data: [] }),
+    supabase
+      .from('v_claim_evidence_summary')
+      .select('claim_id', { count: 'exact', head: true })
+      .eq('triangulation_tier', 'triangulated'),
+    supabase.from('v_claim_evidence_summary').select('claim_id', { count: 'exact', head: true }),
+    supabase
+      .from('organizations')
+      .select('id', { count: 'exact', head: true })
+      .eq('acco_certified', true)
+      .eq('is_active', true),
+    supabase
+      .from('civic_org_classifications')
+      .select('id', { count: 'exact', head: true })
+      .eq('tier', 1)
+      .not('confirmed_at', 'is', null),
+  ]);
+
   const heroBySlug = new Map<string, string>();
-  for (const r of data || []) {
+  for (const r of heroRes.data || []) {
     if (r.hero_photo_url) heroBySlug.set(r.slug, r.hero_photo_url);
   }
+  const liveCounts = {
+    triangulated: triRes.count || 0,
+    totalClaims: totalRes.count || 0,
+    accos: accoRes.count || 0,
+    tier1: tier1Res.count || 0,
+  };
+
   return HOOK_ENTRIES.map((e) => {
+    if (e.kind === 'live_counts') return { ...e, liveCounts };
     if (!e.slug) return e;
     const fromDb = heroBySlug.get(e.slug);
     return fromDb ? { ...e, image: fromDb } : e;

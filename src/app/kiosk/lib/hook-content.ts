@@ -9,6 +9,8 @@
  * the org's /sites/[slug] page.
  */
 
+export type HookKind = 'portrait' | 'number' | 'live_counts';
+
 export interface HookEntry {
   /** Display name as the visitor sees it. */
   name: string;
@@ -24,6 +26,18 @@ export interface HookEntry {
   slug: string | null;
   /** State code (used for sorting / Adelaide-soft-highlight). */
   state: 'NT' | 'QLD' | 'NSW' | 'VIC' | 'WA' | 'SA' | 'TAS' | 'ACT' | null;
+  /** Render variant. Default 'portrait'. */
+  kind?: HookKind;
+  /**
+   * For 'live_counts' kind: dynamic numbers shown as a typographic moment.
+   * Populated server-side at render time.
+   */
+  liveCounts?: {
+    triangulated: number;
+    totalClaims: number;
+    accos: number;
+    tier1: number;
+  };
 }
 
 const SUPABASE_MEDIA = 'https://tednluwflfhxyucgwigh.supabase.co/storage/v1/object/public/media/contained/gallery';
@@ -82,6 +96,17 @@ export const HOOK_ENTRIES: HookEntry[] = [
     image: '',
     slug: null,
     state: null,
+    kind: 'number',
+  },
+  {
+    name: 'The Centre',
+    org: 'Centre of Excellence',
+    place: 'Australia',
+    quote: 'Every fact here earns its headline by multiple independent sources.',
+    image: '',
+    slug: null,
+    state: null,
+    kind: 'live_counts',
   },
 ];
 

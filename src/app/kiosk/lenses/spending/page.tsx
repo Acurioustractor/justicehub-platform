@@ -9,6 +9,7 @@
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { LensBar } from '../../components/LensBar';
+import { TrustDrillButton } from '../../components/TrustDrillButton';
 import { getDetentionCosts } from '@/lib/detention-costs';
 
 export const revalidate = 600;
@@ -79,12 +80,13 @@ export default async function SpendingLensPage() {
             </div>
 
             {sources != null && (
-              <Link
-                href={`/intelligence/civic/claim/${encodeURIComponent('access.ratio.detention_vs_community_cost.national')}`}
-                className="mt-10 sm:mt-16 inline-block text-xs sm:text-sm font-mono uppercase tracking-[0.3em] text-emerald-400 border border-emerald-700 px-4 py-3 rounded hover:bg-emerald-950"
-              >
-                Backed by {sources} independent {sources === 1 ? 'source' : 'sources'} · tap to see
-              </Link>
+              <div className="mt-10 sm:mt-16">
+                <TrustDrillButton
+                  claimId="access.ratio.detention_vs_community_cost.national"
+                  initialSources={sources}
+                  variant="dark"
+                />
+              </div>
             )}
           </div>
         </section>
