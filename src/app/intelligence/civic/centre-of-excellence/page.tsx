@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Search, Coins, Building2, FileText, MapPin, Users, GitBranch, Scale } from 'lucide-react';
+import { ArrowRight, Search, Coins, Building2, FileText, MapPin, Users, GitBranch, Scale, Sparkles } from 'lucide-react';
 
 import { createServiceClient } from '@/lib/supabase/service';
 
@@ -119,6 +119,7 @@ export default async function COEPage() {
             <ActionCard icon={<MapPin className="w-5 h-5" />} title="Read place-based stories" body="Five named locales with the local Tier 1 universe, state context, and detention nearest." href="/intelligence/civic/locale" />
             <ActionCard icon={<Scale className="w-5 h-5" />} title="See independent oversight" body="107 recommendations from Sentencing Advisory Councils, Auditors-General, Children&apos;s Commissioners." href="/intelligence/civic" />
             <ActionCard icon={<Users className="w-5 h-5" />} title="Add your service" body="Touch-friendly intake. Reviewer checks then publishes." href="/add-service" />
+            <ActionCard icon={<Sparkles className="w-5 h-5" />} title="See what changed this week" body="Living feed: claims refreshed, evidence added, Tier 1 confirmations, grants classified, oversight indexed." href="/intelligence/civic/whats-new" />
           </div>
         </div>
       </section>

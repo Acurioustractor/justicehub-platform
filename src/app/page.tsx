@@ -207,9 +207,10 @@ export default async function HomePage() {
                 <p className="text-xs text-stone-600 mt-1">Via ORIC public register</p>
               </div>
             </div>
-            <p className="mt-5 text-xs font-mono uppercase tracking-widest text-stone-500">
+            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs font-mono uppercase tracking-widest text-stone-500">
               <Link href="/intelligence/civic" className="hover:text-stone-900 hover:underline">See all claims with their evidence trail →</Link>
-            </p>
+              <Link href="/intelligence/civic/whats-new" className="hover:text-stone-900 hover:underline">What changed this week →</Link>
+            </div>
           </div>
         </section>
 
