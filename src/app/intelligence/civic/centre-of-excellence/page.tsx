@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 async function fetchHeadlines() {
   const supabase = createServiceClient() as any;
-  const [orgsCount, t1Count, claimsRes, evidenceRes, programsCount, grantsCount, foundationsRes, accoOrgs, sourcesActive, openGaps, sourcedGaps] = await Promise.all([
+  const [orgsCount, t1Count, claimsRes, evidenceRes, programsCount, grantsCount, foundationsRes, accoOrgs, sourcesActive, openGaps, sourcedGaps, peopleCount, rolesCount] = await Promise.all([
     supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('archived', false),
     supabase.from('civic_org_classifications').select('id', { count: 'exact', head: true }).eq('tier', 1).not('confirmed_at', 'is', null),
     supabase.from('civic_intelligence_claims').select('id', { count: 'exact', head: true }),
@@ -26,7 +26,9 @@ async function fetchHeadlines() {
     supabase.from('data_sources_inventory').select('id', { count: 'exact', head: true }).eq('status', 'active'),
     supabase.from('data_gap_questions').select('id', { count: 'exact', head: true }).in('status', ['open', 'investigating']),
     supabase.from('data_gap_questions').select('id', { count: 'exact', head: true }).eq('status', 'sourced'),
-  ]);
+    supabase.from('people').select('id', { count: 'exact', head: true }),
+    supabase.from('person_role_holdings').select('id', { count: 'exact', head: true }),
+  ] as any[]);
   const tierTally: Record<string, number> = {};
   for (const r of evidenceRes.data || []) tierTally[r.triangulation_tier] = (tierTally[r.triangulation_tier] || 0) + 1;
   const distinctFoundations = new Set((foundationsRes.data || []).map((r: any) => r.foundation_abn).filter(Boolean));
@@ -43,6 +45,8 @@ async function fetchHeadlines() {
     activeSources: sourcesActive.count || 0,
     openGaps: openGaps.count || 0,
     sourcedGaps: sourcedGaps.count || 0,
+    people: peopleCount.count || 0,
+    roles: rolesCount.count || 0,
   };
 }
 
@@ -182,7 +186,7 @@ export default async function COEPage() {
           {/* Data sufficiency transparency */}
           <div className="mt-10 border-t-2 border-stone-200 pt-8">
             <p className="text-xs font-mono uppercase tracking-[0.3em] text-stone-500 mb-3">Live data inventory</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               <div className="border-2 border-emerald-300 bg-emerald-50 rounded p-3">
                 <p className="text-2xl font-bold text-stone-900">{h.activeSources}</p>
                 <p className="text-[10px] font-mono uppercase tracking-widest text-stone-600 mt-0.5">Active sources</p>
@@ -193,7 +197,15 @@ export default async function COEPage() {
               </div>
               <div className="border-2 border-stone-300 bg-white rounded p-3">
                 <p className="text-2xl font-bold text-stone-900">{h.sourcedGaps}</p>
-                <p className="text-[10px] font-mono uppercase tracking-widest text-stone-600 mt-0.5">Closed by research agent</p>
+                <p className="text-[10px] font-mono uppercase tracking-widest text-stone-600 mt-0.5">Closed by agent</p>
+              </div>
+              <Link href="/intelligence/civic/people" className="border-2 border-purple-300 bg-purple-50 rounded p-3 hover:border-purple-700 transition-colors">
+                <p className="text-2xl font-bold text-stone-900">{h.people}</p>
+                <p className="text-[10px] font-mono uppercase tracking-widest text-stone-600 mt-0.5">Named people →</p>
+              </Link>
+              <div className="border-2 border-stone-300 bg-white rounded p-3">
+                <p className="text-2xl font-bold text-stone-900">{h.roles}</p>
+                <p className="text-[10px] font-mono uppercase tracking-widest text-stone-600 mt-0.5">Role holdings</p>
               </div>
             </div>
             <p className="mt-4 text-sm text-stone-700 leading-relaxed">
