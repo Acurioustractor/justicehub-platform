@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { CivicClaim, regionLabel } from '@/lib/civic-intelligence/citation-format';
 import { CopyCitationButton } from './CopyCitationButton';
 import { TierBadge } from './TierBadge';
@@ -12,6 +13,8 @@ interface Props {
   triangulationTier?: 'triangulated' | 'corroborated' | 'single_source' | 'no_evidence' | null;
   /** Source count when tier is provided. */
   supportingSources?: number;
+  /** When true (default), the label links to /intelligence/civic/claim/[id]. */
+  linkToEvidence?: boolean;
 }
 
 const TIER_BADGE: Record<string, { label: string; cls: string }> = {
@@ -21,7 +24,7 @@ const TIER_BADGE: Record<string, { label: string; cls: string }> = {
   no_evidence: { label: 'No evidence', cls: 'text-stone-600 bg-stone-100 border-stone-300' },
 };
 
-export function SnapshotStatCard({ claim, displayValue, context, accent = 'neutral', size = 'md', triangulationTier, supportingSources }: Props) {
+export function SnapshotStatCard({ claim, displayValue, context, accent = 'neutral', size = 'md', triangulationTier, supportingSources, linkToEvidence = true }: Props) {
   const accentClass =
     accent === 'urgent' ? 'border-rose-300 bg-rose-50'
     : accent === 'positive' ? 'border-emerald-300 bg-emerald-50'
@@ -57,7 +60,19 @@ export function SnapshotStatCard({ claim, displayValue, context, accent = 'neutr
         {value}
       </div>
       {context && <p className="mt-2 text-sm text-stone-600">{context}</p>}
-      <p className="mt-3 text-xs font-mono text-stone-500">{claim.display_label}</p>
+      <p className="mt-3 text-xs font-mono text-stone-500">
+        {linkToEvidence ? (
+          <Link
+            href={`/intelligence/civic/claim/${encodeURIComponent(claim.claim_id)}`}
+            className="hover:text-stone-900 hover:underline"
+            title="See the evidence trail"
+          >
+            {claim.display_label} →
+          </Link>
+        ) : (
+          claim.display_label
+        )}
+      </p>
     </article>
   );
 }

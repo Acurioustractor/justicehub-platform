@@ -92,40 +92,43 @@ export interface ConfirmedTierOneOrg {
 
 export async function getConfirmedTier1Orgs(state?: string): Promise<ConfirmedTierOneOrg[]> {
   const supabase = createServiceClient() as any;
-  let q = supabase
-    .from('civic_org_classifications')
-    .select('organization_id, sector_category, tier')
-    .eq('tier', 1)
-    .not('confirmed_at', 'is', null);
-
-  const { data: classRows, error } = await q;
-  if (error) {
-    console.error('getConfirmedTier1Orgs failed:', error.message);
+  // When state is provided, scope the org fetch via .eq('state', upper)
+  // so we don't pull the whole national register and filter in JS.
+  let orgQuery = supabase
+    .from('organizations')
+    .select('id, name, slug, abn, state, is_indigenous_org')
+    .eq('is_active', true);
+  if (state) orgQuery = orgQuery.eq('state', state.toUpperCase());
+  const { data: stateOrgs, error: orgErr } = await orgQuery.limit(10000);
+  if (orgErr) {
+    console.error('getConfirmedTier1Orgs orgs fetch failed:', orgErr.message);
     return [];
   }
+  if (!stateOrgs || stateOrgs.length === 0) return [];
 
-  const ids = (classRows || []).map((c: any) => c.organization_id);
-  if (ids.length === 0) return [];
-
-  const orgs: any[] = [];
-  for (let i = 0; i < ids.length; i += 100) {
-    const chunk = ids.slice(i, i + 100);
-    const { data, error: orgErr } = await supabase
-      .from('organizations')
-      .select('id, name, slug, abn, state, is_indigenous_org')
-      .in('id', chunk);
-    if (orgErr) {
-      console.error('orgs fetch failed:', orgErr.message);
+  const orgIds = stateOrgs.map((o: any) => o.id);
+  // Now intersect with confirmed Tier 1 classifications.
+  const classRows: any[] = [];
+  for (let i = 0; i < orgIds.length; i += 100) {
+    const chunk = orgIds.slice(i, i + 100);
+    const { data, error } = await supabase
+      .from('civic_org_classifications')
+      .select('organization_id, sector_category, tier, confirmed_at')
+      .eq('tier', 1)
+      .not('confirmed_at', 'is', null)
+      .in('organization_id', chunk);
+    if (error) {
+      console.error('getConfirmedTier1Orgs classRows chunk failed:', error.message);
       continue;
     }
-    orgs.push(...(data || []));
+    classRows.push(...(data || []));
   }
+  const sectorByOrgId = new Map(classRows.map((c) => [c.organization_id, c.sector_category]));
+  const confirmedSet = new Set(classRows.map((c) => c.organization_id));
 
-  const sectorByOrgId = new Map((classRows || []).map((c: any) => [c.organization_id, c.sector_category]));
-
-  return orgs
-    .filter((o) => !state || o.state === state)
-    .map((o) => ({
+  return stateOrgs
+    .filter((o: any) => confirmedSet.has(o.id))
+    .map((o: any) => ({
       organization_id: o.id,
       org_name: o.name,
       org_slug: o.slug,
@@ -134,7 +137,7 @@ export async function getConfirmedTier1Orgs(state?: string): Promise<ConfirmedTi
       is_indigenous_org: !!o.is_indigenous_org,
       sector_category: (sectorByOrgId.get(o.id) as string) || null,
     }))
-    .sort((a, b) => (a.org_name || '').localeCompare(b.org_name || ''));
+    .sort((a: ConfirmedTierOneOrg, b: ConfirmedTierOneOrg) => (a.org_name || '').localeCompare(b.org_name || ''));
 }
 
 export async function getYjHansardSample(limit = 10): Promise<any[]> {
@@ -164,6 +167,24 @@ export async function getOversightRecommendations(limit = 25): Promise<any[]> {
     return [];
   }
   return data || [];
+}
+
+export async function getFoundationClassifierCoverage(): Promise<{
+  total: number;
+  classified: number;
+  pct: number;
+}> {
+  const supabase = createServiceClient() as any;
+  const { count: total } = await supabase
+    .from('foundation_grantees')
+    .select('id', { count: 'exact', head: true });
+  const { count: classified } = await supabase
+    .from('foundation_grantees')
+    .select('id', { count: 'exact', head: true })
+    .not('yj_classified_at', 'is', null);
+  const t = total || 0;
+  const c = classified || 0;
+  return { total: t, classified: c, pct: t > 0 ? c / t : 0 };
 }
 
 export async function getCharterCommitments(limit = 25): Promise<any[]> {

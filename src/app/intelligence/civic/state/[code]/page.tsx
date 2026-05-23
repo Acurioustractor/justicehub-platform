@@ -20,6 +20,7 @@ import {
   getEvidenceSummary,
   getConfirmedTier1Orgs,
   getOversightRecommendations,
+  getFoundationClassifierCoverage,
 } from '@/lib/civic-intelligence/queries';
 import { SnapshotStatCard } from '@/components/intelligence/civic/SnapshotStatCard';
 
@@ -87,13 +88,13 @@ export default async function StatePage({ params }: { params: { code: string } }
     detentionPop,
     detentionBeds,
     tier1Count,
-    indigenousShare,
     returnRate,
     allClaims,
     evidence,
     tier1Orgs,
     oversight,
     foundation,
+    classifierCoverage,
   ] = await Promise.all([
     getClaim(`access.cost.detention_per_youth.annual.${code}`),
     getClaim(`access.cost.community_per_youth.annual.${code}`),
@@ -101,16 +102,31 @@ export default async function StatePage({ params }: { params: { code: string } }
     getClaim(`access.count.detention_avg_daily_pop.${code}`),
     getClaim(`access.count.detention_beds.${code}`),
     getClaim(`access.count.tier_1_orgs.${code}`),
-    getClaim(`access.indigenous_share.${code}`),
     getClaim(`oversight.rate.return_to_supervision.${code}`),
     getAllClaims(),
     getEvidenceSummary(),
     getConfirmedTier1Orgs(STATE),
     getOversightRecommendations(50),
     getFoundationFlows(code),
+    getFoundationClassifierCoverage(),
   ]);
 
-  const stateOversight = oversight.filter((o: any) => o.jurisdiction === STATE || o.jurisdiction === 'National').slice(0, 8);
+  const stateOversightLocal = oversight.filter((o: any) => o.jurisdiction === STATE).slice(0, 6);
+  const stateOversightNational = oversight.filter((o: any) => o.jurisdiction === 'National').slice(0, 4);
+
+  // Derive cost ratio from the two cost cards so the three numbers can't disagree
+  // on screen, instead of trusting the separately-snapshotted ratio claim.
+  const derivedRatio =
+    detentionCost?.value_numeric != null && communityCost?.value_numeric && Number(communityCost.value_numeric) > 0
+      ? Number(detentionCost.value_numeric) / Number(communityCost.value_numeric)
+      : null;
+
+  // Return-to-supervision: stored as a 0-1 fraction. Clamp at 100% so a unit
+  // mistake in the snapshot can't render "6300%".
+  const returnRatePct =
+    returnRate?.value_numeric != null
+      ? Math.min(Math.round(Number(returnRate.value_numeric) * 100), 100)
+      : null;
 
   const evid = (claimId?: string | null) =>
     claimId
@@ -121,6 +137,10 @@ export default async function StatePage({ params }: { params: { code: string } }
       : {};
 
   const indigenousLed = tier1Orgs.filter((o) => o.is_indigenous_org).length;
+  const liveIndigenousSharePct = tier1Orgs.length > 0 ? Math.round((indigenousLed / tier1Orgs.length) * 100) : null;
+  // Reconcile the snapshotted Tier 1 count claim against the live count.
+  const tier1ClaimCount = tier1Count?.value_numeric != null ? Number(tier1Count.value_numeric) : null;
+  const tier1CountAgrees = tier1ClaimCount != null && tier1ClaimCount === tier1Orgs.length;
 
   return (
     <main className="min-h-screen bg-stone-50 text-stone-900">
@@ -167,11 +187,11 @@ export default async function StatePage({ params }: { params: { code: string } }
               {...evid(communityCost.claim_id)}
             />
           )}
-          {costRatio && (
+          {costRatio && derivedRatio != null && (
             <SnapshotStatCard
               claim={costRatio}
-              displayValue={`${Math.round(Number(costRatio.value_numeric))}×`}
-              context="cost multiple of detention over community"
+              displayValue={`${derivedRatio.toFixed(1)}×`}
+              context={`derived live: $${Math.round(Number(detentionCost!.value_numeric)).toLocaleString()} ÷ $${Math.round(Number(communityCost!.value_numeric)).toLocaleString()}`}
               accent="urgent"
               size="lg"
               {...evid(costRatio.claim_id)}
@@ -190,10 +210,10 @@ export default async function StatePage({ params }: { params: { code: string } }
           {detentionBeds && (
             <SnapshotStatCard claim={detentionBeds} size="md" {...evid(detentionBeds.claim_id)} />
           )}
-          {returnRate && (
+          {returnRate && returnRatePct != null && (
             <SnapshotStatCard
               claim={returnRate}
-              displayValue={`${Math.round(Number(returnRate.value_numeric) * 100)}%`}
+              displayValue={`${returnRatePct}%`}
               context="return to supervision within 12 months"
               size="md"
               {...evid(returnRate.claim_id)}
@@ -213,7 +233,13 @@ export default async function StatePage({ params }: { params: { code: string } }
           </div>
           {tier1Count && (
             <div className="mb-6 max-w-md">
-              <SnapshotStatCard claim={tier1Count} size="md" {...evid(tier1Count.claim_id)} />
+              <SnapshotStatCard
+                claim={tier1Count}
+                displayValue={tier1Orgs.length > 0 ? `${tier1Orgs.length}` : (tier1ClaimCount != null ? `${tier1ClaimCount}` : 'n/a')}
+                context={tier1ClaimCount != null && !tier1CountAgrees ? `Snapshot says ${tier1ClaimCount}, live register shows ${tier1Orgs.length}. The live number is below.` : undefined}
+                size="md"
+                {...evid(tier1Count.claim_id)}
+              />
             </div>
           )}
           {tier1Orgs.length === 0 ? (
@@ -246,26 +272,32 @@ export default async function StatePage({ params }: { params: { code: string } }
         </div>
       </section>
 
-      {/* INDIGENOUS SHARE */}
-      {indigenousShare && (
+      {/* INDIGENOUS SHARE — derived live from the Tier 1 register above. */}
+      {liveIndigenousSharePct != null && (
         <section className="max-w-6xl mx-auto px-6 py-12">
           <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-5">Indigenous-controlled share</p>
-          <div className="max-w-md">
-            <SnapshotStatCard
-              claim={indigenousShare}
-              displayValue={`${Math.round(Number(indigenousShare.value_numeric) * 100)}%`}
-              context="of confirmed Tier 1 orgs in this state"
-              size="lg"
-              {...evid(indigenousShare.claim_id)}
-            />
+          <div className="border-2 border-stone-300 bg-white p-6 rounded max-w-md">
+            <p className="text-xs font-mono uppercase tracking-widest text-stone-500">Live from the Tier 1 register</p>
+            <p className="mt-2 text-5xl font-bold tracking-tight">{liveIndigenousSharePct}%</p>
+            <p className="mt-2 text-sm text-stone-700">{indigenousLed} of {tier1Orgs.length} confirmed Tier 1 organisations in {stateName} are Indigenous-controlled.</p>
           </div>
         </section>
       )}
 
       {/* FOUNDATION FLOWS */}
-      <section className="bg-amber-50/40 border-y-2 border-amber-200 py-12">
+      <section className="bg-stone-100 border-y-2 border-stone-200 py-12">
         <div className="max-w-6xl mx-auto px-6">
           <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-5">Foundation flows into {stateName}</p>
+          {classifierCoverage.pct < 0.99 && (
+            <div className="mb-6 border-2 border-rose-300 bg-rose-50 p-4 rounded text-sm md:text-base">
+              <p className="font-semibold text-rose-900">YJ-relevance coverage incomplete</p>
+              <p className="mt-1 text-rose-800 leading-relaxed">
+                Only {classifierCoverage.classified.toLocaleString()} of {classifierCoverage.total.toLocaleString()} foundation grants
+                ({Math.round(classifierCoverage.pct * 100)}%) have been classified for youth-justice relevance.
+                The YJ-relevant numbers below are a floor, not a ceiling. The remaining grants are being processed.
+              </p>
+            </div>
+          )}
           {foundation.grantCount === 0 ? (
             <p className="text-stone-600 italic">No foundation grants recorded for {stateName} grantees yet.</p>
           ) : (
@@ -277,9 +309,12 @@ export default async function StatePage({ params }: { params: { code: string } }
                   <p className="text-xs text-stone-500 mt-1">across {foundation.grantCount.toLocaleString()} grants</p>
                 </div>
                 <div className="border-2 border-stone-300 bg-white p-5 rounded">
-                  <p className="text-xs font-mono uppercase tracking-widest text-stone-500">YJ-relevant share</p>
+                  <p className="text-xs font-mono uppercase tracking-widest text-stone-500">YJ-relevant share (classified so far)</p>
                   <p className="text-3xl font-bold mt-2">${(foundation.yjDollars / 1_000_000).toFixed(2)}M</p>
-                  <p className="text-xs text-stone-500 mt-1">{foundation.yjGrantCount.toLocaleString()} grants · {foundation.totalDollars > 0 ? ((foundation.yjDollars / foundation.totalDollars) * 100).toFixed(1) : '0'}% of total</p>
+                  <p className="text-xs text-stone-500 mt-1">
+                    {foundation.yjGrantCount.toLocaleString()} grants · {foundation.totalDollars > 0 ? ((foundation.yjDollars / foundation.totalDollars) * 100).toFixed(1) : '0'}% of total
+                    {classifierCoverage.pct < 0.99 ? ' · floor only' : ''}
+                  </p>
                 </div>
                 <div className="border-2 border-stone-300 bg-white p-5 rounded">
                   <p className="text-xs font-mono uppercase tracking-widest text-stone-500">Top funder</p>
@@ -305,14 +340,14 @@ export default async function StatePage({ params }: { params: { code: string } }
         </div>
       </section>
 
-      {/* OVERSIGHT */}
+      {/* OVERSIGHT — local first, national separately so the kiosk doesn't conflate the two. */}
       <section className="max-w-6xl mx-auto px-6 py-12">
-        <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-5">Oversight findings ({STATE} + National)</p>
-        {stateOversight.length === 0 ? (
-          <p className="text-stone-600 italic">No oversight recommendations indexed yet.</p>
+        <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-5">{STATE} oversight findings</p>
+        {stateOversightLocal.length === 0 ? (
+          <p className="text-stone-600 italic mb-8">No {STATE}-specific oversight recommendations indexed yet.</p>
         ) : (
-          <ul className="space-y-3">
-            {stateOversight.map((rec: any) => (
+          <ul className="space-y-3 mb-10">
+            {stateOversightLocal.map((rec: any) => (
               <li key={rec.id} className="border-l-4 border-stone-300 pl-4 py-2">
                 <div className="flex items-baseline gap-2 text-xs font-mono text-stone-500">
                   <span className="uppercase tracking-widest">{rec.jurisdiction || 'unknown'}</span>
@@ -329,6 +364,29 @@ export default async function StatePage({ params }: { params: { code: string } }
               </li>
             ))}
           </ul>
+        )}
+        {stateOversightNational.length > 0 && (
+          <>
+            <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-5 mt-6">National oversight findings (federal scope)</p>
+            <ul className="space-y-3">
+              {stateOversightNational.map((rec: any) => (
+                <li key={rec.id} className="border-l-4 border-stone-200 pl-4 py-2">
+                  <div className="flex items-baseline gap-2 text-xs font-mono text-stone-500">
+                    <span className="uppercase tracking-widest">National</span>
+                    <span>·</span>
+                    <span>{rec.oversight_body || rec.report_title || 'Source'}</span>
+                    {rec.report_date && <><span>·</span><span>{String(rec.report_date).slice(0, 10)}</span></>}
+                  </div>
+                  <p className="mt-1 text-stone-900">{rec.recommendation_text || 'No text available'}</p>
+                  {rec.report_url && (
+                    <a href={rec.report_url} target="_blank" rel="noreferrer" className="text-xs text-stone-500 underline mt-1 inline-block">
+                      Source report
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </section>
 
