@@ -25,6 +25,10 @@
       "schedule": "0 15 * * 1"
     },
     {
+      "path": "/api/cron/data-sufficiency/health-probe",
+      "schedule": "0 13 1 * *"
+    },
+    {
       "path": "/api/cron/alma?batch=20",
       "schedule": "0 3 * * *"
     },

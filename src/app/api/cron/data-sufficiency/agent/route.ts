@@ -132,16 +132,48 @@ export async function GET(request: NextRequest) {
   const targetGapId = searchParams.get('gap_id');
 
   const supabase = createServiceClient() as any;
-  let q = supabase
-    .from('data_gap_questions')
-    .select('id, question, topic, proposed_source_url, priority, status')
-    .in('status', ['open', 'investigating'])
-    .order('priority')
-    .order('raised_at', { ascending: true });
-  if (targetGapId) q = q.eq('id', targetGapId);
-  else q = q.limit(batch);
-  const { data: gaps } = await q;
-  if (!gaps || gaps.length === 0) {
+  let gaps: any[] = [];
+  if (targetGapId) {
+    const { data } = await supabase
+      .from('data_gap_questions')
+      .select('id, question, topic, proposed_source_url, priority, status')
+      .eq('id', targetGapId);
+    gaps = data || [];
+  } else {
+    // Topic rotation: pull all open/investigating gaps then interleave so each
+    // topic gets a slot in the batch before any topic gets a second slot.
+    const { data: all } = await supabase
+      .from('data_gap_questions')
+      .select('id, question, topic, proposed_source_url, priority, status, raised_at')
+      .in('status', ['open', 'investigating'])
+      .order('priority')
+      .order('raised_at', { ascending: true });
+    const byTopic = new Map<string, any[]>();
+    for (const g of all || []) {
+      if (!byTopic.has(g.topic)) byTopic.set(g.topic, []);
+      byTopic.get(g.topic)!.push(g);
+    }
+    // Interleave across topics
+    const topicOrder = [...byTopic.keys()].sort((a, b) => {
+      // Bring topics with most-overdue first by max raised_at age within
+      const aOldest = byTopic.get(a)![0]?.raised_at;
+      const bOldest = byTopic.get(b)![0]?.raised_at;
+      return new Date(aOldest || 0).getTime() - new Date(bOldest || 0).getTime();
+    });
+    while (gaps.length < batch) {
+      let added = 0;
+      for (const t of topicOrder) {
+        if (gaps.length >= batch) break;
+        const next = byTopic.get(t)!.shift();
+        if (next) {
+          gaps.push(next);
+          added++;
+        }
+      }
+      if (added === 0) break;
+    }
+  }
+  if (gaps.length === 0) {
     return NextResponse.json({ ok: true, processedGaps: 0, message: 'No open gap questions.' });
   }
 
