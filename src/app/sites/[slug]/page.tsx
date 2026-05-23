@@ -13,6 +13,7 @@ import PeerValidations from '@/components/sites/PeerValidations';
 import { AnnualReportFactsSection } from '@/components/alma/AnnualReportFacts';
 import { DataProvenance } from '@/components/alma/DataProvenance';
 import { TrustSignals } from '@/components/alma/TrustSignals';
+import { KioskReturnBanner } from '@/components/kiosk/KioskReturnBanner';
 
 // Rich site content per org — will move to DB later
 const ORG_SITE_CONTENT: Record<string, any> = {
@@ -336,6 +337,7 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
 
     return (
       <div className="min-h-screen bg-white">
+        <KioskReturnBanner />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         {/* Hero — Full Width with Photo */}
         <header className="relative text-white overflow-hidden">

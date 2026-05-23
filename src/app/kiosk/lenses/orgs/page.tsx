@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { LensBar } from '../../components/LensBar';
 import { TrustDrillButton } from '../../components/TrustDrillButton';
+import { withKioskRef } from '../../lib/kiosk-ref';
 
 export const revalidate = 600;
 
@@ -123,7 +124,7 @@ function OrgCard({ org, highlight }: { org: TierOneOrg; highlight?: boolean }) {
   return (
     <li>
       <Link
-        href={org.slug ? `/sites/${org.slug}` : '#'}
+        href={org.slug ? withKioskRef(`/sites/${org.slug}`) : '#'}
         className={`block border-2 ${border} bg-white hover:border-stone-900 p-5 rounded transition-colors min-h-[120px]`}
       >
         <div className="flex items-start justify-between gap-3 mb-2">

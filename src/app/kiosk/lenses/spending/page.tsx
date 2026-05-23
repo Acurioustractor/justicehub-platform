@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { LensBar } from '../../components/LensBar';
 import { TrustDrillButton } from '../../components/TrustDrillButton';
+import { withKioskRef } from '../../lib/kiosk-ref';
 import { getDetentionCosts } from '@/lib/detention-costs';
 
 export const revalidate = 600;
@@ -96,10 +97,10 @@ export default async function SpendingLensPage() {
           <div className="max-w-4xl mx-auto px-6 py-8">
             <p className="text-xs font-mono uppercase tracking-[0.3em] text-stone-400 mb-4">Go deeper</p>
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <DrillCard href="/intelligence/civic" title="Where it comes from" body="The source claims, AIHW + RoGS." />
+              <DrillCard href={withKioskRef('/intelligence/civic')} title="Where it comes from" body="The source claims, AIHW + RoGS." />
               <DrillCard href="/kiosk/lenses/places" title="By state" body="Every state's detention $ and community $. Worst gap: SA at 32×." />
-              <DrillCard href="/intelligence/civic/foundations" title="Foundation flows" body="1.46% of all foundation $ reaches ACCOs. 8.46% of YJ-classified $." />
-              <DrillCard href="/intelligence/civic/government-programs" title="Government programs" body="76 programs catalogued. Who delivers them." />
+              <DrillCard href={withKioskRef('/intelligence/civic/foundations')} title="Foundation flows" body="1.46% of all foundation $ reaches ACCOs. 8.46% of YJ-classified $." />
+              <DrillCard href={withKioskRef('/intelligence/civic/government-programs')} title="Government programs" body="76 programs catalogued. Who delivers them." />
             </ul>
           </div>
         </section>

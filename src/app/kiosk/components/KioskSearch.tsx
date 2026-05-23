@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { withKioskRef } from '../lib/kiosk-ref';
 
 /**
  * Search button + modal for the persistent lens bar.
@@ -40,21 +41,29 @@ const TYPE_BADGE: Record<string, string> = {
 };
 
 function buildHref(r: SearchResult): string {
-  if (r.href) return r.href;
-  switch (r.result_type) {
-    case 'organization':
-      return `/sites/${r.id}`;
-    case 'claim':
-      return `/intelligence/civic/claim/${encodeURIComponent(r.id)}`;
-    case 'gov_program':
-      return `/intelligence/civic/government-programs`;
-    case 'grant_opportunity':
-      return `/find-funding`;
-    case 'foundation':
-      return `/intelligence/civic/foundations`;
-    default:
-      return '/intelligence/civic';
+  let base = r.href || '';
+  if (!base) {
+    switch (r.result_type) {
+      case 'organization':
+        base = `/sites/${r.id}`;
+        break;
+      case 'claim':
+        base = `/intelligence/civic/claim/${encodeURIComponent(r.id)}`;
+        break;
+      case 'gov_program':
+        base = '/intelligence/civic/government-programs';
+        break;
+      case 'grant_opportunity':
+        base = '/find-funding';
+        break;
+      case 'foundation':
+        base = '/intelligence/civic/foundations';
+        break;
+      default:
+        base = '/intelligence/civic';
+    }
   }
+  return withKioskRef(base);
 }
 
 export function KioskSearch() {

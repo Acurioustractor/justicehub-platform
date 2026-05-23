@@ -9,6 +9,7 @@
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { LensBar } from '../../components/LensBar';
+import { CategoryEvidenceButton } from '../../components/CategoryEvidenceButton';
 
 export const revalidate = 600;
 
@@ -84,30 +85,39 @@ export default async function WhatWorksLensPage() {
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {groups.map((g) => (
               <li key={g.type}>
-                <Link
-                  href={`/kiosk/lenses/what-works/${encodeURIComponent(g.type)}`}
-                  className="block border-2 border-stone-300 bg-white hover:border-stone-900 p-6 rounded transition-colors min-h-[200px]"
-                >
-                  <p className="text-xs font-mono uppercase tracking-[0.3em] text-stone-500 mb-2">
-                    {g.total} programs · {g.evidenceStrong} evidence-backed
-                  </p>
-                  <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">{g.type}</h2>
-                  {g.namedOrgs.length > 0 && (
-                    <ul className="space-y-1 mb-3">
-                      {g.namedOrgs.map((o) => (
-                        <li key={o} className="text-sm text-stone-700 truncate">→ {o}</li>
-                      ))}
-                      {g.total > g.namedOrgs.length && (
-                        <li className="text-xs font-mono text-stone-500">+ {g.total - g.namedOrgs.length} more</li>
-                      )}
-                    </ul>
-                  )}
-                  {g.costMedian != null && (
-                    <p className="text-xs font-mono uppercase tracking-[0.3em] text-emerald-700">
-                      ~${g.costMedian.toLocaleString()} per young person · median
+                <div className="border-2 border-stone-300 bg-white p-6 rounded min-h-[200px]">
+                  <Link
+                    href={`/kiosk/lenses/what-works/${encodeURIComponent(g.type)}`}
+                    className="block hover:opacity-80 transition-opacity"
+                  >
+                    <p className="text-xs font-mono uppercase tracking-[0.3em] text-stone-500 mb-2">
+                      {g.total} programs · {g.evidenceStrong} evidence-backed
                     </p>
-                  )}
-                </Link>
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">{g.type}</h2>
+                    {g.namedOrgs.length > 0 && (
+                      <ul className="space-y-1 mb-3">
+                        {g.namedOrgs.map((o) => (
+                          <li key={o} className="text-sm text-stone-700 truncate">→ {o}</li>
+                        ))}
+                        {g.total > g.namedOrgs.length && (
+                          <li className="text-xs font-mono text-stone-500">+ {g.total - g.namedOrgs.length} more</li>
+                        )}
+                      </ul>
+                    )}
+                    {g.costMedian != null && (
+                      <p className="text-xs font-mono uppercase tracking-[0.3em] text-emerald-700">
+                        ~${g.costMedian.toLocaleString()} per young person · median
+                      </p>
+                    )}
+                  </Link>
+                  <div className="mt-4">
+                    <CategoryEvidenceButton
+                      type={g.type}
+                      totalPrograms={g.total}
+                      evidenceCount={g.evidenceStrong}
+                    />
+                  </div>
+                </div>
               </li>
             ))}
           </ul>

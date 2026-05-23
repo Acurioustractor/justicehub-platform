@@ -14,6 +14,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { LensBar } from '../../../components/LensBar';
+import { withKioskRef } from '../../../lib/kiosk-ref';
 
 export const revalidate = 600;
 
@@ -171,7 +172,7 @@ export default async function CategoryPage({ params }: { params: { type: string 
                   <li key={r.id}>
                     {orgSlug ? (
                       <Link
-                        href={`/sites/${orgSlug}`}
+                        href={withKioskRef(`/sites/${orgSlug}`)}
                         className="block border-2 border-stone-300 bg-white hover:border-stone-900 p-5 rounded transition-colors min-h-[140px]"
                       >
                         {card}

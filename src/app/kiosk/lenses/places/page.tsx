@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { LensBar } from '../../components/LensBar';
 import { TrustDrillButton } from '../../components/TrustDrillButton';
+import { withKioskRef } from '../../lib/kiosk-ref';
 
 export const revalidate = 600;
 
@@ -112,7 +113,7 @@ export default async function PlacesLensPage() {
             <p className="text-xs font-mono uppercase tracking-[0.3em] text-stone-500 mb-3">You are here</p>
             <div className="border-4 border-emerald-500 bg-white p-6 sm:p-8 rounded">
               <Link
-                href={`/intelligence/civic/state/${sa.code}`}
+                href={withKioskRef(`/intelligence/civic/state/${sa.code}`)}
                 className="block hover:opacity-80 transition-opacity"
               >
                 <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
@@ -146,7 +147,7 @@ export default async function PlacesLensPage() {
               <li key={s.code}>
                 <div className="border-2 border-stone-300 bg-white p-5 rounded min-h-[120px]">
                   <Link
-                    href={`/intelligence/civic/state/${s.code}`}
+                    href={withKioskRef(`/intelligence/civic/state/${s.code}`)}
                     className="block hover:opacity-80 transition-opacity"
                   >
                     <div className="flex items-start justify-between gap-3">
