@@ -56,6 +56,30 @@ export async function getAllClaims(): Promise<Record<string, CivicClaim>> {
   return out;
 }
 
+export interface EvidenceSummary {
+  triangulation_tier: 'triangulated' | 'corroborated' | 'single_source' | 'no_evidence';
+  supporting_sources: number;
+}
+
+export async function getEvidenceSummary(): Promise<Record<string, EvidenceSummary>> {
+  const supabase = createServiceClient() as any;
+  const { data, error } = await supabase
+    .from('v_claim_evidence_summary')
+    .select('claim_id, triangulation_tier, supporting_sources');
+  if (error) {
+    console.error('getEvidenceSummary failed:', error.message);
+    return {};
+  }
+  const out: Record<string, EvidenceSummary> = {};
+  for (const row of data || []) {
+    out[row.claim_id] = {
+      triangulation_tier: row.triangulation_tier,
+      supporting_sources: row.supporting_sources,
+    };
+  }
+  return out;
+}
+
 export interface ConfirmedTierOneOrg {
   organization_id: string;
   org_name: string | null;

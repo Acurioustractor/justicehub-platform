@@ -241,6 +241,13 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
 
   if (!org) notFound();
 
+  // Entity-360: cross-source facts joined by ABN.
+  const { data: entity360 } = await (supabase as any)
+    .from('v_entity_360')
+    .select('*')
+    .eq('organization_id', org.id)
+    .maybeSingle();
+
   const siteContent = ORG_SITE_CONTENT[params.slug];
   const hasOwnWebsite = org.website_url && !org.website_url.includes('justicehub');
   const isBasecamp = org.type === 'basecamp' || org.partner_tier === 'basecamp';
@@ -701,6 +708,93 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
 
         {/* Trust signals — show claimed/AI/register tier + freshness */}
         <TrustSignals orgId={(org as any).id} />
+
+        {/* Entity-360: cross-source facts via ABN */}
+        {entity360 && (
+          <section className="max-w-6xl mx-auto px-6 py-12">
+            <div className="border-2 border-stone-200 bg-white rounded-lg p-6">
+              <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-4">
+                Cross-source verification · joined via ABN
+              </p>
+              <div className="flex flex-wrap gap-2 mb-5">
+                {entity360.acco_certified && (
+                  <span className="text-xs font-mono uppercase tracking-widest text-purple-700 bg-purple-50 border border-purple-300 px-3 py-1 rounded">
+                    ACCO (ORIC-registered)
+                  </span>
+                )}
+                {!entity360.acco_certified && entity360.is_indigenous_org && (
+                  <span className="text-xs font-mono uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-300 px-3 py-1 rounded">
+                    Indigenous-led (heuristic)
+                  </span>
+                )}
+                {entity360.is_acnc_charity && (
+                  <span className="text-xs font-mono uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-300 px-3 py-1 rounded">
+                    ACNC charity {entity360.charity_size ? `· ${entity360.charity_size}` : ''}
+                  </span>
+                )}
+                {entity360.is_confirmed_tier1 && (
+                  <span className="text-xs font-mono uppercase tracking-widest text-rose-700 bg-rose-50 border border-rose-300 px-3 py-1 rounded">
+                    Tier 1 frontline YJ
+                  </span>
+                )}
+                {entity360.ndis_status && (
+                  <span className="text-xs font-mono uppercase tracking-widest text-sky-700 bg-sky-50 border border-sky-300 px-3 py-1 rounded">
+                    NDIS · {entity360.ndis_status}
+                  </span>
+                )}
+                {entity360.confirmed_sector && (
+                  <span className="text-xs font-mono uppercase tracking-widest text-stone-700 bg-stone-100 border border-stone-300 px-3 py-1 rounded">
+                    Sector · {entity360.confirmed_sector}
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                {entity360.abn && (
+                  <div>
+                    <div className="text-xs font-mono uppercase tracking-widest text-stone-500">ABN</div>
+                    <div className="font-mono text-stone-800">{entity360.abn}</div>
+                  </div>
+                )}
+                {entity360.oric_icn && (
+                  <div>
+                    <div className="text-xs font-mono uppercase tracking-widest text-stone-500">ORIC ICN</div>
+                    <div className="font-mono text-stone-800">{entity360.oric_icn}</div>
+                  </div>
+                )}
+                {entity360.ato_total_income && (
+                  <div>
+                    <div className="text-xs font-mono uppercase tracking-widest text-stone-500">ATO declared income {entity360.ato_report_year ? `(${entity360.ato_report_year})` : ''}</div>
+                    <div className="font-medium text-stone-900">${(Number(entity360.ato_total_income) / 1_000_000).toFixed(1)}M</div>
+                  </div>
+                )}
+                {Number(entity360.total_justice_funding_received) > 0 && (
+                  <div>
+                    <div className="text-xs font-mono uppercase tracking-widest text-stone-500">Justice funding received</div>
+                    <div className="font-medium text-stone-900">${(Number(entity360.total_justice_funding_received) / 1_000_000).toFixed(2)}M</div>
+                    <div className="text-xs text-stone-500">across {entity360.justice_funding_records} records</div>
+                  </div>
+                )}
+                {Number(entity360.foundation_dollars_received) > 0 && (
+                  <div>
+                    <div className="text-xs font-mono uppercase tracking-widest text-stone-500">Foundation grants received</div>
+                    <div className="font-medium text-stone-900">${(Number(entity360.foundation_dollars_received) / 1_000_000).toFixed(2)}M</div>
+                    <div className="text-xs text-stone-500">across {entity360.foundation_grants_received} grants</div>
+                  </div>
+                )}
+                {Number(entity360.foundation_dollars_given) > 0 && (
+                  <div>
+                    <div className="text-xs font-mono uppercase tracking-widest text-stone-500">Foundation grants given</div>
+                    <div className="font-medium text-stone-900">${(Number(entity360.foundation_dollars_given) / 1_000_000).toFixed(2)}M</div>
+                    <div className="text-xs text-stone-500">across {entity360.foundation_grants_given} grants</div>
+                  </div>
+                )}
+              </div>
+              <p className="mt-4 text-xs text-stone-500 italic">
+                These facts join via ABN across ABR + ACNC + ORIC + ATO + NDIS + justice_funding + foundation_grantees + civic_org_classifications.
+              </p>
+            </div>
+          </section>
+        )}
 
         {/* History summary — surfaces enriched history_summary when there's no curated siteContent */}
         {(org as any).history_summary && !siteContent.founder && (

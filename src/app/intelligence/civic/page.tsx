@@ -10,7 +10,7 @@ import LivedExperienceContrast from '@/components/intelligence/LivedExperienceCo
 
 import { SnapshotStatCard } from '@/components/intelligence/civic/SnapshotStatCard';
 import { ChapterCitationsPanel } from '@/components/intelligence/civic/ChapterCitationsPanel';
-import { getAllClaims, getYjHansardSample, getOversightRecommendations, getCharterCommitments, getConfirmedTier1Orgs } from '@/lib/civic-intelligence/queries';
+import { getAllClaims, getEvidenceSummary, getYjHansardSample, getOversightRecommendations, getCharterCommitments, getConfirmedTier1Orgs } from '@/lib/civic-intelligence/queries';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getFeaturedJusticeStories } from '@/lib/supabase/empathy-ledger';
 
@@ -35,8 +35,9 @@ export default async function CivicIntelligencePage(props: {
   const params = props.searchParams ? await props.searchParams : {};
   const region = params?.region;
 
-  const [claims, hansard, oversight, commitments, tier1Qld, tier1Nt, stories] = await Promise.all([
+  const [claims, evidence, hansard, oversight, commitments, tier1Qld, tier1Nt, stories] = await Promise.all([
     getAllClaims(),
+    getEvidenceSummary(),
     getYjHansardSample(12),
     getOversightRecommendations(25),
     getCharterCommitments(25),
@@ -44,6 +45,12 @@ export default async function CivicIntelligencePage(props: {
     getConfirmedTier1Orgs('NT'),
     getFeaturedJusticeStories(4).catch(() => []),
   ]);
+
+  // Helper to extract evidence props for a claim
+  const evid = (claimId: string) => ({
+    triangulationTier: evidence[claimId]?.triangulation_tier as any,
+    supportingSources: evidence[claimId]?.supporting_sources,
+  });
 
   const accessClaims = Object.values(claims).filter((c) => c.chapter === 'access');
   const promiseClaims = Object.values(claims).filter((c) => c.chapter === 'promises');
@@ -141,19 +148,19 @@ export default async function CivicIntelligencePage(props: {
         {detentionMultipleNational && (
           <div className="mb-10 border-2 border-rose-300 bg-rose-50 rounded-lg p-6">
             <p className="text-xs font-mono uppercase tracking-widest text-rose-700 mb-3">Headline · ROGS 2024-25</p>
-            <SnapshotStatCard claim={detentionMultipleNational} accent="urgent" size="lg" />
+            <SnapshotStatCard claim={detentionMultipleNational} accent="urgent" size="lg" {...evid(detentionMultipleNational.claim_id)} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-              {detentionAnnualNational && <SnapshotStatCard claim={detentionAnnualNational} accent="urgent" />}
-              {communityAnnualNational && <SnapshotStatCard claim={communityAnnualNational} accent="positive" />}
+              {detentionAnnualNational && <SnapshotStatCard claim={detentionAnnualNational} accent="urgent" {...evid(detentionAnnualNational.claim_id)} />}
+              {communityAnnualNational && <SnapshotStatCard claim={communityAnnualNational} accent="positive" {...evid(communityAnnualNational.claim_id)} />}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              {detentionTotalNational && <SnapshotStatCard claim={detentionTotalNational} accent="urgent" size="sm" />}
-              {communityTotalNational && <SnapshotStatCard claim={communityTotalNational} accent="positive" size="sm" />}
+              {detentionTotalNational && <SnapshotStatCard claim={detentionTotalNational} accent="urgent" size="sm" {...evid(detentionTotalNational.claim_id)} />}
+              {communityTotalNational && <SnapshotStatCard claim={communityTotalNational} accent="positive" size="sm" {...evid(communityTotalNational.claim_id)} />}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-              {detentionPopNational && <SnapshotStatCard claim={detentionPopNational} accent="urgent" size="sm" />}
-              {communityPopNational && <SnapshotStatCard claim={communityPopNational} accent="positive" size="sm" />}
-              {detentionBedsNational && <SnapshotStatCard claim={detentionBedsNational} size="sm" />}
+              {detentionPopNational && <SnapshotStatCard claim={detentionPopNational} accent="urgent" size="sm" {...evid(detentionPopNational.claim_id)} />}
+              {communityPopNational && <SnapshotStatCard claim={communityPopNational} accent="positive" size="sm" {...evid(communityPopNational.claim_id)} />}
+              {detentionBedsNational && <SnapshotStatCard claim={detentionBedsNational} size="sm" {...evid(detentionBedsNational.claim_id)} />}
             </div>
             <p className="mt-5 text-sm text-stone-700">
               Community supervision serves nearly four times as many young people for less than half the spend.
@@ -165,30 +172,31 @@ export default async function CivicIntelligencePage(props: {
 
         {headlineRatio && (
           <div className="mb-6">
-            <SnapshotStatCard claim={headlineRatio} accent="urgent" size="lg" context="Confirmed funding records, 2026-05-15 snapshot." />
+            <SnapshotStatCard claim={headlineRatio} accent="urgent" size="lg" context="Confirmed funding records, 2026-05-15 snapshot." {...evid(headlineRatio.claim_id)} />
           </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          {consultancySpend && <SnapshotStatCard claim={consultancySpend} accent="urgent" />}
-          {tier1Funding && <SnapshotStatCard claim={tier1Funding} accent="positive" />}
+          {consultancySpend && <SnapshotStatCard claim={consultancySpend} accent="urgent" {...evid(consultancySpend.claim_id)} />}
+          {tier1Funding && <SnapshotStatCard claim={tier1Funding} accent="positive" {...evid(tier1Funding.claim_id)} />}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {tier1QldClaim && <SnapshotStatCard claim={tier1QldClaim} size="sm" />}
-          {tier1NtClaim && <SnapshotStatCard claim={tier1NtClaim} size="sm" />}
+          {tier1QldClaim && <SnapshotStatCard claim={tier1QldClaim} size="sm" {...evid(tier1QldClaim.claim_id)} />}
+          {tier1NtClaim && <SnapshotStatCard claim={tier1NtClaim} size="sm" {...evid(tier1NtClaim.claim_id)} />}
           {indigenousShare && (
             <SnapshotStatCard
               claim={indigenousShare}
               displayValue={indigenousShare.value_numeric != null ? `${Math.round(Number(indigenousShare.value_numeric) * 100)}%` : 'n/a'}
               size="sm"
+              {...evid(indigenousShare.claim_id)}
             />
           )}
         </div>
 
         {meetingAsymmetry && (
           <Callout label="Secondary claim · meeting register">
-            <SnapshotStatCard claim={meetingAsymmetry} size="sm" />
+            <SnapshotStatCard claim={meetingAsymmetry} size="sm" {...evid(meetingAsymmetry.claim_id)} />
             <p className="mt-3 text-sm text-stone-700">
               The ministerial diary register contains near-zero direct consultancy meetings. That is not a sign that consultancies don't shape policy. It is a sign that procurement, not meetings, is where the access happens. The funding ratio above is the honest proxy. This number complements but does not replace it.
             </p>
@@ -222,7 +230,7 @@ export default async function CivicIntelligencePage(props: {
 
         {promiseClaims.map((claim) => (
           <div key={claim.claim_id} className="mb-4">
-            <SnapshotStatCard claim={claim} size="md" />
+            <SnapshotStatCard claim={claim} size="md" {...evid(claim.claim_id)} />
           </div>
         ))}
 
@@ -272,7 +280,7 @@ export default async function CivicIntelligencePage(props: {
 
         {oversightClaims.map((claim) => (
           <div key={claim.claim_id} className="mb-4">
-            <SnapshotStatCard claim={claim} size="md" />
+            <SnapshotStatCard claim={claim} size="md" {...evid(claim.claim_id)} />
           </div>
         ))}
 
