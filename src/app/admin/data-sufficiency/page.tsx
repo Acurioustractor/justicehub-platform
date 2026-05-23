@@ -104,6 +104,13 @@ export default async function DataSufficiencyPage() {
           Do we have enough data? Continually reconsider. Every source listed; every known gap recorded; every lead a path to follow.
         </p>
 
+        {/* Findings link */}
+        <p className="mt-6">
+          <Link href="/admin/data-sufficiency/findings" className="inline-block text-xs font-mono uppercase tracking-widest text-emerald-700 border border-emerald-300 px-3 py-2 rounded hover:bg-emerald-50">
+            Review agent findings →
+          </Link>
+        </p>
+
         {/* Per-topic rollup */}
         <section className="mt-8 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
           {TOPIC_ORDER.map((topic) => {
@@ -111,7 +118,11 @@ export default async function DataSufficiencyPage() {
             const stale = (r?.stale_sources ?? 0) > 0;
             const openGaps = gaps.filter((g) => g.topic === topic && g.status === 'open').length;
             return (
-              <div key={topic} className={`border-2 ${stale ? 'border-rose-300 bg-rose-50' : 'border-stone-300 bg-white'} rounded p-3`}>
+              <Link
+                key={topic}
+                href={`/admin/data-sufficiency/${topic}`}
+                className={`block border-2 ${stale ? 'border-rose-300 bg-rose-50' : 'border-stone-300 bg-white'} hover:border-stone-900 rounded p-3 transition-colors`}
+              >
                 <p className="text-xs font-mono uppercase tracking-widest text-stone-500">{TOPIC_LABEL[topic]}</p>
                 <p className="mt-1 text-xl font-bold">{r?.active_sources ?? 0}<span className="text-stone-400 text-sm">/{(r?.active_sources ?? 0) + (r?.planned_sources ?? 0)}</span></p>
                 <p className="text-[10px] text-stone-600 mt-0.5">active sources</p>
@@ -121,7 +132,7 @@ export default async function DataSufficiencyPage() {
                 {stale && (
                   <p className="mt-1 text-[10px] font-mono uppercase tracking-widest text-rose-700">{r!.stale_sources} stale</p>
                 )}
-              </div>
+              </Link>
             );
           })}
         </section>

@@ -13,6 +13,18 @@
       "schedule": "0 16 * * *"
     },
     {
+      "path": "/api/cron/data-sufficiency/refresh",
+      "schedule": "0 14 * * 1"
+    },
+    {
+      "path": "/api/cron/data-sufficiency/agent?batch=5",
+      "schedule": "0 17 * * *"
+    },
+    {
+      "path": "/api/cron/data-sufficiency/freshness",
+      "schedule": "0 15 * * 1"
+    },
+    {
       "path": "/api/cron/alma?batch=20",
       "schedule": "0 3 * * *"
     },
