@@ -40,7 +40,42 @@ async function getStories(): Promise<Story[]> {
     return [];
   }
   // Drop Mounty Yarns per CLAUDE.md anchor-community decision.
-  return (data || []).filter((s: Story) => !(s.title || '').toLowerCase().includes('mounty yarns'));
+  const filtered = ((data as Story[]) || []).filter(
+    (s) => !(s.title || '').toLowerCase().includes('mounty yarns')
+  );
+
+  // Backfill missing media_urls from partner_photos of the linked org so the
+  // swiper has something to render instead of black + quote.
+  const orgIdsNeedingPhoto = new Set<string>();
+  for (const s of filtered) {
+    if ((!s.media_urls || s.media_urls.length === 0) && s.linked_organization_ids?.length) {
+      orgIdsNeedingPhoto.add(s.linked_organization_ids[0]);
+    }
+  }
+  if (orgIdsNeedingPhoto.size > 0) {
+    const ids = Array.from(orgIdsNeedingPhoto);
+    const photoByOrg = new Map<string, string>();
+    for (let i = 0; i < ids.length; i += 100) {
+      const chunk = ids.slice(i, i + 100);
+      const { data: photos } = await supabase
+        .from('partner_photos')
+        .select('organization_id, photo_url, is_public, display_order')
+        .in('organization_id', chunk)
+        .eq('is_public', true)
+        .order('display_order', { ascending: true });
+      for (const p of photos || []) {
+        if (!photoByOrg.has(p.organization_id)) photoByOrg.set(p.organization_id, p.photo_url);
+      }
+    }
+    for (const s of filtered) {
+      if ((!s.media_urls || s.media_urls.length === 0) && s.linked_organization_ids?.length) {
+        const url = photoByOrg.get(s.linked_organization_ids[0]);
+        if (url) s.media_urls = [url];
+      }
+    }
+  }
+
+  return filtered;
 }
 
 export default async function StoriesLensPage() {

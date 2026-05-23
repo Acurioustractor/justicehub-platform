@@ -26,13 +26,15 @@ export interface HookEntry {
   state: 'NT' | 'QLD' | 'NSW' | 'VIC' | 'WA' | 'SA' | 'TAS' | 'ACT' | null;
 }
 
+const SUPABASE_MEDIA = 'https://tednluwflfhxyucgwigh.supabase.co/storage/v1/object/public/media/contained/gallery';
+
 export const HOOK_ENTRIES: HookEntry[] = [
   {
-    name: 'Kristy',
-    org: 'Oonchiumpa',
+    name: 'Oonchiumpa',
+    org: 'Oonchiumpa Consultancy & Services',
     place: 'Mparntwe (Alice Springs)',
     quote: 'We have been doing this work for twelve years. The data is finally catching up.',
-    image: '/images/orgs/oonchiumpa-hero.jpg',
+    image: `${SUPABASE_MEDIA}/oonchiumpa-hero.jpg`,
     slug: 'oonchiumpa',
     state: 'NT',
   },
@@ -41,7 +43,7 @@ export const HOOK_ENTRIES: HookEntry[] = [
     org: 'PICC',
     place: 'Bwgcolman (Palm Island) · Townsville',
     quote: 'When the community runs the program, the children stay home.',
-    image: '/images/orgs/picc-hero.jpg',
+    image: '/images/orgs/picc/stretch-bed-build.jpg',
     slug: 'palm-island-community-company',
     state: 'QLD',
   },
@@ -50,7 +52,7 @@ export const HOOK_ENTRIES: HookEntry[] = [
     org: 'BG Fit',
     place: 'Bundaberg',
     quote: 'Fitness is the door we open. Belonging is what we offer behind it.',
-    image: '/images/orgs/bg-fit-hero.jpg',
+    image: `${SUPABASE_MEDIA}/bgfit-hero.jpg`,
     slug: 'bg-fit',
     state: 'QLD',
   },
@@ -59,16 +61,16 @@ export const HOOK_ENTRIES: HookEntry[] = [
     org: 'MMEIC',
     place: 'Minjerribah (North Stradbroke Island)',
     quote: 'The Elders speak first. Then everyone else.',
-    image: '/images/orgs/mmeic-hero.jpg',
+    image: '',
     slug: 'minjerribah-moorgumpin-elders-in-council-aboriginal-corporation',
     state: 'QLD',
   },
   {
     name: 'Olabud Doogethu',
-    org: 'Olabud Doogethu',
+    org: 'Olabud Doogethu Aboriginal Corporation',
     place: 'Halls Creek (Kimberley)',
     quote: 'Place-based justice. Our young people, our way, on our Country.',
-    image: '/images/orgs/olabud-hero.jpg',
+    image: '',
     slug: 'olabud-doogethu',
     state: 'WA',
   },
@@ -77,7 +79,7 @@ export const HOOK_ENTRIES: HookEntry[] = [
     org: 'The cost asymmetry',
     place: 'Australia',
     quote: '$1,330,000 to lock up one child for one year. $36,869 to support them in community. 32× cheaper.',
-    image: '/images/orgs/number-hero.jpg',
+    image: '',
     slug: null,
     state: null,
   },

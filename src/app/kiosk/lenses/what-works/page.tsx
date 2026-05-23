@@ -85,7 +85,7 @@ export default async function WhatWorksLensPage() {
             {groups.map((g) => (
               <li key={g.type}>
                 <Link
-                  href={`/intelligence/civic`}
+                  href={`/kiosk/lenses/what-works/${encodeURIComponent(g.type)}`}
                   className="block border-2 border-stone-300 bg-white hover:border-stone-900 p-6 rounded transition-colors min-h-[200px]"
                 >
                   <p className="text-xs font-mono uppercase tracking-[0.3em] text-stone-500 mb-2">
