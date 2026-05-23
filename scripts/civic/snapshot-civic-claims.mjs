@@ -697,6 +697,74 @@ async function main() {
     }
   }
 
+  // ── AIHW Indigenous overrepresentation (Phase 3) ────────────
+  // From aihw_youth_justice_stats (sourced from AIHW Youth Justice in
+  // Australia annual report). The 16-20× overrep figures are headline
+  // claims that drive the case for community-led alternatives.
+  const { data: aihwRows } = await supabase
+    .from('aihw_youth_justice_stats')
+    .select('report_year, state, metric_key, metric_value, unit, indigenous_status')
+    .ilike('metric_key', '%indigenous_overrep_ratio')
+    .eq('state', 'NAT')
+    .order('report_year', { ascending: false })
+    .limit(10);
+
+  if (aihwRows && aihwRows.length > 0) {
+    const aihwLatestYear = aihwRows[0].report_year;
+    for (const row of aihwRows) {
+      if (row.report_year !== aihwLatestYear) continue;
+      const lane = row.metric_key.replace('.indigenous_overrep_ratio', '');
+      const ratio = Number(row.metric_value);
+      if (!ratio) continue;
+      await upsertClaim({
+        claim_id: `oversight.ratio.indigenous_overrep_${lane}.national`,
+        display_label: `Indigenous over-representation in YJ ${lane} (national)`,
+        value_numeric: ratio,
+        value_text: `Aboriginal and Torres Strait Islander young people are ${ratio}× more likely to be under youth justice ${lane} than non-Indigenous young people (${aihwLatestYear}, national)`,
+        unit: 'ratio',
+        tier: 1,
+        region: 'national',
+        chapter: 'oversight',
+        methodology: `AIHW Youth Justice in Australia ${aihwLatestYear}: rate per 10,000 ATSI young people / rate per 10,000 non-Indigenous young people, ${lane} channel. Sourced from aihw_youth_justice_stats table; original extraction via scripts/civic/ingest-aihw-youth-justice.mjs.`,
+        methodology_url: METHODOLOGY_URL,
+        source_record_ids: { aihw_report_year: aihwLatestYear, channel: lane },
+        source_doc_urls: [`https://www.aihw.gov.au/reports/youth-justice/youth-justice-in-australia-${aihwLatestYear}/`],
+        verification_status: 'snapshot',
+      });
+    }
+  }
+
+  // National YJ supervision average daily from AIHW
+  const { data: avgDailyRows } = await supabase
+    .from('aihw_youth_justice_stats')
+    .select('report_year, metric_value')
+    .eq('metric_key', 'supervision.avg_daily.national')
+    .eq('state', 'NAT')
+    .order('report_year', { ascending: false })
+    .limit(1);
+
+  if (avgDailyRows && avgDailyRows.length > 0) {
+    const row = avgDailyRows[0];
+    const v = Number(row.metric_value);
+    if (v) {
+      await upsertClaim({
+        claim_id: 'access.count.yj_supervision_avg_daily.national',
+        display_label: 'Young people under YJ supervision on the average day (national)',
+        value_numeric: v,
+        value_text: `${v.toLocaleString()} young people under youth justice supervision on the average day in Australia (${row.report_year})`,
+        unit: 'count',
+        tier: 1,
+        region: 'national',
+        chapter: 'access',
+        methodology: `AIHW Youth Justice in Australia ${row.report_year}: average daily count of young people under sentenced or unsentenced supervision (community + detention combined).`,
+        methodology_url: METHODOLOGY_URL,
+        source_record_ids: { aihw_report_year: row.report_year },
+        source_doc_urls: [`https://www.aihw.gov.au/reports/youth-justice/youth-justice-in-australia-${row.report_year}/`],
+        verification_status: 'snapshot',
+      });
+    }
+  }
+
   // ── Tier 1 funding distribution (Phase 3) ─────────────────────
   // Cross-state aggregate so we can compare "the median Tier 1 org receives X
   // in justice funding" vs detention's $1.33M per young person per year.
