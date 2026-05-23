@@ -21,6 +21,7 @@ export interface CivicClaim {
   computed_at: string;
   verification_status: 'snapshot' | 'verified' | 'retired';
   notes: string | null;
+  source_year: string | null;
 }
 
 const SITE_ORIGIN = 'https://justicehub.com.au';

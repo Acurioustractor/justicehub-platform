@@ -60,19 +60,24 @@ export function SnapshotStatCard({ claim, displayValue, context, accent = 'neutr
         {value}
       </div>
       {context && <p className="mt-2 text-sm text-stone-600">{context}</p>}
-      <p className="mt-3 text-xs font-mono text-stone-500">
-        {linkToEvidence ? (
-          <Link
-            href={`/intelligence/civic/claim/${encodeURIComponent(claim.claim_id)}`}
-            className="hover:text-stone-900 hover:underline"
-            title="See the evidence trail"
-          >
-            {claim.display_label} →
-          </Link>
-        ) : (
-          claim.display_label
+      <div className="mt-3 flex items-center justify-between gap-2 text-xs font-mono text-stone-500">
+        <p className="flex-1">
+          {linkToEvidence ? (
+            <Link
+              href={`/intelligence/civic/claim/${encodeURIComponent(claim.claim_id)}`}
+              className="hover:text-stone-900 hover:underline"
+              title="See the evidence trail"
+            >
+              {claim.display_label} →
+            </Link>
+          ) : (
+            claim.display_label
+          )}
+        </p>
+        {claim.source_year && (
+          <span className="shrink-0 text-[10px] uppercase tracking-widest text-stone-400">{claim.source_year}</span>
         )}
-      </p>
+      </div>
     </article>
   );
 }

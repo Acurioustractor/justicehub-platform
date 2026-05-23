@@ -792,6 +792,46 @@ export default async function OrgSitePage({ params }: { params: { slug: string }
               <p className="mt-4 text-xs text-stone-500 italic">
                 These facts join via ABN across ABR + ACNC + ORIC + ATO + NDIS + justice_funding + foundation_grantees + civic_org_classifications.
               </p>
+              {(org.state || entity360.abn || entity360.oric_icn) && (
+                <div className="mt-4 pt-4 border-t border-stone-200 flex flex-wrap gap-x-5 gap-y-2 text-xs font-mono">
+                  {org.state && ['NSW','VIC','QLD','WA','SA','TAS','ACT','NT'].includes(String(org.state).toUpperCase()) && (
+                    <Link
+                      href={`/intelligence/civic/state/${String(org.state).toLowerCase()}`}
+                      className="text-stone-600 hover:text-stone-900 hover:underline uppercase tracking-widest"
+                    >
+                      See {String(org.state).toUpperCase()} youth-justice context →
+                    </Link>
+                  )}
+                  {entity360.is_confirmed_tier1 && (
+                    <Link
+                      href={`/intelligence/civic/claim/${encodeURIComponent('access.count.tier_1_orgs.' + String(org.state || '').toLowerCase())}`}
+                      className="text-stone-600 hover:text-stone-900 hover:underline uppercase tracking-widest"
+                    >
+                      See Tier 1 evidence trail →
+                    </Link>
+                  )}
+                  {entity360.abn && (
+                    <a
+                      href={`https://abr.business.gov.au/ABN/View?id=${entity360.abn.replace(/\s/g, '')}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-stone-600 hover:text-stone-900 hover:underline uppercase tracking-widest"
+                    >
+                      ABR public record →
+                    </a>
+                  )}
+                  {entity360.is_acnc_charity && entity360.abn && (
+                    <a
+                      href={`https://www.acnc.gov.au/charity/charities?abn=${entity360.abn.replace(/\s/g, '')}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-stone-600 hover:text-stone-900 hover:underline uppercase tracking-widest"
+                    >
+                      ACNC charity record →
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           </section>
         )}
