@@ -14,11 +14,13 @@
 
 import { EmailCaptureFooter } from '../components/EmailCaptureFooter';
 import { IdleWatcher } from '../components/IdleWatcher';
+import { ControlSignalWatcher } from '../components/ControlSignalWatcher';
 
 export default function LensLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <IdleWatcher timeoutMs={60_000} />
+      <ControlSignalWatcher intervalMs={5000} />
       <main className="flex-1 flex flex-col">{children}</main>
       <EmailCaptureFooter />
     </>

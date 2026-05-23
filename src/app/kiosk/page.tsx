@@ -11,6 +11,7 @@
 
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { HookRotator } from './components/HookRotator';
+import { ControlSignalWatcher } from './components/ControlSignalWatcher';
 import { HOOK_ENTRIES, type HookEntry } from './lib/hook-content';
 
 export const revalidate = 60;
@@ -61,5 +62,10 @@ async function getMergedEntries(): Promise<HookEntry[]> {
 
 export default async function KioskHookPage() {
   const entries = await getMergedEntries();
-  return <HookRotator entries={entries} />;
+  return (
+    <>
+      <ControlSignalWatcher intervalMs={5000} />
+      <HookRotator entries={entries} />
+    </>
+  );
 }

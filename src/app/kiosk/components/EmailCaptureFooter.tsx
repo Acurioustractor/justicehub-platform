@@ -62,14 +62,14 @@ export function EmailCaptureFooter() {
           </p>
         )}
         {(status === 'idle' || status === 'submitting' || status === 'error') && (
-          <form onSubmit={submit} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="sm:flex-1">
               <p className="text-sm sm:text-base font-semibold text-stone-900">Get What Changed in your inbox.</p>
               <p className="text-xs text-stone-600">
                 The weekly digest: new claims, evidence, named Tier 1 orgs, classified grants.
               </p>
             </div>
-            <div className="flex gap-2 flex-1 sm:max-w-md">
+            <form onSubmit={submit} className="flex gap-2 flex-1 sm:max-w-md">
               <input
                 type="email"
                 inputMode="email"
@@ -88,8 +88,16 @@ export function EmailCaptureFooter() {
               >
                 {status === 'submitting' ? '...' : 'Subscribe'}
               </button>
-            </div>
-          </form>
+            </form>
+            <a
+              href="/kiosk/card"
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center justify-center min-h-[48px] px-5 border-2 border-stone-900 text-stone-900 text-sm font-mono uppercase tracking-widest rounded hover:bg-stone-900 hover:text-white transition-colors shrink-0"
+            >
+              Take a card
+            </a>
+          </div>
         )}
         {status === 'error' && errorMsg && (
           <p className="mt-2 text-xs text-rose-700">{errorMsg}</p>
