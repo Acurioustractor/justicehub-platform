@@ -123,6 +123,34 @@ export default async function COEPage() {
         </div>
       </section>
 
+      <section className="px-6 py-16 border-b border-stone-200 bg-stone-100">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold text-stone-900 mb-2">Browse by state</h2>
+          <p className="text-stone-600 mb-8">Detention cost, community alternatives, frontline organisations, foundation flows, oversight findings — for one jurisdiction at a time.</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { code: 'nsw', name: 'New South Wales' },
+              { code: 'vic', name: 'Victoria' },
+              { code: 'qld', name: 'Queensland' },
+              { code: 'wa', name: 'Western Australia' },
+              { code: 'sa', name: 'South Australia' },
+              { code: 'tas', name: 'Tasmania' },
+              { code: 'act', name: 'ACT' },
+              { code: 'nt', name: 'Northern Territory' },
+            ].map((s) => (
+              <Link
+                key={s.code}
+                href={`/intelligence/civic/state/${s.code}`}
+                className="block border-2 border-stone-300 bg-white p-4 hover:border-stone-900 transition-colors rounded text-center"
+              >
+                <span className="text-xs font-mono uppercase tracking-widest text-stone-500">{s.code.toUpperCase()}</span>
+                <p className="mt-1 font-semibold text-stone-900">{s.name}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="px-6 py-16 border-b border-stone-200">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold text-stone-900 mb-6 flex items-baseline gap-3">
