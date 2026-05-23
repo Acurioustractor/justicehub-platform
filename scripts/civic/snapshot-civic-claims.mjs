@@ -697,6 +697,132 @@ async function main() {
     }
   }
 
+  // ── Foundation philanthropy to ACCO orgs ────────────────────
+  // foundation_grantees + organizations.acco_certified (set by Fix #1).
+  // Stark asymmetry claim: % of tracked philanthropic dollars reaching
+  // Aboriginal-controlled organisations.
+  {
+    // Paginate — Supabase caps each fetch at 1000 rows even without explicit .limit()
+    const row = [];
+    let fgOffset = 0;
+    const FG_PAGE = 1000;
+    while (true) {
+      const { data: page } = await supabase
+        .from('foundation_grantees')
+        .select('grant_amount, grantee_abn')
+        .range(fgOffset, fgOffset + FG_PAGE - 1);
+      if (!page || page.length === 0) break;
+      row.push(...page);
+      if (page.length < FG_PAGE) break;
+      fgOffset += FG_PAGE;
+    }
+    if (row.length > 0) {
+      // Need to know which grantees are ACCO — fetch ACCO ABN set
+      const { data: accoOrgs } = await supabase
+        .from('organizations')
+        .select('abn')
+        .eq('acco_certified', true);
+      const accoAbns = new Set((accoOrgs || []).map((o) => o.abn).filter(Boolean));
+      let totalDollars = 0;
+      let accoDollars = 0;
+      let totalGrants = 0;
+      let accoGrants = 0;
+      for (const r of row) {
+        const amt = Number(r.grant_amount || 0);
+        if (!amt) continue;
+        totalGrants++;
+        totalDollars += amt;
+        if (r.grantee_abn && accoAbns.has(r.grantee_abn)) {
+          accoGrants++;
+          accoDollars += amt;
+        }
+      }
+      if (totalDollars > 0) {
+        const sharePct = (accoDollars / totalDollars) * 100;
+        await upsertClaim({
+          claim_id: 'access.share.foundation_dollars_to_acco.national',
+          display_label: 'Foundation philanthropic dollars reaching ACCOs',
+          value_numeric: accoDollars / totalDollars,
+          value_text: `${sharePct.toFixed(2)}% of tracked foundation philanthropic dollars reach Aboriginal Community Controlled Organisations ($${(accoDollars / 1_000_000).toFixed(2)}M of $${(totalDollars / 1_000_000).toFixed(0)}M across ${totalGrants.toLocaleString()} grants in foundation_grantees)`,
+          unit: 'fraction',
+          tier: 1,
+          region: 'national',
+          chapter: 'access',
+          methodology: 'Sum of foundation_grantees.grant_amount where grantee_abn matches an organisation with acco_certified=true (i.e. abn appears in oric_corporations) divided by total foundation grant_amount. ACCO = Aboriginal Community Controlled Organisation, certified via ORIC registration. Excludes grants where grantee_abn is unmatched.',
+          methodology_url: METHODOLOGY_URL,
+          source_record_ids: { acco_grants: accoGrants, total_grants: totalGrants },
+          source_doc_urls: [],
+          verification_status: 'snapshot',
+        });
+      }
+    }
+  }
+
+  // ── Oversight totals: combined recommendations tally ────────
+  const { count: orCount } = await supabase
+    .from('oversight_recommendations')
+    .select('id', { count: 'exact', head: true });
+  const { count: ccrCount } = await supabase
+    .from('children_commissioner_reports')
+    .select('id', { count: 'exact', head: true });
+  const { count: agaCount } = await supabase
+    .from('auditor_general_audits')
+    .select('id', { count: 'exact', head: true });
+
+  if (orCount) {
+    await upsertClaim({
+      claim_id: 'oversight.count.recommendations_all_sources',
+      display_label: 'Total tracked oversight recommendations (all sources)',
+      value_numeric: orCount,
+      value_text: `${orCount} recommendations tracked across Sentencing Advisory Councils (QLD/VIC/TAS/NSW/NT), state Auditors-General, and the Royal Commission into the Protection and Detention of Children in the NT`,
+      unit: 'count',
+      tier: 1,
+      region: 'national',
+      chapter: 'oversight',
+      methodology: "count(oversight_recommendations) — populated by Sentencing Council and Auditor-General ingestion scripts. Excludes Children's Commissioner findings (stored separately in children_commissioner_reports.recommendations jsonb).",
+      methodology_url: METHODOLOGY_URL,
+      source_record_ids: { total: orCount },
+      source_doc_urls: [],
+      verification_status: 'snapshot',
+    });
+  }
+
+  if (ccrCount) {
+    await upsertClaim({
+      claim_id: 'oversight.count.childrens_commissioner_reports',
+      display_label: "Children's Commissioner reports analysed",
+      value_numeric: ccrCount,
+      value_text: `${ccrCount} jurisdictional Children's Commissioner annual reports analysed with structured findings + recommendations`,
+      unit: 'count',
+      tier: 1,
+      region: 'national',
+      chapter: 'oversight',
+      methodology: 'count(children_commissioner_reports). Sourced from ingest-children-commissioners.mjs (Gemini-extracted structured findings).',
+      methodology_url: METHODOLOGY_URL,
+      source_record_ids: { total: ccrCount },
+      source_doc_urls: [],
+      verification_status: 'snapshot',
+    });
+  }
+
+  if (agaCount) {
+    await upsertClaim({
+      claim_id: 'oversight.count.auditor_general_audits',
+      display_label: 'State Auditor-General YJ performance audits tracked',
+      value_numeric: agaCount,
+      value_text: `${agaCount} state Auditor-General performance audits relevant to youth justice tracked with findings + recommendations`,
+      unit: 'count',
+      tier: 1,
+      region: 'national',
+      chapter: 'oversight',
+      methodology: 'count(auditor_general_audits). Currently QLD + NSW + VIC + WA; SA/TAS sources need different discovery path.',
+      methodology_url: METHODOLOGY_URL,
+      source_record_ids: { total: agaCount },
+      source_doc_urls: [],
+      verification_status: 'snapshot',
+    });
+  }
+
   // ── AIHW Indigenous overrepresentation (Phase 3) ────────────
   // From aihw_youth_justice_stats (sourced from AIHW Youth Justice in
   // Australia annual report). The 16-20× overrep figures are headline
