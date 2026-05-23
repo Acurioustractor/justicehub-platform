@@ -49,11 +49,14 @@ export default async function HomePage() {
       .gt('amount_dollars', 0),
     supabase
       .from('organizations')
-      .select('id', { count: 'exact', head: true }),
+      .select('id', { count: 'planned', head: true })
+      .eq('is_active', true),
     supabase
       .from('organizations')
       .select('id, name, slug, state, is_indigenous_org')
       .or('partner_tier.eq.basecamp,type.eq.basecamp')
+      .eq('is_active', true)
+      .eq('verification_status', 'verified')
       .order('state'),
     supabase
       .from('alma_evidence')
@@ -75,6 +78,22 @@ export default async function HomePage() {
   const funding = fundingRes.data || [];
   const basecamps = basecampsRes.data || [];
   const stories = storiesRes.data || [];
+
+  // Centre of Excellence headline counts — triangulation tier distribution + ACCO tally.
+  const [triangulationRes, accoRes, tier1ConfirmedRes] = await Promise.all([
+    supabase.from('v_claim_evidence_summary').select('triangulation_tier'),
+    supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('acco_certified', true).eq('is_active', true),
+    supabase.from('civic_org_classifications').select('id', { count: 'exact', head: true }).eq('tier', 1).not('confirmed_at', 'is', null),
+  ]);
+  const triangulationRows = (triangulationRes.data || []) as Array<{ triangulation_tier: string }>;
+  const tierCounts = {
+    triangulated: triangulationRows.filter((r) => r.triangulation_tier === 'triangulated').length,
+    corroborated: triangulationRows.filter((r) => r.triangulation_tier === 'corroborated').length,
+    single: triangulationRows.filter((r) => r.triangulation_tier === 'single_source').length,
+    total: triangulationRows.length,
+  };
+  const accoCount = accoRes.count || 0;
+  const tier1Count = tier1ConfirmedRes.count || 0;
 
   const totalFunding = funding.reduce((sum: number, f: any) => sum + (Number(f.amount_dollars) || 0), 0);
   const avgCost = costData.length ? Math.round(costData.reduce((a: number, b: number) => a + b, 0) / costData.length) : 8500;
@@ -134,6 +153,63 @@ export default async function HomePage() {
                 Join the Network
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* Centre of Excellence band — every fact earned its headline by N sources. */}
+        <section className="bg-[#F5F0E8] border-t border-stone-200">
+          <div className="max-w-6xl mx-auto px-6 sm:px-12 py-12">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
+              <div className="max-w-2xl">
+                <p
+                  className="text-xs uppercase tracking-[0.3em] text-stone-600 mb-3"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
+                  Centre of Excellence for Youth Justice
+                </p>
+                <h2
+                  className="text-2xl md:text-3xl font-bold text-stone-900 leading-tight"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
+                  Every fact on this site earns its headline by{' '}
+                  <span className="text-[#059669]">multiple independent sources</span>.
+                </h2>
+                <p className="mt-3 text-base text-stone-700 max-w-xl leading-relaxed">
+                  Triangulation, not assertion. Names, not abstractions. Every claim links back to the dataset and the named entities behind it.
+                </p>
+              </div>
+              <Link
+                href="/intelligence/civic/centre-of-excellence"
+                className="inline-flex items-center gap-2 px-5 py-3 bg-stone-900 text-white text-sm font-semibold rounded shrink-0 hover:bg-stone-800 transition-colors self-start md:self-center"
+              >
+                Open the Centre <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="border-2 border-emerald-300 bg-emerald-50 p-4 rounded">
+                <p className="text-3xl font-bold text-emerald-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{tierCounts.triangulated}</p>
+                <p className="text-xs font-mono uppercase tracking-widest text-emerald-800 mt-1">Triangulated claims</p>
+                <p className="text-xs text-stone-600 mt-1">3+ independent sources</p>
+              </div>
+              <div className="border-2 border-amber-300 bg-amber-50 p-4 rounded">
+                <p className="text-3xl font-bold text-amber-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{tierCounts.corroborated}</p>
+                <p className="text-xs font-mono uppercase tracking-widest text-amber-800 mt-1">Corroborated</p>
+                <p className="text-xs text-stone-600 mt-1">2 independent sources</p>
+              </div>
+              <div className="border-2 border-stone-300 bg-white p-4 rounded">
+                <p className="text-3xl font-bold text-stone-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{tier1Count.toLocaleString()}</p>
+                <p className="text-xs font-mono uppercase tracking-widest text-stone-600 mt-1">Tier 1 frontline YJ orgs</p>
+                <p className="text-xs text-stone-600 mt-1">Confirmed in civic register</p>
+              </div>
+              <div className="border-2 border-purple-300 bg-purple-50 p-4 rounded">
+                <p className="text-3xl font-bold text-purple-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{accoCount.toLocaleString()}</p>
+                <p className="text-xs font-mono uppercase tracking-widest text-purple-800 mt-1">ACCO certified</p>
+                <p className="text-xs text-stone-600 mt-1">Via ORIC public register</p>
+              </div>
+            </div>
+            <p className="mt-5 text-xs font-mono uppercase tracking-widest text-stone-500">
+              <Link href="/intelligence/civic" className="hover:text-stone-900 hover:underline">See all claims with their evidence trail →</Link>
+            </p>
           </div>
         </section>
 
