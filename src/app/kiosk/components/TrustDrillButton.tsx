@@ -36,6 +36,7 @@ interface ClaimDetail {
     source_year: string | null;
     methodology: string | null;
     methodology_url: string | null;
+    source_doc_urls: string[] | null;
   };
   summary: {
     triangulation_tier: 'triangulated' | 'corroborated' | 'single_source' | 'no_evidence';
@@ -140,6 +141,29 @@ export function TrustDrillButton({
             <div className="flex-1 overflow-y-auto p-5 space-y-3">
               {loading && <p className="text-stone-500 text-sm">Loading sources…</p>}
               {error && <p className="text-rose-400 text-sm">{error}</p>}
+
+              {data && data.claim?.source_doc_urls && data.claim.source_doc_urls.length > 0 && (
+                <section className="border border-emerald-900 bg-emerald-950/30 rounded p-4">
+                  <p className="text-xs font-mono uppercase tracking-widest text-emerald-300 mb-2">
+                    Primary source documents
+                  </p>
+                  <ul className="space-y-1">
+                    {data.claim.source_doc_urls.map((u, i) => (
+                      <li key={i}>
+                        <a
+                          href={u}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-sm text-emerald-200 underline break-all hover:text-white"
+                        >
+                          {u}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
               {data && data.evidence.length === 0 && (
                 <p className="text-stone-500 text-sm italic">No evidence rows registered for this claim.</p>
               )}

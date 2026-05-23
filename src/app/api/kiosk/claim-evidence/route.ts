@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
   const [claimRes, summaryRes, evidenceRes] = await Promise.all([
     supabase
       .from('civic_intelligence_claims')
-      .select('claim_id, display_label, value_text, value_numeric, unit, region, source_year, methodology, methodology_url')
+      .select('claim_id, display_label, value_text, value_numeric, unit, region, source_year, methodology, methodology_url, source_doc_urls')
       .eq('claim_id', id)
       .maybeSingle(),
     supabase
