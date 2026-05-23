@@ -46,12 +46,16 @@ function fmtMoney(n: any) {
   return `$${v.toLocaleString()}`;
 }
 
+type TypeFilter = 'all' | 'organization' | 'claim' | 'gov_program' | 'grant_opportunity' | 'foundation';
+
 export default function ExhibitionPage() {
   const [q, setQ] = useState('');
   const [results, setResults] = useState<Record<string, ResultRow[]>>({});
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState('');
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
+  const [stateFilter, setStateFilter] = useState<string | null>(null);
 
   const runSearch = useCallback(async (query: string) => {
     if (query.trim().length < 2) {
@@ -112,20 +116,53 @@ export default function ExhibitionPage() {
             )}
           </div>
 
-          {/* Type chips */}
-          <div className="mt-5 flex flex-wrap gap-2 text-xs font-mono uppercase tracking-widest">
+          {/* Type filter chips (clickable) */}
+          <div className="mt-5 flex flex-wrap gap-2 text-xs font-mono uppercase tracking-widest items-baseline">
+            <button
+              onClick={() => setTypeFilter('all')}
+              className={`px-3 py-1.5 rounded-full transition ${typeFilter === 'all' ? 'bg-stone-50 text-stone-900' : 'bg-stone-800 text-stone-300 hover:bg-stone-700'}`}
+            >
+              All: {Object.values(counts).reduce((s, n) => s + n, 0)}
+            </button>
             {Object.entries(TYPE_LABEL).map(([type, label]) => {
               const c = counts[type] || 0;
+              const active = typeFilter === type;
               return (
-                <span
+                <button
                   key={type}
-                  className={`px-3 py-1.5 rounded-full ${c > 0 ? 'bg-stone-50 text-stone-900' : 'bg-stone-800 text-stone-500'}`}
+                  onClick={() => setTypeFilter(active ? 'all' : (type as TypeFilter))}
+                  disabled={c === 0}
+                  className={`px-3 py-1.5 rounded-full transition ${active ? 'bg-stone-50 text-stone-900' : c > 0 ? 'bg-stone-800 text-stone-300 hover:bg-stone-700' : 'bg-stone-900/40 text-stone-600 cursor-not-allowed'}`}
                 >
                   {label}: {c}
-                </span>
+                </button>
               );
             })}
           </div>
+
+          {/* State filter chips */}
+          {q.length >= 2 && (
+            <div className="mt-3 flex flex-wrap gap-2 text-xs font-mono uppercase tracking-widest items-baseline">
+              <span className="text-stone-500 mr-1">By state:</span>
+              {(['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'] as const).map((s) => {
+                const active = stateFilter === s;
+                return (
+                  <button
+                    key={s}
+                    onClick={() => setStateFilter(active ? null : s)}
+                    className={`px-3 py-1 rounded-full transition text-[10px] ${active ? 'bg-stone-50 text-stone-900' : 'bg-stone-800 text-stone-400 hover:bg-stone-700'}`}
+                  >
+                    {s}
+                  </button>
+                );
+              })}
+              {stateFilter && (
+                <button onClick={() => setStateFilter(null)} className="px-3 py-1 rounded-full text-[10px] underline text-stone-400 hover:text-stone-200">
+                  Clear
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
@@ -140,14 +177,23 @@ export default function ExhibitionPage() {
             <div className="space-y-10">
               {(['organization', 'claim', 'gov_program', 'grant_opportunity', 'foundation'] as const).map(
                 (type) => {
-                  const rows = results[type] || [];
+                  if (typeFilter !== 'all' && typeFilter !== type) return null;
+                  let rows = results[type] || [];
+                  // State filter — apply to org-like result types that carry state in meta
+                  if (stateFilter) {
+                    rows = rows.filter((r) => {
+                      const meta = r.meta || {};
+                      const s = (meta.state || meta.jurisdiction || '').toString().toUpperCase();
+                      return s === stateFilter;
+                    });
+                  }
                   if (rows.length === 0) return null;
                   return (
                     <div key={type}>
                       <h2 className="text-xl font-bold text-stone-900 mb-3 flex items-baseline gap-2">
                         <span>{TYPE_LABEL[type]}</span>
                         <span className="text-xs font-mono uppercase tracking-widest text-stone-500">
-                          {counts[type]} result{counts[type] === 1 ? '' : 's'}
+                          {rows.length} result{rows.length === 1 ? '' : 's'}{stateFilter ? ` in ${stateFilter}` : ''}
                         </span>
                       </h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
