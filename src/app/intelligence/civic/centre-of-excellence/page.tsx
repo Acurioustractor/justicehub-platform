@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 async function fetchHeadlines() {
   const supabase = createServiceClient() as any;
-  const [orgsCount, t1Count, claimsRes, evidenceRes, programsCount, grantsCount, foundationsRes, accoOrgs] = await Promise.all([
+  const [orgsCount, t1Count, claimsRes, evidenceRes, programsCount, grantsCount, foundationsRes, accoOrgs, sourcesActive, openGaps, sourcedGaps] = await Promise.all([
     supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('archived', false),
     supabase.from('civic_org_classifications').select('id', { count: 'exact', head: true }).eq('tier', 1).not('confirmed_at', 'is', null),
     supabase.from('civic_intelligence_claims').select('id', { count: 'exact', head: true }),
@@ -23,6 +23,9 @@ async function fetchHeadlines() {
     supabase.from('grant_opportunities').select('id', { count: 'exact', head: true }),
     supabase.from('foundation_grantees').select('foundation_abn'),
     supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('acco_certified', true),
+    supabase.from('data_sources_inventory').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+    supabase.from('data_gap_questions').select('id', { count: 'exact', head: true }).in('status', ['open', 'investigating']),
+    supabase.from('data_gap_questions').select('id', { count: 'exact', head: true }).eq('status', 'sourced'),
   ]);
   const tierTally: Record<string, number> = {};
   for (const r of evidenceRes.data || []) tierTally[r.triangulation_tier] = (tierTally[r.triangulation_tier] || 0) + 1;
@@ -37,6 +40,9 @@ async function fetchHeadlines() {
     grants: grantsCount.count || 0,
     foundations: distinctFoundations.size,
     accoOrgs: accoOrgs.count || 0,
+    activeSources: sourcesActive.count || 0,
+    openGaps: openGaps.count || 0,
+    sourcedGaps: sourcedGaps.count || 0,
   };
 }
 
@@ -171,6 +177,28 @@ export default async function COEPage() {
               <li>Foundation grant records and ACNC charity returns</li>
             </ul>
             <p>Where claims have lower confidence we say so. The data-quality audit at{' '}<Link href="/intelligence/civic/data-quality" className="underline">/intelligence/civic/data-quality</Link> shows where the gaps are.</p>
+          </div>
+
+          {/* Data sufficiency transparency */}
+          <div className="mt-10 border-t-2 border-stone-200 pt-8">
+            <p className="text-xs font-mono uppercase tracking-[0.3em] text-stone-500 mb-3">Live data inventory</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div className="border-2 border-emerald-300 bg-emerald-50 rounded p-3">
+                <p className="text-2xl font-bold text-stone-900">{h.activeSources}</p>
+                <p className="text-[10px] font-mono uppercase tracking-widest text-stone-600 mt-0.5">Active sources</p>
+              </div>
+              <div className="border-2 border-rose-300 bg-rose-50 rounded p-3">
+                <p className="text-2xl font-bold text-stone-900">{h.openGaps}</p>
+                <p className="text-[10px] font-mono uppercase tracking-widest text-stone-600 mt-0.5">Open data gaps</p>
+              </div>
+              <div className="border-2 border-stone-300 bg-white rounded p-3">
+                <p className="text-2xl font-bold text-stone-900">{h.sourcedGaps}</p>
+                <p className="text-[10px] font-mono uppercase tracking-widest text-stone-600 mt-0.5">Closed by research agent</p>
+              </div>
+            </div>
+            <p className="mt-4 text-sm text-stone-700 leading-relaxed">
+              A research agent runs every night looking for more sources to close the gaps we name. A freshness watcher catches sources that have not been refreshed. A health probe catches URLs that have gone offline. The system reconsiders &quot;do we have enough&quot; continuously, not just on demand.
+            </p>
           </div>
         </div>
       </section>
