@@ -11,6 +11,7 @@
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { LensBar } from '../../components/LensBar';
+import { TrustDrillButton } from '../../components/TrustDrillButton';
 
 export const revalidate = 600;
 
@@ -47,10 +48,20 @@ async function getTier1Orgs(): Promise<TierOneOrg[]> {
   return out;
 }
 
+async function getTier1Sources(): Promise<number> {
+  const supabase = createServiceClient() as any;
+  const { data } = await supabase
+    .from('v_claim_evidence_summary')
+    .select('supporting_sources')
+    .eq('claim_id', 'access.count.tier_1_orgs.national')
+    .maybeSingle();
+  return Number(data?.supporting_sources) || 0;
+}
+
 const STATE_RANK: Record<string, number> = { SA: 0, NT: 1, QLD: 2, WA: 3, NSW: 4, VIC: 5, TAS: 6, ACT: 7 };
 
 export default async function OrgsLensPage() {
-  const orgs = await getTier1Orgs();
+  const [orgs, tier1Sources] = await Promise.all([getTier1Orgs(), getTier1Sources()]);
   orgs.sort((a, b) => {
     const ar = a.state ? STATE_RANK[a.state] ?? 99 : 99;
     const br = b.state ? STATE_RANK[b.state] ?? 99 : 99;
@@ -71,9 +82,18 @@ export default async function OrgsLensPage() {
             {orgs.length} confirmed Tier 1 frontline YJ organisations · {accoCount} ACCO-certified
           </p>
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-3">The orgs, named.</h1>
-          <p className="text-base sm:text-lg text-stone-700 max-w-2xl mb-8">
+          <p className="text-base sm:text-lg text-stone-700 max-w-2xl mb-6">
             Every organisation here is confirmed delivering frontline youth-justice work, registered with their ABN, sourced.
           </p>
+          {tier1Sources > 0 && (
+            <div className="mb-8">
+              <TrustDrillButton
+                claimId="access.count.tier_1_orgs.national"
+                initialSources={tier1Sources}
+                variant="light"
+              />
+            </div>
+          )}
 
           {saOrgs.length > 0 && (
             <>

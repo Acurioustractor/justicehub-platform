@@ -9,6 +9,7 @@
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { LensBar } from '../../components/LensBar';
+import { TrustDrillButton } from '../../components/TrustDrillButton';
 
 export const revalidate = 600;
 
@@ -17,6 +18,8 @@ interface StateRow {
   name: string;
   tier1Count: number;
   costRatio: number | null;
+  ratioClaimId: string | null;
+  ratioSources: number;
 }
 
 const STATES: { code: string; name: string }[] = [
@@ -32,13 +35,17 @@ const STATES: { code: string; name: string }[] = [
 
 async function getStateData(): Promise<StateRow[]> {
   const supabase = createServiceClient() as any;
-  const [orgsRes, ratioRes] = await Promise.all([
+  const [orgsRes, ratioRes, evidenceRes] = await Promise.all([
     supabase.from('organizations').select('id, state').eq('is_active', true),
     supabase
       .from('civic_intelligence_claims')
       .select('claim_id, value_numeric')
       .like('claim_id', 'access.ratio.detention_vs_community_cost.%')
       .in('verification_status', ['snapshot', 'verified']),
+    supabase
+      .from('v_claim_evidence_summary')
+      .select('claim_id, supporting_sources')
+      .like('claim_id', 'access.ratio.detention_vs_community_cost.%'),
   ]);
   const orgs = orgsRes.data || [];
 
@@ -61,12 +68,23 @@ async function getStateData(): Promise<StateRow[]> {
     if (m) ratioByState.set(m[1].toUpperCase(), Number(r.value_numeric));
   }
 
-  return STATES.map((s) => ({
-    code: s.code,
-    name: s.name,
-    tier1Count: tier1ByState.get(s.code.toUpperCase()) || 0,
-    costRatio: ratioByState.get(s.code.toUpperCase()) || null,
-  }));
+  const sourcesByState = new Map<string, number>();
+  for (const r of evidenceRes.data || []) {
+    const m = r.claim_id.match(/\.([a-z]+)$/);
+    if (m) sourcesByState.set(m[1].toUpperCase(), Number(r.supporting_sources) || 0);
+  }
+
+  return STATES.map((s) => {
+    const upper = s.code.toUpperCase();
+    return {
+      code: s.code,
+      name: s.name,
+      tier1Count: tier1ByState.get(upper) || 0,
+      costRatio: ratioByState.get(upper) || null,
+      ratioClaimId: ratioByState.has(upper) ? `access.ratio.detention_vs_community_cost.${s.code}` : null,
+      ratioSources: sourcesByState.get(upper) || 0,
+    };
+  });
 }
 
 export default async function PlacesLensPage() {
@@ -92,26 +110,33 @@ export default async function PlacesLensPage() {
           {/* SA hero card */}
           <div className="mb-8">
             <p className="text-xs font-mono uppercase tracking-[0.3em] text-stone-500 mb-3">You are here</p>
-            <Link
-              href={`/intelligence/civic/state/${sa.code}`}
-              className="block border-4 border-emerald-500 bg-white hover:border-emerald-700 p-6 sm:p-8 rounded transition-colors"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-                <div>
-                  <p className="text-xs font-mono uppercase tracking-[0.3em] text-emerald-700 mb-2">SA</p>
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">{sa.name}</h2>
-                  <p className="mt-2 text-base text-stone-700">{sa.tier1Count} confirmed Tier 1 orgs</p>
-                </div>
-                {sa.costRatio != null && (
-                  <div className="text-right">
-                    <p className="text-5xl sm:text-6xl md:text-7xl font-bold text-[#DC2626]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                      {sa.costRatio.toFixed(1)}×
-                    </p>
-                    <p className="text-xs font-mono uppercase tracking-[0.3em] text-stone-500">cost gap</p>
+            <div className="border-4 border-emerald-500 bg-white p-6 sm:p-8 rounded">
+              <Link
+                href={`/intelligence/civic/state/${sa.code}`}
+                className="block hover:opacity-80 transition-opacity"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-mono uppercase tracking-[0.3em] text-emerald-700 mb-2">SA</p>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">{sa.name}</h2>
+                    <p className="mt-2 text-base text-stone-700">{sa.tier1Count} confirmed Tier 1 orgs</p>
                   </div>
-                )}
-              </div>
-            </Link>
+                  {sa.costRatio != null && (
+                    <div className="text-right">
+                      <p className="text-5xl sm:text-6xl md:text-7xl font-bold text-[#DC2626]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                        {sa.costRatio.toFixed(1)}×
+                      </p>
+                      <p className="text-xs font-mono uppercase tracking-[0.3em] text-stone-500">cost gap</p>
+                    </div>
+                  )}
+                </div>
+              </Link>
+              {sa.ratioClaimId && sa.ratioSources > 0 && (
+                <div className="mt-4">
+                  <TrustDrillButton claimId={sa.ratioClaimId} initialSources={sa.ratioSources} variant="light" />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Other states */}
@@ -119,25 +144,32 @@ export default async function PlacesLensPage() {
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {rest.map((s) => (
               <li key={s.code}>
-                <Link
-                  href={`/intelligence/civic/state/${s.code}`}
-                  className="block border-2 border-stone-300 bg-white hover:border-stone-900 p-5 rounded transition-colors min-h-[120px]"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-xs font-mono uppercase tracking-[0.3em] text-stone-500">{s.code.toUpperCase()}</p>
-                      <h3 className="mt-1 text-xl font-bold tracking-tight">{s.name}</h3>
-                      <p className="mt-1 text-sm text-stone-600">{s.tier1Count} Tier 1 orgs</p>
-                    </div>
-                    {s.costRatio != null && (
-                      <div className="text-right">
-                        <p className="text-3xl sm:text-4xl font-bold text-[#DC2626]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                          {s.costRatio.toFixed(1)}×
-                        </p>
+                <div className="border-2 border-stone-300 bg-white p-5 rounded min-h-[120px]">
+                  <Link
+                    href={`/intelligence/civic/state/${s.code}`}
+                    className="block hover:opacity-80 transition-opacity"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-mono uppercase tracking-[0.3em] text-stone-500">{s.code.toUpperCase()}</p>
+                        <h3 className="mt-1 text-xl font-bold tracking-tight">{s.name}</h3>
+                        <p className="mt-1 text-sm text-stone-600">{s.tier1Count} Tier 1 orgs</p>
                       </div>
-                    )}
-                  </div>
-                </Link>
+                      {s.costRatio != null && (
+                        <div className="text-right">
+                          <p className="text-3xl sm:text-4xl font-bold text-[#DC2626]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                            {s.costRatio.toFixed(1)}×
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                  {s.ratioClaimId && s.ratioSources > 0 && (
+                    <div className="mt-3">
+                      <TrustDrillButton claimId={s.ratioClaimId} initialSources={s.ratioSources} variant="light" />
+                    </div>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
