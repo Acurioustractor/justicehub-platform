@@ -191,22 +191,26 @@ export async function GET(request: NextRequest) {
     // Keep relevance >= 0.4 to filter the noise
     const findings = ranked.filter((r) => r.relevance >= 0.4);
     for (const f of findings) {
-      const { error } = await supabase
+      // Pre-check for existing row — Supabase upsert can't reliably target
+      // the (gap_question_id, candidate_url) unique index from PostgREST.
+      const { data: existing } = await supabase
         .from('data_agent_findings')
-        .upsert(
-          {
-            gap_question_id: gap.id,
-            topic: gap.topic,
-            candidate_url: f.url,
-            candidate_title: f.title,
-            summary: f.summary,
-            relevance_score: f.relevance,
-            rationale: f.rationale,
-            search_query: searchQ,
-            raw_result: candidates.find((c) => c.url === f.url) || null,
-          },
-          { onConflict: 'gap_question_id,candidate_url', ignoreDuplicates: true }
-        );
+        .select('id')
+        .eq('gap_question_id', gap.id)
+        .eq('candidate_url', f.url)
+        .maybeSingle();
+      if (existing) continue;
+      const { error } = await supabase.from('data_agent_findings').insert({
+        gap_question_id: gap.id,
+        topic: gap.topic,
+        candidate_url: f.url,
+        candidate_title: f.title,
+        summary: f.summary,
+        relevance_score: f.relevance,
+        rationale: f.rationale,
+        search_query: searchQ,
+        raw_result: candidates.find((c) => c.url === f.url) || null,
+      });
       if (!error) totalFindings++;
     }
     results.push({ gapId: gap.id, candidates: candidates.length, findings: findings.length });
