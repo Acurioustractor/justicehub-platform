@@ -1,8 +1,11 @@
 import Link from 'next/link';
+import { KioskSearch } from './KioskSearch';
 
 /**
  * Persistent five-lens nav. Sits pinned at top of every /kiosk/lenses/* screen.
  * The current lens is highlighted; the other four are always one tap away.
+ * A search button on the right opens a full-modal search across orgs / claims /
+ * government programs / grants / foundations.
  *
  * Kiosk constraint: tap targets must be at least 56px tall so a finger can hit
  * any lens without misfires. Use `min-h-[56px]` and large hit area.
@@ -49,6 +52,9 @@ export function LensBar({ current }: { current: LensKey }) {
               </li>
             );
           })}
+          <li>
+            <KioskSearch />
+          </li>
         </ul>
       </div>
     </nav>
