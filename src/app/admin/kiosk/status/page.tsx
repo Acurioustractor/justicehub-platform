@@ -25,7 +25,7 @@ async function getStatus() {
   const supabase = createServiceClient() as any;
   const slugs = HOOK_ENTRIES.map((e) => e.slug).filter((s): s is string => Boolean(s));
 
-  const [heroOrgs, signals, subscribers, tri, total, accos, tier1, stories, programs] = await Promise.all([
+  const [heroOrgs, signals, subscribers, tri, total, accos, tier1, stories, programs, classTotal, classDone, claimsWithDocs] = await Promise.all([
     slugs.length > 0
       ? supabase.from('organizations').select('slug, name, hero_photo_url').in('slug', slugs)
       : Promise.resolve({ data: [] }),
@@ -65,6 +65,13 @@ async function getStatus() {
       .select('id', { count: 'exact', head: true })
       .neq('verification_status', 'ai_generated')
       .eq('serves_youth_justice', true),
+    supabase.from('foundation_grantees').select('id', { count: 'exact', head: true }),
+    supabase.from('foundation_grantees').select('id', { count: 'exact', head: true }).not('yj_classified_at', 'is', null),
+    supabase
+      .from('civic_intelligence_claims')
+      .select('claim_id', { count: 'exact', head: true })
+      .in('verification_status', ['snapshot', 'verified'])
+      .not('source_doc_urls', 'is', null),
   ]);
 
   const heroBySlug = new Map<string, { name: string; url: string | null }>(
@@ -86,6 +93,11 @@ async function getStatus() {
       stories: stories.count || 0,
       programs: programs.count || 0,
     },
+    classifier: {
+      total: classTotal.count || 0,
+      classified: classDone.count || 0,
+    },
+    claimsWithDocs: claimsWithDocs.count || 0,
   };
 }
 
@@ -102,10 +114,13 @@ export default async function KioskStatusPage() {
     if (profile?.role !== 'admin') redirect('/');
   }
 
-  const { hookEntries, signals, subscribers, counts } = await getStatus();
+  const { hookEntries, signals, subscribers, counts, classifier, claimsWithDocs } = await getStatus();
   const heroesReady = hookEntries.filter((e) => e.slug && e.registeredOrg?.url).length;
   const heroesTotal = hookEntries.filter((e) => e.slug).length;
   const pinConfigured = Boolean(process.env.KIOSK_CONTROL_PIN);
+  const classifierPct = classifier.total > 0 ? Math.round((classifier.classified / classifier.total) * 100) : 0;
+  const classifierDisclaimerShows = classifierPct < 99;
+  const docsPct = counts.totalClaims > 0 ? Math.round((claimsWithDocs / counts.totalClaims) * 100) : 0;
 
   return (
     <main className="min-h-screen bg-stone-50 text-stone-900">
@@ -135,7 +150,34 @@ export default async function KioskStatusPage() {
             <CheckRow ok={counts.triangulated >= 50} label={`At least 50 triangulated claims (have ${counts.triangulated})`} />
             <CheckRow ok={counts.tier1 > 0} label={`At least 1 confirmed Tier 1 org (have ${counts.tier1})`} />
             <CheckRow ok={counts.stories > 0} label={`At least 1 community-voice story (have ${counts.stories})`} />
+            <CheckRow ok={claimsWithDocs === counts.totalClaims} label={`Primary source documents: ${claimsWithDocs} of ${counts.totalClaims} claims (${docsPct}%)`} />
           </ul>
+        </section>
+
+        {/* YJ classifier coverage */}
+        <section className="mt-10">
+          <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-3">YJ classifier coverage</p>
+          <div className="border-2 border-stone-200 bg-white rounded p-5">
+            <div className="flex items-baseline justify-between mb-2">
+              <p className="text-2xl font-bold text-stone-900">
+                {classifier.classified.toLocaleString()} <span className="text-stone-400">/ {classifier.total.toLocaleString()}</span>
+              </p>
+              <p className={`text-sm font-mono uppercase tracking-widest ${classifierDisclaimerShows ? 'text-rose-700' : 'text-emerald-700'}`}>
+                {classifierPct}% classified
+              </p>
+            </div>
+            <div className="h-2 bg-stone-100 rounded overflow-hidden">
+              <div
+                className={`h-full ${classifierDisclaimerShows ? 'bg-rose-500' : 'bg-emerald-500'}`}
+                style={{ width: `${classifierPct}%` }}
+              />
+            </div>
+            <p className="mt-3 text-xs text-stone-600 leading-relaxed">
+              {classifierDisclaimerShows
+                ? `Below 99% — state pages still show the "YJ-relevance coverage incomplete" disclaimer. Run scripts/civic/classify-foundation-grants-yj.mjs --apply to advance.`
+                : 'Above 99% — the "coverage incomplete" disclaimer is suppressed on state pages.'}
+            </p>
+          </div>
         </section>
 
         {/* Hook entries */}
