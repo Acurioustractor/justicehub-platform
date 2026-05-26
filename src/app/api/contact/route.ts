@@ -80,7 +80,7 @@ async function syncToGHL(
     const ghl = getGHLClient();
     if (!ghl.isConfigured()) return;
 
-    const tags: string[] = [GHL_TAGS.JUSTICEHUB];
+    const tags: string[] = [GHL_TAGS.JUSTICEHUB, 'act-inquiry', 'project-justicehub'];
 
     // Add category-specific tag
     if (CATEGORY_TAGS[category]) {
