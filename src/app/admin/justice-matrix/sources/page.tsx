@@ -91,12 +91,20 @@ export default async function SourcesAdminPage({
               </p>
             </div>
           </div>
-          <Link
-            href="/admin/justice-matrix/discoveries"
-            className="px-3 py-2 bg-white border-2 border-black font-bold text-sm hover:bg-gray-100"
-          >
-            Review queue →
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/admin/justice-matrix/sources/new"
+              className="px-3 py-2 bg-black text-white border-2 border-black font-bold text-sm hover:bg-gray-800"
+            >
+              + Add source
+            </Link>
+            <Link
+              href="/admin/justice-matrix/discoveries"
+              className="px-3 py-2 bg-white border-2 border-black font-bold text-sm hover:bg-gray-100"
+            >
+              Review queue →
+            </Link>
+          </div>
         </div>
       </div>
 
