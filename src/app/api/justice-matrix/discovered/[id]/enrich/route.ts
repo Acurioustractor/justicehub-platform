@@ -28,6 +28,12 @@ const CaseEnrichmentSchema = z.object({
   court: z.string().nullable().optional(),
   strategic_issue: z.string().nullable().optional(),
   key_holding: z.string().nullable().optional(),
+  facts: z.string().nullable().optional(),
+  reasoning: z.string().nullable().optional(),
+  dissents: z.string().nullable().optional(),
+  statutes_cited: z.array(z.string()).default([]).nullable().optional(),
+  cases_cited: z.array(z.string()).default([]).nullable().optional(),
+  judges: z.array(z.string()).default([]).nullable().optional(),
   region: z.string().nullable().optional(),
   country_code: z.string().max(8).nullable().optional(),
   categories: z.array(z.string()).default([]),
@@ -105,12 +111,13 @@ Source page text (truncated):
 ${opts.pageText || '(empty — fall back to existing fields + training knowledge)'}
 
 Return ONLY valid JSON of this shape; use null for fields you cannot ground:
-{"jurisdiction":"...","case_citation":"...","year":2024,"court":"...","strategic_issue":"What was at stake (1–2 sentences)","key_holding":"What the court actually decided (2–3 sentences)","region":"Europe|Americas|Asia-Pacific|Africa|global|National|<state>","country_code":"ISO 2-letter","categories":["refugee","asylum",...],"outcome":"favorable|adverse|pending","precedent_strength":"high|medium|low"}
+{"jurisdiction":"...","case_citation":"...","year":2024,"court":"...","strategic_issue":"What was at stake (1–2 sentences)","key_holding":"What the court actually decided (2–3 sentences)","facts":"What happened to the people in this case — one paragraph","reasoning":"Why the court decided this way — the ratio decidendi (2-4 sentences)","dissents":"Dissenting opinions: who and on what point, or null","statutes_cited":["Refugee Convention art. 33","Migration Act 1958 s.36"],"cases_cited":["Plaintiff M70/2011 v Minister","Chen Shi Hai v Minister"],"judges":["Kiefel CJ","Gageler J"],"region":"Europe|Americas|Asia-Pacific|Africa|global|National|<state>","country_code":"ISO 2-letter","categories":["refugee","asylum",...],"outcome":"favorable|adverse|pending","precedent_strength":"high|medium|low"}
 
 Rules:
 - Holding ≠ issue. Holding is what the court decided.
-- Don't invent. If a field can't be grounded, return null.
+- Don't invent. If a field can't be grounded, return null (or [] for the arrays).
 - Categories: lowercase, hyphen-separated. Reuse common ones (refugee, asylum, non-refoulement, detention-conditions, youth-justice, etc.) where they fit.
+- Statutes/cases/judges: arrays of short strings. Trim honorifics; "Kiefel CJ" not "The Honourable Chief Justice Kiefel".
 - Outcome favourable = applicant/petitioner won. Adverse = lost. Pending = ongoing.`;
 }
 

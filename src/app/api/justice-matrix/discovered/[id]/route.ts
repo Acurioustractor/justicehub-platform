@@ -106,6 +106,8 @@ export async function PUT(
 
       if (discovery.item_type === 'case') {
         // Create case from discovery
+        const arr = (v: unknown) =>
+          Array.isArray(v) && v.length ? (v as string[]).map(String) : null
         const caseData = {
           jurisdiction: body.jurisdiction || discovery.extracted_jurisdiction,
           case_citation: body.case_citation || discovery.extracted_title,
@@ -113,6 +115,12 @@ export async function PUT(
           court: body.court,
           strategic_issue: body.strategic_issue || discovery.extracted_summary,
           key_holding: body.key_holding,
+          facts: body.facts ?? null,
+          reasoning: body.reasoning ?? null,
+          dissents: body.dissents ?? null,
+          statutes_cited: arr(body.statutes_cited),
+          cases_cited: arr(body.cases_cited),
+          judges: arr(body.judges),
           authoritative_link: discovery.source_url,
           region: body.region,
           country_code: body.country_code || discovery.extracted_country_code,

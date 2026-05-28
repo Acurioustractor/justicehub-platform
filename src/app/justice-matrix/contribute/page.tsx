@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { PreviewGate } from '@/components/PreviewGate';
 import { ContributeForm } from './ContributeForm';
 import { ArrowLeft } from 'lucide-react';
 
@@ -11,9 +10,8 @@ export const metadata = {
 
 export default function ContributePage() {
   return (
-    <PreviewGate title="Justice Matrix" subtitle="Strategic litigation clearing house — preview">
-      <main style={{ background: '#f8f1e6', color: '#2b2530' }} className="min-h-screen">
-        {/* HERO */}
+    <main style={{ background: '#f8f1e6', color: '#2b2530' }} className="min-h-screen">
+      {/* HERO */}
         <section
           style={{ background: 'radial-gradient(circle at 30% 0%, #5a2d74, #38184d 60%, #2c1240)' }}
           className="relative overflow-hidden"
@@ -59,8 +57,7 @@ export default function ContributePage() {
           <p className="mt-6 text-xs text-center" style={{ color: '#7d5f3d' }}>
             Submissions are stored as pending review in the same queue an admin uses to triage scanner-discovered items. No item appears in the live matrix without admin approval.
           </p>
-        </section>
-      </main>
-    </PreviewGate>
+      </section>
+    </main>
   );
 }

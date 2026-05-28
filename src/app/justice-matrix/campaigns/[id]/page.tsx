@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { PreviewGate } from '@/components/PreviewGate';
 import { CopyCitationButton } from '../../cases/[id]/CopyCitationButton';
 import { ArrowLeft, ExternalLink, Megaphone, ShieldCheck, MapPin } from 'lucide-react';
 
@@ -57,30 +56,42 @@ async function fetchProfile(id: string) {
   if (error || !c) return null;
   const campaignRow = c as CampaignRow;
 
+  // Semantic similarity via pgvector. Falls back to category overlap if the
+  // RPCs return nothing (e.g. missing embedding on this row).
   const cats = campaignRow.categories ?? [];
   const [similarRes, casesRes] = await Promise.all([
-    cats.length
-      ? supabase
-          .from('justice_matrix_campaigns')
-          .select('id,campaign_name,country_region,start_year,is_ongoing')
-          .neq('id', campaignRow.id)
-          .overlaps('categories', cats)
-          .limit(6)
-      : Promise.resolve({ data: [] as SimilarCampaign[] }),
-    cats.length
-      ? supabase
-          .from('justice_matrix_cases')
-          .select('id,case_citation,jurisdiction,year,outcome')
-          .overlaps('categories', cats)
-          .limit(6)
-      : Promise.resolve({ data: [] as LinkedCase[] }),
+    supabase.rpc('justice_matrix_related_campaigns', {
+      campaign_id: campaignRow.id,
+      match_limit: 6,
+    }),
+    supabase.rpc('justice_matrix_related_cases_for_campaign', {
+      campaign_id: campaignRow.id,
+      match_limit: 6,
+    }),
   ]);
 
-  return {
-    campaignRow,
-    similar: (similarRes.data ?? []) as SimilarCampaign[],
-    cases: (casesRes.data ?? []) as LinkedCase[],
-  };
+  let similar: SimilarCampaign[] = (similarRes.data ?? []) as SimilarCampaign[];
+  let cases: LinkedCase[] = (casesRes.data ?? []) as LinkedCase[];
+
+  if (!similar.length && cats.length) {
+    const fb = await supabase
+      .from('justice_matrix_campaigns')
+      .select('id,campaign_name,country_region,start_year,is_ongoing')
+      .neq('id', campaignRow.id)
+      .overlaps('categories', cats)
+      .limit(6);
+    similar = (fb.data ?? []) as SimilarCampaign[];
+  }
+  if (!cases.length && cats.length) {
+    const fb = await supabase
+      .from('justice_matrix_cases')
+      .select('id,case_citation,jurisdiction,year,outcome')
+      .overlaps('categories', cats)
+      .limit(6);
+    cases = (fb.data ?? []) as LinkedCase[];
+  }
+
+  return { campaignRow, similar, cases };
 }
 
 export default async function CampaignProfilePage({ params }: { params: Promise<{ id: string }> }) {
@@ -99,12 +110,8 @@ export default async function CampaignProfilePage({ params }: { params: Promise<
       : '';
 
   return (
-    <PreviewGate
-      title="Justice Matrix"
-      subtitle="Strategic litigation clearing house — preview"
-    >
-      <main style={{ background: '#f8f1e6', color: '#2b2530' }} className="min-h-screen">
-        {/* HERO */}
+    <main style={{ background: '#f8f1e6', color: '#2b2530' }} className="min-h-screen">
+      {/* HERO */}
         <section
           style={{ background: 'radial-gradient(circle at 30% 0%, #5a2d74, #38184d 60%, #2c1240)' }}
           className="relative overflow-hidden"
@@ -118,7 +125,7 @@ export default async function CampaignProfilePage({ params }: { params: Promise<
           />
           <div className="relative max-w-7xl mx-auto px-6 md:px-10 py-14 md:py-20">
             <Link
-              href="/preview/justice-matrix"
+              href="/justice-matrix/explore"
               className="inline-flex items-center gap-2 text-[#eadff2] hover:text-white text-sm mb-8 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -288,11 +295,10 @@ export default async function CampaignProfilePage({ params }: { params: Promise<
                   </ul>
                 </Card>
               )}
-            </aside>
-          </div>
-        </section>
-      </main>
-    </PreviewGate>
+          </aside>
+        </div>
+      </section>
+    </main>
   );
 }
 

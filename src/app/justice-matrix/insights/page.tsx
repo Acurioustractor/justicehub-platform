@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { PreviewGate } from '@/components/PreviewGate';
 import { ChevronLeft, Scale, Megaphone } from 'lucide-react';
 
 const DISPLAY = "'Cormorant Garamond', Georgia, serif";
@@ -129,9 +128,8 @@ export default async function InsightsPage() {
   const ongoingShare = pct(campaigns.filter((c) => c.is_ongoing).length, totalCampaigns);
 
   return (
-    <PreviewGate title="Justice Matrix" subtitle="Strategic litigation clearing house — preview">
-      <main style={{ background: '#f8f1e6', color: '#2b2530' }} className="min-h-screen">
-        {/* HERO */}
+    <main style={{ background: '#f8f1e6', color: '#2b2530' }} className="min-h-screen">
+      {/* HERO */}
         <section
           style={{ background: 'radial-gradient(circle at 30% 0%, #5a2d74, #38184d 60%, #2c1240)' }}
           className="relative overflow-hidden"
@@ -306,10 +304,9 @@ export default async function InsightsPage() {
                 }))}
               />
             </div>
-          </Block>
-        </section>
-      </main>
-    </PreviewGate>
+        </Block>
+      </section>
+    </main>
   );
 }
 

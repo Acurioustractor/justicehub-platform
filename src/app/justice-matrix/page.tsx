@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { PreviewGate } from '@/components/PreviewGate';
-import { ArrowRight, Globe, Scale, Megaphone, Database } from 'lucide-react';
+import { ArrowRight, Globe, Scale, Megaphone, Database, Search } from 'lucide-react';
 
 const DISPLAY = "'Cormorant Garamond', Georgia, serif";
 
@@ -56,8 +55,7 @@ export default async function JusticeMatrixLandingPage() {
   const stats = await loadStats();
 
   return (
-    <PreviewGate title="Justice Matrix" subtitle="Strategic litigation clearing house — preview">
-      <main style={{ background: '#f8f1e6', color: '#2b2530' }} className="min-h-screen">
+    <main style={{ background: '#f8f1e6', color: '#2b2530' }} className="min-h-screen">
         {/* HERO */}
         <section
           style={{ background: 'radial-gradient(circle at 30% 0%, #5a2d74, #38184d 60%, #2c1240)' }}
@@ -85,22 +83,23 @@ export default async function JusticeMatrixLandingPage() {
             </p>
 
             <div className="flex flex-wrap gap-3 mt-9">
-              <PrimaryCta href="/justice-matrix/cases">
+              <PrimaryCta href="/justice-matrix/explore">
+                <Search className="w-4 h-4" />
+                Explore everything
+              </PrimaryCta>
+              <SecondaryCta href="/justice-matrix/cases">
                 <Scale className="w-4 h-4" />
-                Browse {stats.cases.toLocaleString()} cases
-              </PrimaryCta>
-              <PrimaryCta href="/justice-matrix/campaigns">
+                {stats.cases.toLocaleString()} cases
+              </SecondaryCta>
+              <SecondaryCta href="/justice-matrix/campaigns">
                 <Megaphone className="w-4 h-4" />
-                Browse {stats.campaigns.toLocaleString()} campaigns
-              </PrimaryCta>
-              <SecondaryCta href="/justice-matrix/contribute">
-                Contribute a case or campaign
+                {stats.campaigns.toLocaleString()} campaigns
               </SecondaryCta>
               <SecondaryCta href="/justice-matrix/insights">
-                See the insights
+                Insights
               </SecondaryCta>
-              <SecondaryCta href="/preview/justice-matrix">
-                View the partnership overview
+              <SecondaryCta href="/justice-matrix/contribute">
+                Contribute
               </SecondaryCta>
             </div>
           </div>
@@ -190,8 +189,7 @@ export default async function JusticeMatrixLandingPage() {
             />
           </div>
         </section>
-      </main>
-    </PreviewGate>
+    </main>
   );
 }
 

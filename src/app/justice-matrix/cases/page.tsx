@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { PreviewGate } from '@/components/PreviewGate';
 import { Search, ChevronLeft, ChevronRight, Scale, X } from 'lucide-react';
 
 const DISPLAY = "'Cormorant Garamond', Georgia, serif";
@@ -159,8 +158,7 @@ export default async function CasesListPage({ searchParams }: { searchParams: Pr
   }
 
   return (
-    <PreviewGate title="Justice Matrix" subtitle="Strategic litigation clearing house — preview">
-      <main style={{ background: '#f8f1e6', color: '#2b2530' }} className="min-h-screen">
+    <main style={{ background: '#f8f1e6', color: '#2b2530' }} className="min-h-screen">
         {/* Hero strip */}
         <section
           style={{ background: 'radial-gradient(circle at 30% 0%, #5a2d74, #38184d 60%, #2c1240)' }}
@@ -175,7 +173,7 @@ export default async function CasesListPage({ searchParams }: { searchParams: Pr
           />
           <div className="relative max-w-7xl mx-auto px-6 md:px-10 py-12 md:py-16">
             <Link
-              href="/preview/justice-matrix"
+              href="/justice-matrix"
               className="inline-flex items-center gap-2 text-[#eadff2] hover:text-white text-sm mb-6 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -455,8 +453,7 @@ export default async function CasesListPage({ searchParams }: { searchParams: Pr
             </div>
           </div>
         </section>
-      </main>
-    </PreviewGate>
+    </main>
   );
 }
 

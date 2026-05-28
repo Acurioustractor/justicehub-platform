@@ -1,0 +1,175 @@
+import { createServiceClient } from '@/lib/supabase/service-lite';
+import { ExploreClient, type FacetSeed } from './ExploreClient';
+
+export const dynamic = 'force-dynamic';
+
+export const metadata = {
+  title: 'Explore · Justice Matrix',
+  description:
+    'Search every strategic case and advocacy campaign in the Justice Matrix. Keyword or semantic. Cross-jurisdiction.',
+};
+
+type SP = Record<string, string | string[] | undefined>;
+
+function sp(value: SP[string], def = ''): string {
+  return typeof value === 'string' ? value : Array.isArray(value) ? value[0] ?? def : def;
+}
+
+async function loadFacetSeed(): Promise<FacetSeed> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createServiceClient() as any;
+  const [casesCount, campaignsCount, allCats] = await Promise.all([
+    supabase.from('justice_matrix_cases').select('*', { count: 'exact', head: true }),
+    supabase.from('justice_matrix_campaigns').select('*', { count: 'exact', head: true }),
+    supabase.from('justice_matrix_cases').select('categories'),
+  ]);
+
+  const counts = new Map<string, number>();
+  for (const row of (allCats.data ?? []) as { categories: string[] | null }[]) {
+    for (const c of row.categories ?? []) counts.set(c, (counts.get(c) ?? 0) + 1);
+  }
+  const topCategories = Array.from(counts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 18);
+
+  return {
+    topCategories,
+    totals: {
+      cases: casesCount.count ?? 0,
+      campaigns: campaignsCount.count ?? 0,
+    },
+  };
+}
+
+async function loadInitial(params: {
+  q: string;
+  type: 'all' | 'case' | 'campaign';
+  cats: string[];
+  outcome: string;
+  strength: string;
+}) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createServiceClient() as any;
+  const limit = 24;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const caseTask: any =
+    params.type === 'campaign'
+      ? Promise.resolve({ data: [] })
+      : (() => {
+          let cq = supabase
+            .from('justice_matrix_cases')
+            .select(
+              'id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,region,country_code,categories,outcome,precedent_strength,case_type,authoritative_link',
+            )
+            .order('year', { ascending: false, nullsFirst: false })
+            .limit(limit);
+          if (params.q) {
+            const s = params.q;
+            cq = cq.or(
+              `case_citation.ilike.%${s}%,jurisdiction.ilike.%${s}%,strategic_issue.ilike.%${s}%,key_holding.ilike.%${s}%`,
+            );
+          }
+          if (params.cats.length) cq = cq.overlaps('categories', params.cats);
+          if (params.outcome) cq = cq.eq('outcome', params.outcome);
+          if (params.strength) cq = cq.eq('precedent_strength', params.strength);
+          return cq;
+        })();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const campaignTask: any =
+    params.type === 'case'
+      ? Promise.resolve({ data: [] })
+      : (() => {
+          let mq = supabase
+            .from('justice_matrix_campaigns')
+            .select(
+              'id,campaign_name,country_region,start_year,is_ongoing,goals,notable_tactics,country_code,categories,lead_organizations,campaign_link',
+            )
+            .order('start_year', { ascending: false, nullsFirst: false })
+            .limit(limit);
+          if (params.q) {
+            const s = params.q;
+            mq = mq.or(
+              `campaign_name.ilike.%${s}%,country_region.ilike.%${s}%,goals.ilike.%${s}%,notable_tactics.ilike.%${s}%,lead_organizations.ilike.%${s}%`,
+            );
+          }
+          if (params.cats.length) mq = mq.overlaps('categories', params.cats);
+          return mq;
+        })();
+
+  const [caseRes, campaignRes] = await Promise.all([caseTask, campaignTask]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cases = (caseRes.data ?? []).map((r: any) => ({
+    kind: 'case' as const,
+    id: r.id,
+    title: r.case_citation,
+    jurisdiction: r.jurisdiction,
+    year: r.year ?? null,
+    court: r.court ?? null,
+    excerpt: r.strategic_issue ?? r.key_holding ?? null,
+    region: r.region ?? null,
+    country_code: r.country_code ?? null,
+    categories: r.categories ?? null,
+    outcome: r.outcome ?? null,
+    precedent_strength: r.precedent_strength ?? null,
+    case_type: r.case_type ?? null,
+    authoritative_link: r.authoritative_link ?? null,
+    distance: null,
+  }));
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const campaigns = (campaignRes.data ?? []).map((r: any) => ({
+    kind: 'campaign' as const,
+    id: r.id,
+    title: r.campaign_name,
+    region: r.country_region ?? null,
+    start_year: r.start_year ?? null,
+    is_ongoing: r.is_ongoing ?? null,
+    excerpt: r.goals ?? r.notable_tactics ?? null,
+    country_code: r.country_code ?? null,
+    categories: r.categories ?? null,
+    lead_organizations: r.lead_organizations ?? null,
+    campaign_link: r.campaign_link ?? null,
+    distance: null,
+  }));
+
+  return {
+    mode: 'keyword' as const,
+    q: params.q,
+    type: params.type,
+    cases,
+    campaigns,
+    total: cases.length + campaigns.length,
+  };
+}
+
+export default async function ExplorePage({ searchParams }: { searchParams: Promise<SP> }) {
+  const raw = await searchParams;
+  const q = sp(raw.q).replace(/[,()*%]/g, ' ').trim().slice(0, 120);
+  const modeParam = sp(raw.mode);
+  const mode: 'keyword' | 'semantic' = modeParam === 'semantic' ? 'semantic' : 'keyword';
+  const typeParam = sp(raw.type);
+  const type: 'all' | 'case' | 'campaign' =
+    typeParam === 'case' || typeParam === 'campaign' ? typeParam : 'all';
+  const cats = sp(raw.cat)
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const outcome = sp(raw.outcome);
+  const strength = sp(raw.strength);
+
+  const [facetSeed, initial] = await Promise.all([
+    loadFacetSeed(),
+    loadInitial({ q, type, cats, outcome, strength }),
+  ]);
+
+  return (
+    <ExploreClient
+      facetSeed={facetSeed}
+      initial={initial}
+      initialState={{ q, mode, type, cats, outcome, strength }}
+    />
+  );
+}
