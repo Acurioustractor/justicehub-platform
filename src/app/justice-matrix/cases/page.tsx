@@ -19,6 +19,7 @@ interface CaseListRow {
   outcome: 'favorable' | 'adverse' | 'pending' | null;
   precedent_strength: 'high' | 'medium' | 'low' | null;
   region: string | null;
+  case_type: string | null;
 }
 
 // Sanitise free-text query so it can't break the PostgREST .or() comma syntax.
@@ -47,6 +48,7 @@ async function loadData(opts: {
   cats: string[];
   outcome: string;
   strength: string;
+  showAll: boolean;
   page: number;
 }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -56,7 +58,7 @@ async function loadData(opts: {
   let casesQ = supabase
     .from('justice_matrix_cases')
     .select(
-      'id,case_citation,jurisdiction,year,court,strategic_issue,categories,outcome,precedent_strength,region',
+      'id,case_citation,jurisdiction,year,court,strategic_issue,categories,outcome,precedent_strength,region,case_type',
       { count: 'exact' },
     )
     .order('year', { ascending: false, nullsFirst: false })
@@ -70,11 +72,30 @@ async function loadData(opts: {
   if (opts.cats.length) casesQ = casesQ.overlaps('categories', opts.cats);
   if (opts.outcome) casesQ = casesQ.eq('outcome', opts.outcome);
   if (opts.strength) casesQ = casesQ.eq('precedent_strength', opts.strength);
+  // Default to strategic litigation only; ?show=all lifts the filter to include
+  // reports, inquiries, legislation, royal commissions.
+  if (!opts.showAll) casesQ = casesQ.eq('case_type', 'court_decision');
 
   // Pull all category arrays to compute facet counts client-side. ~100 rows; fine.
-  const allCatsQ = supabase.from('justice_matrix_cases').select('categories');
+  // Same filter applied so the chip counts reflect the default scope.
+  let allCatsQ = supabase.from('justice_matrix_cases').select('categories,case_type');
+  if (!opts.showAll) allCatsQ = allCatsQ.eq('case_type', 'court_decision');
 
-  const [cases, allCats] = await Promise.all([casesQ, allCatsQ]);
+  // And get the corpus-wide type breakdown so we can show the toggle label honestly.
+  const typeSplitQ = supabase
+    .from('justice_matrix_cases')
+    .select('case_type', { count: 'exact', head: true })
+    .eq('case_type', 'court_decision');
+  const typeTotalQ = supabase
+    .from('justice_matrix_cases')
+    .select('id', { count: 'exact', head: true });
+
+  const [cases, allCats, courtCount, totalCount] = await Promise.all([
+    casesQ,
+    allCatsQ,
+    typeSplitQ,
+    typeTotalQ,
+  ]);
 
   // Aggregate category counts
   const counts = new Map<string, number>();
@@ -89,6 +110,8 @@ async function loadData(opts: {
     rows: (cases.data ?? []) as CaseListRow[],
     total: cases.count ?? 0,
     topCats,
+    courtDecisionsTotal: courtCount.count ?? 0,
+    allTypesTotal: totalCount.count ?? 0,
   };
 }
 
@@ -101,9 +124,17 @@ export default async function CasesListPage({ searchParams }: { searchParams: Pr
     .filter(Boolean);
   const outcome = sp(raw.outcome);
   const strength = sp(raw.strength);
+  const showAll = sp(raw.show) === 'all';
   const page = Math.max(1, parseInt(sp(raw.page, '1'), 10) || 1);
 
-  const { rows, total, topCats } = await loadData({ q, cats, outcome, strength, page });
+  const { rows, total, topCats, courtDecisionsTotal, allTypesTotal } = await loadData({
+    q,
+    cats,
+    outcome,
+    strength,
+    showAll,
+    page,
+  });
   const totalPages = Math.max(1, Math.ceil(total / LIMIT));
 
   // Current params as flat object for url building (omit empty / page-only)
@@ -112,8 +143,9 @@ export default async function CasesListPage({ searchParams }: { searchParams: Pr
   if (cats.length) current.cat = cats.join(',');
   if (outcome) current.outcome = outcome;
   if (strength) current.strength = strength;
+  if (showAll) current.show = 'all';
 
-  const anyFilter = !!(q || cats.length || outcome || strength);
+  const anyFilter = !!(q || cats.length || outcome || strength || showAll);
 
   function toggleCatHref(c: string): string {
     const next = cats.includes(c) ? cats.filter((x) => x !== c) : [...cats, c];
@@ -239,6 +271,24 @@ export default async function CasesListPage({ searchParams }: { searchParams: Pr
                 </div>
               )}
 
+              {/* Type scope toggle — courts only by default, all types via ?show=all */}
+              <FacetGroup title="Scope">
+                <FacetChip
+                  href={`/justice-matrix/cases${urlWith({ ...current, show: '' }, {})}`}
+                  active={!showAll}
+                >
+                  Court decisions
+                  <span className="ml-1 opacity-60">{courtDecisionsTotal}</span>
+                </FacetChip>
+                <FacetChip
+                  href={`/justice-matrix/cases${urlWith({ ...current, show: 'all' }, {})}`}
+                  active={showAll}
+                >
+                  All types
+                  <span className="ml-1 opacity-60">{allTypesTotal}</span>
+                </FacetChip>
+              </FacetGroup>
+
               {/* Outcome */}
               <FacetGroup title="Outcome">
                 {(['favorable', 'adverse', 'pending'] as const).map((o) => (
@@ -338,6 +388,14 @@ export default async function CasesListPage({ searchParams }: { searchParams: Pr
                                   style={{ background: '#faf5ec', borderColor: '#dbc7a9', color: '#7d5f3d' }}
                                 >
                                   High precedent
+                                </span>
+                              )}
+                              {showAll && r.case_type && r.case_type !== 'court_decision' && (
+                                <span
+                                  className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] border"
+                                  style={{ background: '#fff3df', borderColor: '#dbbf90', color: '#a96a1c' }}
+                                >
+                                  {r.case_type.replace(/_/g, ' ')}
                                 </span>
                               )}
                             </div>
