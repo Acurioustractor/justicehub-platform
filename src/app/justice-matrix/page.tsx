@@ -96,6 +96,9 @@ export default async function JusticeMatrixLandingPage() {
               <SecondaryCta href="/justice-matrix/contribute">
                 Contribute a case or campaign
               </SecondaryCta>
+              <SecondaryCta href="/justice-matrix/insights">
+                See the insights
+              </SecondaryCta>
               <SecondaryCta href="/preview/justice-matrix">
                 View the partnership overview
               </SecondaryCta>
