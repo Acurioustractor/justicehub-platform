@@ -60,41 +60,55 @@ const PROVIDERS = [
   { name: 'deepseek',  key: 'DEEPSEEK_API_KEY',  base: 'https://api.deepseek.com/v1',                          model: 'deepseek-chat' },
 ];
 
-async function callLLM(prompt) {
+// Calls available providers in order and parses the response as JSON. On HTTP
+// error OR unparseable JSON, falls through to the next provider; the whole
+// rotation repeats `attempts` times. This is the retry-on-JSON-fail: previously
+// callLLM returned the first 200-OK provider's text and a single parse attempt
+// stranded the case when that text was malformed JSON.
+async function callLLMJson(prompt, attempts = 2) {
   const available = PROVIDERS.filter((p) => env[p.key]);
   if (!available.length) throw new Error('No LLM provider API keys set');
   let lastErr;
-  for (const p of available) {
-    try {
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 45000);
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    for (const p of available) {
       try {
-        const res = await fetch(`${p.base}/chat/completions`, {
-          method: 'POST',
-          headers: {
-            'content-type': 'application/json',
-            authorization: `Bearer ${env[p.key]}`,
-          },
-          body: JSON.stringify({
-            model: p.model,
-            messages: [{ role: 'user', content: prompt }],
-            max_tokens: 1500,
-            response_format: { type: 'json_object' },
-          }),
-          signal: ctrl.signal,
-        });
-        if (!res.ok) {
-          lastErr = new Error(`${p.name} ${res.status}`);
-          continue;
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 45000);
+        try {
+          const res = await fetch(`${p.base}/chat/completions`, {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+              authorization: `Bearer ${env[p.key]}`,
+            },
+            body: JSON.stringify({
+              model: p.model,
+              messages: [{ role: 'user', content: prompt }],
+              max_tokens: 1500,
+              response_format: { type: 'json_object' },
+            }),
+            signal: ctrl.signal,
+          });
+          if (!res.ok) {
+            lastErr = new Error(`${p.name} ${res.status}`);
+            continue;
+          }
+          const json = await res.json();
+          const text = (json.choices?.[0]?.message?.content ?? '')
+            .replace(/<think>[\s\S]*?<\/think>/g, '')
+            .trim();
+          try {
+            return parseJSON(text);
+          } catch (pe) {
+            lastErr = new Error(`${p.name} bad JSON: ${pe.message.slice(0, 80)}`);
+            continue; // next provider
+          }
+        } finally {
+          clearTimeout(t);
         }
-        const json = await res.json();
-        const text = json.choices?.[0]?.message?.content ?? '';
-        return text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
-      } finally {
-        clearTimeout(t);
+      } catch (e) {
+        lastErr = e;
       }
-    } catch (e) {
-      lastErr = e;
     }
   }
   throw lastErr ?? new Error('All providers exhausted');
@@ -191,18 +205,11 @@ async function processOne(c) {
   }
 
   const pageText = await fetchSourceText(c.authoritative_link);
-  let raw;
-  try {
-    raw = await callLLM(deepPrompt(c, pageText));
-  } catch (e) {
-    return { ok: false, reason: `LLM: ${e.message.slice(0, 120)}` };
-  }
-
   let enriched;
   try {
-    enriched = parseJSON(raw);
+    enriched = await callLLMJson(deepPrompt(c, pageText));
   } catch (e) {
-    return { ok: false, reason: `JSON: ${e.message.slice(0, 120)}` };
+    return { ok: false, reason: `LLM/JSON: ${e.message.slice(0, 120)}` };
   }
 
   const arr = (v) => (Array.isArray(v) && v.length ? v.map(String) : null);

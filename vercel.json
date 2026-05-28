@@ -191,6 +191,10 @@
     {
       "path": "/api/cron/justice-matrix/embed-new",
       "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/cron/justice-matrix/backfill-facts",
+      "schedule": "0 5 * * *"
     }
   ]
 }
