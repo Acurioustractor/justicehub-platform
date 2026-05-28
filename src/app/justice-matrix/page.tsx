@@ -93,6 +93,9 @@ export default async function JusticeMatrixLandingPage() {
                 <Megaphone className="w-4 h-4" />
                 Browse {stats.campaigns.toLocaleString()} campaigns
               </PrimaryCta>
+              <SecondaryCta href="/justice-matrix/contribute">
+                Contribute a case or campaign
+              </SecondaryCta>
               <SecondaryCta href="/preview/justice-matrix">
                 View the partnership overview
               </SecondaryCta>
