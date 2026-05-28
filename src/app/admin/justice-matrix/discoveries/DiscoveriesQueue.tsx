@@ -200,6 +200,83 @@ export function DiscoveriesQueue({ reviewerEmail }: { reviewerEmail: string }) {
     return input.split(',').map((s) => s.trim()).filter(Boolean);
   }
 
+  /**
+   * Ask the server to fetch the source URL, LLM-extract the full field set,
+   * and merge the result into the editor. Only overwrites fields that are
+   * currently empty so curator-made edits aren't clobbered.
+   */
+  async function doEnrich() {
+    if (!selected) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/justice-matrix/discovered/${selected.id}/enrich`, {
+        method: 'POST',
+      });
+      const json = await res.json();
+      if (!json.success) {
+        alert(`Enrich failed: ${json.error}${json.issues ? '\n' + json.issues.join('\n') : ''}`);
+        return;
+      }
+      const e = json.enriched as Record<string, unknown>;
+      const pick = <T,>(v: unknown, fallback: T): T => (v === null || v === undefined ? fallback : (v as T));
+
+      if (selected.item_type === 'case' && editCase) {
+        setEditCase({
+          jurisdiction: editCase.jurisdiction || pick(e.jurisdiction, ''),
+          case_citation: editCase.case_citation || pick(e.case_citation, '') || selected.extracted_title || '',
+          year:
+            editCase.year !== '' ? editCase.year : (typeof e.year === 'number' ? (e.year as number) : ''),
+          court: editCase.court || pick(e.court, ''),
+          strategic_issue: editCase.strategic_issue || pick(e.strategic_issue, ''),
+          key_holding: editCase.key_holding || pick(e.key_holding, ''),
+          region: editCase.region || pick(e.region, ''),
+          country_code: editCase.country_code || pick(e.country_code, ''),
+          categories:
+            editCase.categories ||
+            (Array.isArray(e.categories) ? (e.categories as string[]).join(', ') : ''),
+          outcome:
+            editCase.outcome ||
+            ((['favorable', 'adverse', 'pending'] as const).includes(e.outcome as never)
+              ? (e.outcome as EditFormCase['outcome'])
+              : ''),
+          precedent_strength:
+            editCase.precedent_strength ||
+            ((['high', 'medium', 'low'] as const).includes(e.precedent_strength as never)
+              ? (e.precedent_strength as EditFormCase['precedent_strength'])
+              : ''),
+        });
+      } else if (selected.item_type === 'campaign' && editCampaign) {
+        setEditCampaign({
+          country_region: editCampaign.country_region || pick(e.country_region, ''),
+          campaign_name:
+            editCampaign.campaign_name ||
+            pick(e.campaign_name, '') ||
+            selected.extracted_title ||
+            '',
+          lead_organizations: editCampaign.lead_organizations || pick(e.lead_organizations, ''),
+          goals: editCampaign.goals || pick(e.goals, ''),
+          notable_tactics: editCampaign.notable_tactics || pick(e.notable_tactics, ''),
+          outcome_status: editCampaign.outcome_status || pick(e.outcome_status, ''),
+          start_year:
+            editCampaign.start_year !== ''
+              ? editCampaign.start_year
+              : typeof e.start_year === 'number'
+              ? (e.start_year as number)
+              : '',
+          is_ongoing: typeof e.is_ongoing === 'boolean' ? (e.is_ongoing as boolean) : editCampaign.is_ongoing,
+          country_code: editCampaign.country_code || pick(e.country_code, ''),
+          categories:
+            editCampaign.categories ||
+            (Array.isArray(e.categories) ? (e.categories as string[]).join(', ') : ''),
+        });
+      }
+    } catch (err) {
+      alert(`Enrich error: ${(err as Error).message}`);
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function doApprove() {
     if (!selected) return;
     setSaving(true);
@@ -685,6 +762,15 @@ export function DiscoveriesQueue({ reviewerEmail }: { reviewerEmail: string }) {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                          disabled={saving}
+                          onClick={doEnrich}
+                          title="Fetch the source URL and let an LLM fill every field it can ground. Curator just verifies and approves."
+                          className="flex items-center gap-2 px-4 py-2 bg-purple-700 text-white font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                        >
+                          <RefreshCw className={`w-4 h-4 ${saving ? 'animate-spin' : ''}`} />
+                          {saving ? 'Enriching…' : 'Enrich from source'}
+                        </button>
                         <button
                           disabled={saving}
                           onClick={doApprove}
