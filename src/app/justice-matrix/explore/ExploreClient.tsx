@@ -598,104 +598,78 @@ function CampaignCard({ hit }: { hit: CampaignHit }) {
 }
 
 function EvidenceCard({ hit }: { hit: EvidenceHit }) {
-  // No internal detail route for evidence — link out to the source when present,
-  // otherwise render as a static card. Either way it is badged "Evidence" and
-  // labelled Australia so it never reads as a litigation precedent.
-  const inner = (
-    <div className="flex items-start gap-4">
-      <div
-        className="hidden md:flex h-9 w-9 shrink-0 rounded-full items-center justify-center"
-        style={{ background: '#e3efee', color: '#1f6f78' }}
-        aria-hidden
-      >
-        <BookOpen className="w-4 h-4" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex flex-wrap items-center gap-2 mb-1.5 text-[11px]">
-          <KindBadge kind="evidence" />
-          {hit.restricted && <ConsentBadge />}
-          <span className="font-semibold uppercase tracking-[0.2em]" style={{ color: '#8d6a44' }}>
-            {hit.jurisdiction}
-          </span>
-          {hit.evidence_type && <span style={{ color: '#5e5145' }}>· {hit.evidence_type}</span>}
-          {hit.year && <span style={{ color: '#5e5145' }}>· {hit.year}</span>}
-          {hit.distance !== null && (
-            <span className="opacity-50" style={{ color: '#5e5145' }}>
-              · {(1 - hit.distance).toFixed(2)}
-            </span>
-          )}
-        </div>
-        <h3
-          style={{ fontFamily: DISPLAY, fontWeight: 500, color: '#2b2530' }}
-          className="text-xl md:text-2xl leading-tight mb-1.5"
-        >
-          {hit.title}
-        </h3>
-        {hit.excerpt && (
-          <p className="text-sm leading-6 line-clamp-2" style={{ color: '#584b40' }}>
-            {hit.excerpt}
-          </p>
-        )}
-        {hit.cultural_safety && (
-          <p className="text-[11px] mt-2 italic" style={{ color: '#1f6f78' }}>
-            {hit.cultural_safety}
-          </p>
-        )}
-        <div
-          className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px]"
-          style={{ color: '#7d5f3d' }}
-        >
-          {hit.organization && <span>{hit.organization}</span>}
-          {hit.author && <span>· {hit.author}</span>}
-          {hit.restricted ? (
-            <span className="italic" style={{ color: '#a96a1c' }}>
-              · Community controlled — access on request
-            </span>
-          ) : (
-            hit.source_url && (
-              <span
-                className="inline-flex items-center gap-1 underline"
-                style={{ color: '#1f6f78' }}
-              >
-                <ExternalLink className="w-3 h-3" />
-                source
-              </span>
-            )
-          )}
-        </div>
-      </div>
-      {hit.source_url && (
-        <ArrowRight
-          className="w-4 h-4 opacity-0 group-hover:opacity-60 transition-opacity self-center"
-          style={{ color: '#1f6f78' }}
-        />
-      )}
-    </div>
-  );
-
-  const cardStyle = {
-    background: '#fff8ef',
-    borderColor: '#e6d7c1',
-    boxShadow: '0 12px 28px rgba(49,31,15,0.05)',
-  } as const;
-
+  // Links to the internal evidence detail page (like cases/campaigns). The
+  // detail page hosts the source link and respects the same consent gate.
+  // Badged "Evidence" and labelled Australia so it never reads as litigation.
   return (
     <li>
-      {hit.source_url ? (
-        <a
-          href={hit.source_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block rounded-[18px] border p-5 transition-colors hover:bg-white group"
-          style={cardStyle}
-        >
-          {inner}
-        </a>
-      ) : (
-        <div className="block rounded-[18px] border p-5 group" style={cardStyle}>
-          {inner}
+      <Link
+        href={`/justice-matrix/evidence/${hit.id}`}
+        className="block rounded-[18px] border p-5 transition-colors hover:bg-white group"
+        style={{
+          background: '#fff8ef',
+          borderColor: '#e6d7c1',
+          boxShadow: '0 12px 28px rgba(49,31,15,0.05)',
+        }}
+      >
+        <div className="flex items-start gap-4">
+          <div
+            className="hidden md:flex h-9 w-9 shrink-0 rounded-full items-center justify-center"
+            style={{ background: '#e3efee', color: '#1f6f78' }}
+            aria-hidden
+          >
+            <BookOpen className="w-4 h-4" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-2 mb-1.5 text-[11px]">
+              <KindBadge kind="evidence" />
+              {hit.restricted && <ConsentBadge />}
+              <span className="font-semibold uppercase tracking-[0.2em]" style={{ color: '#8d6a44' }}>
+                {hit.jurisdiction}
+              </span>
+              {hit.evidence_type && <span style={{ color: '#5e5145' }}>· {hit.evidence_type}</span>}
+              {hit.year && <span style={{ color: '#5e5145' }}>· {hit.year}</span>}
+              {hit.distance !== null && (
+                <span className="opacity-50" style={{ color: '#5e5145' }}>
+                  · {(1 - hit.distance).toFixed(2)}
+                </span>
+              )}
+            </div>
+            <h3
+              style={{ fontFamily: DISPLAY, fontWeight: 500, color: '#2b2530' }}
+              className="text-xl md:text-2xl leading-tight mb-1.5"
+            >
+              {hit.title}
+            </h3>
+            {hit.excerpt && (
+              <p className="text-sm leading-6 line-clamp-2" style={{ color: '#584b40' }}>
+                {hit.excerpt}
+              </p>
+            )}
+            {hit.cultural_safety && (
+              <p className="text-[11px] mt-2 italic" style={{ color: '#1f6f78' }}>
+                {hit.cultural_safety}
+              </p>
+            )}
+            <div
+              className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px]"
+              style={{ color: '#7d5f3d' }}
+            >
+              {hit.organization && <span>{hit.organization}</span>}
+              {hit.author && <span>· {hit.author}</span>}
+              {hit.restricted && (
+                <span className="italic" style={{ color: '#a96a1c' }}>
+                  · Community controlled — access on request
+                </span>
+              )}
+            </div>
+          </div>
+          <ArrowRight
+            className="w-4 h-4 opacity-0 group-hover:opacity-60 transition-opacity self-center"
+            style={{ color: '#1f6f78' }}
+          />
         </div>
-      )}
+      </Link>
     </li>
   );
 }
