@@ -56,9 +56,11 @@ interface ResearchHit {
   title: string;
   author: string | null;
   organization: string | null;
-  publication_date: string | null;
+  year: number | null;
   evidence_type: string | null;
   source_url: string | null;
+  consent_level: string | null;
+  cultural_safety: string | null;
 }
 
 interface MediaArticleHit {
@@ -87,7 +89,6 @@ async function fetchProfile(id: string) {
   const cats = caseRow.categories ?? [];
 
   // alma_media_articles.topics overlap → straight semantic-ish match.
-  // alma_evidence has no topic column, so fall back to ilike across categories.
   const mediaTask = cats.length
     ? supabase
         .from('alma_media_articles')
@@ -97,22 +98,11 @@ async function fetchProfile(id: string) {
         .limit(5)
     : Promise.resolve({ data: [] as MediaArticleHit[] });
 
-  const researchTask = cats.length
-    ? (() => {
-        // Match evidence whose title or findings mention any of the case's top categories.
-        const top = cats.slice(0, 4).map((c) => c.replace(/'/g, ''));
-        const orClause = top
-          .flatMap((c) => [`title.ilike.%${c}%`, `findings.ilike.%${c}%`])
-          .join(',');
-        return supabase
-          .from('alma_evidence')
-          .select('id,title,author,organization,publication_date,evidence_type,source_url')
-          .or(orClause)
-          .order('publication_date', { ascending: false, nullsFirst: false })
-          .limit(5);
-      })()
-    : Promise.resolve({ data: [] as ResearchHit[] });
-
+  // Related evidence is now semantic (case embedding → nearest alma_evidence),
+  // replacing the old ilike-on-categories match. The RPC bakes in the consent
+  // gate: 'Strictly Private' excluded, 'Community Controlled' redacted to title
+  // + provenance. No unfiltered fallback — if a case lacks an embedding it
+  // simply shows no related evidence rather than risk leaking restricted rows.
   const [similarRes, campaignsRes, mediaRes, researchRes] = await Promise.all([
     supabase.rpc('justice_matrix_related_cases', { case_id: caseRow.id, match_limit: 6 }),
     supabase.rpc('justice_matrix_related_campaigns_for_case', {
@@ -120,7 +110,10 @@ async function fetchProfile(id: string) {
       match_limit: 6,
     }),
     mediaTask,
-    researchTask,
+    supabase.rpc('justice_matrix_related_evidence_for_case', {
+      case_id: caseRow.id,
+      match_limit: 5,
+    }),
   ]);
 
   let similar: SimilarCase[] = (similarRes.data ?? []) as SimilarCase[];
@@ -365,49 +358,59 @@ export default async function CaseProfilePage({ params }: { params: Promise<{ id
                 <Card>
                   <Kicker>Related research</Kicker>
                   <ul className="divide-y" style={{ borderColor: '#e8dcc9' }}>
-                    {research.map((r) => (
-                      <li key={r.id} className="py-3">
-                        {r.source_url ? (
-                          <a
-                            href={r.source_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block hover:opacity-80 transition-opacity"
-                          >
-                            <div className="flex items-start gap-1.5">
-                              <BookOpen className="w-3.5 h-3.5 mt-1 shrink-0 opacity-60" style={{ color: '#4a2560' }} />
-                              <div>
-                                <div
-                                  style={{ fontFamily: DISPLAY, color: '#2b2530' }}
-                                  className="text-base font-medium leading-snug"
+                    {research.map((r) => {
+                      const restricted = r.consent_level === 'Community Controlled';
+                      const provenance = [r.author, r.organization, r.year]
+                        .filter(Boolean)
+                        .join(' · ');
+                      const titleEl = (
+                        <div
+                          style={{ fontFamily: DISPLAY, color: '#2b2530' }}
+                          className="text-base font-medium leading-snug"
+                        >
+                          {r.title}
+                        </div>
+                      );
+                      return (
+                        <li key={r.id} className="py-3">
+                          <div className="flex items-start gap-1.5">
+                            <BookOpen
+                              className="w-3.5 h-3.5 mt-1 shrink-0 opacity-60"
+                              style={{ color: '#4a2560' }}
+                            />
+                            <div>
+                              {r.source_url ? (
+                                <a
+                                  href={r.source_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block hover:opacity-80 transition-opacity"
                                 >
-                                  {r.title}
-                                </div>
+                                  {titleEl}
+                                </a>
+                              ) : (
+                                titleEl
+                              )}
+                              {provenance && (
                                 <div className="text-xs mt-1" style={{ color: '#5e5145' }}>
-                                  {[r.author, r.organization, r.publication_date?.slice(0, 4)]
-                                    .filter(Boolean)
-                                    .join(' · ')}
+                                  {provenance}
                                 </div>
-                              </div>
+                              )}
+                              {restricted && (
+                                <div className="text-xs mt-1 italic" style={{ color: '#a96a1c' }}>
+                                  Community controlled — access on request
+                                </div>
+                              )}
+                              {r.cultural_safety && (
+                                <div className="text-xs mt-1 italic" style={{ color: '#1f6f78' }}>
+                                  {r.cultural_safety}
+                                </div>
+                              )}
                             </div>
-                          </a>
-                        ) : (
-                          <>
-                            <div
-                              style={{ fontFamily: DISPLAY, color: '#2b2530' }}
-                              className="text-base font-medium leading-snug"
-                            >
-                              {r.title}
-                            </div>
-                            <div className="text-xs mt-1" style={{ color: '#5e5145' }}>
-                              {[r.author, r.organization, r.publication_date?.slice(0, 4)]
-                                .filter(Boolean)
-                                .join(' · ')}
-                            </div>
-                          </>
-                        )}
-                      </li>
-                    ))}
+                          </div>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </Card>
               )}

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Search, Scale, Megaphone, X, Sparkles, ExternalLink, ArrowRight } from 'lucide-react';
+import { Search, Scale, Megaphone, BookOpen, X, Sparkles, ExternalLink, ArrowRight } from 'lucide-react';
 
 const DISPLAY = "'Cormorant Garamond', Georgia, serif";
 
@@ -39,20 +39,43 @@ interface CampaignHit {
   distance: number | null;
 }
 
-type Hit = CaseHit | CampaignHit;
+// ALMA evidence — Australia-only youth-justice research/evaluations, surfaced
+// as a DISTINCT third kind so it is never confused with the (global) cases.
+interface EvidenceHit {
+  kind: 'evidence';
+  id: string;
+  title: string;
+  jurisdiction: string; // always 'Australia'
+  country_code: string | null; // always 'AU'
+  region: string | null;
+  year: number | null;
+  evidence_type: string | null;
+  excerpt: string | null;
+  organization: string | null;
+  author: string | null;
+  source_url: string | null;
+  consent_level: string | null;
+  cultural_safety: string | null;
+  // 'Community Controlled' → title + provenance only, "access on request".
+  restricted: boolean;
+  distance: number | null;
+}
+
+type Hit = CaseHit | CampaignHit | EvidenceHit;
 
 interface SearchResponse {
   mode: 'keyword' | 'semantic';
   q: string;
-  type: 'all' | 'case' | 'campaign';
+  type: 'all' | 'case' | 'campaign' | 'evidence';
   cases: CaseHit[];
   campaigns: CampaignHit[];
+  evidence: EvidenceHit[];
   total: number;
 }
 
 export interface FacetSeed {
   topCategories: Array<[string, number]>;
-  totals: { cases: number; campaigns: number };
+  totals: { cases: number; campaigns: number; evidence: number };
 }
 
 export interface ExploreClientProps {
@@ -63,7 +86,7 @@ export interface ExploreClientProps {
   initialState: {
     q: string;
     mode: 'keyword' | 'semantic';
-    type: 'all' | 'case' | 'campaign';
+    type: 'all' | 'case' | 'campaign' | 'evidence';
     cats: string[];
     outcome: string;
     strength: string;
@@ -74,7 +97,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
   // --- state ----------------------------------------------------------------
   const [q, setQ] = useState(initialState.q);
   const [mode, setMode] = useState<'keyword' | 'semantic'>(initialState.mode);
-  const [type, setType] = useState<'all' | 'case' | 'campaign'>(initialState.type);
+  const [type, setType] = useState<'all' | 'case' | 'campaign' | 'evidence'>(initialState.type);
   const [cats, setCats] = useState<string[]>(initialState.cats);
   const [outcome, setOutcome] = useState<string>(initialState.outcome);
   const [strength, setStrength] = useState<string>(initialState.strength);
@@ -155,17 +178,20 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
   }, []);
 
   const merged: Hit[] = useMemo(() => {
-    // Interleave cases and campaigns by relevance (semantic distance asc, else by year desc).
-    const items: Hit[] = [...results.cases, ...results.campaigns];
+    // Interleave all kinds by relevance (semantic distance asc, else by year desc).
+    const sortYear = (h: Hit) => (h.kind === 'campaign' ? h.start_year ?? 0 : h.year ?? 0);
+    const items: Hit[] = [
+      ...results.cases,
+      ...results.campaigns,
+      ...(results.evidence ?? []),
+    ];
     items.sort((a, b) => {
       if (results.mode === 'semantic') {
         const ad = a.distance ?? 1;
         const bd = b.distance ?? 1;
         return ad - bd;
       }
-      const ay = a.kind === 'case' ? a.year ?? 0 : a.start_year ?? 0;
-      const by = b.kind === 'case' ? b.year ?? 0 : b.start_year ?? 0;
-      return by - ay;
+      return sortYear(b) - sortYear(a);
     });
     return items;
   }, [results]);
@@ -193,12 +219,13 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
             style={{ fontFamily: DISPLAY, fontWeight: 500, lineHeight: 1.02 }}
             className="text-5xl md:text-6xl text-white max-w-4xl mb-5"
           >
-            One search across every case and campaign.
+            One search across cases, campaigns, and evidence.
           </h1>
           <p className="text-[#eadff2] text-base md:text-lg max-w-2xl mb-8">
             {facetSeed.totals.cases.toLocaleString()} strategic cases ·{' '}
-            {facetSeed.totals.campaigns.toLocaleString()} advocacy campaigns. Type to filter
-            instantly, switch to semantic mode for related-ideas search.
+            {facetSeed.totals.campaigns.toLocaleString()} advocacy campaigns ·{' '}
+            {facetSeed.totals.evidence.toLocaleString()} Australian evidence studies. Type to
+            filter instantly, switch to semantic mode for related-ideas search.
           </p>
 
           {/* Search input */}
@@ -255,11 +282,12 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
             />
             <SegmentedToggle
               value={type}
-              onChange={(v) => setType(v as 'all' | 'case' | 'campaign')}
+              onChange={(v) => setType(v as 'all' | 'case' | 'campaign' | 'evidence')}
               options={[
                 { value: 'all', label: 'All' },
                 { value: 'case', label: 'Cases', icon: <Scale className="w-3 h-3" /> },
                 { value: 'campaign', label: 'Campaigns', icon: <Megaphone className="w-3 h-3" /> },
+                { value: 'evidence', label: 'Evidence', icon: <BookOpen className="w-3 h-3" /> },
               ]}
             />
             {loading && (
@@ -365,8 +393,10 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
                 {merged.map((hit) =>
                   hit.kind === 'case' ? (
                     <CaseCard key={`c-${hit.id}`} hit={hit} />
-                  ) : (
+                  ) : hit.kind === 'campaign' ? (
                     <CampaignCard key={`m-${hit.id}`} hit={hit} />
+                  ) : (
+                    <EvidenceCard key={`e-${hit.id}`} hit={hit} />
                   ),
                 )}
               </ul>
@@ -567,6 +597,109 @@ function CampaignCard({ hit }: { hit: CampaignHit }) {
   );
 }
 
+function EvidenceCard({ hit }: { hit: EvidenceHit }) {
+  // No internal detail route for evidence — link out to the source when present,
+  // otherwise render as a static card. Either way it is badged "Evidence" and
+  // labelled Australia so it never reads as a litigation precedent.
+  const inner = (
+    <div className="flex items-start gap-4">
+      <div
+        className="hidden md:flex h-9 w-9 shrink-0 rounded-full items-center justify-center"
+        style={{ background: '#e3efee', color: '#1f6f78' }}
+        aria-hidden
+      >
+        <BookOpen className="w-4 h-4" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-wrap items-center gap-2 mb-1.5 text-[11px]">
+          <KindBadge kind="evidence" />
+          {hit.restricted && <ConsentBadge />}
+          <span className="font-semibold uppercase tracking-[0.2em]" style={{ color: '#8d6a44' }}>
+            {hit.jurisdiction}
+          </span>
+          {hit.evidence_type && <span style={{ color: '#5e5145' }}>· {hit.evidence_type}</span>}
+          {hit.year && <span style={{ color: '#5e5145' }}>· {hit.year}</span>}
+          {hit.distance !== null && (
+            <span className="opacity-50" style={{ color: '#5e5145' }}>
+              · {(1 - hit.distance).toFixed(2)}
+            </span>
+          )}
+        </div>
+        <h3
+          style={{ fontFamily: DISPLAY, fontWeight: 500, color: '#2b2530' }}
+          className="text-xl md:text-2xl leading-tight mb-1.5"
+        >
+          {hit.title}
+        </h3>
+        {hit.excerpt && (
+          <p className="text-sm leading-6 line-clamp-2" style={{ color: '#584b40' }}>
+            {hit.excerpt}
+          </p>
+        )}
+        {hit.cultural_safety && (
+          <p className="text-[11px] mt-2 italic" style={{ color: '#1f6f78' }}>
+            {hit.cultural_safety}
+          </p>
+        )}
+        <div
+          className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px]"
+          style={{ color: '#7d5f3d' }}
+        >
+          {hit.organization && <span>{hit.organization}</span>}
+          {hit.author && <span>· {hit.author}</span>}
+          {hit.restricted ? (
+            <span className="italic" style={{ color: '#a96a1c' }}>
+              · Community controlled — access on request
+            </span>
+          ) : (
+            hit.source_url && (
+              <span
+                className="inline-flex items-center gap-1 underline"
+                style={{ color: '#1f6f78' }}
+              >
+                <ExternalLink className="w-3 h-3" />
+                source
+              </span>
+            )
+          )}
+        </div>
+      </div>
+      {hit.source_url && (
+        <ArrowRight
+          className="w-4 h-4 opacity-0 group-hover:opacity-60 transition-opacity self-center"
+          style={{ color: '#1f6f78' }}
+        />
+      )}
+    </div>
+  );
+
+  const cardStyle = {
+    background: '#fff8ef',
+    borderColor: '#e6d7c1',
+    boxShadow: '0 12px 28px rgba(49,31,15,0.05)',
+  } as const;
+
+  return (
+    <li>
+      {hit.source_url ? (
+        <a
+          href={hit.source_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block rounded-[18px] border p-5 transition-colors hover:bg-white group"
+          style={cardStyle}
+        >
+          {inner}
+        </a>
+      ) : (
+        <div className="block rounded-[18px] border p-5 group" style={cardStyle}>
+          {inner}
+        </div>
+      )}
+    </li>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Small UI bits
 // ---------------------------------------------------------------------------
@@ -647,17 +780,32 @@ function FacetChip({
   );
 }
 
-function KindBadge({ kind }: { kind: 'case' | 'campaign' }) {
+function KindBadge({ kind }: { kind: 'case' | 'campaign' | 'evidence' }) {
+  const palette =
+    kind === 'case'
+      ? { background: 'rgba(74,37,96,0.08)', borderColor: '#c8b2d4', color: '#4a2560' }
+      : kind === 'campaign'
+      ? { background: 'rgba(169,106,28,0.08)', borderColor: '#dbbf90', color: '#a96a1c' }
+      : { background: 'rgba(31,111,120,0.10)', borderColor: '#9cc3c8', color: '#1f6f78' };
+  const label = kind === 'case' ? 'Case' : kind === 'campaign' ? 'Campaign' : 'Evidence';
   return (
     <span
       className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] border"
-      style={
-        kind === 'case'
-          ? { background: 'rgba(74,37,96,0.08)', borderColor: '#c8b2d4', color: '#4a2560' }
-          : { background: 'rgba(169,106,28,0.08)', borderColor: '#dbbf90', color: '#a96a1c' }
-      }
+      style={palette}
     >
-      {kind === 'case' ? 'Case' : 'Campaign'}
+      {label}
+    </span>
+  );
+}
+
+function ConsentBadge() {
+  return (
+    <span
+      className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] border"
+      style={{ background: 'rgba(169,106,28,0.10)', borderColor: '#dbbf90', color: '#a96a1c' }}
+      title="Community controlled — title and provenance shown; full study available on request"
+    >
+      Community controlled
     </span>
   );
 }

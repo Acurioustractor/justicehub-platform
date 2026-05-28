@@ -70,6 +70,35 @@ export function campaignEmbeddingText(c: {
     .slice(0, 4000);
 }
 
+/**
+ * Compose the canonical text for an ALMA evidence row. Title first (the formal
+ * identifier), then findings (the substance), then methodology/context. Used to
+ * cross-link Australian youth-justice evidence into Matrix semantic search as a
+ * distinct kind — never merged into the cases/campaigns tables.
+ */
+export function evidenceEmbeddingText(e: {
+  title?: string | null;
+  evidence_type?: string | null;
+  findings?: string | null;
+  methodology?: string | null;
+  timeframe?: string | null;
+  author?: string | null;
+  organization?: string | null;
+}): string {
+  return [
+    e.title ?? '',
+    e.evidence_type ?? '',
+    e.findings ?? '',
+    e.methodology ?? '',
+    e.timeframe ?? '',
+    e.author ?? '',
+    e.organization ?? '',
+  ]
+    .filter(Boolean)
+    .join(' | ')
+    .slice(0, 4000);
+}
+
 /** Composes the canonical text for a discovered item using its extracted fields. */
 export function discoveryEmbeddingText(d: {
   extracted_title: string;

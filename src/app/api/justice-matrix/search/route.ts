@@ -63,6 +63,29 @@ interface CampaignResult {
   distance: number | null;
 }
 
+interface EvidenceResult {
+  kind: 'evidence';
+  id: string;
+  title: string;
+  // ALMA evidence is Australia-only by definition; stamped here so the explore
+  // UI can label and filter it as a distinct kind, never confused with the
+  // (global) litigation cases.
+  jurisdiction: string;
+  country_code: 'AU';
+  region: null;
+  year: number | null;
+  evidence_type: string | null;
+  excerpt: string | null;
+  organization: string | null;
+  author: string | null;
+  source_url: string | null;
+  consent_level: string | null;
+  cultural_safety: string | null;
+  // 'Community Controlled' rows: title + provenance only, no findings/source.
+  restricted: boolean;
+  distance: number | null;
+}
+
 function clampInt(value: string | null, def: number, min: number, max: number): number {
   if (!value) return def;
   const n = parseInt(value, 10);
@@ -83,8 +106,10 @@ export async function GET(req: Request) {
   const q = safeIlike(sp.get('q') ?? '');
   const mode = sp.get('mode') === 'semantic' ? 'semantic' : 'keyword';
   const typeParam = sp.get('type') ?? 'all';
-  const type: 'all' | 'case' | 'campaign' =
-    typeParam === 'case' || typeParam === 'campaign' ? typeParam : 'all';
+  const type: 'all' | 'case' | 'campaign' | 'evidence' =
+    typeParam === 'case' || typeParam === 'campaign' || typeParam === 'evidence'
+      ? typeParam
+      : 'all';
   const cats = (sp.get('cat') ?? '')
     .split(',')
     .map((s) => s.trim())
@@ -97,12 +122,24 @@ export async function GET(req: Request) {
 
   const supabase = createServiceClient() as AnyClient;
 
+  // Which kinds to include for this request.
+  const includeCases = type === 'all' || type === 'case';
+  const includeCampaigns = type === 'all' || type === 'campaign';
+  // ALMA evidence has no categories/outcome/precedent-strength/region and is
+  // Australia-only. So a category/outcome/strength/region filter — or a country
+  // filter for anywhere but AU — means evidence cannot honestly match; drop it
+  // rather than show unfiltered evidence alongside filtered cases/campaigns.
+  const evidenceEligible =
+    cats.length === 0 && !outcome && !strength && !region && (!country || country === 'AU');
+  const includeEvidence = (type === 'all' || type === 'evidence') && evidenceEligible;
+
   // Semantic mode requires an embedding for the query string. If q is empty we
   // silently fall back to keyword mode (no point semantic-searching for "").
   const useSemantic = mode === 'semantic' && q.length >= 3 && !!process.env.OPENAI_API_KEY;
 
   let cases: CaseResult[] = [];
   let campaigns: CampaignResult[] = [];
+  let evidence: EvidenceResult[] = [];
 
   if (useSemantic) {
     let queryVec: string;
@@ -114,7 +151,7 @@ export async function GET(req: Request) {
       return runKeywordSearch();
     }
 
-    if (type !== 'campaign') {
+    if (includeCases) {
       const { data } = await supabase.rpc('justice_matrix_search_cases', {
         query_embedding: queryVec,
         match_limit: limit,
@@ -122,7 +159,7 @@ export async function GET(req: Request) {
       });
       cases = (data ?? []).map(mapCaseRow);
     }
-    if (type !== 'case') {
+    if (includeCampaigns) {
       const { data } = await supabase.rpc('justice_matrix_search_campaigns', {
         query_embedding: queryVec,
         match_limit: limit,
@@ -130,10 +167,20 @@ export async function GET(req: Request) {
       });
       campaigns = (data ?? []).map(mapCampaignRow);
     }
+    if (includeEvidence) {
+      const { data } = await supabase.rpc('justice_matrix_search_evidence', {
+        query_embedding: queryVec,
+        match_limit: limit,
+        max_distance: 0.6,
+      });
+      evidence = (data ?? []).map(mapEvidenceRow);
+    }
 
     // Apply non-semantic facet filters in-memory — the RPCs return a small set.
     cases = applyCaseFilters(cases, { cats, outcome, strength, region, country });
     campaigns = applyCampaignFilters(campaigns, { cats, region, country });
+    // Evidence needs no in-memory facet filtering: includeEvidence already
+    // gates it to the no-incompatible-filter case.
   } else {
     return runKeywordSearch();
   }
@@ -144,7 +191,8 @@ export async function GET(req: Request) {
     type,
     cases,
     campaigns,
-    total: cases.length + campaigns.length,
+    evidence,
+    total: cases.length + campaigns.length + evidence.length,
   });
 
   // -----------------------------------------------------------------
@@ -154,7 +202,7 @@ export async function GET(req: Request) {
   async function runKeywordSearch() {
     const tasks: Array<Promise<unknown>> = [];
 
-    if (type !== 'campaign') {
+    if (includeCases) {
       let cq = supabase
         .from('justice_matrix_cases')
         .select(
@@ -173,7 +221,7 @@ export async function GET(req: Request) {
       tasks.push(Promise.resolve({ data: [] }));
     }
 
-    if (type !== 'case') {
+    if (includeCampaigns) {
       let mq = supabase
         .from('justice_matrix_campaigns')
         .select(
@@ -190,10 +238,30 @@ export async function GET(req: Request) {
       tasks.push(Promise.resolve({ data: [] }));
     }
 
+    if (includeEvidence) {
+      let eq = supabase
+        .from('alma_evidence')
+        .select(
+          'id,title,evidence_type,findings,methodology,organization,author,publication_date,source_url,source_document_url,consent_level,cultural_safety',
+        )
+        // Consent gate: exclude 'Strictly Private' (and NULL/unknown). A
+        // 'Community Controlled' row that matches still only exposes its title +
+        // provenance — findings/source are redacted in mapEvidenceRow — which is
+        // exactly what the policy permits, so a single .or() is safe here.
+        .in('consent_level', ['Public Knowledge Commons', 'Community Controlled'])
+        .order('publication_date', { ascending: false, nullsFirst: false })
+        .limit(limit);
+      if (q) eq = eq.or(`title.ilike.%${q}%,findings.ilike.%${q}%,methodology.ilike.%${q}%,organization.ilike.%${q}%,author.ilike.%${q}%`);
+      tasks.push(eq);
+    } else {
+      tasks.push(Promise.resolve({ data: [] }));
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [caseRes, campRes] = (await Promise.all(tasks)) as Array<{ data: any[] | null }>;
+    const [caseRes, campRes, evidRes] = (await Promise.all(tasks)) as Array<{ data: any[] | null }>;
     const caseRows = (caseRes.data ?? []).map(mapCaseRow);
     const campRows = (campRes.data ?? []).map(mapCampaignRow);
+    const evidRows = (evidRes.data ?? []).map(mapEvidenceRow);
 
     return NextResponse.json({
       mode: 'keyword',
@@ -201,7 +269,8 @@ export async function GET(req: Request) {
       type,
       cases: caseRows,
       campaigns: campRows,
-      total: caseRows.length + campRows.length,
+      evidence: evidRows,
+      total: caseRows.length + campRows.length + evidRows.length,
     });
   }
 }
@@ -241,6 +310,39 @@ function mapCampaignRow(r: any): CampaignResult {
     categories: r.categories ?? null,
     lead_organizations: r.lead_organizations ?? null,
     campaign_link: r.campaign_link ?? null,
+    distance: typeof r.distance === 'number' ? r.distance : null,
+  };
+}
+
+// Handles both the semantic RPC row (year, source_url) and the keyword row
+// (publication_date, source_url + source_document_url). Enforces the consent
+// policy at the mapping layer too (the RPC already redacts in SQL; the keyword
+// branch relies on this): 'Community Controlled' → title + provenance only.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapEvidenceRow(r: any): EvidenceResult {
+  const year =
+    typeof r.year === 'number'
+      ? r.year
+      : r.publication_date
+        ? new Date(r.publication_date).getUTCFullYear()
+        : null;
+  const restricted = r.consent_level === 'Community Controlled';
+  return {
+    kind: 'evidence',
+    id: r.id,
+    title: r.title,
+    jurisdiction: 'Australia',
+    country_code: 'AU',
+    region: null,
+    year,
+    evidence_type: r.evidence_type ?? null,
+    excerpt: restricted ? null : r.findings ?? r.methodology ?? null,
+    organization: r.organization ?? null,
+    author: r.author ?? null,
+    source_url: restricted ? null : r.source_url ?? r.source_document_url ?? null,
+    consent_level: r.consent_level ?? null,
+    cultural_safety: r.cultural_safety ?? null,
+    restricted,
     distance: typeof r.distance === 'number' ? r.distance : null,
   };
 }

@@ -12,6 +12,7 @@ import { createServiceClient } from '@/lib/supabase/service-lite';
 import {
   caseEmbeddingText,
   campaignEmbeddingText,
+  evidenceEmbeddingText,
   embedBatch,
   toPgVector,
 } from '@/lib/justice-matrix/embeddings';
@@ -27,7 +28,7 @@ type Db = any;
 
 async function topUpTable(opts: {
   supabase: Db;
-  table: 'justice_matrix_cases' | 'justice_matrix_campaigns';
+  table: 'justice_matrix_cases' | 'justice_matrix_campaigns' | 'alma_evidence';
   selectCols: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   composeText: (row: any) => string;
@@ -82,6 +83,7 @@ export async function GET(request: Request) {
   const supabase = createServiceClient() as Db;
   let cases = { found: 0, embedded: 0 };
   let campaigns = { found: 0, embedded: 0 };
+  let evidence = { found: 0, embedded: 0 };
   try {
     cases = await topUpTable({
       supabase,
@@ -95,6 +97,15 @@ export async function GET(request: Request) {
       selectCols: 'campaign_name,country_region,start_year,goals,notable_tactics',
       composeText: (r) => campaignEmbeddingText(r),
     });
+    // ALMA evidence shares the Matrix vector space (same model) so new rows
+    // become cross-searchable. Top-up catches NULL embeddings only — same as
+    // cases/campaigns; content edits are not re-embedded here.
+    evidence = await topUpTable({
+      supabase,
+      table: 'alma_evidence',
+      selectCols: 'title,evidence_type,findings,methodology,timeframe,author,organization',
+      composeText: (r) => evidenceEmbeddingText(r),
+    });
   } catch (e) {
     return NextResponse.json(
       { ok: false, error: (e as Error).message?.slice(0, 300) },
@@ -107,5 +118,6 @@ export async function GET(request: Request) {
     scanned_at: new Date().toISOString(),
     cases,
     campaigns,
+    evidence,
   });
 }

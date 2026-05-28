@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'Explore · Justice Matrix',
   description:
-    'Search every strategic case and advocacy campaign in the Justice Matrix. Keyword or semantic. Cross-jurisdiction.',
+    'Search every strategic case, advocacy campaign, and Australian youth-justice evidence study in the Justice Matrix. Keyword or semantic. Cross-jurisdiction.',
 };
 
 type SP = Record<string, string | string[] | undefined>;
@@ -18,9 +18,13 @@ function sp(value: SP[string], def = ''): string {
 async function loadFacetSeed(): Promise<FacetSeed> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createServiceClient() as any;
-  const [casesCount, campaignsCount, allCats] = await Promise.all([
+  const [casesCount, campaignsCount, evidenceCount, allCats] = await Promise.all([
     supabase.from('justice_matrix_cases').select('*', { count: 'exact', head: true }),
     supabase.from('justice_matrix_campaigns').select('*', { count: 'exact', head: true }),
+    supabase
+      .from('alma_evidence')
+      .select('*', { count: 'exact', head: true })
+      .in('consent_level', ['Public Knowledge Commons', 'Community Controlled']),
     supabase.from('justice_matrix_cases').select('categories'),
   ]);
 
@@ -37,13 +41,14 @@ async function loadFacetSeed(): Promise<FacetSeed> {
     totals: {
       cases: casesCount.count ?? 0,
       campaigns: campaignsCount.count ?? 0,
+      evidence: evidenceCount.count ?? 0,
     },
   };
 }
 
 async function loadInitial(params: {
   q: string;
-  type: 'all' | 'case' | 'campaign';
+  type: 'all' | 'case' | 'campaign' | 'evidence';
   cats: string[];
   outcome: string;
   strength: string;
@@ -51,6 +56,15 @@ async function loadInitial(params: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createServiceClient() as any;
   const limit = 24;
+
+  // ALMA evidence is Australia-only with no categories/outcome/strength, so it
+  // only seeds when none of those incompatible filters are active. Mirrors the
+  // `evidenceEligible` gate in /api/justice-matrix/search.
+  const includeEvidence =
+    (params.type === 'all' || params.type === 'evidence') &&
+    params.cats.length === 0 &&
+    !params.outcome &&
+    !params.strength;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const caseTask: any =
@@ -98,7 +112,33 @@ async function loadInitial(params: {
           return mq;
         })();
 
-  const [caseRes, campaignRes] = await Promise.all([caseTask, campaignTask]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const evidenceTask: any = !includeEvidence
+    ? Promise.resolve({ data: [] })
+    : (() => {
+        let eq = supabase
+          .from('alma_evidence')
+          .select(
+            'id,title,evidence_type,findings,methodology,organization,author,publication_date,source_url,source_document_url,consent_level,cultural_safety',
+          )
+          // Consent gate: exclude 'Strictly Private' (and NULL/unknown).
+          .in('consent_level', ['Public Knowledge Commons', 'Community Controlled'])
+          .order('publication_date', { ascending: false, nullsFirst: false })
+          .limit(limit);
+        if (params.q) {
+          const s = params.q;
+          eq = eq.or(
+            `title.ilike.%${s}%,findings.ilike.%${s}%,methodology.ilike.%${s}%,organization.ilike.%${s}%,author.ilike.%${s}%`,
+          );
+        }
+        return eq;
+      })();
+
+  const [caseRes, campaignRes, evidenceRes] = await Promise.all([
+    caseTask,
+    campaignTask,
+    evidenceTask,
+  ]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cases = (caseRes.data ?? []).map((r: any) => ({
@@ -135,13 +175,38 @@ async function loadInitial(params: {
     distance: null,
   }));
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const evidence = (evidenceRes.data ?? []).map((r: any) => {
+    const restricted = r.consent_level === 'Community Controlled';
+    return {
+      kind: 'evidence' as const,
+      id: r.id,
+      title: r.title,
+      jurisdiction: 'Australia' as const,
+      country_code: 'AU' as const,
+      region: null,
+      year: r.publication_date ? new Date(r.publication_date).getUTCFullYear() : null,
+      evidence_type: r.evidence_type ?? null,
+      // 'Community Controlled' → title + provenance only.
+      excerpt: restricted ? null : r.findings ?? r.methodology ?? null,
+      organization: r.organization ?? null,
+      author: r.author ?? null,
+      source_url: restricted ? null : r.source_url ?? r.source_document_url ?? null,
+      consent_level: r.consent_level ?? null,
+      cultural_safety: r.cultural_safety ?? null,
+      restricted,
+      distance: null,
+    };
+  });
+
   return {
     mode: 'keyword' as const,
     q: params.q,
     type: params.type,
     cases,
     campaigns,
-    total: cases.length + campaigns.length,
+    evidence,
+    total: cases.length + campaigns.length + evidence.length,
   };
 }
 
@@ -151,8 +216,10 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   const modeParam = sp(raw.mode);
   const mode: 'keyword' | 'semantic' = modeParam === 'semantic' ? 'semantic' : 'keyword';
   const typeParam = sp(raw.type);
-  const type: 'all' | 'case' | 'campaign' =
-    typeParam === 'case' || typeParam === 'campaign' ? typeParam : 'all';
+  const type: 'all' | 'case' | 'campaign' | 'evidence' =
+    typeParam === 'case' || typeParam === 'campaign' || typeParam === 'evidence'
+      ? typeParam
+      : 'all';
   const cats = sp(raw.cat)
     .split(',')
     .map((s) => s.trim())
