@@ -29,7 +29,6 @@ import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createClient } from '@supabase/supabase-js';
-import Anthropic from '@anthropic-ai/sdk';
 import {
   JusticeMatrixDiscoveryResponseSchema,
   validateLLMOutput,
@@ -42,6 +41,7 @@ import {
   findSemanticDuplicate,
   type SemanticMatch,
 } from '../src/lib/justice-matrix/embeddings';
+import { callBackgroundLLM } from '../src/lib/ai/model-router';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -58,8 +58,9 @@ const supabase = createClient(
   env.NEXT_PUBLIC_SUPABASE_URL,
   env.SUPABASE_SERVICE_ROLE_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
-const anthropic = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
-const MODEL = 'claude-sonnet-4-5-20250929';
+// Propagate .env.local entries to process.env so the model-router can read its
+// provider keys (CEREBRAS_API_KEY, MINIMAX_API_KEY, GROQ_API_KEY, etc.).
+for (const [k, v] of Object.entries(env)) if (!process.env[k]) process.env[k] = v;
 
 // ---- args ----
 const argv = process.argv.slice(2);
@@ -148,12 +149,17 @@ Return ONLY valid JSON (no markdown) of the form:
 Content:
 ${content.substring(0, 28000)}`;
 
-  const res = await anthropic.messages.create({
-    model: MODEL,
-    max_tokens: 4000,
-    messages: [{ role: 'user', content: prompt }],
-  });
-  const text = res.content[0].type === 'text' ? res.content[0].text : '';
+  // Routed via callBackgroundLLM so the scanner cascades across all configured
+  // providers (Cerebras Llama-4, Sambanova, MiniMax-M2.7, Groq, DeepSeek,
+  // gpt-4o, Gemini) and keeps working when any single provider is out of
+  // credit or rate-limited.
+  let text: string;
+  try {
+    text = await callBackgroundLLM(prompt, { maxTokens: 4000, jsonMode: true });
+  } catch (e) {
+    console.log(`   ❌ LLM error (all providers exhausted): ${(e as Error).message?.slice(0, 200)}`);
+    return [];
+  }
   let raw: unknown;
   try {
     raw = parseJSON(text);
@@ -296,7 +302,7 @@ async function run() {
             raw_data: {
               extracted: item,
               scanner: 'scan-justice-matrix.ts',
-              model: MODEL,
+              model: 'via-model-router',
               scanned_at: new Date().toISOString(),
               semantic_match: semantic ?? null,
             },
