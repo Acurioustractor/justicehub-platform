@@ -13,6 +13,11 @@
 import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { curiaApiItems } from '@/lib/justice-matrix/curia-adapter';
+import {
+  discoveryEmbeddingText,
+  findSemanticDuplicate,
+  type SemanticMatch,
+} from '@/lib/justice-matrix/embeddings';
 import type { JusticeMatrixDiscoveryItem } from '@/lib/ai/llm-schemas';
 
 export const dynamic = 'force-dynamic';
@@ -31,7 +36,13 @@ interface SourceRow {
 
 const LIMIT_PER_SOURCE = 8;
 
-async function isDuplicate(supabase: Db, item: JusticeMatrixDiscoveryItem): Promise<boolean> {
+/**
+ * Check whether a candidate item exactly matches an item already live or
+ * pending. Exact matches are skipped outright (no point re-staging the same
+ * thing for review). Semantic near-matches are NOT exact — they get flagged
+ * but still staged so the curator can confirm the duplicate in the queue.
+ */
+async function exactDuplicate(supabase: Db, item: JusticeMatrixDiscoveryItem): Promise<boolean> {
   const titleFragment = item.title.trim().slice(0, 40);
   const table = item.item_type === 'case' ? 'justice_matrix_cases' : 'justice_matrix_campaigns';
   const titleCol = item.item_type === 'case' ? 'case_citation' : 'campaign_name';
@@ -53,7 +64,28 @@ async function scanCuriaSource(supabase: Db, source: SourceRow) {
   const items = await curiaApiItems(LIMIT_PER_SOURCE);
   let staged = 0;
   for (const item of items) {
-    if (await isDuplicate(supabase, item)) continue;
+    if (await exactDuplicate(supabase, item)) continue;
+
+    // Semantic dedup: compute the candidate's embedding and look for a close
+    // existing case / campaign. If found, stage anyway but flag the candidate
+    // with potential_duplicate_id + similarity_score so the curator queue
+    // surfaces it and the human decides.
+    let semantic: SemanticMatch | null = null;
+    try {
+      semantic = await findSemanticDuplicate({
+        supabase,
+        itemType: item.item_type === 'case' ? 'case' : 'campaign',
+        text: discoveryEmbeddingText({
+          extracted_title: item.title,
+          extracted_jurisdiction: item.jurisdiction,
+          extracted_year: item.year,
+          extracted_summary: item.summary,
+        }),
+      });
+    } catch {
+      // Embedding-side failures should not block staging.
+    }
+
     const { error } = await supabase.from('justice_matrix_discovered').insert({
       source_id: source.id,
       source_url: item.item_url || source.url,
@@ -62,6 +94,7 @@ async function scanCuriaSource(supabase: Db, source: SourceRow) {
         extracted: item,
         scanner: 'cron/scan-json',
         scanned_at: new Date().toISOString(),
+        semantic_match: semantic ?? null,
       },
       extracted_title: item.title,
       extracted_jurisdiction: item.jurisdiction ?? null,
@@ -70,6 +103,8 @@ async function scanCuriaSource(supabase: Db, source: SourceRow) {
       extracted_summary: item.summary ?? null,
       extracted_country_code: item.country_code ?? null,
       extraction_confidence: item.confidence,
+      potential_duplicate_id: semantic?.id ?? null,
+      similarity_score: semantic ? Math.round((1 - semantic.distance) * 100) : null,
       status: 'pending',
     });
     if (!error) staged++;
