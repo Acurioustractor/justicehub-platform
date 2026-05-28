@@ -45,6 +45,7 @@ interface CaseResult {
   precedent_strength: string | null;
   case_type: string | null;
   authoritative_link: string | null;
+  verified: boolean | null;
   distance: number | null;
 }
 
@@ -118,6 +119,9 @@ export async function GET(req: Request) {
   const strength = sp.get('strength') ?? '';
   const region = (sp.get('region') ?? '').trim().slice(0, 80);
   const country = (sp.get('country') ?? '').trim().slice(0, 8).toUpperCase();
+  const scopeParam = sp.get('scope');
+  const scope: 'all' | 'au' | 'global' =
+    scopeParam === 'au' || scopeParam === 'global' ? scopeParam : 'all';
   const limit = clampInt(sp.get('limit'), 24, 1, 60);
 
   const supabase = createServiceClient() as AnyClient;
@@ -131,7 +135,9 @@ export async function GET(req: Request) {
   // rather than show unfiltered evidence alongside filtered cases/campaigns.
   const evidenceEligible =
     cats.length === 0 && !outcome && !strength && !region && (!country || country === 'AU');
-  const includeEvidence = (type === 'all' || type === 'evidence') && evidenceEligible;
+  // Evidence is Australia-only, so the 'global' lens excludes it entirely.
+  const includeEvidence =
+    (type === 'all' || type === 'evidence') && evidenceEligible && scope !== 'global';
 
   // Semantic mode requires an embedding for the query string. If q is empty we
   // silently fall back to keyword mode (no point semantic-searching for "").
@@ -179,8 +185,13 @@ export async function GET(req: Request) {
     // Apply non-semantic facet filters in-memory — the RPCs return a small set.
     cases = applyCaseFilters(cases, { cats, outcome, strength, region, country });
     campaigns = applyCampaignFilters(campaigns, { cats, region, country });
+    // AU-vs-global lens (case by jurisdiction, campaign by region text).
+    if (scope !== 'all') {
+      cases = cases.filter((c) => inScope(c.jurisdiction, scope));
+      campaigns = campaigns.filter((m) => inScope(m.region, scope));
+    }
     // Evidence needs no in-memory facet filtering: includeEvidence already
-    // gates it to the no-incompatible-filter case.
+    // gates it to the no-incompatible-filter case (and excludes it under global).
   } else {
     return runKeywordSearch();
   }
@@ -206,7 +217,7 @@ export async function GET(req: Request) {
       let cq = supabase
         .from('justice_matrix_cases')
         .select(
-          'id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,region,country_code,categories,outcome,precedent_strength,case_type,authoritative_link',
+          'id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,region,country_code,categories,outcome,precedent_strength,case_type,authoritative_link,verified',
         )
         .order('year', { ascending: false, nullsFirst: false })
         .limit(limit);
@@ -216,6 +227,8 @@ export async function GET(req: Request) {
       if (strength) cq = cq.eq('precedent_strength', strength);
       if (region) cq = cq.ilike('region', `%${region}%`);
       if (country) cq = cq.eq('country_code', country);
+      if (scope === 'au') cq = cq.ilike('jurisdiction', '%australia%');
+      else if (scope === 'global') cq = cq.not('jurisdiction', 'ilike', '%australia%');
       tasks.push(cq);
     } else {
       tasks.push(Promise.resolve({ data: [] }));
@@ -233,6 +246,8 @@ export async function GET(req: Request) {
       if (cats.length) mq = mq.overlaps('categories', cats);
       if (region) mq = mq.ilike('country_region', `%${region}%`);
       if (country) mq = mq.eq('country_code', country);
+      if (scope === 'au') mq = mq.ilike('country_region', '%australia%');
+      else if (scope === 'global') mq = mq.not('country_region', 'ilike', '%australia%');
       tasks.push(mq);
     } else {
       tasks.push(Promise.resolve({ data: [] }));
@@ -292,8 +307,17 @@ function mapCaseRow(r: any): CaseResult {
     precedent_strength: r.precedent_strength ?? null,
     case_type: r.case_type ?? null,
     authoritative_link: r.authoritative_link ?? null,
+    verified: typeof r.verified === 'boolean' ? r.verified : null,
     distance: typeof r.distance === 'number' ? r.distance : null,
   };
+}
+
+// AU-vs-global lens. Case `country_code` is ~40% null, so we read the
+// jurisdiction/region text instead ("... Australia" vs "European Court ...").
+function inScope(text: string | null, scope: 'all' | 'au' | 'global'): boolean {
+  if (scope === 'all') return true;
+  const isAu = /australia/i.test(text ?? '');
+  return scope === 'au' ? isAu : !isAu;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

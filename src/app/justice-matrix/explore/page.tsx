@@ -49,6 +49,7 @@ async function loadFacetSeed(): Promise<FacetSeed> {
 async function loadInitial(params: {
   q: string;
   type: 'all' | 'case' | 'campaign' | 'evidence';
+  scope: 'all' | 'au' | 'global';
   cats: string[];
   outcome: string;
   strength: string;
@@ -58,10 +59,11 @@ async function loadInitial(params: {
   const limit = 24;
 
   // ALMA evidence is Australia-only with no categories/outcome/strength, so it
-  // only seeds when none of those incompatible filters are active. Mirrors the
-  // `evidenceEligible` gate in /api/justice-matrix/search.
+  // only seeds when none of those incompatible filters are active, and never
+  // under the 'global' lens. Mirrors the gate in /api/justice-matrix/search.
   const includeEvidence =
     (params.type === 'all' || params.type === 'evidence') &&
+    params.scope !== 'global' &&
     params.cats.length === 0 &&
     !params.outcome &&
     !params.strength;
@@ -74,7 +76,7 @@ async function loadInitial(params: {
           let cq = supabase
             .from('justice_matrix_cases')
             .select(
-              'id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,region,country_code,categories,outcome,precedent_strength,case_type,authoritative_link',
+              'id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,region,country_code,categories,outcome,precedent_strength,case_type,authoritative_link,verified',
             )
             .order('year', { ascending: false, nullsFirst: false })
             .limit(limit);
@@ -87,6 +89,8 @@ async function loadInitial(params: {
           if (params.cats.length) cq = cq.overlaps('categories', params.cats);
           if (params.outcome) cq = cq.eq('outcome', params.outcome);
           if (params.strength) cq = cq.eq('precedent_strength', params.strength);
+          if (params.scope === 'au') cq = cq.ilike('jurisdiction', '%australia%');
+          else if (params.scope === 'global') cq = cq.not('jurisdiction', 'ilike', '%australia%');
           return cq;
         })();
 
@@ -109,6 +113,8 @@ async function loadInitial(params: {
             );
           }
           if (params.cats.length) mq = mq.overlaps('categories', params.cats);
+          if (params.scope === 'au') mq = mq.ilike('country_region', '%australia%');
+          else if (params.scope === 'global') mq = mq.not('country_region', 'ilike', '%australia%');
           return mq;
         })();
 
@@ -156,6 +162,7 @@ async function loadInitial(params: {
     precedent_strength: r.precedent_strength ?? null,
     case_type: r.case_type ?? null,
     authoritative_link: r.authoritative_link ?? null,
+    verified: r.verified ?? null,
     distance: null,
   }));
 
@@ -220,6 +227,9 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     typeParam === 'case' || typeParam === 'campaign' || typeParam === 'evidence'
       ? typeParam
       : 'all';
+  const scopeParam = sp(raw.scope);
+  const scope: 'all' | 'au' | 'global' =
+    scopeParam === 'au' || scopeParam === 'global' ? scopeParam : 'all';
   const cats = sp(raw.cat)
     .split(',')
     .map((s) => s.trim())
@@ -229,14 +239,14 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
 
   const [facetSeed, initial] = await Promise.all([
     loadFacetSeed(),
-    loadInitial({ q, type, cats, outcome, strength }),
+    loadInitial({ q, type, scope, cats, outcome, strength }),
   ]);
 
   return (
     <ExploreClient
       facetSeed={facetSeed}
       initial={initial}
-      initialState={{ q, mode, type, cats, outcome, strength }}
+      initialState={{ q, mode, type, scope, cats, outcome, strength }}
     />
   );
 }

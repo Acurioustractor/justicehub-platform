@@ -2,7 +2,19 @@
 
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { Search, Scale, Megaphone, BookOpen, X, Sparkles, ExternalLink, ArrowRight } from 'lucide-react';
+import {
+  Search,
+  Scale,
+  Megaphone,
+  BookOpen,
+  X,
+  Sparkles,
+  ExternalLink,
+  ArrowRight,
+  Globe,
+  MapPin,
+  ShieldCheck,
+} from 'lucide-react';
 
 const DISPLAY = "'Cormorant Garamond', Georgia, serif";
 
@@ -21,6 +33,7 @@ interface CaseHit {
   precedent_strength: string | null;
   case_type: string | null;
   authoritative_link: string | null;
+  verified: boolean | null;
   distance: number | null;
 }
 
@@ -87,6 +100,7 @@ export interface ExploreClientProps {
     q: string;
     mode: 'keyword' | 'semantic';
     type: 'all' | 'case' | 'campaign' | 'evidence';
+    scope: 'all' | 'au' | 'global';
     cats: string[];
     outcome: string;
     strength: string;
@@ -98,6 +112,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
   const [q, setQ] = useState(initialState.q);
   const [mode, setMode] = useState<'keyword' | 'semantic'>(initialState.mode);
   const [type, setType] = useState<'all' | 'case' | 'campaign' | 'evidence'>(initialState.type);
+  const [scope, setScope] = useState<'all' | 'au' | 'global'>(initialState.scope);
   const [cats, setCats] = useState<string[]>(initialState.cats);
   const [outcome, setOutcome] = useState<string>(initialState.outcome);
   const [strength, setStrength] = useState<string>(initialState.strength);
@@ -106,7 +121,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
   const searchRef = useRef<HTMLInputElement>(null);
 
   const hasFilter = Boolean(
-    q || cats.length || outcome || strength || type !== 'all' || mode !== 'keyword',
+    q || cats.length || outcome || strength || type !== 'all' || scope !== 'all' || mode !== 'keyword',
   );
 
   // --- url sync (shareable state) ------------------------------------------
@@ -115,11 +130,12 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
     if (q) p.set('q', q);
     if (mode !== 'keyword') p.set('mode', mode);
     if (type !== 'all') p.set('type', type);
+    if (scope !== 'all') p.set('scope', scope);
     if (cats.length) p.set('cat', cats.join(','));
     if (outcome) p.set('outcome', outcome);
     if (strength) p.set('strength', strength);
     return p.toString();
-  }, [q, mode, type, cats, outcome, strength]);
+  }, [q, mode, type, scope, cats, outcome, strength]);
 
   useEffect(() => {
     const url = queryString ? `?${queryString}` : window.location.pathname;
@@ -174,6 +190,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
     setOutcome('');
     setStrength('');
     setType('all');
+    setScope('all');
     setMode('keyword');
   }, []);
 
@@ -288,6 +305,15 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
                 { value: 'case', label: 'Cases', icon: <Scale className="w-3 h-3" /> },
                 { value: 'campaign', label: 'Campaigns', icon: <Megaphone className="w-3 h-3" /> },
                 { value: 'evidence', label: 'Evidence', icon: <BookOpen className="w-3 h-3" /> },
+              ]}
+            />
+            <SegmentedToggle
+              value={scope}
+              onChange={(v) => setScope(v as 'all' | 'au' | 'global')}
+              options={[
+                { value: 'all', label: 'Everywhere' },
+                { value: 'au', label: 'Australia', icon: <MapPin className="w-3 h-3" /> },
+                { value: 'global', label: 'Global', icon: <Globe className="w-3 h-3" /> },
               ]}
             />
             {loading && (
@@ -450,6 +476,16 @@ function CaseCard({ hit }: { hit: CaseHit }) {
                   style={{ background: '#faf5ec', borderColor: '#dbc7a9', color: '#7d5f3d' }}
                 >
                   high precedent
+                </span>
+              )}
+              {hit.verified && (
+                <span
+                  className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] border"
+                  style={{ background: 'rgba(61,111,74,0.12)', borderColor: '#9fc3a6', color: '#3d6f4a' }}
+                  title="Verified by the Justice Matrix team"
+                >
+                  <ShieldCheck className="w-3 h-3" />
+                  verified
                 </span>
               )}
               {hit.distance !== null && (
