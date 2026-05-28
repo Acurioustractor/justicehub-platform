@@ -37,6 +37,11 @@ import {
 } from '../src/lib/ai/llm-schemas';
 import { parseJSON } from '../src/lib/ai/parse-json';
 import { curiaApiItems } from '../src/lib/justice-matrix/curia-adapter';
+import {
+  discoveryEmbeddingText,
+  findSemanticDuplicate,
+  type SemanticMatch,
+} from '../src/lib/justice-matrix/embeddings';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -250,11 +255,38 @@ async function run() {
       for (const item of items) {
         if (staged >= LIMIT) break;
         if (await isDuplicate(item)) {
-          console.log(`   ⏭️  dup, skip: ${item.item_type} — ${item.title.slice(0, 70)}`);
+          console.log(`   ⏭️  exact-dup, skip: ${item.item_type} — ${item.title.slice(0, 70)}`);
           continue;
         }
+
+        // Semantic dedup: compute candidate embedding, check nearest existing
+        // case or campaign. If found below threshold, stage anyway and flag
+        // with potential_duplicate_id + similarity_score so the reviewer
+        // queue surfaces it. Mirrors the cron path.
+        let semantic: SemanticMatch | null = null;
+        if (env.OPENAI_API_KEY) {
+          try {
+            semantic = await findSemanticDuplicate({
+              supabase,
+              itemType: item.item_type === 'case' ? 'case' : 'campaign',
+              text: discoveryEmbeddingText({
+                extracted_title: item.title,
+                extracted_jurisdiction: item.jurisdiction,
+                extracted_year: item.year,
+                extracted_summary: item.summary,
+              }),
+              apiKey: env.OPENAI_API_KEY,
+            });
+          } catch {
+            // Embedding-side failures should not block staging.
+          }
+        }
+        const flag = semantic
+          ? ` ⚠️ near-dup of "${semantic.title.slice(0, 50)}" (sim ${Math.round((1 - semantic.distance) * 100)}%)`
+          : '';
+
         console.log(
-          `   ${APPLY ? '➕ stage' : '👀 would stage'}: [${item.item_type}] ${item.title.slice(0, 80)} (conf ${item.confidence})`
+          `   ${APPLY ? '➕ stage' : '👀 would stage'}: [${item.item_type}] ${item.title.slice(0, 80)} (conf ${item.confidence})${flag}`
         );
         if (APPLY) {
           const { error } = await supabase.from('justice_matrix_discovered').insert({
@@ -266,6 +298,7 @@ async function run() {
               scanner: 'scan-justice-matrix.ts',
               model: MODEL,
               scanned_at: new Date().toISOString(),
+              semantic_match: semantic ?? null,
             },
             extracted_title: item.title,
             extracted_jurisdiction: item.jurisdiction ?? null,
@@ -274,6 +307,8 @@ async function run() {
             extracted_summary: item.summary ?? null,
             extracted_country_code: item.country_code ?? null,
             extraction_confidence: item.confidence,
+            potential_duplicate_id: semantic?.id ?? null,
+            similarity_score: semantic ? Math.round((1 - semantic.distance) * 100) : null,
             status: 'pending',
           });
           if (error) {
