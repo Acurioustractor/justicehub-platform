@@ -335,13 +335,21 @@ export function DiscoveriesQueue({ reviewerEmail }: { reviewerEmail: string }) {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => fetchDiscoveries()}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 border-2 border-gray-300 hover:bg-gray-200 font-bold"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Refresh
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/admin/justice-matrix/sources"
+              className="px-3 py-2 bg-white border-2 border-black font-bold text-sm hover:bg-gray-100"
+            >
+              Source health →
+            </Link>
+            <button
+              onClick={() => fetchDiscoveries()}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 border-2 border-gray-300 hover:bg-gray-200 font-bold"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Refresh
+            </button>
+          </div>
         </div>
       </div>
 
