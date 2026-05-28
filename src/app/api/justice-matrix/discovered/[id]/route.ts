@@ -1,5 +1,11 @@
 import { createServiceClient } from '@/lib/supabase/service-lite'
 import { checkAdmin } from '@/lib/supabase/admin-lite'
+import {
+  caseEmbeddingText,
+  campaignEmbeddingText,
+  embed,
+  toPgVector,
+} from '@/lib/justice-matrix/embeddings'
 import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic';
@@ -148,6 +154,21 @@ export async function PUT(
           })
           .eq('id', id)
 
+        // Best-effort: embed the newly-published case so subsequent scanner
+        // runs can find semantic duplicates of it. Approval is not blocked
+        // by a failure here; the nightly cron picks up unembedded rows.
+        if (process.env.OPENAI_API_KEY) {
+          try {
+            const vec = await embed(caseEmbeddingText(caseResult.data))
+            await supabase
+              .from('justice_matrix_cases')
+              .update({ embedding: toPgVector(vec) })
+              .eq('id', approvedId)
+          } catch (e) {
+            console.warn('Case embedding failed (non-fatal):', (e as Error).message?.slice(0, 200))
+          }
+        }
+
       } else if (discovery.item_type === 'campaign') {
         // Create campaign from discovery
         const campaignData = {
@@ -196,6 +217,19 @@ export async function PUT(
             review_notes: body.review_notes,
           })
           .eq('id', id)
+
+        // Best-effort campaign embedding (matches the case path above).
+        if (process.env.OPENAI_API_KEY) {
+          try {
+            const vec = await embed(campaignEmbeddingText(campaignResult.data))
+            await supabase
+              .from('justice_matrix_campaigns')
+              .update({ embedding: toPgVector(vec) })
+              .eq('id', approvedId)
+          } catch (e) {
+            console.warn('Campaign embedding failed (non-fatal):', (e as Error).message?.slice(0, 200))
+          }
+        }
       }
 
       return NextResponse.json({
