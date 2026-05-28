@@ -31,12 +31,12 @@ import { fileURLToPath } from 'url';
 import { createClient } from '@supabase/supabase-js';
 import Anthropic from '@anthropic-ai/sdk';
 import {
-  JusticeMatrixDiscoveryItemSchema,
   JusticeMatrixDiscoveryResponseSchema,
   validateLLMOutput,
   type JusticeMatrixDiscoveryItem,
 } from '../src/lib/ai/llm-schemas';
 import { parseJSON } from '../src/lib/ai/parse-json';
+import { curiaApiItems } from '../src/lib/justice-matrix/curia-adapter';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -162,76 +162,6 @@ ${content.substring(0, 28000)}`;
     return [];
   }
   return validated.data.items;
-}
-
-/**
- * CJEU adapter. Curia is an Angular SPA but its search is backed by a clean JSON
- * API (the InfoCuria elastic-connector). We call it directly and map the
- * structured hits to discovery items — no browser, no LLM. Subject matter comes
- * from the matCode highlight labels (e.g. "Borders, asylum and immigration").
- */
-const CURIA_API = 'https://infocuriaws.curia.europa.eu/elastic-connector/search';
-const CURIA_SEARCH_TERM = 'asylum refugee non-refoulement';
-
-async function curiaApiItems(limit: number): Promise<JusticeMatrixDiscoveryItem[]> {
-  const body = {
-    searchTerm: CURIA_SEARCH_TERM,
-    multiSearchTerms: [],
-    sortTermList: [{ sortDirection: 'DESC', sortTerm: 'AFF_NUM', sortSourceTab: 'affair' }],
-    pagination: { pageNumber: 0, pageSize: Math.max(limit * 2, 12), from: 1, to: Math.max(limit * 2, 12) },
-    language: 'EN',
-    tabName: 'affair',
-    isAllTabsRequest: true,
-    ecli: '',
-    publishedId: '',
-    usualName: '',
-    logicDocId: '',
-    isSearchExact: false,
-    searchSources: ['document', 'metadata'],
-  };
-  const res = await fetch(CURIA_API, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json; charset=UTF-8',
-      accept: 'application/json',
-      referer: 'https://infocuria.curia.europa.eu/',
-      origin: 'https://infocuria.curia.europa.eu',
-    },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error(`curia API ${res.status}`);
-  const json: any = await res.json();
-  const items: JusticeMatrixDiscoveryItem[] = [];
-  for (const hit of json.searchHits ?? []) {
-    const c = hit.content ?? {};
-    const publishedId: string = c.publishedId ?? c.id ?? '';
-    const nameEntry = (c.usualNameML ?? []).find((x: any) => x.en) ?? (c.usualNameML ?? [])[0];
-    const name = nameEntry ? Object.values(nameEntry)[0] : publishedId;
-    // Subject-matter labels from the highlight; only keep clearly asylum/migration cases.
-    const labels: string[] = Object.values(hit.highlightFields ?? {})
-      .flat()
-      .map((s: any) => String(s).replace(/<[^>]+>/g, ''));
-    const subject = labels.filter((l) => /asylum|border|immigration|migrat|refugee/i.test(l));
-    if (!subject.length) continue; // skip cases that only incidentally mention the terms
-    const yearSuffix = publishedId.match(/\/(\d{2})$/)?.[1];
-    const year = yearSuffix ? 2000 + parseInt(yearSuffix, 10) : null;
-    const raw = {
-      item_type: 'case' as const,
-      title: `${name} (${publishedId})`,
-      jurisdiction: 'European Union (CJEU)',
-      year,
-      categories: ['refugee', 'asylum'],
-      summary: `CJEU case. Subject matter: ${[...new Set(subject)].join('; ')}.`,
-      country_code: 'EU',
-      item_url: `https://curia.europa.eu/juris/liste.jsf?language=en&num=${encodeURIComponent(publishedId)}`,
-      refugee_related: true,
-      confidence: 0.7,
-    };
-    const v = validateLLMOutput(raw, JusticeMatrixDiscoveryItemSchema);
-    if (v.success) items.push(v.data);
-    if (items.length >= limit) break;
-  }
-  return items;
 }
 
 function isCuriaApiSource(source: Source, url: string): boolean {
