@@ -144,7 +144,7 @@ npm run dev -p 3014
 
 # Run a script
 node scripts/civic/run-data-agent.mjs --batch 5
-node scripts/civic/classify-foundation-grants-yj.mjs --apply --batch 100
+node scripts/civic/classify-foundation-grants-yj.mjs --apply --yes-production --batch 100
 node scripts/civic/run-data-digest.mjs --hours 24
 
 # Apply a migration locally (requires supabase CLI link)

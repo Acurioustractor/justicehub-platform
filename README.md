@@ -2,6 +2,13 @@
 
 A Next.js platform for Australian youth justice — connecting system-impacted young people with support services, surfacing evidence-based interventions, and powering community-led advocacy campaigns.
 
+JusticeHub has two surfaces:
+
+- **JusticeHub Atlas** — the evidence map. The Australian Living Map of Alternatives (ALMA), triangulated claims, the CONTAINED campaign, funding workspaces. The Atlas is not a case management tool. It tells you what works.
+- **JusticeHub Practice** — the reflex layer for community-led practice (launching at Reintegration 2026, week of 22 June). Practice helps you do the work: hold cases without losing them, record outcomes without writing twice, brief funders without rewriting your week into a grant report.
+
+The Atlas tells you what works. Practice helps you do it. The launch companion brief lives at `/from-programs-to-practice`.
+
 ## Core Systems
 
 ### ALMA (Alternative Local Models Australia)
