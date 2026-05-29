@@ -148,104 +148,149 @@ function dataflowMatchesIndigenousLGA(df) {
 }
 
 function dimensionIndex(structure) {
-  // SDMX-JSON dimension order is positional. Walk the observation dimensions
-  // list and build name → index + index → values lookup.
-  const dims =
-    structure?.dimensions?.observation ||
-    structure?.dimensions?.series ||
-    structure?.dimensions ||
-    [];
-  const byName = {};
-  const byIndex = [];
-  dims.forEach((d, i) => {
-    const id = (d.id || d.ID || '').toUpperCase();
-    byName[id] = i;
-    byIndex.push({
-      id,
+  // SDMX-JSON dimension order is positional. Two sub-lists matter:
+  //   - series dimensions (key prefix on each series)
+  //   - observation dimensions (key suffix per observation row, usually TIME)
+  // We return both so the parser can resolve series keys + observation keys
+  // separately.
+  const buildList = (dims) =>
+    (dims || []).map((d) => ({
+      id: (d.id || d.ID || '').toUpperCase(),
       values: (d.values || []).map((v) => ({
         id: v.id ?? v.ID ?? null,
         name:
           typeof v.name === 'string' ? v.name : v.name?.en || v.Name || null,
       })),
-    });
-  });
-  return { byName, byIndex };
+    }));
+  const series = buildList(structure?.dimensions?.series);
+  const observation = buildList(structure?.dimensions?.observation);
+  // Fallback for flat dimension lists (older responses).
+  const flat = buildList(Array.isArray(structure?.dimensions) ? structure.dimensions : null);
+  return { series, observation, flat };
 }
 
-function safeLookup(byIndex, dimName, keyParts) {
-  if (!byIndex) return null;
-  // Try common dimension id variants. ABS uses LGA / LGA_2021 / REGION /
-  // REF_AREA depending on the dataflow.
-  const candidates = {
-    LGA: ['LGA', 'LGA_2021', 'REGION', 'REF_AREA', 'GEOGRAPHY'],
+function safeLookup(dimList, dimName, keyParts) {
+  if (!dimList || dimList.length === 0) return null;
+  // Try common dimension id variants. ABS uses LGA / LGA_YYYY / REGION /
+  // REF_AREA depending on the dataflow vintage. The LGA lookup also accepts
+  // any `LGA_YYYY` pattern via regex fallback because ABS re-issues the
+  // ASGS code list every year (LGA_2016 ... LGA_2024 all seen 2026-05-23).
+  const exactCandidates = {
+    LGA: ['LGA', 'LGA_2021', 'REGION', 'REF_AREA', 'GEOGRAPHY', 'ASGS_2011', 'ASGS_2016', 'ASGS_2021'],
     YEAR: ['TIME_PERIOD', 'TIME', 'PERIOD'],
     AGE: ['AGE', 'AGE_GROUP', 'AGEGROUP'],
-    SEX: ['SEX'],
-    INDIG: ['INDIGENOUS_STATUS', 'INDIG_STATUS', 'INDIGENOUS', 'IND_STATUS'],
+    SEX: ['SEX', 'SEX_ABS'],
+    INDIG: ['INDIGENOUS_STATUS', 'INDIG_STATUS', 'INDIGENOUS', 'IND_STATUS', 'INDP'],
     STATE: ['STATE', 'STE', 'STATE_CODE'],
   }[dimName] || [dimName];
 
-  for (const candidate of candidates) {
-    const idx = byIndex.findIndex((d) => d.id === candidate);
-    if (idx >= 0) {
-      const valIdx = parseInt(keyParts[idx], 10);
-      if (Number.isFinite(valIdx) && byIndex[idx].values[valIdx]) {
-        return byIndex[idx].values[valIdx];
-      }
+  const regexFallback = {
+    LGA: /^(LGA|ASGS)_?\d{0,4}$/i,
+    YEAR: null,
+    AGE: null,
+    SEX: null,
+    INDIG: /^INDIG/i,
+    STATE: /^(STATE|STE)/i,
+  }[dimName];
+
+  const tryIdx = (idx) => {
+    if (idx < 0) return null;
+    const valIdx = parseInt(keyParts[idx], 10);
+    if (Number.isFinite(valIdx) && dimList[idx].values[valIdx]) {
+      return dimList[idx].values[valIdx];
     }
+    return null;
+  };
+
+  for (const candidate of exactCandidates) {
+    const hit = tryIdx(dimList.findIndex((d) => d.id === candidate));
+    if (hit) return hit;
+  }
+  if (regexFallback) {
+    const hit = tryIdx(dimList.findIndex((d) => regexFallback.test(d.id)));
+    if (hit) return hit;
   }
   return null;
 }
 
 function parseSdmxJson(json, dataflowId) {
-  // Two SDMX-JSON shapes:
-  //   - v2 (dataSets[].observations / structures[].dimensions)
-  //   - v1 (data.dataSets[].observations / data.structures[].dimensions)
+  // ABS DataAPI returns SDMX-JSON v1+ with two possible shapes per dataset:
+  //   (a) flat observations:  dataSet.observations = { "k1:k2:k3:t" -> [value, ...] }
+  //   (b) series + obs:       dataSet.series = { "k1:k2:k3" -> { observations: { "t" -> [value] } } }
+  // The series form is what ABS uses for ERP/Census LGA flows. Both share the
+  // same structures[0].dimensions split (series vs observation).
   const root = json?.data || json;
   const dataSets = root?.dataSets || [];
-  const structure = (root?.structures && root.structures[0]) || root?.structure || null;
+  const structure =
+    (Array.isArray(root?.structures) ? root.structures[0] : null) ||
+    root?.structure ||
+    null;
   if (!structure || dataSets.length === 0) return [];
-  const { byIndex } = dimensionIndex(structure);
+  const { series: seriesDims, observation: obsDims, flat } = dimensionIndex(structure);
+
+  // Combined dimension list for flat-observation keys: series + observation.
+  const flatDims = [...seriesDims, ...obsDims];
+  const useDims = flatDims.length > 0 ? flatDims : flat;
+
   const rows = [];
 
-  for (const ds of dataSets) {
-    const obs = ds.observations || {};
-    for (const [seriesKey, value] of Object.entries(obs)) {
-      const keyParts = seriesKey.split(':');
-      const lga = safeLookup(byIndex, 'LGA', keyParts);
-      const year = safeLookup(byIndex, 'YEAR', keyParts);
-      const age = safeLookup(byIndex, 'AGE', keyParts);
-      const sex = safeLookup(byIndex, 'SEX', keyParts);
-      const indig = safeLookup(byIndex, 'INDIG', keyParts);
-      const state = safeLookup(byIndex, 'STATE', keyParts);
-      const countRaw = Array.isArray(value) ? value[0] : value;
+  const sourceLabel = (() => {
+    const up = dataflowId.toUpperCase();
+    if (up.includes('C21') || up.includes('CENSUS2021')) return 'census_2021';
+    if (up.includes('C16') || up.includes('CENSUS2016')) return 'census_2016';
+    if (up.includes('PROJ')) return 'erp_projection';
+    if (up.includes('ERP')) return 'erp_annual';
+    return 'abs_dataflow';
+  })();
 
-      // We can't emit a tidy row without an LGA code — skip.
-      if (!lga?.id) continue;
-      rows.push({
-        lga_code: String(lga.id),
-        lga_name: lga.name || null,
-        state: state?.name || state?.id || null,
-        reference_year: parseInt(year?.id || year?.name || '0', 10) || null,
-        source: dataflowId.toUpperCase().includes('C21')
-          ? 'census_2021'
-          : dataflowId.toUpperCase().includes('ERP') ||
-            dataflowId.toUpperCase().includes('PROJ')
-          ? 'erp_projection'
-          : 'abs_dataflow',
-        age_group: age?.id || age?.name || 'all',
-        sex: sex?.id || sex?.name || 'all',
-        indigenous_status: indig?.id || indig?.name || 'unknown',
-        count_persons:
-          typeof countRaw === 'number' && Number.isFinite(countRaw)
-            ? Math.round(countRaw)
-            : countRaw == null
-            ? null
-            : Number.isFinite(parseFloat(countRaw))
-            ? Math.round(parseFloat(countRaw))
-            : null,
-        dataflow_id: dataflowId,
-      });
+  const numericCount = (v) => {
+    const raw = Array.isArray(v) ? v[0] : v;
+    if (typeof raw === 'number' && Number.isFinite(raw)) return Math.round(raw);
+    if (raw == null) return null;
+    const f = parseFloat(raw);
+    return Number.isFinite(f) ? Math.round(f) : null;
+  };
+
+  const emit = (allKeyParts, value) => {
+    const lga = safeLookup(useDims, 'LGA', allKeyParts);
+    const year = safeLookup(useDims, 'YEAR', allKeyParts);
+    const age = safeLookup(useDims, 'AGE', allKeyParts);
+    const sex = safeLookup(useDims, 'SEX', allKeyParts);
+    const indig = safeLookup(useDims, 'INDIG', allKeyParts);
+    const state = safeLookup(useDims, 'STATE', allKeyParts);
+    if (!lga?.id) return; // require an LGA-like code
+    rows.push({
+      lga_code: String(lga.id),
+      lga_name: lga.name || null,
+      state: state?.name || state?.id || null,
+      reference_year: parseInt(year?.id || year?.name || '0', 10) || null,
+      source: sourceLabel,
+      age_group: age?.id || age?.name || 'all',
+      sex: sex?.id || sex?.name || 'all',
+      indigenous_status: indig?.id || indig?.name || 'unknown',
+      count_persons: numericCount(value),
+      dataflow_id: dataflowId,
+    });
+  };
+
+  for (const ds of dataSets) {
+    // Shape (a): flat observations on the dataset.
+    if (ds.observations && Object.keys(ds.observations).length > 0) {
+      for (const [k, v] of Object.entries(ds.observations)) {
+        emit(k.split(':'), v);
+      }
+      continue;
+    }
+    // Shape (b): series-keyed, each with nested observations.
+    if (ds.series && typeof ds.series === 'object') {
+      for (const [sKey, sObj] of Object.entries(ds.series)) {
+        const sParts = sKey.split(':');
+        const obs = sObj?.observations || {};
+        for (const [oKey, v] of Object.entries(obs)) {
+          const oParts = oKey.split(':');
+          emit([...sParts, ...oParts], v);
+        }
+      }
     }
   }
   return rows;

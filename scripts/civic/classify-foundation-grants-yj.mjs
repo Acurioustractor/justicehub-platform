@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 /**
  * YJ-relevance classifier for foundation_grantees grants.
- * Idempotent — skips rows with yj_classified_at IS NOT NULL.
+ * Idempotent - skips rows with yj_classified_at IS NOT NULL.
  *
  * Usage:
  *   node scripts/civic/classify-foundation-grants-yj.mjs              # dry-run, 50 rows
- *   node scripts/civic/classify-foundation-grants-yj.mjs --apply
- *   node scripts/civic/classify-foundation-grants-yj.mjs --apply --batch 500
+ *   node scripts/civic/classify-foundation-grants-yj.mjs --apply --yes-production
+ *   node scripts/civic/classify-foundation-grants-yj.mjs --apply --yes-production --batch 500
  */
 
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
-dotenv.config({ path: '.env.local' });
+import { z } from 'zod';
+dotenv.config({ path: '.env.local', quiet: true });
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -19,8 +20,31 @@ const supabase = createClient(
 );
 
 const APPLY = process.argv.includes('--apply');
-const BATCH_ARG = process.argv.find((a) => a.startsWith('--batch'));
-const BATCH = BATCH_ARG ? parseInt(process.argv[process.argv.indexOf(BATCH_ARG) + 1], 10) : (APPLY ? 200 : 50);
+const YES_PRODUCTION = process.argv.includes('--yes-production');
+const DEBUG = process.argv.includes('--debug');
+const args = process.argv.slice(2);
+
+if (APPLY && !YES_PRODUCTION) {
+  console.error('Refusing production write without --yes-production.');
+  process.exit(1);
+}
+
+function option(name) {
+  const eq = args.find((a) => a.startsWith(`${name}=`));
+  if (eq) return eq.slice(name.length + 1);
+  const idx = args.indexOf(name);
+  if (idx >= 0) return args[idx + 1];
+  return null;
+}
+
+const BATCH = option('--batch') ? parseInt(option('--batch'), 10) : (APPLY ? 200 : 50);
+const FOUNDATION_ID = option('--foundation-id');
+const FOUNDATION_ABN = option('--foundation-abn');
+const EXTRACTION_METHODS = option('--extraction-method')
+  ? option('--extraction-method').split(',').map((s) => s.trim()).filter(Boolean)
+  : [];
+const SOURCE_KEY = option('--source-key');
+const SHOW_SAMPLES = option('--samples') ? parseInt(option('--samples'), 10) : 10;
 
 const GEMINI_KEY = process.env.GEMINI_API_KEY;
 if (!GEMINI_KEY) {
@@ -43,6 +67,8 @@ Rules:
 - A cultural / on-Country / mentoring grant for Indigenous youth = indigenous_youth_general (NOT direct_yj_service unless the grant text mentions diversion / justice / detention / bail).
 - Children's services / kids programs without justice framing = not_yj.
 - Health, housing, disability without justice framing = not_yj.
+- If the only evidence is a generic partner-list commitment, classify as not_yj unless the grantee name or program text explicitly signals justice, legal service, youth justice, detention, diversion, bail, reinvestment, courts, sentencing, policing of children, or criminal justice reform.
+- Do not use broad reputation or outside knowledge to infer youth justice relevance. Base the classification on the supplied grantee, program, and evidence text.
 
 Output JSON only:
 {
@@ -51,6 +77,26 @@ Output JSON only:
   "yj_confidence": number 0..1,
   "yj_evidence_snippet": "<1 sentence quoting source text that drove the classification, max 200 chars>"
 }`;
+
+// Mirrors FoundationGrantYjClassificationSchema in src/lib/ai/llm-schemas.ts.
+// This standalone .mjs script cannot import the TS module without a tsx loader.
+const ClassificationSchema = z.object({
+  yj_relevant: z.boolean(),
+  yj_category: z.enum([
+    'direct_yj_service',
+    'yj_research',
+    'yj_advocacy',
+    'broader_justice_includes_yj',
+    'indigenous_youth_general',
+    'not_yj',
+  ]),
+  yj_confidence: z.coerce.number().min(0).max(1),
+  yj_evidence_snippet: z
+    .string()
+    .min(5)
+    .transform((s) => s.slice(0, 300))
+    .default('No clear youth justice evidence in grant input.'),
+});
 
 async function callGemini(input) {
   const res = await fetch(
@@ -91,13 +137,27 @@ function buildInput(row) {
 }
 
 async function main() {
-  console.log(`Foundation grant YJ classifier · ${APPLY ? 'APPLY' : 'DRY-RUN'} · batch=${BATCH}\n`);
+  const filters = [
+    FOUNDATION_ID ? `foundation-id=${FOUNDATION_ID}` : null,
+    FOUNDATION_ABN ? `foundation-abn=${FOUNDATION_ABN}` : null,
+    EXTRACTION_METHODS.length ? `extraction-method=${EXTRACTION_METHODS.join(',')}` : null,
+    SOURCE_KEY ? `source-key=${SOURCE_KEY}` : null,
+  ].filter(Boolean);
+  console.log(`Foundation grant YJ classifier - ${APPLY ? 'APPLY' : 'DRY-RUN'} - batch=${BATCH}${filters.length ? ` - ${filters.join(' - ')}` : ''}\n`);
 
-  const { data: rows, error } = await supabase
+  let query = supabase
     .from('foundation_grantees')
-    .select('id, foundation_name, grantee_name, program_name, grant_year, evidence_text')
+    .select('id, foundation_id, foundation_abn, foundation_name, grantee_name, program_name, grant_year, evidence_text, extraction_method, metadata')
     .is('yj_classified_at', null)
     .limit(BATCH);
+
+  if (FOUNDATION_ID) query = query.eq('foundation_id', FOUNDATION_ID);
+  if (FOUNDATION_ABN) query = query.eq('foundation_abn', FOUNDATION_ABN);
+  if (EXTRACTION_METHODS.length === 1) query = query.eq('extraction_method', EXTRACTION_METHODS[0]);
+  if (EXTRACTION_METHODS.length > 1) query = query.in('extraction_method', EXTRACTION_METHODS);
+  if (SOURCE_KEY) query = query.filter('metadata->>source_key', 'eq', SOURCE_KEY);
+
+  const { data: rows, error } = await query;
   if (error) {
     console.error('Fetch failed:', error.message);
     process.exit(1);
@@ -112,17 +172,36 @@ async function main() {
   let yjCount = 0;
   let errors = 0;
   const byCategory = {};
+  const samples = [];
 
   for (const r of rows) {
     processed++;
     try {
-      const result = await callGemini(buildInput(r));
-      if (!result || !result.yj_category) { errors++; continue; }
+      const raw = await callGemini(buildInput(r));
+      const parsed = ClassificationSchema.safeParse(raw);
+      if (!parsed.success) {
+        if (DEBUG) {
+          console.warn(`  invalid classification for ${r.grantee_name}: ${parsed.error.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`).join('; ')}`);
+        }
+        errors++;
+        continue;
+      }
+      const result = parsed.data;
       const isYj = result.yj_relevant === true && result.yj_category !== 'not_yj';
       if (isYj) yjCount++;
       byCategory[result.yj_category] = (byCategory[result.yj_category] || 0) + 1;
+      if (samples.length < SHOW_SAMPLES) {
+        samples.push({
+          grantee_name: r.grantee_name,
+          program_name: r.program_name,
+          category: result.yj_category,
+          relevant: isYj,
+          confidence: result.yj_confidence,
+          snippet: result.yj_evidence_snippet,
+        });
+      }
       if (processed % 20 === 0) {
-        console.log(`  ${processed}/${rows.length} · ${yjCount} YJ-relevant so far`);
+        console.log(`  ${processed}/${rows.length} - ${yjCount} YJ-relevant so far`);
       }
       if (!APPLY) continue;
       const { error: updErr } = await supabase
@@ -141,12 +220,19 @@ async function main() {
     }
   }
 
-  console.log(`\nProcessed ${processed} · YJ-relevant ${yjCount} · errors ${errors}`);
+  console.log(`\nProcessed ${processed} - YJ-relevant ${yjCount} - errors ${errors}`);
   console.log('Category distribution:');
   for (const [cat, n] of Object.entries(byCategory).sort((a, b) => b[1] - a[1])) {
     console.log(`  ${n} ${cat}`);
   }
-  if (!APPLY) console.log('\nDry-run — pass --apply to write.');
+  if (samples.length > 0) {
+    console.log('\nSamples:');
+    for (const s of samples) {
+      console.log(`  - ${s.grantee_name}: ${s.category} (${s.confidence})${s.program_name ? ` - ${s.program_name}` : ''}`);
+      console.log(`    ${s.snippet.slice(0, 180)}`);
+    }
+  }
+  if (!APPLY) console.log('\nDry-run - pass --apply to write.');
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });
