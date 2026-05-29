@@ -37,8 +37,13 @@ export const SURFACES: Record<SurfaceKey, Surface> = {
     exploreHref: '/justice-matrix/explore?surface=refugee',
   },
   youth: {
+    // Scope-only lens (no category preset). The 595 ALMA evidence studies carry
+    // no categories, and the search route excludes evidence whenever a category
+    // filter is active, so a cat preset would hide the evidence lane that is the
+    // whole point of this surface. In this platform the Australian corpus IS
+    // youth justice, so scope=au alone is the right set and keeps evidence in.
     key: 'youth',
-    defaultCats: ['youth-justice', 'raise-the-age', 'justice-reinvestment'],
+    defaultCats: [],
     defaultScope: 'au',
     label: 'Youth Justice',
     blurb:
