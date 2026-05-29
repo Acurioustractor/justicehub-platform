@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { bucketJurisdiction, compareRegions } from '@/lib/justice-matrix/jurisdiction';
 import { SURFACES, type SurfaceKey } from '@/lib/justice-matrix/surfaces';
+import { classifyCase } from '@/lib/justice-matrix/case-type';
 
 // ---------------------------------------------------------------------------
 // Local "research tool" design tokens. Scoped to this experience only — the
@@ -169,7 +170,10 @@ function hitYear(h: Hit): number {
 // inquiries, legislation, royal commissions, statistics) is not litigation and
 // must not carry decision-only facets (outcome, precedent strength).
 function isDecision(h: CaseHit): boolean {
-  return h.case_type === 'court_decision';
+  // Use the shared normalizer (citation + stored type + jurisdiction) rather than
+  // a bare string match, so a freshly-scraped row with a null/odd case_type is
+  // still bucketed correctly and never masquerades as litigation.
+  return classifyCase(h.title, h.case_type, h.jurisdiction) === 'decision';
 }
 
 // Human-readable label for a non-decision case_type. Used as a small chip so a
