@@ -18,6 +18,7 @@ import {
   ChevronRight,
   Save,
   FileWarning,
+  ShieldCheck,
 } from 'lucide-react';
 // reviewerEmail is passed in by the server-side admin guard so the queue
 // always renders with the real identity from the first paint.
@@ -46,6 +47,8 @@ interface Discovery {
   extraction_confidence: number | null;
   similarity_score: number | null;
   potential_duplicate_id: string | null;
+  approved_case_id: string | null;
+  approved_campaign_id: string | null;
   discovered_at: string;
   source?: { name: string; source_type: string; region: string } | null;
 }
@@ -97,6 +100,8 @@ export function DiscoveriesQueue({ reviewerEmail }: { reviewerEmail: string }) {
   const [saving, setSaving] = useState(false);
   const [editCase, setEditCase] = useState<EditFormCase | null>(null);
   const [editCampaign, setEditCampaign] = useState<EditFormCampaign | null>(null);
+  // Optimistic record of discoveries whose case a human just confirmed this session.
+  const [confirmedIds, setConfirmedIds] = useState<Set<string>>(new Set());
 
   const fetchDiscoveries = useCallback(async () => {
     setLoading(true);
@@ -352,6 +357,24 @@ export function DiscoveriesQueue({ reviewerEmail }: { reviewerEmail: string }) {
     const r = await callAction(selected.id, { action: 'reject', review_notes: actionInput.trim() || null });
     setSaving(false);
     if (!r.ok) { alert(`Reject failed: ${r.error}`); return; }
+    fetchDiscoveries();
+  }
+
+  // Dual-control step 2: a human confirms legal review on an already-approved
+  // case. The endpoint refuses without an authoritative link (source of record)
+  // and sets human_confirmed=true, which clears the public "unconfirmed" badge.
+  async function doConfirmReview() {
+    if (!selected?.approved_case_id) return;
+    setSaving(true);
+    const r = await callAction(selected.id, {
+      action: 'confirm_review',
+      case_id: selected.approved_case_id,
+      review_notes: actionInput.trim() || 'legal review confirmed',
+    });
+    setSaving(false);
+    if (!r.ok) { alert(`Confirm review failed: ${r.error}`); return; }
+    setConfirmedIds((s) => new Set(s).add(selected.id));
+    setActionInput('');
     fetchDiscoveries();
   }
 
@@ -808,10 +831,51 @@ export function DiscoveriesQueue({ reviewerEmail }: { reviewerEmail: string }) {
 
                 {/* Already-reviewed banner */}
                 {selected.status !== 'pending' && (
-                  <div className={`border-t-2 pt-4 text-sm ${selected.status === 'approved' ? 'border-green-200 text-green-700' : selected.status === 'rejected' ? 'border-red-200 text-red-700' : 'border-orange-200 text-orange-700'}`}>
-                    <strong className="capitalize">{selected.status}</strong>
-                    {selected.reviewed_by && <> by <span className="font-mono">{selected.reviewed_by}</span></>}
-                    {selected.review_notes && <> · {selected.review_notes}</>}
+                  <div className="border-t-2 border-gray-200 pt-4 space-y-3">
+                    <div className={`text-sm ${selected.status === 'approved' ? 'text-green-700' : selected.status === 'rejected' ? 'text-red-700' : 'text-orange-700'}`}>
+                      <strong className="capitalize">{selected.status}</strong>
+                      {selected.reviewed_by && <> by <span className="font-mono">{selected.reviewed_by}</span></>}
+                      {selected.review_notes && <> · {selected.review_notes}</>}
+                    </div>
+
+                    {/* Dual-control: confirm legal review on an approved, not-yet-confirmed case */}
+                    {selected.status === 'approved' && selected.item_type === 'case' && selected.approved_case_id && (
+                      confirmedIds.has(selected.id) ? (
+                        <div className="flex items-center gap-2 text-sm font-bold text-green-700">
+                          <ShieldCheck className="w-4 h-4" />
+                          Legal review confirmed
+                        </div>
+                      ) : (
+                        <div className="bg-amber-50 border-2 border-amber-300 p-3">
+                          <div className="text-xs font-bold text-amber-800 mb-1 flex items-center gap-1">
+                            <AlertTriangle className="w-3.5 h-3.5" />
+                            AI-extracted, not yet human-confirmed
+                          </div>
+                          <p className="text-xs text-amber-900 mb-2">
+                            Second sign-off of dual control: a human confirms the facts against the source of
+                            record. Refused if the case has no authoritative link. Clears the public
+                            &quot;unconfirmed&quot; badge.
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              placeholder="Confirmation note (optional)"
+                              value={actionInput}
+                              onChange={(e) => setActionInput(e.target.value)}
+                              className="flex-1 px-3 py-1.5 border-2 border-gray-300 focus:border-black focus:outline-none text-sm"
+                            />
+                            <button
+                              disabled={saving}
+                              onClick={doConfirmReview}
+                              className="flex items-center gap-2 px-4 py-2 bg-green-700 text-white font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all disabled:opacity-50 text-sm whitespace-nowrap"
+                            >
+                              <ShieldCheck className="w-4 h-4" />
+                              {saving ? 'Confirming…' : 'Confirm legal review'}
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    )}
                   </div>
                 )}
 
