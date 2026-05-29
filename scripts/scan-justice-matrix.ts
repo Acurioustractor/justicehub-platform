@@ -36,6 +36,8 @@ import {
 } from '../src/lib/ai/llm-schemas';
 import { parseJSON } from '../src/lib/ai/parse-json';
 import { curiaApiItems } from '../src/lib/justice-matrix/curia-adapter';
+import { hudocApiItems } from '../src/lib/justice-matrix/hudoc-adapter';
+import { courtlistenerApiItems } from '../src/lib/justice-matrix/courtlistener-adapter';
 import {
   discoveryEmbeddingText,
   findSemanticDuplicate,
@@ -175,8 +177,17 @@ ${content.substring(0, 28000)}`;
   return validated.data.items;
 }
 
-function isCuriaApiSource(source: Source, url: string): boolean {
-  return source.data_format === 'json' && /curia\.europa\.eu/.test(url);
+// Pick the verified JSON adapter for a source by host (mirrors the scan-json
+// cron). Returns null for HTML/Playwright sources or JSON sources with no adapter.
+function pickJsonAdapter(
+  source: Source,
+  url: string,
+): ((limit: number) => Promise<JusticeMatrixDiscoveryItem[]>) | null {
+  if (source.data_format !== 'json') return null;
+  if (/curia\.europa\.eu/.test(url)) return curiaApiItems;
+  if (/hudoc\.echr\.coe\.int/.test(url)) return hudocApiItems;
+  if (/courtlistener\.com/.test(url)) return courtlistenerApiItems;
+  return null;
 }
 
 /** Skip items that already exist as cases/campaigns or are already queued. */
@@ -227,12 +238,13 @@ async function run() {
       let fetchError: string | null = null;
       let items: JusticeMatrixDiscoveryItem[] = [];
 
-      if (isCuriaApiSource(source, targetUrl)) {
+      const jsonAdapter = pickJsonAdapter(source, targetUrl);
+      if (jsonAdapter) {
         // JSON-API adapter: no browser, no LLM — structured map.
         try {
-          items = await curiaApiItems(LIMIT);
+          items = await jsonAdapter(LIMIT);
           content = 'json-api';
-          console.log(`   ✅ CJEU API: ${items.length} asylum case(s)`);
+          console.log(`   ✅ JSON API: ${items.length} item(s)`);
         } catch (e: any) {
           fetchError = e.message?.slice(0, 300) ?? String(e);
           console.log(`   ❌ API failed: ${fetchError}`);

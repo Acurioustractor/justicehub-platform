@@ -230,6 +230,11 @@ export async function courtlistenerApiItems(limit: number): Promise<JusticeMatri
       confidence: 0.6,
     };
 
+    // Gate, do not just label: BM25 keyword search bleeds in off-topic cases
+    // (e.g. CSI Aviation, an Everglades suit) that merely mention a query word.
+    // Only stage rows with an actual immigration/asylum signal in name+snippet,
+    // so the sweep and the daily auto-publish cron do not pollute the matrix.
+    if (!immigration) continue;
     const v = validateLLMOutput(raw, JusticeMatrixDiscoveryItemSchema);
     if (v.success) items.push(v.data);
     if (items.length >= limit) break;
