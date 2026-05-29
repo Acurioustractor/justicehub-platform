@@ -186,6 +186,19 @@ function caseTypeLabel(t: string | null): string {
     .join(' ');
 }
 
+// Normalise the free-text court field to a stable display label so the Court
+// facet merges variants ("European Union (CJEU)", "CJEU", "CJEU (CJEU)" → "CJEU").
+// Used both to build the facet and to filter by it.
+function normCourt(c: string): string {
+  const t = c.toLowerCase();
+  if (t.includes('human rights') && t.includes('court')) return c.includes('Grand Chamber') ? 'ECtHR (Grand Chamber)' : 'ECtHR';
+  if (t.includes('cjeu') || t.includes('court of justice') || t.includes('european union')) return 'CJEU';
+  if (t.includes('final appeal')) return 'HK CFA';
+  if (t.includes('high court of australia')) return 'High Court (AU)';
+  if (t.includes('federal court of australia')) return 'Federal Court (AU)';
+  return c.slice(0, 36);
+}
+
 const PAGE_STEP = 25;
 
 export function ExploreClient({ facetSeed, initial, initialState }: ExploreClientProps) {
@@ -200,6 +213,9 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
   const [outcome, setOutcome] = useState<string>(initialState.outcome);
   const [strength, setStrength] = useState<string>(initialState.strength);
   const [region, setRegion] = useState<string | null>(null);
+  // Court + decade are client-side filters over the (now complete) working set.
+  const [court, setCourt] = useState<string | null>(null);
+  const [decade, setDecade] = useState<number | null>(null);
   // The active lens (audience surface), or null for neutral cross-search.
   const [surface, setSurface] = useState<SurfaceKey | null>(initialState.surface ?? null);
 
@@ -218,6 +234,8 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
       caseClass !== 'all' ||
       scope !== 'all' ||
       region ||
+      court ||
+      decade ||
       surface ||
       mode !== 'keyword',
   );
@@ -258,7 +276,11 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
       setLoading(true);
       try {
         const sep = queryString ? '&' : '';
-        const res = await fetch(`/api/justice-matrix/search?${queryString}${sep}limit=200`, {
+        // Load the full case + campaign set (corpus is ~400) so client-side sort,
+        // A-Z, oldest-first, jurisdiction buckets and facet counts are honest, not
+        // a view of only the newest 200. Evidence (larger) is capped server-side;
+        // its true total still comes from `counts`.
+        const res = await fetch(`/api/justice-matrix/search?${queryString}${sep}limit=400`, {
           signal: ctrl.signal,
         });
         if (!res.ok) return;
@@ -276,7 +298,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
   }, [queryString]);
 
   // Reset pagination whenever the displayed set changes shape.
-  useEffect(() => setVisible(PAGE_STEP), [results, sort, region, view, type, caseClass]);
+  useEffect(() => setVisible(PAGE_STEP), [results, sort, region, view, type, caseClass, court, decade]);
 
   // A case-class sub-filter only makes sense inside the Cases context. When the
   // reader moves to Campaigns or Evidence, drop it so it cannot silently narrow.
@@ -311,6 +333,8 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
     setScope('all');
     setMode('keyword');
     setRegion(null);
+    setCourt(null);
+    setDecade(null);
     // Drop the lens so the reader lands in neutral cross-search over the whole
     // corpus; surface also leaves the shareable URL.
     setSurface(null);
@@ -339,8 +363,39 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
     return classFiltered.filter((h) => bucketJurisdiction(hitJurisdictionText(h)).region === region);
   }, [classFiltered, region]);
 
+  // Court (case-only) + decade facets, client-side over the complete working set.
+  const facetFiltered = useMemo(() => {
+    let items = regionFiltered;
+    if (court) items = items.filter((h) => h.kind === 'case' && !!h.court && normCourt(h.court) === court);
+    if (decade != null) items = items.filter((h) => { const y = hitYear(h); return y > 0 && Math.floor(y / 10) * 10 === decade; });
+    return items;
+  }, [regionFiltered, court, decade]);
+
+  // Facet options computed from the CURRENT result set, so counts reflect the
+  // active query (best-practice faceted search), not a static seed.
+  const courtFacet = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const h of regionFiltered) if (h.kind === 'case' && h.court) { const lbl = normCourt(h.court); m.set(lbl, (m.get(lbl) ?? 0) + 1); }
+    return Array.from(m.entries()).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  }, [regionFiltered]);
+  const decadeFacet = useMemo(() => {
+    const m = new Map<number, number>();
+    for (const h of regionFiltered) { const y = hitYear(h); if (y > 0) { const d = Math.floor(y / 10) * 10; m.set(d, (m.get(d) ?? 0) + 1); } }
+    return Array.from(m.entries()).sort((a, b) => b[0] - a[0]);
+  }, [regionFiltered]);
+  const catFacet = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const h of regionFiltered) {
+      const cs = h.kind === 'evidence' ? [] : h.categories ?? []; // evidence has no categories
+      for (const c of cs) m.set(c, (m.get(c) ?? 0) + 1);
+    }
+    const arr = Array.from(m.entries()).sort((a, b) => b[1] - a[1]).slice(0, 14);
+    // Fallback to the server seed before the first fetch resolves / if empty.
+    return arr.length ? arr : facetSeed.topCategories;
+  }, [regionFiltered, facetSeed]);
+
   const sorted = useMemo(() => {
-    const items = [...regionFiltered];
+    const items = [...facetFiltered];
     if (sort === 'relevance') items.sort((a, b) => (a.distance ?? 1) - (b.distance ?? 1));
     else if (sort === 'az') items.sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''));
     else if (sort === 'jurisdiction')
@@ -351,7 +406,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
       });
     else items.sort((a, b) => (sort === 'newest' ? hitYear(b) - hitYear(a) : hitYear(a) - hitYear(b)));
     return items;
-  }, [regionFiltered, sort]);
+  }, [facetFiltered, sort]);
 
   // Jurisdiction buckets for the browser view (cases+campaigns loaded fully;
   // evidence is all Australia → add its true count to the Australia tile).
@@ -370,8 +425,10 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
   }, [results]);
 
   const counts = results.counts ?? { case: 0, campaign: 0, evidence: 0 };
-  const totalShown =
-    region || caseClassActive ? regionFiltered.length : counts.case + counts.campaign + counts.evidence;
+  // When any client-side narrowing is active (region, case-class, court, decade)
+  // the honest count is the filtered set; otherwise it's the server's true total.
+  const clientNarrowed = Boolean(region || caseClassActive || court || decade != null);
+  const totalShown = clientNarrowed ? facetFiltered.length : counts.case + counts.campaign + counts.evidence;
   const pageItems = sorted.slice(0, visible);
 
   // --- render ---------------------------------------------------------------
@@ -512,6 +569,8 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
             <AppliedChip label={`Lens: ${SURFACES[surface].label}`} onRemove={clearAll} />
           )}
           {region && <AppliedChip label={region} onRemove={() => setRegion(null)} />}
+          {court && <AppliedChip label={court} onRemove={() => setCourt(null)} />}
+          {decade != null && <AppliedChip label={`${decade}s`} onRemove={() => setDecade(null)} />}
           {caseClassActive && (
             <AppliedChip
               label={caseClass === 'decisions' ? 'decisions only' : 'reports & inquiries'}
@@ -537,13 +596,19 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
         {/* Facet rail (desktop) */}
         <aside className="hidden lg:block">
           <FacetRail
-            facetSeed={facetSeed}
+            catFacet={catFacet}
+            courtFacet={courtFacet}
+            decadeFacet={decadeFacet}
             cats={cats}
             toggleCat={toggleCat}
             outcome={outcome}
             setOutcome={setOutcome}
             strength={strength}
             setStrength={setStrength}
+            court={court}
+            setCourt={setCourt}
+            decade={decade}
+            setDecade={setDecade}
           />
         </aside>
 
@@ -596,13 +661,19 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
               </button>
             </div>
             <FacetRail
-              facetSeed={facetSeed}
+              catFacet={catFacet}
+              courtFacet={courtFacet}
+              decadeFacet={decadeFacet}
               cats={cats}
               toggleCat={toggleCat}
               outcome={outcome}
               setOutcome={setOutcome}
               strength={strength}
               setStrength={setStrength}
+              court={court}
+              setCourt={setCourt}
+              decade={decade}
+              setDecade={setDecade}
             />
           </div>
         </div>
@@ -725,27 +796,39 @@ function AppliedChip({ label, onRemove }: { label: string; onRemove: () => void 
 // Facet rail
 // ---------------------------------------------------------------------------
 function FacetRail({
-  facetSeed,
+  catFacet,
+  courtFacet,
+  decadeFacet,
   cats,
   toggleCat,
   outcome,
   setOutcome,
   strength,
   setStrength,
+  court,
+  setCourt,
+  decade,
+  setDecade,
 }: {
-  facetSeed: FacetSeed;
+  catFacet: Array<[string, number]>;
+  courtFacet: Array<[string, number]>;
+  decadeFacet: Array<[number, number]>;
   cats: string[];
   toggleCat: (c: string) => void;
   outcome: string;
   setOutcome: (v: string) => void;
   strength: string;
   setStrength: (v: string) => void;
+  court: string | null;
+  setCourt: (v: string | null) => void;
+  decade: number | null;
+  setDecade: (v: number | null) => void;
 }) {
   return (
     <div className="space-y-6 lg:sticky lg:top-32">
       <FacetGroup title="Issue areas">
         <div className="flex flex-wrap gap-1.5">
-          {facetSeed.topCategories.map(([c, n]) => (
+          {catFacet.map(([c, n]) => (
             <FacetChip key={c} active={cats.includes(c)} onClick={() => toggleCat(c)}>
               {c}
               <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.6 }} className="ml-1">
@@ -755,6 +838,34 @@ function FacetRail({
           ))}
         </div>
       </FacetGroup>
+      {courtFacet.length > 0 && (
+        <FacetGroup title="Court">
+          <div className="flex flex-wrap gap-1.5">
+            {courtFacet.map(([c, n]) => (
+              <FacetChip key={c} active={court === c} onClick={() => setCourt(court === c ? null : c)}>
+                {c}
+                <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.6 }} className="ml-1">
+                  {n}
+                </span>
+              </FacetChip>
+            ))}
+          </div>
+        </FacetGroup>
+      )}
+      {decadeFacet.length > 1 && (
+        <FacetGroup title="Era">
+          <div className="flex flex-wrap gap-1.5">
+            {decadeFacet.map(([d, n]) => (
+              <FacetChip key={d} active={decade === d} onClick={() => setDecade(decade === d ? null : d)}>
+                {d}s
+                <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.6 }} className="ml-1">
+                  {n}
+                </span>
+              </FacetChip>
+            ))}
+          </div>
+        </FacetGroup>
+      )}
       <FacetGroup title="Outcome (decisions only)">
         <div className="flex flex-wrap gap-1.5">
           {(['favorable', 'adverse', 'pending'] as const).map((o) => (
@@ -868,6 +979,11 @@ function ListRow({ hit }: { hit: Hit }) {
           <div className="font-medium text-[15px] leading-snug truncate" style={{ color: C.ink }}>
             {hit.title}
           </div>
+          {hit.excerpt && (
+            <p className="mt-0.5 text-[13px] leading-snug line-clamp-1" style={{ color: C.body }}>
+              {hit.excerpt}
+            </p>
+          )}
           <div className="mt-1">
             <MetaRow hit={hit} />
           </div>

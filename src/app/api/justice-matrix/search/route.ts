@@ -130,7 +130,7 @@ export async function GET(req: Request) {
   // sort / grouping / jurisdiction-bucketing / pagination itself (corpus is
   // small). cases+campaigns fit well under 200; evidence is capped (true total
   // comes from `counts`).
-  const limit = clampInt(sp.get('limit'), 50, 1, 200);
+  const limit = clampInt(sp.get('limit'), 50, 1, 500);
 
   const supabase = createServiceClient() as AnyClient;
 
