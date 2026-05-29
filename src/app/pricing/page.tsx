@@ -3,75 +3,31 @@
 import { useRouter } from 'next/navigation'
 import { Check, ArrowRight } from 'lucide-react'
 import { Navigation } from '@/components/ui/navigation'
+import { TIERS as BILLING_TIERS, type TierKey } from '@/lib/billing/tiers'
 
-const TIERS = [
-  {
-    key: 'community',
-    name: 'Community',
-    price: 'Free',
-    priceSuffix: 'forever',
-    description: 'For ATSILS, grassroots legal orgs, CLCs, and community organisations',
-    features: [
-      'Full Call It Out access',
-      'Program discovery',
-      'Basic analytics',
-      'Up to 5 team members',
-      'Community support',
-    ],
-    cta: 'Current Plan',
-    disabled: true,
-  },
-  {
-    key: 'organisation',
-    name: 'Organisation',
-    price: '$299',
-    priceSuffix: '/mo',
-    description: 'For mid-size NFPs, advocacy groups, and legal services',
-    features: [
-      'Everything in Community',
-      'Funding Operating System',
-      'Outcome tracking',
-      'API access',
-      'Up to 25 team members',
-      'Priority email support (48h)',
-    ],
-    cta: 'Get Started',
-    popular: true,
-  },
-  {
-    key: 'institution',
-    name: 'Institution',
-    price: '$2,499',
-    priceSuffix: '/mo',
-    description: 'For universities, Legal Aid commissions, and large charities',
-    features: [
-      'Everything in Organisation',
-      'Research datasets',
-      'Custom reports',
-      'Unlimited team members',
-      'SLA (24h response)',
-      'Phone + email support',
-    ],
-    cta: 'Get Started',
-  },
-  {
-    key: 'enterprise',
-    name: 'Enterprise',
-    price: 'Custom',
-    priceSuffix: '',
-    description: 'For government departments and consultancies',
-    features: [
-      'Everything in Institution',
-      'Cross-agency dashboards',
-      'Policy modelling',
-      'Dedicated account manager',
-      'Custom SLA (4h response)',
-      'White-label option',
-    ],
-    cta: 'Contact Us',
-    contact: true,
-  },
-] as const
+const TIER_ORDER: TierKey[] = ['community', 'organisation', 'institution', 'enterprise']
+
+function formatTierPrice(price: number | null) {
+  if (price === null) return 'Custom'
+  if (price === 0) return 'Free'
+  return `$${price.toLocaleString('en-AU')}`
+}
+
+const TIERS = TIER_ORDER.map((key) => {
+  const tier = BILLING_TIERS[key]
+  return {
+    key,
+    name: tier.name,
+    price: formatTierPrice(tier.price),
+    priceSuffix: tier.price === 0 ? 'forever' : tier.price === null ? '' : '/mo',
+    description: tier.description,
+    features: [...tier.features],
+    cta: key === 'community' ? 'Current Plan' : key === 'enterprise' ? 'Contact Us' : 'Get Started',
+    disabled: key === 'community',
+    popular: key === 'organisation',
+    contact: key === 'enterprise',
+  }
+})
 
 export default function PricingPage() {
   const router = useRouter()
@@ -160,10 +116,10 @@ export default function PricingPage() {
 
               {/* CTA */}
               <button
-                disabled={'disabled' in tier && tier.disabled}
+                disabled={tier.disabled}
                 onClick={() => {
-                  if ('disabled' in tier && tier.disabled) return
-                  if ('contact' in tier && tier.contact) {
+                  if (tier.disabled) return
+                  if (tier.contact) {
                     window.location.href = 'mailto:benjamin@act.place?subject=JusticeHub Enterprise'
                   } else {
                     router.push('/login?tier=' + tier.key)
@@ -171,18 +127,18 @@ export default function PricingPage() {
                 }}
                 className="w-full py-3 px-4 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-colors"
                 style={{
-                  backgroundColor: 'disabled' in tier && tier.disabled
+                  backgroundColor: tier.disabled
                     ? '#D1CCC4'
                     : tier.popular
                     ? '#DC2626'
                     : '#0A0A0A',
                   color: '#FFFFFF',
-                  cursor: 'disabled' in tier && tier.disabled ? 'not-allowed' : 'pointer',
-                  opacity: 'disabled' in tier && tier.disabled ? 0.6 : 1,
+                  cursor: tier.disabled ? 'not-allowed' : 'pointer',
+                  opacity: tier.disabled ? 0.6 : 1,
                 }}
               >
                 {tier.cta}
-                {!('disabled' in tier && tier.disabled) && <ArrowRight className="w-4 h-4" />}
+                {!tier.disabled && <ArrowRight className="w-4 h-4" />}
               </button>
             </div>
           ))}
