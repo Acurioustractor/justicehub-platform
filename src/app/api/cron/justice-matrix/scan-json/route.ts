@@ -40,7 +40,7 @@ interface SourceRow {
   total_items_found: number | null;
 }
 
-const LIMIT_PER_SOURCE = 8;
+const LIMIT_PER_SOURCE = 25;
 
 /**
  * Check whether a candidate item exactly matches an item already live or
