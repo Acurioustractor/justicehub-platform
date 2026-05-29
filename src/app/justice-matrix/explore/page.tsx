@@ -1,4 +1,5 @@
 import { createServiceClient } from '@/lib/supabase/service-lite';
+import { SURFACES, asSurfaceKey } from '@/lib/justice-matrix/surfaces';
 import { ExploreClient, type FacetSeed } from './ExploreClient';
 
 export const dynamic = 'force-dynamic';
@@ -246,22 +247,33 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     viewParam === 'cards' || viewParam === 'grouped' || viewParam === 'jurisdiction'
       ? viewParam
       : 'list';
-  const cats = sp(raw.cat)
+  const urlCats = sp(raw.cat)
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
   const outcome = sp(raw.outcome);
   const strength = sp(raw.strength);
 
+  // A surface is a lens: a preset of cat + scope plus framing. The preset is
+  // only a DEFAULT, never a lock. If the URL carries an explicit cat or scope,
+  // that wins. Absent any surface, every value below is byte-identical to the
+  // neutral cross-search behaviour, so the existing explore cannot break.
+  const surfaceKey = asSurfaceKey(sp(raw.surface));
+  const hasUrlCat = typeof raw.cat === 'string' ? raw.cat.length > 0 : Array.isArray(raw.cat);
+  const hasUrlScope = scopeParam === 'au' || scopeParam === 'global' || scopeParam === 'all';
+
+  const cats = surfaceKey && !hasUrlCat ? SURFACES[surfaceKey].defaultCats : urlCats;
+  const seededScope = surfaceKey && !hasUrlScope ? SURFACES[surfaceKey].defaultScope : scope;
+
   const [facetSeed, initialBase] = await Promise.all([
     loadFacetSeed(),
-    loadInitial({ q, type, scope, cats, outcome, strength }),
+    loadInitial({ q, type, scope: seededScope, cats, outcome, strength }),
   ]);
 
   // When no filter is active the unfiltered facet totals are the true per-type
   // counts — better first paint than the loaded row lengths (client still
   // refetches accurate counts on mount for the filtered case).
-  const unfiltered = !q && !cats.length && !outcome && !strength && scope === 'all';
+  const unfiltered = !q && !cats.length && !outcome && !strength && seededScope === 'all';
   const initial = unfiltered
     ? {
         ...initialBase,
@@ -277,7 +289,18 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     <ExploreClient
       facetSeed={facetSeed}
       initial={initial}
-      initialState={{ q, mode, type, scope, sort, view, cats, outcome, strength }}
+      initialState={{
+        q,
+        mode,
+        type,
+        scope: seededScope,
+        sort,
+        view,
+        cats,
+        outcome,
+        strength,
+        surface: surfaceKey,
+      }}
     />
   );
 }

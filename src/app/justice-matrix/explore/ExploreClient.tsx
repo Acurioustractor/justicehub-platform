@@ -21,6 +21,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { bucketJurisdiction, compareRegions } from '@/lib/justice-matrix/jurisdiction';
+import { SURFACES, type SurfaceKey } from '@/lib/justice-matrix/surfaces';
 
 // ---------------------------------------------------------------------------
 // Local "research tool" design tokens. Scoped to this experience only — the
@@ -147,6 +148,7 @@ export interface ExploreClientProps {
     cats: string[];
     outcome: string;
     strength: string;
+    surface?: SurfaceKey | null;
   };
 }
 
@@ -194,6 +196,8 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
   const [outcome, setOutcome] = useState<string>(initialState.outcome);
   const [strength, setStrength] = useState<string>(initialState.strength);
   const [region, setRegion] = useState<string | null>(null);
+  // The active lens (audience surface), or null for neutral cross-search.
+  const [surface, setSurface] = useState<SurfaceKey | null>(initialState.surface ?? null);
 
   const [results, setResults] = useState<SearchResponse>(initial);
   const [loading, setLoading] = useState(false);
@@ -210,6 +214,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
       caseClass !== 'all' ||
       scope !== 'all' ||
       region ||
+      surface ||
       mode !== 'keyword',
   );
 
@@ -223,8 +228,9 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
     if (cats.length) p.set('cat', cats.join(','));
     if (outcome) p.set('outcome', outcome);
     if (strength) p.set('strength', strength);
+    if (surface) p.set('surface', surface);
     return p.toString();
-  }, [q, mode, type, scope, cats, outcome, strength]);
+  }, [q, mode, type, scope, cats, outcome, strength, surface]);
 
   const fullQuery = useMemo(() => {
     // What the UI reflects in the address bar (adds view/sort/region which are
@@ -301,6 +307,9 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
     setScope('all');
     setMode('keyword');
     setRegion(null);
+    // Drop the lens so the reader lands in neutral cross-search over the whole
+    // corpus; surface also leaves the shareable URL.
+    setSurface(null);
   }, []);
 
   // --- derived: merge → region-filter → sort -------------------------------
@@ -410,6 +419,16 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
           </button>
         </div>
 
+        {/* SURFACE FRAMING: one-line lens blurb, only when a surface is active */}
+        {surface && (
+          <div className="max-w-7xl mx-auto px-4 md:px-6 pb-2 flex items-baseline gap-2">
+            <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.16em', color: '#d3b583' }}>
+              {SURFACES[surface].label.toUpperCase()}
+            </span>
+            <span style={{ fontSize: 13, color: '#cbb8d6' }}>{SURFACES[surface].blurb}</span>
+          </div>
+        )}
+
         {/* CONTROL STRIP */}
         <div className="max-w-7xl mx-auto px-4 md:px-6 pb-3 flex flex-wrap items-center gap-x-4 gap-y-2">
           <Tabs
@@ -485,6 +504,9 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
           {region && ` · ${region}`}
         </span>
         <div className="flex flex-wrap items-center gap-1.5">
+          {surface && (
+            <AppliedChip label={`Lens: ${SURFACES[surface].label}`} onRemove={clearAll} />
+          )}
           {region && <AppliedChip label={region} onRemove={() => setRegion(null)} />}
           {caseClassActive && (
             <AppliedChip
@@ -501,7 +523,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
         </div>
         {hasFilter && (
           <button type="button" onClick={clearAll} className="text-xs underline ml-1" style={{ color: C.accent }}>
-            clear all
+            {surface ? 'Search the whole corpus' : 'clear all'}
           </button>
         )}
       </div>
