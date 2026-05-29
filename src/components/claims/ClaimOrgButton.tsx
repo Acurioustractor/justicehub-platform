@@ -376,7 +376,7 @@ export function ClaimOrgButton({
         <ClaimNextStepsPanel
           status="verified"
           email={submittedEmail}
-          hubHref={`/hub/${orgSlug}/dashboard`}
+          hubHref={`/hub/${orgSlug}/practice`}
           hubLabel="Open organization workspace"
         />
       </>

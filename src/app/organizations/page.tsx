@@ -3,6 +3,8 @@ import { Navigation, Footer } from '@/components/ui/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
 import { Building2, ListFilter, Map as MapIcon, MapPin, Network } from 'lucide-react';
 import { DetentionCentreMap } from '@/components/organizations/DetentionCentreMap';
+import { OrganizationSupportPathway } from '@/components/organizations/OrganizationSupportPathway';
+import { WhyClaimOrganizationPanel } from '@/components/organizations/OrganizationJourneyPanels';
 import { FALLBACK_DETENTION_FACILITIES } from '@/lib/organizations/fallback-detention-centres';
 import { OrganizationsPageContent } from './page-content';
 
@@ -169,7 +171,7 @@ async function fetchRelationshipRows(
   return data || [];
 }
 
-async function fetchClaimedOrgIds(supabase: ReturnType<typeof createServiceClient>, orgIds: string[]) {
+async function fetchClaimedOrgIds(supabase: ReturnType<typeof createServiceClient>, orgIds: string[]): Promise<string[]> {
   if (orgIds.length === 0) return [];
 
   const svc = supabase as any;
@@ -202,6 +204,9 @@ async function fetchOrganizationsMetrics(supabase: ReturnType<typeof createServi
       .from('organizations')
       .select('id', { count: 'planned', head: true })
       .eq('is_active', true)
+      .not('name', 'is', null)
+      .neq('name', '')
+      .neq('name', '(blank)')
       .then(({ count, error }: { count: number | null; error: any }) => {
         if (error) throw error;
         return count || orgs.length;
@@ -312,7 +317,7 @@ export default async function OrganizationsPage() {
   const { organizations, totalOrgCount, grantScopeLinkedCount, abnBackedCount, programCounts, serviceCounts, teamCounts, detentionFacilities, claimedOrgIds, dataStatus } = await getOrganizationsData();
 
   const verifiedCount = organizations.filter(
-    (org: Organization) => org.verification_status === 'verified'
+    (org: Organization) => org.verification_status === 'verified' || org.verification_status === 'acnc_verified'
   ).length;
 
   const operationalFacilities = detentionFacilities.filter(f => f.operational_status === 'operational');
@@ -353,7 +358,7 @@ export default async function OrganizationsPage() {
                   {dataStatus === 'partial' && organizations.length === 0 ? '—' : organizations.length.toLocaleString()}
                 </div>
                 <p className="text-sm uppercase tracking-wide text-earth-600 font-medium">
-                  Loaded Profiles
+                  Initial Profiles
                 </p>
               </div>
               <div>
@@ -361,7 +366,7 @@ export default async function OrganizationsPage() {
                   {dataStatus === 'partial' && organizations.length === 0 ? '—' : verifiedCount}
                 </div>
                 <p className="text-sm uppercase tracking-wide text-earth-600 font-medium">
-                  Verified Profiles
+                  Initial Verified
                 </p>
               </div>
               {claimedOrgIds.length > 0 && (
@@ -379,7 +384,7 @@ export default async function OrganizationsPage() {
                   {dataStatus === 'partial' && organizations.length === 0 ? '—' : grantScopeLinkedCount.toLocaleString()}
                 </div>
                 <p className="text-sm uppercase tracking-wide text-earth-600 font-medium">
-                  Loaded GrantScope
+                  Initial GrantScope
                 </p>
               </div>
               <div>
@@ -387,7 +392,7 @@ export default async function OrganizationsPage() {
                   {dataStatus === 'partial' && organizations.length === 0 ? '—' : abnBackedCount.toLocaleString()}
                 </div>
                 <p className="text-sm uppercase tracking-wide text-earth-600 font-medium">
-                  Loaded ABN
+                  Initial ABN
                 </p>
               </div>
               <div>
@@ -456,6 +461,9 @@ export default async function OrganizationsPage() {
             </div>
           </div>
         </section>
+
+        <OrganizationSupportPathway mode="directory" />
+        <WhyClaimOrganizationPanel claimHref="/hub" variant="directory" />
 
         <section id="centre-map" className="py-12 border-b-2 border-black bg-gradient-to-br from-blue-50 via-green-50 to-sand-50">
           <div className="container-justice">
@@ -547,6 +555,7 @@ export default async function OrganizationsPage() {
         <section id="organization-directory">
           <OrganizationsPageContent
             organizations={organizations}
+            totalOrgCount={totalOrgCount}
             programCounts={programCounts}
             serviceCounts={serviceCounts}
             teamCounts={teamCounts}

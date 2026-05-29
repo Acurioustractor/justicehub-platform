@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { getEntityEnrichment } from '@/lib/grantscope/entity-enrichment';
+import {
+  getEntityEnrichment,
+  getEntityEnrichmentByAbn,
+} from '@/lib/grantscope/entity-enrichment';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,8 +11,8 @@ export const dynamic = 'force-dynamic';
  * GET /api/organizations/[id]/enrichment
  *
  * Returns GrantScope entity enrichment data for a JH organization.
- * Looks up the org's gs_entity_id and fetches enrichment from the GS entity graph.
- * Returns null enrichment for unlinked orgs (graceful degradation).
+ * Looks up the org's gs_entity_id or ABN and fetches enrichment from the GS
+ * entity graph. Returns null enrichment for unlinked orgs.
  */
 export async function GET(
   _request: NextRequest,
@@ -27,7 +30,7 @@ export async function GET(
 
     const { data: org, error } = await supabase
       .from('organizations')
-      .select('id, name, gs_entity_id')
+      .select('id, name, abn, gs_entity_id')
       .eq(isUUID ? 'id' : 'slug', id)
       .single();
 
@@ -38,7 +41,11 @@ export async function GET(
       );
     }
 
-    if (!org.gs_entity_id) {
+    const enrichment = org.gs_entity_id
+      ? await getEntityEnrichment(org.gs_entity_id)
+      : await getEntityEnrichmentByAbn(org.abn);
+
+    if (!enrichment) {
       return NextResponse.json({
         organizationId: org.id,
         organizationName: org.name,
@@ -46,8 +53,6 @@ export async function GET(
         enrichment: null,
       });
     }
-
-    const enrichment = await getEntityEnrichment(org.gs_entity_id);
 
     return NextResponse.json({
       organizationId: org.id,
