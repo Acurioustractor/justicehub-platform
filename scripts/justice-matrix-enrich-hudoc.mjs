@@ -39,7 +39,9 @@ const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
 const PROVIDERS = [
   { name: 'groq', key: 'GROQ_API_KEY', base: 'https://api.groq.com/openai/v1', model: 'llama-3.3-70b-versatile' },
   { name: 'gemini', key: 'GEMINI_API_KEY', base: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-2.5-flash' },
-  { name: 'anthropic', key: 'ANTHROPIC_API_KEY', anthropic: true, model: 'claude-sonnet-4-6' },
+  { name: 'cerebras', key: 'CEREBRAS_API_KEY', base: 'https://api.cerebras.ai/v1', model: 'llama3.3-70b' },
+  { name: 'sambanova', key: 'SAMBANOVA_API_KEY', base: 'https://api.sambanova.ai/v1', model: 'Meta-Llama-3.3-70B-Instruct' },
+  { name: 'anthropic', key: 'ANTHROPIC_API_KEY', anthropic: true, model: 'claude-sonnet-4-6' }, // last resort only
 ];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 function parseJSON(t) { const c = t.replace(/<think>[\s\S]*?<\/think>/g, '').replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim(); try { return JSON.parse(c); } catch { const a = c.indexOf('{'), b = c.lastIndexOf('}'); if (a >= 0 && b > a) return JSON.parse(c.slice(a, b + 1)); throw new Error('no JSON'); } }

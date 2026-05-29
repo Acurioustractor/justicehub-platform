@@ -62,10 +62,11 @@ let providerFailures = { anthropic: 0, groq: 0, openai: 0 };
  * Call LLM with fallback chain: Anthropic -> Groq -> OpenAI
  */
 async function callLLMWithFallback(prompt, maxTokens = 4000) {
+  // Free/cheap first; Anthropic LAST-RESORT only (cost control).
   const providers = [
-    { name: 'anthropic', client: anthropic },
     { name: 'groq', client: groq },
-    { name: 'openai', client: openai }
+    { name: 'openai', client: openai },
+    { name: 'anthropic', client: anthropic }
   ].filter(p => p.client && providerFailures[p.name] < 3);
 
   for (const provider of providers) {

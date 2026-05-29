@@ -32,10 +32,13 @@ const argv = process.argv.slice(2);
 const APPLY = argv.includes('--apply');
 const LIMIT = (() => { const i = argv.indexOf('--limit'); return i >= 0 ? parseInt(argv[i + 1], 10) : 12; })();
 
+// Free/cheap providers first; Anthropic LAST-RESORT only (cost control).
 const PROVIDERS = [
-  { name: 'anthropic', key: 'ANTHROPIC_API_KEY', anthropic: true, model: 'claude-sonnet-4-6' },
   { name: 'groq', key: 'GROQ_API_KEY', base: 'https://api.groq.com/openai/v1', model: 'llama-3.3-70b-versatile' },
   { name: 'gemini', key: 'GEMINI_API_KEY', base: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-2.5-flash' },
+  { name: 'cerebras', key: 'CEREBRAS_API_KEY', base: 'https://api.cerebras.ai/v1', model: 'llama3.3-70b' },
+  { name: 'sambanova', key: 'SAMBANOVA_API_KEY', base: 'https://api.sambanova.ai/v1', model: 'Meta-Llama-3.3-70B-Instruct' },
+  { name: 'anthropic', key: 'ANTHROPIC_API_KEY', anthropic: true, model: 'claude-sonnet-4-6' }, // last resort only
 ];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -44,7 +47,7 @@ function parseJSON(text) {
   try { return JSON.parse(cleaned); } catch { const a = cleaned.indexOf('{'); const b = cleaned.lastIndexOf('}'); if (a >= 0 && b > a) return JSON.parse(cleaned.slice(a, b + 1)); throw new Error('no JSON'); }
 }
 async function oneCall(p, prompt) {
-  const maxTries = p.anthropic ? 5 : 1;
+  const maxTries = 3; // retry any provider on rate-limit before falling through
   let lastErr;
   for (let i = 0; i < maxTries; i++) {
     const ctrl = new AbortController();
@@ -53,12 +56,12 @@ async function oneCall(p, prompt) {
       const res = p.anthropic
         ? await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': env[p.key], 'anthropic-version': '2023-06-01' }, body: JSON.stringify({ model: p.model, max_tokens: 600, messages: [{ role: 'user', content: prompt }] }), signal: ctrl.signal })
         : await fetch(`${p.base}/chat/completions`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${env[p.key]}` }, body: JSON.stringify({ model: p.model, max_tokens: 600, messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' } }), signal: ctrl.signal });
-      if (res.status === 429 && p.anthropic && i < maxTries - 1) { await sleep(4000 * (i + 1)); continue; }
+      if ((res.status === 429 || res.status === 503) && i < maxTries - 1) { await sleep(2500 * (i + 1)); continue; }
       if (!res.ok) throw new Error(`${p.name} ${res.status}`);
       const json = await res.json();
       const text = p.anthropic ? json.content?.[0]?.text ?? '' : json.choices?.[0]?.message?.content ?? '';
       return parseJSON(text);
-    } catch (e) { lastErr = e; if (p.anthropic && i < maxTries - 1) { await sleep(4000 * (i + 1)); continue; } throw e; } finally { clearTimeout(t); }
+    } catch (e) { lastErr = e; if (/abort|fetch failed|network|ECONN|terminated/i.test(e.message ?? '') && i < maxTries - 1) { await sleep(1500); continue; } throw e; } finally { clearTimeout(t); }
   }
   throw lastErr ?? new Error(`${p.name} exhausted`);
 }
