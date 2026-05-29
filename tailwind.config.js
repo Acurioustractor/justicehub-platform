@@ -121,8 +121,8 @@ module.exports = {
         },
       },
       fontFamily: {
-        'sans': ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
-        'display': ['Inter', 'system-ui', 'sans-serif'],
+        'sans': ['Instrument Sans', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Arial', 'sans-serif'],
+        'display': ['Cormorant Garamond', 'Georgia', 'serif'],
         'mono': ['IBM Plex Mono', 'Courier New', 'monospace'],
       },
       letterSpacing: {
