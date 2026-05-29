@@ -86,7 +86,7 @@ export default async function BasecampPage({ params }: { params: { 'org-slug': s
   if (!organization) redirect('/');
 
   if (organization.type !== 'basecamp' && organization.partner_tier !== 'basecamp') {
-    redirect(`/hub/${slug}/dashboard`);
+    redirect(`/hub/${slug}/practice`);
   }
 
   const data = await getBasecampData(organization.id);

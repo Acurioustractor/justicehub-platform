@@ -46,5 +46,5 @@ export default async function CompliancePage({ params }: { params: { 'org-slug':
   }
 
   const deadlines = await getUpcomingDeadlines(org.id);
-  return <ComplianceView deadlines={deadlines} />;
+  return <ComplianceView deadlines={deadlines} orgId={org.id} orgSlug={org.slug} />;
 }
