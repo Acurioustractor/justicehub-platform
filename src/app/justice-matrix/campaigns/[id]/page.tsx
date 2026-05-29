@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { CopyCitationButton } from '../../cases/[id]/CopyCitationButton';
+import { LegalDisclaimer } from '../../_components/LegalDisclaimer';
 import { ArrowLeft, ExternalLink, Megaphone, ShieldCheck, MapPin } from 'lucide-react';
 
 // Cormorant Garamond + Instrument Sans are loaded globally via globals.css.
@@ -212,6 +213,12 @@ export default async function CampaignProfilePage({ params }: { params: Promise<
 
               {campaignRow.campaign_link && (
                 <Block kicker="Source" title="Campaign link">
+                  <div
+                    className="text-[10px] font-semibold uppercase tracking-[0.16em] mb-2"
+                    style={{ color: '#8d6a44' }}
+                  >
+                    Source of record
+                  </div>
                   <a
                     href={campaignRow.campaign_link}
                     target="_blank"
@@ -296,6 +303,11 @@ export default async function CampaignProfilePage({ params }: { params: Promise<
                 </Card>
               )}
           </aside>
+        </div>
+
+        {/* Governance v1: disclaimer + CC BY-NC licence, page end */}
+        <div className="mt-14">
+          <LegalDisclaimer tone="footer" />
         </div>
       </section>
     </main>

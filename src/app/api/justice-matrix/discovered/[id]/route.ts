@@ -130,9 +130,13 @@ export async function PUT(
           outcome: body.outcome,
           precedent_strength: body.precedent_strength,
           source: 'ai_scraped',
-          verified: true,
-          verified_by: body.reviewed_by,
-          verified_at: new Date().toISOString(),
+          // Governance v1 dual-control for case law: approval (this action)
+          // creates the row but does NOT sign off legal review. A second admin
+          // must call the `confirm_review` action below, which sets
+          // human_confirmed + verified. Until then the row shows the existing
+          // amber "AI-extracted, unconfirmed" badge in the explore tool.
+          verified: false,
+          human_confirmed: false,
         }
 
         const caseResult = await supabase
@@ -244,6 +248,79 @@ export async function PUT(
         success: true,
         message: `${discovery.item_type} approved and created`,
         approved_id: approvedId
+      })
+
+    } else if (body.action === 'confirm_review') {
+      // Governance v1 — second step of dual-control for case law. A distinct
+      // admin signs off legal review on an already-approved case. This sets
+      // human_confirmed + verified, which clears the amber "unconfirmed" badge.
+      //
+      // Two guards, enforced here (not in the DB):
+      //   1. Official-source citation required. Cannot sign off a case with a
+      //      null authoritative_link. The source of record is the citation of
+      //      authority, so without it there is nothing to verify against.
+      //   2. Case law only. Campaigns use single approval (lower legal risk)
+      //      and do not flow through this action.
+      const targetCaseId: string | null = body.case_id ?? null;
+      if (!targetCaseId) {
+        return NextResponse.json({
+          success: false,
+          error: 'case_id is required to confirm legal review',
+        }, { status: 400 })
+      }
+
+      const existing = await supabase
+        .from('justice_matrix_cases')
+        .select('id, authoritative_link')
+        .eq('id', targetCaseId)
+        .single()
+
+      if (existing.error || !existing.data) {
+        return NextResponse.json({
+          success: false,
+          error: 'Case not found',
+        }, { status: 404 })
+      }
+
+      if (!existing.data.authoritative_link) {
+        return NextResponse.json({
+          success: false,
+          error: 'Cannot sign off legal review without an authoritative link (source of record)',
+        }, { status: 422 })
+      }
+
+      const { data, error } = await supabase
+        .from('justice_matrix_cases')
+        .update({
+          human_confirmed: true,
+          verified: true,
+          verified_by: body.reviewed_by,
+          verified_at: new Date().toISOString(),
+        })
+        .eq('id', targetCaseId)
+        .select()
+        .single()
+
+      if (error) {
+        return NextResponse.json({
+          success: false,
+          error: error.message,
+        }, { status: 500 })
+      }
+
+      // Tie the sign-off back to the discovery audit trail when one exists.
+      await supabase
+        .from('justice_matrix_discovered')
+        .update({
+          review_notes: body.review_notes,
+          reviewed_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+
+      return NextResponse.json({
+        success: true,
+        message: 'Legal review confirmed',
+        data,
       })
 
     } else if (body.action === 'reject') {

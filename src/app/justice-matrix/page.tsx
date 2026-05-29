@@ -94,6 +94,13 @@ export default async function JusticeMatrixLandingPage() {
             Mapped and connected across {stats.regions} regions so a win in one place can be reused in another.
           </p>
 
+          {/* Governance v1: one-line disclaimer, kept verbatim with the shared
+              LegalDisclaimer DISCLAIMER_SHORT string. Styled to the hero tokens
+              here rather than the cream footer block used on profile pages. */}
+          <p className="text-[12px] leading-5 mb-8" style={{ color: C.muted }}>
+            Research resource, not legal advice. Read the original source before acting.
+          </p>
+
           {/* Funnel: native GET form → lands in the explore tool */}
           <form action="/justice-matrix/explore" className="max-w-2xl flex items-stretch gap-2">
             <div className="relative flex-1">
