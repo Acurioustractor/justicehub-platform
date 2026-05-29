@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { X, Send, ExternalLink, Sparkles, Database, Users, Building2, FileText, MapPin, Scale, Heart, TrendingUp } from 'lucide-react';
 
 interface ChatMessage {
@@ -44,6 +45,7 @@ const TYPE_COLORS = {
 };
 
 export function ALMAChat() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -152,12 +154,16 @@ export function ALMAChat() {
     { text: "How can I support youth justice reform?", icon: Heart, category: "Action" }
   ];
 
+  if (pathname === '/judges-on-country/postcards') {
+    return null;
+  }
+
   return (
     <>
       {/* Floating Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 p-4 bg-black text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all ${isOpen ? 'hidden' : 'flex'} items-center gap-2`}
+        className={`fixed bottom-6 right-6 z-50 p-4 bg-black text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all print:hidden ${isOpen ? 'hidden' : 'flex'} items-center gap-2`}
         aria-label="Open ALMA Chat"
       >
         <Sparkles className="w-5 h-5" />
@@ -166,7 +172,7 @@ export function ALMAChat() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-48px)] h-[600px] max-h-[calc(100vh-100px)] bg-white border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+        <div className="fixed bottom-6 right-6 z-50 h-[600px] max-h-[calc(100vh-100px)] w-[400px] max-w-[calc(100vw-48px)] border-2 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] print:hidden flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b-2 border-black bg-black text-white">
             <div className="flex items-center gap-3">

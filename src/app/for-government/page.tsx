@@ -58,7 +58,7 @@ export default function ForGovernmentPage() {
     {
       program: "Oonchiumpa",
       location: "NT",
-      result: "95% reduced anti-social behavior",
+      result: "95% diversion success",
       approach: "On-country programs, cultural mentoring"
     }
   ];

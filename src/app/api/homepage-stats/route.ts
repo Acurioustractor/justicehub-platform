@@ -4,6 +4,11 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 export const revalidate = 300; // Revalidate every 5 minutes
 
+type FundingTotalRow = {
+  grant_count?: number | string | null;
+  total_dollars?: number | string | null;
+};
+
 export async function GET() {
   const supabase = createServiceClient();
 
@@ -48,7 +53,7 @@ export async function GET() {
     // Get total organizations
     const { count: totalOrganizations } = await supabase
       .from('organizations')
-      .select('*', { count: 'exact', head: true })
+      .select('*', { count: 'planned', head: true })
       .eq('is_active', true);
 
     // Get services by state for coverage
@@ -80,15 +85,15 @@ export async function GET() {
       { count: mediumOrgs },
       { count: largeOrgs },
     ] = await Promise.all([
-      supabase.from('organizations').select('*', { count: 'exact', head: true }).not('abn', 'is', null),
-      supabase.from('organizations').select('*', { count: 'exact', head: true }).eq('is_indigenous_org', true),
-      supabase.from('organizations').select('*', { count: 'exact', head: true }).eq('charity_size', 'Small'),
-      supabase.from('organizations').select('*', { count: 'exact', head: true }).eq('charity_size', 'Medium'),
-      supabase.from('organizations').select('*', { count: 'exact', head: true }).eq('charity_size', 'Large'),
+      supabase.from('organizations').select('*', { count: 'planned', head: true }).not('abn', 'is', null),
+      supabase.from('organizations').select('*', { count: 'planned', head: true }).eq('is_indigenous_org', true),
+      supabase.from('organizations').select('*', { count: 'planned', head: true }).eq('charity_size', 'Small'),
+      supabase.from('organizations').select('*', { count: 'planned', head: true }).eq('charity_size', 'Medium'),
+      supabase.from('organizations').select('*', { count: 'planned', head: true }).eq('charity_size', 'Large'),
     ]);
 
     // Justice funding totals (dynamic — replaces hardcoded $8.7B)
-    const { data: fundingTotal } = await supabase.rpc('get_funding_total').single();
+    const { data: fundingTotal } = await supabase.rpc('get_funding_total').single<FundingTotalRow>();
     const totalFundingGrants = fundingTotal?.grant_count ?? 52133;
     const totalFundingBillions = fundingTotal?.total_dollars
       ? parseFloat((Number(fundingTotal.total_dollars) / 1_000_000_000).toFixed(1))

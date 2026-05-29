@@ -15,6 +15,13 @@ import {
   Building2,
   Scale,
   Landmark,
+  Search,
+  Mail,
+  MessageSquare,
+  Share2,
+  Copy,
+  Check,
+  Printer,
   X,
 } from 'lucide-react';
 
@@ -108,6 +115,42 @@ interface IntelData {
   generatedAt: string;
 }
 
+interface ConnectedSearchConnection {
+  kind: string;
+  label: string;
+  value: string;
+  note?: string;
+}
+
+interface ConnectedSearchEvidence {
+  label: string;
+  detail: string;
+  sourceTable: string;
+  sourceUrl?: string | null;
+}
+
+interface ConnectedSearchCard {
+  id: string;
+  type: 'place' | 'organization';
+  title: string;
+  subtitle: string;
+  url?: string;
+  summary: string;
+  connections: ConnectedSearchConnection[];
+  evidence: ConnectedSearchEvidence[];
+}
+
+interface ConnectedSearchResponse {
+  q: string;
+  counts: Record<string, number>;
+  answer?: {
+    headline: string;
+    summary: string;
+    cards: ConnectedSearchCard[];
+    caveats: string[];
+  };
+}
+
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   confirmed: { label: 'Confirmed', color: '#059669', bg: 'bg-[#059669]/10' },
   planning: { label: 'Planning', color: '#d97706', bg: 'bg-amber-500/10' },
@@ -115,6 +158,10 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   demand: { label: 'Community Demand', color: '#DC2626', bg: 'bg-[#DC2626]/10' },
 };
 
+const CAMPAIGN_SHARE_URL = 'https://justicehub.com.au/contained/tour/intelligence';
+const CAMPAIGN_REGISTER_URL = '/contained/register-interest?source=adelaide_intelligence_takeaway';
+const CAMPAIGN_JOIN_URL = '/contained/join?role=supporter&source=adelaide_intelligence_takeaway';
+const CAMPAIGN_STORY_URL = '/contained/share?source=adelaide_intelligence_takeaway';
 const MONTH_RE = /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/g;
 
 function dateEndpoint(date: string, edge: 'start' | 'end') {
@@ -133,6 +180,19 @@ function tourDateWindow(stops: TourStopIntel[]) {
   return first === last ? first : `${first}-${last}`;
 }
 
+function connectionByLabel(card: ConnectedSearchCard | undefined, label: string) {
+  return card?.connections.find((connection) => connection.label === label);
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // ---------------------------------------------------------------------------
 // Stat Tile
 // ---------------------------------------------------------------------------
@@ -144,6 +204,414 @@ function StatTile({ label, value, color = '#F5F0E8' }: { label: string; value: s
       </div>
       <div className="text-[12px] text-[#F5F0E8]/90 uppercase tracking-[0.15em] mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
         {label}
+      </div>
+    </div>
+  );
+}
+
+function ConnectedSearchPanel() {
+  const [query, setQuery] = useState('Adelaide');
+  const [response, setResponse] = useState<ConnectedSearchResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const runSearch = async (nextQuery = query) => {
+    const trimmed = nextQuery.trim();
+    if (trimmed.length < 2) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/exhibition/search?q=${encodeURIComponent(trimmed)}&limit=8`, { cache: 'no-store' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'Search failed');
+      setResponse(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Search failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    runSearch('Adelaide');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const cards = response?.answer?.cards || [];
+
+  return (
+    <div className="p-3 space-y-3">
+      <div>
+        <div className="text-[12px] text-[#F5F0E8]/95 uppercase tracking-[0.15em] mb-2" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+          Connected Search
+        </div>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            runSearch();
+          }}
+          className="flex gap-1"
+        >
+          <div className="relative flex-1">
+            <Search className="absolute left-2 top-2.5 w-3.5 h-3.5 text-[#F5F0E8]/50" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              className="w-full bg-white/5 border border-white/10 text-[#F5F0E8] pl-7 pr-2 py-2 text-xs outline-none focus:border-[#DC2626]"
+              style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+              placeholder="Search org, place, funder"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="px-2 border border-white/10 bg-white/5 text-[#F5F0E8]/90 hover:border-[#DC2626] disabled:opacity-50"
+            aria-label="Run connected search"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ChevronRight className="w-4 h-4" />}
+          </button>
+        </form>
+      </div>
+
+      {error && (
+        <p className="text-[12px] text-[#DC2626]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+          {error}
+        </p>
+      )}
+
+      {loading && !response && (
+        <div className="border border-white/10 bg-white/[0.03] p-3 flex items-start gap-2">
+          <Loader2 className="w-4 h-4 animate-spin text-[#DC2626] flex-shrink-0 mt-0.5" />
+          <p className="text-[12px] text-[#F5F0E8]/70 leading-snug" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+            Connecting organisations, money, oversight and source records...
+          </p>
+        </div>
+      )}
+
+      {response?.answer && (
+        <div className="space-y-3 max-h-[440px] overflow-y-auto pr-1">
+          <div className="border-l-2 border-[#DC2626] pl-3">
+            <div className="text-sm font-bold text-[#F5F0E8]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              {response.answer.headline}
+            </div>
+            <p className="text-[12px] text-[#F5F0E8]/80 leading-snug mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+              {response.answer.summary}
+            </p>
+          </div>
+
+          {cards.slice(0, 2).map((card) => (
+            <div key={card.id} className="border border-white/10 bg-white/[0.03] p-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="text-xs font-bold text-[#F5F0E8] leading-snug">{card.title}</div>
+                  <div className="text-[11px] text-[#F5F0E8]/60 uppercase tracking-wider mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                    {card.subtitle}
+                  </div>
+                </div>
+                {card.url && (
+                  <Link href={card.url} className="text-[#DC2626] hover:text-[#F5F0E8] flex-shrink-0" aria-label={`Open ${card.title}`}>
+                    <ChevronRight className="w-4 h-4" />
+                  </Link>
+                )}
+              </div>
+              <p className="text-[12px] text-[#F5F0E8]/80 leading-snug mt-2" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                {card.summary}
+              </p>
+              <div className="mt-3 space-y-1.5">
+                {card.connections.slice(0, 8).map((connection) => (
+                  <div key={`${card.id}:${connection.kind}:${connection.label}`} className="border-l border-white/10 pl-2">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="text-[11px] text-[#F5F0E8]/70 uppercase tracking-wider" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                        {connection.label}
+                      </span>
+                      <span className="text-[11px] font-bold text-[#F5F0E8] text-right" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                        {connection.value}
+                      </span>
+                    </div>
+                    {connection.note && (
+                      <div className="text-[11px] text-[#F5F0E8]/60 leading-snug mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                        {connection.note}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {card.evidence.length > 0 && (
+                <details className="mt-3 group">
+                  <summary className="cursor-pointer text-[11px] text-[#DC2626] uppercase tracking-[0.15em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                    Evidence ({card.evidence.length})
+                  </summary>
+                  <div className="mt-2 space-y-2">
+                    {card.evidence.map((item) => (
+                      <div key={`${card.id}:${item.label}:${item.sourceTable}`} className="text-[11px] leading-snug text-[#F5F0E8]/70" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                        <div className="text-[#F5F0E8]/90">{item.label}</div>
+                        <div>{item.detail}</div>
+                        <div className="text-[#F5F0E8]/45">{item.sourceTable}</div>
+                        {item.sourceUrl && (
+                          <a href={item.sourceUrl} target="_blank" rel="noreferrer" className="text-[#DC2626] hover:text-[#F5F0E8] break-all">
+                            Source
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              )}
+            </div>
+          ))}
+
+          {response.answer.caveats.length > 0 && (
+            <div className="border border-amber-500/25 bg-amber-500/10 p-2">
+              <div className="text-[11px] text-amber-300 uppercase tracking-[0.15em] mb-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                Coverage
+              </div>
+              <ul className="space-y-1">
+                {response.answer.caveats.slice(0, 4).map((caveat) => (
+                  <li key={caveat} className="text-[11px] text-amber-100/80 leading-snug" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                    {caveat}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CampaignTakeawayPanel({ summary }: { summary: IntelData['summary'] }) {
+  const [placeCard, setPlaceCard] = useState<ConnectedSearchCard | undefined>();
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadAdelaideGraph() {
+      try {
+        const res = await fetch('/api/exhibition/search?q=Adelaide&limit=8', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data: ConnectedSearchResponse = await res.json();
+        if (!active) return;
+        setPlaceCard(data.answer?.cards.find((card) => card.type === 'place') || data.answer?.cards[0]);
+      } catch {
+        if (active) setPlaceCard(undefined);
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+
+    loadAdelaideGraph();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const coreFrontline = connectionByLabel(placeCard, 'Core Tier 1 frontline');
+  const evidenceUniverse = connectionByLabel(placeCard, 'Evidence-linked org universe');
+  const programs = connectionByLabel(placeCard, 'Program operators');
+  const detention = connectionByLabel(placeCard, 'Detention and government side');
+  const funding = connectionByLabel(placeCard, 'Known funding rows');
+  const oversight = connectionByLabel(placeCard, 'Oversight evidence');
+
+  const facts = [
+    {
+      label: 'Confirmed frontline',
+      value: coreFrontline?.value || '4 orgs',
+      note: coreFrontline?.note || 'Confirmed Tier 1 rows for the Adelaide youth justice surface.',
+    },
+    {
+      label: 'Connected network',
+      value: evidenceUniverse?.value || `${summary.orgsIndexed.toLocaleString()} indexed orgs`,
+      note: evidenceUniverse?.note || 'Broader evidence graph across organisations, money, programs and facilities.',
+    },
+    {
+      label: 'Programs and custody',
+      value: [programs?.value, detention?.value].filter(Boolean).join(' + ') || `${summary.programsCatalogued.toLocaleString()} programs`,
+      note: detention?.note || programs?.note || 'Program, facility and government-side records are shown as separate evidence layers.',
+    },
+    {
+      label: 'Money and oversight',
+      value: funding?.value || `$${summary.fundingTrackedBillions.toFixed(1)}B tracked`,
+      note: [funding?.note, oversight?.value].filter(Boolean).join('; ') || `${summary.strongEvidenceCount.toLocaleString()} strong evidence records indexed.`,
+    },
+  ];
+
+  const cardText = [
+    'CONTAINED Adelaide civic intelligence',
+    '',
+    ...facts.map((fact) => `${fact.label}: ${fact.value} - ${fact.note}`),
+    '',
+    'Stay connected:',
+    CAMPAIGN_SHARE_URL,
+  ].join('\n');
+
+  const messageText = [
+    'CONTAINED Adelaide civic intelligence:',
+    `${evidenceUniverse?.value || `${summary.orgsIndexed.toLocaleString()} indexed orgs`} connected across youth justice evidence.`,
+    `${programs?.value || `${summary.programsCatalogued.toLocaleString()} programs`} and ${funding?.value || `$${summary.fundingTrackedBillions.toFixed(1)}B tracked`} in the data surface.`,
+    CAMPAIGN_SHARE_URL,
+  ].join('\n');
+
+  const encodedCard = encodeURIComponent(cardText);
+  const encodedMessage = encodeURIComponent(messageText);
+  const mailtoHref = `mailto:?subject=${encodeURIComponent('CONTAINED Adelaide civic intelligence')}&body=${encodedCard}`;
+  const smsHref = `sms:?&body=${encodedMessage}`;
+
+  const copyCard = async () => {
+    try {
+      await navigator.clipboard.writeText(cardText);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  const printCard = () => {
+    const printWindow = window.open('', '_blank', 'noopener,noreferrer,width=520,height=720');
+    if (!printWindow) return;
+    const rows = facts
+      .map(
+        (fact) => `
+          <section>
+            <div class="label">${escapeHtml(fact.label)}</div>
+            <div class="value">${escapeHtml(fact.value)}</div>
+            <p>${escapeHtml(fact.note)}</p>
+          </section>
+        `
+      )
+      .join('');
+
+    printWindow.document.write(`<!doctype html>
+      <html>
+        <head>
+          <title>CONTAINED Adelaide Takeaway</title>
+          <style>
+            * { box-sizing: border-box; }
+            body { margin: 0; padding: 28px; font-family: Arial, sans-serif; color: #111; background: #f7f2ea; }
+            main { max-width: 420px; margin: 0 auto; border: 2px solid #111; padding: 22px; background: #fff; }
+            h1 { margin: 0 0 8px; font-size: 24px; line-height: 1; text-transform: uppercase; }
+            .kicker, .label, footer { font-family: monospace; text-transform: uppercase; letter-spacing: .12em; }
+            .kicker { color: #b91c1c; font-size: 12px; margin-bottom: 18px; }
+            section { border-top: 1px solid #ddd; padding: 14px 0; }
+            .label { font-size: 10px; color: #555; }
+            .value { font-size: 26px; font-weight: 800; margin-top: 2px; }
+            p { margin: 6px 0 0; font-size: 12px; line-height: 1.45; color: #333; }
+            footer { border-top: 2px solid #111; margin-top: 12px; padding-top: 14px; font-size: 11px; line-height: 1.5; }
+          </style>
+        </head>
+        <body>
+          <main>
+            <div class="kicker">Youth justice evidence card</div>
+            <h1>CONTAINED Adelaide</h1>
+            ${rows}
+            <footer>${escapeHtml(CAMPAIGN_SHARE_URL)}</footer>
+          </main>
+          <script>window.print();</script>
+        </body>
+      </html>`);
+    printWindow.document.close();
+    printWindow.focus();
+  };
+
+  return (
+    <div className="p-3 space-y-3">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <div className="text-[12px] text-[#F5F0E8]/95 uppercase tracking-[0.15em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+            Takeaway Card
+          </div>
+          <p className="text-[12px] text-[#F5F0E8]/70 leading-snug mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+            Fewer numbers, stronger connections, and a record people can take with them.
+          </p>
+        </div>
+        {loading ? <Loader2 className="w-4 h-4 text-[#DC2626] animate-spin flex-shrink-0 mt-0.5" /> : <Share2 className="w-4 h-4 text-[#DC2626] flex-shrink-0 mt-0.5" />}
+      </div>
+
+      <div className="border border-white/10 bg-[#F5F0E8]/[0.04] divide-y divide-white/10">
+        {facts.map((fact) => (
+          <div key={fact.label} className="p-2.5">
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="text-[11px] text-[#F5F0E8]/70 uppercase tracking-wider" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                {fact.label}
+              </span>
+              <span className="text-[12px] font-bold text-[#F5F0E8] text-right" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                {fact.value}
+              </span>
+            </div>
+            <p className="text-[11px] text-[#F5F0E8]/60 leading-snug mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+              {fact.note}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <div>
+        <div className="text-[11px] text-[#F5F0E8]/60 uppercase tracking-[0.15em] mb-2" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+          Stay Engaged
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <Link
+            href={CAMPAIGN_REGISTER_URL}
+            className="min-h-[42px] border border-white/10 bg-white/5 px-2 py-2 text-[11px] text-[#F5F0E8] hover:border-[#DC2626] flex items-center gap-2"
+            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+          >
+            <Mail className="w-3.5 h-3.5 flex-shrink-0 text-[#DC2626]" />
+            Updates
+          </Link>
+          <Link
+            href={CAMPAIGN_JOIN_URL}
+            className="min-h-[42px] border border-white/10 bg-white/5 px-2 py-2 text-[11px] text-[#F5F0E8] hover:border-[#DC2626] flex items-center gap-2"
+            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+          >
+            <Users className="w-3.5 h-3.5 flex-shrink-0 text-[#DC2626]" />
+            Join
+          </Link>
+          <a
+            href={smsHref}
+            className="min-h-[42px] border border-white/10 bg-white/5 px-2 py-2 text-[11px] text-[#F5F0E8] hover:border-[#DC2626] flex items-center gap-2"
+            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+          >
+            <MessageSquare className="w-3.5 h-3.5 flex-shrink-0 text-[#DC2626]" />
+            Message
+          </a>
+          <a
+            href={mailtoHref}
+            className="min-h-[42px] border border-white/10 bg-white/5 px-2 py-2 text-[11px] text-[#F5F0E8] hover:border-[#DC2626] flex items-center gap-2"
+            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+          >
+            <Share2 className="w-3.5 h-3.5 flex-shrink-0 text-[#DC2626]" />
+            Email
+          </a>
+          <button
+            type="button"
+            onClick={copyCard}
+            className="min-h-[42px] border border-white/10 bg-white/5 px-2 py-2 text-[11px] text-[#F5F0E8] hover:border-[#DC2626] flex items-center gap-2"
+            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+          >
+            {copied ? <Check className="w-3.5 h-3.5 flex-shrink-0 text-[#059669]" /> : <Copy className="w-3.5 h-3.5 flex-shrink-0 text-[#DC2626]" />}
+            {copied ? 'Copied' : 'Copy'}
+          </button>
+          <button
+            type="button"
+            onClick={printCard}
+            className="min-h-[42px] border border-white/10 bg-white/5 px-2 py-2 text-[11px] text-[#F5F0E8] hover:border-[#DC2626] flex items-center gap-2"
+            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+          >
+            <Printer className="w-3.5 h-3.5 flex-shrink-0 text-[#DC2626]" />
+            Print
+          </button>
+        </div>
+        <Link
+          href={CAMPAIGN_STORY_URL}
+          className="mt-2 min-h-[42px] border border-[#DC2626]/40 bg-[#DC2626]/10 px-2 py-2 text-[11px] text-[#F5F0E8] hover:bg-[#DC2626]/20 flex items-center gap-2"
+          style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+        >
+          <MessageSquareQuote className="w-3.5 h-3.5 flex-shrink-0 text-[#DC2626]" />
+          Share a story or local signal
+        </Link>
       </div>
     </div>
   );
@@ -955,7 +1423,13 @@ export function TourIntelligenceContent() {
       {/* Main content */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* Left sidebar — stop list (hidden on mobile when panel open) */}
-        <div className={`w-56 flex-shrink-0 border-r border-white/10 overflow-y-auto bg-[#0A0A0A] ${showPanel ? 'hidden md:block' : ''}`}>
+        <div className={`w-80 flex-shrink-0 border-r border-white/10 overflow-y-auto bg-[#0A0A0A] ${showPanel ? 'hidden md:block' : ''}`}>
+          <div className="border-b border-white/10">
+            <ConnectedSearchPanel />
+          </div>
+          <div className="border-b border-white/10">
+            <CampaignTakeawayPanel summary={data.summary} />
+          </div>
           <div className="p-3 border-b border-white/10">
             <div className="text-[12px] text-[#F5F0E8]/95 uppercase tracking-[0.15em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
               {data.stops.length} Stops &middot; {tourDateWindow(data.stops)}

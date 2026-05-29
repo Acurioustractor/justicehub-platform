@@ -103,6 +103,7 @@ export default function GrassrootsActivationPreviewPage() {
   const [selectedBasecamp, setSelectedBasecamp] = useState<Basecamp | null>(null);
   const [expandedPhase, setExpandedPhase] = useState<number | null>(1);
   const [calculatorAmount, setCalculatorAmount] = useState(100000);
+  const foundingBasecampCount = seedData.basecamps.length;
 
   const calculatedBenefits = useMemo(() => {
     const stateGovShare = calculatorAmount * 0.3;
@@ -182,7 +183,7 @@ export default function GrassrootsActivationPreviewPage() {
           </div>
           <div className="flex items-center gap-2 text-sm text-emerald-300">
             <span className="px-2 py-1 bg-emerald-600/30 text-emerald-200 rounded">PREVIEW</span>
-            <span>{seedData.keyMetrics.basecamps} Basecamps</span>
+            <span>{foundingBasecampCount} Basecamps</span>
             <span>•</span>
             <span>{seedData.keyMetrics.corePartners} CORE + {seedData.keyMetrics.networkPartners} NETWORK</span>
           </div>
@@ -285,7 +286,7 @@ export default function GrassrootsActivationPreviewPage() {
             <section className="grid md:grid-cols-4 gap-6">
               <div className="bg-white p-6 rounded-xl border shadow-sm text-center">
                 <MapPin className="w-8 h-8 text-emerald-600 mx-auto mb-3" />
-                <p className="text-3xl font-bold">{seedData.keyMetrics.basecamps}</p>
+                <p className="text-3xl font-bold">{foundingBasecampCount}</p>
                 <p className="text-gray-600">Founding Basecamps</p>
               </div>
               <div className="bg-white p-6 rounded-xl border shadow-sm text-center">
@@ -320,7 +321,7 @@ export default function GrassrootsActivationPreviewPage() {
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {seedData.basecamps.map(basecamp => (
                   <div
                     key={basecamp.id}
@@ -381,7 +382,7 @@ export default function GrassrootsActivationPreviewPage() {
               <div className="p-6 border-b">
                 <h2 className="text-2xl font-bold">Founding Basecamps</h2>
                 <p className="text-gray-600">
-                  Interactive map showing our 4 founding community basecamps and future CORE/NETWORK partners.
+                  Interactive map showing our founding community basecamps and future CORE/NETWORK partners.
                 </p>
               </div>
               <div className="h-[500px]">
@@ -399,7 +400,7 @@ export default function GrassrootsActivationPreviewPage() {
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="flex items-center gap-3">
                   <div className="w-4 h-4 rounded-full bg-emerald-500" />
-                  <span className="text-sm">Founding Basecamps (4)</span>
+                  <span className="text-sm">Founding Basecamps ({foundingBasecampCount})</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-4 h-4 rounded-full bg-amber-500" />
@@ -633,7 +634,7 @@ export default function GrassrootsActivationPreviewPage() {
                 <div className="flex flex-wrap justify-center gap-6 text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-emerald-500" />
-                    <span>Founding Basecamps (4)</span>
+                    <span>Founding Basecamps ({foundingBasecampCount})</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-amber-500" />

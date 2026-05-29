@@ -13,6 +13,7 @@ import {
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
 import { DetentionCentreMap } from '@/components/organizations/DetentionCentreMap';
+import { WhyClaimOrganizationPanel } from '@/components/organizations/OrganizationJourneyPanels';
 import { FALLBACK_DETENTION_FACILITIES } from '@/lib/organizations/fallback-detention-centres';
 
 export const dynamic = 'force-dynamic';
@@ -363,6 +364,8 @@ export default async function CentrePage({
             </div>
           </div>
         </section>
+
+        <WhyClaimOrganizationPanel claimHref="/hub" variant="centre" />
 
         <section className="py-12">
           <div className="container-justice">

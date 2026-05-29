@@ -10,6 +10,7 @@ interface NavSection {
   items: {
     title: string;
     slug: string;
+    href?: string;
     wordCount?: string;
   }[];
 }
@@ -19,13 +20,13 @@ const navigation: NavSection[] = [
     title: 'Mindaroo Foundation Pitch 🎯',
     icon: <Book className="w-5 h-5" />,
     items: [
-      { title: 'Pitch Package Hub ⭐', slug: 'mindaroo-pitch', wordCount: 'Overview' },
-      { title: 'One-Page Executive Pitch', slug: 'mindaroo-pitch/one-pager', wordCount: '3K words' },
-      { title: 'Strategic Pitch (Complete)', slug: 'mindaroo-pitch/strategic-pitch', wordCount: '21K words' },
-      { title: 'Sovereignty Flywheel Visual', slug: 'mindaroo-pitch/sovereignty-flywheel', wordCount: '6K words' },
-      { title: 'Budget Breakdown (3 Years)', slug: 'mindaroo-pitch/budget-breakdown', wordCount: '8K words' },
-      { title: 'Research & Evidence Paper', slug: 'mindaroo-pitch/research-paper', wordCount: '12K words' },
-      { title: 'Platform Screenshots Gallery', slug: 'mindaroo-pitch/screenshots', wordCount: '19 images' },
+      { title: 'Pitch Package Hub ⭐', slug: 'minderoo-pitch', href: '/pitch/minderoo', wordCount: 'Overview' },
+      { title: 'One-Page Executive Pitch', slug: 'minderoo-one-pager', wordCount: '3K words' },
+      { title: 'Strategic Pitch (Complete)', slug: 'minderoo-strategic-pitch', wordCount: '21K words' },
+      { title: 'Sovereignty Flywheel Visual', slug: 'sovereignty-flywheel-visual', wordCount: '6K words' },
+      { title: 'Budget Breakdown (3 Years)', slug: 'minderoo-budget-breakdown', wordCount: '8K words' },
+      { title: 'Research & Evidence Paper', slug: 'minderoo-research-paper', wordCount: '12K words' },
+      { title: 'Platform Screenshots Gallery', slug: 'minderoo-screenshots', href: '/screenshots/mindaroo-pitch/README.md', wordCount: '19 images' },
     ],
   },
   // INTERNAL SECTIONS - Hidden for Mindaroo pitch presentation
@@ -89,11 +90,12 @@ export function WikiSidebar() {
             </div>
             <ul className="mt-2 space-y-1">
               {section.items.map((item) => {
-                const isActive = pathname === `/wiki/${item.slug}`;
+                const href = item.href || `/wiki/${item.slug}`;
+                const isActive = pathname === href;
                 return (
                   <li key={item.slug}>
                     <Link
-                      href={`/wiki/${item.slug}`}
+                      href={href}
                       className={`
                         block px-3 py-2 rounded-md text-sm transition-colors
                         ${

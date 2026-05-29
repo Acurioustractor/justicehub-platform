@@ -11,26 +11,14 @@ const supabase = createClient();
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const redirectParam = searchParams.get('redirect') || '';
+  const isClaimRedirect = redirectParam.includes('claim=1');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<string | null>(null);
   const [error, setError] = useState(searchParams.get('error') === 'auth_failed' ? 'Authentication failed. Please try again.' : '');
   const [mode, setMode] = useState<'login' | 'reset' | 'magic-link' | 'phone'>('magic-link');
-  const [devBypassing, setDevBypassing] = useState(false);
-
-  // Dev bypass: on localhost, skip login entirely
-  useState(() => {
-    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-      setDevBypassing(true);
-      const redirect = searchParams.get('redirect') || '/';
-      window.location.href = redirect;
-    }
-  });
-
-  if (devBypassing) {
-    return <div className="min-h-screen flex items-center justify-center"><p className="text-gray-500">Dev bypass — redirecting...</p></div>;
-  }
   const [resetSent, setResetSent] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [phone, setPhone] = useState('');
@@ -243,6 +231,15 @@ function LoginForm() {
         <div className="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <h1 className="text-4xl font-black mb-2">{modeTitle}</h1>
           <p className="text-earth-700 mb-8">{modeSubtitle}</p>
+
+          {isClaimRedirect && (
+            <div className="mb-6 border-2 border-purple-700 bg-purple-50 px-4 py-3 text-sm text-purple-950">
+              <div className="font-black">Sign in to claim this organization</div>
+              <p className="mt-1">
+                After sign-in, you will return to the organization profile to submit the claim.
+              </p>
+            </div>
+          )}
 
           {error && (
             <div className="bg-red-100 border-2 border-red-600 text-red-800 px-4 py-3 mb-6 font-bold">
