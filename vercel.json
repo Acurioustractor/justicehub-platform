@@ -189,6 +189,10 @@
       "schedule": "0 4 * * 1"
     },
     {
+      "path": "/api/cron/justice-matrix/auto-publish",
+      "schedule": "45 4 * * *"
+    },
+    {
       "path": "/api/cron/justice-matrix/embed-new",
       "schedule": "30 3 * * *"
     },
