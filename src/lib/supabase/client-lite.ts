@@ -5,6 +5,12 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 
 export type LooseBrowserSupabaseClient = SupabaseClient<any, 'public', any>
 
+const browserLock = async <T>(
+  _name: string,
+  _acquireTimeout: number,
+  fn: () => Promise<T>
+) => fn()
+
 /**
  * Lightweight browser client for residual admin/navigation surfaces that do not
  * need the full generated Database type graph during compilation.
@@ -15,6 +21,9 @@ export function createClient(): LooseBrowserSupabaseClient {
 
   if (!url || !key) {
     return createBrowserClient<any>('https://placeholder.supabase.co', 'placeholder-key', {
+      auth: {
+        lock: browserLock,
+      },
       cookies: {
         getAll() {
           return []
@@ -25,6 +34,9 @@ export function createClient(): LooseBrowserSupabaseClient {
   }
 
   return createBrowserClient<any>(url, key, {
+    auth: {
+      lock: browserLock,
+    },
     cookies: {
       getAll() {
         if (typeof document === 'undefined') {
