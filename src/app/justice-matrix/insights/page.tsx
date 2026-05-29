@@ -168,7 +168,7 @@ export default async function InsightsPage() {
           {/* Outcomes */}
           <Block kicker="Outcomes" title="What courts have done">
             <p className="text-base leading-7 mb-6 max-w-3xl" style={{ color: '#584b40' }}>
-              Of {totalCases} cases in the matrix, {outcomeCounts.favorable} ({pct(outcomeCounts.favorable, totalCases)}%) resolved favorably, {outcomeCounts.adverse} ({pct(outcomeCounts.adverse, totalCases)}%) adversely, and {outcomeCounts.pending} ({pct(outcomeCounts.pending, totalCases)}%) remain pending. {outcomeCounts.untagged} are not yet tagged with an outcome — a curation gap rather than a substantive one.
+              Of {totalCases} cases in the matrix, {outcomeCounts.favorable} ({pct(outcomeCounts.favorable, totalCases)}%) resolved favorably, {outcomeCounts.adverse} ({pct(outcomeCounts.adverse, totalCases)}%) adversely, and {outcomeCounts.pending} ({pct(outcomeCounts.pending, totalCases)}%) remain pending. {outcomeCounts.untagged} are not yet tagged with an outcome, a curation gap rather than a substantive one.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <Stat tone="good" label="Favorable" value={outcomeCounts.favorable} share={pct(outcomeCounts.favorable, totalCases)} />
@@ -280,7 +280,7 @@ export default async function InsightsPage() {
           {/* Live state */}
           <Block kicker="Live state" title="What's still moving">
             <p className="text-base leading-7 mb-6 max-w-3xl" style={{ color: '#584b40' }}>
-              {ongoingShare}% of campaigns in the matrix are tagged ongoing — advocacy work where an organiser can still pick up a phone, a strategy, or a coalition. Newest additions sit at the top.
+              {ongoingShare}% of campaigns in the matrix are tagged ongoing: advocacy work where an organiser can still pick up a phone, a strategy, or a coalition. Newest additions sit at the top.
             </p>
             <div className="grid md:grid-cols-2 gap-6">
               <RecentList
