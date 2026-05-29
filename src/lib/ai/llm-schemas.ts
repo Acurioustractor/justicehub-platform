@@ -188,6 +188,60 @@ export const GovernmentProgramsResponseSchema = z.object({
 export type GovernmentProgram = z.infer<typeof GovernmentProgramSchema>;
 
 // ---------------------------------------------------------------------------
+// Foundation grant extraction schema
+// ---------------------------------------------------------------------------
+
+export const FOUNDATION_GRANT_CONFIDENCE = [
+  'high',
+  'medium',
+  'low',
+] as const;
+
+export const FOUNDATION_GRANT_YJ_HINTS = [
+  'direct_yj_service',
+  'yj_research',
+  'yj_advocacy',
+  'broader_justice_includes_yj',
+  'indigenous_youth_general',
+  'not_yj',
+] as const;
+
+export const FoundationGrantExtractionItemSchema = z.object({
+  grantee_name: z.string().min(2).max(300),
+  grant_amount: z.number().nonnegative().nullable().optional(),
+  grant_year: z
+    .number()
+    .int()
+    .min(2006)
+    .max(new Date().getFullYear() + 1),
+  program_name: z.string().max(300).nullable().optional(),
+  evidence_text: z.string().min(10).max(1000),
+  source_section: z.string().max(200).nullable().optional(),
+  confidence: z.enum(FOUNDATION_GRANT_CONFIDENCE).catch('medium'),
+  yj_relevance_hint: z.enum(FOUNDATION_GRANT_YJ_HINTS).catch('not_yj'),
+});
+
+export const FoundationGrantExtractionResponseSchema = z.object({
+  grants: z.array(FoundationGrantExtractionItemSchema).default([]),
+});
+
+export type FoundationGrantExtractionItem = z.infer<typeof FoundationGrantExtractionItemSchema>;
+export type FoundationGrantExtractionResponse = z.infer<typeof FoundationGrantExtractionResponseSchema>;
+
+export const FoundationGrantYjClassificationSchema = z.object({
+  yj_relevant: z.boolean(),
+  yj_category: z.enum(FOUNDATION_GRANT_YJ_HINTS),
+  yj_confidence: z.coerce.number().min(0).max(1),
+  yj_evidence_snippet: z
+    .string()
+    .min(5)
+    .transform((s) => s.slice(0, 300))
+    .default('No clear youth justice evidence in grant input.'),
+});
+
+export type FoundationGrantYjClassification = z.infer<typeof FoundationGrantYjClassificationSchema>;
+
+// ---------------------------------------------------------------------------
 // Media sentiment analysis schema
 // ---------------------------------------------------------------------------
 
@@ -253,6 +307,15 @@ export const JusticeMatrixDiscoveryItemSchema = z.object({
   // Whether this item is within the refugee / asylum protection domain.
   refugee_related: z.boolean().default(false),
   confidence: z.number().min(0).max(1).default(0.5),
+  // Deterministic enrichment captured at scan time from the source API (not
+  // LLM, not editorial). HUDOC importance -> precedent_strength, conclusion ->
+  // outcome; CourtListener citeCount -> precedent_strength, native judges/court.
+  // The auto-publish promote maps these onto the case. Optional: adapters that
+  // do not have them simply omit them.
+  court: z.string().nullable().optional(),
+  precedent_strength: z.enum(['high', 'medium', 'low']).nullable().optional(),
+  outcome: z.enum(['favorable', 'adverse', 'pending']).nullable().optional(),
+  judges: z.array(z.string()).nullable().optional(),
 });
 
 export const JusticeMatrixDiscoveryResponseSchema = z.object({
