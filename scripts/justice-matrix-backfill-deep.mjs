@@ -52,12 +52,15 @@ if (!env.NEXT_PUBLIC_SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
 
 const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 
+// Claude is first: most capable at grounding legal cases, so it gets the best
+// shot at the unfilled (esp. international) backlog. The free OpenAI-compatible
+// providers follow as fallback. DeepSeek removed (key returns 402 / no credits).
 const PROVIDERS = [
+  { name: 'anthropic', key: 'ANTHROPIC_API_KEY', anthropic: true,                                              model: 'claude-sonnet-4-6' },
   { name: 'groq',      key: 'GROQ_API_KEY',      base: 'https://api.groq.com/openai/v1',                       model: 'llama-3.3-70b-versatile' },
   { name: 'gemini',    key: 'GEMINI_API_KEY',    base: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-2.5-flash' },
   { name: 'sambanova', key: 'SAMBANOVA_API_KEY', base: 'https://api.sambanova.ai/v1',                          model: 'Meta-Llama-3.3-70B-Instruct' },
   { name: 'minimax',   key: 'MINIMAX_API_KEY',   base: 'https://api.minimaxi.chat/v1',                         model: 'MiniMax-M2.7' },
-  { name: 'deepseek',  key: 'DEEPSEEK_API_KEY',  base: 'https://api.deepseek.com/v1',                          model: 'deepseek-chat' },
 ];
 
 // Calls available providers in order and parses the response as JSON. On HTTP
@@ -75,28 +78,47 @@ async function callLLMJson(prompt, attempts = 2) {
         const ctrl = new AbortController();
         const t = setTimeout(() => ctrl.abort(), 45000);
         try {
-          const res = await fetch(`${p.base}/chat/completions`, {
-            method: 'POST',
-            headers: {
-              'content-type': 'application/json',
-              authorization: `Bearer ${env[p.key]}`,
-            },
-            body: JSON.stringify({
-              model: p.model,
-              messages: [{ role: 'user', content: prompt }],
-              max_tokens: 1500,
-              response_format: { type: 'json_object' },
-            }),
-            signal: ctrl.signal,
-          });
+          // Anthropic uses its own Messages API (not OpenAI-compatible: different
+          // endpoint, headers, and response shape; no response_format — we rely
+          // on the prompt's "return ONLY valid JSON" + the tolerant parser).
+          const res = p.anthropic
+            ? await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                  'content-type': 'application/json',
+                  'x-api-key': env[p.key],
+                  'anthropic-version': '2023-06-01',
+                },
+                body: JSON.stringify({
+                  model: p.model,
+                  max_tokens: 1500,
+                  messages: [{ role: 'user', content: prompt }],
+                }),
+                signal: ctrl.signal,
+              })
+            : await fetch(`${p.base}/chat/completions`, {
+                method: 'POST',
+                headers: {
+                  'content-type': 'application/json',
+                  authorization: `Bearer ${env[p.key]}`,
+                },
+                body: JSON.stringify({
+                  model: p.model,
+                  messages: [{ role: 'user', content: prompt }],
+                  max_tokens: 1500,
+                  response_format: { type: 'json_object' },
+                }),
+                signal: ctrl.signal,
+              });
           if (!res.ok) {
             lastErr = new Error(`${p.name} ${res.status}`);
             continue;
           }
           const json = await res.json();
-          const text = (json.choices?.[0]?.message?.content ?? '')
-            .replace(/<think>[\s\S]*?<\/think>/g, '')
-            .trim();
+          const rawText = p.anthropic
+            ? json.content?.[0]?.text ?? ''
+            : json.choices?.[0]?.message?.content ?? '';
+          const text = rawText.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
           try {
             return parseJSON(text);
           } catch (pe) {
