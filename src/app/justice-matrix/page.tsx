@@ -1,244 +1,310 @@
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { ArrowRight, Globe, Scale, Megaphone, Database, Search } from 'lucide-react';
-
-const DISPLAY = "'Cormorant Garamond', Georgia, serif";
+import { ArrowRight, Globe, Scale, Megaphone, Database, Search, BookOpen, Map as MapIcon } from 'lucide-react';
+import { bucketJurisdiction } from '@/lib/justice-matrix/jurisdiction';
 
 export const dynamic = 'force-dynamic';
+
+// Local "research tool" tokens — matches /justice-matrix/explore so the entry
+// point and the tool feel like one experience. Scoped to this route; the global
+// JusticeHub editorial design system is not used or modified here.
+const SANS = "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+const MONO = "'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
+const C = {
+  page: '#fafafa',
+  surface: '#ffffff',
+  border: '#e4e4e7',
+  ink: '#18181b',
+  body: '#3f3f46',
+  muted: '#71717a',
+  accent: '#4a2560',
+  accentSoft: 'rgba(74,37,96,0.08)',
+  barBg: '#1c1420',
+  gold: '#d3b583',
+};
 
 interface Stats {
   cases: number;
   campaigns: number;
+  evidence: number;
   sources: number;
-  jurisdictions: number;
   regions: number;
   refugeeCases: number;
-  ongoingCampaigns: number;
 }
 
 async function loadStats(): Promise<Stats> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createServiceClient() as any;
-  const [casesCount, campaignsCount, sourcesCount, jurisData, refugeeCount, ongoingCount] =
+  const [casesCount, campaignsCount, evidenceCount, sourcesCount, jurisData, refugeeCount] =
     await Promise.all([
       supabase.from('justice_matrix_cases').select('*', { count: 'exact', head: true }),
       supabase.from('justice_matrix_campaigns').select('*', { count: 'exact', head: true }),
+      // Consent-gated, same as explore: excludes 'Strictly Private'.
+      supabase
+        .from('alma_evidence')
+        .select('*', { count: 'exact', head: true })
+        .in('consent_level', ['Public Knowledge Commons', 'Community Controlled']),
       supabase.from('justice_matrix_sources').select('*', { count: 'exact', head: true }).eq('is_active', true),
-      supabase.from('justice_matrix_cases').select('jurisdiction,region'),
+      supabase.from('justice_matrix_cases').select('jurisdiction'),
       supabase
         .from('justice_matrix_cases')
         .select('*', { count: 'exact', head: true })
         .overlaps('categories', ['refugee', 'asylum']),
-      supabase
-        .from('justice_matrix_campaigns')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_ongoing', true),
     ]);
-  const jurisdictions = new Set<string>();
+  // Distinct regions via the same normalizer the explore Jurisdiction view uses.
   const regions = new Set<string>();
-  for (const row of (jurisData.data ?? []) as { jurisdiction: string; region: string | null }[]) {
-    if (row.jurisdiction) jurisdictions.add(row.jurisdiction);
-    if (row.region) regions.add(row.region);
+  for (const row of (jurisData.data ?? []) as { jurisdiction: string }[]) {
+    if (row.jurisdiction) regions.add(bucketJurisdiction(row.jurisdiction).region);
   }
+  regions.add('Australia'); // evidence is Australia-grounded
   return {
     cases: casesCount.count ?? 0,
     campaigns: campaignsCount.count ?? 0,
+    evidence: evidenceCount.count ?? 0,
     sources: sourcesCount.count ?? 0,
-    jurisdictions: jurisdictions.size,
     regions: regions.size,
     refugeeCases: refugeeCount.count ?? 0,
-    ongoingCampaigns: ongoingCount.count ?? 0,
   };
 }
 
 export default async function JusticeMatrixLandingPage() {
   const stats = await loadStats();
+  const total = stats.cases + stats.campaigns + stats.evidence;
 
   return (
-    <main style={{ background: '#f8f1e6', color: '#2b2530' }} className="min-h-screen">
-        {/* HERO */}
-        <section
-          style={{ background: 'radial-gradient(circle at 30% 0%, #5a2d74, #38184d 60%, #2c1240)' }}
-          className="relative overflow-hidden"
-        >
-          <div
-            className="absolute inset-0 opacity-50 pointer-events-none"
-            style={{
-              backgroundImage: 'radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1px)',
-              backgroundSize: '40px 40px',
-            }}
-          />
-          <div className="relative max-w-7xl mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-14 md:pb-20">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.36em] text-[#d3b583] mb-5">
-              Justice Matrix
+    <main style={{ background: C.page, color: C.ink, fontFamily: SANS }} className="min-h-screen">
+      {/* HERO — dark panel matching the explore search bar, with the funnel */}
+      <section
+        className="relative overflow-hidden"
+        style={{ background: 'radial-gradient(circle at 22% 0%, #3a1f4d, #1c1420 70%)' }}
+      >
+        <div
+          className="absolute inset-0 opacity-40 pointer-events-none"
+          style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1px)', backgroundSize: '40px 40px' }}
+        />
+        <div className="relative max-w-6xl mx-auto px-5 md:px-8 pt-16 md:pt-24 pb-12 md:pb-16">
+          <div style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '0.26em', color: C.gold }} className="uppercase mb-5">
+            Justice Matrix
+          </div>
+          <h1 className="text-white font-semibold tracking-tight text-4xl md:text-6xl max-w-3xl leading-[1.05] mb-5">
+            Find the precedent, playbook, or evidence, then move.
+          </h1>
+          <p className="text-[15px] md:text-base max-w-2xl leading-7 mb-8" style={{ color: '#cbb8d6' }}>
+            A searchable clearing house for strategic litigation, advocacy, and Australian youth-justice evidence.
+            Mapped and connected across {stats.regions} regions so a win in one place can be reused in another.
+          </p>
+
+          {/* Funnel: native GET form → lands in the explore tool */}
+          <form action="/justice-matrix/explore" className="max-w-2xl flex items-stretch gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: C.muted }} />
+              <input
+                type="text"
+                name="q"
+                placeholder="Search cases, campaigns, evidence…"
+                aria-label="Search the Justice Matrix"
+                className="w-full rounded-md pl-9 pr-3 py-3 text-[15px] focus:outline-none"
+                style={{ background: '#fff', color: C.ink, border: '1px solid #d4d4d8' }}
+              />
             </div>
-            <h1
-              style={{ fontFamily: DISPLAY, fontWeight: 500, lineHeight: 1.02 }}
-              className="text-5xl md:text-7xl text-white max-w-4xl mb-7"
+            <button
+              type="submit"
+              className="rounded-md px-5 text-sm font-semibold"
+              style={{ background: C.gold, color: '#1c1420' }}
             >
-              A clearing house for strategic litigation and advocacy.
-            </h1>
-            <p className="text-[#eadff2] text-lg md:text-xl max-w-3xl leading-8">
-              {stats.cases.toLocaleString()} strategic cases, {stats.campaigns.toLocaleString()} advocacy campaigns, {stats.sources.toLocaleString()} active sources. Curated across {stats.regions} regions and {stats.jurisdictions.toLocaleString()} jurisdictions so practitioners can find the precedent or playbook they need, adapt it, and move.
-            </p>
+              Search
+            </button>
+          </form>
 
-            <div className="flex flex-wrap gap-3 mt-9">
-              <PrimaryCta href="/justice-matrix/explore">
-                <Search className="w-4 h-4" />
-                Explore everything
-              </PrimaryCta>
-              <SecondaryCta href="/justice-matrix/cases">
-                <Scale className="w-4 h-4" />
-                {stats.cases.toLocaleString()} cases
-              </SecondaryCta>
-              <SecondaryCta href="/justice-matrix/campaigns">
-                <Megaphone className="w-4 h-4" />
-                {stats.campaigns.toLocaleString()} campaigns
-              </SecondaryCta>
-              <SecondaryCta href="/justice-matrix/insights">
-                Insights
-              </SecondaryCta>
-              <SecondaryCta href="/justice-matrix/contribute">
-                Contribute
-              </SecondaryCta>
+          {/* Quick entries — all deep-link into the explore tool */}
+          <div className="flex flex-wrap gap-2 mt-4" style={{ fontFamily: MONO, fontSize: 12 }}>
+            <QuickLink href="/justice-matrix/explore">Browse all {total.toLocaleString()}</QuickLink>
+            <QuickLink href="/justice-matrix/explore?type=case">Cases {stats.cases}</QuickLink>
+            <QuickLink href="/justice-matrix/explore?type=campaign">Campaigns {stats.campaigns}</QuickLink>
+            <QuickLink href="/justice-matrix/explore?type=evidence">Evidence {stats.evidence}</QuickLink>
+            <QuickLink href="/justice-matrix/explore?view=jurisdiction">By jurisdiction</QuickLink>
+          </div>
+        </div>
+      </section>
+
+      {/* ENTRY TILES — the funnel, made tactile */}
+      <section className="max-w-6xl mx-auto px-5 md:px-8 py-8 md:py-10">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <EntryTile
+            href="/justice-matrix/explore?type=case"
+            icon={<Scale className="w-5 h-5" />}
+            color="#4a2560"
+            label="Cases"
+            count={stats.cases}
+            body="Strategic litigation across courts worldwide, with outcome, holding and precedent strength."
+          />
+          <EntryTile
+            href="/justice-matrix/explore?type=campaign"
+            icon={<Megaphone className="w-5 h-5" />}
+            color="#a96a1c"
+            label="Campaigns"
+            count={stats.campaigns}
+            body="Advocacy work and tactics, with the organisations leading them."
+          />
+          <EntryTile
+            href="/justice-matrix/explore?type=evidence"
+            icon={<BookOpen className="w-5 h-5" />}
+            color="#1f6f78"
+            label="Evidence"
+            count={stats.evidence}
+            body="Australian youth-justice research and evaluations of what works, with consent respected."
+          />
+          <EntryTile
+            href="/justice-matrix/explore?view=jurisdiction"
+            icon={<MapIcon className="w-5 h-5" />}
+            color="#4a2560"
+            label="By jurisdiction"
+            count={stats.regions}
+            body="Browse by region: Australia by state, plus international courts."
+            countLabel="regions"
+          />
+        </div>
+      </section>
+
+      {/* What this is */}
+      <section className="max-w-6xl mx-auto px-5 md:px-8 pb-10 md:pb-14">
+        <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-14">
+          <div>
+            <Kicker>What this is</Kicker>
+            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-4" style={{ color: C.ink }}>
+              Built so wins don&apos;t stay isolated.
+            </h2>
+            <div className="space-y-4 text-[15px] leading-7" style={{ color: C.body }}>
+              <p>
+                Civil-rights and social-justice lawyers pursue landmark cases that defend fundamental freedoms,
+                but their victories often stay siloed, and strategies and pleadings get replicated inefficiently or lost.
+              </p>
+              <p>
+                The Justice Matrix maps, classifies and connects strategic litigation, advocacy, and the
+                Australian evidence base. An AI-assisted scanner pulls candidates from court databases and
+                civil-society sources; a human review queue decides what becomes part of the matrix.
+              </p>
             </div>
           </div>
-        </section>
-
-        {/* STATS STRIP */}
-        <section className="max-w-7xl mx-auto px-6 md:px-10 py-12 md:py-14">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard label="Strategic cases" value={stats.cases.toLocaleString()} />
-            <StatCard label="Advocacy campaigns" value={stats.campaigns.toLocaleString()} />
-            <StatCard label="Active sources" value={stats.sources.toLocaleString()} />
-            <StatCard label="Jurisdictions" value={stats.jurisdictions.toLocaleString()} />
-          </div>
-        </section>
-
-        {/* What this is */}
-        <section className="max-w-7xl mx-auto px-6 md:px-10 pb-12 md:pb-20">
-          <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-16">
-            <div>
-              <div className="text-[10px] font-semibold uppercase tracking-[0.28em] mb-3" style={{ color: '#8d6a44' }}>
-                What this is
-              </div>
-              <h2
-                style={{ fontFamily: DISPLAY, fontWeight: 500, color: '#2b2530', lineHeight: 1.1 }}
-                className="text-4xl md:text-5xl mb-6"
-              >
-                Built so wins don&apos;t stay isolated.
-              </h2>
-              <div className="space-y-5 text-lg leading-8" style={{ color: '#584b40' }}>
-                <p>
-                  Around the world, civil-rights and social-justice lawyers pursue landmark cases that defend fundamental freedoms. Their victories are often isolated. Litigation strategies, pleadings, and advocacy campaigns are replicated inefficiently or lost entirely inside national silos.
-                </p>
-                <p>
-                  The Justice Matrix maps, classifies and connects strategic litigation and advocacy across jurisdictions. It is a working ecosystem with case profiles, campaign profiles, an AI-assisted scanner that pulls candidates from court databases and civil-society sources, and a human review queue that decides what becomes part of the matrix.
-                </p>
-              </div>
-            </div>
-
-            <aside className="space-y-4">
-              <SidePanel
-                kicker="Refugee &amp; asylum"
-                title={`${stats.refugeeCases} cases, growing`}
-                body={`A working corpus of refugee and asylum jurisprudence from the UK, EU, ECtHR, US, Canada, Australia, and Africa, with linked campaigns. Filter by chip on the case list to see only this domain.`}
-                href="/justice-matrix/cases?cat=refugee,asylum"
-                ctaLabel="See refugee cases"
-              />
-              <SidePanel
-                kicker="Live campaigns"
-                title={`${stats.ongoingCampaigns} ongoing`}
-                body={`Advocacy work that is still in motion. Use the list to filter by region or topic and reach the lead organisations.`}
-                href="/justice-matrix/campaigns?status=active"
-                ctaLabel="See active campaigns"
-              />
-            </aside>
-          </div>
-        </section>
-
-        {/* How it works */}
-        <section className="max-w-7xl mx-auto px-6 md:px-10 pb-16 md:pb-24">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.28em] mb-3" style={{ color: '#8d6a44' }}>
-            How it stays current
-          </div>
-          <h2
-            style={{ fontFamily: DISPLAY, fontWeight: 500, color: '#2b2530', lineHeight: 1.1 }}
-            className="text-4xl md:text-5xl mb-10 max-w-3xl"
-          >
-            Sources to queue to matrix.
-          </h2>
-          <div className="grid md:grid-cols-3 gap-5">
-            <StepCard
-              icon={<Database className="w-5 h-5" />}
-              step="01"
-              title="Sources"
-              body={`${stats.sources} active feeds: court databases (HUDOC, CourtListener, BAILII, AustLII, CJEU), legal aggregators (UNHCR Refworld, EDAL), and civil-society networks. JSON sources are scanned by a weekly Vercel cron; HTML sources run via a Playwright + LLM CLI.`}
+          <aside className="space-y-3">
+            <SidePanel
+              kicker="Refugee & asylum"
+              title={`${stats.refugeeCases} cases`}
+              body="A working corpus of refugee and asylum jurisprudence from the UK, EU, ECtHR, US, Canada, Australia and Africa, with linked campaigns."
+              href="/justice-matrix/explore?cat=refugee,asylum"
+              ctaLabel="Open in explore"
             />
-            <StepCard
-              icon={<Globe className="w-5 h-5" />}
-              step="02"
-              title="Review queue"
-              body="Every scanned item lands in a curator queue, not the live matrix. An admin sees the candidate next to its source, edits the fields, and approves, rejects, or marks duplicate. Nothing publishes without that approval."
+            <SidePanel
+              kicker="Semantic search"
+              title="Search by meaning"
+              body="Switch to semantic mode to surface related ideas by meaning across cases, campaigns and evidence, beyond keyword matches."
+              href="/justice-matrix/explore?mode=semantic"
+              ctaLabel="Try semantic mode"
             />
-            <StepCard
-              icon={<Scale className="w-5 h-5" />}
-              step="03"
-              title="Profiles"
-              body="Approved items become case or campaign profiles, joined by category overlap so a visitor sees similar cases and linked campaigns from any profile. Copy citations, copy permalinks, follow the threads."
-            />
-          </div>
-        </section>
+          </aside>
+        </div>
+      </section>
+
+      {/* How it stays current */}
+      <section className="max-w-6xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
+        <Kicker>How it stays current</Kicker>
+        <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-8 max-w-2xl" style={{ color: C.ink }}>
+          Sources to queue to matrix.
+        </h2>
+        <div className="grid md:grid-cols-3 gap-3">
+          <StepCard
+            icon={<Database className="w-5 h-5" />}
+            step="01"
+            title="Sources"
+            body={`${stats.sources} active feeds: court databases (HUDOC, CourtListener, BAILII, AustLII, CJEU), legal aggregators (UNHCR Refworld, EDAL), and civil-society networks. Scanned by cron + a Playwright/LLM CLI.`}
+          />
+          <StepCard
+            icon={<Globe className="w-5 h-5" />}
+            step="02"
+            title="Review queue"
+            body="Every scanned item lands in a curator queue, not the live matrix. An admin sees the candidate beside its source, edits fields, and approves, rejects, or marks duplicate. Nothing publishes without approval."
+          />
+          <StepCard
+            icon={<Scale className="w-5 h-5" />}
+            step="03"
+            title="Profiles"
+            body="Approved items become case, campaign, or evidence profiles, connected by semantic similarity so any profile surfaces the related cases, campaigns and evidence around it."
+          />
+        </div>
+      </section>
     </main>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Bits and pieces (kept local; not used elsewhere yet)
+// Local UI (research-tool; not shared)
 // ---------------------------------------------------------------------------
 
-function PrimaryCta({ href, children }: { href: string; children: React.ReactNode }) {
+function Kicker({ children }: { children: React.ReactNode }) {
   return (
-    <Link
-      href={href}
-      className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border transition-colors"
-      style={{ background: '#f8f1e6', color: '#2b2530', borderColor: '#f8f1e6' }}
-    >
+    <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.18em', color: C.muted }} className="uppercase mb-2.5">
       {children}
-      <ArrowRight className="w-4 h-4" />
-    </Link>
-  );
-}
-
-function SecondaryCta({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <Link
-      href={href}
-      className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border transition-colors hover:bg-white/10"
-      style={{ background: 'transparent', color: '#f1e6f7', borderColor: 'rgba(255,255,255,0.35)' }}
-    >
-      {children}
-      <ArrowRight className="w-4 h-4" />
-    </Link>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div
-      className="rounded-[22px] border p-6"
-      style={{ background: '#fff8ef', borderColor: '#e6d7c1', boxShadow: '0 16px 40px rgba(49,31,15,0.06)' }}
-    >
-      <div className="text-[10px] font-semibold uppercase tracking-[0.22em] mb-3" style={{ color: '#8d6a44' }}>
-        {label}
-      </div>
-      <div
-        style={{ fontFamily: DISPLAY, fontWeight: 500, lineHeight: 1, color: '#2b2530' }}
-        className="text-5xl tabular-nums"
-      >
-        {value}
-      </div>
     </div>
+  );
+}
+
+function QuickLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors"
+      style={{ background: 'rgba(255,255,255,0.08)', color: '#e6dcea', border: '1px solid rgba(255,255,255,0.16)' }}
+    >
+      {children}
+      <ArrowRight className="w-3 h-3" />
+    </Link>
+  );
+}
+
+function EntryTile({
+  href,
+  icon,
+  color,
+  label,
+  count,
+  body,
+  countLabel,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  color: string;
+  label: string;
+  count: number;
+  body: string;
+  countLabel?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="group block rounded-lg border p-4 transition-colors hover:border-zinc-300"
+      style={{ background: C.surface, borderColor: C.border }}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <span className="inline-flex items-center justify-center rounded-md h-9 w-9" style={{ background: `${color}14`, color }}>
+          {icon}
+        </span>
+        <span style={{ fontFamily: MONO, fontSize: 22, color: C.ink }} className="tabular-nums">
+          {count.toLocaleString()}
+        </span>
+      </div>
+      <div className="flex items-baseline gap-1.5">
+        <span className="font-semibold text-[15px]" style={{ color: C.ink }}>
+          {label}
+        </span>
+        {countLabel && <span style={{ fontFamily: MONO, fontSize: 10, color: C.muted }}>{countLabel}</span>}
+      </div>
+      <p className="mt-1 text-[13px] leading-5" style={{ color: C.muted }}>
+        {body}
+      </p>
+      <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium group-hover:underline" style={{ color }}>
+        Open <ArrowRight className="w-3 h-3" />
+      </span>
+    </Link>
   );
 }
 
@@ -258,22 +324,20 @@ function SidePanel({
   return (
     <Link
       href={href}
-      className="block rounded-[22px] border p-6 hover:bg-white transition-colors"
-      style={{ background: '#fff8ef', borderColor: '#e6d7c1', boxShadow: '0 16px 40px rgba(49,31,15,0.06)' }}
+      className="block rounded-lg border p-5 transition-colors hover:border-zinc-300"
+      style={{ background: C.surface, borderColor: C.border }}
     >
-      <div className="text-[10px] font-semibold uppercase tracking-[0.22em] mb-2" style={{ color: '#8d6a44' }}>
-        <span dangerouslySetInnerHTML={{ __html: kicker }} />
-      </div>
-      <div style={{ fontFamily: DISPLAY, fontWeight: 500, color: '#2b2530' }} className="text-2xl mb-2 leading-snug">
+      <Kicker>{kicker}</Kicker>
+      <div className="font-semibold text-lg mb-1.5" style={{ color: C.ink }}>
         {title}
       </div>
-      <p className="text-sm leading-6" style={{ color: '#584b40' }}>
+      <p className="text-[13px] leading-6" style={{ color: C.body }}>
         {body}
       </p>
-      <div className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold" style={{ color: '#4a2560' }}>
+      <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium" style={{ color: C.accent }}>
         {ctaLabel}
         <ArrowRight className="w-4 h-4" />
-      </div>
+      </span>
     </Link>
   );
 }
@@ -290,25 +354,17 @@ function StepCard({
   body: string;
 }) {
   return (
-    <div
-      className="rounded-[22px] border p-6"
-      style={{ background: '#fff8ef', borderColor: '#e6d7c1', boxShadow: '0 16px 40px rgba(49,31,15,0.06)' }}
-    >
-      <div className="flex items-center justify-between mb-4">
-        <div className="rounded-full p-2" style={{ background: '#f3eadb', color: '#4a2560' }}>
+    <div className="rounded-lg border p-5" style={{ background: C.surface, borderColor: C.border }}>
+      <div className="flex items-center justify-between mb-3">
+        <span className="inline-flex items-center justify-center rounded-md h-9 w-9" style={{ background: C.accentSoft, color: C.accent }}>
           {icon}
-        </div>
-        <div className="text-[10px] font-semibold uppercase tracking-[0.28em]" style={{ color: '#8d6a44' }}>
-          {step}
-        </div>
+        </span>
+        <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '0.18em', color: C.muted }}>{step}</span>
       </div>
-      <div
-        style={{ fontFamily: DISPLAY, fontWeight: 500, color: '#2b2530' }}
-        className="text-2xl mb-3 leading-snug"
-      >
+      <div className="font-semibold text-lg mb-2" style={{ color: C.ink }}>
         {title}
       </div>
-      <p className="text-sm leading-6" style={{ color: '#584b40' }}>
+      <p className="text-[13px] leading-6" style={{ color: C.body }}>
         {body}
       </p>
     </div>

@@ -398,7 +398,7 @@ export default async function CaseProfilePage({ params }: { params: Promise<{ id
                               )}
                               {restricted && (
                                 <div className="text-xs mt-1 italic" style={{ color: '#a96a1c' }}>
-                                  Community controlled — access on request
+                                  Community controlled. Access on request.
                                 </div>
                               )}
                               {r.cultural_safety && (

@@ -818,7 +818,7 @@ function GroupedView({ items, counts }: { items: Hit[]; counts: Counts }) {
             </ul>
             {rows.length > 8 && (
               <p className="mt-1.5 text-xs" style={{ color: C.muted }}>
-                +{rows.length - 8} more — switch to List view or filter to this type.
+                +{rows.length - 8} more. Switch to List view or filter to this type.
               </p>
             )}
           </div>
