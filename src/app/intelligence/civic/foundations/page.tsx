@@ -29,101 +29,75 @@ interface TopRecipient {
   grant_count: number;
 }
 
-async function fetchTopFoundations(): Promise<TopFoundation[]> {
-  const supabase = createServiceClient() as any;
-  // Aggregate in JS — paginate the table because rollups require all rows
-  const totals = new Map<string, { total: number; grants: number }>();
-  let offset = 0;
-  const PAGE = 1000;
-  while (true) {
-    const { data } = await supabase
-      .from('foundation_grantees')
-      .select('foundation_name, grant_amount')
-      .range(offset, offset + PAGE - 1);
-    if (!data || data.length === 0) break;
-    for (const r of data) {
-      const name = r.foundation_name?.trim();
-      if (!name) continue;
-      const amt = Number(r.grant_amount || 0);
-      const cur = totals.get(name) || { total: 0, grants: 0 };
-      cur.total += amt;
-      cur.grants++;
-      totals.set(name, cur);
-    }
-    if (data.length < PAGE) break;
-    offset += PAGE;
-  }
-  return Array.from(totals.entries())
-    .map(([name, v]) => ({ name, total: v.total, grants: v.grants }))
-    .sort((a, b) => b.total - a.total)
-    .slice(0, 12);
+interface FoundationOverview {
+  grantRows: number;
+  topFoundations: TopFoundation[];
+  topRecipients: TopRecipient[];
+  topAccoRecipients: TopRecipient[];
 }
 
-async function fetchTopRecipients(accoOnly: boolean): Promise<TopRecipient[]> {
+async function fetchFoundationOverview(): Promise<FoundationOverview> {
   const supabase = createServiceClient() as any;
-  // Paginate foundation_grantees, aggregate per ABN, then join to organizations.
-  const byAbn = new Map<string, { total: number; grants: number }>();
-  let offset = 0;
-  const PAGE = 1000;
-  while (true) {
-    const { data } = await supabase
+  const [foundationsRes, recipientsRes, accoRecipientsRes, grantCountRes] = await Promise.all([
+    supabase
+      .from('v_entity_360')
+      .select('name, foundation_dollars_given, foundation_grants_given')
+      .gt('foundation_dollars_given', 0)
+      .order('foundation_dollars_given', { ascending: false })
+      .limit(12),
+    supabase
+      .from('v_entity_360')
+      .select('organization_id, name, slug, state, acco_certified, foundation_dollars_received, foundation_grants_received')
+      .gt('foundation_dollars_received', 0)
+      .order('foundation_dollars_received', { ascending: false })
+      .limit(12),
+    supabase
+      .from('v_entity_360')
+      .select('organization_id, name, slug, state, acco_certified, foundation_dollars_received, foundation_grants_received')
+      .eq('acco_certified', true)
+      .gt('foundation_dollars_received', 0)
+      .order('foundation_dollars_received', { ascending: false })
+      .limit(12),
+    supabase
       .from('foundation_grantees')
-      .select('grantee_abn, grant_amount')
-      .not('grantee_abn', 'is', null)
-      .range(offset, offset + PAGE - 1);
-    if (!data || data.length === 0) break;
-    for (const r of data) {
-      const abn = r.grantee_abn;
-      const amt = Number(r.grant_amount || 0);
-      if (!amt) continue;
-      const cur = byAbn.get(abn) || { total: 0, grants: 0 };
-      cur.total += amt;
-      cur.grants++;
-      byAbn.set(abn, cur);
-    }
-    if (data.length < PAGE) break;
-    offset += PAGE;
-  }
-  // Lookup orgs in batches of 100 ABNs
-  const abns = Array.from(byAbn.keys());
-  const orgsByAbn = new Map<string, { id: string; name: string; slug: string; state: string; acco_certified: boolean }>();
-  for (let i = 0; i < abns.length; i += 100) {
-    const chunk = abns.slice(i, i + 100);
-    const { data } = await supabase
-      .from('organizations')
-      .select('id, abn, name, slug, state, acco_certified')
-      .in('abn', chunk);
-    for (const o of data || []) {
-      if (!orgsByAbn.has(o.abn)) orgsByAbn.set(o.abn, o);
-    }
-  }
-  const rows: TopRecipient[] = [];
-  for (const [abn, v] of byAbn.entries()) {
-    const org = orgsByAbn.get(abn);
-    if (!org) continue;
-    if (accoOnly && !org.acco_certified) continue;
-    rows.push({
-      org_id: org.id,
-      name: org.name,
-      slug: org.slug,
-      state: org.state,
-      acco_certified: org.acco_certified,
-      total_received: v.total,
-      grant_count: v.grants,
-    });
-  }
-  return rows.sort((a, b) => b.total_received - a.total_received).slice(0, 12);
+      .select('id', { count: 'exact', head: true }),
+  ]);
+
+  if (foundationsRes.error) console.error('fetchFoundationOverview foundations failed:', foundationsRes.error.message);
+  if (recipientsRes.error) console.error('fetchFoundationOverview recipients failed:', recipientsRes.error.message);
+  if (accoRecipientsRes.error) console.error('fetchFoundationOverview ACCO recipients failed:', accoRecipientsRes.error.message);
+  if (grantCountRes.error) console.error('fetchFoundationOverview grant count failed:', grantCountRes.error.message);
+
+  const toRecipient = (row: any): TopRecipient => ({
+    org_id: row.organization_id,
+    name: row.name,
+    slug: row.slug,
+    state: row.state,
+    acco_certified: !!row.acco_certified,
+    total_received: Number(row.foundation_dollars_received || 0),
+    grant_count: Number(row.foundation_grants_received || 0),
+  });
+
+  return {
+    grantRows: grantCountRes.count || 0,
+    topFoundations: (foundationsRes.data || []).map((row: any) => ({
+      name: row.name,
+      total: Number(row.foundation_dollars_given || 0),
+      grants: Number(row.foundation_grants_given || 0),
+    })),
+    topRecipients: (recipientsRes.data || []).map(toRecipient),
+    topAccoRecipients: (accoRecipientsRes.data || []).map(toRecipient),
+  };
 }
 
 export default async function FoundationsPage() {
-  const [claims, topFoundations, topRecipients, topAccoRecipients] = await Promise.all([
+  const [claims, foundationOverview] = await Promise.all([
     getAllClaims(),
-    fetchTopFoundations(),
-    fetchTopRecipients(false),
-    fetchTopRecipients(true),
+    fetchFoundationOverview(),
   ]);
 
   const accoShareClaim = claims['access.share.foundation_dollars_to_acco.national'];
+  const { topFoundations, topRecipients, topAccoRecipients } = foundationOverview;
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -190,8 +164,8 @@ export default async function FoundationsPage() {
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-stone-900 mb-3">Top foundations by tracked spend</h2>
           <p className="text-stone-700 mb-6 max-w-2xl">
-            The largest known grant-givers in our database. This is a partial census — foundations that don&apos;t
-            publish grantee lists or report through ACNC AIS won&apos;t appear here.
+            The largest known grant-givers joined to the organisations register by ABN. This is a partial census —
+            foundations that don&apos;t publish grantee lists or report through ACNC AIS won&apos;t appear here.
           </p>
           <ol className="space-y-2">
             {topFoundations.map((f, i) => (
@@ -281,7 +255,8 @@ export default async function FoundationsPage() {
         <div className="max-w-5xl mx-auto text-sm text-stone-700">
           <p className="font-mono uppercase tracking-widest text-xs text-stone-500 mb-3">Sources</p>
           <ul className="space-y-1.5">
-            <li><strong>foundation_grantees</strong> — JusticeHub aggregation of foundation grant data from ACNC AIS + public foundation publications. 4,934+ grants from ~179 distinct foundations.</li>
+            <li><strong>foundation_grantees</strong> — JusticeHub aggregation of foundation grant data from ACNC AIS + public foundation publications. {foundationOverview.grantRows.toLocaleString()} tracked grant rows from public foundation sources.</li>
+            <li><strong>v_entity_360</strong> — organisation-linked foundation rollups used for the top foundation and recipient lists on this page.</li>
             <li><strong>oric_corporations</strong> — Office of the Registrar of Indigenous Corporations register. Authoritative ACCO test.</li>
             <li><strong>organizations.acco_certified</strong> — TRUE when an org&apos;s ABN appears in oric_corporations. Set by scripts/civic/seed-detention-centres.mjs and refreshed via migrations.</li>
             <li>

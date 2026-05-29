@@ -4,7 +4,8 @@
  * Per-state youth-justice landscape. One page joins:
  *   - civic_intelligence_claims filtered by region (with triangulation badges)
  *   - civic_org_classifications confirmed Tier 1 → organizations join
- *   - oversight_recommendations filtered by jurisdiction
+ *   - oversight_recommendations, children_commissioner_reports and
+ *     auditor_general_audits filtered by jurisdiction
  *   - foundation_grantees where grantee state matches
  *
  * Designed for the Adelaide exhibition kiosk and for local advocates who need
@@ -20,6 +21,7 @@ import {
   getEvidenceSummary,
   getConfirmedTier1Orgs,
   getOversightRecommendations,
+  getStateOversightEvidence,
   getFoundationClassifierCoverage,
 } from '@/lib/civic-intelligence/queries';
 import { SnapshotStatCard } from '@/components/intelligence/civic/SnapshotStatCard';
@@ -93,6 +95,7 @@ export default async function StatePage({ params }: { params: { code: string } }
     evidence,
     tier1Orgs,
     oversight,
+    stateOversightEvidence,
     foundation,
     classifierCoverage,
   ] = await Promise.all([
@@ -107,12 +110,15 @@ export default async function StatePage({ params }: { params: { code: string } }
     getEvidenceSummary(),
     getConfirmedTier1Orgs(STATE),
     getOversightRecommendations(50),
+    getStateOversightEvidence(STATE),
     getFoundationFlows(code),
     getFoundationClassifierCoverage(),
   ]);
 
-  const stateOversightLocal = oversight.filter((o: any) => o.jurisdiction === STATE).slice(0, 6);
+  const stateOversightLocal = stateOversightEvidence.filter((o) => o.kind === 'recommendation').slice(0, 6);
   const stateOversightNational = oversight.filter((o: any) => o.jurisdiction === 'National').slice(0, 4);
+  const stateCommissionerReports = stateOversightEvidence.filter((o) => o.kind === 'children_commissioner_report');
+  const stateAuditorAudits = stateOversightEvidence.filter((o) => o.kind === 'auditor_general_audit');
 
   // Derive cost ratio from the two cost cards so the three numbers can't disagree
   // on screen, instead of trusting the separately-snapshotted ratio claim.
@@ -137,10 +143,24 @@ export default async function StatePage({ params }: { params: { code: string } }
       : {};
 
   const indigenousLed = tier1Orgs.filter((o) => o.is_indigenous_org).length;
+  const accoCertified = tier1Orgs.filter((o) => o.acco_certified).length;
   const liveIndigenousSharePct = tier1Orgs.length > 0 ? Math.round((indigenousLed / tier1Orgs.length) * 100) : null;
   // Reconcile the snapshotted Tier 1 count claim against the live count.
   const tier1ClaimCount = tier1Count?.value_numeric != null ? Number(tier1Count.value_numeric) : null;
   const tier1CountAgrees = tier1ClaimCount != null && tier1ClaimCount === tier1Orgs.length;
+  const launchCaveats = [
+    tier1Orgs.length < 10
+      ? `${stateName} has only ${tier1Orgs.length} confirmed Tier 1 organisations in the live register. Use the list below as a curated launch snapshot, not a full service census.`
+      : null,
+    accoCertified === 0
+      ? `${stateName} currently has 0 ACCO-certified confirmed Tier 1 organisations in the register. Do not infer ACCO coverage from Indigenous-led flags.`
+      : null,
+    stateOversightLocal.length === 0 && stateOversightEvidence.length > 0
+      ? `${stateName} has ${stateOversightEvidence.length} jurisdiction-specific oversight evidence row${stateOversightEvidence.length === 1 ? '' : 's'} indexed, but 0 jurisdiction-specific oversight recommendation rows extracted. Existing evidence, recommendations pending. National findings are shown separately and should not be treated as state-specific coverage.`
+      : stateOversightLocal.length < 3
+        ? `${stateName} has ${stateOversightLocal.length} jurisdiction-specific oversight recommendation row${stateOversightLocal.length === 1 ? '' : 's'} indexed and ${stateOversightEvidence.length} total jurisdiction-specific oversight evidence row${stateOversightEvidence.length === 1 ? '' : 's'}. National findings are shown separately and should not be treated as state-specific coverage.`
+        : null,
+  ].filter(Boolean) as string[];
 
   return (
     <main className="min-h-screen bg-stone-50 text-stone-900">
@@ -162,6 +182,19 @@ export default async function StatePage({ params }: { params: { code: string } }
           </p>
         </div>
       </header>
+
+      {launchCaveats.length > 0 && (
+        <section className="border-b-2 border-amber-200 bg-amber-50">
+          <div className="max-w-6xl mx-auto px-6 py-8">
+            <p className="text-xs font-mono uppercase tracking-widest text-amber-800 mb-3">Launch caveat</p>
+            <ul className="space-y-2 text-sm md:text-base text-amber-950 leading-relaxed">
+              {launchCaveats.map((caveat) => (
+                <li key={caveat}>{caveat}</li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {/* HEADLINE COSTS */}
       <section className="max-w-6xl mx-auto px-6 py-12">
@@ -228,7 +261,7 @@ export default async function StatePage({ params }: { params: { code: string } }
           <div className="flex items-baseline justify-between mb-5">
             <p className="text-xs font-mono uppercase tracking-widest text-stone-500">Frontline organisations</p>
             <p className="text-xs font-mono text-stone-500">
-              {tier1Orgs.length} confirmed Tier 1 · {indigenousLed} Indigenous-led
+              {tier1Orgs.length} confirmed Tier 1 · {indigenousLed} Indigenous-led · {accoCertified} ACCO-certified
             </p>
           </div>
           {tier1Count && (
@@ -260,6 +293,11 @@ export default async function StatePage({ params }: { params: { code: string } }
                       {org.is_indigenous_org && (
                         <span className="text-[10px] font-mono uppercase tracking-widest text-purple-700 bg-purple-50 border border-purple-300 px-1.5 py-0.5 rounded shrink-0">
                           Indigenous-led
+                        </span>
+                      )}
+                      {org.acco_certified && (
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-300 px-1.5 py-0.5 rounded shrink-0">
+                          ACCO-certified
                         </span>
                       )}
                     </div>
@@ -342,28 +380,72 @@ export default async function StatePage({ params }: { params: { code: string } }
 
       {/* OVERSIGHT — local first, national separately so the kiosk doesn't conflate the two. */}
       <section className="max-w-6xl mx-auto px-6 py-12">
-        <p className="text-xs font-mono uppercase tracking-widest text-stone-500 mb-5">{STATE} oversight findings</p>
-        {stateOversightLocal.length === 0 ? (
-          <p className="text-stone-600 italic mb-8">No {STATE}-specific oversight recommendations indexed yet.</p>
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-5">
+          <div>
+            <p className="text-xs font-mono uppercase tracking-widest text-stone-500">{STATE} oversight evidence</p>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight">Reports and recommendations indexed for {stateName}</h2>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="border border-stone-300 bg-white px-3 py-2 rounded">
+              <p className="text-xl font-bold">{stateOversightLocal.length}</p>
+              <p className="text-[10px] font-mono uppercase tracking-widest text-stone-500">Recs</p>
+            </div>
+            <div className="border border-stone-300 bg-white px-3 py-2 rounded">
+              <p className="text-xl font-bold">{stateCommissionerReports.length}</p>
+              <p className="text-[10px] font-mono uppercase tracking-widest text-stone-500">Comm.</p>
+            </div>
+            <div className="border border-stone-300 bg-white px-3 py-2 rounded">
+              <p className="text-xl font-bold">{stateAuditorAudits.length}</p>
+              <p className="text-[10px] font-mono uppercase tracking-widest text-stone-500">Audit</p>
+            </div>
+          </div>
+        </div>
+        {stateOversightEvidence.length === 0 ? (
+          <p className="text-stone-600 italic mb-8">No {STATE}-specific oversight evidence rows indexed yet.</p>
         ) : (
           <ul className="space-y-3 mb-10">
-            {stateOversightLocal.map((rec: any) => (
-              <li key={rec.id} className="border-l-4 border-stone-300 pl-4 py-2">
-                <div className="flex items-baseline gap-2 text-xs font-mono text-stone-500">
-                  <span className="uppercase tracking-widest">{rec.jurisdiction || 'unknown'}</span>
+            {stateOversightEvidence.slice(0, 10).map((item) => (
+              <li key={item.id} className="border-l-4 border-stone-300 bg-white pl-4 pr-4 py-3 rounded-r">
+                <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-stone-500">
+                  <span className="uppercase tracking-widest">{item.jurisdiction || STATE}</span>
                   <span>·</span>
-                  <span>{rec.oversight_body || rec.report_title || 'Source'}</span>
-                  {rec.report_date && <><span>·</span><span>{String(rec.report_date).slice(0, 10)}</span></>}
+                  <span>
+                    {item.kind === 'recommendation'
+                      ? 'Recommendation'
+                      : item.kind === 'children_commissioner_report'
+                        ? "Children's Commissioner"
+                        : 'Auditor-General'}
+                  </span>
+                  {item.publishedDate && <><span>·</span><span>{String(item.publishedDate).slice(0, 10)}</span></>}
+                  {item.status && <><span>·</span><span>{item.status}</span></>}
                 </div>
-                <p className="mt-1 text-stone-900">{rec.recommendation_text || 'No text available'}</p>
-                {rec.report_url && (
-                  <a href={rec.report_url} target="_blank" rel="noreferrer" className="text-xs text-stone-500 underline mt-1 inline-block">
+                <h3 className="mt-1 font-semibold text-stone-900">{item.title}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-stone-700">{item.summary}</p>
+                {item.flags.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {item.flags.map((flag) => (
+                      <span key={`${item.id}:${flag}`} className="text-[10px] font-mono uppercase tracking-widest text-stone-600 bg-stone-100 border border-stone-300 px-1.5 py-0.5 rounded">
+                        {flag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {item.url && (
+                  <a href={item.url} target="_blank" rel="noreferrer" className="text-xs text-stone-500 underline mt-2 inline-block">
                     Source report
                   </a>
                 )}
               </li>
             ))}
           </ul>
+        )}
+        {stateOversightEvidence.length > 0 && stateOversightLocal.length === 0 && (
+          <div className="mb-10 border-2 border-amber-300 bg-amber-50 p-4 rounded text-sm text-amber-950">
+            <p className="font-semibold">Existing evidence, recommendations pending</p>
+            <p className="mt-1 leading-relaxed">
+              {stateName} has source reports indexed above, but no recommendations have been extracted into the recommendation ledger yet. Treat the evidence as supporting context until extraction is complete.
+            </p>
+          </div>
         )}
         {stateOversightNational.length > 0 && (
           <>
@@ -401,7 +483,9 @@ export default async function StatePage({ params }: { params: { code: string } }
             Frontline organisations are confirmed Tier 1 entries from <span className="font-mono">civic_org_classifications</span>{' '}
             joined to the organisations register.
             Foundation flows aggregate <span className="font-mono">foundation_grantees</span> records with the YJ relevance classifier applied.
-            Oversight findings come from <span className="font-mono">oversight_recommendations</span>.
+            Oversight evidence comes from <span className="font-mono">oversight_recommendations</span>,{' '}
+            <span className="font-mono">children_commissioner_reports</span>, and{' '}
+            <span className="font-mono">auditor_general_audits</span>.
           </p>
           <p className="mt-4 text-xs text-stone-500">
             Last revalidated: hourly. <Link href="/intelligence/civic/centre-of-excellence" className="underline">Centre of Excellence</Link>.

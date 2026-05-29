@@ -13,20 +13,27 @@ interface PageProps {
 async function fetchOrgPortrait(slug: string) {
   const sb = createServiceClient() as any;
 
-  const { data: org } = await sb
+  const { data: orgRows } = await sb
     .from('organizations')
     .select('id, name, slug, description, website, logo_url, partner_tier, state, is_indigenous_org, gs_entity_id')
     .eq('slug', slug)
-    .maybeSingle();
-  if (!org) return null;
+    .eq('is_active', true)
+    .neq('archived', true)
+    .limit(20);
+  if (!orgRows || orgRows.length === 0) return null;
 
-  // Civic classification: only published if confirmed Tier 1
-  const { data: classification } = await sb
+  const orgIds = orgRows.map((row: any) => row.id);
+  const { data: classifications } = await sb
     .from('civic_org_classifications')
-    .select('tier, sector_category, confirmed_at, llm_evidence_snippet')
-    .eq('organization_id', org.id)
-    .not('confirmed_at', 'is', null)
-    .maybeSingle();
+    .select('organization_id, tier, sector_category, confirmed_at, llm_evidence_snippet')
+    .in('organization_id', orgIds)
+    .not('confirmed_at', 'is', null);
+
+  // Slugs are not unique in the current register. Prefer the duplicate row that
+  // is confirmed Tier 1 so public civic portrait URLs stay stable.
+  const tierOneClassification = (classifications || []).find((row: any) => row.tier === 1);
+  const org = orgRows.find((row: any) => row.id === tierOneClassification?.organization_id) || orgRows[0];
+  const classification = (classifications || []).find((row: any) => row.organization_id === org.id) || null;
 
   if (!classification || classification.tier !== 1) {
     return { org, classification: null };

@@ -32,15 +32,10 @@ interface CompletenessRow {
 
 async function fetchAuditData() {
   const supabase = createServiceClient() as any;
-  const [stateRes, completenessRes, fgRes, totalsRes] = await Promise.all([
-    supabase.rpc('exec_sql', { sql: '' }).catch(() => ({ data: null })),
-    Promise.resolve({}),
-    supabase.from('foundation_grantees').select('id, yj_relevant', { count: 'exact', head: false }),
-    supabase
-      .from('organizations')
-      .select('id', { count: 'exact', head: true })
-      .neq('archived', true),
-  ]);
+  const totalsRes = await supabase
+    .from('organizations')
+    .select('id', { count: 'exact', head: true })
+    .neq('archived', true);
 
   // Direct queries that don't depend on RPC
   const { data: stateRows } = await supabase
@@ -60,7 +55,6 @@ async function fetchAuditData() {
   const stateArr = Object.values(byState).sort((a, b) => b.tier1_orgs - a.tier1_orgs);
 
   // Per-org enrichment completeness for Tier 1
-  const t1Ids = (stateRows || []).map((r: any) => r.organization_id).filter(Boolean);
   let completeness: CompletenessRow = {
     tier1_total: 0, acco_certified: 0, with_logo: 0, with_email: 0,
     with_history: 0, with_ar_url: 0, avg_completeness: 0,
