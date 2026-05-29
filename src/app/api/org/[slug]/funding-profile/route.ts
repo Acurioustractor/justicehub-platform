@@ -51,8 +51,24 @@ export async function GET(
       return NextResponse.json({ error: 'Organization not found' }, { status: 404 });
     }
 
+    if (!org.gs_entity_id && org.abn) {
+      const sanitizedAbn = String(org.abn).replace(/\s/g, '');
+      if (/^\d{11}$/.test(sanitizedAbn)) {
+        const { data: gsEntity } = await supabase
+          .from('gs_entities')
+          .select('id')
+          .eq('abn', sanitizedAbn)
+          .order('source_count', { ascending: false, nullsFirst: false })
+          .limit(1)
+          .maybeSingle();
+        if (gsEntity?.id) {
+          org = { ...org, gs_entity_id: gsEntity.id };
+        }
+      }
+    }
+
     // Run all queries in parallel
-    const queries: Promise<unknown>[] = [
+    const queries: any[] = [
       // 1. JusticeHub justice_funding records
       supabase
         .from('justice_funding')
@@ -89,9 +105,9 @@ export async function GET(
       queries.push(
         supabase
           .from('person_roles')
-          .select('person_name, role_title, start_date, end_date, dataset')
+          .select('id, person_name, role_type, company_name, company_abn, appointment_date, cessation_date, source, confidence')
           .eq('entity_id', org.gs_entity_id)
-          .order('start_date', { ascending: false, nullsFirst: false })
+          .order('cessation_date', { ascending: true, nullsFirst: true })
           .limit(50)
       );
     }

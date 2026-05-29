@@ -5,8 +5,13 @@ import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
 const VALID_TOUR_STOPS = [
   'Mount Druitt',
   'Adelaide',
-  'Perth',
-  'Tennant Creek',
+  'Perth + surrounds',
+  'Brisbane',
+  'Northern Rivers',
+  'Alice Springs / Central Australia',
+  'Sydney + Canberra',
+  'Victoria',
+  'Tasmania',
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

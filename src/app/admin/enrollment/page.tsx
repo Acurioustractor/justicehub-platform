@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { buildQrUrl } from '@/lib/qr';
 
 interface EnrollmentCode {
   id: string;
@@ -158,7 +159,10 @@ export default function AdminEnrollmentPage() {
                 </td>
                 <td className="px-4 py-3">
                   <a
-                    href={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(`${baseUrl}/contained/enroll?code=${c.code}`)}`}
+                    href={buildQrUrl({
+                      data: `${baseUrl}/contained/enroll?code=${c.code}`,
+                      size: 300,
+                    })}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:underline text-xs"

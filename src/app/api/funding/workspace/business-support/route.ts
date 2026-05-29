@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server-lite';
+import { checkOrgAccess } from '@/lib/org-hub/auth';
 import {
   fundingOsErrorResponse,
   type FundingDiscoveryReviewWorkspaceInput,
@@ -24,7 +26,24 @@ function toWorkspaceInput(body: Record<string, unknown>): FundingDiscoveryReview
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
-    const workspace = await upsertFundingDiscoveryReviewWorkspace(toWorkspaceInput(body), null);
+    const input = toWorkspaceInput(body);
+
+    if (!input.organizationId) {
+      return NextResponse.json({ error: 'organizationId is required' }, { status: 400 });
+    }
+
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+
+    if (!await checkOrgAccess(supabase, user.id, input.organizationId)) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    }
+
+    const workspace = await upsertFundingDiscoveryReviewWorkspace(input, user.id);
 
     return NextResponse.json({
       success: true,

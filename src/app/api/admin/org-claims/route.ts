@@ -79,7 +79,12 @@ export async function PUT(request: NextRequest) {
     if (status === 'verified' && claim) {
       const orgUpdate: Record<string, unknown> = {
         verification_status: 'verified',
+        is_active: true,
       };
+      if (claim.role_at_org === 'Basecamp Application') {
+        orgUpdate.partner_tier = 'basecamp';
+        orgUpdate.type = 'basecamp';
+      }
       if (abn) {
         orgUpdate.abn = abn;
       }

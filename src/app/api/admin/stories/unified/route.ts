@@ -111,7 +111,7 @@ export async function GET() {
   // 4. Stories (interviews, Mounty Yarns etc)
   const { data: interviews } = await db
     .from('stories')
-    .select('id, title, excerpt, summary, status, featured_image_url, themes, is_featured, organization_id, participant_name, story_type, created_at, slug, organizations!stories_organization_id_fkey(name)')
+    .select('id, title, excerpt, summary, status, featured_image_url, themes, tags, is_featured, organization_id, participant_name, story_type, created_at, slug, organizations!stories_organization_id_fkey(name)')
     .order('created_at', { ascending: false });
 
   for (const i of interviews || []) {

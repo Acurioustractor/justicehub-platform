@@ -722,6 +722,7 @@ const stagePages: Record<LaunchStage, string[]> = {
     '/contained/about',
     '/contained/content',
     '/contained/share',
+    '/contained/canberra',
   ],
   live: [
     '/contained/launch',

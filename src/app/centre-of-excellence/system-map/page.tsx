@@ -84,7 +84,7 @@ const sovereignty = [
   {
     icon: Lock,
     label: 'Per-org workspace',
-    body: 'The org logs in to /hub/[slug]/dashboard and works on their own data on their own terms. The workspace is the control room, not a CMS.',
+    body: 'The org logs in to /hub/[slug]/practice and works on their own data on their own terms. The workspace is the control room, not a CMS.',
   },
   {
     icon: Users,

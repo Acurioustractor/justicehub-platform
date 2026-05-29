@@ -3,6 +3,12 @@
 import { createBrowserClient } from '@supabase/ssr'
 import type { Database } from '@/types/database.types'
 
+const browserLock = async <T>(
+  _name: string,
+  _acquireTimeout: number,
+  fn: () => Promise<T>
+) => fn()
+
 /**
  * Create a Supabase client for Client Components
  * This client is used in 'use client' components for interactive features
@@ -13,13 +19,6 @@ export function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '';
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
 
-  console.log('🔑 Creating Supabase client:', {
-    hasUrl: !!url,
-    hasKey: !!key,
-    urlPreview: url ? `${url.substring(0, 30)}...` : 'missing',
-    keyPreview: key ? `${key.substring(0, 20)}...` : 'missing'
-  });
-
   // During build time, return a placeholder if env vars aren't available
   if (!url || !key) {
     console.warn('Supabase credentials not available, using placeholder client');
@@ -27,6 +26,9 @@ export function createClient() {
       'https://placeholder.supabase.co',
       'placeholder-key',
       {
+        auth: {
+          lock: browserLock,
+        },
         cookies: {
           getAll() { return [] },
           setAll() {},
@@ -39,6 +41,9 @@ export function createClient() {
     url,
     key,
     {
+      auth: {
+        lock: browserLock,
+      },
       cookies: {
         getAll() {
           // Only access document in browser environment

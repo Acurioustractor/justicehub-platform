@@ -65,7 +65,7 @@ const onlyFilter = onlyArg ? onlyArg.split(',').map((s) => s.trim().toUpperCase(
 const maxChunksArg = args.find((_, i) => args[i - 1] === '--max-chunks');
 const maxChunks = maxChunksArg ? parseInt(maxChunksArg, 10) : Infinity;
 
-const MAX_PDF_BYTES = 25 * 1024 * 1024; // 25MB — commissioner reports are bigger than ALMA annuals
+const MAX_PDF_BYTES = 50 * 1024 * 1024; // 50MB — NT 2024-25 is 33MB, others typically 5-25MB
 const FETCH_TIMEOUT_MS = 45000;
 const CHARS_PER_TOKEN = 4; // rough avg for English prose
 const CHUNK_TOKENS = 8000;
@@ -113,24 +113,30 @@ const JURISDICTIONS = [
   {
     code: 'QLD',
     body_name: 'Queensland Family & Child Commission',
-    index_url: 'https://www.qfcc.qld.gov.au/about-us/our-publications/annual-report',
+    // QLD is Drupal/GovCMS — listing page links to publication sub-pages
+    // (one per year + one per "child protection performance"). We crawl the
+    // listing then follow up to 2 sub-pages to find PDF links.
+    index_url: 'https://www.qfcc.qld.gov.au/annual-report',
     format: 'pdf',
-    // QLD publishes 2 PDFs (annual + child protection performance). We pick
-    // the highest-year first, then look for a second sibling on the same page.
-    multi_doc: true,
+    multi_doc: true, // annual + child protection performance
+    follow_subpage_paths: ['/publication/annual-report-', '/publication/annual-report-performance-'],
   },
   {
     code: 'WA',
     body_name: 'Commissioner for Children & Young People (WA)',
-    // WA publishes its annual report as an HTML page, not a PDF. The index
-    // page lists multiple annual-report years; we grab the latest sub-page.
-    index_url: 'https://www.ccyp.wa.gov.au/about-us/corporate-information/annual-reports/',
+    // WA publishes the annual report under /about-us/corporate-information/
+    // with year-specific HTML sub-pages AND direct PDFs. We pick the latest
+    // PDF (e.g. ccyp-2024-25-annual-report-web.pdf) when discoverable;
+    // otherwise fall back to the HTML sub-page.
+    index_url: 'https://www.ccyp.wa.gov.au/about-us/corporate-information/',
     latest_html_hint: 'https://www.ccyp.wa.gov.au/about-us/corporate-information/annual-report-2024-2025/',
-    format: 'html',
+    format: 'pdf', // PDFs exist on the corporate-info page; HTML is the fallback
   },
   {
     code: 'SA',
     body_name: 'Commissioner for Children & Young People (SA)',
+    // SA CCYP hosts at ccyp.com.au but the site frequently TCP-times-out
+    // from non-AU IPs. The script logs + skips on failure (spec fallback).
     index_url: 'https://www.ccyp.com.au/our-work/annual-reports/',
     format: 'pdf',
   },
@@ -144,14 +150,20 @@ const JURISDICTIONS = [
   {
     code: 'TAS',
     body_name: 'Commissioner for Children & Young People (TAS)',
-    index_url: 'https://www.childcomm.tas.gov.au/publications/annual-reports/',
+    // TAS uses /resource/annual-report-{year}/ as the canonical resource page,
+    // discoverable via the site search. We crawl the search results then
+    // follow into the latest resource sub-page to grab the PDF.
+    index_url: 'https://childcomm.tas.gov.au/?s=annual+report+2024',
+    fallback_index: 'https://childcomm.tas.gov.au/?s=annual+report',
     format: 'pdf',
+    follow_subpage_paths: ['/resource/annual-report-'],
   },
   {
     code: 'NT',
     body_name: 'Office of the Children\'s Commissioner (NT)',
-    // NT index requires runtime scrape — landing page is the publications hub.
-    index_url: 'https://occ.nt.gov.au/publications',
+    // NT site renders PDFs into card-style elements with the PDF URL in
+    // data-pub-file (not in <a href>). Our extractor handles both.
+    index_url: 'https://occ.nt.gov.au/resources/occ-publications/annual-reports',
     format: 'pdf',
   },
   {
@@ -160,18 +172,20 @@ const JURISDICTIONS = [
     // ACT CYP Commissioner sits inside the HRC consolidated annual report.
     // We flag this in metadata so downstream consumers know it's a chapter
     // extract, not a standalone document.
-    index_url: 'https://hrc.act.gov.au/publications/annual-reports/',
+    index_url: 'https://www.hrc.act.gov.au/about-us/annual-reports',
     format: 'pdf',
     metadata_flags: { is_consolidated_act: true },
   },
   {
     code: 'Federal',
     body_name: 'National Children\'s Commissioner (AHRC)',
-    index_url: 'https://humanrights.gov.au/our-work/childrens-rights/publications/national-childrens-commissioners-statutory-report-2023',
-    // Fall back to the main publications index if that direct link doesn't
-    // resolve at runtime.
-    fallback_index: 'https://humanrights.gov.au/our-work/childrens-rights/projects/national-childrens-commissioners-annual-statutory-report',
+    // AHRC is behind a Cloudflare bot-challenge page that browser-less
+    // requests cannot pass. The script logs + skips. Operator can supply
+    // a downloaded PDF manually in a future iteration.
+    index_url: 'https://humanrights.gov.au/our-work/childrens-rights/projects/national-childrens-commissioners-annual-statutory-report',
+    fallback_index: 'https://humanrights.gov.au/our-work/childrens-rights/publications/help-way-earlier-2024',
     format: 'pdf',
+    metadata_flags: { cloudflare_blocked: true },
   },
 ];
 
@@ -209,15 +223,23 @@ Return ONLY JSON, no prose.`;
 
 // ─── HTTP / parsing helpers ──────────────────────────────────────────────
 
+// Several commissioner sites (notably AHRC, ACT HRC, ccyp.com.au) reject
+// non-browser User-Agents or sit behind Cloudflare bot challenges. Use a
+// real Safari UA + Accept-Language to avoid 403s where possible. Where a
+// site still blocks us, the script logs + skips per spec fallback.
+const BROWSER_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15';
+const BROWSER_HEADERS = {
+  'User-Agent': BROWSER_UA,
+  Accept: 'text/html,application/xhtml+xml,application/pdf,*/*;q=0.8',
+  'Accept-Language': 'en-AU,en;q=0.9',
+};
+
 async function fetchPage(url) {
   try {
     const res = await fetch(url, {
       redirect: 'follow',
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      headers: {
-        'User-Agent': 'JusticeHubMapBot/1.0 (+https://justicehub.com.au)',
-        Accept: 'text/html,application/xhtml+xml,application/pdf,*/*',
-      },
+      headers: BROWSER_HEADERS,
     });
     if (!res.ok) return { ok: false, reason: `http_${res.status}` };
     const ct = (res.headers.get('content-type') || '').toLowerCase();
@@ -237,10 +259,7 @@ async function fetchPdfBuffer(url) {
     const res = await fetch(url, {
       redirect: 'follow',
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      headers: {
-        'User-Agent': 'JusticeHubMapBot/1.0 (+https://justicehub.com.au)',
-        Accept: 'application/pdf,*/*',
-      },
+      headers: { ...BROWSER_HEADERS, Accept: 'application/pdf,*/*;q=0.8' },
     });
     if (!res.ok) return { ok: false, reason: `http_${res.status}` };
     const buf = Buffer.from(await res.arrayBuffer());
@@ -254,17 +273,86 @@ async function fetchPdfBuffer(url) {
 
 // Find annual-report PDF links on an index page. Prefers highest 4-digit year.
 // Returns array sorted by year descending, with [0] being the latest.
+//
+// Handles three patterns:
+//   1. <a href="...pdf">Annual Report 2024-25</a>     — standard
+//   2. <div data-pub-file="...pdf">                    — NT OCC card pattern
+//   3. Standalone full-URL .pdf strings in the HTML    — last-resort capture
 function findAnnualReportPdfLinks(html, baseUrl) {
-  const linkRe = /<a\b[^>]*href=["']([^"']+\.pdf[^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi;
   const candidates = [];
+
+  // Pattern 1: <a href="...pdf">text</a>
+  const linkRe = /<a\b[^>]*href=["']([^"']+\.pdf[^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi;
   let m;
   while ((m = linkRe.exec(html)) !== null) {
     const rawHref = m[1].trim();
     const text = m[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
     const hay = `${rawHref} ${text}`.toLowerCase();
-    // Signal words for annual reports vs other PDFs on the same site
-    const hasAnnualSignal = /annual|report|statutory|year[\s-]?in[\s-]?review|performance/.test(hay);
+    const hasAnnualSignal = /annual|report|statutory|year[\s-]?in[\s-]?review|performance|help.?way.?earlier/.test(hay);
     if (!hasAnnualSignal) continue;
+    // Skip PDFs that are corrections / errata / strategic plans — they often
+    // share a year token with the main report but are NOT the full report.
+    const isAuxiliary = /erratum|errata|correction|strategic.?plan|child.?friendly|poster|infographic|summary|highlights/.test(hay);
+    const yearMatch = hay.match(/20\d{2}/g);
+    const year = yearMatch ? Math.max(...yearMatch.map(Number)) : 0;
+    let absolute;
+    try {
+      absolute = new URL(rawHref, baseUrl).toString();
+    } catch {
+      continue;
+    }
+    candidates.push({ url: absolute, year, text, isAuxiliary });
+  }
+
+  // Pattern 2: data-pub-file="...pdf" (NT OCC card pattern). The card title
+  // is usually nearby in an <h5> — capture a window of surrounding text.
+  const pubFileRe = /data-pub-file=["']([^"']+\.pdf[^"']*)["']([^]{0,500})/gi;
+  while ((m = pubFileRe.exec(html)) !== null) {
+    const rawHref = m[1].trim();
+    const ctx = m[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const hay = `${rawHref} ${ctx}`.toLowerCase();
+    const hasAnnualSignal = /annual|report|statutory|performance/.test(hay);
+    if (!hasAnnualSignal) continue;
+    const isAuxiliary = /erratum|errata|correction|strategic.?plan|child.?friendly|poster|infographic|summary|highlights/.test(hay);
+    const yearMatch = hay.match(/20\d{2}/g);
+    const year = yearMatch ? Math.max(...yearMatch.map(Number)) : 0;
+    let absolute;
+    try {
+      absolute = new URL(rawHref, baseUrl).toString();
+    } catch {
+      continue;
+    }
+    candidates.push({ url: absolute, year, text: ctx.slice(0, 200), isAuxiliary });
+  }
+
+  // dedupe by URL, keep first occurrence (which captured the most context)
+  const seen = new Set();
+  const unique = candidates.filter((c) => {
+    if (seen.has(c.url)) return false;
+    seen.add(c.url);
+    return true;
+  });
+  // Sort: non-auxiliary (main reports) first, then by year descending.
+  unique.sort((a, b) => {
+    if (a.isAuxiliary !== b.isAuxiliary) return a.isAuxiliary ? 1 : -1;
+    return b.year - a.year;
+  });
+  return unique;
+}
+
+// Find publication-sub-page URLs on a Drupal-style listing index (QLD).
+// Returns sub-page URLs whose paths match any of `pathPrefixes`, ordered by
+// inferred year descending.
+function findSubpageLinks(html, baseUrl, pathPrefixes) {
+  const linkRe = /<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  const candidates = [];
+  let m;
+  while ((m = linkRe.exec(html)) !== null) {
+    const rawHref = m[1].trim();
+    const text = m[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const matchesPrefix = pathPrefixes.some((p) => rawHref.includes(p));
+    if (!matchesPrefix) continue;
+    const hay = `${rawHref} ${text}`.toLowerCase();
     const yearMatch = hay.match(/20\d{2}/g);
     const year = yearMatch ? Math.max(...yearMatch.map(Number)) : 0;
     let absolute;
@@ -275,7 +363,6 @@ function findAnnualReportPdfLinks(html, baseUrl) {
     }
     candidates.push({ url: absolute, year, text });
   }
-  // dedupe by URL
   const seen = new Set();
   const unique = candidates.filter((c) => {
     if (seen.has(c.url)) return false;
@@ -514,15 +601,50 @@ function inferReportYear(url, text) {
 // ─── Discovery per jurisdiction ──────────────────────────────────────────
 
 // Returns array of { url, format, year_hint, text } — usually 1 doc, but
-// QLD returns up to 2.
+// QLD returns up to 2 (annual + child-protection-performance).
 async function discoverReportsFor(j) {
   const page = await fetchPage(j.index_url);
   if (!page.ok) {
+    // Try fallback index if configured
+    if (j.fallback_index) {
+      const page2 = await fetchPage(j.fallback_index);
+      if (page2.ok) return discoverFromPage(j, page2);
+    }
     return { ok: false, reason: `index_fetch:${page.reason}` };
   }
+  return discoverFromPage(j, page);
+}
+
+async function discoverFromPage(j, page) {
   if (page.contentType === 'pdf') {
     // The "index" URL itself was a PDF — use it directly.
     return { ok: true, docs: [{ url: page.finalUrl, format: 'pdf', year_hint: null, text: '' }] };
+  }
+
+  // QLD path: listing of /publication/annual-report-{year} sub-pages. Follow
+  // the latest one(s) and grab the PDF from inside.
+  if (j.follow_subpage_paths) {
+    const subpages = findSubpageLinks(page.html, page.finalUrl, j.follow_subpage_paths);
+    if (subpages.length === 0) return { ok: false, reason: 'no_subpages_found' };
+    // For multi_doc: pick latest from each path prefix
+    const picks = [];
+    for (const prefix of j.follow_subpage_paths) {
+      const matchingPrefix = subpages.filter((s) => s.url.includes(prefix));
+      if (matchingPrefix.length > 0) picks.push(matchingPrefix[0]);
+      if (!j.multi_doc) break;
+    }
+    const docs = [];
+    for (const sub of picks) {
+      const sp = await fetchPage(sub.url);
+      if (!sp.ok || sp.contentType !== 'html') continue;
+      const pdfs = findAnnualReportPdfLinks(sp.html, sp.finalUrl);
+      if (pdfs.length > 0) {
+        docs.push({ url: pdfs[0].url, format: 'pdf', year_hint: pdfs[0].year || sub.year, text: pdfs[0].text });
+      }
+      await new Promise((r) => setTimeout(r, 800));
+    }
+    if (docs.length === 0) return { ok: false, reason: 'subpages_had_no_pdfs' };
+    return { ok: true, docs };
   }
 
   if (j.format === 'html') {
@@ -550,7 +672,7 @@ async function discoverReportsFor(j) {
   const pdfs = findAnnualReportPdfLinks(page.html, page.finalUrl);
   if (pdfs.length === 0) {
     // Federal fallback: try the alternate index URL
-    if (j.fallback_index) {
+    if (j.fallback_index && page.finalUrl !== j.fallback_index) {
       const page2 = await fetchPage(j.fallback_index);
       if (page2.ok && page2.contentType === 'html') {
         const pdfs2 = findAnnualReportPdfLinks(page2.html, page2.finalUrl);
@@ -562,6 +684,10 @@ async function discoverReportsFor(j) {
       if (page2.ok && page2.contentType === 'pdf') {
         return { ok: true, docs: [{ url: page2.finalUrl, format: 'pdf', year_hint: null, text: '' }] };
       }
+    }
+    // For WA where format='pdf' but explicit HTML hint exists, try the hint
+    if (j.latest_html_hint) {
+      return { ok: true, docs: [{ url: j.latest_html_hint, format: 'html', year_hint: null, text: '' }] };
     }
     return { ok: false, reason: 'no_pdf_links_found_on_index' };
   }

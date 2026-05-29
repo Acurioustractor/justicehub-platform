@@ -1,4 +1,9 @@
 import { createServiceClient } from '@/lib/supabase/service';
+import {
+  isMissingServicesCompleteError,
+  normalizeServiceCatalogRow,
+  type NormalizedServiceCatalogRow,
+} from '@/lib/services/service-catalog';
 
 type ServicesCompleteRow = {
   id: string | null;
@@ -15,6 +20,8 @@ type ServicesCompleteRow = {
   indigenous_specific: boolean | null;
   youth_specific: boolean | null;
 };
+
+type ServiceDisplayRow = ServicesCompleteRow | NormalizedServiceCatalogRow;
 
 export interface ServiceDetailPayload {
   id: string;
@@ -45,6 +52,10 @@ export type ServiceDetailResult =
   | { status: 200; body: { service: ServiceDetailPayload; metadata: Record<string, string> } }
   | { status: 400 | 404 | 500; body: { error: string } };
 
+function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
 export async function getServiceDetailResult(serviceId: string): Promise<ServiceDetailResult> {
   if (!serviceId) {
     return { status: 400, body: { error: 'Service ID is required' } };
@@ -58,19 +69,39 @@ export async function getServiceDetailResult(serviceId: string): Promise<Service
     .eq('active', true)
     .single();
 
-  if (error) {
-    if (error.code === 'PGRST116') {
-      return { status: 404, body: { error: 'Service not found' } };
-    }
+  let row: NormalizedServiceCatalogRow | null = null;
+  let source = 'services_complete';
+
+  if (!error && service) {
+    row = normalizeServiceCatalogRow(service as unknown as Record<string, unknown>);
+  } else if (error && !isMissingServicesCompleteError(error) && error.code !== 'PGRST116') {
     console.error('Error fetching service:', error);
     return { status: 500, body: { error: error.message } };
   }
 
-  if (!service) {
-    return { status: 404, body: { error: 'Service not found' } };
+  if (!row) {
+    const fallbackQuery = supabase
+      .from('services')
+      .select('*')
+      .eq('is_active', true);
+
+    const { data: fallbackService, error: fallbackError } = await (isUuid(serviceId)
+      ? fallbackQuery.eq('id', serviceId).maybeSingle()
+      : fallbackQuery.eq('slug', serviceId).maybeSingle());
+
+    if (fallbackError) {
+      console.error('Error fetching service fallback:', fallbackError);
+      return { status: 500, body: { error: fallbackError.message } };
+    }
+
+    if (!fallbackService) {
+      return { status: 404, body: { error: 'Service not found' } };
+    }
+
+    row = normalizeServiceCatalogRow(fallbackService as Record<string, unknown>);
+    source = 'services';
   }
 
-  const row = service as unknown as ServicesCompleteRow;
   const categories = Array.isArray(row.categories) ? row.categories : [];
 
   const transformedService: ServiceDetailPayload = {
@@ -80,13 +111,13 @@ export async function getServiceDetailResult(serviceId: string): Promise<Service
     description: row.description || 'No description available',
     location: buildLocation(row),
     contact: extractContact(row),
-    cost: mapCost('unknown'),
-    rating: Math.round((row.score || 0.5) * 5 * 100) / 100,
-    verified: (row.score || 0) >= 0.8,
-    lastUpdated: formatTimestamp(row.last_scraped_at || row.updated_at),
+    cost: mapCost(row.cost),
+    rating: Math.round((Number(row.score || row.confidence_score || 0.5)) * 5 * 100) / 100,
+    verified: row.verification_status === 'verified' || Number(row.score || row.confidence_score || 0) >= 0.8,
+    lastUpdated: formatTimestamp(row.last_scraped_at as string | null | undefined || row.updated_at),
     source: row.url,
     aiDiscovered: true,
-    eligibility: [],
+    eligibility: row.eligibility_criteria,
     subcategory: categories[1],
     contactInfo: {
       phone: stringFrom(row.contact, 'phone'),
@@ -94,8 +125,8 @@ export async function getServiceDetailResult(serviceId: string): Promise<Service
       website: row.url || undefined,
       address: buildAddress(row),
     },
-    confidenceScore: row.score,
-    extractionTimestamp: row.last_scraped_at,
+    confidenceScore: Number(row.score || row.confidence_score || 0) || null,
+    extractionTimestamp: row.last_scraped_at as string | null | undefined,
   };
 
   return {
@@ -103,7 +134,7 @@ export async function getServiceDetailResult(serviceId: string): Promise<Service
     body: {
       service: transformedService,
       metadata: {
-        source: 'Canonical service detail (services_complete)',
+        source: `Canonical service detail (${source})`,
         lastUpdate: new Date().toISOString(),
         confidence: 'Schema-aligned data',
       },
@@ -142,14 +173,14 @@ function stringFrom(record: Record<string, unknown> | null, key: string): string
   return typeof value === 'string' && value.trim().length > 0 ? value : undefined;
 }
 
-function buildLocation(service: ServicesCompleteRow): string {
+function buildLocation(service: ServiceDisplayRow): string {
   const city = stringFrom(service.location, 'city');
   const state = stringFrom(service.location, 'state');
   const parts = [city, state].filter(Boolean);
   return parts.join(', ') || 'Australia';
 }
 
-function buildAddress(service: ServicesCompleteRow): string {
+function buildAddress(service: ServiceDisplayRow): string {
   const address = stringFrom(service.location, 'address');
   const suburb = stringFrom(service.location, 'suburb');
   const city = stringFrom(service.location, 'city');
@@ -159,7 +190,7 @@ function buildAddress(service: ServicesCompleteRow): string {
   return parts.join(', ') || 'Address not available';
 }
 
-function extractContact(service: ServicesCompleteRow): string {
+function extractContact(service: ServiceDisplayRow): string {
   const phone = stringFrom(service.contact, 'phone');
   const email = stringFrom(service.contact, 'email');
   if (phone) return phone;

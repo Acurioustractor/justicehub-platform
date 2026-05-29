@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Lock } from 'lucide-react';
-import { TIERS, type TierKey } from '@/lib/stripe';
+import { TIERS, type TierKey } from '@/lib/billing/tiers';
 
 interface FeatureGateProps {
   allowed: boolean;

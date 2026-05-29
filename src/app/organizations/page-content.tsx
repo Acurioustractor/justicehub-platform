@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
   Search,
+  Building2,
   Briefcase,
   Heart,
   Users,
@@ -32,6 +34,7 @@ interface Organization {
 
 interface OrganizationsPageContentProps {
   organizations: Organization[];
+  totalOrgCount: number;
   programCounts: Record<string, number>;
   serviceCounts: Record<string, number>;
   teamCounts: Record<string, number>;
@@ -39,18 +42,301 @@ interface OrganizationsPageContentProps {
   dataStatus?: 'live' | 'partial';
 }
 
+interface DirectoryResponse {
+  organizations?: Organization[];
+  total?: number;
+  programCounts?: Record<string, number>;
+  serviceCounts?: Record<string, number>;
+  teamCounts?: Record<string, number>;
+  centrePartnerships?: Record<string, CentrePartnershipSummary>;
+  claimedOrgIds?: string[];
+  error?: string;
+}
+
 type DirectoryView = 'cards' | 'list';
-type QuickFilter = 'all' | 'linked' | 'claimed' | 'with-services' | 'needs-profile';
+type QuickFilter = 'all' | 'linked' | 'claimed' | 'with-services' | 'centre-partners' | 'needs-profile';
+type CentrePartnershipSummary = { count: number; centres: string[]; types: string[] };
+
+const DIRECTORY_PAGE_SIZE = 60;
+const DIRECTORY_DISPLAY_INCREMENT = 60;
+const AU_STATES = ['ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA'];
+const QUICK_FILTERS: QuickFilter[] = ['all', 'linked', 'claimed', 'with-services', 'centre-partners', 'needs-profile'];
+const VERIFICATION_FILTERS = ['all', 'verified', 'claimed', 'unverified'];
+const SORT_OPTIONS = ['name-asc', 'name-desc', 'most-programs', 'most-services'];
+
+function isVerifiedStatus(status: string | null) {
+  return status === 'verified' || status === 'acnc_verified';
+}
+
+function mergeOrganizations(existing: Organization[], incoming: Organization[]) {
+  const byId = new Map(existing.map((org) => [org.id, org]));
+  incoming.forEach((org) => byId.set(org.id, org));
+  return Array.from(byId.values());
+}
+
+function mergeCountMaps(existing: Record<string, number>, incoming: Record<string, number> | undefined) {
+  return { ...existing, ...(incoming || {}) };
+}
+
+function mergeIds(existing: string[], incoming: string[] | undefined) {
+  return Array.from(new Set([...existing, ...(incoming || [])]));
+}
+
+function mergeCentrePartnerships(
+  existing: Record<string, CentrePartnershipSummary>,
+  incoming: Record<string, CentrePartnershipSummary> | undefined
+) {
+  return { ...existing, ...(incoming || {}) };
+}
+
+function formatOrgType(type: string | null) {
+  return type ? type.replace(/-/g, ' ') : null;
+}
+
+function formatLocation(org: Organization) {
+  return [org.city, org.state].filter(Boolean).join(', ') || 'Location open';
+}
+
+function DirectoryBadge({
+  children,
+  tone = 'neutral',
+  icon,
+}: {
+  children: ReactNode;
+  tone?: 'neutral' | 'green' | 'blue' | 'purple' | 'ochre' | 'red';
+  icon?: ReactNode;
+}) {
+  const tones = {
+    neutral: 'border-earth-300 bg-white text-earth-700',
+    green: 'border-eucalyptus-700 bg-eucalyptus-50 text-eucalyptus-800',
+    blue: 'border-blue-700 bg-blue-50 text-blue-800',
+    purple: 'border-purple-700 bg-purple-50 text-purple-800',
+    ochre: 'border-ochre-700 bg-ochre-50 text-ochre-800',
+    red: 'border-red-700 bg-red-50 text-red-800',
+  };
+
+  return (
+    <span className={`inline-flex max-w-full items-center gap-1 border px-2 py-1 text-[11px] font-bold uppercase leading-none ${tones[tone]}`}>
+      {icon}
+      <span className="truncate">{children}</span>
+    </span>
+  );
+}
+
+function LinkSummary({
+  programCount,
+  serviceCount,
+  teamCount,
+  centreCount,
+}: {
+  programCount: number;
+  serviceCount: number;
+  teamCount: number;
+  centreCount: number;
+}) {
+  const items = [
+    { label: 'centre link', count: centreCount, icon: <Building2 className="h-3.5 w-3.5" />, className: 'text-red-700' },
+    { label: 'program', count: programCount, icon: <Heart className="h-3.5 w-3.5" />, className: 'text-eucalyptus-700' },
+    { label: 'service', count: serviceCount, icon: <Briefcase className="h-3.5 w-3.5" />, className: 'text-ochre-700' },
+    { label: 'team', count: teamCount, icon: <Users className="h-3.5 w-3.5" />, className: 'text-blue-700' },
+  ].filter((item) => item.count > 0);
+
+  if (items.length === 0) {
+    return (
+      <div className="flex flex-wrap gap-2 text-xs font-bold text-earth-500">
+        <span className="border border-earth-200 bg-sand-50 px-2 py-1">Claim ready</span>
+        <span className="border border-earth-200 bg-sand-50 px-2 py-1">Services open</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-wrap gap-3">
+      {items.map((item) => (
+        <span key={item.label} className={`inline-flex items-center gap-1 text-xs font-bold ${item.className}`}>
+          {item.icon}
+          {item.count} {item.label}{item.count === 1 ? '' : 's'}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function OrganizationCard({
+  org,
+  isClaimed,
+  programCount,
+  serviceCount,
+  teamCount,
+  centrePartnership,
+}: {
+  org: Organization;
+  isClaimed: boolean;
+  programCount: number;
+  serviceCount: number;
+  teamCount: number;
+  centrePartnership?: CentrePartnershipSummary;
+}) {
+  const isVerified = isVerifiedStatus(org.verification_status);
+  const hasGrantScope = Boolean(org.gs_entity_id || org.abn);
+  const typeLabel = formatOrgType(org.type);
+  const description = org.description || 'No public summary available yet.';
+  const centreCount = centrePartnership?.count || 0;
+  const centreNames = centrePartnership?.centres?.slice(0, 2) || [];
+
+  return (
+    <Link
+      href={`/organizations/${org.slug || org.id}`}
+      className={`group flex h-full min-h-[260px] flex-col border-2 border-black bg-white p-5 transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] ${
+        isClaimed ? 'shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]' : ''
+      }`}
+    >
+      <div className="mb-4 flex min-h-[28px] flex-wrap items-start gap-1.5">
+        {isClaimed && (
+          <DirectoryBadge tone="purple" icon={<CheckCircle2 className="h-3 w-3" />}>
+            Claimed
+          </DirectoryBadge>
+        )}
+        {isVerified && (
+          <DirectoryBadge tone="green" icon={<CheckCircle2 className="h-3 w-3" />}>
+            Verified
+          </DirectoryBadge>
+        )}
+        {hasGrantScope && (
+          <DirectoryBadge tone="blue" icon={<Link2 className="h-3 w-3" />}>
+            Civic graph
+          </DirectoryBadge>
+        )}
+        {centreCount > 0 && (
+          <DirectoryBadge tone="red" icon={<Building2 className="h-3 w-3" />}>
+            Centre partner
+          </DirectoryBadge>
+        )}
+        {typeLabel && <DirectoryBadge>{typeLabel}</DirectoryBadge>}
+      </div>
+
+      <h3 className="line-clamp-3 break-words text-xl font-bold leading-tight text-earth-900 transition-colors group-hover:text-ochre-700">
+        {org.name}
+      </h3>
+
+      <div className="mt-3 flex items-center gap-1.5 text-sm text-earth-600">
+        <MapPin className="h-4 w-4 shrink-0" />
+        <span className="truncate">{formatLocation(org)}</span>
+      </div>
+
+      <p className={`mt-3 line-clamp-3 text-sm leading-relaxed ${org.description ? 'text-earth-600' : 'text-earth-400'}`}>
+        {description}
+      </p>
+
+      {centreCount > 0 && (
+        <div className="mt-4 border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-900">
+          <div className="font-bold uppercase">Works with detention centre{centreCount === 1 ? '' : 's'}</div>
+          <div className="mt-1 line-clamp-2">
+            {centreNames.length > 0 ? centreNames.join(' · ') : `${centreCount} centre link${centreCount === 1 ? '' : 's'} recorded`}
+          </div>
+        </div>
+      )}
+
+      <div className="mt-auto pt-5">
+        <div className="border-t border-earth-200 pt-4">
+          <LinkSummary programCount={programCount} serviceCount={serviceCount} teamCount={teamCount} centreCount={centreCount} />
+        </div>
+
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <span className="min-w-0 truncate text-xs font-medium text-earth-500">
+            {org.abn ? `ABN ${org.abn}` : hasGrantScope ? 'GrantScope linked' : 'Identity link open'}
+          </span>
+          <span className="inline-flex shrink-0 items-center gap-1 text-sm font-bold text-blue-700">
+            Open
+            <ArrowUpRight className="h-4 w-4" />
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function OrganizationListRow({
+  org,
+  isClaimed,
+  programCount,
+  serviceCount,
+  teamCount,
+  centrePartnership,
+}: {
+  org: Organization;
+  isClaimed: boolean;
+  programCount: number;
+  serviceCount: number;
+  teamCount: number;
+  centrePartnership?: CentrePartnershipSummary;
+}) {
+  const isVerified = isVerifiedStatus(org.verification_status);
+  const hasGrantScope = Boolean(org.gs_entity_id || org.abn);
+  const typeLabel = formatOrgType(org.type);
+  const centreCount = centrePartnership?.count || 0;
+  const linkedCount = programCount + serviceCount + teamCount + centreCount;
+
+  return (
+    <Link
+      href={`/organizations/${org.slug || org.id}`}
+      className="grid gap-3 border-b border-earth-200 p-4 transition-colors last:border-b-0 hover:bg-sand-50 md:grid-cols-[minmax(0,1.4fr)_minmax(170px,0.45fr)_minmax(240px,0.7fr)_auto]"
+    >
+      <div className="min-w-0">
+        <div className="flex items-start gap-2">
+          <h3 className="min-w-0 break-words font-bold leading-tight text-earth-900">{org.name}</h3>
+          {isClaimed && <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-purple-700" />}
+        </div>
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-earth-500">
+          {typeLabel && <span className="font-bold uppercase">{typeLabel}</span>}
+          {org.abn && <span>ABN {org.abn}</span>}
+          {org.gs_entity_id && <span>GrantScope linked</span>}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-1 text-sm text-earth-600">
+        <MapPin className="h-4 w-4 shrink-0" />
+        <span className="truncate">{formatLocation(org)}</span>
+      </div>
+
+      <div className="flex flex-wrap gap-2 text-xs font-bold">
+        {isVerified && <DirectoryBadge tone="green">Verified</DirectoryBadge>}
+        {isClaimed && <DirectoryBadge tone="purple">Claimed</DirectoryBadge>}
+        {hasGrantScope && <DirectoryBadge tone="blue">Civic graph</DirectoryBadge>}
+        {centreCount > 0 && <DirectoryBadge tone="red">Centre partner</DirectoryBadge>}
+        <DirectoryBadge tone={linkedCount > 0 ? 'ochre' : 'neutral'}>
+          {linkedCount > 0 ? `${linkedCount} linked item${linkedCount === 1 ? '' : 's'}` : 'Profile open'}
+        </DirectoryBadge>
+      </div>
+
+      <div className="flex items-center justify-end gap-1 text-sm font-bold text-blue-700">
+        Open
+        <ArrowUpRight className="h-4 w-4" />
+      </div>
+    </Link>
+  );
+}
 
 export function OrganizationsPageContent({
   organizations,
+  totalOrgCount,
   programCounts,
   serviceCounts,
   teamCounts,
   claimedOrgIds,
   dataStatus = 'live',
 }: OrganizationsPageContentProps) {
-  const claimedSet = useMemo(() => new Set(claimedOrgIds), [claimedOrgIds]);
+  const [directoryOrgs, setDirectoryOrgs] = useState<Organization[]>(organizations);
+  const [directoryTotal, setDirectoryTotal] = useState(totalOrgCount || organizations.length);
+  const [loadedProgramCounts, setLoadedProgramCounts] = useState<Record<string, number>>(programCounts);
+  const [loadedServiceCounts, setLoadedServiceCounts] = useState<Record<string, number>>(serviceCounts);
+  const [loadedTeamCounts, setLoadedTeamCounts] = useState<Record<string, number>>(teamCounts);
+  const [loadedCentrePartnerships, setLoadedCentrePartnerships] = useState<Record<string, CentrePartnershipSummary>>({});
+  const [loadedClaimedOrgIds, setLoadedClaimedOrgIds] = useState<string[]>(claimedOrgIds);
+  const [isDirectoryLoading, setIsDirectoryLoading] = useState(false);
+  const [directoryError, setDirectoryError] = useState<string | null>(null);
+  const filtersHaveMounted = useRef(false);
+  const claimedSet = useMemo(() => new Set(loadedClaimedOrgIds), [loadedClaimedOrgIds]);
   const [searchQuery, setSearchQuery] = useState('');
   const [stateFilter, setStateFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -59,35 +345,121 @@ export function OrganizationsPageContent({
   const [viewMode, setViewMode] = useState<DirectoryView>('cards');
   const [quickFilter, setQuickFilter] = useState<QuickFilter>('all');
 
-  // Derive unique states and types from data
+  useEffect(() => {
+    setDirectoryOrgs(organizations);
+    setDirectoryTotal(totalOrgCount || organizations.length);
+    setLoadedProgramCounts(programCounts);
+    setLoadedServiceCounts(serviceCounts);
+    setLoadedTeamCounts(teamCounts);
+    setLoadedCentrePartnerships({});
+    setLoadedClaimedOrgIds(claimedOrgIds);
+  }, [organizations, totalOrgCount, programCounts, serviceCounts, teamCounts, claimedOrgIds]);
+
+  // Derive unique states and types from the loaded working set.
   const states = useMemo(() => {
-    const set = new Set<string>();
-    organizations.forEach((org) => {
+    const set = new Set<string>(AU_STATES);
+    directoryOrgs.forEach((org) => {
       if (org.state) set.add(org.state);
     });
     return Array.from(set).sort();
-  }, [organizations]);
+  }, [directoryOrgs]);
 
   const types = useMemo(() => {
     const set = new Set<string>();
-    organizations.forEach((org) => {
+    directoryOrgs.forEach((org) => {
       if (org.type) set.add(org.type);
     });
     return Array.from(set).sort();
-  }, [organizations]);
+  }, [directoryOrgs]);
 
   const [visibleCount, setVisibleCount] = useState(30);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const quick = params.get('quick') as QuickFilter | null;
+    const verification = params.get('verification');
+    const sort = params.get('sort');
+    const state = params.get('state');
+    const type = params.get('type');
+    const q = params.get('q');
+    const view = params.get('view');
+
+    if (quick && QUICK_FILTERS.includes(quick)) setQuickFilter(quick);
+    if (verification && VERIFICATION_FILTERS.includes(verification)) setVerificationFilter(verification);
+    if (sort && SORT_OPTIONS.includes(sort)) setSortBy(sort);
+    if (state) setStateFilter(state);
+    if (type) setTypeFilter(type);
+    if (q) setSearchQuery(q);
+    if (view === 'list' || view === 'cards') setViewMode(view);
+  }, []);
+
   const hasActiveFilters =
-    searchQuery ||
+    Boolean(searchQuery.trim()) ||
     stateFilter !== 'all' ||
     typeFilter !== 'all' ||
     verificationFilter !== 'all' ||
     quickFilter !== 'all';
 
+  const fetchDirectoryPage = async ({ reset = false, offset }: { reset?: boolean; offset?: number } = {}) => {
+    const requestedOffset = reset ? 0 : offset ?? directoryOrgs.length;
+    const params = new URLSearchParams({
+      offset: String(requestedOffset),
+      limit: String(DIRECTORY_PAGE_SIZE),
+      sort: sortBy,
+      quick: quickFilter,
+      verification: verificationFilter,
+    });
+
+    if (searchQuery.trim()) params.set('q', searchQuery.trim());
+    if (stateFilter !== 'all') params.set('state', stateFilter);
+    if (typeFilter !== 'all') params.set('type', typeFilter);
+
+    setIsDirectoryLoading(true);
+    setDirectoryError(null);
+
+    try {
+      const response = await fetch(`/api/organizations/directory?${params.toString()}`, {
+        cache: 'no-store',
+      });
+      const payload = (await response.json()) as DirectoryResponse;
+
+      if (!response.ok) {
+        throw new Error(payload.error || 'Organization directory failed to load');
+      }
+
+      const incomingOrgs = payload.organizations || [];
+      setDirectoryOrgs((current) => (reset ? incomingOrgs : mergeOrganizations(current, incomingOrgs)));
+      setDirectoryTotal((current) =>
+        typeof payload.total === 'number'
+          ? payload.total
+          : Math.max(current, requestedOffset + incomingOrgs.length)
+      );
+      setLoadedProgramCounts((current) =>
+        reset ? payload.programCounts || {} : mergeCountMaps(current, payload.programCounts)
+      );
+      setLoadedServiceCounts((current) =>
+        reset ? payload.serviceCounts || {} : mergeCountMaps(current, payload.serviceCounts)
+      );
+      setLoadedTeamCounts((current) =>
+        reset ? payload.teamCounts || {} : mergeCountMaps(current, payload.teamCounts)
+      );
+      setLoadedCentrePartnerships((current) =>
+        reset ? payload.centrePartnerships || {} : mergeCentrePartnerships(current, payload.centrePartnerships)
+      );
+      setLoadedClaimedOrgIds((current) =>
+        reset ? payload.claimedOrgIds || [] : mergeIds(current, payload.claimedOrgIds)
+      );
+      if (reset) setVisibleCount(30);
+    } catch (error) {
+      setDirectoryError(error instanceof Error ? error.message : 'Organization directory failed to load');
+    } finally {
+      setIsDirectoryLoading(false);
+    }
+  };
+
   const filtered = useMemo(() => {
-    const query = searchQuery.toLowerCase();
-    return organizations
+    const query = searchQuery.trim().toLowerCase();
+    return directoryOrgs
       .filter((org) => {
         // Search
         if (query) {
@@ -111,14 +483,15 @@ export function OrganizationsPageContent({
         // Type
         if (typeFilter !== 'all' && org.type !== typeFilter) return false;
         // Verification
-        if (verificationFilter === 'verified' && org.verification_status !== 'verified') return false;
+        if (verificationFilter === 'verified' && !isVerifiedStatus(org.verification_status)) return false;
         if (verificationFilter === 'claimed' && !claimedSet.has(org.id)) return false;
-        if (verificationFilter === 'unverified' && org.verification_status === 'verified') return false;
+        if (verificationFilter === 'unverified' && isVerifiedStatus(org.verification_status)) return false;
         // Quick filters
         if (quickFilter === 'linked' && !(org.gs_entity_id || org.abn)) return false;
         if (quickFilter === 'claimed' && !claimedSet.has(org.id)) return false;
-        if (quickFilter === 'with-services' && !((programCounts[org.id] || 0) + (serviceCounts[org.id] || 0))) return false;
-        if (quickFilter === 'needs-profile' && (claimedSet.has(org.id) || org.verification_status === 'verified')) return false;
+        if (quickFilter === 'with-services' && !((loadedProgramCounts[org.id] || 0) + (loadedServiceCounts[org.id] || 0))) return false;
+        if (quickFilter === 'centre-partners' && !(loadedCentrePartnerships[org.id]?.count > 0)) return false;
+        if (quickFilter === 'needs-profile' && (claimedSet.has(org.id) || isVerifiedStatus(org.verification_status) || org.description)) return false;
         return true;
       })
       .sort((a, b) => {
@@ -133,26 +506,45 @@ export function OrganizationsPageContent({
           case 'name-desc':
             return b.name.localeCompare(a.name);
           case 'most-programs': {
-            const ap = (programCounts[a.id] || 0) + (serviceCounts[a.id] || 0);
-            const bp = (programCounts[b.id] || 0) + (serviceCounts[b.id] || 0);
+            const ap = (loadedProgramCounts[a.id] || 0) + (loadedServiceCounts[a.id] || 0);
+            const bp = (loadedProgramCounts[b.id] || 0) + (loadedServiceCounts[b.id] || 0);
             return bp - ap || a.name.localeCompare(b.name);
           }
           case 'most-services': {
-            const as2 = serviceCounts[a.id] || 0;
-            const bs = serviceCounts[b.id] || 0;
+            const as2 = loadedServiceCounts[a.id] || 0;
+            const bs = loadedServiceCounts[b.id] || 0;
             return bs - as2 || a.name.localeCompare(b.name);
           }
           default: // name-asc
             return a.name.localeCompare(b.name);
         }
       });
-  }, [organizations, searchQuery, stateFilter, typeFilter, verificationFilter, quickFilter, sortBy, programCounts, serviceCounts, claimedSet]);
+  }, [directoryOrgs, searchQuery, stateFilter, typeFilter, verificationFilter, quickFilter, sortBy, loadedProgramCounts, loadedServiceCounts, loadedCentrePartnerships, claimedSet]);
 
-  // Reset pagination when filters change
-  useEffect(() => { setVisibleCount(30); }, [searchQuery, stateFilter, typeFilter, verificationFilter, quickFilter, sortBy, viewMode]);
+  useEffect(() => {
+    if (!filtersHaveMounted.current) {
+      filtersHaveMounted.current = true;
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      void fetchDirectoryPage({ reset: true, offset: 0 });
+    }, searchQuery.trim() ? 350 : 100);
+
+    return () => window.clearTimeout(timeout);
+  }, [searchQuery, stateFilter, typeFilter, verificationFilter, quickFilter, sortBy]);
 
   const visibleOrgs = filtered.slice(0, visibleCount);
-  const hasMore = visibleCount < filtered.length;
+  const shownCount = Math.min(visibleCount, filtered.length);
+  const hasMore = visibleCount < filtered.length || directoryOrgs.length < directoryTotal;
+
+  const handleLoadMore = async () => {
+    const nextVisibleCount = visibleCount + DIRECTORY_DISPLAY_INCREMENT;
+    if (nextVisibleCount > filtered.length && directoryOrgs.length < directoryTotal) {
+      await fetchDirectoryPage({ offset: directoryOrgs.length });
+    }
+    setVisibleCount(nextVisibleCount);
+  };
 
   const clearFilters = () => {
     setSearchQuery('');
@@ -172,7 +564,7 @@ export function OrganizationsPageContent({
             <div>
               <h2 className="text-2xl font-bold text-earth-900">Organization Directory</h2>
               <p className="text-sm text-earth-600">
-                Search the loaded profile set, then open a record to build out programs, services, stories, funding, and claim status.
+                Search the full organization table, then open a record to build out programs, services, stories, funding, and claim status.
               </p>
             </div>
             <div className="flex border-2 border-black bg-white">
@@ -281,6 +673,7 @@ export function OrganizationsPageContent({
               { key: 'linked', label: 'ABN / GrantScope linked' },
               { key: 'claimed', label: 'Claimed' },
               { key: 'with-services', label: 'Programs or services' },
+              { key: 'centre-partners', label: 'Centre partners' },
               { key: 'needs-profile', label: 'Needs profile work' },
             ].map((item) => (
               <button
@@ -301,10 +694,16 @@ export function OrganizationsPageContent({
           {/* Result Count */}
           <div className="mt-3 text-sm text-earth-600 font-medium">
             Showing{' '}
-            <span className="font-bold text-earth-900">{Math.min(visibleCount, filtered.length)}</span>{' '}
-            of {filtered.length} organizations
-            {filtered.length < organizations.length && (
-              <span className="text-earth-400"> (filtered from {organizations.length})</span>
+            <span className="font-bold text-earth-900">{shownCount.toLocaleString()}</span>{' '}
+            of {directoryTotal.toLocaleString()} organizations
+            {directoryOrgs.length < directoryTotal && (
+              <span className="text-earth-400"> ({directoryOrgs.length.toLocaleString()} loaded)</span>
+            )}
+            {isDirectoryLoading && (
+              <span className="ml-2 text-blue-700">Loading directory...</span>
+            )}
+            {directoryError && (
+              <span className="ml-2 text-red-700">{directoryError}</span>
             )}
           </div>
         </div>
@@ -316,171 +715,34 @@ export function OrganizationsPageContent({
           {filtered.length > 0 ? (
             <>
             {viewMode === 'cards' ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {visibleOrgs.map((org) => {
-                const isVerified = org.verification_status === 'verified';
-                const hasGrantScope = Boolean(org.gs_entity_id || org.abn);
-                const hasLinks =
-                  programCounts[org.id] || serviceCounts[org.id] || teamCounts[org.id];
                 return (
-                  <Link
+                  <OrganizationCard
                     key={org.id}
-                    href={`/organizations/${org.slug || org.id}`}
-                    className={`block bg-white border-2 border-black p-5 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all group ${isVerified ? 'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]' : ''} ${hasLinks && !isVerified ? 'ring-2 ring-ochre-200' : ''}`}
-                  >
-                    {/* Header */}
-                    <div className="flex items-start justify-between gap-2 mb-3">
-                      <h3 className="font-bold text-lg text-earth-900 group-hover:text-ochre-600 transition-colors">
-                        {org.name}
-                      </h3>
-                      <div className="flex flex-shrink-0 gap-1">
-                        {claimedSet.has(org.id) && (
-                          <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-800 px-2 py-0.5 border border-purple-600 text-xs font-bold uppercase tracking-wider">
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            Claimed
-                          </span>
-                        )}
-                        {isVerified && (
-                          <span className="inline-flex items-center gap-1 bg-eucalyptus-100 text-eucalyptus-800 px-2 py-0.5 border border-black text-xs font-bold uppercase tracking-wider">
-                            <svg
-                              className="w-3 h-3"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                            Verified
-                          </span>
-                        )}
-                        {hasGrantScope && (
-                          <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-800 px-2 py-0.5 border border-blue-600 text-xs font-bold uppercase tracking-wider">
-                            <Link2 className="w-3 h-3" />
-                            Civic graph
-                          </span>
-                        )}
-                        {org.type && (
-                          <span className="px-2 py-0.5 bg-sand-100 border border-black text-xs font-bold uppercase tracking-wide">
-                            {org.type.replace('-', ' ')}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Location */}
-                    {org.city && org.state && (
-                      <div className="flex items-center gap-1 text-sm text-earth-600 mb-3">
-                        <MapPin className="w-4 h-4" />
-                        {org.city}, {org.state}
-                      </div>
-                    )}
-
-                    {/* Description */}
-                    {org.description && (
-                      <p className="text-sm text-earth-600 mb-4 line-clamp-2">
-                        {org.description}
-                      </p>
-                    )}
-
-                    {/* Linked Content Counts */}
-                    {hasLinks && (
-                      <div className="pt-3 mt-auto border-t border-earth-200 flex flex-wrap gap-3">
-                        {programCounts[org.id] && (
-                          <div className="flex items-center gap-1 text-xs font-bold text-eucalyptus-700">
-                            <Heart className="w-3 h-3" />
-                            {programCounts[org.id]} program
-                            {programCounts[org.id] !== 1 ? 's' : ''}
-                          </div>
-                        )}
-                        {serviceCounts[org.id] && (
-                          <div className="flex items-center gap-1 text-xs font-bold text-ochre-700">
-                            <Briefcase className="w-3 h-3" />
-                            {serviceCounts[org.id]} service
-                            {serviceCounts[org.id] !== 1 ? 's' : ''}
-                          </div>
-                        )}
-                        {teamCounts[org.id] && (
-                          <div className="flex items-center gap-1 text-xs font-bold text-blue-700">
-                            <Users className="w-3 h-3" />
-                            {teamCounts[org.id]} team
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Tags */}
-                    {org.tags && org.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-3">
-                        {org.tags.slice(0, 3).map((tag) => (
-                          <span
-                            key={tag}
-                            className="bg-sand-50 border border-earth-200 text-earth-600 px-2 py-0.5 text-xs"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                        {org.tags.length > 3 && (
-                          <span className="text-earth-400 text-xs py-0.5">
-                            +{org.tags.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </Link>
+                    org={org}
+                    isClaimed={claimedSet.has(org.id)}
+                    programCount={loadedProgramCounts[org.id] || 0}
+                    serviceCount={loadedServiceCounts[org.id] || 0}
+                    teamCount={loadedTeamCounts[org.id] || 0}
+                    centrePartnership={loadedCentrePartnerships[org.id]}
+                  />
                 );
               })}
             </div>
             ) : (
               <div className="overflow-hidden border-2 border-black bg-white">
                 {visibleOrgs.map((org) => {
-                  const isVerified = org.verification_status === 'verified';
-                  const isClaimed = claimedSet.has(org.id);
-                  const hasGrantScope = Boolean(org.gs_entity_id || org.abn);
-                  const linkedCount =
-                    (programCounts[org.id] || 0) +
-                    (serviceCounts[org.id] || 0) +
-                    (teamCounts[org.id] || 0);
-
                   return (
-                    <Link
+                    <OrganizationListRow
                       key={org.id}
-                      href={`/organizations/${org.slug || org.id}`}
-                      className="grid gap-3 border-b border-earth-200 p-4 transition-colors last:border-b-0 hover:bg-sand-50 md:grid-cols-[minmax(0,1.4fr)_minmax(160px,0.4fr)_minmax(220px,0.7fr)_auto]"
-                    >
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-bold text-earth-900">{org.name}</h3>
-                          {isClaimed && <CheckCircle2 className="h-4 w-4 text-purple-700" />}
-                        </div>
-                        <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-earth-500">
-                          {org.type && <span className="font-bold uppercase tracking-wide">{org.type.replace('-', ' ')}</span>}
-                          {org.abn && <span>ABN {org.abn}</span>}
-                          {org.gs_entity_id && <span>GrantScope linked</span>}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-1 text-sm text-earth-600">
-                        <MapPin className="h-4 w-4" />
-                        {[org.city, org.state].filter(Boolean).join(', ') || 'Location open'}
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 text-xs font-bold">
-                        {isVerified && <span className="border border-eucalyptus-700 bg-eucalyptus-50 px-2 py-1 text-eucalyptus-800">Verified</span>}
-                        {isClaimed && <span className="border border-purple-700 bg-purple-50 px-2 py-1 text-purple-800">Claimed</span>}
-                        {hasGrantScope && <span className="border border-blue-700 bg-blue-50 px-2 py-1 text-blue-800">Civic graph</span>}
-                        <span className="border border-earth-300 bg-white px-2 py-1 text-earth-700">{linkedCount} linked items</span>
-                      </div>
-
-                      <div className="flex items-center justify-end gap-1 text-sm font-bold text-blue-700">
-                        Open
-                        <ArrowUpRight className="h-4 w-4" />
-                      </div>
-                    </Link>
+                      org={org}
+                      isClaimed={claimedSet.has(org.id)}
+                      programCount={loadedProgramCounts[org.id] || 0}
+                      serviceCount={loadedServiceCounts[org.id] || 0}
+                      teamCount={loadedTeamCounts[org.id] || 0}
+                      centrePartnership={loadedCentrePartnerships[org.id]}
+                    />
                   );
                 })}
               </div>
@@ -490,10 +752,13 @@ export function OrganizationsPageContent({
             {hasMore && (
               <div className="mt-8 text-center">
                 <button
-                  onClick={() => setVisibleCount(prev => prev + 60)}
+                  onClick={handleLoadMore}
+                  disabled={isDirectoryLoading}
                   className="px-6 py-3 border-2 border-black bg-ochre-50 text-earth-900 font-bold hover:bg-ochre-100 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
                 >
-                  Load more ({filtered.length - visibleCount} remaining)
+                  {isDirectoryLoading
+                    ? 'Loading organizations...'
+                    : `Load more (${Math.max(directoryTotal - shownCount, 0).toLocaleString()} remaining)`}
                 </button>
               </div>
             )}

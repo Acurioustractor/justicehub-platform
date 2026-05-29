@@ -116,9 +116,44 @@ export default async function AdminDashboard() {
     .eq('status', 'active')
     .order('created_at', { ascending: true });
 
+  const partnerOrgMap = new Map<string, any>();
+  for (const member of partnerOrgs || []) {
+    const org = Array.isArray((member as any).organizations)
+      ? (member as any).organizations[0]
+      : (member as any).organizations;
+    if (!org?.id) continue;
+
+    const existing = partnerOrgMap.get(org.id) || {
+      ...org,
+      memberCount: 0,
+      emails: [] as string[],
+    };
+
+    existing.memberCount += 1;
+    const email = Array.isArray((member as any).profiles)
+      ? (member as any).profiles[0]?.email
+      : (member as any).profiles?.email;
+    if (email && !existing.emails.includes(email)) {
+      existing.emails.push(email);
+    }
+
+    partnerOrgMap.set(org.id, existing);
+  }
+
+  const partnerOrgRows = Array.from(partnerOrgMap.values()).sort((a, b) =>
+    String(a.name || '').localeCompare(String(b.name || ''))
+  );
+  const activeOrgMemberCount = partnerOrgRows.reduce((sum, org) => sum + (org.memberCount || 0), 0);
+
   // Calculate connection rates (org linkage, not profile linkage)
-  const servicesConnectionRate = servicesCount ? Math.round(((servicesWithOrgCount || 0) / servicesCount) * 100) : 0;
-  const programsConnectionRate = programsCount ? Math.round(((programsWithOrgCount || 0) / programsCount) * 100) : 0;
+  const servicesTotal = servicesCount || 0;
+  const programsTotal = programsCount || 0;
+  const servicesLinkedToOrgCount = servicesWithOrgCount || 0;
+  const programsLinkedToOrgCount = programsWithOrgCount || 0;
+  const serviceProfileLinkCount = serviceLinksCount || 0;
+  const programProfileLinkCount = programLinksCount || 0;
+  const servicesConnectionRate = servicesTotal ? Math.round((servicesLinkedToOrgCount / servicesTotal) * 100) : 0;
+  const programsConnectionRate = programsTotal ? Math.round((programsLinkedToOrgCount / programsTotal) * 100) : 0;
 
   // Calculate total auto-linked relationships
   const totalAutoLinks = (orgLinksCount || 0) + (blogPostLinksCount || 0);
@@ -135,7 +170,7 @@ export default async function AdminDashboard() {
         { title: 'People', count: profilesCount || 0, subtitle: `${publicProfilesCount || 0} public, ${peopleWithConnectionsCount || 0} connected`, icon: Users, href: '/admin/profiles', bgColor: 'bg-blue-50', textColor: 'text-blue-600' },
         { title: 'Stories', count: storiesCount || 0, subtitle: `${storyLinksCount || 0} profile links`, icon: BookOpen, href: '/admin/stories', bgColor: 'bg-purple-50', textColor: 'text-purple-600' },
         { title: 'Art & Innovation', count: artCount || 0, subtitle: `${artLinksCount || 0} profile links`, icon: Palette, href: '/admin/art-innovation', bgColor: 'bg-pink-50', textColor: 'text-pink-600' },
-        { title: 'Media', count: (photosCount || 0) + (videosCount || 0), subtitle: `${photosCount || 0} photos, ${videosCount || 0} videos + 261 via EL`, icon: Image, href: '/admin/media', bgColor: 'bg-amber-50', textColor: 'text-amber-600' },
+        { title: 'Media', count: (photosCount || 0) + (videosCount || 0), subtitle: `${photosCount || 0} photos, ${videosCount || 0} videos`, icon: Image, href: '/admin/media', bgColor: 'bg-amber-50', textColor: 'text-amber-600' },
         { title: 'Blog Posts', count: blogPostsCount || 0, subtitle: `${draftPostsCount || 0} drafts`, icon: FileText, href: '/admin/blog', bgColor: 'bg-emerald-50', textColor: 'text-emerald-600' },
         { title: 'Storytellers', count: '🎙️', subtitle: 'Tags & management', icon: Mic, href: '/admin/storytellers', bgColor: 'bg-violet-50', textColor: 'text-violet-600' },
         { title: 'Empathy Ledger', count: empathyTranscriptsCount || 0, subtitle: 'Synced from Empathy Ledger', icon: Database, href: '/admin/empathy-ledger', bgColor: 'bg-violet-50', textColor: 'text-violet-600' },
@@ -145,11 +180,11 @@ export default async function AdminDashboard() {
     {
       label: 'Directory & Organizations',
       cards: [
-        { title: 'Organizations', count: organizationsCount || 0, subtitle: `${orgLinksCount || 0} team members`, icon: Building2, href: '/admin/organizations', bgColor: 'bg-cyan-50', textColor: 'text-cyan-600' },
-        { title: 'Programs', count: programsCount || 0, subtitle: `${programsWithOrgCount || 0}/${programsCount || 0} linked to orgs`, icon: Building2, href: '/admin/programs', bgColor: 'bg-green-50', textColor: 'text-green-600', alert: programsConnectionRate < 50 ? 'Low org linkage' : undefined },
-        { title: 'Services', count: servicesCount || 0, subtitle: `${servicesWithOrgCount || 0}/${servicesCount || 0} linked to orgs`, icon: MapPin, href: '/admin/services', bgColor: 'bg-orange-50', textColor: 'text-orange-600', alert: servicesConnectionRate < 50 ? 'Low org linkage' : undefined },
+        { title: 'Organizations', count: organizationsCount || 0, subtitle: `${partnerOrgRows.length} active org accounts · ${activeOrgMemberCount} members`, icon: Building2, href: '/admin/organizations', bgColor: 'bg-cyan-50', textColor: 'text-cyan-600' },
+        { title: 'Programs', count: programsTotal, subtitle: `${programsLinkedToOrgCount}/${programsTotal} linked to orgs`, icon: Building2, href: '/admin/programs', bgColor: 'bg-green-50', textColor: 'text-green-600', alert: programsTotal > 0 && programsConnectionRate < 50 ? 'Low org linkage' : undefined },
+        { title: 'Services', count: servicesTotal, subtitle: servicesTotal > 0 ? `${servicesLinkedToOrgCount}/${servicesTotal} linked to orgs` : 'No services loaded', icon: MapPin, href: '/admin/services', bgColor: 'bg-orange-50', textColor: 'text-orange-600', alert: servicesTotal > 0 && servicesConnectionRate < 50 ? 'Low org linkage' : undefined },
         { title: 'Auto-Linked', count: totalAutoLinks, subtitle: `${orgLinksCount || 0} orgs + ${blogPostLinksCount || 0} stories`, icon: Network, href: '/admin/auto-linking', bgColor: 'bg-indigo-50', textColor: 'text-indigo-600' },
-        { title: 'Org Claims', count: orgClaimsCount || 0, subtitle: 'Pending partner claims', icon: UserCheck, href: '/admin/org-claims', bgColor: 'bg-teal-50', textColor: 'text-teal-600', alert: (orgClaimsCount || 0) > 0 ? `${orgClaimsCount} pending` : undefined },
+        { title: 'Org Claims', count: orgClaimsCount || 0, subtitle: (orgClaimsCount || 0) > 0 ? 'Review pending partner claims' : 'No pending claims', icon: UserCheck, href: '/admin/org-claims', bgColor: 'bg-teal-50', textColor: 'text-teal-600', alert: (orgClaimsCount || 0) > 0 ? `${orgClaimsCount} pending` : undefined },
       ],
     },
     {
@@ -233,20 +268,20 @@ export default async function AdminDashboard() {
           ))}
 
           {/* Partner Organizations — onboarded with system accounts */}
-          {partnerOrgs && partnerOrgs.length > 0 && (
+          {partnerOrgRows.length > 0 && (
             <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-8 mb-12">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-2xl font-black text-black">Partner Organizations</h2>
-                  <p className="text-sm text-gray-600">{partnerOrgs.length} organizations with active system accounts</p>
+                  <p className="text-sm text-gray-600">
+                    {partnerOrgRows.length} organizations with active system accounts · {activeOrgMemberCount} active members
+                  </p>
                 </div>
                 <Handshake className="w-8 h-8 text-ochre-600" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {partnerOrgs.map((member: any) => {
-                  const org = member.organizations;
-                  if (!org) return null;
+                {partnerOrgRows.map((org: any) => {
                   return (
                     <div key={org.id} className="border-2 border-black p-4 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow">
                       <div className="flex items-start justify-between mb-2">
@@ -258,17 +293,21 @@ export default async function AdminDashboard() {
                           Active
                         </span>
                       </div>
-                      <p className="text-xs text-gray-600 mb-3">{member.profiles?.email}</p>
+                      <p className="text-xs text-gray-600 mb-3">
+                        {org.emails.length > 0
+                          ? org.emails.slice(0, 2).join(', ') + (org.emails.length > 2 ? ` +${org.emails.length - 2}` : '')
+                          : `${org.memberCount || 0} active member${org.memberCount === 1 ? '' : 's'}`}
+                      </p>
                       <div className="flex gap-2">
                         <Link
-                          href={`/admin/organizations/${org.slug}/hub`}
+                          href={org.slug ? `/admin/organizations/${org.slug}/hub` : '/admin/organizations'}
                           className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-ochre-600 text-white text-sm font-bold hover:bg-ochre-700 transition-colors"
                         >
                           Support Hub
                           <ExternalLink className="w-3 h-3" />
                         </Link>
                         <Link
-                          href={`/admin/organizations/${org.slug}`}
+                          href={org.slug ? `/admin/organizations/${org.slug}` : '/admin/organizations'}
                           className="flex items-center justify-center px-3 py-2 border-2 border-black text-sm font-bold hover:bg-gray-100 transition-colors"
                         >
                           Manage
@@ -286,6 +325,19 @@ export default async function AdminDashboard() {
             <h2 className="text-2xl font-black text-black mb-6">Quick Actions</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Link
+                href="/admin/org-claims"
+                className="relative flex items-center gap-3 px-4 py-3 bg-teal-50 border-2 border-teal-600 text-teal-700 font-bold hover:bg-teal-100 transition-colors"
+              >
+                <UserCheck className="w-5 h-5" />
+                Review Org Claims
+                {(orgClaimsCount || 0) > 0 && (
+                  <span className="ml-auto rounded-none border border-teal-700 bg-white px-2 py-0.5 text-xs font-black">
+                    {orgClaimsCount} pending
+                  </span>
+                )}
+              </Link>
+
               <Link
                 href="/signup"
                 className="flex items-center gap-3 px-4 py-3 bg-blue-50 border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-100 transition-colors"
@@ -522,7 +574,12 @@ export default async function AdminDashboard() {
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    {serviceLinksCount} of {servicesCount} services have profile connections
+                    {servicesTotal > 0
+                      ? `${servicesLinkedToOrgCount} of ${servicesTotal} services linked to organizations`
+                      : 'No services loaded yet'}
+                    {serviceProfileLinkCount > 0 && (
+                      <span className="block">{serviceProfileLinkCount} profile link{serviceProfileLinkCount === 1 ? '' : 's'} recorded</span>
+                    )}
                   </p>
                 </div>
 
@@ -539,7 +596,12 @@ export default async function AdminDashboard() {
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    {programLinksCount} of {programsCount} programs have profile connections
+                    {programsLinkedToOrgCount} of {programsTotal} programs linked to organizations
+                    {programProfileLinkCount > 0 ? (
+                      <span className="block">{programProfileLinkCount} profile link{programProfileLinkCount === 1 ? '' : 's'} recorded</span>
+                    ) : (
+                      <span className="block">No profile links recorded yet</span>
+                    )}
                   </p>
                 </div>
 

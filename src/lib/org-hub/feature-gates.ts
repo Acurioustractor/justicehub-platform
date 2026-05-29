@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { TierKey } from '@/lib/stripe';
+import type { TierKey } from '@/lib/billing/tiers';
 
 /**
  * Feature gate definitions — maps features to the minimum tier required.
@@ -31,6 +31,53 @@ const FEATURE_MIN_TIER: Record<Feature, TierKey> = {
   custom_reports: 'enterprise',
 };
 
+function isTrialActive(org: { billing_status?: string | null; trial_ends_at?: string | null }) {
+  if (org.billing_status !== 'trialing' || !org.trial_ends_at) return false;
+  const trialEndsAt = new Date(org.trial_ends_at);
+  return !Number.isNaN(trialEndsAt.getTime()) && trialEndsAt.getTime() > Date.now();
+}
+
+async function getOrganizationForFeatureCheck(
+  supabase: SupabaseClient,
+  orgId: string
+) {
+  const withTrial = await (supabase as any)
+    .from('organizations')
+    .select('id, slug, plan, type, partner_tier, billing_status, trial_ends_at')
+    .eq('id', orgId)
+    .single();
+
+  if (!withTrial.error) return withTrial;
+
+  const message = String(withTrial.error?.message || '').toLowerCase();
+  if (!message.includes('trial_ends_at')) return withTrial;
+
+  return (supabase as any)
+    .from('organizations')
+    .select('id, slug, plan, type, partner_tier, billing_status')
+    .eq('id', orgId)
+    .single();
+}
+
+async function getMembershipsForFeatureCheck(supabase: SupabaseClient, userId: string) {
+  const withTrial = await (supabase as any)
+    .from('organization_members')
+    .select('organization_id, organizations(plan, type, partner_tier, billing_status, trial_ends_at)')
+    .eq('user_id', userId)
+    .eq('status', 'active');
+
+  if (!withTrial.error) return withTrial;
+
+  const message = String(withTrial.error?.message || '').toLowerCase();
+  if (!message.includes('trial_ends_at')) return withTrial;
+
+  return (supabase as any)
+    .from('organization_members')
+    .select('organization_id, organizations(plan, type, partner_tier, billing_status)')
+    .eq('user_id', userId)
+    .eq('status', 'active');
+}
+
 export interface FeatureAccessResult {
   allowed: boolean;
   reason: string;
@@ -55,11 +102,7 @@ export async function checkFeatureAccess(
   feature: Feature
 ): Promise<FeatureAccessResult> {
   // Fetch org details
-  const { data: org } = await supabase
-    .from('organizations')
-    .select('id, slug, plan, type, partner_tier, trial_ends_at, billing_status')
-    .eq('id', orgId)
-    .single();
+  const { data: org } = await getOrganizationForFeatureCheck(supabase, orgId);
 
   if (!org) {
     return {
@@ -87,7 +130,7 @@ export async function checkFeatureAccess(
   }
 
   const plan = (org.plan as TierKey) || 'community';
-  const trialActive = org.trial_ends_at ? new Date(org.trial_ends_at) > new Date() : false;
+  const trialActive = isTrialActive(org);
 
   // During active trial, grant access as if on 'organisation' tier
   const effectivePlan = trialActive && plan === 'community' ? 'organisation' : plan;
@@ -155,11 +198,7 @@ export async function checkApiFeatureAccess(
   }
 
   // Find user's best org membership
-  const { data: memberships } = await (supabase as any)
-    .from('organization_members')
-    .select('organization_id, organizations(plan, type, partner_tier, trial_ends_at)')
-    .eq('user_id', user.id)
-    .eq('status', 'active');
+  const { data: memberships } = await getMembershipsForFeatureCheck(supabase, user.id);
 
   if (!memberships || memberships.length === 0) {
     return {
@@ -193,7 +232,7 @@ export async function checkApiFeatureAccess(
     }
 
     const plan = org.plan || 'community';
-    const trialActive = org.trial_ends_at ? new Date(org.trial_ends_at) > new Date() : false;
+    const trialActive = isTrialActive(org);
     const effectivePlan = trialActive && plan === 'community' ? 'organisation' : plan;
 
     if ((TIER_RANK[effectivePlan] ?? 0) >= requiredRank) {

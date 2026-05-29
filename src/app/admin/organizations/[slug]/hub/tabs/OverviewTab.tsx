@@ -3,6 +3,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
+  GrantScopePartnerMapPanel,
+  OrganizationDataSourcesPanel,
+  type GrantScopePartnerMapData,
+  type OrganizationDataSource,
+} from '@/components/organizations/OrganizationJourneyPanels';
+import {
   DollarSign,
   ShieldCheck,
   Calendar,
@@ -220,6 +226,77 @@ export function OverviewTab({
   const navigateTab = (tab: TabKey) => {
     if (onNavigateTab) onNavigateTab(tab);
   };
+  const fundingWorkspaceHref = funding ? `/funding/workspace/${funding.organizationId}` : undefined;
+  const dataSources: OrganizationDataSource[] = [
+    {
+      key: 'identity',
+      label: 'Identity and claim',
+      status: 'ready',
+      detail: 'Active hub access means the claim has been verified and the organization workspace is open.',
+    },
+    {
+      key: 'funding',
+      label: 'GrantScope readiness',
+      status: funding ? (funding.readinessScore >= 70 ? 'ready' : 'partial') : 'missing',
+      detail: funding
+        ? `Readiness ${funding.readinessScore}, trust ${funding.trustScore}, delivery ${funding.deliveryScore}.`
+        : 'No capability profile has been loaded into the funding workspace yet.',
+      href: fundingWorkspaceHref,
+    },
+    {
+      key: 'programs',
+      label: 'Programs and services',
+      status: programs.count > 0 ? 'ready' : 'missing',
+      detail: `${programs.count} program record${programs.count === 1 ? '' : 's'} currently attached to the organization.`,
+    },
+    {
+      key: 'people',
+      label: 'People and stories',
+      status: people.count > 0 || stories.count > 0 || Boolean(empathyLedger) ? 'ready' : 'missing',
+      detail: `${people.count} people, ${stories.count} stories${empathyLedger ? `, ${empathyLedger.storytellerCount} Empathy Ledger storytellers` : ''}.`,
+    },
+  ];
+  const partnerMapData: GrantScopePartnerMapData | null = funding
+    ? {
+        bestGrants: funding.topMatches.map((match) => ({
+          label: match.name,
+          detail: [match.funder, match.deadline ? `Deadline ${formatDate(match.deadline)}` : null]
+            .filter(Boolean)
+            .join(' · '),
+          amount: match.maxAmount ? formatCurrency(match.maxAmount) : null,
+          href: `/funding/workspace/${funding.organizationId}/applications/${match.id}`,
+          tone: 'green',
+        })),
+        governmentPathways: funding.topMatches
+          .filter((match) => match.funder.toLowerCase().includes('government') || match.funder.toLowerCase().includes('department'))
+          .map((match) => ({
+            label: match.funder || match.name,
+            detail: match.name,
+            amount: match.maxAmount ? formatCurrency(match.maxAmount) : null,
+            href: `/funding/workspace/${funding.organizationId}/applications/${match.id}`,
+            tone: 'blue',
+          })),
+        foundationFits: funding.topMatches
+          .filter((match) => {
+            const text = `${match.funder} ${match.name}`.toLowerCase();
+            return text.includes('foundation') || text.includes('trust') || text.includes('philanth');
+          })
+          .map((match) => ({
+            label: match.funder || match.name,
+            detail: match.name,
+            amount: match.maxAmount ? formatCurrency(match.maxAmount) : null,
+            href: `/funding/workspace/${funding.organizationId}/applications/${match.id}`,
+            tone: 'purple',
+          })),
+        likelyPartners: funding.supportNeeds.map((need) => ({
+          label: 'Support partner need',
+          detail: need,
+          tone: 'ochre',
+        })),
+        readinessBlockers: funding.nextActions.slice(0, 4),
+        nextAction: funding.nextActions[0] || 'Shortlist the strongest GrantScope match and open an application pathway.',
+      }
+    : null;
 
   return (
     <div className="space-y-6">
@@ -249,6 +326,13 @@ export function OverviewTab({
           </span>
         </div>
       )}
+
+      <OrganizationDataSourcesPanel
+        compact
+        title="Organization operating data"
+        subtitle="What the claimed workspace can already use for profile control, publishing, grants, and support work."
+        sources={dataSources}
+      />
 
       {/* Empathy Ledger Sync */}
       <div className="flex items-center gap-3">
@@ -431,6 +515,15 @@ export function OverviewTab({
                 </div>
               )}
             </div>
+          )}
+
+          {partnerMapData && fundingWorkspaceHref && (
+            <GrantScopePartnerMapPanel
+              compact
+              orgName="Workspace"
+              data={partnerMapData}
+              workspaceHref={fundingWorkspaceHref}
+            />
           )}
 
           {/* Outcome Commitments (if funding data) */}

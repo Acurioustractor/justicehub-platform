@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { ShieldCheck, FileText, CalendarClock, CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowRight, ShieldCheck, FileText, CalendarClock, CheckCircle2, ClipboardList, DollarSign } from 'lucide-react';
 import type { BGFitDeadline } from '@/lib/bgfit/types';
 import { formatDate, getUrgencyColor } from '@/lib/bgfit/utils';
 
@@ -9,6 +10,8 @@ type Filter = 'all' | 'overdue' | 'urgent' | 'soon';
 
 interface ComplianceViewProps {
   deadlines: BGFitDeadline[];
+  orgId: string;
+  orgSlug: string;
 }
 
 const FILTERS: { key: Filter; label: string; color: string }[] = [
@@ -33,7 +36,7 @@ function getDeadlineIcon(type: string) {
   }
 }
 
-export function ComplianceView({ deadlines }: ComplianceViewProps) {
+export function ComplianceView({ deadlines, orgId, orgSlug }: ComplianceViewProps) {
   const [filter, setFilter] = useState<Filter>('all');
 
   const activeDl = deadlines.filter((d) => d.urgency !== 'done');
@@ -76,13 +79,17 @@ export function ComplianceView({ deadlines }: ComplianceViewProps) {
         ))}
       </div>
 
+      {deadlines.length === 0 && (
+        <ComplianceStart orgId={orgId} orgSlug={orgSlug} />
+      )}
+
       {/* Deadline list */}
       <div className="space-y-3">
-        {filtered.length === 0 ? (
+        {filtered.length === 0 && deadlines.length > 0 ? (
           <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-lg p-8 text-center text-gray-500">
             No deadlines in this category.
           </div>
-        ) : (
+        ) : deadlines.length > 0 ? (
           filtered.map((deadline) => {
             const Icon = getDeadlineIcon(deadline.deadline_type);
             const colors = getUrgencyColor(deadline.urgency);
@@ -126,7 +133,7 @@ export function ComplianceView({ deadlines }: ComplianceViewProps) {
               </div>
             );
           })
-        )}
+        ) : null}
       </div>
 
       {/* Completed section */}
@@ -153,5 +160,71 @@ export function ComplianceView({ deadlines }: ComplianceViewProps) {
         </div>
       )}
     </div>
+  );
+}
+
+function ComplianceStart({ orgId, orgSlug }: { orgId: string; orgSlug: string }) {
+  return (
+    <section className="border-2 border-black bg-sand-50 p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <p className="text-xs font-black uppercase tracking-wide text-gray-500">Why this is empty</p>
+      <h3 className="mt-2 text-xl font-black">No reporting or acquittal dates have been created yet.</h3>
+      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-gray-600">
+        Compliance deadlines are generated from managed grants and reporting requirements. Once a grant is
+        promoted into the workspace, this page becomes the operating view for acquittals, progress reports,
+        BAS/ORIC/ACNC style reminders, receipts, and flagged budget issues.
+      </p>
+
+      <div className="mt-5 grid gap-3 lg:grid-cols-3">
+        <ComplianceLink
+          href={`/hub/${orgSlug}/grants`}
+          icon={DollarSign}
+          title="Create or import a grant"
+          detail="Add the live grant first: funder, amount, dates, budget lines, and reporting rules."
+        />
+        <ComplianceLink
+          href={`/funding/workspace/${orgId}`}
+          icon={ClipboardList}
+          title="Use readiness notes"
+          detail="Capture blockers, partner asks, and support evidence before a grant becomes live."
+        />
+        <ComplianceLink
+          href={`/hub/${orgSlug}/profile?tab=public`}
+          icon={ShieldCheck}
+          title="Check public proof"
+          detail="Make sure profile, programs, people, and proof are ready before sharing with funders."
+        />
+      </div>
+    </section>
+  );
+}
+
+function ComplianceLink({
+  href,
+  icon: Icon,
+  title,
+  detail,
+}: {
+  href: string;
+  icon: typeof ShieldCheck;
+  title: string;
+  detail: string;
+}) {
+  return (
+    <Link
+      href={href}
+      prefetch={href.includes('/funding/workspace') ? false : undefined}
+      className="group flex min-h-[150px] flex-col justify-between border-2 border-black bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+    >
+      <div>
+        <div className="mb-3 inline-flex h-9 w-9 items-center justify-center border-2 border-black bg-white">
+          <Icon className="h-5 w-5" />
+        </div>
+        <h4 className="text-base font-black">{title}</h4>
+        <p className="mt-2 text-xs leading-relaxed text-gray-600">{detail}</p>
+      </div>
+      <span className="mt-4 inline-flex items-center gap-1 text-xs font-black uppercase tracking-wide text-ochre-700">
+        Open <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
+      </span>
+    </Link>
   );
 }

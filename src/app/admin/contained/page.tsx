@@ -99,6 +99,12 @@ export default async function AdminContainedPage() {
               >
                 Moderate Stories{pendingStories > 0 ? ` (${pendingStories})` : ''}
               </Link>
+              <Link
+                href="/admin/contained/enrollment"
+                className="px-4 py-2 text-sm font-bold border-2 border-black hover:bg-black hover:text-white transition-colors"
+              >
+                Enrollment Codes
+              </Link>
             </div>
           </div>
 

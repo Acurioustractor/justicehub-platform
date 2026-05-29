@@ -935,7 +935,6 @@ export default function CampaignCommandCentre() {
                     { label: 'Oonchiumpa', href: '/organizations/oonchiumpa', desc: 'Aboriginal-led cultural healing, Alice Springs NT' },
                     { label: 'BG Fit', href: '/organizations/bg-fit', desc: 'Youth fitness & mentoring, Mount Isa QLD' },
                     { label: 'Mounty Yarns', href: '/organizations/mounty-yarns', desc: 'Youth-led storytelling, Mount Druitt NSW' },
-                    { label: 'PICC Townsville', href: '/organizations/picc-townsville', desc: 'Pasifika family support, Townsville QLD' },
                     { label: 'ALMA Interventions', href: '/intelligence/interventions', desc: 'Evidence intelligence engine' },
                     { label: 'Justice Funding', href: '/justice-funding', desc: 'National funding tracker' },
                     { label: 'Contained Tour', href: '/contained', desc: 'Public campaign page' },

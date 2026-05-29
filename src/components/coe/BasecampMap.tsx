@@ -83,20 +83,45 @@ export default function BasecampMap({ locations, height = '400px' }: BasecampMap
           }),
         });
 
-        // Build stats HTML
-        const statsHtml = basecamp.stats?.slice(0, 2).map(stat =>
-          `<div style="font-size: 11px; color: #059669; margin-bottom: 2px;">✓ ${stat.value}</div>`
-        ).join('') || '';
+        const popup = document.createElement('div');
+        popup.style.minWidth = '220px';
+        popup.style.fontFamily = "'Inter', system-ui, sans-serif";
 
-        marker.bindPopup(`
-          <div style="min-width: 220px; font-family: 'Inter', system-ui, sans-serif;">
-            <div style="font-size: 10px; color: #d97706; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">${basecamp.region}</div>
-            <h3 style="font-size: 16px; font-weight: 800; color: #111827; margin: 0 0 6px 0;">${basecamp.name}</h3>
-            <p style="font-size: 12px; color: #4b5563; line-height: 1.4; margin: 0 0 8px 0;">${basecamp.description}</p>
-            ${statsHtml ? `<div style="margin-bottom: 8px;">${statsHtml}</div>` : ''}
-            <a href="/organizations/${basecamp.slug}" style="font-size: 12px; font-weight: 700; color: #d97706; text-decoration: none;">View profile →</a>
-          </div>
-        `, {
+        const region = document.createElement('div');
+        region.style.cssText = 'font-size:10px;color:#d97706;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px;';
+        region.textContent = basecamp.region || '';
+        popup.appendChild(region);
+
+        const title = document.createElement('h3');
+        title.style.cssText = 'font-size:16px;font-weight:800;color:#111827;margin:0 0 6px 0;';
+        title.textContent = basecamp.name || '';
+        popup.appendChild(title);
+
+        const description = document.createElement('p');
+        description.style.cssText = 'font-size:12px;color:#4b5563;line-height:1.4;margin:0 0 8px 0;';
+        description.textContent = basecamp.description || '';
+        popup.appendChild(description);
+
+        const stats = basecamp.stats?.slice(0, 2) || [];
+        if (stats.length > 0) {
+          const statsWrap = document.createElement('div');
+          statsWrap.style.marginBottom = '8px';
+          stats.forEach((stat) => {
+            const item = document.createElement('div');
+            item.style.cssText = 'font-size:11px;color:#059669;margin-bottom:2px;';
+            item.textContent = `✓ ${stat.value}`;
+            statsWrap.appendChild(item);
+          });
+          popup.appendChild(statsWrap);
+        }
+
+        const link = document.createElement('a');
+        link.href = `/organizations/${encodeURIComponent(basecamp.slug)}`;
+        link.style.cssText = 'font-size:12px;font-weight:700;color:#d97706;text-decoration:none;';
+        link.textContent = 'View profile →';
+        popup.appendChild(link);
+
+        marker.bindPopup(popup, {
           closeButton: true,
           className: 'basecamp-popup'
         });

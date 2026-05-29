@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Check, CreditCard, ArrowLeft, Crown, Users } from 'lucide-react';
-import { TIERS, type TierKey } from '@/lib/stripe';
+import { TIERS, type TierKey } from '@/lib/billing/tiers';
 import { TrialBanner } from '@/components/ui/feature-gate';
 
 interface BillingClientProps {

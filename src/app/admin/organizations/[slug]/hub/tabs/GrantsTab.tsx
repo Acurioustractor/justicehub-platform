@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import {
   DollarSign,
   Calendar,
@@ -13,6 +14,7 @@ import {
   FileText,
   Receipt,
   BarChart3,
+  Network,
 } from 'lucide-react';
 
 // ---------- Types ----------
@@ -246,6 +248,35 @@ export function GrantsTab({ orgId }: { orgId: string }) {
           <Plus className="w-4 h-4" />
           Add Grant
         </button>
+      </div>
+
+      <div className="grid gap-3 border-2 border-black bg-gradient-to-br from-blue-50 via-white to-emerald-50 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+        <div>
+          <div className="mb-1 inline-flex items-center gap-2 text-xs font-black uppercase tracking-wide text-blue-800">
+            <Network className="h-4 w-4" />
+            GrantScope pathway
+          </div>
+          <h3 className="text-lg font-black">Use the funding workspace for matches, partners, and readiness gaps.</h3>
+          <p className="mt-1 text-sm text-gray-600">
+            Active grants stay here; GrantScope discovery and application work happens in the shared funding workspace.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href={`/funding/workspace/${orgId}`}
+            className="inline-flex items-center gap-2 border-2 border-black bg-emerald-700 px-3 py-2 text-sm font-black text-white hover:bg-emerald-800"
+          >
+            Funding workspace
+            <ExternalLink className="h-4 w-4" />
+          </Link>
+          <Link
+            href={`/funding/discovery/${orgId}`}
+            className="inline-flex items-center gap-2 border-2 border-black bg-white px-3 py-2 text-sm font-black hover:bg-gray-100"
+          >
+            Discovery profile
+            <ExternalLink className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
 
       {/* Grants List */}

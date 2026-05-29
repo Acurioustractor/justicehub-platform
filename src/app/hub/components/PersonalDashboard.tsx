@@ -36,6 +36,16 @@ interface PipelineData {
   fundingRecords: number;
 }
 
+interface OrganizationWorkspace {
+  id: string;
+  name: string;
+  slug: string;
+  role: string | null;
+  status: string | null;
+  city: string | null;
+  state: string | null;
+}
+
 interface PersonalDashboardProps {
   userName: string;
   memberType: string | null;
@@ -44,6 +54,7 @@ interface PersonalDashboardProps {
   orgSlug: string | null;
   orgName: string | null;
   orgStatus: string | null;
+  orgWorkspaces?: OrganizationWorkspace[];
   communityCounts: Record<string, CommunityCounts>;
   tourStops: TourStop[];
   fundingCount: number;
@@ -62,6 +73,7 @@ export function PersonalDashboard({
   orgSlug,
   orgName,
   orgStatus,
+  orgWorkspaces = [],
   communityCounts,
   tourStops,
   fundingCount,
@@ -186,6 +198,19 @@ export function PersonalDashboard({
   const stateOptions = ['NSW', 'QLD', 'SA', 'WA', 'NT', 'VIC', 'TAS', 'ACT'];
 
   const totalMembers = Object.values(communityCounts).reduce((sum, c) => sum + c.total, 0);
+  const activeOrgWorkspaces = orgWorkspaces.length > 0
+    ? orgWorkspaces
+    : orgSlug && orgName
+      ? [{
+          id: orgSlug,
+          name: orgName,
+          slug: orgSlug,
+          role: null,
+          status: orgStatus,
+          city: null,
+          state: null,
+        }]
+      : [];
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F5F0E8]">
@@ -197,13 +222,18 @@ export function PersonalDashboard({
             <span className="text-[#F5F0E8]/20">/</span>
             <span className="font-mono text-xs text-[#DC2626]">HUB</span>
           </div>
-          {orgSlug && (
+          {activeOrgWorkspaces.length === 1 && (
             <Link
-              href={`/hub/${orgSlug}`}
+              href={`/hub/${activeOrgWorkspaces[0].slug}/practice`}
               className="text-xs font-mono text-[#059669] hover:underline flex items-center gap-1"
             >
-              {orgName} Hub <ArrowRight className="w-3 h-3" />
+              {activeOrgWorkspaces[0].name} Hub <ArrowRight className="w-3 h-3" />
             </Link>
+          )}
+          {activeOrgWorkspaces.length > 1 && (
+            <span className="text-xs font-mono text-[#059669]">
+              {activeOrgWorkspaces.length} org hubs active
+            </span>
           )}
         </div>
       </div>
@@ -231,6 +261,7 @@ export function PersonalDashboard({
           userState={userState}
           orgSlug={orgSlug}
           orgName={orgName}
+          orgWorkspaces={activeOrgWorkspaces}
           profileSlug={profileSlug}
         />
 
@@ -705,17 +736,34 @@ export function PersonalDashboard({
             )}
 
             {/* Org hub link */}
-            {orgSlug && (
-              <Link
-                href={`/hub/${orgSlug}`}
-                className="block border border-[#059669]/30 bg-[#059669]/5 p-5 hover:border-[#059669]/50 transition-colors"
-              >
-                <h2 className="font-mono text-xs text-[#059669] mb-2 uppercase tracking-wider">Organisation Hub</h2>
-                <p className="font-bold">{orgName}</p>
-                <p className="text-xs text-[#F5F0E8]/40 font-mono mt-1 flex items-center gap-1">
-                  Dashboard, grants, compliance <ChevronRight className="w-3 h-3" />
-                </p>
-              </Link>
+            {activeOrgWorkspaces.length > 0 && (
+              <div className="border border-[#059669]/30 bg-[#059669]/5 p-5">
+                <h2 className="font-mono text-xs text-[#059669] mb-3 uppercase tracking-wider">
+                  {activeOrgWorkspaces.length === 1 ? 'Organisation Hub' : 'Organisation Hubs'}
+                </h2>
+                <div className="space-y-2">
+                  {activeOrgWorkspaces.map((workspace) => (
+                    <Link
+                      key={workspace.slug}
+                      href={`/hub/${workspace.slug}/practice`}
+                      className="block border border-[#059669]/20 bg-black/10 p-3 hover:border-[#059669]/50 transition-colors"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="font-bold">{workspace.name}</p>
+                          <p className="text-xs text-[#F5F0E8]/40 font-mono mt-1">
+                            {[
+                              workspace.role ? `${workspace.role} access` : null,
+                              [workspace.city, workspace.state].filter(Boolean).join(', '),
+                            ].filter(Boolean).join(' · ') || 'Dashboard, grants, compliance'}
+                          </p>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-[#059669] mt-1 shrink-0" />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             )}
 
             {/* Regional Funding */}

@@ -14,6 +14,15 @@ interface WelcomeOnboardingProps {
   userState: string;
   orgSlug: string | null;
   orgName: string | null;
+  orgWorkspaces?: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    role: string | null;
+    status: string | null;
+    city: string | null;
+    state: string | null;
+  }>;
   profileSlug: string | null;
 }
 
@@ -125,7 +134,15 @@ const ROLE_STEPS: Record<string, Array<{
   ],
 };
 
-export function WelcomeOnboarding({ userName, memberType, userState, orgSlug, orgName, profileSlug }: WelcomeOnboardingProps) {
+export function WelcomeOnboarding({
+  userName,
+  memberType,
+  userState,
+  orgSlug,
+  orgName,
+  orgWorkspaces = [],
+  profileSlug,
+}: WelcomeOnboardingProps) {
   const [step, setStep] = useState(0);
   const [dismissed, setDismissed] = useState(true); // start hidden, check localStorage
 
@@ -145,7 +162,40 @@ export function WelcomeOnboarding({ userName, memberType, userState, orgSlug, or
 
   if (dismissed) return null;
 
-  const steps = memberType ? ROLE_STEPS[memberType] : ROLE_STEPS.supporter;
+  const activeOrgWorkspaces = orgWorkspaces.length > 0
+    ? orgWorkspaces
+    : orgSlug && orgName
+      ? [{
+          id: orgSlug,
+          name: orgName,
+          slug: orgSlug,
+          role: null,
+          status: null,
+          city: null,
+          state: null,
+        }]
+      : [];
+  const primaryOrg = activeOrgWorkspaces[0] || null;
+  const baseSteps = memberType ? ROLE_STEPS[memberType] : ROLE_STEPS.supporter;
+  const steps =
+    memberType === 'organization' && primaryOrg
+      ? [
+          {
+            ...baseSteps[0],
+            title: activeOrgWorkspaces.length > 1
+              ? 'Your Organisation Hubs Are Active'
+              : `${primaryOrg.name} Hub Is Active`,
+            description: activeOrgWorkspaces.length > 1
+              ? `You have ${activeOrgWorkspaces.length} verified organisation workspaces. Use these hubs to manage profiles, programs, services, stories, funding readiness, and GrantScope partner work.`
+              : `${primaryOrg.name} is verified. Use the hub to manage the profile, programs, services, stories, funding readiness, and GrantScope partner work.`,
+            cta: {
+              label: activeOrgWorkspaces.length > 1 ? `Open ${primaryOrg.name}` : 'Open organisation hub',
+              href: `/hub/${primaryOrg.slug}/practice`,
+            },
+          },
+          ...baseSteps.slice(1),
+        ]
+      : baseSteps;
   if (!steps) return null;
 
   const current = steps[step];

@@ -17,6 +17,23 @@ export interface LocaleConfig {
 
 export const LOCALES: LocaleConfig[] = [
   {
+    slug: 'adelaide',
+    displayName: 'Tarntanya (Adelaide)',
+    state: 'SA',
+    description:
+      'South Australian launch locale for the contained exhibition. Kaurna country, connected to state youth justice budgets, oversight, frontline services and the Adelaide Youth Training Centre at Cavan.',
+    cityKeywords: [
+      'Adelaide',
+      'ADELAIDE',
+      'North Adelaide',
+      'NORTH ADELAIDE',
+      'Port Adelaide',
+      'PORT ADELAIDE',
+      'Cavan',
+    ],
+    detentionCentreSlug: 'adelaide-youth-training-centre',
+  },
+  {
     slug: 'mparntwe',
     displayName: 'Mparntwe (Alice Springs)',
     state: 'NT',

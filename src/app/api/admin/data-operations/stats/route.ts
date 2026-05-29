@@ -1,6 +1,22 @@
 import { NextResponse } from 'next/server';
 import { requireAdminApi } from '@/lib/admin-api-auth';
 
+type InterventionStateRow = {
+  organizations?: { state?: string | null } | null;
+};
+
+type OrgTypeRow = {
+  type?: string | null;
+};
+
+type EvidenceTypeRow = {
+  evidence_type?: string | null;
+};
+
+type StatusRow = {
+  status?: string | null;
+};
+
 export async function GET() {
   try {
     const auth = await requireAdminApi();
@@ -55,7 +71,7 @@ export async function GET() {
       .neq('verification_status', 'ai_generated');
 
     const stateCounts: Record<string, number> = {};
-    interventionsByState?.forEach((i: any) => {
+    (interventionsByState as InterventionStateRow[] | null)?.forEach((i) => {
       const state = i.organizations?.state || 'Unknown';
       stateCounts[state] = (stateCounts[state] || 0) + 1;
     });
@@ -67,7 +83,7 @@ export async function GET() {
       .not('type', 'is', null);
 
     const orgTypeCounts: Record<string, number> = {};
-    orgsByType?.forEach((o) => {
+    (orgsByType as OrgTypeRow[] | null)?.forEach((o) => {
       const type = o.type || 'Unknown';
       orgTypeCounts[type] = (orgTypeCounts[type] || 0) + 1;
     });
@@ -79,7 +95,7 @@ export async function GET() {
       .not('evidence_type', 'is', null);
 
     const evidenceTypeCounts: Record<string, number> = {};
-    evidenceByType?.forEach((e) => {
+    (evidenceByType as EvidenceTypeRow[] | null)?.forEach((e) => {
       const type = e.evidence_type || 'Unknown';
       evidenceTypeCounts[type] = (evidenceTypeCounts[type] || 0) + 1;
     });
@@ -90,7 +106,7 @@ export async function GET() {
       .select('status');
 
     const linkStatusCounts: Record<string, number> = {};
-    linksByStatus?.forEach((l) => {
+    (linksByStatus as StatusRow[] | null)?.forEach((l) => {
       const status = l.status || 'pending';
       linkStatusCounts[status] = (linkStatusCounts[status] || 0) + 1;
     });
@@ -101,7 +117,7 @@ export async function GET() {
       .select('status');
 
     const jobStatusCounts: Record<string, number> = {};
-    jobsByStatus?.forEach((j) => {
+    (jobsByStatus as StatusRow[] | null)?.forEach((j) => {
       const status = j.status || 'unknown';
       jobStatusCounts[status] = (jobStatusCounts[status] || 0) + 1;
     });

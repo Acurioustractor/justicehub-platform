@@ -12,6 +12,8 @@ import {
 import { Navigation } from '@/components/ui/navigation';
 import { FundingOrganizationSupportEditor } from '@/components/funding/funding-organization-support-editor';
 import { getFundingOrganizationWorkspaceDetail } from '@/lib/funding/funding-operating-system';
+import { createClient } from '@/lib/supabase/server-lite';
+import { checkOrgAccess } from '@/lib/org-hub/auth';
 
 function formatDate(value?: string | null) {
   if (!value) return '—';
@@ -43,6 +45,14 @@ function checklistClass(complete: boolean) {
   return complete ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200';
 }
 
+async function canEditFundingWorkspace(organizationId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return false;
+  return checkOrgAccess(supabase, user.id, organizationId).catch(() => false);
+}
+
 export default async function FundingOrganizationWorkspacePage({
   params,
 }: {
@@ -54,6 +64,7 @@ export default async function FundingOrganizationWorkspacePage({
     notFound();
   }
 
+  const canEdit = await canEditFundingWorkspace(params.organizationId);
   const completionCount = workspace.profileChecklist.filter((item) => item.complete).length;
   const incompleteChecklist = workspace.profileChecklist.filter((item) => !item.complete);
   const primaryMatch = workspace.topMatches[0] || null;
@@ -307,27 +318,43 @@ export default async function FundingOrganizationWorkspacePage({
                         </div>
                       ))}
                   </div>
-                  <div className="flex flex-col gap-2 mt-4 sm:flex-row">
-                    <Link
-                      href={`/admin/funding/os/discovery-workspace?organizationIds=${workspace.organizationId}`}
-                      className="inline-flex items-center justify-center gap-2 px-3 py-2 bg-white text-black text-xs font-bold border-2 border-black hover:bg-gray-100 transition-colors"
-                    >
-                      Add Shared Support Note
-                    </Link>
+                  {canEdit && (
+                    <div className="flex flex-col gap-2 mt-4 sm:flex-row">
+                      <Link
+                        href={`/admin/funding/os/discovery-workspace?organizationIds=${workspace.organizationId}`}
+                        className="inline-flex items-center justify-center gap-2 px-3 py-2 bg-white text-black text-xs font-bold border-2 border-black hover:bg-gray-100 transition-colors"
+                      >
+                        Add Shared Support Note
+                      </Link>
+                      {primaryMatch && (
+                        <Link
+                          href={`/funding/workspace/${workspace.organizationId}/applications/${primaryMatch.id}`}
+                          className="inline-flex items-center justify-center gap-2 px-3 py-2 bg-black text-white text-xs font-bold border-2 border-black hover:bg-gray-800 transition-colors"
+                        >
+                          Build Funding Draft
+                        </Link>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {canEdit ? (
+                  <FundingOrganizationSupportEditor
+                    organizationId={workspace.organizationId}
+                    initialNote={workspace.sharedWorkspace?.note || null}
+                  />
+                ) : (
+                  <div className="border border-gray-200 bg-[#f8fafc] p-4 text-sm text-gray-600">
+                    Sign in with organisation access to edit support notes and funding drafts.
                     {primaryMatch && (
                       <Link
-                        href={`/funding/workspace/${workspace.organizationId}/applications/${primaryMatch.id}`}
-                        className="inline-flex items-center justify-center gap-2 px-3 py-2 bg-black text-white text-xs font-bold border-2 border-black hover:bg-gray-800 transition-colors"
+                        href={`/login?redirect=${encodeURIComponent(`/funding/workspace/${workspace.organizationId}/applications/${primaryMatch.id}`)}`}
+                        className="ml-2 font-bold text-black underline"
                       >
-                        Build Funding Draft
+                        Sign in
                       </Link>
                     )}
                   </div>
-                </div>
-                <FundingOrganizationSupportEditor
-                  organizationId={workspace.organizationId}
-                  initialNote={workspace.sharedWorkspace?.note || null}
-                />
+                )}
               </div>
 
               <div className="bg-white border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
@@ -397,7 +424,7 @@ export default async function FundingOrganizationWorkspacePage({
                     workspace.nextActions.map((action, index) => (
                       <div key={action} className="border border-amber-200 bg-amber-50 p-3">
                         <div className="text-sm text-gray-800">{action}</div>
-                        {index === workspace.nextActions.length - 1 && workspace.topMatches[0] && (
+                        {canEdit && index === workspace.nextActions.length - 1 && workspace.topMatches[0] && (
                           <Link
                             href={`/funding/workspace/${workspace.organizationId}/applications/${workspace.topMatches[0].id}`}
                             className="inline-flex items-center justify-center gap-2 mt-3 px-3 py-2 bg-black text-white text-xs font-bold border-2 border-black hover:bg-gray-800 transition-colors"
@@ -434,12 +461,14 @@ export default async function FundingOrganizationWorkspacePage({
                           Deadline {formatDate(match.opportunity?.deadline)} • Max{' '}
                           {formatCurrency(match.opportunity?.max_grant_amount)}
                         </div>
-                        <Link
-                          href={`/funding/workspace/${workspace.organizationId}/applications/${match.id}`}
-                          className="inline-flex items-center justify-center gap-2 mt-3 px-3 py-2 bg-white text-black text-xs font-bold border-2 border-black hover:bg-gray-100 transition-colors"
-                        >
-                          Open Draft Workspace
-                        </Link>
+                        {canEdit && (
+                          <Link
+                            href={`/funding/workspace/${workspace.organizationId}/applications/${match.id}`}
+                            className="inline-flex items-center justify-center gap-2 mt-3 px-3 py-2 bg-white text-black text-xs font-bold border-2 border-black hover:bg-gray-100 transition-colors"
+                          >
+                            Open Draft Workspace
+                          </Link>
+                        )}
                       </div>
                     ))
                   )}
@@ -455,7 +484,7 @@ export default async function FundingOrganizationWorkspacePage({
                   >
                     Open Discovery Detail
                   </Link>
-                  {workspace.topMatches[0] && (
+                  {canEdit && workspace.topMatches[0] && (
                     <Link
                       href={`/funding/workspace/${workspace.organizationId}/applications/${workspace.topMatches[0].id}`}
                       className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#1d4ed8] text-white font-bold border-2 border-black hover:bg-[#1e40af] transition-colors"
@@ -463,24 +492,28 @@ export default async function FundingOrganizationWorkspacePage({
                       Start Best-Match Draft
                     </Link>
                   )}
-                  <Link
-                    href={`/admin/funding/os/discovery-workspace?organizationIds=${workspace.organizationId}`}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-white text-black font-bold border-2 border-black hover:bg-gray-100 transition-colors"
-                  >
-                    Open Shared Review Workspace
-                  </Link>
-                  <Link
-                    href={`/admin/funding/os/pipeline?organizationId=${workspace.organizationId}`}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-white text-black font-bold border-2 border-black hover:bg-gray-100 transition-colors"
-                  >
-                    Open Pipeline Context
-                  </Link>
-                  <Link
-                    href={`/admin/funding/os/community-reporting?organizationId=${workspace.organizationId}`}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-white text-black font-bold border-2 border-black hover:bg-gray-100 transition-colors"
-                  >
-                    Open Community Reporting
-                  </Link>
+                  {canEdit && (
+                    <>
+                      <Link
+                        href={`/admin/funding/os/discovery-workspace?organizationIds=${workspace.organizationId}`}
+                        className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-white text-black font-bold border-2 border-black hover:bg-gray-100 transition-colors"
+                      >
+                        Open Shared Review Workspace
+                      </Link>
+                      <Link
+                        href={`/admin/funding/os/pipeline?organizationId=${workspace.organizationId}`}
+                        className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-white text-black font-bold border-2 border-black hover:bg-gray-100 transition-colors"
+                      >
+                        Open Pipeline Context
+                      </Link>
+                      <Link
+                        href={`/admin/funding/os/community-reporting?organizationId=${workspace.organizationId}`}
+                        className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-white text-black font-bold border-2 border-black hover:bg-gray-100 transition-colors"
+                      >
+                        Open Community Reporting
+                      </Link>
+                    </>
+                  )}
                 </div>
               </section>
             </div>

@@ -51,7 +51,7 @@ export default async function GrantsPage({ params }: { params: { 'org-slug': str
 
   return (
     <GrantsTabs
-      yourGrants={<GrantsView grants={grants} />}
+      yourGrants={<GrantsView grants={grants} orgId={org.id} orgSlug={org.slug} />}
       discover={<GrantDiscovery />}
     />
   );

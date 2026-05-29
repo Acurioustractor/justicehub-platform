@@ -15,6 +15,7 @@ import {
   MapPinned,
   Network,
   PencilLine,
+  RefreshCw,
   Search,
   ShieldCheck,
   Users,
@@ -407,10 +408,15 @@ export default async function DashboardPage({ params }: { params: { 'org-slug': 
 
           <div className="grid min-w-full gap-2 sm:min-w-[360px] sm:grid-cols-2 lg:min-w-[420px]">
             <QuickActionLink
+              href={`/hub/${org.slug}/practice`}
+              icon={RefreshCw}
+              label="Practice Reflex"
+              primary
+            />
+            <QuickActionLink
               href={`/funding/workspace/${org.id}`}
               icon={Briefcase}
               label="Plan your funding"
-              primary
             />
             <QuickActionLink href={`/hub/${org.slug}/grants`} icon={Search} label="Find grants" />
             <QuickActionLink href={`/organizations/${org.slug}`} icon={Globe2} label="Your public page" />

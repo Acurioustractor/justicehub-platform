@@ -34,17 +34,17 @@ const BASECAMPS = [
     highlight: 'anchor',
   },
   {
-    name: 'PICC',
-    location: 'Townsville / Palm Island, QLD',
+    name: 'BG Fit',
+    location: 'Mount Isa, QLD',
     type: 'Regional',
-    pop: '3,000',
-    status: 'Proposed',
-    programs: 21,
-    team: 200,
-    funded: '$0 philanthropic',
-    slug: 'picc-townsville',
-    description: 'Largest community-controlled youth justice response in Northern Queensland. 21 programs, 200 staff — zero philanthropic funding.',
-    highlight: 'gap',
+    pop: '18,000+',
+    status: 'Active',
+    programs: 4,
+    team: 5,
+    funded: '$312K',
+    slug: 'bg-fit',
+    description: 'Fitness, cultural connection, and mentoring on Kalkadoon Country. CAMPFIRE framework and youth diversion in North West Queensland.',
+    highlight: 'regional',
   },
   {
     name: 'Oonchiumpa',
@@ -154,19 +154,24 @@ const REVENUE_STREAMS = [
 export default async function BasecampModelPage() {
   const supabase = createServiceClient() as any;
 
-  const [interventionCount, fundingCount, orgCount] = await Promise.all([
+  const [interventionCount, fundingRows, orgCount] = await Promise.all([
     supabase
       .from('alma_interventions')
       .select('id', { count: 'exact', head: true })
       .neq('verification_status', 'ai_generated'),
     supabase
       .from('justice_funding')
-      .select('id', { count: 'exact', head: true })
+      .select('amount_dollars')
       .gt('amount_dollars', 0),
     supabase
       .from('organizations')
       .select('id', { count: 'exact', head: true }),
   ]);
+  const totalFunding = (fundingRows.data || []).reduce(
+    (sum: number, row: { amount_dollars?: number | string | null }) =>
+      sum + Number(row.amount_dollars || 0),
+    0
+  );
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#0A0A0A]">
@@ -197,7 +202,7 @@ export default async function BasecampModelPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
               {[
                 { value: (interventionCount.count || 0).toLocaleString(), label: 'Programs mapped' },
-                { value: `$${((fundingCount.count || 0) > 100000 ? '114.9B' : (fundingCount.count || 0).toLocaleString())}`, label: 'Funding tracked' },
+                { value: `$${totalFunding >= 1_000_000_000 ? `${(totalFunding / 1_000_000_000).toFixed(1)}B` : totalFunding.toLocaleString()}`, label: 'Funding tracked' },
                 { value: `${((orgCount.count || 0) / 1000).toFixed(0)}K+`, label: 'Organisations' },
                 { value: '$5,214', label: 'Avg program cost/yr' },
               ].map((stat, i) => (

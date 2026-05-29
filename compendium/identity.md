@@ -4,7 +4,14 @@
 
 ## Purpose
 
-JusticeHub exists to centre lived experience in youth justice reform. The platform connects research, evidence, and service directories to the people who actually know what works — communities, practitioners, and young people themselves. It is not a case management tool. It is infrastructure that communities can own, adapt, and use to advocate for alternatives to detention.
+JusticeHub exists to centre lived experience in youth justice reform. The platform connects research, evidence, and service directories to the people who actually know what works — communities, practitioners, and young people themselves. It is infrastructure that communities can own, adapt, and use to advocate for alternatives to detention.
+
+JusticeHub now has two surfaces:
+
+- **JusticeHub Atlas** — the evidence map. The Australian Living Map of Alternatives (ALMA), triangulated claims, the CONTAINED campaign, funding workspaces. The Atlas is not a case management tool. It tells you what works.
+- **JusticeHub Practice** — the reflex layer for community-led practice (launching at Reintegration 2026). Practice IS the operational layer for community-led work. It helps you do it: hold cases without losing them, record outcomes without writing twice, brief funders without rewriting your week into a grant report.
+
+The Atlas tells you what works. Practice helps you do it.
 
 ## Philosophy Alignment
 

@@ -356,7 +356,7 @@ function WidgetPreview() {
         </div>
         <div className="mt-3 text-center">
           <code className="text-[10px] text-gray-600 bg-black/40 px-2 py-1 rounded">
-            &lt;script src=&quot;justicehub.org.au/widget.js&quot;&gt;
+            &lt;script src=&quot;justicehub.com.au/widget.js&quot;&gt;
           </code>
         </div>
       </div>

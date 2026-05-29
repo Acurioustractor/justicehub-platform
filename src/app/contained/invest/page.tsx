@@ -6,57 +6,94 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const TOUR_STOPS = [
   {
+    city: 'Mount Druitt',
+    state: 'NSW',
+    date: 'May-Jun 2026',
+    partner: 'Mounty Yarns + Just Reinvest',
+    status: 'Small gathering',
+    cost: '$20,000',
+    description: 'Flexible Western Sydney pre-launch gathering. Young people, Mounty Yarns, and Just Reinvest relationships shape what travels next.',
+  },
+  {
     city: 'Adelaide',
     state: 'SA',
-    date: 'June–July 2026',
-    partner: 'Justice Reform Initiative + ALP Conference',
-    status: 'Confirmed',
+    date: 'End Jun 2026',
+    partner: 'Justice Reform Initiative + Tandanya',
+    status: 'Public launch',
     cost: '$50,000',
-    description: 'National conference integration — delegates walk through between sessions.',
+    description: 'Australian tour launch at Tandanya. Brisbane young people carry Room 1, David from Diagrama anchors Room 2, Adelaide organisations build Room 3.',
   },
   {
-    city: 'Perth',
+    city: 'Perth + surrounds',
     state: 'WA',
-    date: 'July–August 2026',
-    partner: 'UWA + JRI Perth',
-    status: 'Confirmed',
+    date: 'Jul-Aug 2026',
+    partner: 'UWA + Reconciliation WA',
+    status: 'Planning',
     cost: '$50,000',
-    description: 'University campus deployment — academic + reform-network anchor.',
+    description: 'University campus deployment, civic partnerships, and a regional drop-in to Broome or Kalgoorlie.',
   },
   {
-    city: 'Tennant Creek',
+    city: 'Brisbane',
+    state: 'QLD',
+    date: 'Sep 2026',
+    partner: 'YAC + EPIC Pathways',
+    status: 'Planning',
+    cost: '$40,000',
+    description: 'Queensland sector stop with young facilitators, universities, MPs, and local program evidence in the room.',
+  },
+  {
+    city: 'Northern Rivers',
+    state: 'NSW',
+    date: 'Oct 2026',
+    partner: 'The Buttery',
+    status: 'Tentative',
+    cost: '$35,000',
+    description: 'Therapeutic-community lineage and regional public access outside the metro circuit.',
+  },
+  {
+    city: 'Alice Springs · Central Australia',
     state: 'NT',
-    date: 'August–September 2026',
+    date: 'Nov 2026',
     partner: 'Oonchiumpa',
     status: 'Confirmed',
     cost: '$50,000',
-    description: 'Aboriginal community-controlled stop. Cultural safety, local facilitation, community authority.',
+    description: 'Community-controlled Central Australian stop. Cultural safety, local facilitation, community authority.',
   },
   {
-    city: 'Townsville / Palm Island',
-    state: 'QLD',
-    date: 'September 2026',
-    partner: 'Palm Island Community Company (PICC)',
-    status: 'Confirmed',
-    cost: '$50,000',
-    description: 'Far North hosted by PICC — Aboriginal organisation with deep custodial roots.',
+    city: 'Sydney + Canberra',
+    state: 'NSW/ACT',
+    date: 'Dec 2026-Jan 2027',
+    partner: 'Uniting + USyd + ACT civic partners',
+    status: 'Tentative',
+    cost: '$60,000',
+    description: 'Sydney advocacy and research spine, then Parliament-facing Canberra days for federal and territory decision-makers.',
   },
   {
-    city: 'Hobart',
+    city: 'Victoria',
+    state: 'VIC',
+    date: 'Feb-Mar 2027',
+    partner: 'St Martins YAC + RMIT',
+    status: 'Tentative',
+    cost: '$40,000',
+    description: 'Youth arts collaboration, academic spine, and a Room 3 built with local program partners.',
+  },
+  {
+    city: 'Tasmania',
     state: 'TAS',
-    date: 'June 2027 — close',
+    date: 'Apr 2027',
     partner: 'DarkLab + Prevention Not Detention',
-    status: 'Confirmed',
-    cost: '$50,000',
-    description: 'Tour close — civic memory, public exhibition, legacy.',
+    status: 'Tentative',
+    cost: '$35,000',
+    description: 'Tour close with cultural institution backing, coalition organising, and the year-end public record.',
   },
 ];
 
 const WHAT_MONEY_BUYS = [
-  { amount: '$50–70K', gets: 'Container build (3-room fit-out). Reusable infrastructure — every future stop runs on this asset. ~7 years of tours from one build.' },
-  { amount: '$50K', gets: 'One full tour stop. 500+ decision-makers walk through. Anchor partner: Oonchiumpa, PICC, BG Fit, JRI, or DarkLab. Local policy window opens.' },
-  { amount: '$200K', gets: 'Full 5-city tour + documentation + research output. 2,500+ decision-makers nationally. JusticeHub + Australian Living Map + Empathy Ledger evidence layer published.' },
-  { amount: '$500K', gets: 'Tour + permanent platform underwrite. Above PLUS JusticeHub civic intelligence layer funded for 12 months — ongoing oversight infrastructure beyond the tour.' },
+  { amount: '$20K', gets: 'Mount Druitt small gathering. Young people paid, Western Sydney build proof captured, first local relationships documented before the public launch.' },
+  { amount: '$50K', gets: 'Adelaide public launch at Tandanya. Conference delegates, Brisbane build story, David from Diagrama, and local Room 3 program evidence.' },
+  { amount: '$30K-$60K', gets: 'One flexible tour stop. Young facilitators paid, move and setup covered, local Room 1 and Room 3 built, documentation and reflection journals captured.' },
+  { amount: '$120K', gets: 'Tour-wide backbone. Travelling facilitator core, editorial, documentation, national coordination, insurance, admin, and the year-end bound record.' },
+  { amount: '$500K', gets: 'Full Australian tour. Nine-stop national arc, one year of JusticeHub civic intelligence, Australian Living Map and Empathy Ledger evidence published around the container.' },
   { amount: 'Bespoke', gets: 'Pop-up Contained, co-designed with you. Custom build for your audience, place, or moment. We co-design rooms, story, and outputs. Priced to scope.' },
 ];
 
@@ -86,7 +123,7 @@ export default function ContainedInvestPage() {
 
             <p className="text-lg text-gray-600 max-w-2xl leading-relaxed">
               CONTAINED is evidence-led immersive advocacy. One shipping container, three rooms,
-              five cities. Every dollar funds infrastructure for community-led justice reform.
+              a Mount Druitt small gathering, an Adelaide launch, and a flexible Australian tour. Every dollar funds infrastructure for community-led justice reform.
             </p>
           </div>
         </section>
@@ -120,7 +157,7 @@ export default function ContainedInvestPage() {
                 <div className="text-sm text-gray-400 uppercase tracking-widest mb-3">Oonchiumpa outcome</div>
                 <p className="text-gray-300 text-sm">
                   95% reduction in anti-social behaviour among young people on Country with
-                  Oonchiumpa, Mparntwe (Alice Springs). Aboriginal-led cultural healing,
+                  Oonchiumpa, Alice Springs / Central Australia. Aboriginal-led cultural healing,
                   decades of practice.
                 </p>
                 <p className="text-xs text-gray-500 mt-2">Source: Oonchiumpa program evaluation</p>
@@ -150,7 +187,7 @@ export default function ContainedInvestPage() {
                       </div>
                       <div className="text-right">
                         <span className={`text-xs font-bold uppercase tracking-widest px-2 py-1 ${
-                          stop.status === 'Confirmed'
+                          stop.status === 'Confirmed' || stop.status === 'Public launch' || stop.status === 'Small gathering'
                             ? 'bg-[#059669] text-white'
                             : 'bg-gray-200 text-gray-600'
                         }`}>
@@ -172,11 +209,11 @@ export default function ContainedInvestPage() {
             </div>
 
             <div className="mt-8 border-2 border-[#0A0A0A] bg-[#0A0A0A] text-white p-6 text-center">
-              <div className="text-3xl font-black font-mono mb-2">$200,000</div>
+              <div className="text-3xl font-black font-mono mb-2">$500,000</div>
               <div className="text-sm text-gray-400 uppercase tracking-widest mb-4">Full National Tour</div>
               <p className="text-gray-300 max-w-lg mx-auto">
-                Fund all five cities including transport, documentation, community engagement,
-                and partner activation. Your name on the movement.
+                Fund the Mount Druitt gathering, Adelaide launch, every tour stop, transport, documentation, community engagement,
+                partner activation, and the JusticeHub evidence layer that remains after the container moves on.
               </p>
             </div>
           </div>

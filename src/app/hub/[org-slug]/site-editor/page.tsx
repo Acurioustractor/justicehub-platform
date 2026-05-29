@@ -38,7 +38,7 @@ export default async function SiteEditorPage({ params }: { params: { 'org-slug':
   if (!data) redirect('/');
 
   if (data.org.type !== 'basecamp' && data.org.partner_tier !== 'basecamp') {
-    redirect(`/hub/${params['org-slug']}/dashboard`);
+    redirect(`/hub/${params['org-slug']}/profile`);
   }
 
   return <SiteEditorClient data={data} />;

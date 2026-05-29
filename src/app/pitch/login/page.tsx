@@ -1,17 +1,21 @@
 'use client'
-import { useState, Suspense } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useRef, useState, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 function LoginForm() {
   const params = useSearchParams()
-  const router = useRouter()
   const next = params.get('next') || '/pitch/minderoo/'
-  const [password, setPassword] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
+    const password = inputRef.current?.value ?? ''
+    if (!password.trim()) {
+      setError('Enter the passphrase to continue.')
+      return
+    }
     setLoading(true)
     setError(null)
     try {
@@ -41,17 +45,18 @@ function LoginForm() {
         <p style={{ fontSize: 14, color: '#605468', lineHeight: 1.5, margin: '0 0 24px' }}>This pitch is shared under community consent. Please enter the passphrase you were given.</p>
         <label style={{ display: 'block', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 600, color: '#605468', marginBottom: 6 }}>Passphrase</label>
         <input
+          ref={inputRef}
+          name="password"
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          autoComplete="current-password"
           autoFocus
           style={{ width: '100%', padding: '12px 14px', border: '1px solid #e6dfcf', borderRadius: 8, fontSize: 15, fontFamily: 'inherit', outline: 'none' }}
         />
         {error && <div style={{ marginTop: 10, color: '#b7410e', fontSize: 13 }}>{error}</div>}
         <button
           type="submit"
-          disabled={loading || !password}
-          style={{ marginTop: 16, width: '100%', padding: '12px 18px', background: loading || !password ? '#b8a8c4' : '#4a2560', color: 'white', border: 0, borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: loading || !password ? 'default' : 'pointer', letterSpacing: 0.5 }}
+          disabled={loading}
+          style={{ marginTop: 16, width: '100%', padding: '12px 18px', background: loading ? '#b8a8c4' : '#4a2560', color: 'white', border: 0, borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: loading ? 'default' : 'pointer', letterSpacing: 0.5 }}
         >{loading ? 'Unlocking...' : 'Open the envelope'}</button>
         <div style={{ marginTop: 18, fontSize: 11, color: '#8a7d92', lineHeight: 1.5 }}>Problem? Email <a href="mailto:benjamin@act.place" style={{ color: '#4a2560' }}>benjamin@act.place</a>.</div>
       </form>

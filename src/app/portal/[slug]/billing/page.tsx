@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server-lite';
 import { redirect } from 'next/navigation';
 import { checkOrgAccess } from '@/lib/org-hub/auth';
-import { TIERS, type TierKey } from '@/lib/stripe';
+import type { TierKey } from '@/lib/billing/tiers';
 import { BillingClient } from './BillingClient';
 
 export default async function BillingPage({ params }: { params: { slug: string } }) {

@@ -30,6 +30,7 @@ interface LocaleOrg {
   slug: string;
   city: string | null;
   is_indigenous_org: boolean;
+  acco_certified: boolean;
 }
 
 async function fetchLocaleOrgs(cityKeywords: string[]): Promise<LocaleOrg[]> {
@@ -38,7 +39,7 @@ async function fetchLocaleOrgs(cityKeywords: string[]): Promise<LocaleOrg[]> {
   const orFilter = cityKeywords.map((k) => `city.ilike.${k}`).join(',');
   const { data } = await supabase
     .from('organizations')
-    .select('id, name, slug, city, is_indigenous_org, civic_org_classifications!inner(tier, confirmed_at)')
+    .select('id, name, slug, city, is_indigenous_org, acco_certified, civic_org_classifications!inner(tier, confirmed_at)')
     .or(orFilter)
     .neq('archived', true)
     .eq('civic_org_classifications.tier', 1)
@@ -49,6 +50,7 @@ async function fetchLocaleOrgs(cityKeywords: string[]): Promise<LocaleOrg[]> {
     slug: row.slug,
     city: row.city,
     is_indigenous_org: !!row.is_indigenous_org,
+    acco_certified: !!row.acco_certified,
   }));
 }
 
@@ -92,6 +94,8 @@ export default async function LocalePage({ params }: { params: Promise<{ slug: s
   const stateRecid = claims[`oversight.rate.return_to_supervision.${stateCode}`];
 
   const indigenousOrgsCount = orgs.filter((o) => o.is_indigenous_org).length;
+  const accoCertifiedOrgsCount = orgs.filter((o) => o.acco_certified).length;
+  const showCoverageNote = orgs.length < 3 || accoCertifiedOrgsCount === 0;
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -116,6 +120,21 @@ export default async function LocalePage({ params }: { params: Promise<{ slug: s
           <p className="mt-5 max-w-2xl text-lg md:text-xl text-stone-300">{locale.description}</p>
         </div>
       </section>
+
+      {showCoverageNote && (
+        <section className="px-6 py-8 border-b border-amber-200 bg-amber-50">
+          <div className="max-w-5xl mx-auto">
+            <p className="text-xs font-mono uppercase tracking-widest text-amber-800 mb-2">Coverage note</p>
+            <p className="max-w-3xl text-sm md:text-base text-amber-950 leading-relaxed">
+              This locale currently has {orgs.length} confirmed Tier 1 organisation{orgs.length === 1 ? '' : 's'} matched by city.
+              {accoCertifiedOrgsCount === 0
+                ? ' No ACCO-certified confirmed Tier 1 organisation is matched here yet; Indigenous-led and ACCO-certified are not interchangeable.'
+                : ` ${accoCertifiedOrgsCount} ${accoCertifiedOrgsCount === 1 ? 'is' : 'are'} ACCO-certified.`}
+              {' '}Treat this as a launch register snapshot, not a complete census of every local youth justice service.
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* Tier 1 universe here */}
       <section className="px-6 py-16 border-b border-stone-200">
@@ -145,6 +164,11 @@ export default async function LocalePage({ params }: { params: Promise<{ slug: s
                   {o.is_indigenous_org && (
                     <span className="text-xs font-mono uppercase tracking-widest text-emerald-700 bg-emerald-50 px-2 py-1 rounded">
                       Indigenous-led
+                    </span>
+                  )}
+                  {o.acco_certified && (
+                    <span className="text-xs font-mono uppercase tracking-widest text-purple-700 bg-purple-50 px-2 py-1 rounded">
+                      ACCO-certified
                     </span>
                   )}
                 </li>

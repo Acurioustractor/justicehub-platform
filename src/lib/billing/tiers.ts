@@ -6,6 +6,7 @@ export const TIERS = {
     stripePriceId: null,
     features: [
       'Full Call It Out access',
+      'Practice Reflex checklist',
       'Program discovery',
       'Basic analytics',
       'Up to 5 team members',
@@ -19,8 +20,10 @@ export const TIERS = {
     stripePriceId: process.env.STRIPE_PRICE_ORGANISATION,
     features: [
       'Everything in Community',
+      'Practice Reflex operating support',
       'Funding Operating System',
       'Outcome tracking',
+      'Report drafting support',
       'API access',
       'Up to 25 team members',
       'Priority email support (48h)',

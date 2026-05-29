@@ -21,15 +21,38 @@ export default async function HubPage() {
     .eq('user_id', user.id)
     .single();
 
-  // Fetch user's org membership (if any)
-  const { data: membership } = await service
+  // Fetch user's active org memberships. A person can administer more than one org.
+  const { data: memberships } = await service
     .from('organization_members')
-    .select('organization_id, role, status, organizations(id, name, slug, state, city)')
+    .select('organization_id, role, status, created_at, organizations(id, name, slug, state, city)')
     .eq('user_id', user.id)
-    .limit(1)
-    .maybeSingle();
+    .eq('status', 'active')
+    .order('created_at', { ascending: false });
 
-  const { data: pendingClaim } = membership?.status === 'active'
+  const activeMemberships = memberships || [];
+  const primaryMembership = activeMemberships[0] || null;
+  const orgWorkspaces = activeMemberships
+    .map((membership: any) => {
+      const organization = membership.organizations as any;
+      if (!organization?.slug) return null;
+      return {
+        id: organization.id,
+        name: organization.name,
+        slug: organization.slug,
+        role: membership.role,
+        status: membership.status,
+        city: organization.city,
+        state: organization.state,
+      };
+    })
+    .filter(Boolean);
+
+  const primaryWorkspace = orgWorkspaces[0] as { slug: string } | undefined;
+  if (primaryWorkspace?.slug) {
+    redirect(`/hub/${primaryWorkspace.slug}/practice`);
+  }
+
+  const { data: pendingClaim } = orgWorkspaces.length > 0
     ? { data: null }
     : await (service as any)
       .from('organization_claims')
@@ -40,14 +63,14 @@ export default async function HubPage() {
       .limit(1)
       .maybeSingle();
 
-  // If user has active org membership, offer a link but still show personal hub
-  const orgSlug = membership?.status === 'active'
-    ? (membership.organizations as any)?.slug
+  // Pending claims still use the personal hub. Verified organizations open their own workspace above.
+  const orgSlug = primaryMembership?.status === 'active'
+    ? (primaryMembership.organizations as any)?.slug
     : null;
-  const orgRecord = membership?.status === 'active'
-    ? (membership.organizations as any)
+  const orgRecord = primaryMembership?.status === 'active'
+    ? (primaryMembership.organizations as any)
     : (pendingClaim?.organizations as any);
-  const orgStatus = membership?.status || pendingClaim?.status || null;
+  const orgStatus = primaryMembership?.status || pendingClaim?.status || null;
 
   // Get member type from role_tags
   const roleTags: string[] = publicProfile?.role_tags || [];
@@ -157,6 +180,7 @@ export default async function HubPage() {
       orgSlug={orgSlug}
       orgName={orgRecord?.name || null}
       orgStatus={orgStatus}
+      orgWorkspaces={orgWorkspaces as any}
       communityCounts={communityCounts}
       tourStops={tourStops}
       fundingCount={fundingCount}
