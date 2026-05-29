@@ -122,7 +122,11 @@ export async function GET(req: Request) {
   const scopeParam = sp.get('scope');
   const scope: 'all' | 'au' | 'global' =
     scopeParam === 'au' || scopeParam === 'global' ? scopeParam : 'all';
-  const limit = clampInt(sp.get('limit'), 24, 1, 60);
+  // Raised cap: the explore client loads a generous working set and does the
+  // sort / grouping / jurisdiction-bucketing / pagination itself (corpus is
+  // small). cases+campaigns fit well under 200; evidence is capped (true total
+  // comes from `counts`).
+  const limit = clampInt(sp.get('limit'), 50, 1, 200);
 
   const supabase = createServiceClient() as AnyClient;
 
@@ -203,6 +207,8 @@ export async function GET(req: Request) {
     cases,
     campaigns,
     evidence,
+    // Semantic returns top-N by distance, so the "count" is just what matched.
+    counts: { case: cases.length, campaign: campaigns.length, evidence: evidence.length },
     total: cases.length + campaigns.length + evidence.length,
   });
 
@@ -211,72 +217,69 @@ export async function GET(req: Request) {
   // -----------------------------------------------------------------
 
   async function runKeywordSearch() {
-    const tasks: Array<Promise<unknown>> = [];
-
-    if (includeCases) {
-      let cq = supabase
-        .from('justice_matrix_cases')
-        .select(
-          'id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,region,country_code,categories,outcome,precedent_strength,case_type,authoritative_link,verified',
-        )
-        .order('year', { ascending: false, nullsFirst: false })
-        .limit(limit);
-      if (q) cq = cq.or(`case_citation.ilike.%${q}%,jurisdiction.ilike.%${q}%,strategic_issue.ilike.%${q}%,key_holding.ilike.%${q}%`);
-      if (cats.length) cq = cq.overlaps('categories', cats);
-      if (outcome) cq = cq.eq('outcome', outcome);
-      if (strength) cq = cq.eq('precedent_strength', strength);
-      if (region) cq = cq.ilike('region', `%${region}%`);
-      if (country) cq = cq.eq('country_code', country);
-      if (scope === 'au') cq = cq.ilike('jurisdiction', '%australia%');
-      else if (scope === 'global') cq = cq.not('jurisdiction', 'ilike', '%australia%');
-      tasks.push(cq);
-    } else {
-      tasks.push(Promise.resolve({ data: [] }));
-    }
-
-    if (includeCampaigns) {
-      let mq = supabase
-        .from('justice_matrix_campaigns')
-        .select(
-          'id,campaign_name,country_region,start_year,is_ongoing,goals,notable_tactics,country_code,categories,lead_organizations,campaign_link',
-        )
-        .order('start_year', { ascending: false, nullsFirst: false })
-        .limit(limit);
-      if (q) mq = mq.or(`campaign_name.ilike.%${q}%,country_region.ilike.%${q}%,goals.ilike.%${q}%,notable_tactics.ilike.%${q}%,lead_organizations.ilike.%${q}%`);
-      if (cats.length) mq = mq.overlaps('categories', cats);
-      if (region) mq = mq.ilike('country_region', `%${region}%`);
-      if (country) mq = mq.eq('country_code', country);
-      if (scope === 'au') mq = mq.ilike('country_region', '%australia%');
-      else if (scope === 'global') mq = mq.not('country_region', 'ilike', '%australia%');
-      tasks.push(mq);
-    } else {
-      tasks.push(Promise.resolve({ data: [] }));
-    }
-
-    if (includeEvidence) {
-      let eq = supabase
-        .from('alma_evidence')
-        .select(
-          'id,title,evidence_type,findings,methodology,organization,author,publication_date,source_url,source_document_url,consent_level,cultural_safety',
-        )
-        // Consent gate: exclude 'Strictly Private' (and NULL/unknown). A
-        // 'Community Controlled' row that matches still only exposes its title +
-        // provenance — findings/source are redacted in mapEvidenceRow — which is
-        // exactly what the policy permits, so a single .or() is safe here.
-        .in('consent_level', ['Public Knowledge Commons', 'Community Controlled'])
-        .order('publication_date', { ascending: false, nullsFirst: false })
-        .limit(limit);
-      if (q) eq = eq.or(`title.ilike.%${q}%,findings.ilike.%${q}%,methodology.ilike.%${q}%,organization.ilike.%${q}%,author.ilike.%${q}%`);
-      tasks.push(eq);
-    } else {
-      tasks.push(Promise.resolve({ data: [] }));
-    }
-
+    // Filter-applier closures so the data fetch and the head:true count share
+    // identical filter chains (single source of truth per type).
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [caseRes, campRes, evidRes] = (await Promise.all(tasks)) as Array<{ data: any[] | null }>;
+    const filterCases = (b: any) => {
+      if (q) b = b.or(`case_citation.ilike.%${q}%,jurisdiction.ilike.%${q}%,strategic_issue.ilike.%${q}%,key_holding.ilike.%${q}%`);
+      if (cats.length) b = b.overlaps('categories', cats);
+      if (outcome) b = b.eq('outcome', outcome);
+      if (strength) b = b.eq('precedent_strength', strength);
+      if (region) b = b.ilike('region', `%${region}%`);
+      if (country) b = b.eq('country_code', country);
+      if (scope === 'au') b = b.ilike('jurisdiction', '%australia%');
+      else if (scope === 'global') b = b.not('jurisdiction', 'ilike', '%australia%');
+      return b;
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const filterCampaigns = (b: any) => {
+      if (q) b = b.or(`campaign_name.ilike.%${q}%,country_region.ilike.%${q}%,goals.ilike.%${q}%,notable_tactics.ilike.%${q}%,lead_organizations.ilike.%${q}%`);
+      if (cats.length) b = b.overlaps('categories', cats);
+      if (region) b = b.ilike('country_region', `%${region}%`);
+      if (country) b = b.eq('country_code', country);
+      if (scope === 'au') b = b.ilike('country_region', '%australia%');
+      else if (scope === 'global') b = b.not('country_region', 'ilike', '%australia%');
+      return b;
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const filterEvidence = (b: any) => {
+      // Consent gate: exclude 'Strictly Private' (and NULL/unknown). A matched
+      // 'Community Controlled' row only exposes title + provenance (redacted in
+      // mapEvidenceRow), which the policy permits — so a single .or() is safe.
+      b = b.in('consent_level', ['Public Knowledge Commons', 'Community Controlled']);
+      if (q) b = b.or(`title.ilike.%${q}%,findings.ilike.%${q}%,methodology.ilike.%${q}%,organization.ilike.%${q}%,author.ilike.%${q}%`);
+      return b;
+    };
+
+    const empty = Promise.resolve({ data: [], count: 0 });
+    const caseSel = 'id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,region,country_code,categories,outcome,precedent_strength,case_type,authoritative_link,verified';
+    const campSel = 'id,campaign_name,country_region,start_year,is_ongoing,goals,notable_tactics,country_code,categories,lead_organizations,campaign_link';
+    const evidSel = 'id,title,evidence_type,findings,methodology,organization,author,publication_date,source_url,source_document_url,consent_level,cultural_safety';
+
+    const [caseRes, campRes, evidRes, caseCount, campCount, evidCount] = await Promise.all([
+      includeCases
+        ? filterCases(supabase.from('justice_matrix_cases').select(caseSel)).order('year', { ascending: false, nullsFirst: false }).limit(limit)
+        : empty,
+      includeCampaigns
+        ? filterCampaigns(supabase.from('justice_matrix_campaigns').select(campSel)).order('start_year', { ascending: false, nullsFirst: false }).limit(limit)
+        : empty,
+      includeEvidence
+        ? filterEvidence(supabase.from('alma_evidence').select(evidSel)).order('publication_date', { ascending: false, nullsFirst: false }).limit(limit)
+        : empty,
+      includeCases ? filterCases(supabase.from('justice_matrix_cases').select('*', { count: 'exact', head: true })) : empty,
+      includeCampaigns ? filterCampaigns(supabase.from('justice_matrix_campaigns').select('*', { count: 'exact', head: true })) : empty,
+      includeEvidence ? filterEvidence(supabase.from('alma_evidence').select('*', { count: 'exact', head: true })) : empty,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ]) as Array<{ data: any[] | null; count: number | null }>;
+
     const caseRows = (caseRes.data ?? []).map(mapCaseRow);
     const campRows = (campRes.data ?? []).map(mapCampaignRow);
     const evidRows = (evidRes.data ?? []).map(mapEvidenceRow);
+    const counts = {
+      case: caseCount.count ?? caseRows.length,
+      campaign: campCount.count ?? campRows.length,
+      evidence: evidCount.count ?? evidRows.length,
+    };
 
     return NextResponse.json({
       mode: 'keyword',
@@ -285,7 +288,8 @@ export async function GET(req: Request) {
       cases: caseRows,
       campaigns: campRows,
       evidence: evidRows,
-      total: caseRows.length + campRows.length + evidRows.length,
+      counts,
+      total: counts.case + counts.campaign + counts.evidence,
     });
   }
 }

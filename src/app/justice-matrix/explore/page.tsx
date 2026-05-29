@@ -213,6 +213,9 @@ async function loadInitial(params: {
     cases,
     campaigns,
     evidence,
+    // Seed counts = loaded row lengths; the client refetches true per-type
+    // counts from /api/justice-matrix/search on mount and corrects within ~220ms.
+    counts: { case: cases.length, campaign: campaigns.length, evidence: evidence.length },
     total: cases.length + campaigns.length + evidence.length,
   };
 }
@@ -230,6 +233,18 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   const scopeParam = sp(raw.scope);
   const scope: 'all' | 'au' | 'global' =
     scopeParam === 'au' || scopeParam === 'global' ? scopeParam : 'all';
+  const sortParam = sp(raw.sort);
+  const sort: 'relevance' | 'newest' | 'oldest' | 'az' | 'jurisdiction' =
+    (['relevance', 'newest', 'oldest', 'az', 'jurisdiction'] as const).includes(
+      sortParam as 'relevance' | 'newest' | 'oldest' | 'az' | 'jurisdiction',
+    )
+      ? (sortParam as 'relevance' | 'newest' | 'oldest' | 'az' | 'jurisdiction')
+      : 'newest';
+  const viewParam = sp(raw.view);
+  const view: 'list' | 'cards' | 'grouped' | 'jurisdiction' =
+    viewParam === 'cards' || viewParam === 'grouped' || viewParam === 'jurisdiction'
+      ? viewParam
+      : 'list';
   const cats = sp(raw.cat)
     .split(',')
     .map((s) => s.trim())
@@ -237,16 +252,31 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   const outcome = sp(raw.outcome);
   const strength = sp(raw.strength);
 
-  const [facetSeed, initial] = await Promise.all([
+  const [facetSeed, initialBase] = await Promise.all([
     loadFacetSeed(),
     loadInitial({ q, type, scope, cats, outcome, strength }),
   ]);
+
+  // When no filter is active the unfiltered facet totals are the true per-type
+  // counts — better first paint than the loaded row lengths (client still
+  // refetches accurate counts on mount for the filtered case).
+  const unfiltered = !q && !cats.length && !outcome && !strength && scope === 'all';
+  const initial = unfiltered
+    ? {
+        ...initialBase,
+        counts: {
+          case: facetSeed.totals.cases,
+          campaign: facetSeed.totals.campaigns,
+          evidence: facetSeed.totals.evidence,
+        },
+      }
+    : initialBase;
 
   return (
     <ExploreClient
       facetSeed={facetSeed}
       initial={initial}
-      initialState={{ q, mode, type, scope, cats, outcome, strength }}
+      initialState={{ q, mode, type, scope, sort, view, cats, outcome, strength }}
     />
   );
 }

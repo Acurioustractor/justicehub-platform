@@ -9,15 +9,48 @@ import {
   BookOpen,
   X,
   Sparkles,
-  ExternalLink,
   ArrowRight,
   Globe,
   MapPin,
   ShieldCheck,
+  SlidersHorizontal,
+  LayoutList,
+  LayoutGrid,
+  Layers,
+  Map as MapIcon,
+  ChevronRight,
 } from 'lucide-react';
+import { bucketJurisdiction, compareRegions } from '@/lib/justice-matrix/jurisdiction';
 
-const DISPLAY = "'Cormorant Garamond', Georgia, serif";
+// ---------------------------------------------------------------------------
+// Local "research tool" design tokens. Scoped to this experience only — the
+// global JusticeHub editorial system (Cormorant / cream) is intentionally NOT
+// used or modified here. Neutral surfaces + one brand-thread accent (JH purple)
+// + mono labels for a dense, functional, search-first feel.
+// ---------------------------------------------------------------------------
+const SANS = "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+const MONO = "'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
+const C = {
+  page: '#fafafa',
+  surface: '#ffffff',
+  border: '#e4e4e7',
+  borderStrong: '#d4d4d8',
+  ink: '#18181b',
+  body: '#3f3f46',
+  muted: '#71717a',
+  accent: '#4a2560',
+  accentSoft: 'rgba(74,37,96,0.08)',
+  barBg: '#1c1420',
+};
+const KIND = {
+  case: { label: 'Case', color: '#4a2560', soft: 'rgba(74,37,96,0.10)', border: '#c8b2d4', Icon: Scale },
+  campaign: { label: 'Campaign', color: '#a96a1c', soft: 'rgba(169,106,28,0.10)', border: '#dbbf90', Icon: Megaphone },
+  evidence: { label: 'Evidence', color: '#1f6f78', soft: 'rgba(31,111,120,0.10)', border: '#9cc3c8', Icon: BookOpen },
+} as const;
 
+// ---------------------------------------------------------------------------
+// Types (match /api/justice-matrix/search)
+// ---------------------------------------------------------------------------
 interface CaseHit {
   kind: 'case';
   id: string;
@@ -36,7 +69,6 @@ interface CaseHit {
   verified: boolean | null;
   distance: number | null;
 }
-
 interface CampaignHit {
   kind: 'campaign';
   id: string;
@@ -51,15 +83,12 @@ interface CampaignHit {
   campaign_link: string | null;
   distance: number | null;
 }
-
-// ALMA evidence — Australia-only youth-justice research/evaluations, surfaced
-// as a DISTINCT third kind so it is never confused with the (global) cases.
 interface EvidenceHit {
   kind: 'evidence';
   id: string;
   title: string;
-  jurisdiction: string; // always 'Australia'
-  country_code: string | null; // always 'AU'
+  jurisdiction: string;
+  country_code: string | null;
   region: string | null;
   year: number | null;
   evidence_type: string | null;
@@ -69,20 +98,30 @@ interface EvidenceHit {
   source_url: string | null;
   consent_level: string | null;
   cultural_safety: string | null;
-  // 'Community Controlled' → title + provenance only, "access on request".
   restricted: boolean;
   distance: number | null;
 }
-
 type Hit = CaseHit | CampaignHit | EvidenceHit;
 
+type Mode = 'keyword' | 'semantic';
+type TypeFilter = 'all' | 'case' | 'campaign' | 'evidence';
+type Scope = 'all' | 'au' | 'global';
+type Sort = 'relevance' | 'newest' | 'oldest' | 'az' | 'jurisdiction';
+type View = 'list' | 'cards' | 'grouped' | 'jurisdiction';
+
+interface Counts {
+  case: number;
+  campaign: number;
+  evidence: number;
+}
 interface SearchResponse {
-  mode: 'keyword' | 'semantic';
+  mode: Mode;
   q: string;
-  type: 'all' | 'case' | 'campaign' | 'evidence';
+  type: TypeFilter;
   cases: CaseHit[];
   campaigns: CampaignHit[];
   evidence: EvidenceHit[];
+  counts: Counts;
   total: number;
 }
 
@@ -90,41 +129,60 @@ export interface FacetSeed {
   topCategories: Array<[string, number]>;
   totals: { cases: number; campaigns: number; evidence: number };
 }
-
 export interface ExploreClientProps {
   facetSeed: FacetSeed;
-  /** Initial keyword response so the page is useful without JS-driven search yet. */
   initial: SearchResponse;
-  /** Optional initial state from URL search params. */
   initialState: {
     q: string;
-    mode: 'keyword' | 'semantic';
-    type: 'all' | 'case' | 'campaign' | 'evidence';
-    scope: 'all' | 'au' | 'global';
+    mode: Mode;
+    type: TypeFilter;
+    scope: Scope;
+    sort: Sort;
+    view: View;
     cats: string[];
     outcome: string;
     strength: string;
   };
 }
 
+// ---------------------------------------------------------------------------
+// Hit helpers
+// ---------------------------------------------------------------------------
+function hitHref(h: Hit): string {
+  return `/justice-matrix/${h.kind === 'campaign' ? 'campaigns' : h.kind === 'evidence' ? 'evidence' : 'cases'}/${h.id}`;
+}
+function hitJurisdictionText(h: Hit): string {
+  return h.kind === 'campaign' ? h.region ?? '' : h.jurisdiction ?? '';
+}
+function hitYear(h: Hit): number {
+  return h.kind === 'campaign' ? h.start_year ?? 0 : h.year ?? 0;
+}
+
+const PAGE_STEP = 25;
+
 export function ExploreClient({ facetSeed, initial, initialState }: ExploreClientProps) {
-  // --- state ----------------------------------------------------------------
   const [q, setQ] = useState(initialState.q);
-  const [mode, setMode] = useState<'keyword' | 'semantic'>(initialState.mode);
-  const [type, setType] = useState<'all' | 'case' | 'campaign' | 'evidence'>(initialState.type);
-  const [scope, setScope] = useState<'all' | 'au' | 'global'>(initialState.scope);
+  const [mode, setMode] = useState<Mode>(initialState.mode);
+  const [type, setType] = useState<TypeFilter>(initialState.type);
+  const [scope, setScope] = useState<Scope>(initialState.scope);
+  const [sort, setSort] = useState<Sort>(initialState.sort);
+  const [view, setView] = useState<View>(initialState.view);
   const [cats, setCats] = useState<string[]>(initialState.cats);
   const [outcome, setOutcome] = useState<string>(initialState.outcome);
   const [strength, setStrength] = useState<string>(initialState.strength);
+  const [region, setRegion] = useState<string | null>(null);
+
   const [results, setResults] = useState<SearchResponse>(initial);
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(PAGE_STEP);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
   const hasFilter = Boolean(
-    q || cats.length || outcome || strength || type !== 'all' || scope !== 'all' || mode !== 'keyword',
+    q || cats.length || outcome || strength || type !== 'all' || scope !== 'all' || region || mode !== 'keyword',
   );
 
-  // --- url sync (shareable state) ------------------------------------------
+  // --- URL sync (shareable state) ------------------------------------------
   const queryString = useMemo(() => {
     const p = new URLSearchParams();
     if (q) p.set('q', q);
@@ -137,35 +195,49 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
     return p.toString();
   }, [q, mode, type, scope, cats, outcome, strength]);
 
-  useEffect(() => {
-    const url = queryString ? `?${queryString}` : window.location.pathname;
-    window.history.replaceState(null, '', url);
-  }, [queryString]);
+  const fullQuery = useMemo(() => {
+    // What the UI reflects in the address bar (adds view/sort/region which are
+    // client-only display concerns, not sent to the API fetch).
+    const p = new URLSearchParams(queryString);
+    if (sort !== 'newest') p.set('sort', sort);
+    if (view !== 'list') p.set('view', view);
+    return p.toString();
+  }, [queryString, sort, view]);
 
-  // --- debounced fetch -----------------------------------------------------
+  useEffect(() => {
+    const url = fullQuery ? `?${fullQuery}` : window.location.pathname;
+    window.history.replaceState(null, '', url);
+  }, [fullQuery]);
+
+  // --- fetch (debounced). Loads a generous working set; sort/group/region
+  // bucketing happen client-side over it. ------------------------------------
   useEffect(() => {
     const ctrl = new AbortController();
     const handle = setTimeout(async () => {
       setLoading(true);
       try {
-        const url = `/api/justice-matrix/search${queryString ? `?${queryString}` : ''}`;
-        const res = await fetch(url, { signal: ctrl.signal });
+        const sep = queryString ? '&' : '';
+        const res = await fetch(`/api/justice-matrix/search?${queryString}${sep}limit=200`, {
+          signal: ctrl.signal,
+        });
         if (!res.ok) return;
-        const json = (await res.json()) as SearchResponse;
-        setResults(json);
+        setResults((await res.json()) as SearchResponse);
       } catch (e) {
         if ((e as Error).name !== 'AbortError') console.error(e);
       } finally {
         setLoading(false);
       }
-    }, 220);
+    }, 200);
     return () => {
       clearTimeout(handle);
       ctrl.abort();
     };
   }, [queryString]);
 
-  // --- keyboard shortcuts (/ focuses, Esc clears) ---------------------------
+  // Reset pagination whenever the displayed set changes shape.
+  useEffect(() => setVisible(PAGE_STEP), [results, sort, region, view, type]);
+
+  // --- keyboard: "/" focuses, Esc clears focus ------------------------------
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === '/' && document.activeElement?.tagName !== 'INPUT') {
@@ -179,11 +251,9 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // --- helpers --------------------------------------------------------------
   const toggleCat = useCallback((c: string) => {
     setCats((prev) => (prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]));
   }, []);
-
   const clearAll = useCallback(() => {
     setQ('');
     setCats([]);
@@ -192,529 +262,299 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
     setType('all');
     setScope('all');
     setMode('keyword');
+    setRegion(null);
   }, []);
 
-  const merged: Hit[] = useMemo(() => {
-    // Interleave all kinds by relevance (semantic distance asc, else by year desc).
-    const sortYear = (h: Hit) => (h.kind === 'campaign' ? h.start_year ?? 0 : h.year ?? 0);
-    const items: Hit[] = [
-      ...results.cases,
-      ...results.campaigns,
-      ...(results.evidence ?? []),
-    ];
-    items.sort((a, b) => {
-      if (results.mode === 'semantic') {
-        const ad = a.distance ?? 1;
-        const bd = b.distance ?? 1;
-        return ad - bd;
-      }
-      return sortYear(b) - sortYear(a);
-    });
+  // --- derived: merge → region-filter → sort -------------------------------
+  const all: Hit[] = useMemo(
+    () => [...(results.cases ?? []), ...(results.campaigns ?? []), ...(results.evidence ?? [])],
+    [results],
+  );
+
+  const regionFiltered = useMemo(() => {
+    if (!region) return all;
+    return all.filter((h) => bucketJurisdiction(hitJurisdictionText(h)).region === region);
+  }, [all, region]);
+
+  const sorted = useMemo(() => {
+    const items = [...regionFiltered];
+    if (sort === 'relevance') items.sort((a, b) => (a.distance ?? 1) - (b.distance ?? 1));
+    else if (sort === 'az') items.sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''));
+    else if (sort === 'jurisdiction')
+      items.sort((a, b) => {
+        const ra = bucketJurisdiction(hitJurisdictionText(a)).region;
+        const rb = bucketJurisdiction(hitJurisdictionText(b)).region;
+        return compareRegions(ra, rb) || hitJurisdictionText(a).localeCompare(hitJurisdictionText(b));
+      });
+    else items.sort((a, b) => (sort === 'newest' ? hitYear(b) - hitYear(a) : hitYear(a) - hitYear(b)));
     return items;
+  }, [regionFiltered, sort]);
+
+  // Jurisdiction buckets for the browser view (cases+campaigns loaded fully;
+  // evidence is all Australia → add its true count to the Australia tile).
+  const regionBuckets = useMemo(() => {
+    const map = new Map<string, number>();
+    const bump = (text: string, n = 1) => {
+      const { region: r } = bucketJurisdiction(text);
+      map.set(r, (map.get(r) ?? 0) + n);
+    };
+    (results.cases ?? []).forEach((c) => bump(c.jurisdiction));
+    (results.campaigns ?? []).forEach((m) => bump(m.region ?? ''));
+    if ((results.counts?.evidence ?? 0) > 0) bump('Australia', results.counts.evidence);
+    return Array.from(map.entries())
+      .map(([r, count]) => ({ region: r, count }))
+      .sort((a, b) => compareRegions(a.region, b.region));
   }, [results]);
+
+  const counts = results.counts ?? { case: 0, campaign: 0, evidence: 0 };
+  const totalShown = region ? regionFiltered.length : counts.case + counts.campaign + counts.evidence;
+  const pageItems = sorted.slice(0, visible);
 
   // --- render ---------------------------------------------------------------
   return (
-    <main style={{ background: '#f8f1e6', color: '#2b2530' }} className="min-h-screen">
-      {/* HERO */}
-      <section
-        style={{ background: 'radial-gradient(circle at 30% 0%, #5a2d74, #38184d 60%, #2c1240)' }}
-        className="relative overflow-hidden"
+    <main style={{ background: C.page, color: C.ink, fontFamily: SANS }} className="min-h-screen">
+      {/* STICKY SEARCH BAR */}
+      <header
+        className="sticky top-0 z-30 border-b"
+        style={{ background: C.barBg, borderColor: '#000' }}
       >
-        <div
-          className="absolute inset-0 opacity-50 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1px)',
-            backgroundSize: '40px 40px',
-          }}
-        />
-        <div className="relative max-w-6xl mx-auto px-6 md:px-10 pt-14 md:pt-20 pb-10 md:pb-14">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.36em] text-[#d3b583] mb-4">
-            Justice Matrix · Explore
-          </div>
-          <h1
-            style={{ fontFamily: DISPLAY, fontWeight: 500, lineHeight: 1.02 }}
-            className="text-5xl md:text-6xl text-white max-w-4xl mb-5"
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex items-center gap-3">
+          <Link
+            href="/justice-matrix"
+            className="hidden sm:flex items-center gap-2 shrink-0"
+            style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '0.18em', color: '#d3b583' }}
           >
-            One search across cases, campaigns, and evidence.
-          </h1>
-          <p className="text-[#eadff2] text-base md:text-lg max-w-2xl mb-8">
-            {facetSeed.totals.cases.toLocaleString()} strategic cases ·{' '}
-            {facetSeed.totals.campaigns.toLocaleString()} advocacy campaigns ·{' '}
-            {facetSeed.totals.evidence.toLocaleString()} Australian evidence studies. Type to
-            filter instantly, switch to semantic mode for related-ideas search.
-          </p>
-
-          {/* Search input */}
-          <div className="relative max-w-3xl">
-            <Search
-              className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5"
-              style={{ color: '#8d6a44' }}
-            />
+            JUSTICE MATRIX
+          </Link>
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: C.muted }} />
             <input
               ref={searchRef}
-              type="text"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Try: Bugmy · refugee non-refoulement · Mabo · detention conditions..."
-              className="w-full rounded-full pl-14 pr-32 py-4 text-base md:text-lg border-2 focus:outline-none placeholder:text-[#7d5f3d]/60"
-              style={{
-                background: '#fff8ef',
-                borderColor: '#d3b583',
-                color: '#2b2530',
-                fontFamily: DISPLAY,
-              }}
+              placeholder="Search cases, campaigns, evidence…  (press /)"
               aria-label="Search the Justice Matrix"
+              className="w-full rounded-md pl-9 pr-3 py-2 text-[15px] focus:outline-none"
+              style={{ background: '#ffffff', color: C.ink, border: `1px solid ${C.borderStrong}` }}
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-              {q && (
-                <button
-                  type="button"
-                  onClick={() => setQ('')}
-                  className="rounded-full p-1.5 hover:bg-black/5"
-                  style={{ color: '#8d6a44' }}
-                  aria-label="Clear search"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-              <kbd
-                className="hidden md:inline-flex items-center gap-1 rounded px-2 py-1 text-[11px] font-mono"
-                style={{ background: 'rgba(45,18,64,0.08)', color: '#4a2560' }}
-              >
-                press /
-              </kbd>
-            </div>
-          </div>
-
-          {/* Mode toggle */}
-          <div className="mt-4 flex flex-wrap items-center gap-2">
-            <SegmentedToggle
-              value={mode}
-              onChange={(v) => setMode(v as 'keyword' | 'semantic')}
-              options={[
-                { value: 'keyword', label: 'Keyword' },
-                { value: 'semantic', label: 'Semantic', icon: <Sparkles className="w-3 h-3" /> },
-              ]}
-            />
-            <SegmentedToggle
-              value={type}
-              onChange={(v) => setType(v as 'all' | 'case' | 'campaign' | 'evidence')}
-              options={[
-                { value: 'all', label: 'All' },
-                { value: 'case', label: 'Cases', icon: <Scale className="w-3 h-3" /> },
-                { value: 'campaign', label: 'Campaigns', icon: <Megaphone className="w-3 h-3" /> },
-                { value: 'evidence', label: 'Evidence', icon: <BookOpen className="w-3 h-3" /> },
-              ]}
-            />
-            <SegmentedToggle
-              value={scope}
-              onChange={(v) => setScope(v as 'all' | 'au' | 'global')}
-              options={[
-                { value: 'all', label: 'Everywhere' },
-                { value: 'au', label: 'Australia', icon: <MapPin className="w-3 h-3" /> },
-                { value: 'global', label: 'Global', icon: <Globe className="w-3 h-3" /> },
-              ]}
-            />
-            {loading && (
-              <span className="text-[11px] uppercase tracking-[0.22em] text-[#d3b583] animate-pulse">
-                searching…
-              </span>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* RESULTS */}
-      <section className="max-w-6xl mx-auto px-6 md:px-10 py-10 md:py-14">
-        <div className="grid lg:grid-cols-[240px_1fr] gap-10">
-          {/* Sidebar */}
-          <aside className="space-y-7 lg:sticky lg:top-6 lg:self-start">
-            <FacetGroup title="Issue areas">
-              <div className="flex flex-wrap gap-1.5">
-                {facetSeed.topCategories.map(([c, n]) => (
-                  <FacetChip key={c} active={cats.includes(c)} onClick={() => toggleCat(c)}>
-                    {c}
-                    <span className="ml-1 opacity-60">{n}</span>
-                  </FacetChip>
-                ))}
-              </div>
-            </FacetGroup>
-
-            <FacetGroup title="Outcome (cases)">
-              <div className="flex flex-wrap gap-1.5">
-                {(['favorable', 'adverse', 'pending'] as const).map((o) => (
-                  <FacetChip
-                    key={o}
-                    active={outcome === o}
-                    onClick={() => setOutcome((cur) => (cur === o ? '' : o))}
-                  >
-                    {o}
-                  </FacetChip>
-                ))}
-              </div>
-            </FacetGroup>
-
-            <FacetGroup title="Precedent strength">
-              <div className="flex flex-wrap gap-1.5">
-                {(['high', 'medium', 'low'] as const).map((s) => (
-                  <FacetChip
-                    key={s}
-                    active={strength === s}
-                    onClick={() => setStrength((cur) => (cur === s ? '' : s))}
-                  >
-                    {s}
-                  </FacetChip>
-                ))}
-              </div>
-            </FacetGroup>
-
-            {hasFilter && (
+            {q && (
               <button
                 type="button"
-                onClick={clearAll}
-                className="text-[12px] font-semibold underline"
-                style={{ color: '#7d5f3d' }}
+                onClick={() => setQ('')}
+                aria-label="Clear search"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 hover:bg-black/5"
+                style={{ color: C.muted }}
               >
-                clear all filters
+                <X className="w-4 h-4" />
               </button>
             )}
-          </aside>
+          </div>
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(true)}
+            className="lg:hidden inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm shrink-0"
+            style={{ background: '#ffffff', color: C.ink }}
+          >
+            <SlidersHorizontal className="w-4 h-4" /> Filters
+          </button>
+        </div>
 
-          {/* Results column */}
-          <div>
-            <div className="flex items-baseline justify-between mb-6">
-              <div className="text-sm" style={{ color: '#5e5145' }}>
-                <strong style={{ color: '#2b2530' }}>{results.total.toLocaleString()}</strong>{' '}
-                {results.total === 1 ? 'result' : 'results'}
-                {results.mode === 'semantic' && ' · semantic'}
-                {q && ` for "${q}"`}
-              </div>
-              {hasFilter && (
-                <button
-                  type="button"
-                  onClick={clearAll}
-                  className="text-xs font-semibold inline-flex items-center gap-1.5"
-                  style={{ color: '#4a2560' }}
-                >
-                  reset <X className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-
-            {merged.length === 0 ? (
-              <div
-                className="rounded-[22px] border p-10 text-center"
-                style={{ background: '#fff8ef', borderColor: '#e6d7c1' }}
-              >
-                <p style={{ color: '#584b40' }} className="text-base mb-2">
-                  Nothing yet.
-                </p>
-                <p className="text-xs" style={{ color: '#7d5f3d' }}>
-                  Try a different word, switch to semantic mode, or clear the filters above.
-                </p>
-              </div>
-            ) : (
-              <ul className="space-y-3">
-                {merged.map((hit) =>
-                  hit.kind === 'case' ? (
-                    <CaseCard key={`c-${hit.id}`} hit={hit} />
-                  ) : hit.kind === 'campaign' ? (
-                    <CampaignCard key={`m-${hit.id}`} hit={hit} />
-                  ) : (
-                    <EvidenceCard key={`e-${hit.id}`} hit={hit} />
-                  ),
-                )}
-              </ul>
+        {/* CONTROL STRIP */}
+        <div className="max-w-7xl mx-auto px-4 md:px-6 pb-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <Tabs
+            value={type}
+            onChange={setType}
+            options={[
+              { value: 'all', label: 'All', n: counts.case + counts.campaign + counts.evidence },
+              { value: 'case', label: 'Cases', n: counts.case },
+              { value: 'campaign', label: 'Campaigns', n: counts.campaign },
+              { value: 'evidence', label: 'Evidence', n: counts.evidence },
+            ]}
+          />
+          <div className="h-5 w-px" style={{ background: 'rgba(255,255,255,0.15)' }} />
+          <Seg
+            value={mode}
+            onChange={(v) => setMode(v as Mode)}
+            options={[
+              { value: 'keyword', label: 'Keyword' },
+              { value: 'semantic', label: 'Semantic', icon: <Sparkles className="w-3 h-3" /> },
+            ]}
+          />
+          <Seg
+            value={scope}
+            onChange={(v) => setScope(v as Scope)}
+            options={[
+              { value: 'all', label: 'Everywhere' },
+              { value: 'au', label: 'AU', icon: <MapPin className="w-3 h-3" /> },
+              { value: 'global', label: 'Global', icon: <Globe className="w-3 h-3" /> },
+            ]}
+          />
+          <div className="ml-auto flex items-center gap-3">
+            {loading && (
+              <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.2em', color: '#d3b583' }} className="animate-pulse">
+                SEARCHING…
+              </span>
             )}
+            <label className="flex items-center gap-1.5 text-xs" style={{ color: '#cbb8d6' }}>
+              <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.14em' }}>SORT</span>
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as Sort)}
+                className="rounded px-2 py-1 text-xs"
+                style={{ background: '#ffffff', color: C.ink, border: `1px solid ${C.borderStrong}` }}
+              >
+                <option value="relevance">Relevance</option>
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="az">A–Z</option>
+                <option value="jurisdiction">Jurisdiction</option>
+              </select>
+            </label>
+            <ViewSwitch value={view} onChange={setView} />
           </div>
         </div>
-      </section>
+      </header>
+
+      {/* APPLIED FILTERS + COUNT */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 pt-4 flex flex-wrap items-center gap-2">
+        <span style={{ fontFamily: MONO, fontSize: 12, color: C.muted }}>
+          <strong style={{ color: C.ink }}>{totalShown.toLocaleString()}</strong> result{totalShown === 1 ? '' : 's'}
+          {results.mode === 'semantic' && ' · semantic'}
+          {region && ` · ${region}`}
+        </span>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {region && <AppliedChip label={region} onRemove={() => setRegion(null)} />}
+          {cats.map((c) => (
+            <AppliedChip key={c} label={c} onRemove={() => toggleCat(c)} />
+          ))}
+          {outcome && <AppliedChip label={`outcome: ${outcome}`} onRemove={() => setOutcome('')} />}
+          {strength && <AppliedChip label={`${strength} precedent`} onRemove={() => setStrength('')} />}
+          {scope !== 'all' && <AppliedChip label={scope === 'au' ? 'Australia' : 'Global'} onRemove={() => setScope('all')} />}
+        </div>
+        {hasFilter && (
+          <button type="button" onClick={clearAll} className="text-xs underline ml-1" style={{ color: C.accent }}>
+            clear all
+          </button>
+        )}
+      </div>
+
+      {/* BODY */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-5 grid lg:grid-cols-[230px_1fr] gap-6">
+        {/* Facet rail (desktop) */}
+        <aside className="hidden lg:block">
+          <FacetRail
+            facetSeed={facetSeed}
+            cats={cats}
+            toggleCat={toggleCat}
+            outcome={outcome}
+            setOutcome={setOutcome}
+            strength={strength}
+            setStrength={setStrength}
+          />
+        </aside>
+
+        {/* Results */}
+        <section>
+          {view === 'jurisdiction' ? (
+            <JurisdictionView buckets={regionBuckets} active={region} onPick={(r) => { setRegion(r); setView('list'); }} />
+          ) : sorted.length === 0 ? (
+            <Empty />
+          ) : view === 'grouped' ? (
+            <GroupedView items={sorted} counts={counts} />
+          ) : view === 'cards' ? (
+            <ul className="grid sm:grid-cols-2 gap-3">
+              {pageItems.map((h) => (
+                <ResultCard key={`${h.kind}-${h.id}`} hit={h} />
+              ))}
+            </ul>
+          ) : (
+            <ul className="divide-y rounded-lg border" style={{ borderColor: C.border, background: C.surface }}>
+              {pageItems.map((h) => (
+                <ListRow key={`${h.kind}-${h.id}`} hit={h} />
+              ))}
+            </ul>
+          )}
+
+          {view !== 'jurisdiction' && visible < sorted.length && (
+            <div className="text-center mt-5">
+              <button
+                type="button"
+                onClick={() => setVisible((v) => v + PAGE_STEP)}
+                className="rounded-md px-4 py-2 text-sm font-medium border"
+                style={{ background: C.surface, borderColor: C.borderStrong, color: C.ink }}
+              >
+                Show more ({sorted.length - visible} more)
+              </button>
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* Mobile filter drawer */}
+      {drawerOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          <div className="flex-1 bg-black/40" onClick={() => setDrawerOpen(false)} />
+          <div className="w-[80%] max-w-xs overflow-y-auto p-5" style={{ background: C.page }}>
+            <div className="flex items-center justify-between mb-4">
+              <span style={{ fontFamily: MONO, fontSize: 12, letterSpacing: '0.16em', color: C.muted }}>FILTERS</span>
+              <button type="button" onClick={() => setDrawerOpen(false)} aria-label="Close filters">
+                <X className="w-5 h-5" style={{ color: C.ink }} />
+              </button>
+            </div>
+            <FacetRail
+              facetSeed={facetSeed}
+              cats={cats}
+              toggleCat={toggleCat}
+              outcome={outcome}
+              setOutcome={setOutcome}
+              strength={strength}
+              setStrength={setStrength}
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Result cards
+// Control widgets
 // ---------------------------------------------------------------------------
-
-function CaseCard({ hit }: { hit: CaseHit }) {
+function Tabs<T extends string>({
+  value,
+  onChange,
+  options,
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  options: Array<{ value: T; label: string; n: number }>;
+}) {
   return (
-    <li>
-      <Link
-        href={`/justice-matrix/cases/${hit.id}`}
-        className="block rounded-[18px] border p-5 transition-colors hover:bg-white group"
-        style={{
-          background: '#fff8ef',
-          borderColor: '#e6d7c1',
-          boxShadow: '0 12px 28px rgba(49,31,15,0.05)',
-        }}
-      >
-        <div className="flex items-start gap-4">
-          <div
-            className="hidden md:flex h-9 w-9 shrink-0 rounded-full items-center justify-center"
-            style={{ background: '#f3eadb', color: '#4a2560' }}
-            aria-hidden
+    <div className="flex items-center gap-1">
+      {options.map((o) => {
+        const active = value === o.value;
+        return (
+          <button
+            key={o.value}
+            type="button"
+            onClick={() => onChange(o.value)}
+            className="inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-[13px] font-medium transition-colors"
+            style={
+              active
+                ? { background: '#f8f1e6', color: C.ink }
+                : { background: 'transparent', color: '#e6dcea' }
+            }
           >
-            <Scale className="w-4 h-4" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-1.5 text-[11px]">
-              <KindBadge kind="case" />
-              <span
-                className="font-semibold uppercase tracking-[0.2em]"
-                style={{ color: '#8d6a44' }}
-              >
-                {hit.jurisdiction}
-              </span>
-              {hit.year && <span style={{ color: '#5e5145' }}>· {hit.year}</span>}
-              {hit.court && <span style={{ color: '#5e5145' }}>· {hit.court}</span>}
-              {hit.outcome && <OutcomeBadge outcome={hit.outcome} />}
-              {hit.precedent_strength === 'high' && (
-                <span
-                  className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] border"
-                  style={{ background: '#faf5ec', borderColor: '#dbc7a9', color: '#7d5f3d' }}
-                >
-                  high precedent
-                </span>
-              )}
-              {hit.verified && (
-                <span
-                  className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] border"
-                  style={{ background: 'rgba(61,111,74,0.12)', borderColor: '#9fc3a6', color: '#3d6f4a' }}
-                  title="Verified by the Justice Matrix team"
-                >
-                  <ShieldCheck className="w-3 h-3" />
-                  verified
-                </span>
-              )}
-              {hit.distance !== null && (
-                <span className="opacity-50" style={{ color: '#5e5145' }}>
-                  · {(1 - hit.distance).toFixed(2)}
-                </span>
-              )}
-            </div>
-            <h3
-              style={{ fontFamily: DISPLAY, fontWeight: 500, color: '#2b2530' }}
-              className="text-xl md:text-2xl leading-tight mb-1.5"
-            >
-              {hit.title}
-            </h3>
-            {hit.excerpt && (
-              <p className="text-sm leading-6 line-clamp-2" style={{ color: '#584b40' }}>
-                {hit.excerpt}
-              </p>
-            )}
-            {hit.categories && hit.categories.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2">
-                {hit.categories.slice(0, 5).map((c) => (
-                  <span
-                    key={c}
-                    className="rounded-full px-2 py-0.5 text-[10px]"
-                    style={{ background: '#f3eadb', color: '#5e5145', border: '1px solid #eadfce' }}
-                  >
-                    {c}
-                  </span>
-                ))}
-                {hit.categories.length > 5 && (
-                  <span className="text-[10px] self-center" style={{ color: '#7d5f3d' }}>
-                    +{hit.categories.length - 5}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-          <ArrowRight
-            className="w-4 h-4 opacity-0 group-hover:opacity-60 transition-opacity self-center"
-            style={{ color: '#4a2560' }}
-          />
-        </div>
-      </Link>
-    </li>
+            {o.label}
+            <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.7 }}>{o.n.toLocaleString()}</span>
+          </button>
+        );
+      })}
+    </div>
   );
 }
 
-function CampaignCard({ hit }: { hit: CampaignHit }) {
-  return (
-    <li>
-      <Link
-        href={`/justice-matrix/campaigns/${hit.id}`}
-        className="block rounded-[18px] border p-5 transition-colors hover:bg-white group"
-        style={{
-          background: '#fff8ef',
-          borderColor: '#e6d7c1',
-          boxShadow: '0 12px 28px rgba(49,31,15,0.05)',
-        }}
-      >
-        <div className="flex items-start gap-4">
-          <div
-            className="hidden md:flex h-9 w-9 shrink-0 rounded-full items-center justify-center"
-            style={{ background: '#f3eadb', color: '#a96a1c' }}
-            aria-hidden
-          >
-            <Megaphone className="w-4 h-4" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-1.5 text-[11px]">
-              <KindBadge kind="campaign" />
-              {hit.region && (
-                <span
-                  className="font-semibold uppercase tracking-[0.2em]"
-                  style={{ color: '#8d6a44' }}
-                >
-                  {hit.region}
-                </span>
-              )}
-              {hit.start_year && <span style={{ color: '#5e5145' }}>· {hit.start_year}</span>}
-              {hit.is_ongoing && (
-                <span
-                  className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] border"
-                  style={{ background: 'rgba(61,111,74,0.14)', borderColor: '#9fc3a6', color: '#3d6f4a' }}
-                >
-                  active
-                </span>
-              )}
-              {hit.distance !== null && (
-                <span className="opacity-50" style={{ color: '#5e5145' }}>
-                  · {(1 - hit.distance).toFixed(2)}
-                </span>
-              )}
-            </div>
-            <h3
-              style={{ fontFamily: DISPLAY, fontWeight: 500, color: '#2b2530' }}
-              className="text-xl md:text-2xl leading-tight mb-1.5"
-            >
-              {hit.title}
-            </h3>
-            {hit.excerpt && (
-              <p className="text-sm leading-6 line-clamp-2" style={{ color: '#584b40' }}>
-                {hit.excerpt}
-              </p>
-            )}
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px]" style={{ color: '#7d5f3d' }}>
-              {hit.lead_organizations && (
-                <span>Led by {hit.lead_organizations.split(',').slice(0, 2).join(', ')}</span>
-              )}
-              {hit.campaign_link && (
-                <a
-                  href={hit.campaign_link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-1 underline"
-                  style={{ color: '#4a2560' }}
-                >
-                  <ExternalLink className="w-3 h-3" />
-                  source
-                </a>
-              )}
-            </div>
-            {hit.categories && hit.categories.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2">
-                {hit.categories.slice(0, 5).map((c) => (
-                  <span
-                    key={c}
-                    className="rounded-full px-2 py-0.5 text-[10px]"
-                    style={{ background: '#f3eadb', color: '#5e5145', border: '1px solid #eadfce' }}
-                  >
-                    {c}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-          <ArrowRight
-            className="w-4 h-4 opacity-0 group-hover:opacity-60 transition-opacity self-center"
-            style={{ color: '#4a2560' }}
-          />
-        </div>
-      </Link>
-    </li>
-  );
-}
-
-function EvidenceCard({ hit }: { hit: EvidenceHit }) {
-  // Links to the internal evidence detail page (like cases/campaigns). The
-  // detail page hosts the source link and respects the same consent gate.
-  // Badged "Evidence" and labelled Australia so it never reads as litigation.
-  return (
-    <li>
-      <Link
-        href={`/justice-matrix/evidence/${hit.id}`}
-        className="block rounded-[18px] border p-5 transition-colors hover:bg-white group"
-        style={{
-          background: '#fff8ef',
-          borderColor: '#e6d7c1',
-          boxShadow: '0 12px 28px rgba(49,31,15,0.05)',
-        }}
-      >
-        <div className="flex items-start gap-4">
-          <div
-            className="hidden md:flex h-9 w-9 shrink-0 rounded-full items-center justify-center"
-            style={{ background: '#e3efee', color: '#1f6f78' }}
-            aria-hidden
-          >
-            <BookOpen className="w-4 h-4" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-1.5 text-[11px]">
-              <KindBadge kind="evidence" />
-              {hit.restricted && <ConsentBadge />}
-              <span className="font-semibold uppercase tracking-[0.2em]" style={{ color: '#8d6a44' }}>
-                {hit.jurisdiction}
-              </span>
-              {hit.evidence_type && <span style={{ color: '#5e5145' }}>· {hit.evidence_type}</span>}
-              {hit.year && <span style={{ color: '#5e5145' }}>· {hit.year}</span>}
-              {hit.distance !== null && (
-                <span className="opacity-50" style={{ color: '#5e5145' }}>
-                  · {(1 - hit.distance).toFixed(2)}
-                </span>
-              )}
-            </div>
-            <h3
-              style={{ fontFamily: DISPLAY, fontWeight: 500, color: '#2b2530' }}
-              className="text-xl md:text-2xl leading-tight mb-1.5"
-            >
-              {hit.title}
-            </h3>
-            {hit.excerpt && (
-              <p className="text-sm leading-6 line-clamp-2" style={{ color: '#584b40' }}>
-                {hit.excerpt}
-              </p>
-            )}
-            {hit.cultural_safety && (
-              <p className="text-[11px] mt-2 italic" style={{ color: '#1f6f78' }}>
-                {hit.cultural_safety}
-              </p>
-            )}
-            <div
-              className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px]"
-              style={{ color: '#7d5f3d' }}
-            >
-              {hit.organization && <span>{hit.organization}</span>}
-              {hit.author && <span>· {hit.author}</span>}
-              {hit.restricted && (
-                <span className="italic" style={{ color: '#a96a1c' }}>
-                  · Community controlled — access on request
-                </span>
-              )}
-            </div>
-          </div>
-          <ArrowRight
-            className="w-4 h-4 opacity-0 group-hover:opacity-60 transition-opacity self-center"
-            style={{ color: '#1f6f78' }}
-          />
-        </div>
-      </Link>
-    </li>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Small UI bits
-// ---------------------------------------------------------------------------
-
-function SegmentedToggle<T extends string>({
+function Seg<T extends string>({
   value,
   onChange,
   options,
@@ -724,10 +564,7 @@ function SegmentedToggle<T extends string>({
   options: Array<{ value: T; label: string; icon?: React.ReactNode }>;
 }) {
   return (
-    <div
-      className="inline-flex rounded-full p-1 border"
-      style={{ background: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.15)' }}
-    >
+    <div className="inline-flex rounded-md overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.18)' }}>
       {options.map((o) => {
         const active = value === o.value;
         return (
@@ -735,12 +572,8 @@ function SegmentedToggle<T extends string>({
             key={o.value}
             type="button"
             onClick={() => onChange(o.value)}
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold transition-colors"
-            style={
-              active
-                ? { background: '#f8f1e6', color: '#2b2530' }
-                : { background: 'transparent', color: '#eadff2' }
-            }
+            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium transition-colors"
+            style={active ? { background: '#f8f1e6', color: C.ink } : { background: 'transparent', color: '#cbb8d6' }}
           >
             {o.icon}
             {o.label}
@@ -751,38 +584,125 @@ function SegmentedToggle<T extends string>({
   );
 }
 
+function ViewSwitch({ value, onChange }: { value: View; onChange: (v: View) => void }) {
+  const opts: Array<{ v: View; label: string; Icon: typeof LayoutList }> = [
+    { v: 'list', label: 'List', Icon: LayoutList },
+    { v: 'cards', label: 'Cards', Icon: LayoutGrid },
+    { v: 'grouped', label: 'Grouped', Icon: Layers },
+    { v: 'jurisdiction', label: 'Map', Icon: MapIcon },
+  ];
+  return (
+    <div className="inline-flex rounded-md overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.18)' }}>
+      {opts.map(({ v, label, Icon }) => {
+        const active = value === v;
+        return (
+          <button
+            key={v}
+            type="button"
+            onClick={() => onChange(v)}
+            title={label}
+            aria-label={label}
+            className="p-1.5 transition-colors"
+            style={active ? { background: '#f8f1e6', color: C.ink } : { background: 'transparent', color: '#cbb8d6' }}
+          >
+            <Icon className="w-4 h-4" />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function AppliedChip({ label, onRemove }: { label: string; onRemove: () => void }) {
+  return (
+    <span
+      className="inline-flex items-center gap-1 rounded-full pl-2.5 pr-1.5 py-0.5 text-xs"
+      style={{ background: C.accentSoft, color: C.accent, border: `1px solid ${C.border}` }}
+    >
+      {label}
+      <button type="button" onClick={onRemove} aria-label={`Remove ${label}`} className="rounded-full hover:bg-black/10 p-0.5">
+        <X className="w-3 h-3" />
+      </button>
+    </span>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Facet rail
+// ---------------------------------------------------------------------------
+function FacetRail({
+  facetSeed,
+  cats,
+  toggleCat,
+  outcome,
+  setOutcome,
+  strength,
+  setStrength,
+}: {
+  facetSeed: FacetSeed;
+  cats: string[];
+  toggleCat: (c: string) => void;
+  outcome: string;
+  setOutcome: (v: string) => void;
+  strength: string;
+  setStrength: (v: string) => void;
+}) {
+  return (
+    <div className="space-y-6 lg:sticky lg:top-32">
+      <FacetGroup title="Issue areas">
+        <div className="flex flex-wrap gap-1.5">
+          {facetSeed.topCategories.map(([c, n]) => (
+            <FacetChip key={c} active={cats.includes(c)} onClick={() => toggleCat(c)}>
+              {c}
+              <span style={{ fontFamily: MONO, fontSize: 10, opacity: 0.6 }} className="ml-1">
+                {n}
+              </span>
+            </FacetChip>
+          ))}
+        </div>
+      </FacetGroup>
+      <FacetGroup title="Outcome · cases">
+        <div className="flex flex-wrap gap-1.5">
+          {(['favorable', 'adverse', 'pending'] as const).map((o) => (
+            <FacetChip key={o} active={outcome === o} onClick={() => setOutcome(outcome === o ? '' : o)}>
+              {o}
+            </FacetChip>
+          ))}
+        </div>
+      </FacetGroup>
+      <FacetGroup title="Precedent strength">
+        <div className="flex flex-wrap gap-1.5">
+          {(['high', 'medium', 'low'] as const).map((s) => (
+            <FacetChip key={s} active={strength === s} onClick={() => setStrength(strength === s ? '' : s)}>
+              {s}
+            </FacetChip>
+          ))}
+        </div>
+      </FacetGroup>
+    </div>
+  );
+}
+
 function FacetGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <div
-        className="text-[10px] font-semibold uppercase tracking-[0.22em] mb-2.5"
-        style={{ color: '#8d6a44' }}
-      >
+      <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.16em', color: C.muted }} className="uppercase mb-2.5">
         {title}
       </div>
       {children}
     </div>
   );
 }
-
-function FacetChip({
-  children,
-  active,
-  onClick,
-}: {
-  children: React.ReactNode;
-  active: boolean;
-  onClick: () => void;
-}) {
+function FacetChip({ children, active, onClick }: { children: React.ReactNode; active: boolean; onClick: () => void }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold border transition-colors"
+      className="inline-flex items-center rounded px-2 py-1 text-xs font-medium transition-colors border"
       style={
         active
-          ? { background: '#4a2560', borderColor: '#4a2560', color: '#f8f1e6' }
-          : { background: '#fff8ef', borderColor: '#e6d7c1', color: '#4a2560' }
+          ? { background: C.accent, borderColor: C.accent, color: '#fff' }
+          : { background: C.surface, borderColor: C.border, color: C.body }
       }
     >
       {children}
@@ -790,49 +710,177 @@ function FacetChip({
   );
 }
 
-function KindBadge({ kind }: { kind: 'case' | 'campaign' | 'evidence' }) {
-  const palette =
-    kind === 'case'
-      ? { background: 'rgba(74,37,96,0.08)', borderColor: '#c8b2d4', color: '#4a2560' }
-      : kind === 'campaign'
-      ? { background: 'rgba(169,106,28,0.08)', borderColor: '#dbbf90', color: '#a96a1c' }
-      : { background: 'rgba(31,111,120,0.10)', borderColor: '#9cc3c8', color: '#1f6f78' };
-  const label = kind === 'case' ? 'Case' : kind === 'campaign' ? 'Campaign' : 'Evidence';
+// ---------------------------------------------------------------------------
+// Result renderers
+// ---------------------------------------------------------------------------
+function MetaRow({ hit }: { hit: Hit }) {
+  const k = KIND[hit.kind];
   return (
-    <span
-      className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] border"
-      style={palette}
-    >
-      {label}
+    <span className="inline-flex flex-wrap items-center gap-x-2 gap-y-1" style={{ fontFamily: MONO, fontSize: 10.5 }}>
+      <span
+        className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 uppercase tracking-wider"
+        style={{ background: k.soft, color: k.color, border: `1px solid ${k.border}` }}
+      >
+        {k.label}
+      </span>
+      {hit.kind === 'evidence' && hit.restricted && (
+        <span className="rounded px-1.5 py-0.5 uppercase" style={{ background: 'rgba(169,106,28,0.10)', border: '1px solid #dbbf90', color: '#a96a1c' }}>
+          community controlled
+        </span>
+      )}
+      {hit.kind === 'case' && hit.verified && (
+        <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5" style={{ background: 'rgba(61,111,74,0.12)', border: '1px solid #9fc3a6', color: '#3d6f4a' }}>
+          <ShieldCheck className="w-3 h-3" /> verified
+        </span>
+      )}
+      {hit.kind === 'case' && hit.outcome && (
+        <span style={{ color: hit.outcome === 'favorable' ? '#3d6f4a' : hit.outcome === 'adverse' ? '#8a2a2a' : '#a96a1c' }}>{hit.outcome}</span>
+      )}
+      <span style={{ color: C.muted }}>{hitJurisdictionText(hit) || (hit.kind === 'evidence' ? 'Australia' : '')}</span>
+      {hitYear(hit) > 0 && <span style={{ color: C.muted }}>· {hitYear(hit)}</span>}
+      {hit.distance !== null && <span style={{ color: C.muted, opacity: 0.7 }}>· {(1 - hit.distance).toFixed(2)}</span>}
     </span>
   );
 }
 
-function ConsentBadge() {
+function ListRow({ hit }: { hit: Hit }) {
+  const k = KIND[hit.kind];
   return (
-    <span
-      className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] border"
-      style={{ background: 'rgba(169,106,28,0.10)', borderColor: '#dbbf90', color: '#a96a1c' }}
-      title="Community controlled — title and provenance shown; full study available on request"
-    >
-      Community controlled
-    </span>
+    <li>
+      <Link href={hitHref(hit)} className="group flex items-start gap-3 px-4 py-3 hover:bg-black/[0.02] transition-colors">
+        <k.Icon className="w-4 h-4 mt-0.5 shrink-0" style={{ color: k.color }} />
+        <div className="min-w-0 flex-1">
+          <div className="font-medium text-[15px] leading-snug truncate" style={{ color: C.ink }}>
+            {hit.title}
+          </div>
+          <div className="mt-1">
+            <MetaRow hit={hit} />
+          </div>
+        </div>
+        <ChevronRight className="w-4 h-4 self-center opacity-0 group-hover:opacity-50 shrink-0" style={{ color: C.accent }} />
+      </Link>
+    </li>
   );
 }
 
-function OutcomeBadge({ outcome }: { outcome: string }) {
-  const palette =
-    outcome === 'favorable'
-      ? { bg: 'rgba(61,111,74,0.15)', color: '#3d6f4a', border: '#9fc3a6' }
-      : outcome === 'adverse'
-      ? { bg: 'rgba(138,42,42,0.12)', color: '#8a2a2a', border: '#d6a0a0' }
-      : { bg: 'rgba(169,106,28,0.12)', color: '#a96a1c', border: '#dbbf90' };
+function ResultCard({ hit }: { hit: Hit }) {
+  const k = KIND[hit.kind];
   return (
-    <span
-      className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] border"
-      style={{ background: palette.bg, color: palette.color, borderColor: palette.border }}
-    >
-      {outcome}
-    </span>
+    <li className="rounded-lg border p-4 transition-colors hover:border-zinc-300" style={{ background: C.surface, borderColor: C.border }}>
+      <Link href={hitHref(hit)} className="group block">
+        <MetaRow hit={hit} />
+        <h3 className="mt-2 font-semibold text-[16px] leading-snug" style={{ color: C.ink }}>
+          {hit.title}
+        </h3>
+        {hit.excerpt && (
+          <p className="mt-1.5 text-sm leading-6 line-clamp-3" style={{ color: C.body }}>
+            {hit.excerpt}
+          </p>
+        )}
+        {hit.kind === 'evidence' && hit.cultural_safety && (
+          <p className="mt-2 text-xs italic" style={{ color: '#1f6f78' }}>{hit.cultural_safety}</p>
+        )}
+        <div className="mt-2 flex items-center gap-2 text-xs" style={{ color: k.color }}>
+          <span className="inline-flex items-center gap-1 group-hover:underline">
+            Open <ArrowRight className="w-3 h-3" />
+          </span>
+        </div>
+      </Link>
+    </li>
+  );
+}
+
+function GroupedView({ items, counts }: { items: Hit[]; counts: Counts }) {
+  const groups: Array<{ kind: Hit['kind']; total: number }> = [
+    { kind: 'case', total: counts.case },
+    { kind: 'campaign', total: counts.campaign },
+    { kind: 'evidence', total: counts.evidence },
+  ];
+  return (
+    <div className="space-y-8">
+      {groups.map(({ kind, total }) => {
+        const rows = items.filter((h) => h.kind === kind);
+        if (!rows.length) return null;
+        const k = KIND[kind];
+        return (
+          <div key={kind}>
+            <div className="flex items-center gap-2 mb-2">
+              <k.Icon className="w-4 h-4" style={{ color: k.color }} />
+              <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', color: C.ink }} className="uppercase">
+                {k.label}s
+              </span>
+              <span style={{ fontFamily: MONO, fontSize: 11, color: C.muted }}>{total.toLocaleString()}</span>
+            </div>
+            <ul className="divide-y rounded-lg border" style={{ borderColor: C.border, background: C.surface }}>
+              {rows.slice(0, 8).map((h) => (
+                <ListRow key={`${h.kind}-${h.id}`} hit={h} />
+              ))}
+            </ul>
+            {rows.length > 8 && (
+              <p className="mt-1.5 text-xs" style={{ color: C.muted }}>
+                +{rows.length - 8} more — switch to List view or filter to this type.
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function JurisdictionView({
+  buckets,
+  active,
+  onPick,
+}: {
+  buckets: Array<{ region: string; count: number }>;
+  active: string | null;
+  onPick: (r: string) => void;
+}) {
+  if (!buckets.length) return <Empty />;
+  const max = Math.max(...buckets.map((b) => b.count), 1);
+  return (
+    <div>
+      <p className="text-sm mb-4" style={{ color: C.muted }}>
+        Browse by jurisdiction. Australian evidence is grounded locally; cases and campaigns span international courts.
+      </p>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {buckets.map((b) => (
+          <button
+            key={b.region}
+            type="button"
+            onClick={() => onPick(b.region)}
+            className="text-left rounded-lg border p-4 transition-colors hover:border-zinc-300"
+            style={{
+              background: active === b.region ? C.accentSoft : C.surface,
+              borderColor: active === b.region ? C.accent : C.border,
+            }}
+          >
+            <div className="flex items-baseline justify-between">
+              <span className="font-medium text-[15px]" style={{ color: C.ink }}>
+                {b.region}
+              </span>
+              <span style={{ fontFamily: MONO, fontSize: 13, color: C.accent }}>{b.count.toLocaleString()}</span>
+            </div>
+            <div className="mt-2 h-1 rounded-full" style={{ background: C.border }}>
+              <div className="h-1 rounded-full" style={{ width: `${Math.max(6, (b.count / max) * 100)}%`, background: C.accent }} />
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Empty() {
+  return (
+    <div className="rounded-lg border p-10 text-center" style={{ background: C.surface, borderColor: C.border }}>
+      <p className="text-base mb-1" style={{ color: C.ink }}>
+        No results.
+      </p>
+      <p className="text-sm" style={{ color: C.muted }}>
+        Try a different term, switch to semantic mode, widen the scope, or clear filters.
+      </p>
+    </div>
   );
 }
