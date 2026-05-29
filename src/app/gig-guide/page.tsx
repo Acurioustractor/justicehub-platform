@@ -54,6 +54,8 @@ export default async function GigGuidePage() {
     .from('organizations')
     .select('id, name, slug, state')
     .or('partner_tier.eq.basecamp,type.eq.basecamp')
+    .eq('is_active', true)
+    .eq('verification_status', 'verified')
     .order('state');
 
   const events = opportunities || [];

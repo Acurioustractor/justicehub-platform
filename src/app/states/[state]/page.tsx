@@ -67,7 +67,9 @@ export default async function StateScorecardPage({ params }: { params: { state: 
       .from('organizations')
       .select('id, name, slug, is_indigenous_org')
       .or('partner_tier.eq.basecamp,type.eq.basecamp')
-      .eq('state', state),
+      .eq('state', state)
+      .eq('is_active', true)
+      .eq('verification_status', 'verified'),
     // Network miners
     supabase
       .from('network_memberships')

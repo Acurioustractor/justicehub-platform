@@ -23,7 +23,12 @@ export default async function AmplifyPage() {
     supabase.from('organizations').select('id', { count: 'exact', head: true }),
     supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('is_indigenous_org', true),
     supabase.from('alma_evidence').select('id', { count: 'exact', head: true }),
-    supabase.from('organizations').select('id', { count: 'exact', head: true }).or('partner_tier.eq.basecamp,type.eq.basecamp'),
+    supabase
+      .from('organizations')
+      .select('id', { count: 'exact', head: true })
+      .or('partner_tier.eq.basecamp,type.eq.basecamp')
+      .eq('is_active', true)
+      .eq('verification_status', 'verified'),
   ]);
 
   const interventions = interventionsRes.data || [];

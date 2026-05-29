@@ -22,6 +22,8 @@ export default async function BasecampsPage() {
     .from('organizations')
     .select('id, name, slug, state, description, is_indigenous_org')
     .eq('partner_tier', 'basecamp')
+    .eq('is_active', true)
+    .eq('verification_status', 'verified')
     .order('state');
 
   // Fetch live metrics per basecamp
@@ -207,7 +209,7 @@ export default async function BasecampsPage() {
                         return (
                           <Link
                             key={bc.id}
-                            href={`/alma/${bc.slug}`}
+                            href={`/organizations/${bc.slug || bc.id}`}
                             className="block group"
                           >
                             <div className="flex items-center gap-3">

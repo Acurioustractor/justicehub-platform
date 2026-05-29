@@ -90,7 +90,8 @@ export async function POST(request: NextRequest) {
           description: description || null,
           contact_email: contactEmail,
           phone: contactPhone || null,
-          is_active: true,
+          is_active: false,
+          verification_status: 'pending',
         })
         .select('id')
         .single();
@@ -111,6 +112,8 @@ export async function POST(request: NextRequest) {
       .select('id')
       .or('partner_tier.eq.basecamp,type.eq.basecamp')
       .eq('state', state)
+      .eq('is_active', true)
+      .eq('verification_status', 'verified')
       .limit(1)
       .single();
 

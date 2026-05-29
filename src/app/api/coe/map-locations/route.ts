@@ -10,7 +10,7 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-const BASECAMP_SLUGS = ['oonchiumpa', 'bg-fit', 'mounty-yarns', 'picc-townsville'];
+const BASECAMP_SLUGS = ['oonchiumpa', 'bg-fit', 'mounty-yarns'];
 
 type CoeMapLocation = ExcellenceLocation;
 
@@ -91,7 +91,9 @@ export async function GET() {
         supabase
           .from('organizations')
           .select('id, name, slug, description, location, state, latitude, longitude, type, archived')
-          .or(`type.eq.basecamp,slug.in.(${BASECAMP_SLUGS.join(',')})`)
+          .or(`partner_tier.eq.basecamp,type.eq.basecamp,slug.in.(${BASECAMP_SLUGS.join(',')})`)
+          .eq('is_active', true)
+          .eq('verification_status', 'verified')
           .eq('archived', false)
           .order('name', { ascending: true }),
         supabase

@@ -71,7 +71,13 @@ export default async function LeaderboardPage() {
         .from('alma_interventions')
         .select('id, evidence_level, organizations!alma_interventions_operating_organization_id_fkey(state)')
         .neq('verification_status', 'ai_generated'),
-      supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('state', state).or('partner_tier.eq.basecamp,type.eq.basecamp'),
+      supabase
+        .from('organizations')
+        .select('id', { count: 'exact', head: true })
+        .eq('state', state)
+        .or('partner_tier.eq.basecamp,type.eq.basecamp')
+        .eq('is_active', true)
+        .eq('verification_status', 'verified'),
     ]);
 
     const funding = fundingRes.data || [];

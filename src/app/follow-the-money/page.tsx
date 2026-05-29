@@ -103,7 +103,9 @@ export default async function FollowTheMoneyPage() {
   const { data: basecamps } = await supabase
     .from('organizations')
     .select('state')
-    .or('partner_tier.eq.basecamp,type.eq.basecamp');
+    .or('partner_tier.eq.basecamp,type.eq.basecamp')
+    .eq('is_active', true)
+    .eq('verification_status', 'verified');
   const basecampStates = new Set((basecamps || []).map((b: any) => b.state));
 
   // Build state data

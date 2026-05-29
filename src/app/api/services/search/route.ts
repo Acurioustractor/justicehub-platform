@@ -1,38 +1,19 @@
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+import { createServiceClient } from '@/lib/supabase/service-lite'
+import {
+  isMissingServicesCompleteError,
+  normalizeServiceCatalogRow,
+  serviceMatchesCatalogFilters,
+} from '@/lib/services/service-catalog'
 
 export async function GET(request: Request) {
-  const cookieStore = cookies()
-  const supabase = createServerClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
-          }
-        },
-      },
-    }
-  )
+  const supabase = createServiceClient()
   
   const { searchParams } = new URL(request.url)
   const query = searchParams.get('q') || ''
   const location = searchParams.get('location') || ''
   const limit = searchParams.get('limit') || '24'
   
-  // Use services_complete view for full compatibility
   let supabaseQuery = supabase
     .from('services_complete')
     .select('*')
@@ -48,12 +29,42 @@ export async function GET(request: Request) {
   
   const { data, error } = await supabaseQuery
   
-  if (error) {
+  if (!error) {
+    return NextResponse.json({
+      success: true,
+      data: (data || []).map((row) => normalizeServiceCatalogRow(row as Record<string, unknown>)),
+      source: 'services_complete',
+    })
+  }
+
+  if (!isMissingServicesCompleteError(error)) {
     return NextResponse.json({ success: false, error: error.message })
   }
-  
+
+  const { data: fallbackRows, error: fallbackError } = await supabase
+    .from('services')
+    .select('*')
+    .eq('is_active', true)
+    .order('updated_at', { ascending: false, nullsFirst: false })
+    .limit(500)
+
+  if (fallbackError) {
+    return NextResponse.json({ success: false, error: fallbackError.message })
+  }
+
+  const normalized = (fallbackRows || [])
+    .map((row) => normalizeServiceCatalogRow(row as Record<string, unknown>))
+    .filter((service) =>
+      serviceMatchesCatalogFilters(service, {
+        q: query,
+        state: location,
+      })
+    )
+    .slice(0, parseInt(limit))
+
   return NextResponse.json({
     success: true,
-    data
+    data: normalized,
+    source: 'services',
   })
 }

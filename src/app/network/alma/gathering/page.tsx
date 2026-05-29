@@ -42,7 +42,9 @@ export default async function GatheringPage() {
     supabase
       .from('organizations')
       .select('id, name, state', { count: 'exact' })
-      .or('partner_tier.eq.basecamp,type.eq.basecamp'),
+      .or('partner_tier.eq.basecamp,type.eq.basecamp')
+      .eq('is_active', true)
+      .eq('verification_status', 'verified'),
     supabase
       .from('network_memberships')
       .select('id', { count: 'exact', head: true })

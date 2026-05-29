@@ -28,7 +28,12 @@ export default async function NetworkImpactPage() {
     storiesRes,
     youthOppsRes,
   ] = await Promise.all([
-    supabase.from('organizations').select('id, name, state', { count: 'exact' }).or('partner_tier.eq.basecamp,type.eq.basecamp'),
+    supabase
+      .from('organizations')
+      .select('id, name, state', { count: 'exact' })
+      .or('partner_tier.eq.basecamp,type.eq.basecamp')
+      .eq('is_active', true)
+      .eq('verification_status', 'verified'),
     supabase.from('network_memberships').select('id', { count: 'exact', head: true }).eq('status', 'active'),
     supabase.from('alma_interventions').select('id, evidence_level, cost_per_young_person, type').neq('verification_status', 'ai_generated'),
     supabase.from('alma_evidence').select('id', { count: 'exact', head: true }),
