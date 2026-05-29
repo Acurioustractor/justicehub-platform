@@ -58,15 +58,16 @@ if (!env.NEXT_PUBLIC_SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
 
 const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 
-// Claude is first: most capable at grounding legal cases, so it gets the best
-// shot at the unfilled (esp. international) backlog. The free OpenAI-compatible
-// providers follow as fallback. DeepSeek removed (key returns 402 / no credits).
+// Free/cheap OpenAI-compatible providers first; Anthropic LAST-RESORT only (cost
+// control). For grounded legal extraction the cheap models are adequate (their
+// failure mode is to return null, the safe one). DeepSeek removed (402 / no credits).
 const PROVIDERS = [
-  { name: 'anthropic', key: 'ANTHROPIC_API_KEY', anthropic: true,                                              model: 'claude-sonnet-4-6' },
   { name: 'groq',      key: 'GROQ_API_KEY',      base: 'https://api.groq.com/openai/v1',                       model: 'llama-3.3-70b-versatile' },
   { name: 'gemini',    key: 'GEMINI_API_KEY',    base: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-2.5-flash' },
+  { name: 'cerebras',  key: 'CEREBRAS_API_KEY',  base: 'https://api.cerebras.ai/v1',                           model: 'llama3.3-70b' },
   { name: 'sambanova', key: 'SAMBANOVA_API_KEY', base: 'https://api.sambanova.ai/v1',                          model: 'Meta-Llama-3.3-70B-Instruct' },
   { name: 'minimax',   key: 'MINIMAX_API_KEY',   base: 'https://api.minimaxi.chat/v1',                         model: 'MiniMax-M2.7' },
+  { name: 'anthropic', key: 'ANTHROPIC_API_KEY', anthropic: true,                                              model: 'claude-sonnet-4-6' }, // last resort only
 ];
 
 // Calls available providers in order and parses the response as JSON. On HTTP

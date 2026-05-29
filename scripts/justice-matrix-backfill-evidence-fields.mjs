@@ -40,11 +40,16 @@ const LIMIT = (() => {
   return i >= 0 ? parseInt(argv[i + 1], 10) : 100;
 })();
 
-// Claude first: most reliable at honest "null when not stated" extraction.
+// Free/cheap providers first; Anthropic kept LAST-RESORT only (cost control).
+// The cheap models honour grounded-or-null well enough (their failure mode is to
+// return null, which is the safe one), and the longer free chain means a single
+// provider's rate limit doesn't fail the row.
 const PROVIDERS = [
-  { name: 'anthropic', key: 'ANTHROPIC_API_KEY', anthropic: true, model: 'claude-sonnet-4-6' },
   { name: 'groq', key: 'GROQ_API_KEY', base: 'https://api.groq.com/openai/v1', model: 'llama-3.3-70b-versatile' },
   { name: 'gemini', key: 'GEMINI_API_KEY', base: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-2.5-flash' },
+  { name: 'cerebras', key: 'CEREBRAS_API_KEY', base: 'https://api.cerebras.ai/v1', model: 'llama3.3-70b' },
+  { name: 'sambanova', key: 'SAMBANOVA_API_KEY', base: 'https://api.sambanova.ai/v1', model: 'Meta-Llama-3.3-70B-Instruct' },
+  { name: 'anthropic', key: 'ANTHROPIC_API_KEY', anthropic: true, model: 'claude-sonnet-4-6' }, // last resort only
 ];
 
 function parseJSON(text) {
@@ -66,7 +71,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // rate-limit during a burst does not silently abandon it for a weaker model that
 // just returns null effect_size. Weaker providers get one shot.
 async function oneCall(p, prompt) {
-  const maxTries = p.anthropic ? 5 : 1;
+  const maxTries = 3; // retry any provider (incl. groq) on rate-limit before falling through
   let lastErr;
   for (let i = 0; i < maxTries; i++) {
     const ctrl = new AbortController();
@@ -85,8 +90,8 @@ async function oneCall(p, prompt) {
             body: JSON.stringify({ model: p.model, max_tokens: 700, messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' } }),
             signal: ctrl.signal,
           });
-      if (res.status === 429 && p.anthropic && i < maxTries - 1) {
-        await sleep(4000 * (i + 1)); // 4s, 8s, 12s, 16s backoff
+      if ((res.status === 429 || res.status === 503) && i < maxTries - 1) {
+        await sleep(2500 * (i + 1)); // rate-limited (any provider): wait + retry same one
         continue;
       }
       if (!res.ok) throw new Error(`${p.name} ${res.status}`);
@@ -95,7 +100,8 @@ async function oneCall(p, prompt) {
       return parseJSON(text);
     } catch (e) {
       lastErr = e;
-      if (p.anthropic && i < maxTries - 1) { await sleep(4000 * (i + 1)); continue; }
+      // retry only transient network/abort; a thrown HTTP error means try the next provider
+      if (/abort|fetch failed|network|ECONN|terminated/i.test(e.message ?? '') && i < maxTries - 1) { await sleep(1500); continue; }
       throw e;
     } finally {
       clearTimeout(t);

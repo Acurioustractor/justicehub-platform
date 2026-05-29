@@ -33,13 +33,18 @@ const APPLY = argv.includes('--apply');
 const LIMIT = (() => { const i = argv.indexOf('--limit'); return i >= 0 ? parseInt(argv[i + 1], 10) : 10; })();
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
-// groq first: Anthropic credit is exhausted this session, and retrying it wastes
-// ~24s/row of backoff before fallback. groq is fast and fine for grounded
-// extraction from the official conclusion text. Anthropic kept last as a backstop.
+// MiniMax first: the user's MiniMax plan has ample quota (the free groq/gemini
+// tiers were exhausted by today's runs) and M2.7 writes far better prose. It is a
+// reasoning model (emits <think>, no JSON mode), so it needs more tokens and no
+// response_format; parseJSON strips the think block. Cheap free providers follow;
+// Anthropic kept last-resort only (cost).
 const PROVIDERS = [
+  { name: 'minimax', key: 'MINIMAX_API_KEY', base: 'https://api.minimaxi.chat/v1', model: 'MiniMax-M2.7', noJson: true, maxTokens: 2500 },
   { name: 'groq', key: 'GROQ_API_KEY', base: 'https://api.groq.com/openai/v1', model: 'llama-3.3-70b-versatile' },
   { name: 'gemini', key: 'GEMINI_API_KEY', base: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-2.5-flash' },
-  { name: 'anthropic', key: 'ANTHROPIC_API_KEY', anthropic: true, model: 'claude-sonnet-4-6' },
+  { name: 'cerebras', key: 'CEREBRAS_API_KEY', base: 'https://api.cerebras.ai/v1', model: 'llama3.3-70b' },
+  { name: 'sambanova', key: 'SAMBANOVA_API_KEY', base: 'https://api.sambanova.ai/v1', model: 'Meta-Llama-3.3-70B-Instruct' },
+  { name: 'anthropic', key: 'ANTHROPIC_API_KEY', anthropic: true, model: 'claude-sonnet-4-6' }, // last resort only
 ];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 function parseJSON(t) { const c = t.replace(/<think>[\s\S]*?<\/think>/g, '').replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim(); try { return JSON.parse(c); } catch { const a = c.indexOf('{'), b = c.lastIndexOf('}'); if (a >= 0 && b > a) return JSON.parse(c.slice(a, b + 1)); throw new Error('no JSON'); } }
@@ -48,9 +53,10 @@ async function oneCall(p, prompt) {
   for (let i = 0; i < maxTries; i++) {
     const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 60000);
     try {
+      const mt = p.maxTokens ?? 600; // reasoning models (minimax) burn tokens on <think>
       const res = p.anthropic
-        ? await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': env[p.key], 'anthropic-version': '2023-06-01' }, body: JSON.stringify({ model: p.model, max_tokens: 600, messages: [{ role: 'user', content: prompt }] }), signal: ctrl.signal })
-        : await fetch(`${p.base}/chat/completions`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${env[p.key]}` }, body: JSON.stringify({ model: p.model, max_tokens: 600, messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' } }), signal: ctrl.signal });
+        ? await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': env[p.key], 'anthropic-version': '2023-06-01' }, body: JSON.stringify({ model: p.model, max_tokens: mt, messages: [{ role: 'user', content: prompt }] }), signal: ctrl.signal })
+        : await fetch(`${p.base}/chat/completions`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${env[p.key]}` }, body: JSON.stringify({ model: p.model, max_tokens: mt, messages: [{ role: 'user', content: prompt }], ...(p.noJson ? {} : { response_format: { type: 'json_object' } }) }), signal: ctrl.signal });
       // Rate-limited (any provider, incl. groq under burst): wait + retry same provider.
       if ((res.status === 429 || res.status === 503) && i < maxTries - 1) { await sleep(2500 * (i + 1)); continue; }
       if (!res.ok) throw new Error(`${p.name} ${res.status}`); // other HTTP error: fall to next provider
@@ -117,17 +123,22 @@ function outcomeFromConclusion(con) {
 const strengthFromImportance = (imp) => (imp === '1' ? 'high' : imp === '2' ? 'medium' : 'low');
 
 function prompt(c, meta, body) {
-  return `You are writing the summary of an ECtHR case profile, grounded ONLY in the official HUDOC data below. Do not use prior knowledge.
+  return `Write a clean two-field summary of this European Court of Human Rights case, using ONLY the official HUDOC data below. Compose plain-English sentences. Do not use prior knowledge.
 
 Case: ${c.case_citation}
-Official conclusion: ${meta.conclusion}
+Official conclusion (verbatim, may cover several articles): ${meta.conclusion}
 Articles engaged: ${meta.article}
-Judgment text (excerpt): ${body || '(not available)'}
+${body ? `Judgment excerpt: ${body}` : ''}
 
 Return ONLY this JSON:
-{"strategic_issue":"the human-rights question this case raised (e.g. whether removal would breach Article 3), 1-2 sentences","key_holding":"what the Court decided and why it matters, grounded in the conclusion above, 1-2 sentences"}
+{"strategic_issue":"<ONE sentence naming the human-rights question, e.g. 'Whether the applicant's expulsion to Iran would expose him to a real risk of treatment contrary to Article 3.'>","key_holding":"<one to two sentences stating what the Court actually decided>"}
 
-Rules: ground every word in the conclusion / articles / judgment excerpt above. If the excerpt is unavailable, you may still state the issue and holding from the official conclusion + articles, but add nothing not implied by them. Never invent facts, parties, or numbers.`;
+HARD STYLE RULES:
+- Compose prose. NEVER paste the conclusion verbatim, NEVER list article numbers like "Articles: 2, 3, 35, 41", NEVER begin with "European Court of Human Rights judgment".
+- No filler. Banned phrases: "marks a significant outcome", "in the context of", "was at stake", "was in question", "significant outcome in the context of".
+- If the conclusion is MIXED (e.g. "No violation of Article 13; Violation of Article 3"), state BOTH parts in the holding — never report only one half.
+- Name the right, not just the number: Article 2 = right to life; Article 3 = prohibition of torture / inhuman or degrading treatment; Article 4 of Protocol No. 4 = collective expulsion of aliens; Article 8 = private and family life; Article 13 = effective remedy.
+- Ground everything in the conclusion / excerpt; invent no facts, parties, dates, or numbers.`;
 }
 
 const APPNO_RE = /no\.?\s*(\d{3,6}\/\d{2})/i;
@@ -139,7 +150,8 @@ async function run() {
     .select('id,case_citation,jurisdiction,year,strategic_issue,key_holding,authoritative_link,outcome,precedent_strength')
     .eq('source', 'ai_scraped')
     .ilike('authoritative_link', '%hudoc%')
-    .or('key_holding.is.null,strategic_issue.is.null,strategic_issue.ilike.%expulsion%')
+    // Re-process ALL HUDOC rows: the tightened prompt re-does the mediocre prose
+    // (metadata dumps / padding) from the earlier pass, not just the empty ones.
     .limit(LIMIT);
   if (error) { console.error(error.message); process.exit(1); }
   const rows = data ?? [];
@@ -159,20 +171,32 @@ async function run() {
     try { out = await callLLMJson(prompt(r, meta, body)); } catch { failed++; continue; }
 
     const patch = {};
-    if (out.strategic_issue && out.strategic_issue.length > (r.strategic_issue?.length ?? 0)) patch.strategic_issue = String(out.strategic_issue).slice(0, 600);
+    // Overwrite the prose: this is a re-do to replace mediocre earlier output, and
+    // a clean rewrite is often shorter than the metadata dump it replaces.
+    if (out.strategic_issue && !/^european court of human rights judgment/i.test(out.strategic_issue) && !/articles?:\s*\d/i.test(out.strategic_issue))
+      patch.strategic_issue = String(out.strategic_issue).slice(0, 600);
     if (out.key_holding) patch.key_holding = String(out.key_holding).slice(0, 600);
-    // Bonus: official fields + canonical link fix.
+    // Official fields + canonical link fix (set even on re-run; outcome/precedent overwrite).
     const oc = outcomeFromConclusion(meta.conclusion);
-    if (oc && !r.outcome) patch.outcome = oc;
-    if (meta.importance && !r.precedent_strength) patch.precedent_strength = strengthFromImportance(meta.importance);
+    if (oc) patch.outcome = oc;
+    if (meta.importance) patch.precedent_strength = strengthFromImportance(meta.importance);
     const canonical = `https://hudoc.echr.coe.int/eng?i=${meta.itemid}`;
     if (canonical !== r.authoritative_link) patch.authoritative_link = canonical;
     if (!Object.keys(patch).length) { noMeta++; continue; }
 
     console.log(`  + ${Object.keys(patch).join(',')}  <-  ${(r.case_citation || '').slice(0, 50)}  [${meta.conclusion?.slice(0, 40)}…]`);
     if (APPLY) {
-      const { error: e } = await supabase.from('justice_matrix_cases').update({ ...patch, embedding: null, updated_at: new Date().toISOString() }).eq('id', r.id);
-      if (e) { console.log(`    ! ${e.message}`); failed++; continue; }
+      // Retry transient pool/connection timeouts (the shared Supabase pooler
+      // saturates under load) so a generated enrichment isn't lost to infra noise.
+      let wrote = false, werr;
+      for (let w = 0; w < 4 && !wrote; w++) {
+        const { error: e } = await supabase.from('justice_matrix_cases').update({ ...patch, embedding: null, updated_at: new Date().toISOString() }).eq('id', r.id);
+        if (!e) { wrote = true; break; }
+        werr = e;
+        if (/timeout|connection|pool|terminated|fetch failed|ENOTFOUND|ECONNRESET|socket|network/i.test(e.message ?? '')) { await sleep(3000 * (w + 1)); continue; }
+        break; // non-transient error: stop retrying
+      }
+      if (!wrote) { console.log(`    ! write failed: ${werr?.message}`); failed++; continue; }
     }
     improved++;
     await sleep(1200);
