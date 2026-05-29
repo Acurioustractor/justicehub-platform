@@ -1,8 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
+import { readFileSync } from 'fs';
+
+const env = readFileSync(`${process.cwd()}/.env.local`, 'utf8')
+  .split('\n').filter((l) => l && !l.startsWith('#') && l.includes('='))
+  .reduce((a, l) => { const [k, ...v] = l.split('='); a[k.trim()] = v.join('=').trim(); return a; }, {});
 
 const supabase = createClient(
-  'https://tednluwflfhxyucgwigh.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlZG5sdXdmbGZoeHl1Y2d3aWdoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjM0NjIyOSwiZXhwIjoyMDY3OTIyMjI5fQ.wyizbOWRxMULUp6WBojJPfey1ta8-Al1OlZqDDIPIHo'
+  env.NEXT_PUBLIC_SUPABASE_URL || 'https://tednluwflfhxyucgwigh.supabase.co',
+  env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 async function runAudit() {
