@@ -13,6 +13,12 @@
 import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { curiaApiItems } from '@/lib/justice-matrix/curia-adapter';
+// NEW (2026-05-29): live-verified global adapters. First cron run that touches a
+// HUDOC or CourtListener source SHOULD BE WATCHED — these have not yet run
+// against the DB. Both throw on a hard non-OK and return [] on soft-empty, so a
+// flaky upstream is recorded in justice_matrix_sources.last_error, not crashed.
+import { hudocApiItems } from '@/lib/justice-matrix/hudoc-adapter';
+import { courtlistenerApiItems } from '@/lib/justice-matrix/courtlistener-adapter';
 import {
   discoveryEmbeddingText,
   findSemanticDuplicate,
@@ -60,8 +66,20 @@ async function exactDuplicate(supabase: Db, item: JusticeMatrixDiscoveryItem): P
   return !!queued?.length;
 }
 
-async function scanCuriaSource(supabase: Db, source: SourceRow) {
-  const items = await curiaApiItems(LIMIT_PER_SOURCE);
+/**
+ * Adapter signature shared by every JSON source: deterministic field map,
+ * no LLM, returns validated discovery items. Curia + the new HUDOC and
+ * CourtListener adapters all match this.
+ */
+type AdapterFn = (limit: number) => Promise<JusticeMatrixDiscoveryItem[]>;
+
+/**
+ * Run an adapter and stage its items. Curia, HUDOC and CourtListener all flow
+ * through here — the only thing that varies per source is the adapter fn picked
+ * by the host-branch in GET().
+ */
+async function scanWithAdapter(supabase: Db, source: SourceRow, adapter: AdapterFn) {
+  const items = await adapter(LIMIT_PER_SOURCE);
   let staged = 0;
   for (const item of items) {
     if (await exactDuplicate(supabase, item)) continue;
@@ -137,11 +155,20 @@ export async function GET(request: Request) {
   for (const source of (sources ?? []) as SourceRow[]) {
     const now = new Date().toISOString();
     try {
-      // Currently only the InfoCuria endpoint is supported; new JSON sources
-      // get their own adapter branch as they are added.
+      // Host-branch: each JSON source maps to one verified adapter. New JSON
+      // sources get their own branch as they are added.
+      //
+      // NEW (2026-05-29): the HUDOC and CourtListener branches are live-verified
+      // but have not yet run against the DB. WATCH THE FIRST CRON RUN that picks
+      // up a hudoc.echr.coe.int or courtlistener.com source — confirm staged
+      // counts look sane and last_error stays null before trusting them weekly.
       let staged = 0;
       if (/curia\.europa\.eu/.test(source.url)) {
-        staged = await scanCuriaSource(supabase, source);
+        staged = await scanWithAdapter(supabase, source, curiaApiItems);
+      } else if (/hudoc\.echr\.coe\.int/.test(source.url)) {
+        staged = await scanWithAdapter(supabase, source, hudocApiItems);
+      } else if (/courtlistener\.com/.test(source.url)) {
+        staged = await scanWithAdapter(supabase, source, courtlistenerApiItems);
       } else {
         results.push({ source: source.name, staged: 0, error: 'no adapter for this JSON source yet' });
         continue;

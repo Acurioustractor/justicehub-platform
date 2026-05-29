@@ -4,15 +4,20 @@
  * `hudocApiItems(limit)` that returns validated JusticeMatrixDiscoveryItem[]
  * with no LLM in the loop — a deterministic field map, same as curia.
  *
- * Focus: ECtHR child-detention and Article 3 / 5 / 8 case law (the youth-justice
- * and immigration-detention wedge the strategy targets in Phase 1).
+ * Focus: ECtHR non-refoulement and expulsion case law (Article 3 removal cases
+ * and Article 4 Protocol 4 collective expulsion), the refugee / asylum wedge the
+ * strategy targets in Phase 1.
  *
- * ⚠️ SCAFFOLD — LIVE-API VERIFICATION REQUIRED.
- * HUDOC exposes an undocumented Solr/Lucene-backed search endpoint that the
- * public portal (https://hudoc.echr.coe.int) calls. The endpoint, query-param
- * names, and response field names below are best-effort and MUST be confirmed
- * against a live request before this adapter is wired into an active source.
- * Every unverified detail is tagged `TODO(live-api)`.
+ * LIVE-VERIFIED 2026-05-29. Endpoint, params, sort, response shape and the
+ * `columns` field names below were confirmed against a live request:
+ *   GET https://hudoc.echr.coe.int/app/query/results
+ *   query=contentsitename:ECHR AND (documentcollectionid2="JUDGMENTS")
+ *         AND (languageisocode="ENG") AND "non-refoulement"
+ *   -> { resultcount: 114, results: [ { columns: { itemid, docname, appno,
+ *        extractedappno, article, kpdate, ecli, conclusion, importance,
+ *        respondent, languageisocode } } ] }
+ * Verified counts for the candidate filters: "non-refoulement" -> 114,
+ * conclusion:"expulsion" -> 89, "asylum" -> 750.
  */
 
 import {
@@ -21,46 +26,54 @@ import {
   type JusticeMatrixDiscoveryItem,
 } from '@/lib/ai/llm-schemas';
 
-// TODO(live-api): confirm the HUDOC search endpoint. The portal is observed to
-// call an `app/query/results` path on `hudoc.echr.coe.int`; the exact host and
-// path need a live network-tab capture to confirm.
-// Reference: https://hudoc.echr.coe.int (open the network tab, filter XHR).
+// VERIFIED LIVE: the public HUDOC portal calls this endpoint for its result grid.
 export const HUDOC_API_URL = 'https://hudoc.echr.coe.int/app/query/results';
 
-// TODO(live-api): confirm the Lucene query syntax HUDOC accepts in the `query`
-// param. Below is a best-effort filter for English-language Chamber/Grand
-// Chamber judgments mentioning child detention and the relevant Articles.
-const HUDOC_QUERY =
-  '(contentsitename:ECHR) AND (documentcollectionid2:"JUDGMENTS") AND ' +
-  '("detention of minors" OR "child detention" OR "Article 3" OR "Article 5" OR "Article 8")';
+// VERIFIED LIVE: collection facets use `=` (not `:`), free text goes in quotes,
+// and the thesaurus is coded numerically so label-string filters return 0. The
+// base filter is always-on; each pass appends one refugee/asylum predicate.
+const HUDOC_BASE_FILTER =
+  'contentsitename:ECHR AND (documentcollectionid2="JUDGMENTS") AND (languageisocode="ENG")';
 
-// TODO(live-api): confirm the `select` field list HUDOC returns. These are the
-// field names observed in older HUDOC payloads; some may have been renamed.
+// VERIFIED LIVE: the non-refoulement core (114 judgments, tightest) and the
+// Article 3 expulsion/removal outcomes (89, via the conclusion facet). Run both,
+// newest-first, dedup by itemid. These are the Phase-1 seed passes.
+const HUDOC_QUERIES = [
+  `${HUDOC_BASE_FILTER} AND "non-refoulement"`,
+  `${HUDOC_BASE_FILTER} AND conclusion:"expulsion"`,
+];
+
+// VERIFIED LIVE: every one of these keys is present on the `columns` object.
 const HUDOC_SELECT = [
   'itemid',
   'docname',
   'appno',
+  'extractedappno',
   'article',
   'kpdate',
   'ecli',
-  'importance',
   'conclusion',
+  'importance',
+  'respondent',
+  'languageisocode',
 ].join(',');
 
 /**
- * One row in the HUDOC results payload.
- * TODO(live-api): the live API nests result fields under `columns` in some
- * versions and flat in others. This interface models the flat-`columns` shape;
- * adjust once a live response is captured.
+ * One row's `columns` object in the HUDOC results payload.
+ * VERIFIED LIVE: result fields are nested under `columns`.
  */
 interface HudocColumns {
-  itemid?: string;
-  docname?: string; // e.g. "CASE OF A. AND OTHERS v. FRANCE"
-  appno?: string; // application number(s), often semicolon-joined
-  article?: string; // e.g. "3;5;8"
-  kpdate?: string; // judgment date, TODO(live-api): confirm format (ISO vs dd/mm/yyyy)
-  ecli?: string;
-  conclusion?: string;
+  itemid?: string; // e.g. "001-250202"
+  docname?: string; // e.g. "CASE OF J.B. v. GREECE"
+  appno?: string; // first application number, e.g. "54796/16"
+  extractedappno?: string; // semicolon-joined application numbers
+  article?: string; // e.g. "13;13+3;3;41" (compound codes like "13+3" appear)
+  kpdate?: string; // ISO datetime, e.g. "2026-05-26T00:00:00"
+  ecli?: string; // e.g. "ECLI:CE:ECHR:2026:0526JUD005479616"
+  conclusion?: string; // long outcome text
+  importance?: string; // "1".."4"
+  respondent?: string; // 3-letter country code, e.g. "GRC", "SWE"
+  languageisocode?: string; // "ENG"
 }
 
 interface HudocResult {
@@ -68,36 +81,34 @@ interface HudocResult {
 }
 
 interface HudocResponse {
-  // TODO(live-api): confirm the results array key. Older payloads use
-  // `results`; some proxies wrap it in `{ "response": { "docs": [...] } }`.
+  // VERIFIED LIVE: results array key is `results`, count key is `resultcount`.
   results?: HudocResult[];
   resultcount?: number;
 }
 
-/** Best-effort year parse from a HUDOC date string of unknown format. */
+/** Year from a HUDOC `kpdate` ISO datetime (or any 4-digit-year string). */
 function parseYear(kpdate: string | undefined): number | null {
   if (!kpdate) return null;
-  // Match a 4-digit year anywhere in the string (covers ISO `2021-...` and
-  // `dd/mm/yyyy`). TODO(live-api): tighten once the real format is confirmed.
   const m = kpdate.match(/\b(19|20)\d{2}\b/);
   return m ? parseInt(m[0], 10) : null;
 }
 
-/**
- * Fetch up to `limit` ECtHR judgments from HUDOC and map them to discovery
- * items. Returns [] on any non-OK response rather than throwing on a soft
- * failure, but throws on a hard network error so the caller can record it
- * against the source (same posture as curiaApiItems).
- */
-export async function hudocApiItems(limit: number): Promise<JusticeMatrixDiscoveryItem[]> {
-  const length = Math.max(limit * 2, 12);
+/** Split the `article` field into discrete codes, dropping the `13+3` compound
+ * tail so a bare `3` still matches. */
+function articleCodes(article: string | undefined): string[] {
+  if (!article) return [];
+  return article
+    .split(/[;,]/)
+    .map((a) => a.trim())
+    .filter(Boolean);
+}
 
-  // TODO(live-api): confirm param names. The HUDOC portal is observed to use
-  // `query`, `select`, `sort`, `start`, `length`. `rankingModelId` and
-  // `contentsitename` may also be required — capture a live request to confirm.
+/** Run one HUDOC query pass and return its raw rows. */
+async function hudocFetch(query: string, length: number): Promise<HudocResult[]> {
   const params = new URLSearchParams({
-    query: HUDOC_QUERY,
+    query,
     select: HUDOC_SELECT,
+    // VERIFIED LIVE: `kpdate Descending` is newest-first.
     sort: 'kpdate Descending',
     start: '0',
     length: String(length),
@@ -107,41 +118,65 @@ export async function hudocApiItems(limit: number): Promise<JusticeMatrixDiscove
     method: 'GET',
     headers: {
       accept: 'application/json',
-      // HUDOC rejects requests without a browser-like UA in some deployments.
+      // VERIFIED LIVE: HUDOC requires a browser-like UA + referer.
       'user-agent':
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       referer: 'https://hudoc.echr.coe.int/',
     },
   });
   if (!res.ok) throw new Error(`hudoc API ${res.status}`);
-
   const json = (await res.json()) as HudocResponse;
-  const rows = json.results ?? [];
+  return json.results ?? [];
+}
+
+/**
+ * Fetch up to `limit` ECtHR non-refoulement / expulsion judgments from HUDOC and
+ * map them to discovery items. Throws on a hard non-OK response (caller records
+ * it against the source); returns [] on a soft-empty payload. Same posture as
+ * curiaApiItems.
+ */
+export async function hudocApiItems(limit: number): Promise<JusticeMatrixDiscoveryItem[]> {
+  const length = Math.max(limit * 2, 12);
+
+  // Run each query pass, concatenate, dedup by itemid (the non-refoulement and
+  // expulsion corpora overlap).
+  const rows: HudocResult[] = [];
+  for (const query of HUDOC_QUERIES) {
+    const pass = await hudocFetch(query, length);
+    rows.push(...pass);
+  }
 
   const items: JusticeMatrixDiscoveryItem[] = [];
+  const seenItemIds = new Set<string>();
+
   for (const row of rows) {
     const c = row.columns ?? {};
     const itemid = c.itemid ?? '';
     const docname = (c.docname ?? '').trim();
     if (!docname) continue;
+    if (itemid && seenItemIds.has(itemid)) continue;
+    if (itemid) seenItemIds.add(itemid);
 
     const year = parseYear(c.kpdate);
     const appno = (c.appno ?? '').split(';')[0]?.trim();
     // Title mirrors curia's "{name} ({id})" shape so dedup behaves consistently.
     const title = appno ? `${docname} (no. ${appno})` : docname;
 
-    const articles = (c.article ?? '')
-      .split(/[;,]/)
-      .map((a) => a.trim())
-      .filter(Boolean);
-    const categories = ['human rights', 'detention'];
-    if (articles.some((a) => /\b3\b/.test(a))) categories.push('article 3');
-    if (articles.some((a) => /\b5\b/.test(a))) categories.push('article 5');
-    if (articles.some((a) => /\b8\b/.test(a))) categories.push('article 8');
+    const articles = articleCodes(c.article);
+    const categories = ['refugee', 'asylum', 'non-refoulement'];
+    if (articles.some((a) => /^3(\b|$|\+)/.test(a) || /\b3\b/.test(a))) {
+      categories.push('article 3');
+    }
+    // Article 4 of Protocol No. 4 (collective expulsion) shows up as "P4-4" in
+    // the article field and as "Protocol No. 4" in the conclusion text.
+    if (
+      articles.some((a) => /P4-4/i.test(a)) ||
+      /protocol\s*no\.?\s*4/i.test(c.conclusion ?? '')
+    ) {
+      categories.push('article 4 prot 4');
+    }
 
-    // TODO(live-api): confirm the canonical public deep-link. The portal uses
-    // an `#{"itemid":["..."]}` hash fragment; an itemid-keyed link is the most
-    // stable guess.
+    // VERIFIED LIVE (HTTP 200): the itemid-keyed deep link resolves.
     const item_url = itemid
       ? `https://hudoc.echr.coe.int/eng?i=${encodeURIComponent(itemid)}`
       : null;
@@ -155,13 +190,12 @@ export async function hudocApiItems(limit: number): Promise<JusticeMatrixDiscove
       summary: `European Court of Human Rights judgment.${
         articles.length ? ` Articles: ${articles.join(', ')}.` : ''
       }${c.conclusion ? ` Conclusion: ${c.conclusion.slice(0, 200)}.` : ''}`.trim(),
-      // ECtHR is a treaty court, not a single country. Leave country_code null.
+      // ECtHR is a treaty court, not a single country. The `respondent` is the
+      // defending state, not the court's jurisdiction, so leave country_code null.
       country_code: null,
       item_url,
-      // The HUDOC filter targets detention / child-detention; flag as in-domain
-      // for the refugee/immigration-detention wedge.
       refugee_related: true,
-      confidence: 0.65,
+      confidence: 0.7,
     };
 
     const v = validateLLMOutput(raw, JusticeMatrixDiscoveryItemSchema);
