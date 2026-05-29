@@ -353,10 +353,18 @@ export default async function CaseProfilePage({ params }: { params: Promise<{ id
                 </Card>
               )}
 
-              {/* Related research */}
+              {/* Related evidence — the moat made visible. This block links the
+                  decision to on-the-ground Australian alternatives via the
+                  consent-gated semantic RPC. The framing makes the
+                  precedent → alternative link the point, not a footnote.
+                  Consent redaction below (Community Controlled → title +
+                  provenance only) is unchanged. */}
               {research.length > 0 && (
                 <Card>
-                  <Kicker>Related research</Kicker>
+                  <Kicker>What communities built instead</Kicker>
+                  <p className="text-sm leading-6 mb-3" style={{ color: '#5e5145' }}>
+                    Australian programs and evidence that answer this ruling with a real alternative to detention.
+                  </p>
                   <ul className="divide-y" style={{ borderColor: '#e8dcc9' }}>
                     {research.map((r) => {
                       const restricted = r.consent_level === 'Community Controlled';

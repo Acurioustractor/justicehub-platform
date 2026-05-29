@@ -25,6 +25,9 @@ interface EvidenceRow {
   source_url: string | null;
   source_document_url: string | null;
   consent_level: string | null;
+  classified_by: string | null;
+  classified_at: string | null;
+  consent_authority: string | null;
 }
 
 interface RelatedCase {
@@ -48,7 +51,9 @@ async function fetchEvidence(id: string) {
   const { data, error } = await supabase
     .from('alma_evidence')
     .select(
-      'id,title,evidence_type,methodology,sample_size,timeframe,findings,effect_size,limitations,cultural_safety,author,organization,publication_date,doi,source_url,source_document_url,consent_level',
+      // Note: revocation_token is deliberately NOT selected. It is a per-row
+      // capability secret and must never reach the client.
+      'id,title,evidence_type,methodology,sample_size,timeframe,findings,effect_size,limitations,cultural_safety,author,organization,publication_date,doi,source_url,source_document_url,consent_level,classified_by,classified_at,consent_authority',
     )
     .eq('id', id)
     .single();
@@ -164,6 +169,11 @@ export default async function EvidenceProfilePage({ params }: { params: Promise<
                     {row.cultural_safety}
                   </p>
                 )}
+                <p className="text-sm leading-6 mt-5" style={{ color: '#7d5f3d' }}>
+                  This record stays under the control of the community that holds it. The holding
+                  community can request a change to how it appears, or its removal, at any time, and
+                  that request is honoured.
+                </p>
               </Card>
             ) : (
               <>
@@ -222,6 +232,8 @@ export default async function EvidenceProfilePage({ params }: { params: Promise<
                 <ProvRow label="Organisation" value={row.organization} />
                 <ProvRow label="Published" value={year ? String(year) : null} />
                 <ProvRow label="DOI" value={restricted ? null : row.doi} />
+                <ProvRow label="Classified by" value={row.classified_by} />
+                <ProvRow label="On authority of" value={row.consent_authority} />
               </dl>
               {sourceUrl && (
                 <a

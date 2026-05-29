@@ -5,6 +5,12 @@
  * authoritative_link, prompts the LLM to fill JUST these fields (so it doesn't
  * waste tokens regenerating fields we already have), and patches the row.
  *
+ * Only processes rows where case_type='court_decision' — never reports,
+ * inquiries, statistics, or legislation (backfilling a "holding" onto those
+ * would manufacture jurisprudence). Sets ai_extracted_at on rows it fills and
+ * never touches human_confirmed. If the source link returns no text, it skips
+ * the row rather than inventing facts from model memory.
+ *
  * Idempotent: skips rows that already have facts AND reasoning AND judges.
  *
  * Usage:
@@ -196,22 +202,27 @@ Existing case profile:
   source_url: ${c.authoritative_link ?? '(none)'}
 
 Source page text (truncated):
-${pageText || '(empty — fall back to training knowledge if you have it; null otherwise)'}
+${pageText}
 
 Return ONLY valid JSON of this shape; use null for fields you cannot ground:
 {"facts":"What happened to the people in this case — one paragraph","reasoning":"Why the court decided this way — the ratio decidendi (2-4 sentences)","dissents":"Dissenting opinions: who and on what point, or null","statutes_cited":["Refugee Convention art. 33","Migration Act 1958 s.36"],"cases_cited":["Plaintiff M70/2011 v Minister","Chen Shi Hai v Minister"],"judges":["Kiefel CJ","Gageler J"]}
 
 Rules:
-- Don't invent. Null (or []) if you can't ground.
+- Ground every field in the source page text above. Do NOT fall back to prior knowledge or recollection of the case. If the source text does not state it, return null (or []).
 - Statutes/cases/judges: arrays of short strings. Trim honorifics; "Kiefel CJ" not "The Honourable Chief Justice Kiefel".
 - Facts != strategic_issue. Facts = what happened to the people. Issue = the legal question.
 - Reasoning != key_holding. Holding = the decision. Reasoning = why that decision.`;
 }
 
 async function loadCases() {
+  // Only real court decisions get deep fields. Backfilling holding/reasoning/
+  // judges onto reports, inquiries, statistics bulletins, or legislation would
+  // manufacture jurisprudence that does not exist (strategy risk: heterogeneous
+  // corpus). case_type must be exactly 'court_decision'.
   let q = supabase
     .from('justice_matrix_cases')
-    .select('id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,authoritative_link,facts,reasoning,judges')
+    .select('id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,authoritative_link,case_type,facts,reasoning,judges')
+    .eq('case_type', 'court_decision')
     .order('created_at', { ascending: false })
     .limit(limit);
   if (onlyId) q = q.eq('id', onlyId);
@@ -227,6 +238,13 @@ async function processOne(c) {
   }
 
   const pageText = await fetchSourceText(c.authoritative_link);
+  // Honest provenance: no source text means no ground truth. Do NOT ask the
+  // model to recall the case from memory — that produces unverifiable holdings
+  // and judges. Skip the row so a human can find a working source link.
+  if (!pageText) {
+    return { ok: true, skipped: true, reason: 'no source text (link empty/dead) — not invented from memory' };
+  }
+
   let enriched;
   try {
     enriched = await callLLMJson(deepPrompt(c, pageText));
@@ -248,9 +266,11 @@ async function processOne(c) {
 
   if (!apply) return { ok: true, dryRun: true, fields: Object.keys(patch) };
 
+  // Record WHEN a machine filled these fields. Never touch human_confirmed —
+  // that is earned through the admin review UI, never by this backfill.
   const { error } = await supabase
     .from('justice_matrix_cases')
-    .update({ ...patch, updated_at: new Date().toISOString() })
+    .update({ ...patch, ai_extracted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
     .eq('id', c.id);
   if (error) return { ok: false, reason: `update: ${error.message.slice(0, 120)}` };
   return { ok: true, fields: Object.keys(patch) };

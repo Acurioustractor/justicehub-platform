@@ -46,6 +46,10 @@ interface CaseResult {
   case_type: string | null;
   authoritative_link: string | null;
   verified: boolean | null;
+  // A human reviewer has confirmed the facts (vs. AI-extracted, unconfirmed).
+  // Defaults false in the migration; absent from the semantic RPC, so it maps
+  // to null there (no badge on semantic results, which is the honest fallback).
+  human_confirmed: boolean | null;
   distance: number | null;
 }
 
@@ -252,7 +256,7 @@ export async function GET(req: Request) {
     };
 
     const empty = Promise.resolve({ data: [], count: 0 });
-    const caseSel = 'id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,region,country_code,categories,outcome,precedent_strength,case_type,authoritative_link,verified';
+    const caseSel = 'id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,region,country_code,categories,outcome,precedent_strength,case_type,authoritative_link,verified,human_confirmed';
     const campSel = 'id,campaign_name,country_region,start_year,is_ongoing,goals,notable_tactics,country_code,categories,lead_organizations,campaign_link';
     const evidSel = 'id,title,evidence_type,findings,methodology,organization,author,publication_date,source_url,source_document_url,consent_level,cultural_safety';
 
@@ -312,6 +316,7 @@ function mapCaseRow(r: any): CaseResult {
     case_type: r.case_type ?? null,
     authoritative_link: r.authoritative_link ?? null,
     verified: typeof r.verified === 'boolean' ? r.verified : null,
+    human_confirmed: typeof r.human_confirmed === 'boolean' ? r.human_confirmed : null,
     distance: typeof r.distance === 'number' ? r.distance : null,
   };
 }

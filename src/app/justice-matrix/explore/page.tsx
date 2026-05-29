@@ -76,7 +76,7 @@ async function loadInitial(params: {
           let cq = supabase
             .from('justice_matrix_cases')
             .select(
-              'id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,region,country_code,categories,outcome,precedent_strength,case_type,authoritative_link,verified',
+              'id,case_citation,jurisdiction,year,court,strategic_issue,key_holding,region,country_code,categories,outcome,precedent_strength,case_type,authoritative_link,verified,human_confirmed',
             )
             .order('year', { ascending: false, nullsFirst: false })
             .limit(limit);
@@ -163,6 +163,7 @@ async function loadInitial(params: {
     case_type: r.case_type ?? null,
     authoritative_link: r.authoritative_link ?? null,
     verified: r.verified ?? null,
+    human_confirmed: typeof r.human_confirmed === 'boolean' ? r.human_confirmed : null,
     distance: null,
   }));
 

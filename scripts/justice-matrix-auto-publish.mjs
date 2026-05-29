@@ -213,6 +213,34 @@ Rules:
 }
 
 // ---------------------------------------------------------------------------
+// Publication-law gate (strategy Move 6)
+//
+// Australian children's/youth-court matters carry statutory non-publication
+// rules (suppression of a child's identity, suppression orders). A machine must
+// never auto-publish one. We detect the shape from the discovery + enriched
+// fields and, if it matches, refuse to publish and leave the discovery pending
+// for a human to clear. This is legal exposure, not a quality nicety, so the
+// test is deliberately broad (over-refer to a human rather than under-refer).
+// ---------------------------------------------------------------------------
+
+const YOUTH_TERMS =
+  /\b(youth|children|children'?s court|child|juvenile|minor|young person|young people|under[- ]?18|raise the age)\b/i;
+
+function isAustralianYouthMatter(d, enriched) {
+  const jurisdiction = `${enriched?.jurisdiction ?? ''} ${d.extracted_jurisdiction ?? ''}`;
+  if (!/australia/i.test(jurisdiction)) return false;
+
+  const categories = []
+    .concat(enriched?.categories ?? [])
+    .concat(d.extracted_categories ?? [])
+    .join(' ');
+  const title = `${enriched?.case_citation ?? ''} ${d.extracted_title ?? ''}`;
+  const court = `${enriched?.court ?? ''}`;
+
+  return YOUTH_TERMS.test(`${categories} ${title} ${court}`);
+}
+
+// ---------------------------------------------------------------------------
 // Field merge: LLM enriched fields win, fall back to existing discovery fields
 // ---------------------------------------------------------------------------
 
@@ -240,9 +268,13 @@ function buildCaseInsert(d, enriched) {
     outcome: enriched.outcome ?? null,
     precedent_strength: enriched.precedent_strength ?? null,
     source: 'ai_scraped',
-    verified: true,
-    verified_by: 'justice-matrix-auto-publish.mjs',
-    verified_at: new Date().toISOString(),
+    // Provenance is honest: a machine extracted these fields. We record WHEN the
+    // machine did it (ai_extracted_at) and leave verified=false / human_confirmed
+    // at its DEFAULT false. No script may claim a human verified or confirmed a
+    // row — that signal is earned through the admin review UI only.
+    verified: false,
+    human_confirmed: false,
+    ai_extracted_at: new Date().toISOString(),
   };
 }
 
@@ -262,9 +294,10 @@ function buildCampaignInsert(d, enriched) {
     lng: d.extracted_lng,
     categories: enriched.categories?.length ? enriched.categories : d.extracted_categories ?? [],
     source: 'ai_scraped',
-    verified: true,
-    verified_by: 'justice-matrix-auto-publish.mjs',
-    verified_at: new Date().toISOString(),
+    // A machine extracted these fields. Do not claim a human verified them: leave
+    // verified=false and verified_by unset. (The campaigns table has no
+    // human_confirmed/ai_extracted_at columns yet — those live on cases.)
+    verified: false,
   };
 }
 
@@ -323,6 +356,18 @@ async function processOne(d) {
     return { ok: false, reason: `LLM/JSON: ${e.message.slice(0, 120)}` };
   }
 
+  // PUBLICATION-LAW GATE (Move 6): never auto-publish an Australian
+  // youth/children's-court matter. Leave the discovery pending for a human to
+  // clear against non-publication and suppression rules. Applies to cases only
+  // (campaigns are advocacy work, not court matters about a named child).
+  if (d.item_type === 'case' && isAustralianYouthMatter(d, enriched)) {
+    return {
+      ok: false,
+      held: true,
+      reason: 'publication-law gate: AU youth/children matter — left pending for human review',
+    };
+  }
+
   if (!apply) {
     return {
       ok: true,
@@ -342,11 +387,12 @@ async function processOne(d) {
     await supabase
       .from('justice_matrix_discovered')
       .update({
+        // No reviewed_by: a script is not a reviewer. The published row carries
+        // verified=false and the queue note records that a human has not cleared it.
         status: 'approved',
         approved_campaign_id: data.id,
-        reviewed_by: 'justice-matrix-auto-publish.mjs',
         reviewed_at: new Date().toISOString(),
-        review_notes: 'auto-published via LLM-grounded enrichment',
+        review_notes: 'auto-published by script (LLM-grounded enrichment); not human-confirmed',
       })
       .eq('id', d.id);
     return { ok: true, kind: 'campaign', id: data.id, title: data.campaign_name };
@@ -363,11 +409,12 @@ async function processOne(d) {
   await supabase
     .from('justice_matrix_discovered')
     .update({
+      // No reviewed_by: a script is not a reviewer. The published row carries
+      // verified=false / human_confirmed=false and the note records that.
       status: 'approved',
       approved_case_id: data.id,
-      reviewed_by: 'justice-matrix-auto-publish.mjs',
       reviewed_at: new Date().toISOString(),
-      review_notes: 'auto-published via LLM-grounded enrichment',
+      review_notes: 'auto-published by script (LLM-grounded enrichment); not human-confirmed',
     })
     .eq('id', d.id);
   return { ok: true, kind: 'case', id: data.id, title: data.case_citation };
@@ -380,6 +427,7 @@ async function processOne(d) {
 
   let success = 0;
   let failed = 0;
+  let held = 0;
 
   for (const d of discoveries) {
     const label = `[${d.item_type}] ${(d.extracted_title || '(no title)').slice(0, 90)}`;
@@ -389,6 +437,9 @@ async function processOne(d) {
       success++;
       if (res.dryRun) console.log(`would publish as "${(res.title || '?').slice(0, 70)}"`);
       else console.log(`published ${res.kind} ${res.id}`);
+    } else if (res.held) {
+      held++;
+      console.log(`HELD — ${res.reason}`);
     } else {
       failed++;
       console.log(`SKIP — ${res.reason}`);
@@ -397,7 +448,7 @@ async function processOne(d) {
     await new Promise((r) => setTimeout(r, 250));
   }
 
-  console.log(`\n${apply ? 'Published' : 'Would publish'}: ${success}   Skipped: ${failed}`);
+  console.log(`\n${apply ? 'Published' : 'Would publish'}: ${success}   Held (human review): ${held}   Skipped: ${failed}`);
   if (!apply) console.log('\nRe-run with --apply to actually publish.');
 })().catch((e) => {
   console.error(e);

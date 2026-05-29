@@ -67,6 +67,7 @@ interface CaseHit {
   case_type: string | null;
   authoritative_link: string | null;
   verified: boolean | null;
+  human_confirmed: boolean | null;
   distance: number | null;
 }
 interface CampaignHit {
@@ -105,6 +106,10 @@ type Hit = CaseHit | CampaignHit | EvidenceHit;
 
 type Mode = 'keyword' | 'semantic';
 type TypeFilter = 'all' | 'case' | 'campaign' | 'evidence';
+// Within the Cases experience, split court rulings from everything else
+// (reports, inquiries, legislation). Only 52 of the corpus rows are actual
+// decisions; the rest must not masquerade as litigation.
+type CaseClass = 'all' | 'decisions' | 'reports';
 type Scope = 'all' | 'au' | 'global';
 type Sort = 'relevance' | 'newest' | 'oldest' | 'az' | 'jurisdiction';
 type View = 'list' | 'cards' | 'grouped' | 'jurisdiction';
@@ -158,12 +163,30 @@ function hitYear(h: Hit): number {
   return h.kind === 'campaign' ? h.start_year ?? 0 : h.year ?? 0;
 }
 
+// A "decision" is a court ruling. Everything else in the cases table (reports,
+// inquiries, legislation, royal commissions, statistics) is not litigation and
+// must not carry decision-only facets (outcome, precedent strength).
+function isDecision(h: CaseHit): boolean {
+  return h.case_type === 'court_decision';
+}
+
+// Human-readable label for a non-decision case_type. Used as a small chip so a
+// reader can see at a glance that a row is a report, not a ruling.
+function caseTypeLabel(t: string | null): string {
+  if (!t) return 'Record';
+  return t
+    .split('_')
+    .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : w))
+    .join(' ');
+}
+
 const PAGE_STEP = 25;
 
 export function ExploreClient({ facetSeed, initial, initialState }: ExploreClientProps) {
   const [q, setQ] = useState(initialState.q);
   const [mode, setMode] = useState<Mode>(initialState.mode);
   const [type, setType] = useState<TypeFilter>(initialState.type);
+  const [caseClass, setCaseClass] = useState<CaseClass>('all');
   const [scope, setScope] = useState<Scope>(initialState.scope);
   const [sort, setSort] = useState<Sort>(initialState.sort);
   const [view, setView] = useState<View>(initialState.view);
@@ -179,7 +202,15 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
   const searchRef = useRef<HTMLInputElement>(null);
 
   const hasFilter = Boolean(
-    q || cats.length || outcome || strength || type !== 'all' || scope !== 'all' || region || mode !== 'keyword',
+    q ||
+      cats.length ||
+      outcome ||
+      strength ||
+      type !== 'all' ||
+      caseClass !== 'all' ||
+      scope !== 'all' ||
+      region ||
+      mode !== 'keyword',
   );
 
   // --- URL sync (shareable state) ------------------------------------------
@@ -235,7 +266,13 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
   }, [queryString]);
 
   // Reset pagination whenever the displayed set changes shape.
-  useEffect(() => setVisible(PAGE_STEP), [results, sort, region, view, type]);
+  useEffect(() => setVisible(PAGE_STEP), [results, sort, region, view, type, caseClass]);
+
+  // A case-class sub-filter only makes sense inside the Cases context. When the
+  // reader moves to Campaigns or Evidence, drop it so it cannot silently narrow.
+  useEffect(() => {
+    if (type === 'campaign' || type === 'evidence') setCaseClass('all');
+  }, [type]);
 
   // --- keyboard: "/" focuses, Esc clears focus ------------------------------
   useEffect(() => {
@@ -260,6 +297,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
     setOutcome('');
     setStrength('');
     setType('all');
+    setCaseClass('all');
     setScope('all');
     setMode('keyword');
     setRegion(null);
@@ -271,10 +309,22 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
     [results],
   );
 
+  // Case-class sub-filter (decisions vs. reports & inquiries) only touches case
+  // hits; campaigns and evidence always pass through. Active only when the Cases
+  // tab is in view (type 'case' or 'all').
+  const caseClassActive = caseClass !== 'all' && (type === 'case' || type === 'all');
+  const classFiltered = useMemo(() => {
+    if (!caseClassActive) return all;
+    return all.filter((h) => {
+      if (h.kind !== 'case') return true;
+      return caseClass === 'decisions' ? isDecision(h) : !isDecision(h);
+    });
+  }, [all, caseClass, caseClassActive]);
+
   const regionFiltered = useMemo(() => {
-    if (!region) return all;
-    return all.filter((h) => bucketJurisdiction(hitJurisdictionText(h)).region === region);
-  }, [all, region]);
+    if (!region) return classFiltered;
+    return classFiltered.filter((h) => bucketJurisdiction(hitJurisdictionText(h)).region === region);
+  }, [classFiltered, region]);
 
   const sorted = useMemo(() => {
     const items = [...regionFiltered];
@@ -307,7 +357,8 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
   }, [results]);
 
   const counts = results.counts ?? { case: 0, campaign: 0, evidence: 0 };
-  const totalShown = region ? regionFiltered.length : counts.case + counts.campaign + counts.evidence;
+  const totalShown =
+    region || caseClassActive ? regionFiltered.length : counts.case + counts.campaign + counts.evidence;
   const pageItems = sorted.slice(0, visible);
 
   // --- render ---------------------------------------------------------------
@@ -371,6 +422,17 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
               { value: 'evidence', label: 'Evidence', n: counts.evidence },
             ]}
           />
+          {(type === 'case' || type === 'all') && (
+            <Seg
+              value={caseClass}
+              onChange={(v) => setCaseClass(v as CaseClass)}
+              options={[
+                { value: 'all', label: 'All cases' },
+                { value: 'decisions', label: 'Decisions', icon: <Scale className="w-3 h-3" /> },
+                { value: 'reports', label: 'Reports & inquiries', icon: <BookOpen className="w-3 h-3" /> },
+              ]}
+            />
+          )}
           <div className="h-5 w-px" style={{ background: 'rgba(255,255,255,0.15)' }} />
           <Seg
             value={mode}
@@ -424,6 +486,12 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
         </span>
         <div className="flex flex-wrap items-center gap-1.5">
           {region && <AppliedChip label={region} onRemove={() => setRegion(null)} />}
+          {caseClassActive && (
+            <AppliedChip
+              label={caseClass === 'decisions' ? 'decisions only' : 'reports & inquiries'}
+              onRemove={() => setCaseClass('all')}
+            />
+          )}
           {cats.map((c) => (
             <AppliedChip key={c} label={c} onRemove={() => toggleCat(c)} />
           ))}
@@ -661,7 +729,7 @@ function FacetRail({
           ))}
         </div>
       </FacetGroup>
-      <FacetGroup title="Outcome · cases">
+      <FacetGroup title="Outcome (decisions only)">
         <div className="flex flex-wrap gap-1.5">
           {(['favorable', 'adverse', 'pending'] as const).map((o) => (
             <FacetChip key={o} active={outcome === o} onClick={() => setOutcome(outcome === o ? '' : o)}>
@@ -670,7 +738,7 @@ function FacetRail({
           ))}
         </div>
       </FacetGroup>
-      <FacetGroup title="Precedent strength">
+      <FacetGroup title="Precedent strength (decisions only)">
         <div className="flex flex-wrap gap-1.5">
           {(['high', 'medium', 'low'] as const).map((s) => (
             <FacetChip key={s} active={strength === s} onClick={() => setStrength(strength === s ? '' : s)}>
@@ -728,12 +796,33 @@ function MetaRow({ hit }: { hit: Hit }) {
           community controlled
         </span>
       )}
+      {/* Non-decision rows (reports, inquiries, legislation) are not litigation.
+          Badge the real type so they never read as a court "Case". */}
+      {hit.kind === 'case' && !isDecision(hit) && (
+        <span
+          className="rounded px-1.5 py-0.5 uppercase tracking-wider"
+          style={{ background: '#f1f1f3', border: `1px solid ${C.border}`, color: C.body }}
+        >
+          {caseTypeLabel(hit.case_type)}
+        </span>
+      )}
       {hit.kind === 'case' && hit.verified && (
         <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5" style={{ background: 'rgba(61,111,74,0.12)', border: '1px solid #9fc3a6', color: '#3d6f4a' }}>
           <ShieldCheck className="w-3 h-3" /> verified
         </span>
       )}
-      {hit.kind === 'case' && hit.outcome && (
+      {/* AI-extracted, not yet read by a human reviewer. Quiet amber, not alarmist. */}
+      {hit.kind === 'case' && hit.human_confirmed === false && (
+        <span
+          className="rounded px-1.5 py-0.5"
+          style={{ background: 'rgba(169,106,28,0.08)', border: '1px solid #e2cfa6', color: '#9a6a1f' }}
+          title="Extracted by AI from the source. A human reviewer has not yet confirmed these facts."
+        >
+          AI-extracted, unconfirmed
+        </span>
+      )}
+      {/* Outcome is a decision-only fact; never show it on a report or inquiry. */}
+      {hit.kind === 'case' && isDecision(hit) && hit.outcome && (
         <span style={{ color: hit.outcome === 'favorable' ? '#3d6f4a' : hit.outcome === 'adverse' ? '#8a2a2a' : '#a96a1c' }}>{hit.outcome}</span>
       )}
       <span style={{ color: C.muted }}>{hitJurisdictionText(hit) || (hit.kind === 'evidence' ? 'Australia' : '')}</span>
