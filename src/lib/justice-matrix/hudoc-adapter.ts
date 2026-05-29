@@ -181,12 +181,30 @@ export async function hudocApiItems(limit: number): Promise<JusticeMatrixDiscove
       ? `https://hudoc.echr.coe.int/eng?i=${encodeURIComponent(itemid)}`
       : null;
 
+    // Deterministic enrichment from HUDOC's own fields (not editorial):
+    // importance is ECtHR's own 1-4 significance rank (1 = key/Grand-Chamber).
+    const precedent_strength =
+      c.importance === '1' ? 'high' : c.importance === '2' ? 'medium' : c.importance ? 'low' : null;
+    // Outcome from the court's stated conclusion. Strip "no violation" phrases;
+    // if a real "violation" finding remains, the applicant won at least a point
+    // (favorable in a refugee/asylum posture); else "no violation" -> adverse.
+    const concl = (c.conclusion ?? '').toLowerCase();
+    const conclNoNeg = concl.replace(/no[\s-]+violation/g, '');
+    const outcome: 'favorable' | 'adverse' | 'pending' | null = /violation/.test(conclNoNeg)
+      ? 'favorable'
+      : /no[\s-]+violation/.test(concl)
+        ? 'adverse'
+        : null;
+
     const raw = {
       item_type: 'case' as const,
       title,
       jurisdiction: 'Council of Europe (ECtHR)',
+      court: 'European Court of Human Rights',
       year,
       categories,
+      precedent_strength,
+      outcome,
       summary: `European Court of Human Rights judgment.${
         articles.length ? ` Articles: ${articles.join(', ')}.` : ''
       }${c.conclusion ? ` Conclusion: ${c.conclusion.slice(0, 200)}.` : ''}`.trim(),

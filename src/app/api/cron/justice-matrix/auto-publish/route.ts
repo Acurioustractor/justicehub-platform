@@ -46,7 +46,18 @@ interface Discovery {
   extracted_summary: string | null;
   extracted_country_code: string | null;
   similarity_score: number | null;
+  // The full staged item (incl. deterministic adapter enrichment: court,
+  // precedent_strength, outcome, judges) lives under raw_data.extracted.
+  raw_data: { extracted?: Record<string, unknown> } | null;
 }
+
+// Pull a deterministic enrichment field the adapter staged into raw_data.extracted.
+function enriched(d: Discovery, key: string): unknown {
+  return d.raw_data?.extracted?.[key];
+}
+const asStr = (v: unknown): string | null => (typeof v === 'string' && v.trim() ? v.trim() : null);
+const asStrArr = (v: unknown): string[] | null =>
+  Array.isArray(v) && v.length ? v.map(String) : null;
 
 const YOUTH = /youth|child|juvenile|minor|raise the age|raise-the-age|young (person|people|offender)/i;
 
@@ -74,7 +85,7 @@ export async function GET(request: Request) {
   const { data, error } = await supabase
     .from('justice_matrix_discovered')
     .select(
-      'id,item_type,source_url,extracted_title,extracted_jurisdiction,extracted_year,extracted_categories,extracted_summary,extracted_country_code,similarity_score',
+      'id,item_type,source_url,extracted_title,extracted_jurisdiction,extracted_year,extracted_categories,extracted_summary,extracted_country_code,similarity_score,raw_data',
     )
     .eq('status', 'pending')
     .order('discovered_at', { ascending: true })
@@ -159,6 +170,12 @@ export async function GET(request: Request) {
             case_type: 'court_decision',
             authoritative_link: d.source_url,
             source: 'ai_scraped',
+            // Deterministic adapter enrichment (court's own rank / native fields),
+            // carried from raw_data.extracted. Null when the adapter didn't set it.
+            court: asStr(enriched(d, 'court')),
+            precedent_strength: asStr(enriched(d, 'precedent_strength')),
+            outcome: asStr(enriched(d, 'outcome')),
+            judges: asStrArr(enriched(d, 'judges')),
             verified: false,
             human_confirmed: false,
             ai_extracted_at: now,

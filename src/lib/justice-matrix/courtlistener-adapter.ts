@@ -76,6 +76,7 @@ interface CourtListenerResult {
   cluster_id?: number; // stable opinion-cluster id; used for dedup + link fallback
   status?: string; // e.g. "Published"
   suitNature?: string;
+  judge?: string; // native panel/judge string, e.g. "Smith, Jones"
   opinions?: CourtListenerOpinion[];
 }
 
@@ -215,10 +216,19 @@ export async function courtlistenerApiItems(limit: number): Promise<JusticeMatri
         : null;
 
     const courtLabel = row.court || row.court_id;
+    // Deterministic native fields (no editorial inference). CourtListener's v4
+    // search payload has no citation count, so precedent_strength is left unset
+    // (the trust rule forbids machine-asserting it without a real ranking).
+    const judges = row.judge
+      ? row.judge.split(/[;,]/).map((j) => j.trim()).filter(Boolean)
+      : null;
+
     const raw = {
       item_type: 'case' as const,
       title,
       jurisdiction: courtLabel ? `United States (${courtLabel})` : 'United States',
+      court: row.court || courtLabel || null,
+      judges,
       year,
       categories,
       summary: `US court opinion${courtLabel ? ` from ${courtLabel}` : ''}.${
