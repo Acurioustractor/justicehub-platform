@@ -193,7 +193,7 @@ async function run() {
         const { error: e } = await supabase.from('justice_matrix_cases').update({ ...patch, embedding: null, updated_at: new Date().toISOString() }).eq('id', r.id);
         if (!e) { wrote = true; break; }
         werr = e;
-        if (/timeout|connection|pool|terminated/i.test(e.message ?? '')) { await sleep(3000 * (w + 1)); continue; }
+        if (/timeout|connection|pool|terminated|fetch failed|ENOTFOUND|ECONNRESET|socket|network/i.test(e.message ?? '')) { await sleep(3000 * (w + 1)); continue; }
         break; // non-transient error: stop retrying
       }
       if (!wrote) { console.log(`    ! write failed: ${werr?.message}`); failed++; continue; }
