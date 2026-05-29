@@ -19,6 +19,9 @@ import { curiaApiItems } from '@/lib/justice-matrix/curia-adapter';
 // flaky upstream is recorded in justice_matrix_sources.last_error, not crashed.
 import { hudocApiItems } from '@/lib/justice-matrix/hudoc-adapter';
 import { courtlistenerApiItems } from '@/lib/justice-matrix/courtlistener-adapter';
+// EDAL (ECRE) — ~1,829 curated asylum summaries, national ones unique vs the
+// court APIs. Sitemap + per-page meta scrape, no LLM.
+import { edalApiItems } from '@/lib/justice-matrix/edal-adapter';
 import {
   discoveryEmbeddingText,
   findSemanticDuplicate,
@@ -169,6 +172,8 @@ export async function GET(request: Request) {
         staged = await scanWithAdapter(supabase, source, hudocApiItems);
       } else if (/courtlistener\.com/.test(source.url)) {
         staged = await scanWithAdapter(supabase, source, courtlistenerApiItems);
+      } else if (/asylumlawdatabase\.eu/.test(source.url)) {
+        staged = await scanWithAdapter(supabase, source, edalApiItems);
       } else {
         results.push({ source: source.name, staged: 0, error: 'no adapter for this JSON source yet' });
         continue;
