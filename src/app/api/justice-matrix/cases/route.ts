@@ -30,6 +30,7 @@ export async function GET(request: Request) {
     const category = searchParams.get('category')
     const country = searchParams.get('country')
     const featured = searchParams.get('featured')
+    const needsReview = searchParams.get('needs_review')
     const search = searchParams.get('search')
 
     const from = (page - 1) * limit
@@ -60,6 +61,11 @@ export async function GET(request: Request) {
 
     if (featured === 'true') {
       query = query.eq('featured', true)
+    }
+
+    // Pro bono review queue: cases not yet human-confirmed (AI-extracted / unreviewed).
+    if (needsReview === 'true') {
+      query = query.or('human_confirmed.is.null,human_confirmed.eq.false')
     }
 
     if (search) {

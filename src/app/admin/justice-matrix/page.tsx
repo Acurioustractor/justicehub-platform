@@ -56,6 +56,7 @@ export default async function JusticeMatrixAdminPage() {
     { count: casesCount },
     { count: campaignsCount },
     { count: pendingCount },
+    { count: unconfirmedCount },
     { count: sourcesCount },
     { count: activeSourcesCount },
     { count: featuredCasesCount },
@@ -67,6 +68,7 @@ export default async function JusticeMatrixAdminPage() {
     db.from('justice_matrix_cases').select('*', { count: 'exact', head: true }),
     db.from('justice_matrix_campaigns').select('*', { count: 'exact', head: true }),
     db.from('justice_matrix_discovered').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+    db.from('justice_matrix_cases').select('*', { count: 'exact', head: true }).or('human_confirmed.is.null,human_confirmed.eq.false'),
     db.from('justice_matrix_sources').select('*', { count: 'exact', head: true }),
     db.from('justice_matrix_sources').select('*', { count: 'exact', head: true }).eq('is_active', true),
     db.from('justice_matrix_cases').select('*', { count: 'exact', head: true }).eq('featured', true),
@@ -169,6 +171,25 @@ export default async function JusticeMatrixAdminPage() {
               <div className="text-4xl font-black text-black mb-1">{pendingCount || 0}</div>
               <div className="text-sm font-bold text-gray-900">Pending Review</div>
               <div className="text-xs text-gray-600">Click to review discoveries</div>
+            </Link>
+
+            <Link
+              href="/admin/justice-matrix/review"
+              className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`p-3 ${(unconfirmedCount || 0) > 0 ? 'bg-amber-50' : 'bg-emerald-50'}`}>
+                  <CheckCircle2 className={`w-6 h-6 ${(unconfirmedCount || 0) > 0 ? 'text-amber-600' : 'text-emerald-600'}`} />
+                </div>
+                {(unconfirmedCount || 0) > 0 && (
+                  <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold border border-amber-600">
+                    SIGN OFF
+                  </span>
+                )}
+              </div>
+              <div className="text-4xl font-black text-black mb-1">{unconfirmedCount || 0}</div>
+              <div className="text-sm font-bold text-gray-900">Awaiting Legal Review</div>
+              <div className="text-xs text-gray-600">Dual-control sign-off on AI-extracted cases</div>
             </Link>
 
             <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6">
