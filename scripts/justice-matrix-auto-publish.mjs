@@ -349,11 +349,16 @@ async function processOne(d) {
   const pageText = await fetchSourceText(d.source_url);
   const prompt = d.item_type === 'campaign' ? campaignPrompt(d, pageText) : casePrompt(d, pageText);
 
-  let enriched;
+  // LLM enrichment is optional. buildCaseInsert falls back to the scanner's
+  // already-extracted fields (enriched.X ?? d.extracted_X), so an LLM outage
+  // (e.g. a provider out of balance) must NOT strand a discovery in pending -
+  // promote it with the extracted fields and let the nightly facts backfill
+  // deepen it later. This mirrors the no-LLM cron route.
+  let enriched = {};
   try {
     enriched = await callLLMJson(prompt);
   } catch (e) {
-    return { ok: false, reason: `LLM/JSON: ${e.message.slice(0, 120)}` };
+    console.log(`    (enrich skipped, using extracted fields: ${e.message.slice(0, 60)})`);
   }
 
   // PUBLICATION-LAW GATE (Move 6): never auto-publish an Australian
