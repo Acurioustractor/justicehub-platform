@@ -1,4 +1,4 @@
-import { empathyLedgerClient, empathyLedgerServiceClient } from '@/lib/supabase/empathy-ledger';
+import { getStories, getStoryDetail, type V2Story, type V2StoryDetail } from '@/lib/empathy-ledger/v2-client';
 import { notFound } from 'next/navigation';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import Link from 'next/link';
@@ -6,6 +6,46 @@ import Image from 'next/image';
 import { Calendar, Tag, MapPin, ExternalLink, Shield, BookOpen } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
+
+const EMPATHY_LEDGER_BASE_URL = (
+  process.env.EMPATHY_LEDGER_V2_URL || 'https://www.empathyledger.com'
+).replace(/\/+$/, '');
+
+interface NormalizedStory {
+  id: string;
+  title: string;
+  summary: string | null;
+  content: string;
+  story_image_url: string | null;
+  story_category: string | null;
+  themes: string[];
+  published_at: string | null;
+  created_at: string;
+  cultural_warnings: string[];
+  location_text: string | null;
+}
+
+function hasStoryDetail(story: V2Story | V2StoryDetail): story is V2StoryDetail {
+  return 'content' in story;
+}
+
+function normalizeStory(story: V2Story | V2StoryDetail): NormalizedStory {
+  const detail = hasStoryDetail(story) ? story : null;
+
+  return {
+    id: story.id,
+    title: story.title,
+    summary: story.excerpt,
+    content: detail?.content || story.excerpt || '',
+    story_image_url: story.imageUrl,
+    story_category: story.culturalLevel || 'Empathy Ledger story',
+    themes: (story.themes || []).filter(Boolean),
+    published_at: story.publishedAt,
+    created_at: story.createdAt,
+    cultural_warnings: detail?.culturalWarnings?.filter(Boolean) || [],
+    location_text: detail?.location || null,
+  };
+}
 
 /** Simple markdown→HTML for EL article content (no external dependency) */
 function mdToHtml(md: string): string {
@@ -41,66 +81,26 @@ interface PageProps {
 export default async function EmpathyLedgerStoryPage({ params }: PageProps) {
   const { id } = params;
 
-  // Try stories table first (by UUID or slug)
-  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+  const storyDetail = await getStoryDetail(id);
+  const listedStory = storyDetail
+    ? null
+    : (await getStories({ limit: 100 })).data.find((story) => story.id === id) || null;
 
-  let story: any = null;
-
-  if (isUUID) {
-    const { data } = await empathyLedgerClient
-      .from('stories')
-      .select('*')
-      .eq('id', id)
-      .eq('is_public', true)
-      .eq('privacy_level', 'public')
-      .single();
-    story = data;
-  }
-
-  // If not found in stories, try articles table (by UUID or slug)
-  if (!story) {
-    const col = isUUID ? 'id' : 'slug';
-    // Use service client to bypass RLS on articles table
-    const articleClient = empathyLedgerServiceClient || empathyLedgerClient;
-    const { data } = await articleClient
-      .from('articles')
-      .select('*, content')
-      .eq(col, id)
-      .eq('status', 'published')
-      .eq('visibility', 'public')
-      .single();
-
-    if (data) {
-      // Map article fields to story-compatible shape
-      story = {
-        ...data,
-        summary: data.excerpt || data.subtitle,
-        story_image_url: data.featured_image_id
-          ? `https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public/media/${data.featured_image_id}`
-          : null,
-        story_category: data.article_type,
-        themes: data.themes || data.tags || [],
-        published_at: data.published_at,
-        cultural_warnings: null,
-        location_text: null,
-      };
-    }
-  }
-
-  if (!story) {
+  if (!storyDetail && !listedStory) {
     notFound();
   }
 
-  // Fetch organization separately if story has one
-  let organization = null;
-  if (story.organization_id) {
-    const { data: org } = await empathyLedgerClient
-      .from('organizations')
-      .select('name, slug, traditional_country, indigenous_controlled, logo_url')
-      .eq('id', story.organization_id)
-      .single();
-    organization = org;
-  }
+  const sourceStory = storyDetail || listedStory!;
+  const story = normalizeStory(sourceStory);
+
+  const organization = sourceStory.storyteller
+    ? {
+        name: sourceStory.storyteller.displayName,
+        traditional_country: sourceStory.storyteller.culturalBackground?.filter(Boolean).join(', '),
+        indigenous_controlled: false,
+        logo_url: sourceStory.storyteller.avatarUrl,
+      }
+    : null;
 
   const publishDate = story.published_at ? new Date(story.published_at) : new Date(story.created_at);
 
@@ -235,7 +235,7 @@ export default async function EmpathyLedgerStoryPage({ params }: PageProps) {
           )}
 
           {/* Cultural Warnings */}
-          {story.cultural_warnings && story.cultural_warnings.length > 0 && (
+          {story.cultural_warnings.length > 0 && (
             <div className="max-w-4xl mx-auto mb-8 p-4 bg-amber-50 border-2 border-amber-400">
               <p className="text-sm text-amber-800 font-medium">
                 <strong>Cultural Notice:</strong> {story.cultural_warnings.join('. ')}
@@ -314,7 +314,7 @@ export default async function EmpathyLedgerStoryPage({ params }: PageProps) {
               ← Back to JusticeHub
             </Link>
             <a
-              href={`https://empathy-ledger.vercel.app/stories/${story.id}`}
+              href={`${EMPATHY_LEDGER_BASE_URL}/stories/${story.id}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white font-bold hover:bg-purple-700 transition-colors border-2 border-purple-800"

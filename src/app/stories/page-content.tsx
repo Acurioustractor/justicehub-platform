@@ -1,11 +1,7 @@
-'use client';
-
-import { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { ThematicSection } from '@/components/thematic-section';
-import { useSearchParams } from 'next/navigation';
 
 const categories = {
   seeds: { emoji: '🌱', label: 'Seeds', color: 'bg-green-100 text-green-800' },
@@ -31,20 +27,90 @@ type UnifiedContent = {
   excerpt: string;
   category?: string;
   tags?: string[];
-  featured_image_url?: string;
-  reading_time_minutes?: number;
+  featured_image_url?: string | null;
+  reading_time_minutes?: number | null;
   location_tags?: string[];
   author?: {
     full_name?: string;
     name?: string;
-    slug: string;
-    photo_url?: string;
-  };
-  published_at: string;
-  status: string;
-  content_type: 'article' | 'blog' | 'empathy-ledger';
+    slug?: string | null;
+    photo_url?: string | null;
+  } | null;
+  published_at?: string | null;
+  status?: string;
+  content_type: 'article' | 'blog' | 'empathy-ledger' | 'judges-on-country';
+  detail_href?: string;
   primary_tag?: string;
 };
+
+type JudgesOnCountryVoice = {
+  cardNumber: string;
+  slug: string;
+  name: string;
+  role: string;
+  quote: string;
+  image: string;
+  imageAlt: string;
+};
+
+const EL_MEDIA_BASE = 'https://yvnuayzslukamizrlhwb.supabase.co/storage/v1/object/public';
+
+const judgesOnCountryVoices: JudgesOnCountryVoice[] = [
+  {
+    cardNumber: '01',
+    slug: 'start-here-kristy-and-tanya',
+    name: 'Kristy & Tanya',
+    role: 'Co-Founders, Oonchiumpa',
+    quote: '”Our young people are just collateral in a bigger issue. The issue doesn’t sit with them.”',
+    image: `${EL_MEDIA_BASE}/media/c53077e1-98de-4216-9149-6268891ff62e/website-photos/17741793073N_IMG_9698.jpg`,
+    imageAlt: 'Kristy Bloomfield and Tanya Turner from Oonchiumpa',
+  },
+  {
+    cardNumber: '02',
+    slug: 'jackquann-and-nigel',
+    name: 'Jackquann & Nigel',
+    role: 'Voices used with permission',
+    quote: '”Programs.” “Go to school every day.”',
+    image: `${EL_MEDIA_BASE}/media/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1774178045726_1E5A2226.jpg`,
+    imageAlt: 'Jackquann and Nigel from Oonchiumpa',
+  },
+  {
+    cardNumber: '03',
+    slug: 'jackquann-detention-not-my-home',
+    name: 'Jackquann, 14',
+    role: 'Voice used with permission',
+    quote: '”Detention. That’s not my home.”',
+    image: `${EL_MEDIA_BASE}/media/bf17d0a9-2b12-4e4a-982e-09a8b1952ec6/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1774073897284-1E5A2215.jpg`,
+    imageAlt: 'Jackquann from Oonchiumpa',
+  },
+  {
+    cardNumber: '04',
+    slug: 'nigel-talking-to-the-judge',
+    name: 'Nigel, 14',
+    role: 'Voice used with permission',
+    quote: '”When I’m talking to the judge, I feel like I’m panicking.”',
+    image: `${EL_MEDIA_BASE}/media/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1775881001863_1E5A2212.jpg`,
+    imageAlt: 'Nigel from Oonchiumpa',
+  },
+  {
+    cardNumber: '05',
+    slug: 'laquisha-court-is-scary',
+    name: 'Laquisha, 16',
+    role: 'Voice used with permission',
+    quote: '”Court is scary because you don’t know whether you’re getting out or not.”',
+    image: `${EL_MEDIA_BASE}/media/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1774178037844_1E5A2239.jpg`,
+    imageAlt: 'Laquisha from Oonchiumpa',
+  },
+  {
+    cardNumber: '06',
+    slug: 'fred-campbell-trust-earned',
+    name: 'Fred on Xavier',
+    role: 'Trust earned through consistency',
+    quote: '”He trusts us. We earned that trust.”',
+    image: `${EL_MEDIA_BASE}/media/bf17d0a9-2b12-4e4a-982e-09a8b1952ec6/d0a162d2-282e-4653-9d12-aa934c9dfa4e/1776064148444-1770097200386-gz1auk-1E5A8393.jpg`,
+    imageAlt: 'Fred from Oonchiumpa',
+  },
+];
 
 type StatsType = {
   total: number;
@@ -59,53 +125,66 @@ type StatsType = {
 interface StoriesPageContentProps {
   initialContent: UnifiedContent[];
   initialStats: StatsType;
+  activeCategory?: string | null;
 }
 
-export function StoriesPageContent({ initialContent, initialStats }: StoriesPageContentProps) {
-  const searchParams = useSearchParams();
-  const category = searchParams.get('category');
+export function StoriesPageContent({
+  initialContent,
+  initialStats,
+  activeCategory = null,
+}: StoriesPageContentProps) {
+  const category = activeCategory;
+  const showJudgesOnCountryVoices = !category || category === 'voices';
 
-  // Filter content based on URL params (client-side filtering)
-  const filteredContent = useMemo(() => {
-    if (!category) return initialContent;
-    return initialContent.filter((item) => item.category === category);
-  }, [initialContent, category]);
+  const filteredContent = !category
+    ? initialContent
+    : initialContent.filter((item) => {
+        const itemCategory = item.category || item.primary_tag;
+        return (
+          itemCategory === category ||
+          (category === 'voices' &&
+            (item.content_type === 'empathy-ledger' || item.content_type === 'judges-on-country'))
+        );
+      });
 
-  // Calculate filtered stats
-  const stats = useMemo(() => {
-    if (!category) {
-      return initialStats;
-    }
+  const stats = !category
+    ? initialStats
+    : (() => {
+        const uniqueLocations = new Set<string>();
+        let seedsCount = 0;
+        let growthCount = 0;
+        let harvestCount = 0;
+        let rootsCount = 0;
+        let voicesCount = 0;
 
-    const uniqueLocations = new Set<string>();
-    let seedsCount = 0;
-    let growthCount = 0;
-    let harvestCount = 0;
-    let rootsCount = 0;
-    let voicesCount = 0;
+        filteredContent.forEach((item) => {
+          const itemCategory = item.category || item.primary_tag;
 
-    filteredContent.forEach((item) => {
-      if (item.category === 'seeds') seedsCount++;
-      if (item.category === 'growth') growthCount++;
-      if (item.category === 'harvest') harvestCount++;
-      if (item.category === 'roots') rootsCount++;
-      if (item.category === 'voices') voicesCount++;
+          if (itemCategory === 'seeds') seedsCount++;
+          if (itemCategory === 'growth') growthCount++;
+          if (itemCategory === 'harvest') harvestCount++;
+          if (itemCategory === 'roots') rootsCount++;
+          if (
+            itemCategory === 'voices' ||
+            item.content_type === 'empathy-ledger' ||
+            item.content_type === 'judges-on-country'
+          ) voicesCount++;
 
-      if (item.location_tags) {
-        item.location_tags.forEach((loc: string) => uniqueLocations.add(loc));
-      }
-    });
+          if (item.location_tags) {
+            item.location_tags.forEach((loc: string) => uniqueLocations.add(loc));
+          }
+        });
 
-    return {
-      total: filteredContent.length,
-      seeds: seedsCount,
-      growth: growthCount,
-      harvest: harvestCount,
-      roots: rootsCount,
-      voices: voicesCount,
-      locations: uniqueLocations.size,
-    };
-  }, [filteredContent, initialStats, category]);
+        return {
+          total: filteredContent.length,
+          seeds: seedsCount,
+          growth: growthCount,
+          harvest: harvestCount,
+          roots: rootsCount,
+          voices: voicesCount,
+          locations: uniqueLocations.size,
+        };
+      })();
 
   const featuredContent = filteredContent?.[0];
   const otherContent = filteredContent?.slice(1) || [];
@@ -206,13 +285,80 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
             </div>
           </div>
 
+          {showJudgesOnCountryVoices && (
+            <section className="max-w-6xl mx-auto mb-16 border-2 border-black bg-[#fff8ef] p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div>
+                  <div className="text-xs font-black uppercase tracking-[0.22em] text-[#8d3d16]">
+                    Judges on Country
+                  </div>
+                  <h2 className="mt-2 text-3xl font-black text-black">
+                    Voices from Oonchiumpa
+                  </h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-700">
+                    The six field-guide story cards from the Judges on Country page, linked to the full story routes.
+                  </p>
+                </div>
+                <Link
+                  href="/judges-on-country"
+                  className="inline-flex w-fit items-center justify-center border-2 border-black bg-black px-4 py-2 text-sm font-bold text-white hover:bg-red-600"
+                >
+                  Open Judges on Country
+                </Link>
+              </div>
+
+              <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
+                {judgesOnCountryVoices.map((story) => (
+                  <Link
+                    key={story.slug}
+                    href={`/stories/${story.slug}`}
+                    className="group flex flex-col overflow-hidden border-2 border-black bg-white no-underline shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                  >
+                    <div className="relative h-44 border-b-2 border-black bg-black">
+                      <Image
+                        src={story.image}
+                        alt={story.imageAlt}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-4 pb-3 pt-8">
+                        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/75">
+                          Card {story.cardNumber}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex flex-1 flex-col p-5">
+                      <div className="text-[11px] font-black uppercase tracking-[0.16em] text-[#8d3d16]">
+                        {story.role}
+                      </div>
+                      <h3 className="mt-2 text-xl font-black text-black">
+                        {story.name}
+                      </h3>
+                      <p className="mt-3 flex-1 text-lg font-black leading-tight text-black">
+                        {story.quote}
+                      </p>
+                      <span className="mt-4 text-sm font-bold text-[#059669] group-hover:text-[#047857]">
+                        Read their story →
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Featured Content */}
           {featuredContent && !category && (
             <div className="max-w-6xl mx-auto mb-16">
               <Link
                 href={
-                  featuredContent.content_type === 'blog'
+                  featuredContent.detail_href
+                    ? featuredContent.detail_href
+                    : featuredContent.content_type === 'blog'
                     ? `/blog/${featuredContent.slug}`
+                    : featuredContent.content_type === 'judges-on-country'
+                      ? `/judges-on-country/stories/${featuredContent.slug}`
                     : `/stories/${featuredContent.slug}`
                 }
                 className="group block bg-white border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all duration-200 overflow-hidden no-underline"
@@ -256,6 +402,11 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
                           🗣️ Community Voice
                         </span>
                       )}
+                      {featuredContent.content_type === 'judges-on-country' && (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-800 border border-purple-800 text-xs font-bold">
+                          🗣️ Judges on Country
+                        </span>
+                      )}
                     </div>
                     <h2 className="text-3xl md:text-4xl font-black mb-4 group-hover:text-red-600 transition-colors no-underline">
                       {featuredContent.title}
@@ -289,8 +440,12 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
                 <Link
                   key={item.id}
                   href={
-                    item.content_type === 'blog'
+                    item.detail_href
+                      ? item.detail_href
+                      : item.content_type === 'blog'
                       ? `/blog/${item.slug}`
+                      : item.content_type === 'judges-on-country'
+                        ? `/judges-on-country/stories/${item.slug}`
                       : `/stories/${item.slug}`
                   }
                   className="group block bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all duration-200 overflow-hidden no-underline"
@@ -327,6 +482,11 @@ export function StoriesPageContent({ initialContent, initialStats }: StoriesPage
                       {item.content_type === 'empathy-ledger' && (
                         <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-800 border border-purple-800 text-xs font-bold">
                           🗣️ Community Voice
+                        </span>
+                      )}
+                      {item.content_type === 'judges-on-country' && (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-800 border border-purple-800 text-xs font-bold">
+                          🗣️ Judges on Country
                         </span>
                       )}
                     </div>
