@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { createServerClient } from '@supabase/ssr';
 import { generateEnrollmentCode } from '@/lib/enrollment/code-generator';
+import { buildQrUrl } from '@/lib/qr';
 
 async function getAdminUser(request: NextRequest) {
   const supabase = createServerClient(
@@ -94,6 +95,6 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     code: data,
     enrollUrl,
-    qrUrl: `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(enrollUrl)}`,
+    qrUrl: buildQrUrl({ data: enrollUrl, size: 300 }),
   });
 }

@@ -62,6 +62,8 @@ const SECTORS = [
   'research_academic', 'legal_service', 'advocacy', 'funder', 'media', 'other',
 ];
 
+const STATE_OPTIONS = ['ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA'] as const;
+
 const TIER_COLOR = (t: number | null) =>
   t === 1 ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
   : t === 2 ? 'bg-amber-100 text-amber-900 border-amber-300'
@@ -72,7 +74,7 @@ export default function TierOneCurationPage() {
   const [rows, setRows] = useState<Row[]>([]);
   const [counts, setCounts] = useState({ total: 0, pending: 0, confirmed: 0, tier_1_pending: 0 });
   const [loading, setLoading] = useState(true);
-  const [state, setState] = useState<'NT' | 'QLD' | ''>('');
+  const [state, setState] = useState<(typeof STATE_OPTIONS)[number] | ''>('');
   const [confirmation, setConfirmation] = useState<'pending' | 'confirmed' | 'all'>('pending');
   const [tierFilter, setTierFilter] = useState<'' | '1' | '2' | '3'>('');
   const [bulkBusy, setBulkBusy] = useState(false);
@@ -150,9 +152,10 @@ export default function TierOneCurationPage() {
         <div className="flex flex-wrap items-end gap-3 mb-6 p-4 bg-white border border-stone-200 rounded-lg">
           <Field label="State">
             <select value={state} onChange={(e) => setState(e.target.value as any)} className="px-3 py-2 border border-stone-300 rounded text-sm">
-              <option value="">All (NT+QLD)</option>
-              <option value="NT">NT</option>
-              <option value="QLD">QLD</option>
+              <option value="">All states</option>
+              {STATE_OPTIONS.map((code) => (
+                <option key={code} value={code}>{code}</option>
+              ))}
             </select>
           </Field>
           <Field label="Status">

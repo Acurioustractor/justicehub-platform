@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
         needs_review: decision === 'needs_more_info',
         review_decision: decision,
         review_feedback: feedback,
-        reviewed_by: user.id,
+        reviewed_by: auth.userId,
         reviewed_at: now,
         updated_at: now,
         output: {
@@ -201,7 +201,7 @@ export async function POST(request: NextRequest) {
             decision,
             feedback,
             reviewed_at: now,
-            reviewed_by: user.id,
+            reviewed_by: auth.userId,
           },
         },
       })

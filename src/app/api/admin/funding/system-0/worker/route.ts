@@ -8,6 +8,17 @@ import {
 import { getSystem0Policy } from '@/lib/funding/system0-policy';
 import { logSystem0Event } from '@/lib/funding/system0-audit';
 
+function getServiceClient() {
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceRoleKey) {
+    throw new Error('Missing service role key');
+  }
+  return createServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    serviceRoleKey
+  );
+}
+
 function parsePositiveInt(value: unknown, fallback: number, min: number, max: number): number {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return fallback;
