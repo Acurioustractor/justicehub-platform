@@ -59,35 +59,60 @@ function parseJSON(text) {
   }
 }
 
-async function callLLMJson(prompt, attempts = 2) {
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// One provider call returning parsed JSON, or throws. Anthropic (the quality
+// extractor for the grounded-or-null judgement) retries on 429 with backoff so a
+// rate-limit during a burst does not silently abandon it for a weaker model that
+// just returns null effect_size. Weaker providers get one shot.
+async function oneCall(p, prompt) {
+  const maxTries = p.anthropic ? 5 : 1;
+  let lastErr;
+  for (let i = 0; i < maxTries; i++) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 60000);
+    try {
+      const res = p.anthropic
+        ? await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json', 'x-api-key': env[p.key], 'anthropic-version': '2023-06-01' },
+            body: JSON.stringify({ model: p.model, max_tokens: 700, messages: [{ role: 'user', content: prompt }] }),
+            signal: ctrl.signal,
+          })
+        : await fetch(`${p.base}/chat/completions`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json', authorization: `Bearer ${env[p.key]}` },
+            body: JSON.stringify({ model: p.model, max_tokens: 700, messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' } }),
+            signal: ctrl.signal,
+          });
+      if (res.status === 429 && p.anthropic && i < maxTries - 1) {
+        await sleep(4000 * (i + 1)); // 4s, 8s, 12s, 16s backoff
+        continue;
+      }
+      if (!res.ok) throw new Error(`${p.name} ${res.status}`);
+      const json = await res.json();
+      const text = p.anthropic ? json.content?.[0]?.text ?? '' : json.choices?.[0]?.message?.content ?? '';
+      return parseJSON(text);
+    } catch (e) {
+      lastErr = e;
+      if (p.anthropic && i < maxTries - 1) { await sleep(4000 * (i + 1)); continue; }
+      throw e;
+    } finally {
+      clearTimeout(t);
+    }
+  }
+  throw lastErr ?? new Error(`${p.name} exhausted`);
+}
+
+async function callLLMJson(prompt) {
   const available = PROVIDERS.filter((p) => env[p.key]);
   if (!available.length) throw new Error('no LLM key');
   let lastErr;
-  for (let n = 0; n < attempts; n++) {
-    for (const p of available) {
-      try {
-        const ctrl = new AbortController();
-        const t = setTimeout(() => ctrl.abort(), 45000);
-        try {
-          const res = p.anthropic
-            ? await fetch('https://api.anthropic.com/v1/messages', {
-                method: 'POST',
-                headers: { 'content-type': 'application/json', 'x-api-key': env[p.key], 'anthropic-version': '2023-06-01' },
-                body: JSON.stringify({ model: p.model, max_tokens: 700, messages: [{ role: 'user', content: prompt }] }),
-                signal: ctrl.signal,
-              })
-            : await fetch(`${p.base}/chat/completions`, {
-                method: 'POST',
-                headers: { 'content-type': 'application/json', authorization: `Bearer ${env[p.key]}` },
-                body: JSON.stringify({ model: p.model, max_tokens: 700, messages: [{ role: 'user', content: prompt }], response_format: { type: 'json_object' } }),
-                signal: ctrl.signal,
-              });
-          if (!res.ok) { lastErr = new Error(`${p.name} ${res.status}`); continue; }
-          const json = await res.json();
-          const text = p.anthropic ? (json.content?.[0]?.text ?? '') : (json.choices?.[0]?.message?.content ?? '');
-          try { return parseJSON(text); } catch (e) { lastErr = new Error(`${p.name} bad json`); continue; }
-        } finally { clearTimeout(t); }
-      } catch (e) { lastErr = e; }
+  for (const p of available) {
+    try {
+      return await oneCall(p, prompt);
+    } catch (e) {
+      lastErr = e;
     }
   }
   throw lastErr ?? new Error('exhausted');
@@ -111,13 +136,26 @@ async function crossrefAbstract(doi) {
   } catch { return ''; } finally { clearTimeout(t); }
 }
 
+// effect_size is a CONSTRAINED vocabulary in the DB (CHECK constraint), not free
+// text. The model must return exactly one of these, or null when it cannot tell.
+const EFFECT_ENUM = ['Large positive', 'Moderate positive', 'Small positive', 'Null', 'Mixed', 'Not measured'];
+
 function prompt(text) {
-  return `You are extracting the quantitative spine from a research study. Use ONLY what is explicitly stated in the text below. Do NOT infer, estimate, or invent any number. If a value is not explicitly present, return null for it.
+  return `You are extracting structured fields from a research study about a justice or social program. Use ONLY what the text states. Do NOT invent numbers or over-claim an effect.
 
 Return ONLY this JSON:
-{"effect_size": "stated magnitude/direction of the main effect, verbatim-ish (e.g. \\"40% reduction in reoffending\\", \\"d=0.6\\"), or null","sample_size": integer N of participants if explicitly stated, else null,"timeframe": "study duration or follow-up period if stated (e.g. \\"12-month follow-up\\"), or null","limitations": "stated limitations of the study, or null"}
+{"effect_size": "<one label, see below, or null>","sample_size": "<integer participant count if explicitly stated, else null>","timeframe": "<study duration or follow-up period if stated, e.g. 12-month follow-up, else null>","limitations": "<limitations the authors state about their own study, else null>"}
 
-Rules: a value must be quoted or directly derivable from an explicit statement in the text. No number in the text means sample_size/effect_size are null. Do not summarise the findings into an effect if no effect statistic is given.
+effect_size must be EXACTLY one of these six strings, or null if you genuinely cannot tell:
+- "Large positive"     study reports a large beneficial effect on its main outcome
+- "Moderate positive"  a moderate beneficial effect
+- "Small positive"     a small beneficial effect
+- "Null"               reports no effect / no significant difference
+- "Mixed"              beneficial on some outcomes, not others
+- "Not measured"       the study does not measure or report an effect on an outcome (e.g. a program description, framework, or report with no outcome data)
+Choose a positive level ONLY when the text clearly describes a beneficial result. When unsure between two levels, pick the lower. Never output any other string for effect_size.
+
+Rules: sample_size must be an explicit number or null, never an estimate. Do not invent limitations the authors did not state.
 
 TEXT:
 ${text.slice(0, 6000)}`;
@@ -146,7 +184,8 @@ async function run() {
 
     // Only fill empty fields; never overwrite; null where the model found nothing.
     const patch = {};
-    if (r.effect_size == null && out.effect_size) patch.effect_size = String(out.effect_size).slice(0, 500);
+    // effect_size is enum-constrained; only write an allowed label, else leave null.
+    if (r.effect_size == null && typeof out.effect_size === 'string' && EFFECT_ENUM.includes(out.effect_size)) patch.effect_size = out.effect_size;
     if (r.sample_size == null && Number.isInteger(out.sample_size)) patch.sample_size = out.sample_size;
     if (r.timeframe == null && out.timeframe) patch.timeframe = String(out.timeframe).slice(0, 200);
     if (r.limitations == null && out.limitations) patch.limitations = String(out.limitations).slice(0, 1000);
@@ -155,9 +194,10 @@ async function run() {
     console.log(`  + ${Object.keys(patch).join(',')}  <-  ${(r.title || '').slice(0, 60)}`);
     if (APPLY) {
       const { error: upErr } = await supabase.from('alma_evidence').update({ ...patch, updated_at: new Date().toISOString() }).eq('id', r.id);
-      if (!upErr) filled++;
+      if (upErr) { console.log(`    ! write failed: ${upErr.message}`); failed++; }
+      else filled++;
     } else filled++;
-    await new Promise((res) => setTimeout(res, 150));
+    await sleep(800); // pace under Claude's rate limit; 429s self-correct via backoff
   }
   console.log(`\n${APPLY ? 'Filled' : 'Would fill'} ${filled} / ${rows.length}  |  failed ${failed}.`);
 }
