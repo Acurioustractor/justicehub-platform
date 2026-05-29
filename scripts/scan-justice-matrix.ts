@@ -38,6 +38,7 @@ import { parseJSON } from '../src/lib/ai/parse-json';
 import { curiaApiItems } from '../src/lib/justice-matrix/curia-adapter';
 import { hudocApiItems } from '../src/lib/justice-matrix/hudoc-adapter';
 import { courtlistenerApiItems } from '../src/lib/justice-matrix/courtlistener-adapter';
+import { edalApiItems } from '../src/lib/justice-matrix/edal-adapter';
 import {
   discoveryEmbeddingText,
   findSemanticDuplicate,
@@ -187,6 +188,7 @@ function pickJsonAdapter(
   if (/curia\.europa\.eu/.test(url)) return curiaApiItems;
   if (/hudoc\.echr\.coe\.int/.test(url)) return hudocApiItems;
   if (/courtlistener\.com/.test(url)) return courtlistenerApiItems;
+  if (/asylumlawdatabase\.eu/.test(url)) return edalApiItems;
   return null;
 }
 
