@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server-lite';
+import { checkOrgAccess } from '@/lib/org-hub/auth';
 import {
   fundingOsErrorResponse,
   getFundingApplicationDraftWorkspaceRecord,
@@ -46,6 +48,13 @@ function toDraftInput(body: Record<string, unknown>): FundingApplicationDraftWor
 
 export async function GET(request: NextRequest) {
   try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const organizationId = String(searchParams.get('organizationId') || '').trim();
     const opportunityId = String(searchParams.get('opportunityId') || '').trim();
@@ -55,6 +64,10 @@ export async function GET(request: NextRequest) {
         { error: 'organizationId and opportunityId are required' },
         { status: 400 }
       );
+    }
+
+    if (!await checkOrgAccess(supabase, user.id, organizationId)) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
     }
 
     const draft = await getFundingApplicationDraftWorkspaceRecord(
@@ -75,6 +88,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+    const input = toDraftInput(body);
     const requestCommunityReview = body.requestCommunityReview === true;
     const promoteToLiveApplication = body.promoteToLiveApplication === true;
 
@@ -85,12 +99,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!input.organizationId || !input.opportunityId) {
+      return NextResponse.json(
+        { error: 'organizationId and opportunityId are required' },
+        { status: 400 }
+      );
+    }
+
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+
+    if (!await checkOrgAccess(supabase, user.id, input.organizationId)) {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    }
+
     const result = requestCommunityReview
-      ? await requestFundingApplicationDraftCommunityReview(toDraftInput(body), null)
+      ? await requestFundingApplicationDraftCommunityReview(input, user.id)
       : promoteToLiveApplication
-        ? await promoteFundingApplicationDraftToLiveApplication(toDraftInput(body), null)
+        ? await promoteFundingApplicationDraftToLiveApplication(input, user.id)
       : {
-          draft: await upsertFundingApplicationDraftWorkspace(toDraftInput(body), null),
+          draft: await upsertFundingApplicationDraftWorkspace(input, user.id),
           reviewTask: null,
           existing: false,
           applicationId: null,

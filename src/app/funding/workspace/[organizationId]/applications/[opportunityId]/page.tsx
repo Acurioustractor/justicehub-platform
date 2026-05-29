@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -12,6 +12,8 @@ import {
 import { Navigation } from '@/components/ui/navigation';
 import { FundingApplicationDraftEditor } from '@/components/funding/funding-application-draft-editor';
 import { getFundingApplicationWorkspaceDraft } from '@/lib/funding/funding-operating-system';
+import { createClient } from '@/lib/supabase/server-lite';
+import { checkOrgAccess } from '@/lib/org-hub/auth';
 
 function formatDate(value?: string | null) {
   if (!value) return '—';
@@ -48,6 +50,19 @@ export default async function FundingApplicationWorkspaceDraftPage({
 }: {
   params: { organizationId: string; opportunityId: string };
 }) {
+  const path = `/funding/workspace/${params.organizationId}/applications/${params.opportunityId}`;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect(`/login?redirect=${encodeURIComponent(path)}`);
+  }
+
+  const hasAccess = await checkOrgAccess(supabase, user.id, params.organizationId);
+  if (!hasAccess) {
+    notFound();
+  }
+
   const draft = await getFundingApplicationWorkspaceDraft(
     params.organizationId,
     params.opportunityId
