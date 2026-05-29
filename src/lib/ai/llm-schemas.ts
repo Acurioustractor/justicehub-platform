@@ -230,6 +230,39 @@ export const SentimentAnalysisSchema = z.object({
 export type SentimentAnalysis = z.infer<typeof SentimentAnalysisSchema>;
 
 // ---------------------------------------------------------------------------
+// Justice Matrix discovery (scan-justice-matrix scanner -> justice_matrix_discovered)
+// ---------------------------------------------------------------------------
+
+export const JUSTICE_MATRIX_ITEM_TYPES = ['case', 'campaign'] as const;
+
+/**
+ * One candidate strategic-litigation case or advocacy campaign extracted from a
+ * source page. Maps onto the `extracted_*` columns of justice_matrix_discovered.
+ * Fields are permissive (nullable) because source pages vary; the human review
+ * queue is the gate, not this schema.
+ */
+export const JusticeMatrixDiscoveryItemSchema = z.object({
+  item_type: z.enum(JUSTICE_MATRIX_ITEM_TYPES),
+  title: z.string().min(3),
+  jurisdiction: z.string().nullable().optional(),
+  year: z.number().int().min(1900).max(2100).nullable().optional(),
+  categories: z.array(z.string()).default([]),
+  summary: z.string().nullable().optional(),
+  country_code: z.string().max(8).nullable().optional(),
+  item_url: z.string().url().nullable().optional(),
+  // Whether this item is within the refugee / asylum protection domain.
+  refugee_related: z.boolean().default(false),
+  confidence: z.number().min(0).max(1).default(0.5),
+});
+
+export const JusticeMatrixDiscoveryResponseSchema = z.object({
+  items: z.array(JusticeMatrixDiscoveryItemSchema).default([]),
+});
+
+export type JusticeMatrixDiscoveryItem = z.infer<typeof JusticeMatrixDiscoveryItemSchema>;
+export type JusticeMatrixDiscoveryResponse = z.infer<typeof JusticeMatrixDiscoveryResponseSchema>;
+
+// ---------------------------------------------------------------------------
 // Validated parse helper
 // ---------------------------------------------------------------------------
 

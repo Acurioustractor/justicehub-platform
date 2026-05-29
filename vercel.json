@@ -183,6 +183,22 @@
     {
       "path": "/api/cron/civic/qld-hansard",
       "schedule": "0 17 * * 3"
+    },
+    {
+      "path": "/api/cron/justice-matrix/scan-json",
+      "schedule": "0 4 * * 1"
+    },
+    {
+      "path": "/api/cron/justice-matrix/auto-publish",
+      "schedule": "45 4 * * *"
+    },
+    {
+      "path": "/api/cron/justice-matrix/embed-new",
+      "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/cron/justice-matrix/backfill-facts",
+      "schedule": "0 5 * * *"
     }
   ]
 }

@@ -66,6 +66,7 @@ Thumbs.db
 
 # Backup files
 *.backup
+*.bak
 
 # Archive content
 docs/archive/
@@ -82,6 +83,7 @@ screen*.png
 # Claude Code caches
 .claude/tsc-cache/
 .claude/cache/
+.claude/worktrees/
 
 # Local artifacts and thoughts
 artifacts/
@@ -166,3 +168,6 @@ skills/
 # Build artifacts
 tsconfig.tsbuildinfo
 supabase/.temp/
+
+# Playwright MCP session snapshots
+.playwright-mcp/

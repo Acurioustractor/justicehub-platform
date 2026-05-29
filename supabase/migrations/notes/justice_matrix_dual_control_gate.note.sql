@@ -1,0 +1,65 @@
+-- =============================================================================
+-- Justice Matrix Governance v1 — dual-control sign-off gate (DOCUMENTATION ONLY)
+-- =============================================================================
+--
+-- STATUS: NOT A MIGRATION. Do not run this file. It documents the semantics of
+-- the dual-control gate that Governance v1 enforces in application code, plus an
+-- OPTIONAL hardening migration a later operator may choose to apply. The gate
+-- ships in the route handler, not the database, so V1 needs zero schema change.
+--
+-- File lives under supabase/migrations/notes/ with a .note.sql suffix so the
+-- numbered-migration runner does not pick it up.
+--
+-- -----------------------------------------------------------------------------
+-- Columns this gate uses (all already exist on justice_matrix_cases — verified
+-- 2026-05-29 against information_schema):
+--   human_confirmed  boolean                      -- legal-review sign-off flag
+--   verified         boolean                      -- public "Verified" pill
+--   verified_by      text                         -- sign-off admin identity
+--   verified_at      timestamptz                  -- sign-off timestamp
+--   authoritative_link text                       -- source of record (citation)
+--
+-- -----------------------------------------------------------------------------
+-- DUAL-CONTROL RULE (case law)
+--
+--   Step 1  approve            (admin A)
+--           Creates the case row from a discovery.
+--           Sets verified = false, human_confirmed = false.
+--           Row renders the amber "AI-extracted, unconfirmed" badge in explore.
+--
+--   Step 2  confirm_review     (admin B, a distinct action)
+--           Signs off legal review on the existing case row.
+--           GUARD: refuses if authoritative_link IS NULL (no source of record).
+--           Sets human_confirmed = true, verified = true,
+--                verified_by = <reviewer>, verified_at = now().
+--           Badge clears; provenance shows "by <reviewer> on <date>".
+--
+-- Campaigns/advocacy use SINGLE approval (lower legal risk). The approve action
+-- still sets verified = true for campaigns and they never flow through
+-- confirm_review.
+--
+-- The two steps are intended to be two different admins. V1 has no RBAC to
+-- enforce "distinct human", so this is a process control surfaced in the UI, not
+-- a database constraint. Reviewer accounts/roles and signed attribution are
+-- explicitly deferred past V1.
+--
+-- Enforced in: src/app/api/justice-matrix/discovered/[id]/route.ts
+--   - approve (case)      -> verified=false, human_confirmed=false
+--   - confirm_review      -> requires authoritative_link, sets the sign-off
+--
+-- -----------------------------------------------------------------------------
+-- OPTIONAL future hardening (NOT part of V1, NOT applied). If a later operator
+-- wants the source-of-record guard at the database layer as a backstop to the
+-- route check, this CHECK constraint expresses it. Apply through the normal
+-- numbered-migration flow after confirming no legacy rows violate it.
+--
+--   ALTER TABLE justice_matrix_cases
+--     ADD CONSTRAINT justice_matrix_cases_signoff_needs_source
+--     CHECK (human_confirmed IS NOT TRUE OR authoritative_link IS NOT NULL);
+--
+-- Pre-flight before ever applying the above:
+--   SELECT id, case_citation
+--   FROM justice_matrix_cases
+--   WHERE human_confirmed IS TRUE AND authoritative_link IS NULL;
+--   -- must return zero rows first, else the ALTER will fail.
+-- =============================================================================

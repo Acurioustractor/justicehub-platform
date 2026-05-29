@@ -1,10 +1,18 @@
 import { createServiceClient } from '@/lib/supabase/service-lite'
+import { checkAdmin } from '@/lib/supabase/admin-lite'
 import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getDb = () => createServiceClient() as any;
+
+/** Returns a 401 JSON response if the caller is not an admin, else null. */
+async function unauthorized() {
+  const auth = await checkAdmin();
+  if (auth) return null;
+  return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+}
 
 /**
  * GET /api/justice-matrix/cases
@@ -92,6 +100,8 @@ export async function GET(request: Request) {
  * Create a new case
  */
 export async function POST(request: Request) {
+  const denied = await unauthorized();
+  if (denied) return denied;
   try {
     const supabase = getDb()
     const body = await request.json()
