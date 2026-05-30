@@ -28,6 +28,7 @@ interface IssueCard {
   title: string;
   question: string;
   summary: string | null;
+  surface: string;
   category_tags: string[];
   cases: number;
   campaigns: number;
@@ -38,17 +39,24 @@ async function loadIssues(): Promise<IssueCard[]> {
   const supabase = createServiceClient() as any;
   const { data: issues } = await supabase
     .from('justice_matrix_issues')
-    .select('slug,title,question,summary,category_tags')
+    .select('slug,title,question,summary,surface,category_tags')
     .eq('is_published', true)
     .order('sort_order', { ascending: true });
 
+  const isRefugeeItem = (cats: string[] | null) => !!cats?.some((c) => c === 'refugee' || c === 'asylum');
   const rows: IssueCard[] = [];
   for (const it of (issues ?? []) as Omit<IssueCard, 'cases' | 'campaigns'>[]) {
+    // Counts honour the same surface gate as the profile page, so a refugee
+    // issue does not count youth cases that merely share a tag, and vice versa.
+    const inSurface = (cats: string[] | null) =>
+      it.surface === 'refugee' ? isRefugeeItem(cats) : it.surface === 'youth' ? !isRefugeeItem(cats) : true;
     const [casesRes, campaignsRes] = await Promise.all([
-      supabase.from('justice_matrix_cases').select('*', { count: 'exact', head: true }).overlaps('categories', it.category_tags),
-      supabase.from('justice_matrix_campaigns').select('*', { count: 'exact', head: true }).overlaps('categories', it.category_tags),
+      supabase.from('justice_matrix_cases').select('categories').overlaps('categories', it.category_tags),
+      supabase.from('justice_matrix_campaigns').select('categories').overlaps('categories', it.category_tags),
     ]);
-    rows.push({ ...it, cases: casesRes.count ?? 0, campaigns: campaignsRes.count ?? 0 });
+    const cases = ((casesRes.data ?? []) as { categories: string[] | null }[]).filter((r) => inSurface(r.categories)).length;
+    const campaigns = ((campaignsRes.data ?? []) as { categories: string[] | null }[]).filter((r) => inSurface(r.categories)).length;
+    rows.push({ ...it, cases, campaigns });
   }
   return rows;
 }
@@ -85,8 +93,21 @@ export default async function IssuesIndexPage() {
                 className="group block rounded-lg border p-5 md:p-6 transition-colors hover:border-zinc-300"
                 style={{ background: C.surface, borderColor: C.border }}
               >
-                <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.18em', color: C.muted }} className="uppercase mb-2">
-                  {it.title}
+                <div className="flex items-center gap-2 mb-2">
+                  <span
+                    className="rounded px-1.5 py-0.5"
+                    style={{
+                      fontFamily: MONO,
+                      fontSize: 9,
+                      background: it.surface === 'youth' ? 'rgba(31,111,120,0.10)' : 'rgba(74,37,96,0.10)',
+                      color: it.surface === 'youth' ? '#1f6f78' : C.accent,
+                    }}
+                  >
+                    {it.surface === 'youth' ? 'Youth justice' : it.surface === 'all' ? 'Cross-cutting' : 'Refugee & asylum'}
+                  </span>
+                  <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.16em', color: C.muted }} className="uppercase">
+                    {it.title}
+                  </span>
                 </div>
                 <h2 className="font-semibold text-lg md:text-xl tracking-tight leading-snug mb-2" style={{ color: C.ink }}>
                   {it.question}

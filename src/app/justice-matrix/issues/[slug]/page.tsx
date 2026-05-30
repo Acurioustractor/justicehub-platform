@@ -28,6 +28,7 @@ interface Issue {
   title: string;
   question: string;
   summary: string | null;
+  surface: string;
   category_tags: string[];
   hero_case_ids: string[] | null;
   playbook: string | null;
@@ -41,6 +42,7 @@ interface CaseRow {
   region: string | null;
   outcome: string | null;
   precedent_strength: string | null;
+  categories: string[] | null;
 }
 interface CampaignRow {
   id: string;
@@ -49,6 +51,7 @@ interface CampaignRow {
   start_year: number | null;
   is_ongoing: boolean | null;
   lead_organizations: string | null;
+  categories: string[] | null;
 }
 
 async function loadIssue(
@@ -58,7 +61,7 @@ async function loadIssue(
   const supabase = createServiceClient() as any;
   const { data: issue } = await supabase
     .from('justice_matrix_issues')
-    .select('id,slug,title,question,summary,category_tags,hero_case_ids,playbook')
+    .select('id,slug,title,question,summary,surface,category_tags,hero_case_ids,playbook')
     .eq('slug', slug)
     .eq('is_published', true)
     .maybeSingle();
@@ -67,12 +70,12 @@ async function loadIssue(
   const [casesRes, campaignsRes] = await Promise.all([
     supabase
       .from('justice_matrix_cases')
-      .select('id,case_citation,court,year,jurisdiction,region,outcome,precedent_strength')
+      .select('id,case_citation,court,year,jurisdiction,region,outcome,precedent_strength,categories')
       .overlaps('categories', issue.category_tags)
       .limit(40),
     supabase
       .from('justice_matrix_campaigns')
-      .select('id,campaign_name,country_region,start_year,is_ongoing,lead_organizations')
+      .select('id,campaign_name,country_region,start_year,is_ongoing,lead_organizations,categories')
       .overlaps('categories', issue.category_tags)
       .limit(30),
   ]);
@@ -90,7 +93,20 @@ async function loadIssue(
   const campaigns = ((campaignsRes.data ?? []) as CampaignRow[]).sort(
     (a, b) => (b.start_year ?? 0) - (a.start_year ?? 0),
   );
-  return { issue: issue as Issue, cases, campaigns };
+
+  // Surface gate: a refugee issue shows only refugee/asylum items; a youth
+  // issue shows only the domestic (non-refugee) items. Shared category tags
+  // (e.g. detention-conditions) otherwise bleed across domains.
+  const surface = (issue as Issue).surface;
+  const isRefugeeItem = (cats: string[] | null) => !!cats?.some((c) => c === 'refugee' || c === 'asylum');
+  const inSurface = (cats: string[] | null) =>
+    surface === 'refugee' ? isRefugeeItem(cats) : surface === 'youth' ? !isRefugeeItem(cats) : true;
+
+  return {
+    issue: issue as Issue,
+    cases: cases.filter((c) => inSurface(c.categories)),
+    campaigns: campaigns.filter((m) => inSurface(m.categories)),
+  };
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
