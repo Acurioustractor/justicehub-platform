@@ -1,0 +1,12 @@
+# gitleaks config for CI: `gitleaks detect --config .gitleaks.toml`
+# Uses the built-in rule set (covers JWTs, Supabase, OpenAI, AWS, etc.).
+title = "JusticeHub secret scan"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Anon/publishable Supabase keys are public by design; allow only in env example files."
+paths = [
+  '''\.env\.example$''',
+]
