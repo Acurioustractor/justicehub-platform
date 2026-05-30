@@ -22,6 +22,9 @@ import { courtlistenerApiItems } from '@/lib/justice-matrix/courtlistener-adapte
 // EDAL (ECRE) — ~1,829 curated asylum summaries, national ones unique vs the
 // court APIs. Sitemap + per-page meta scrape, no LLM.
 import { edalApiItems } from '@/lib/justice-matrix/edal-adapter';
+// CanLII (Canadian Legal Information Institute) — IRB + federal courts refugee
+// jurisprudence. Requires CANLII_API_KEY (query-param auth, no anonymous tier).
+import { canliiApiItems } from '@/lib/justice-matrix/canlii-adapter';
 import {
   discoveryEmbeddingText,
   findSemanticDuplicate,
@@ -174,6 +177,8 @@ export async function GET(request: Request) {
         staged = await scanWithAdapter(supabase, source, courtlistenerApiItems);
       } else if (/asylumlawdatabase\.eu/.test(source.url)) {
         staged = await scanWithAdapter(supabase, source, edalApiItems);
+      } else if (/canlii\.org/.test(source.url)) {
+        staged = await scanWithAdapter(supabase, source, canliiApiItems);
       } else {
         results.push({ source: source.name, staged: 0, error: 'no adapter for this JSON source yet' });
         continue;
