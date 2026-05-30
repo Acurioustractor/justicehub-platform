@@ -195,6 +195,7 @@ export default async function JusticeMatrixLandingPage() {
           {/* Quick entries — all deep-link into the explore tool */}
           <div className="flex flex-wrap gap-2 mt-4" style={{ fontFamily: MONO, fontSize: 12 }}>
             <QuickLink href="/justice-matrix/explore">Browse all {total.toLocaleString()}</QuickLink>
+            <QuickLink href="/justice-matrix/issues">Issues</QuickLink>
             <QuickLink href="/justice-matrix/explore?type=case">Cases {stats.cases}</QuickLink>
             <QuickLink href="/justice-matrix/explore?type=campaign">Campaigns {stats.campaigns}</QuickLink>
             <QuickLink href="/justice-matrix/explore?type=evidence">Evidence {stats.evidence}</QuickLink>
@@ -249,9 +250,13 @@ export default async function JusticeMatrixLandingPage() {
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-2" style={{ color: C.ink }}>
             The landmark cases and campaigns that anchor the matrix.
           </h2>
-          <p className="text-[14px] leading-6 mb-7 max-w-2xl" style={{ color: C.muted }}>
+          <p className="text-[14px] leading-6 mb-3 max-w-2xl" style={{ color: C.muted }}>
             Curated entry points for each surface: refugee and asylum law across borders, and the Australian youth-justice record.
           </p>
+          <Link href="/justice-matrix/issues" className="inline-flex items-center gap-1.5 mb-7 text-sm font-semibold" style={{ color: C.accent }}>
+            Or start from a question: browse all issues
+            <ArrowRight className="w-4 h-4" />
+          </Link>
 
           <FeaturedGroup
             label="Refugee & asylum"
