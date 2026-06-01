@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { Search, ChevronLeft, ChevronRight, Scale, X } from 'lucide-react';
+import { MatrixFlowNav } from '../_components/MatrixFlowNav';
 
 const DISPLAY = "'Cormorant Garamond', Georgia, serif";
 const LIMIT = 20;
@@ -193,6 +194,8 @@ export default async function CasesListPage({ searchParams }: { searchParams: Pr
             </p>
           </div>
         </section>
+
+        <MatrixFlowNav active="cases" />
 
         {/* Body */}
         <section className="max-w-7xl mx-auto px-6 md:px-10 py-10 md:py-14">

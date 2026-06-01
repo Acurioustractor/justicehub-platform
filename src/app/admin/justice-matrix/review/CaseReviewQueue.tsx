@@ -98,6 +98,7 @@ export function CaseReviewQueue({ reviewerEmail }: { reviewerEmail: string }) {
     );
   }, [cases, search]);
 
+  const hasSearch = search.trim().length > 0;
   const confirmable = cases.filter((c) => c.authoritative_link).length;
 
   return (
@@ -138,7 +139,20 @@ export function CaseReviewQueue({ reviewerEmail }: { reviewerEmail: string }) {
       {loading ? (
         <p className="text-gray-500 text-sm">Loading…</p>
       ) : filtered.length === 0 ? (
-        <p className="text-gray-500 text-sm">Nothing awaiting review. 🎉</p>
+        hasSearch ? (
+          <div className="flex items-center gap-3 text-sm text-gray-500">
+            <p>No cases match the current filter.</p>
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              Clear filter
+            </button>
+          </div>
+        ) : (
+          <p className="text-gray-500 text-sm">Nothing awaiting review.</p>
+        )
       ) : (
         <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-white">
           {filtered.map((c) => {

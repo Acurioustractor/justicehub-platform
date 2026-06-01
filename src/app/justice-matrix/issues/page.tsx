@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { ArrowRight } from 'lucide-react';
+import { MatrixFlowNav } from '../_components/MatrixFlowNav';
 
 export const dynamic = 'force-dynamic';
 
@@ -80,6 +81,8 @@ export default async function IssuesIndexPage() {
           </p>
         </div>
       </section>
+
+      <MatrixFlowNav active="issues" />
 
       <section className="max-w-6xl mx-auto px-5 md:px-8 py-8 md:py-12">
         {issues.length === 0 ? (

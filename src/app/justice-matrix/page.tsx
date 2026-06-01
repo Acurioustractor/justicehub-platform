@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { ArrowRight, Globe, Scale, Megaphone, Database, Search, BookOpen, Map as MapIcon } from 'lucide-react';
 import { bucketJurisdiction } from '@/lib/justice-matrix/jurisdiction';
+import { MatrixFlowNav } from './_components/MatrixFlowNav';
 
 export const dynamic = 'force-dynamic';
 
@@ -195,7 +196,10 @@ export default async function JusticeMatrixLandingPage() {
           {/* Quick entries — all deep-link into the explore tool */}
           <div className="flex flex-wrap gap-2 mt-4" style={{ fontFamily: MONO, fontSize: 12 }}>
             <QuickLink href="/justice-matrix/explore">Browse all {total.toLocaleString()}</QuickLink>
+            <QuickLink href="/justice-matrix/ask">Ask</QuickLink>
+            <QuickLink href="/justice-matrix/how-it-works">How it works</QuickLink>
             <QuickLink href="/justice-matrix/issues">Issues</QuickLink>
+            <QuickLink href="/justice-matrix/guide">Guide</QuickLink>
             <QuickLink href="/justice-matrix/explore?type=case">Cases {stats.cases}</QuickLink>
             <QuickLink href="/justice-matrix/explore?type=campaign">Campaigns {stats.campaigns}</QuickLink>
             <QuickLink href="/justice-matrix/explore?type=evidence">Evidence {stats.evidence}</QuickLink>
@@ -203,6 +207,8 @@ export default async function JusticeMatrixLandingPage() {
           </div>
         </div>
       </section>
+
+      <MatrixFlowNav active="hub" />
 
       {/* ENTRY TILES — the funnel, made tactile */}
       <section className="max-w-6xl mx-auto px-5 md:px-8 py-8 md:py-10">

@@ -23,6 +23,7 @@ import {
 import { bucketJurisdiction, compareRegions } from '@/lib/justice-matrix/jurisdiction';
 import { SURFACES, type SurfaceKey } from '@/lib/justice-matrix/surfaces';
 import { classifyCase } from '@/lib/justice-matrix/case-type';
+import { MatrixFlowNav } from '../_components/MatrixFlowNav';
 
 // ---------------------------------------------------------------------------
 // Local "research tool" design tokens. Scoped to this experience only — the
@@ -557,6 +558,8 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
         </div>
       </header>
 
+      <MatrixFlowNav active="explore" />
+
       {/* APPLIED FILTERS + COUNT */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 pt-4 flex flex-wrap items-center gap-2">
         <span style={{ fontFamily: MONO, fontSize: 12, color: C.muted }}>
@@ -592,7 +595,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
       </div>
 
       {/* BODY */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-5 grid lg:grid-cols-[230px_1fr] gap-6">
+      <div className="max-w-7xl mx-auto min-w-0 px-4 md:px-6 py-5 grid lg:grid-cols-[230px_minmax(0,1fr)] gap-6">
         {/* Facet rail (desktop) */}
         <aside className="hidden lg:block">
           <FacetRail
@@ -613,7 +616,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
         </aside>
 
         {/* Results */}
-        <section>
+        <section className="min-w-0">
           {view === 'jurisdiction' ? (
             <JurisdictionView buckets={regionBuckets} active={region} onPick={(r) => { setRegion(r); setView('list'); }} />
           ) : sorted.length === 0 ? (
@@ -621,13 +624,13 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
           ) : view === 'grouped' ? (
             <GroupedView items={sorted} counts={counts} />
           ) : view === 'cards' ? (
-            <ul className="grid sm:grid-cols-2 gap-3">
+            <ul className="grid min-w-0 sm:grid-cols-2 gap-3">
               {pageItems.map((h) => (
                 <ResultCard key={`${h.kind}-${h.id}`} hit={h} />
               ))}
             </ul>
           ) : (
-            <ul className="divide-y rounded-lg border" style={{ borderColor: C.border, background: C.surface }}>
+            <ul className="min-w-0 divide-y rounded-lg border" style={{ borderColor: C.border, background: C.surface }}>
               {pageItems.map((h) => (
                 <ListRow key={`${h.kind}-${h.id}`} hit={h} />
               ))}
@@ -972,15 +975,15 @@ function MetaRow({ hit }: { hit: Hit }) {
 function ListRow({ hit }: { hit: Hit }) {
   const k = KIND[hit.kind];
   return (
-    <li>
-      <Link href={hitHref(hit)} className="group flex items-start gap-3 px-4 py-3 hover:bg-black/[0.02] transition-colors">
+    <li className="min-w-0 overflow-hidden">
+      <Link href={hitHref(hit)} className="group flex min-w-0 items-start gap-3 px-4 py-3 hover:bg-black/[0.02] transition-colors">
         <k.Icon className="w-4 h-4 mt-0.5 shrink-0" style={{ color: k.color }} />
         <div className="min-w-0 flex-1">
-          <div className="font-medium text-[15px] leading-snug truncate" style={{ color: C.ink }}>
+          <div className="break-words font-medium text-[15px] leading-snug md:truncate" style={{ color: C.ink }}>
             {hit.title}
           </div>
           {hit.excerpt && (
-            <p className="mt-0.5 text-[13px] leading-snug line-clamp-1" style={{ color: C.body }}>
+            <p className="mt-0.5 break-words text-[13px] leading-snug line-clamp-2 md:line-clamp-1" style={{ color: C.body }}>
               {hit.excerpt}
             </p>
           )}
@@ -997,14 +1000,14 @@ function ListRow({ hit }: { hit: Hit }) {
 function ResultCard({ hit }: { hit: Hit }) {
   const k = KIND[hit.kind];
   return (
-    <li className="rounded-lg border p-4 transition-colors hover:border-zinc-300" style={{ background: C.surface, borderColor: C.border }}>
-      <Link href={hitHref(hit)} className="group block">
+    <li className="min-w-0 rounded-lg border p-4 transition-colors hover:border-zinc-300" style={{ background: C.surface, borderColor: C.border }}>
+      <Link href={hitHref(hit)} className="group block min-w-0">
         <MetaRow hit={hit} />
-        <h3 className="mt-2 font-semibold text-[16px] leading-snug" style={{ color: C.ink }}>
+        <h3 className="mt-2 break-words font-semibold text-[16px] leading-snug" style={{ color: C.ink }}>
           {hit.title}
         </h3>
         {hit.excerpt && (
-          <p className="mt-1.5 text-sm leading-6 line-clamp-3" style={{ color: C.body }}>
+          <p className="mt-1.5 break-words text-sm leading-6 line-clamp-3" style={{ color: C.body }}>
             {hit.excerpt}
           </p>
         )}
@@ -1028,13 +1031,13 @@ function GroupedView({ items, counts }: { items: Hit[]; counts: Counts }) {
     { kind: 'evidence', total: counts.evidence },
   ];
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-8">
       {groups.map(({ kind, total }) => {
         const rows = items.filter((h) => h.kind === kind);
         if (!rows.length) return null;
         const k = KIND[kind];
         return (
-          <div key={kind}>
+          <div key={kind} className="min-w-0">
             <div className="flex items-center gap-2 mb-2">
               <k.Icon className="w-4 h-4" style={{ color: k.color }} />
               <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', color: C.ink }} className="uppercase">
@@ -1042,7 +1045,7 @@ function GroupedView({ items, counts }: { items: Hit[]; counts: Counts }) {
               </span>
               <span style={{ fontFamily: MONO, fontSize: 11, color: C.muted }}>{total.toLocaleString()}</span>
             </div>
-            <ul className="divide-y rounded-lg border" style={{ borderColor: C.border, background: C.surface }}>
+            <ul className="min-w-0 divide-y rounded-lg border" style={{ borderColor: C.border, background: C.surface }}>
               {rows.slice(0, 8).map((h) => (
                 <ListRow key={`${h.kind}-${h.id}`} hit={h} />
               ))}
@@ -1071,24 +1074,24 @@ function JurisdictionView({
   if (!buckets.length) return <Empty />;
   const max = Math.max(...buckets.map((b) => b.count), 1);
   return (
-    <div>
+    <div className="min-w-0">
       <p className="text-sm mb-4" style={{ color: C.muted }}>
         Browse by jurisdiction. Australian evidence is grounded locally; cases and campaigns span international courts.
       </p>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid min-w-0 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {buckets.map((b) => (
           <button
             key={b.region}
             type="button"
             onClick={() => onPick(b.region)}
-            className="text-left rounded-lg border p-4 transition-colors hover:border-zinc-300"
+            className="min-w-0 text-left rounded-lg border p-4 transition-colors hover:border-zinc-300"
             style={{
               background: active === b.region ? C.accentSoft : C.surface,
               borderColor: active === b.region ? C.accent : C.border,
             }}
           >
             <div className="flex items-baseline justify-between">
-              <span className="font-medium text-[15px]" style={{ color: C.ink }}>
+              <span className="min-w-0 break-words font-medium text-[15px]" style={{ color: C.ink }}>
                 {b.region}
               </span>
               <span style={{ fontFamily: MONO, fontSize: 13, color: C.accent }}>{b.count.toLocaleString()}</span>
