@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ContributeForm } from './ContributeForm';
 import { ArrowLeft } from 'lucide-react';
+import { MatrixFlowNav } from '../_components/MatrixFlowNav';
 
 const DISPLAY = "'Cormorant Garamond', Georgia, serif";
 
@@ -45,6 +46,8 @@ export default function ContributePage() {
             </p>
           </div>
         </section>
+
+        <MatrixFlowNav active="contribute" />
 
         {/* BODY */}
         <section className="max-w-3xl mx-auto px-6 md:px-10 py-12 md:py-16">

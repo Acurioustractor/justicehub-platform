@@ -1,0 +1,33 @@
+# Local dependencies and build output
+node_modules/
+.next/
+out/
+tsconfig.tsbuildinfo
+
+# Local environment and Vercel state
+.env
+.env.local
+.env.*.local
+.vercel/
+
+# Local agent/browser/tool caches
+.claude/
+.chrome-debug-profile/
+.gstack/
+.playwright-mcp/
+.playwright-linkedin-session/
+.superdesign/
+
+# Generated local work products and logs
+artifacts/
+thoughts/
+logs/
+output/
+
+# Large local data/session files that are not deployment source
+*.log
+*.backup
+*.bak
+*.json.large
+screen*.png
+
