@@ -85,6 +85,11 @@ const routeMap = [
     body: 'Use search and filters when you know a term, jurisdiction, issue, case, or campaign.',
   },
   {
+    route: '/justice-matrix/map',
+    label: 'Map',
+    body: 'Use the live atlas when geography matters: compare cases, campaigns, and evidence by place and precision.',
+  },
+  {
     route: '/justice-matrix/issues',
     label: 'Issues',
     body: 'Use strategic questions when you want law, movement, people, and playbook in one place.',

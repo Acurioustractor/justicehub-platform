@@ -9,6 +9,7 @@ import {
   Compass,
   FilePlus2,
   Layers3,
+  MapPinned,
   Megaphone,
   MessageCircle,
   Scale,
@@ -20,6 +21,7 @@ export type MatrixFlowActive =
   | 'how'
   | 'ask'
   | 'explore'
+  | 'map'
   | 'issues'
   | 'cases'
   | 'campaigns'
@@ -87,6 +89,14 @@ const links: Array<{
     icon: <Search className="h-4 w-4" />,
   },
   {
+    key: 'map',
+    href: '/justice-matrix/map',
+    label: 'Map',
+    short: 'Map',
+    help: 'Live atlas',
+    icon: <MapPinned className="h-4 w-4" />,
+  },
+  {
     key: 'issues',
     href: '/justice-matrix/issues',
     label: 'Issues',
@@ -138,7 +148,7 @@ export function MatrixFlowNav({
             FAQ <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-9">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-10">
           {links.map((item) => {
             const selected = item.key === active;
             return (

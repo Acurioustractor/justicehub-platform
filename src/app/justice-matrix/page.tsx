@@ -200,6 +200,7 @@ export default async function JusticeMatrixLandingPage() {
             <QuickLink href="/justice-matrix/how-it-works">How it works</QuickLink>
             <QuickLink href="/justice-matrix/issues">Issues</QuickLink>
             <QuickLink href="/justice-matrix/guide">Guide</QuickLink>
+            <QuickLink href="/justice-matrix/map">Map</QuickLink>
             <QuickLink href="/justice-matrix/explore?type=case">Cases {stats.cases}</QuickLink>
             <QuickLink href="/justice-matrix/explore?type=campaign">Campaigns {stats.campaigns}</QuickLink>
             <QuickLink href="/justice-matrix/explore?type=evidence">Evidence {stats.evidence}</QuickLink>
@@ -238,12 +239,12 @@ export default async function JusticeMatrixLandingPage() {
             body="Australian youth-justice research and evaluations of what works, with consent respected."
           />
           <EntryTile
-            href="/justice-matrix/explore?view=jurisdiction"
+            href="/justice-matrix/map"
             icon={<MapIcon className="w-5 h-5" />}
             color="#4a2560"
-            label="By jurisdiction"
+            label="Live map"
             count={stats.regions}
-            body="Browse by region: Australia by state, plus international courts."
+            body="Search the corpus geographically: recorded coordinates first, then labelled jurisdiction centroids."
             countLabel="regions"
           />
         </div>

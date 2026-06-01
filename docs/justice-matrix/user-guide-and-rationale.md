@@ -1,6 +1,6 @@
 # Justice Matrix - User Guide and Rationale
 
-**Last updated:** 2026-05-30
+**Last updated:** 2026-06-01
 **Audience:** practitioners, advocates, editors, partner organisations, and future product builders.
 **Source material:** `Justice_Matrix_Background_Paper 1.docx`, `Strategic_refugee_asylum_cases___matrix.xlsx`, `Advocacy_campaigns_for_refugees_asylum_seekers___matrix.xlsx`, plus the live JusticeHub implementation.
 
@@ -45,6 +45,7 @@ The implementation includes:
 - A public hub at `/justice-matrix`.
 - A how-it-works and FAQ page at `/justice-matrix/how-it-works`.
 - A faceted and semantic explore surface at `/justice-matrix/explore`.
+- A live geographic atlas at `/justice-matrix/map`.
 - Case profiles at `/justice-matrix/cases/[id]`.
 - Campaign profiles at `/justice-matrix/campaigns/[id]`.
 - Issue profiles at `/justice-matrix/issues/[slug]`.
@@ -54,7 +55,7 @@ The implementation includes:
 - Scheduled ingestion and enrichment jobs.
 - Deterministic source adapters for HUDOC, CJEU/Curia, CourtListener, EDAL, and CanLII.
 
-The newest work added a featured "Start here" rail, Canadian CanLII ingestion, 25 legally reviewed Canadian refugee/asylum cases, issue profiles, and a surface gate so refugee and youth justice issues do not bleed into each other through shared category tags.
+The newest work added a featured "Start here" rail, Canadian CanLII ingestion, 25 legally reviewed Canadian refugee/asylum cases, issue profiles, a surface gate so refugee and youth justice issues do not bleed into each other through shared category tags, and the live map surface.
 
 ---
 
@@ -169,6 +170,28 @@ Use result types to narrow the field:
 - Cases when you need precedent.
 - Campaigns when you need movement strategy.
 - Evidence when you are working in the Australian youth-justice surface.
+
+### Search geographically in Map
+
+Open `/justice-matrix/map`.
+
+Use Map when geography matters. It shows the same corpus as Explore, but on a world map:
+
+- Cases, campaigns, and consent-gated evidence appear together.
+- Stored `lat`/`lng` values are used first when a record has true coordinates.
+- Records without stored coordinates are mapped to a labelled jurisdiction, court, state, country, regional, or global centroid.
+- Every point carries a precision label, so users can distinguish "recorded coordinates" from "country centroid" or "court city".
+
+Useful map workflows:
+
+- Search `Canada`, `offshore detention`, `non-refoulement`, `Raise the Age`, or `children in detention`.
+- Filter by type: case, campaign, or evidence.
+- Filter by surface: Refugee & Asylum, Youth Justice, or general strategic work.
+- Filter by region or topic.
+- Turn on "Recorded GPS only" when you only want records that already have stored coordinates.
+- Use "Near me" to sort mapped records by distance from the browser's current location, if location permission is granted.
+
+The map is intentionally honest about data quality. It is a research atlas, not a claim that every case or campaign happened at an exact street address.
 
 ### Use issue profiles for strategy
 

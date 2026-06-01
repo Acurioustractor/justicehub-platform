@@ -1,6 +1,6 @@
 # Justice Matrix — Handoff
 
-**Last updated:** 2026-05-30
+**Last updated:** 2026-06-01
 **For:** the next agent/session (Codex or otherwise) continuing this work.
 **Read first:** this file, then `docs/justice-matrix/vision-ux-and-health.md` (the dream + UX) and `docs/justice-matrix/historical-alignment.md` (verified state of everything built to date).
 
@@ -12,7 +12,7 @@ The Justice Matrix is positioned as the **National Justice Project / OHCHR "Glob
 
 This session shipped: a **featured "Start here" rail**, the **CanLII adapter** (Canadian refugee law, live + cron-validated), **25 Canadian cases**, data-hygiene fixes, the security-key purge merge, the flagship **Issue Profiles** feature (the "weave screen"), and the **issue surface gate**. All are on `main` and deployed.
 
-Follow-on local work added a **Justice Matrix guide/cover page** (`/justice-matrix/guide`), a **How it works + FAQ page** (`/justice-matrix/how-it-works`), and an **Ask the Matrix first pass** (`/justice-matrix/ask` + `/api/justice-matrix/ask`). The ask endpoint retrieves from the existing Matrix search API, returns cited records even without an AI provider key, and synthesizes when Gemini/Groq/OpenAI is configured.
+Follow-on local work added a **Justice Matrix guide/cover page** (`/justice-matrix/guide`), a **How it works + FAQ page** (`/justice-matrix/how-it-works`), an **Ask the Matrix first pass** (`/justice-matrix/ask` + `/api/justice-matrix/ask`), and a **live geographic map** (`/justice-matrix/map`). The ask endpoint retrieves from the existing Matrix search API, returns cited records even without an AI provider key, and synthesizes when Gemini/Groq/OpenAI is configured.
 
 Repo: `Acurioustractor/justicehub-platform`. Production: `https://www.justicehub.com.au` (apex 307-redirects to `www`). Supabase project: `tednluwflfhxyucgwigh` (shared, production).
 
@@ -81,6 +81,13 @@ Adapters live in `src/lib/justice-matrix/`: `hudoc-adapter`, `curia-adapter`, `c
 - **The People column is an invite placeholder** — no refugee lived-experience stories exist in the corpus yet (Empathy Ledger / `alma_evidence` is Australian-youth-grounded). This is the known weak spot.
 - 8 issues seeded: 4 refugee (`offshore-detention-third-country-transfer`, `non-refoulement-high-seas`, `immigration-detention-oversight`, `access-to-asylum-transit-bans`), 4 youth (`raise-the-age`, `children-in-detention-inquiries`, `justice-reinvestment-community-led`, `deaths-in-custody-recommendations`).
 - Design: all `/justice-matrix/*` routes use a LOCAL "research-tool" token set (`C`, `SANS`, `MONO` defined per-file), NOT the global JusticeHub editorial system. Match it. No em dashes, no AI-vocab in copy.
+
+### Map (the geographic atlas)
+- Page: `src/app/justice-matrix/map/page.tsx`; client map: `map/JusticeMatrixMapClient.tsx`; resolver: `src/lib/justice-matrix/geo.ts`.
+- Uses Leaflet with OpenStreetMap tiles. Leaflet is dynamically imported inside the client component because the package touches `window` during SSR.
+- Loads Matrix cases, campaigns, and consent-gated ALMA evidence. Evidence is Australia-scoped and labelled as such.
+- Uses stored `lat`/`lng` first. Missing coordinates are resolved to labelled court, state, country, regional, or global centroids. The UI exposes `precisionLabel` and `geoReason` so users do not over-read centroid accuracy.
+- Current local verification on 2026-06-01: `/justice-matrix/map` returned 200; browser rendered 1,014 mapped records, 1,014 marker nodes, and 16 loaded map tiles; no horizontal overflow at 1450px or 390px.
 
 ---
 

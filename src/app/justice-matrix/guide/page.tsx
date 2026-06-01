@@ -9,6 +9,7 @@ import {
   FileText,
   Globe2,
   Layers3,
+  MapPinned,
   Megaphone,
   MessageCircle,
   Scale,
@@ -111,6 +112,13 @@ const publicSurfaces = [
     label: 'Explore',
     icon: <Search className="h-4 w-4" />,
     job: 'Search by keyword or meaning, then filter by type, scope, category, outcome, or strength.',
+  },
+  {
+    route: '/justice-matrix/map',
+    href: '/justice-matrix/map',
+    label: 'Map',
+    icon: <MapPinned className="h-4 w-4" />,
+    job: 'Search the corpus on a world map, with coordinate precision, surface filters, and near-me sorting.',
   },
   {
     route: '/justice-matrix/how-it-works',
@@ -242,6 +250,7 @@ export default async function JusticeMatrixGuidePage() {
                 <HeroLink href="/justice-matrix/how-it-works">How it works</HeroLink>
                 <HeroLink href="/justice-matrix/issues">Start from an issue</HeroLink>
                 <HeroLink href="/justice-matrix/explore">Open Explore</HeroLink>
+                <HeroLink href="/justice-matrix/map">Open Map</HeroLink>
               </div>
             </div>
             <div
