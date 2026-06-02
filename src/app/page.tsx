@@ -25,6 +25,7 @@ import { fmt } from '@/lib/format';
 import { getDetentionCosts } from '@/lib/detention-costs';
 
 export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 const audienceRoutes = [
   {
@@ -110,15 +111,118 @@ const journeySteps = [
   },
 ];
 
+type MetricIssue = {
+  source: string;
+  message: string;
+};
+
+type SupabaseLikeResult<T = any> = {
+  data: T | null;
+  count?: number | null;
+  error?: {
+    code?: string;
+    message?: string;
+    details?: string | null;
+  } | null;
+};
+
+function logMetricIssues(issues: MetricIssue[]) {
+  if (issues.length === 0) return;
+
+  console.warn(
+    '[homepage-metrics] Some live metrics were withheld instead of rendered as zero:',
+    issues.map((issue) => `${issue.source}: ${issue.message}`).join(' | ')
+  );
+}
+
+function issueMessage(error: SupabaseLikeResult['error']) {
+  return [error?.code, error?.message, error?.details].filter(Boolean).join(' — ') || 'Unknown query failure';
+}
+
+function readCount(result: SupabaseLikeResult, source: string, issues: MetricIssue[]): number | null {
+  if (result.error) {
+    issues.push({ source, message: issueMessage(result.error) });
+    return null;
+  }
+
+  if (typeof result.count === 'number') return result.count;
+
+  issues.push({ source, message: 'No count returned' });
+  return null;
+}
+
+function readRows<T>(result: SupabaseLikeResult<T[]>, source: string, issues: MetricIssue[]): T[] | null {
+  if (result.error) {
+    issues.push({ source, message: issueMessage(result.error) });
+    return null;
+  }
+
+  if (Array.isArray(result.data)) return result.data;
+  return [];
+}
+
+function formatCountMetric(value: number | null): string {
+  return value === null ? 'Source check' : value.toLocaleString();
+}
+
+function formatMoneyMetric(value: number | null): string {
+  return value === null ? 'Source check' : fmt(value);
+}
+
+function formatRatioMetric(value: number | null): string {
+  return value === null ? 'Source check' : `${value}x`;
+}
+
+function metricPhrase(value: number | null, label: string): string {
+  return value === null ? `${label} under source check` : `${value.toLocaleString()} ${label}`;
+}
+
+async function loadCostRows(supabase: any, issues: MetricIssue[]) {
+  const baseQuery = () =>
+    supabase
+      .from('alma_interventions')
+      .select('cost_per_young_person', { count: 'exact' })
+      .neq('verification_status', 'ai_generated')
+      .not('cost_per_young_person', 'is', null)
+      .gt('cost_per_young_person', 0)
+      .lt('cost_per_young_person', 500000);
+
+  const firstPage = await baseQuery().range(0, 999);
+  const rows = readRows<{ cost_per_young_person: number | string | null }>(
+    firstPage,
+    'alma_interventions.cost_per_young_person',
+    issues
+  );
+
+  if (!rows) return { rows: null, count: null };
+
+  const total = typeof firstPage.count === 'number' ? firstPage.count : rows.length;
+  let allRows = rows;
+
+  for (let start = 1000; start < total; start += 1000) {
+    const page = await baseQuery().range(start, start + 999);
+    const pageRows = readRows<{ cost_per_young_person: number | string | null }>(
+      page,
+      `alma_interventions.cost_per_young_person page ${Math.floor(start / 1000) + 1}`,
+      issues
+    );
+    if (!pageRows) break;
+    allRows = allRows.concat(pageRows);
+  }
+
+  return { rows: allRows, count: total };
+}
+
 async function loadHomePageData() {
   const supabase = createServiceClient() as any;
+  const metricIssues: MetricIssue[] = [];
 
   const [
     interventionsRes,
     youthJusticeInterventionsRes,
     evidenceRatedInterventionsRes,
-    costDataRes,
-    fundingRes,
+    fundingCountRes,
+    fundingTotalRes,
     orgRes,
     basecampsRes,
     evidenceRes,
@@ -140,16 +244,10 @@ async function loadHomePageData() {
       .neq('verification_status', 'ai_generated')
       .neq('evidence_level', 'Untested (theory/pilot stage)'),
     supabase
-      .from('alma_interventions')
-      .select('cost_per_young_person')
-      .neq('verification_status', 'ai_generated')
-      .not('cost_per_young_person', 'is', null)
-      .gt('cost_per_young_person', 0)
-      .lt('cost_per_young_person', 500000),
-    supabase
       .from('justice_funding')
-      .select('amount_dollars')
+      .select('id', { count: 'exact', head: true })
       .gt('amount_dollars', 0),
+    supabase.rpc('get_funding_total').single(),
     supabase
       .from('organizations')
       .select('id', { count: 'planned', head: true })
@@ -176,13 +274,18 @@ async function loadHomePageData() {
       .eq('status', 'open'),
   ]);
 
-  const costData = (costDataRes.data || []).map((r: any) => Number(r.cost_per_young_person)).filter((n: number) => n > 0);
-  const funding = fundingRes.data || [];
-  const basecamps = basecampsRes.data || [];
-  const stories = storiesRes.data || [];
-  const catalogueCount = interventionsRes.count || 0;
-  const youthJusticeCount = youthJusticeInterventionsRes.count || 0;
-  const evidenceRatedCount = evidenceRatedInterventionsRes.count || 0;
+  const { rows: costRows, count: costDataCount } = await loadCostRows(supabase, metricIssues);
+  const costData = (costRows || []).map((r: any) => Number(r.cost_per_young_person)).filter((n: number) => n > 0);
+  const basecamps = readRows(basecampsRes, 'organizations.basecamps', metricIssues) || [];
+  const stories = readRows(storiesRes, 'articles.published', metricIssues) || [];
+  const catalogueCount = readCount(interventionsRes, 'alma_interventions.catalogue_count', metricIssues);
+  const youthJusticeCount = readCount(youthJusticeInterventionsRes, 'alma_interventions.youth_justice_count', metricIssues);
+  const evidenceRatedCount = readCount(evidenceRatedInterventionsRes, 'alma_interventions.evidence_rated_count', metricIssues);
+  const fundingRecordCount = readCount(fundingCountRes, 'justice_funding.record_count', metricIssues);
+  const fundingTotalData = !fundingTotalRes.error && fundingTotalRes.data ? fundingTotalRes.data as any : null;
+  if (fundingTotalRes.error) {
+    metricIssues.push({ source: 'get_funding_total.rpc', message: issueMessage(fundingTotalRes.error) });
+  }
 
   // Centre of Excellence headline counts — triangulation tier distribution + ACCO tally.
   const [triangulationRes, accoRes, tier1ConfirmedRes] = await Promise.all([
@@ -190,47 +293,74 @@ async function loadHomePageData() {
     supabase.from('organizations').select('id', { count: 'exact', head: true }).eq('acco_certified', true).eq('is_active', true),
     supabase.from('civic_org_classifications').select('id', { count: 'exact', head: true }).eq('tier', 1).not('confirmed_at', 'is', null),
   ]);
-  const triangulationRows = (triangulationRes.data || []) as Array<{ triangulation_tier: string }>;
+  const triangulationRows = readRows<{ triangulation_tier: string }>(
+    triangulationRes,
+    'v_claim_evidence_summary.triangulation_tier',
+    metricIssues
+  );
   const tierCounts = {
-    triangulated: triangulationRows.filter((r) => r.triangulation_tier === 'triangulated').length,
-    corroborated: triangulationRows.filter((r) => r.triangulation_tier === 'corroborated').length,
-    single: triangulationRows.filter((r) => r.triangulation_tier === 'single_source').length,
-    total: triangulationRows.length,
+    triangulated: triangulationRows ? triangulationRows.filter((r) => r.triangulation_tier === 'triangulated').length : null,
+    corroborated: triangulationRows ? triangulationRows.filter((r) => r.triangulation_tier === 'corroborated').length : null,
+    single: triangulationRows ? triangulationRows.filter((r) => r.triangulation_tier === 'single_source').length : null,
+    total: triangulationRows ? triangulationRows.length : null,
   };
-  const accoCount = accoRes.count || 0;
-  const tier1Count = tier1ConfirmedRes.count || 0;
+  const accoCount = readCount(accoRes, 'organizations.acco_certified_count', metricIssues);
+  const tier1Count = readCount(tier1ConfirmedRes, 'civic_org_classifications.tier1_confirmed_count', metricIssues);
 
-  const totalFunding = funding.reduce((sum: number, f: any) => sum + (Number(f.amount_dollars) || 0), 0);
-  const avgCost = costData.length ? Math.round(costData.reduce((a: number, b: number) => a + b, 0) / costData.length) : 8500;
-  const detentionCostsData = await getDetentionCosts();
-  const detentionCost = detentionCostsData.national.annualCost;
-  const nationalDailyCost = detentionCostsData.national.dailyCost;
-  const ntDailyCost = detentionCostsData.byState.NT?.dailyCost || nationalDailyCost;
-  const ratio = Math.round(detentionCost / avgCost);
+  const totalFunding = fundingTotalData?.total_dollars ? Number(fundingTotalData.total_dollars) : null;
+  const avgCost = costData.length ? Math.round(costData.reduce((a: number, b: number) => a + b, 0) / costData.length) : null;
+
+  let detentionCost: number | null = null;
+  let nationalDailyCost: number | null = null;
+  let ntDailyCost: number | null = null;
+  let detentionFinancialYear: string | null = null;
+  try {
+    const detentionCostsData = await getDetentionCosts();
+    if (detentionCostsData.national.dailyCost > 0 && detentionCostsData.national.annualCost > 0) {
+      detentionCost = detentionCostsData.national.annualCost;
+      nationalDailyCost = detentionCostsData.national.dailyCost;
+      ntDailyCost = detentionCostsData.byState.NT?.dailyCost || nationalDailyCost;
+      detentionFinancialYear = detentionCostsData.financialYear;
+    } else {
+      metricIssues.push({ source: 'rogs_justice_spending.detention_costs', message: 'ROGS detention costs returned zero or missing daily cost' });
+    }
+  } catch (error) {
+    metricIssues.push({ source: 'rogs_justice_spending.detention_costs', message: error instanceof Error ? error.message : 'Unknown detention cost failure' });
+  }
+
+  const ratio = detentionCost && avgCost ? Math.round(detentionCost / avgCost) : null;
+  const evidenceCount = readCount(evidenceRes, 'alma_evidence.count', metricIssues);
+  const youthOppsCount = readCount(youthOppsRes, 'youth_opportunities.open_count', metricIssues);
+  const orgCount = readCount(orgRes, 'organizations.active_count', metricIssues);
+
+  logMetricIssues(metricIssues);
 
   return {
     catalogueCount,
     youthJusticeCount,
     evidenceRatedCount,
-    costDataCount: costData.length,
+    costDataCount,
     basecamps,
     stories,
-    evidenceCount: evidenceRes.count || 0,
-    youthOppsCount: youthOppsRes.count || 0,
-    orgCount: orgRes.count || 0,
+    evidenceCount,
+    youthOppsCount,
+    orgCount,
     tierCounts,
     accoCount,
     tier1Count,
+    fundingRecordCount,
     totalFunding,
     avgCost,
     detentionCost,
     nationalDailyCost,
     ntDailyCost,
+    detentionFinancialYear,
     ratio,
+    metricIssues,
   };
 }
 
-const getHomePageData = unstable_cache(loadHomePageData, ['justicehub-home-public-v2'], {
+const getHomePageData = unstable_cache(loadHomePageData, ['justicehub-home-public-v3'], {
   revalidate: 300,
   tags: ['homepage'],
 });
@@ -249,13 +379,24 @@ export default async function HomePage() {
     tierCounts,
     accoCount,
     tier1Count,
+    fundingRecordCount,
     totalFunding,
     avgCost,
     detentionCost,
     nationalDailyCost,
     ntDailyCost,
+    detentionFinancialYear,
     ratio,
+    metricIssues,
   } = await getHomePageData();
+
+  const hasMetricIssues = metricIssues.length > 0;
+  const fundingDisplayValue = totalFunding !== null
+    ? formatMoneyMetric(totalFunding)
+    : fundingRecordCount !== null
+      ? fundingRecordCount.toLocaleString()
+      : 'Source check';
+  const fundingDisplayLabel = totalFunding !== null ? 'funding tracked' : 'funding records indexed';
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#0A0A0A]">
@@ -270,7 +411,7 @@ export default async function HomePage() {
               className="text-sm uppercase tracking-[0.3em] text-[#DC2626] mb-6"
               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
             >
-              {youthJusticeCount.toLocaleString()} youth-justice records. {evidenceRatedCount.toLocaleString()} evidence-rated. {ratio}x average cost gap.
+              {metricPhrase(youthJusticeCount, 'youth-justice records')}. {metricPhrase(evidenceRatedCount, 'evidence-rated')}. {ratio === null ? 'Cost gap under source check.' : `${ratio}x average cost gap.`}
             </p>
             <h1
               className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.05]"
@@ -289,6 +430,11 @@ export default async function HomePage() {
               The numbers are catalogue records, not endorsements. Each record should be read with its evidence level,
               source trail, location, and review status so weak signals stay visible.
             </p>
+            {hasMetricIssues && (
+              <p className="mb-8 max-w-2xl rounded-lg border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-sm leading-6 text-amber-50">
+                Some live totals are under source check, so JusticeHub is not publishing placeholder zeroes for them.
+              </p>
+            )}
 
             <div className="flex flex-wrap gap-3">
               <Link
@@ -479,22 +625,22 @@ export default async function HomePage() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="border-2 border-emerald-300 bg-emerald-50 p-4 rounded">
-                <p className="text-3xl font-bold text-emerald-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{tierCounts.triangulated}</p>
+                <p className="text-3xl font-bold text-emerald-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{formatCountMetric(tierCounts.triangulated)}</p>
                 <p className="text-xs font-mono uppercase tracking-widest text-emerald-800 mt-1">Triangulated claims</p>
                 <p className="text-xs text-stone-600 mt-1">Checked against 3+ sources</p>
               </div>
               <div className="border-2 border-amber-300 bg-amber-50 p-4 rounded">
-                <p className="text-3xl font-bold text-amber-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{tierCounts.corroborated}</p>
+                <p className="text-3xl font-bold text-amber-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{formatCountMetric(tierCounts.corroborated)}</p>
                 <p className="text-xs font-mono uppercase tracking-widest text-amber-800 mt-1">Corroborated</p>
                 <p className="text-xs text-stone-600 mt-1">Checked against 2 sources</p>
               </div>
               <div className="border-2 border-stone-300 bg-white p-4 rounded">
-                <p className="text-3xl font-bold text-stone-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{tier1Count.toLocaleString()}</p>
+                <p className="text-3xl font-bold text-stone-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{formatCountMetric(tier1Count)}</p>
                 <p className="text-xs font-mono uppercase tracking-widest text-stone-600 mt-1">Tier 1 frontline YJ orgs</p>
                 <p className="text-xs text-stone-600 mt-1">Confirmed in civic register</p>
               </div>
               <div className="border-2 border-purple-300 bg-purple-50 p-4 rounded">
-                <p className="text-3xl font-bold text-purple-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{accoCount.toLocaleString()}</p>
+                <p className="text-3xl font-bold text-purple-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{formatCountMetric(accoCount)}</p>
                 <p className="text-xs font-mono uppercase tracking-widest text-purple-800 mt-1">ACCO certified</p>
                 <p className="text-xs text-stone-600 mt-1">Via ORIC public register</p>
               </div>
@@ -521,10 +667,14 @@ export default async function HomePage() {
                   className="text-4xl font-bold"
                   style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#DC2626' }}
                 >
-                  {fmt(detentionCost)}
+                  {formatMoneyMetric(detentionCost)}
                 </p>
                 <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.8)' }}>per young person per year</p>
-                <p className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.5)' }}>${nationalDailyCost.toLocaleString()}/day national average. NT: ${ntDailyCost.toLocaleString()}/day.</p>
+                <p className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  {nationalDailyCost !== null && ntDailyCost !== null
+                    ? `$${nationalDailyCost.toLocaleString()}/day national average. NT: $${ntDailyCost.toLocaleString()}/day. ROGS ${detentionFinancialYear}.`
+                    : 'ROGS detention cost source is under check; no placeholder zero published.'}
+                </p>
               </div>
               <div className="bg-[#059669]/10 rounded-xl p-6 border border-[#059669]/20">
                 <p
@@ -537,19 +687,23 @@ export default async function HomePage() {
                   className="text-4xl font-bold"
                   style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#059669' }}
                 >
-                  {fmt(avgCost)}
+                  {formatMoneyMetric(avgCost)}
                 </p>
                 <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.8)' }}>per young person (average)</p>
-                <p className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.5)' }}>Across {costDataCount} models with cost data.</p>
+                <p className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                  {costDataCount !== null ? `Across ${costDataCount.toLocaleString()} models with cost data.` : 'Cost model count is under source check.'}
+                </p>
               </div>
               <div className="bg-white/5 rounded-xl p-6 border border-white/10 flex flex-col justify-center">
                 <p
                   className="text-5xl font-bold"
                   style={{ fontFamily: "'Space Grotesk', sans-serif", color: '#ffffff' }}
                 >
-                  {ratio}x
+                  {formatRatioMetric(ratio)}
                 </p>
-                <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.8)' }}>cheaper. Better outcomes. Proven.</p>
+                <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                  {ratio === null ? 'Cost comparison held until both source paths are clean.' : 'cheaper. Better outcomes. Proven.'}
+                </p>
                 <Link
                   href="/calculator"
                   className="text-sm font-semibold text-[#059669] mt-3 flex items-center gap-1 hover:underline"
@@ -630,7 +784,9 @@ export default async function HomePage() {
                 Shift policy and money
               </h3>
               <p className="text-sm text-[#0A0A0A]/60 mb-4">
-                See the evidence. {catalogueCount.toLocaleString()} support records are catalogued, with {evidenceRatedCount.toLocaleString()} carrying an evidence signal. Use that to ask better questions.
+                {catalogueCount !== null && evidenceRatedCount !== null
+                  ? `See the evidence. ${catalogueCount.toLocaleString()} support records are catalogued, with ${evidenceRatedCount.toLocaleString()} carrying an evidence signal. Use that to ask better questions.`
+                  : 'See the evidence. Live support-record totals are under source check, so the page is not publishing a placeholder number.'}
               </p>
               <span className="inline-flex items-center gap-2 font-semibold text-sm text-[#0A0A0A]/60 group-hover:underline">
                 See the proof <ArrowRight className="w-4 h-4" />
@@ -665,9 +821,9 @@ export default async function HomePage() {
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   {[
                     { value: basecamps.length, label: 'Basecamps' },
-                    { value: catalogueCount.toLocaleString(), label: 'ALMA Records' },
-                    { value: evidenceCount.toLocaleString(), label: 'Evidence Items' },
-                    { value: youthOppsCount, label: 'Open Opportunities' },
+                    { value: formatCountMetric(catalogueCount), label: 'ALMA Records' },
+                    { value: formatCountMetric(evidenceCount), label: 'Evidence Items' },
+                    { value: formatCountMetric(youthOppsCount), label: 'Open Opportunities' },
                   ].map((s) => (
                     <div key={s.label}>
                       <p
@@ -745,19 +901,19 @@ export default async function HomePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link href="/proof" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
               <Shield className="w-5 h-5 text-[#059669] mb-2" />
-              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{catalogueCount.toLocaleString()}</p>
+              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{formatCountMetric(catalogueCount)}</p>
               <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>support records</p>
               <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">Wall of Proof <ArrowRight className="w-3 h-3" /></span>
             </Link>
             <Link href="/follow-the-money" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
               <DollarSign className="w-5 h-5 text-[#DC2626] mb-2" />
-              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{fmt(totalFunding)}</p>
-              <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>funding tracked</p>
+              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{fundingDisplayValue}</p>
+              <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>{fundingDisplayLabel}</p>
               <span className="text-xs font-semibold text-[#DC2626] mt-2 flex items-center gap-1 group-hover:underline">Follow the Money <ArrowRight className="w-3 h-3" /></span>
             </Link>
             <Link href="/funders" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
               <Users className="w-5 h-5 text-[#0A0A0A]/60 mb-2" />
-              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{orgCount.toLocaleString()}</p>
+              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{formatCountMetric(orgCount)}</p>
               <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>organisations</p>
               <span className="text-xs font-semibold text-[#0A0A0A]/60 mt-2 flex items-center gap-1 group-hover:underline">Funders <ArrowRight className="w-3 h-3" /></span>
             </Link>
