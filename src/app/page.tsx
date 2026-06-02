@@ -899,11 +899,11 @@ export default async function HomePage() {
           </p>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link href="/proof" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
+            <Link href="/directory" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
               <Shield className="w-5 h-5 text-[#059669] mb-2" />
               <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{formatCountMetric(catalogueCount)}</p>
               <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>support records</p>
-              <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">Wall of Proof <ArrowRight className="w-3 h-3" /></span>
+              <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">National Directory <ArrowRight className="w-3 h-3" /></span>
             </Link>
             <Link href="/follow-the-money" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
               <DollarSign className="w-5 h-5 text-[#DC2626] mb-2" />
