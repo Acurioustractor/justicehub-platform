@@ -13,8 +13,10 @@ type ServicesCompleteRow = {
   contact: Record<string, unknown> | null;
   score: number | null;
   updated_at: string | null;
+  last_verified_at?: string | null;
   last_scraped_at: string | null;
   url: string | null;
+  verification_status?: string | null;
   active: boolean | null;
   indigenous_specific: boolean | null;
   youth_specific: boolean | null;
@@ -30,7 +32,9 @@ export interface ServiceDetailPayload {
   cost: 'free' | 'low' | 'moderate' | 'unknown';
   rating: number;
   verified: boolean;
+  verificationStatus?: string | null;
   lastUpdated: string;
+  lastVerifiedAt?: string | null;
   source?: string | null;
   aiDiscovered: boolean;
   eligibility: string[];
@@ -55,6 +59,11 @@ export async function getServiceDetailResult(serviceId: string): Promise<Service
   }
 
   const supabase = createServiceClient();
+  const fallback = await getFallbackServiceDetailResult(supabase, serviceId);
+  if (fallback) {
+    return fallback;
+  }
+
   const { data: service, error } = await supabase
     .from('services_complete')
     .select('*')
@@ -63,11 +72,6 @@ export async function getServiceDetailResult(serviceId: string): Promise<Service
     .single();
 
   if (error) {
-    const fallback = await getFallbackServiceDetailResult(supabase, serviceId);
-    if (fallback) {
-      return fallback;
-    }
-
     if (error.code === 'PGRST116') {
       return { status: 404, body: { error: 'Service not found' } };
     }
@@ -92,8 +96,10 @@ export async function getServiceDetailResult(serviceId: string): Promise<Service
     contact: extractContact(row),
     cost: mapCost('unknown'),
     rating: Math.round((row.score || 0.5) * 5 * 100) / 100,
-    verified: (row.score || 0) >= 0.8,
+    verified: (row.score || 0) >= 0.8 || isVerified(row.verification_status),
+    verificationStatus: row.verification_status || null,
     lastUpdated: formatTimestamp(row.last_scraped_at || row.updated_at),
+    lastVerifiedAt: row.last_verified_at || null,
     source: row.url,
     aiDiscovered: true,
     eligibility: [],
@@ -182,7 +188,9 @@ function buildServiceDetailFromCatalog(
     cost: mapCost(row.cost),
     rating: confidenceScore ? Math.round(confidenceScore * 5 * 100) / 100 : 0,
     verified: isVerified(row.verification_status),
+    verificationStatus: row.verification_status,
     lastUpdated: formatTimestamp(row.updated_at || row.created_at),
+    lastVerifiedAt: row.last_verified_at,
     source,
     aiDiscovered: row.data_source === 'ai_scrape' || row.data_source === 'ai_generated',
     eligibility: row.eligibility_criteria || [],

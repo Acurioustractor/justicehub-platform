@@ -28,6 +28,7 @@ export type NormalizedServiceCatalogRow = Record<string, unknown> & {
   youth_specific: boolean;
   indigenous_specific: boolean;
   updated_at: string | null;
+  last_verified_at: string | null;
   created_at: string | null;
   url: string | null;
 };
@@ -104,6 +105,7 @@ export function normalizeServiceCatalogRow(row: Record<string, unknown>): Normal
     youth_specific: row.youth_specific === true,
     indigenous_specific: row.indigenous_specific === true,
     updated_at: firstString(row.updated_at, row.last_scraped_at),
+    last_verified_at: firstString(row.last_verified_at, row.source_checked_at),
     created_at: firstString(row.created_at),
     url,
   };

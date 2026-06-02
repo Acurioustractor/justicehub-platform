@@ -27,6 +27,13 @@ import {
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { trackJourneyEvent } from '@/lib/analytics/journey';
 import { RecordTrustBadges, TrustBadgeLegend } from '@/components/trust/RecordTrustBadges';
+import {
+  getServiceTrustStatus,
+  isFreshSourceChecked,
+  isHumanVerifiedStatus,
+  serviceTrustScore,
+  type ServiceTrustTone,
+} from '@/lib/services/trust-status';
 
 type ServiceCategory =
   | 'legal'
@@ -50,6 +57,7 @@ interface Service {
   verified: boolean;
   verificationStatus?: string | null;
   lastUpdated: string | null;
+  lastVerifiedAt?: string | null;
   source?: string | null;
   eligibility?: string[];
   subcategory?: string;
@@ -75,6 +83,7 @@ interface ApiServiceRecord {
   cost?: string | null;
   verification_status?: string | null;
   updated_at?: string | null;
+  last_verified_at?: string | null;
   created_at?: string | null;
   data_source_url?: string | null;
   eligibility_criteria?: string[] | null;
@@ -263,6 +272,27 @@ function categoryLabel(categoryId: string): string {
   return categories.find((category) => category.id === categoryId)?.label || categoryId;
 }
 
+function trustNoticeClasses(tone: ServiceTrustTone): string {
+  switch (tone) {
+    case 'strong':
+      return 'border-[#10B981]/35 bg-[#ECFDF5] text-[#064E3B]';
+    case 'community':
+      return 'border-[#A855F7]/35 bg-[#FAF5FF] text-[#581C87]';
+    case 'fresh':
+      return 'border-[#0284C7]/30 bg-[#F0F9FF] text-[#075985]';
+    case 'source':
+      return 'border-[#0EA5E9]/25 bg-[#F0F9FF] text-[#075985]';
+    case 'review':
+    default:
+      return 'border-[#F97316]/25 bg-[#FFF7ED] text-[#7C2D12]';
+  }
+}
+
+function sourceCheckLabel(lastVerifiedAt?: string | null): string {
+  if (!lastVerifiedAt) return 'Source freshness not checked';
+  return `Source checked ${formatDate(lastVerifiedAt)}`;
+}
+
 export default function ServicesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -314,9 +344,10 @@ export default function ServicesPage() {
             location: formatLocation(service.location),
             contact: service.contact?.phone || service.contact?.email || 'Open record for contact details',
             cost: formatCost(service.cost),
-            verified: service.verification_status === 'verified',
+            verified: isHumanVerifiedStatus(service.verification_status),
             verificationStatus: service.verification_status || null,
             lastUpdated: service.updated_at || service.created_at || null,
+            lastVerifiedAt: service.last_verified_at || null,
             source,
             eligibility: service.eligibility_criteria || [],
             subcategory: primaryCategory,
@@ -344,9 +375,12 @@ export default function ServicesPage() {
     return counts;
   }, [services]);
 
-  const verifiedCount = useMemo(() => services.filter((service) => service.verified).length, [services]);
   const sourceLinkedCount = useMemo(() => services.filter((service) => service.source).length, [services]);
-  const needsReviewCount = Math.max(services.length - verifiedCount, 0);
+  const freshSourceCount = useMemo(
+    () => services.filter((service) => service.source && isFreshSourceChecked(service.lastVerifiedAt)).length,
+    [services],
+  );
+  const catalogueLeadCount = useMemo(() => services.filter((service) => !service.source).length, [services]);
 
   const filteredServices = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -384,9 +418,9 @@ export default function ServicesPage() {
     return [...filteredServices].sort((a, b) => {
       switch (sortBy) {
         case 'traceable': {
-          const aTraceable = Number(Boolean(a.source)) + Number(a.verified);
-          const bTraceable = Number(Boolean(b.source)) + Number(b.verified);
-          if (aTraceable !== bTraceable) return bTraceable - aTraceable;
+          const aTrust = serviceTrustScore(a);
+          const bTrust = serviceTrustScore(b);
+          if (aTrust !== bTrust) return bTrust - aTrust;
           return a.name.localeCompare(b.name);
         }
         case 'name-desc':
@@ -479,9 +513,9 @@ export default function ServicesPage() {
                 Find support near the moment it matters.
               </h1>
               <p className="max-w-2xl text-base leading-7 text-white/70 md:text-lg">
-                Search youth justice support records across Australia. These are catalogue records,
-                not endorsements, so check the badges, source link, and service details before
-                relying on any record.
+                Search youth justice support leads across Australia. Most records are catalogue
+                entries, not referrals. Treat a record as stronger only when the badges show a
+                source link, recent source check, community review, or human verification.
               </p>
 
               <div className="mt-7 rounded-lg border border-white/15 bg-white p-2 shadow-2xl">
@@ -535,7 +569,8 @@ export default function ServicesPage() {
               <div className="space-y-4 text-sm leading-6 text-white/70">
                 <p>
                   Start broad, then narrow by state, category, and cost. Open the record before
-                  contacting anyone, and prefer records with a source trail or human review.
+                  contacting anyone. If the record says catalogue lead, use it as a clue and confirm
+                  details with the organisation or a trusted local worker.
                 </p>
                 <TrustBadgeLegend className="border-white/10 bg-white text-[#0A0A0A]" />
               </div>
@@ -572,9 +607,9 @@ export default function ServicesPage() {
           <div className="mx-auto grid max-w-7xl gap-px bg-[#0A0A0A] px-0 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
-                label: 'Records loaded',
+                label: 'Catalogue records',
                 value: loading ? '...' : services.length.toLocaleString(),
-                body: 'Broad catalogue, still being reviewed.',
+                body: 'Useful leads, not endorsements.',
               },
               {
                 label: 'Source linked',
@@ -582,14 +617,14 @@ export default function ServicesPage() {
                 body: 'Records with a public source trail.',
               },
               {
-                label: 'Human verified',
-                value: loading ? '...' : verifiedCount.toLocaleString(),
-                body: 'Confirmed records where metadata allows it.',
+                label: 'Fresh source checks',
+                value: loading ? '...' : freshSourceCount.toLocaleString(),
+                body: 'Source checked in the last 90 days.',
               },
               {
-                label: 'Needs review',
-                value: loading ? '...' : needsReviewCount.toLocaleString(),
-                body: 'Useful leads, not final recommendations.',
+                label: 'Source still needed',
+                value: loading ? '...' : catalogueLeadCount.toLocaleString(),
+                body: 'No public source attached yet.',
               },
             ].map((stat) => (
               <div key={stat.label} className="bg-[#F7F3EA] px-6 py-5 text-[#0A0A0A]">
@@ -698,7 +733,7 @@ export default function ServicesPage() {
                     onChange={(event) => setSortBy(event.target.value)}
                     className="w-full rounded-md border border-[#0A0A0A]/20 bg-white px-3 py-2 text-sm font-medium focus:border-[#0A0A0A] focus:outline-none"
                   >
-                    <option value="traceable">Most traceable first</option>
+                    <option value="traceable">Strongest trust first</option>
                     <option value="name-asc">Name A-Z</option>
                     <option value="name-desc">Name Z-A</option>
                     <option value="location-asc">Location A-Z</option>
@@ -733,7 +768,7 @@ export default function ServicesPage() {
             <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
               <div>
                 <h2 className="text-2xl font-black">
-                  {loading ? 'Loading services' : `${sortedServices.length.toLocaleString()} services found`}
+                  {loading ? 'Loading records' : `${sortedServices.length.toLocaleString()} records found`}
                 </h2>
                 <p className="mt-1 text-sm text-[#0A0A0A]/60">
                   {loading
@@ -882,6 +917,9 @@ export default function ServicesPage() {
 }
 
 function ServiceCard({ service, onOpen }: { service: Service; onOpen: () => void }) {
+  const trustStatus = getServiceTrustStatus(service);
+  const sourceFresh = isFreshSourceChecked(service.lastVerifiedAt);
+
   return (
     <article className="flex h-full flex-col rounded-lg border border-[#0A0A0A]/12 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#0A0A0A] hover:shadow-[0_16px_40px_rgba(10,10,10,0.08)]">
       <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
@@ -893,6 +931,11 @@ function ServiceCard({ service, onOpen }: { service: Service; onOpen: () => void
 
       <h3 className="text-xl font-black leading-tight">{service.name}</h3>
 
+      <div className={`mt-3 rounded-md border px-3 py-2 text-xs leading-5 ${trustNoticeClasses(trustStatus.tone)}`}>
+        <div className="font-mono font-bold uppercase tracking-[0.12em]">{trustStatus.shortLabel}</div>
+        <div className="mt-0.5">{trustStatus.description}</div>
+      </div>
+
       <RecordTrustBadges
         className="mt-3"
         verificationStatus={service.verificationStatus}
@@ -900,8 +943,9 @@ function ServiceCard({ service, onOpen }: { service: Service; onOpen: () => void
         locationLabel={service.location}
         hasCostData={service.cost !== 'unknown'}
         hasSource={Boolean(service.source)}
+        sourceFresh={sourceFresh}
         sourceLabel={service.source ? 'Service source' : null}
-        maxBadges={4}
+        maxBadges={5}
       />
 
       <p className="mt-4 line-clamp-4 text-sm leading-6 text-[#0A0A0A]/65">{service.description}</p>
@@ -935,11 +979,20 @@ function ServiceCard({ service, onOpen }: { service: Service; onOpen: () => void
             href={service.source}
             target="_blank"
             rel="noreferrer"
+            title={sourceCheckLabel(service.lastVerifiedAt)}
             className="inline-flex items-center gap-2 rounded-full border border-[#0A0A0A]/15 px-4 py-2 text-sm font-bold transition-colors hover:border-[#0A0A0A]"
           >
             Source
             <ExternalLink className="h-4 w-4" />
           </a>
+        )}
+        {!service.source && (
+          <span
+            title="No public source URL is attached to this catalogue record yet."
+            className="inline-flex items-center gap-2 rounded-full border border-[#F97316]/25 bg-[#FFF7ED] px-4 py-2 text-sm font-bold text-[#7C2D12]"
+          >
+            No source yet
+          </span>
         )}
       </div>
     </article>
@@ -947,6 +1000,9 @@ function ServiceCard({ service, onOpen }: { service: Service; onOpen: () => void
 }
 
 function ServiceRow({ service, onOpen }: { service: Service; onOpen: () => void }) {
+  const trustStatus = getServiceTrustStatus(service);
+  const sourceFresh = isFreshSourceChecked(service.lastVerifiedAt);
+
   return (
     <article className="rounded-lg border border-[#0A0A0A]/12 bg-white p-4 transition-colors hover:border-[#0A0A0A]">
       <div className="grid gap-4 lg:grid-cols-[1fr_220px_auto] lg:items-center">
@@ -961,11 +1017,15 @@ function ServiceRow({ service, onOpen }: { service: Service; onOpen: () => void 
               locationLabel={service.location}
               hasCostData={service.cost !== 'unknown'}
               hasSource={Boolean(service.source)}
+              sourceFresh={sourceFresh}
               compact
-              maxBadges={4}
+              maxBadges={5}
             />
           </div>
           <h3 className="text-lg font-black">{service.name}</h3>
+          <div className={`mt-2 inline-flex rounded-full border px-2.5 py-1 text-[11px] font-bold ${trustNoticeClasses(trustStatus.tone)}`}>
+            {trustStatus.label}
+          </div>
           <p className="mt-1 line-clamp-2 text-sm leading-6 text-[#0A0A0A]/60">{service.description}</p>
         </div>
         <div className="space-y-1 text-sm text-[#0A0A0A]/65">
@@ -992,11 +1052,20 @@ function ServiceRow({ service, onOpen }: { service: Service; onOpen: () => void 
               href={service.source}
               target="_blank"
               rel="noreferrer"
+              title={sourceCheckLabel(service.lastVerifiedAt)}
               className="inline-flex items-center gap-2 rounded-full border border-[#0A0A0A]/15 px-4 py-2 text-sm font-bold transition-colors hover:border-[#0A0A0A]"
             >
               Source
               <ExternalLink className="h-4 w-4" />
             </a>
+          )}
+          {!service.source && (
+            <span
+              title="No public source URL is attached to this catalogue record yet."
+              className="inline-flex items-center gap-2 rounded-full border border-[#F97316]/25 bg-[#FFF7ED] px-4 py-2 text-sm font-bold text-[#7C2D12]"
+            >
+              No source yet
+            </span>
           )}
         </div>
       </div>

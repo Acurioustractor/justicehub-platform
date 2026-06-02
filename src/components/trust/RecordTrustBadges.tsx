@@ -23,6 +23,7 @@ export interface RecordTrustBadgeInput {
   locationLabel?: string | null;
   hasCostData?: boolean | null;
   hasSource?: boolean | null;
+  sourceFresh?: boolean | null;
   sourceLabel?: string | null;
   communityControlled?: boolean | null;
   humanConfirmed?: boolean | null;
@@ -156,6 +157,14 @@ export function buildRecordTrustBadges(input: RecordTrustBadgeInput): RecordTrus
     });
   }
 
+  if (input.hasSource && input.sourceFresh) {
+    badges.push({
+      label: 'Fresh check',
+      tone: 'source',
+      title: 'The linked source has been checked recently.',
+    });
+  }
+
   if (input.extraBadges?.length) badges.push(...input.extraBadges);
 
   const seen = new Set<string>();
@@ -208,6 +217,7 @@ const legendBadges: RecordTrustBadge[] = [
   { label: 'Local', tone: 'neutral', title: 'Location or geographic coverage is available.' },
   { label: 'Cost data', tone: 'strong', title: 'Cost data is available.' },
   { label: 'Source linked', tone: 'source', title: 'A source URL or source trail is available.' },
+  { label: 'Fresh check', tone: 'source', title: 'The linked source has been checked recently.' },
   { label: 'Needs review', tone: 'review', title: 'Still needs stronger review or confirmation.' },
 ];
 
