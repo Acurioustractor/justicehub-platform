@@ -360,7 +360,7 @@ async function loadHomePageData() {
   };
 }
 
-const getHomePageData = unstable_cache(loadHomePageData, ['justicehub-home-public-v3'], {
+const getHomePageData = unstable_cache(loadHomePageData, ['justicehub-home-public-v4'], {
   revalidate: 300,
   tags: ['homepage'],
 });
