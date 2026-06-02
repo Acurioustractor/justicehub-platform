@@ -22,6 +22,11 @@ import {
 import { Navigation, Footer } from '@/components/ui/navigation';
 import ProfileCard from '@/components/ProfileCard';
 import { RecordTrustBadges } from '@/components/trust/RecordTrustBadges';
+import {
+  getServiceTrustStatus,
+  isFreshSourceChecked,
+  type ServiceTrustTone,
+} from '@/lib/services/trust-status';
 
 interface ProfileData {
   profile: {
@@ -50,7 +55,9 @@ interface ServiceDetail {
   cost: string;
   rating: number;
   verified: boolean;
+  verificationStatus?: string | null;
   lastUpdated: string;
+  lastVerifiedAt?: string | null;
   source?: string;
   aiDiscovered: boolean;
   eligibility?: string[];
@@ -81,7 +88,9 @@ type ServiceApiRecord = {
   cost?: string | null;
   rating?: number | null;
   verified?: boolean | null;
+  verificationStatus?: string | null;
   lastUpdated?: string | null;
+  lastVerifiedAt?: string | null;
   source?: string | null;
   aiDiscovered?: boolean | null;
   eligibility?: string[] | null;
@@ -198,7 +207,9 @@ function normalizeServiceDetail(input: unknown): ServiceDetail | null {
     cost,
     rating,
     verified: asNullableBoolean(record.verified) ?? false,
+    verificationStatus: asNullableString(record.verificationStatus),
     lastUpdated: asNullableString(record.lastUpdated) || 'Recently',
+    lastVerifiedAt: asNullableString(record.lastVerifiedAt),
     source: asNullableString(record.source) || undefined,
     aiDiscovered: asNullableBoolean(record.aiDiscovered) ?? false,
     eligibility: asStringArray(record.eligibility),
@@ -286,6 +297,35 @@ function sourceHost(url: string | undefined): string {
     return new URL(url).hostname.replace(/^www\./, '');
   } catch {
     return url;
+  }
+}
+
+function trustNoticeClasses(tone: ServiceTrustTone): string {
+  switch (tone) {
+    case 'strong':
+      return 'border-[#10B981]/35 bg-[#ECFDF5] text-[#064E3B]';
+    case 'community':
+      return 'border-[#A855F7]/35 bg-[#FAF5FF] text-[#581C87]';
+    case 'fresh':
+      return 'border-[#0284C7]/30 bg-[#F0F9FF] text-[#075985]';
+    case 'source':
+      return 'border-[#0EA5E9]/25 bg-[#F0F9FF] text-[#075985]';
+    case 'review':
+    default:
+      return 'border-[#F97316]/25 bg-[#FFF7ED] text-[#7C2D12]';
+  }
+}
+
+function sourceCheckLabel(lastVerifiedAt?: string | null): string {
+  if (!lastVerifiedAt) return 'Source freshness has not been checked yet.';
+  try {
+    return `Source checked ${new Intl.DateTimeFormat('en-AU', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }).format(new Date(lastVerifiedAt))}`;
+  } catch {
+    return 'Source check date is not readable.';
   }
 }
 
@@ -404,6 +444,16 @@ export default function ServiceDetailPage() {
   const contactWebsite = service.contactInfo?.website || sourceHref || null;
   const email = service.contactInfo?.email || null;
   const hasDirectContact = Boolean(phoneNumber || email || contactWebsite);
+  const sourceFresh = isFreshSourceChecked(service.lastVerifiedAt);
+  const trustStatus = getServiceTrustStatus({
+    verified: service.verified,
+    verificationStatus: service.verificationStatus,
+    source: sourceHref,
+    lastVerifiedAt: service.lastVerifiedAt,
+    lastUpdated: service.lastUpdated,
+    cost: service.cost,
+    location: service.location,
+  });
   const confidenceLabel =
     typeof service.confidenceScore === 'number'
       ? `${Math.round(service.confidenceScore * 100)}%`
@@ -441,11 +491,13 @@ export default function ServiceDetailPage() {
 
               <RecordTrustBadges
                 className="mb-5"
+                verificationStatus={service.verificationStatus}
                 humanConfirmed={service.verified}
                 hasLocation={Boolean(service.location)}
                 locationLabel={service.location}
                 hasCostData={service.cost !== 'unknown'}
                 hasSource={Boolean(sourceHref)}
+                sourceFresh={sourceFresh}
                 sourceLabel={sourceHref}
                 maxBadges={5}
               />
@@ -457,6 +509,13 @@ export default function ServiceDetailPage() {
               <p className="mt-5 max-w-3xl text-base leading-7 text-white/70 md:text-lg">
                 {service.description}
               </p>
+
+              <div className={`mt-6 max-w-2xl rounded-lg border px-4 py-3 text-sm leading-6 ${trustNoticeClasses(trustStatus.tone)}`}>
+                <div className="font-mono text-xs font-bold uppercase tracking-[0.14em]">
+                  {trustStatus.label}
+                </div>
+                <p className="mt-1">{trustStatus.description}</p>
+              </div>
 
               <div className="mt-6 flex flex-wrap gap-2 text-sm">
                 <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 font-bold text-[#0A0A0A]">
@@ -483,7 +542,7 @@ export default function ServiceDetailPage() {
                   <div className="text-sm font-bold text-white">Review</div>
                   <div className="mt-1 flex items-center gap-2 text-sm text-white/65">
                     <ShieldCheck className="h-4 w-4 text-[#10B981]" />
-                    {service.verified ? 'Human verified' : 'Needs human review'}
+                    {trustStatus.shortLabel}
                   </div>
                 </div>
 
@@ -502,6 +561,7 @@ export default function ServiceDetailPage() {
                   ) : (
                     <div className="mt-1 text-sm text-white/55">No source link available</div>
                   )}
+                  <div className="mt-1 text-xs text-white/45">{sourceCheckLabel(service.lastVerifiedAt)}</div>
                 </div>
 
                 <div>
