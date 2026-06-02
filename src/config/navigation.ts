@@ -74,6 +74,11 @@ export const navigationItems: NavigationItem[] = [
         type: 'dropdown',
         items: [
             {
+                label: 'National directory',
+                href: '/directory',
+                description: 'One public index for services, programs, orgs, grants, and funding'
+            },
+            {
                 label: 'Find services',
                 href: '/services',
                 description: 'Legal help, housing, mentoring, and crisis support'
@@ -128,6 +133,7 @@ export const footerSections = [
         title: 'For Youth',
         links: [
             { label: 'Youth Scout', href: '/youth-scout', description: 'Your personalized journey' },
+            { label: 'National Directory', href: '/directory', description: 'Find support, programs, organisations, and grants' },
             { label: 'Find Services', href: '/services', description: 'AI-powered directory' },
             { label: 'Thematic Areas', href: '/themes', description: 'Explore by theme' },
             { label: 'Share Your Story', href: '/stories/new', description: 'Tell your story' },
@@ -138,6 +144,7 @@ export const footerSections = [
         title: 'For Organizations',
         links: [
             { label: 'Talent Scout', href: '/youth-scout/talent-login', description: 'Find emerging talent' },
+            { label: 'National Directory', href: '/directory', description: 'Coverage and trust layer' },
             { label: 'Community Programs', href: '/community-programs', description: 'Grassroots solutions' },
             { label: 'Add Your Program', href: '/community-programs/add', description: 'Share your impact' },
             { label: 'Success Stories', href: '/stories', description: 'Celebrate wins' }
@@ -151,6 +158,7 @@ export const footerSections = [
             { label: 'Country Reports', href: '/justice-network/countries', description: 'Africa and Europe learning reports' },
             { label: 'ALMA Dashboard', href: '/intelligence/dashboard', description: 'AI evidence engine' },
             { label: 'Ask ALMA', href: '/intelligence/chat', description: 'Chat with AI' },
+            { label: 'Directory Methodology', href: '/directory/methodology', description: 'How source coverage and trust labels work' },
             { label: 'System Map', href: '/intelligence/map', description: 'Detention & programs' },
             { label: 'Interventions', href: '/intelligence/interventions', description: 'Evidence database' },
             { label: 'Impact Calculator', href: '/intelligence/impact-calculator', description: 'Cost comparison' },
