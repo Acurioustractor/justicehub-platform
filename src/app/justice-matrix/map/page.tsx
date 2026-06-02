@@ -353,6 +353,7 @@ export default async function JusticeMatrixMapPage() {
               <div className="mt-7 flex flex-wrap gap-2">
                 <HeroLink href="/justice-matrix/explore">Open Explore</HeroLink>
                 <HeroLink href="/justice-matrix/ask">Ask the Matrix</HeroLink>
+                <HeroLink href="/justice-network/youth-remand">Youth remand scenario</HeroLink>
               </div>
             </div>
             <aside

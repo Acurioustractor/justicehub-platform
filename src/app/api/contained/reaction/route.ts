@@ -84,10 +84,15 @@ export async function POST(request: NextRequest) {
             GHL_TAGS.REACTED,
             GHL_TAGS.CONTAINED,
             GHL_TAGS.JUSTICEHUB,
+            GHL_TAGS.CONTAINED_ADELAIDE,
+            GHL_TAGS.PUBLIC_VISITOR,
+            GHL_TAGS.YOUTH_REMAND,
+            GHL_TAGS.COUNTRY_REPORTS,
           ],
           source: 'CONTAINED Reaction Form',
           customFields: {
             contained_feelings: feelings?.join(', ') || '',
+            entry_path: 'adelaide_remand',
           },
         }).catch(err => console.error('[Reaction] GHL tag failed:', err));
       }
@@ -106,17 +111,17 @@ ${response ? `You said: "${response.slice(0, 200)}"` : ''}
 
 That feeling is exactly why we built this. Now here's what you can do with it.
 
-1. NOMINATE A DECISION MAKER
-Know a politician, CEO, or someone who makes decisions about young people? Nominate them. We'll personally invite them to walk through.
-→ ${SITE}/contained#nominate
+1. OPEN THE REMAND EVIDENCE
+See the law, campaigns, alternatives, funding context, and source links behind the experience.
+→ ${SITE}/remand
 
-2. WRITE TO YOUR MP
-Use our templates — email, SMS, or social. Takes 2 minutes.
-→ ${SITE}/contained/act
+2. SHARE THE ADELAIDE PATH
+Send the public visitor pathway to someone who should walk through or understand what this is becoming.
+→ ${SITE}/adelaide
 
-3. SHARE WHAT YOU FELT
-Download stat cards and share templates. Same evidence, every platform.
-→ ${SITE}/contained/tour/social
+3. COMPARE GLOBAL MODELS
+Follow the country reports as the Africa and Europe learning route takes shape.
+→ ${SITE}/justice-network/countries
 
 981 community programs exist across Australia that work better than detention and cost a fraction. You've now seen the evidence. Help us make it impossible to ignore.
 

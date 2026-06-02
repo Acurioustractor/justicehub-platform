@@ -185,7 +185,7 @@ export default function ContainedAboutPage() {
         <div className="grid md:grid-cols-2 gap-12 items-start">
           <div className="space-y-4">
             <p className="text-[#F5F0E8]/95 leading-relaxed">
-              The route starts with a small Mount Druitt gathering in May/June, then launches publicly at Tandanya in Adelaide at the end of June 2026. Brisbane young people carry the build story, David from Diagrama helps hold Room 2, and Adelaide organisations use Room 3 to put their programs in front of delegates, MPs, universities, and funders. The route remains flexible as communities and partners ask for it.
+              The route starts with a small Mount Druitt gathering in May/June, then launches publicly at Tandanya in Adelaide on 23 June 2026. Brisbane young people carry the build story, David from Diagrama helps hold Room 2, and Adelaide organisations use Room 3 to put their programs in front of delegates, MPs, universities, and funders. The route remains flexible as communities and partners ask for it.
             </p>
             <p className="text-[#F5F0E8]/95 leading-relaxed">
               Mount Druitt. Adelaide. Perth + surrounds. Brisbane. Northern Rivers. Alice Springs / Central Australia. Sydney + Canberra. Victoria. Tasmania. One container. One travelling team of young facilitators. Nine partner organisations on the ground.

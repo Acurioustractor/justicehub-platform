@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { ELPhotoPickerModal } from '@/components/empathy-ledger/ELPhotoPickerModal';
+import { YouthRemandVerticalCard } from '@/components/justice-network/YouthRemandVerticalCard';
 import {
   tourStops as staticTourStops,
   journeyContainers,
@@ -453,6 +454,7 @@ export function TourContent() {
             <Link href="/contained/how-it-works" className="text-[#F5F0E8]/90 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>How it works</Link>
             <a href="#tour" className="text-[#F5F0E8]/90 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Tour</a>
             <a href="#stories" className="text-[#F5F0E8]/90 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Stories</a>
+            <Link href="/adelaide" className="text-[#F5F0E8]/90 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Adelaide Path</Link>
             <Link href="/contained/showcase" className="text-[#F5F0E8]/90 hover:text-[#F5F0E8] text-xs uppercase transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Full pack</Link>
             <a href="#tour" className="relative bg-[#DC2626] text-[#F5F0E8] text-xs uppercase font-medium px-6 py-3 hover:bg-[#b91c1c] transition-colors inline-block group overflow-hidden" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>
               <span className="relative z-10">Back This</span>
@@ -470,6 +472,7 @@ export function TourContent() {
             <a href="#rooms" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/90 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Exhibition</a>
             <a href="#tour" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/90 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Tour</a>
             <a href="#stories" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/90 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Stories</a>
+            <Link href="/adelaide" onClick={() => setMobileMenuOpen(false)} className="block text-[#F5F0E8]/90 text-xs uppercase" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Adelaide Path</Link>
             <a href="#tour" onClick={() => setMobileMenuOpen(false)} className="block bg-[#DC2626] text-[#F5F0E8] text-xs uppercase font-medium px-6 py-3 text-center" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.15em' }}>Back This</a>
           </div>
         )}
@@ -750,6 +753,15 @@ export function TourContent() {
 
         <RedDivider bg="#F5F0E8" />
 
+        {/* ==================== JUSTICE NETWORK BRIDGE ==================== */}
+        <section className="relative bg-[#0A0A0A] scanline-overlay concrete-texture overflow-hidden" style={{ padding: 'clamp(50px, 8vw, 100px) 0' }}>
+          <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16">
+            <YouthRemandVerticalCard tone="dark" />
+          </div>
+        </section>
+
+        <RedDivider />
+
         {/* ==================== SECTION 5: THE TOUR ==================== */}
         <section id="back-this-tour" />
         <section id="tour" className="relative bg-[#0A0A0A] scanline-overlay concrete-texture overflow-hidden" style={{ padding: 'clamp(60px, 10vw, 120px) 0 clamp(80px, 12vw, 160px)' }}>
@@ -1001,6 +1013,7 @@ export function TourContent() {
             <div className="grid grid-cols-2 gap-x-16 gap-y-4">
               <Link href="/contained/act" className="text-[#F5F0E8]/95 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Take Action</Link>
               <Link href="/intelligence" className="text-[#F5F0E8]/95 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Data</Link>
+              <Link href="/adelaide" className="text-[#F5F0E8]/95 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Adelaide Path</Link>
               <Link href="/contained/stories" className="text-[#F5F0E8]/95 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Stories</Link>
               <Link href="/contact" className="text-[#F5F0E8]/95 text-xs uppercase hover:text-[#F5F0E8]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>Contact</Link>
             </div>

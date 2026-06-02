@@ -5,6 +5,7 @@ import { PortfolioScoreCard, ConsentIndicator } from '@/components/alma';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
 import { Award, Building2, ExternalLink, MapPin } from 'lucide-react';
+import { RecordTrustBadges } from '@/components/trust/RecordTrustBadges';
 
 // Define types inline to avoid supabase type issues
 type Intervention = {
@@ -15,6 +16,13 @@ type Intervention = {
   consent_level: string | null;
   cultural_authority: string | null;
   metadata: any;
+  geography?: string[] | null;
+  evidence_level?: string | null;
+  verification_status?: string | null;
+  review_status?: string | null;
+  cost_per_young_person?: number | null;
+  source_documents?: Array<Record<string, unknown>> | null;
+  website?: string | null;
   source_url?: string | null;
   organization_name?: string | null;
 };
@@ -153,6 +161,19 @@ export default async function InterventionDetailPage({ params }: InterventionDet
                 showAuthority
               />
             </div>
+            <RecordTrustBadges
+              className="mb-6"
+              evidenceLevel={intervention.evidence_level ?? null}
+              verificationStatus={intervention.verification_status ?? null}
+              reviewStatus={intervention.review_status ?? null}
+              hasLocation={Boolean(metadata?.state || intervention.geography?.length)}
+              locationLabel={metadata?.state || intervention.geography?.join(', ')}
+              hasCostData={intervention.cost_per_young_person != null}
+              hasSource={Boolean(intervention.source_url || intervention.website || intervention.source_documents?.length)}
+              sourceLabel={intervention.source_url || intervention.website || 'ALMA source trail'}
+              communityControlled={Boolean(intervention.cultural_authority)}
+              maxBadges={6}
+            />
             {provenance && (
               <div className="mb-6 inline-flex items-center gap-2 border border-black bg-white px-3 py-1 text-xs">
                 <span className={`font-bold uppercase ${provenance.mode === 'authoritative' ? 'text-emerald-700' : 'text-amber-700'}`}>

@@ -52,6 +52,7 @@ import {
   AUSTRALIAN_STATES,
 } from '@/hooks/useJusticeSearch';
 import type { SearchResultType, SearchResult } from '@/lib/search/types';
+import { RecordTrustBadges } from '@/components/trust/RecordTrustBadges';
 
 // Icon mapping for result types
 const TYPE_ICONS: Record<SearchResultType, React.ReactNode> = {
@@ -246,9 +247,9 @@ function SearchPageContent() {
 
       {/* Results Section */}
       <div className="container mx-auto px-4 py-8">
-        <div className="flex gap-8">
+        <div className="flex min-w-0 gap-8">
           {/* Main Results */}
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             {/* Warnings */}
             {warnings.length > 0 && (
               <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border-2 border-black flex items-start gap-2">
@@ -272,8 +273,8 @@ function SearchPageContent() {
 
             {/* Results Header */}
             {query && !isLoading && (
-              <div className="mb-6 flex items-center justify-between">
-                <div>
+              <div className="mb-6 flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div className="min-w-0">
                   <h2 className="text-lg font-semibold">
                     {total} result{total !== 1 ? 's' : ''} for "{query}"
                   </h2>
@@ -287,8 +288,8 @@ function SearchPageContent() {
 
                 {/* Type tabs for quick filtering */}
                 {facets && facets.total > 0 && (
-                  <Tabs value={filters.type || 'all'} onValueChange={handleTypeFilter}>
-                    <TabsList>
+                  <Tabs value={filters.type || 'all'} onValueChange={handleTypeFilter} className="max-w-full overflow-x-auto">
+                    <TabsList className="w-max max-w-none">
                       <TabsTrigger value="all">
                         All ({facets.total})
                       </TabsTrigger>
@@ -454,10 +455,13 @@ function SearchPageContent() {
 }
 
 function SearchResultCard({ result }: { result: SearchResult }) {
+  const showTrustBadges = result.type === 'intervention' || result.type === 'service' || result.type === 'organization';
+  const metadata = result.metadata as Record<string, unknown>;
+
   return (
-    <Card className="hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow border-2 border-black">
+    <Card padding="none" className="hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow border-2 border-black">
       <CardContent className="p-4">
-        <div className="flex gap-4">
+        <div className="flex min-w-0 gap-4">
           {/* Thumbnail */}
           {result.metadata.imageUrl && (
             <div className="w-20 h-20 flex-shrink-0 overflow-hidden bg-gray-100 border border-black">
@@ -471,10 +475,10 @@ function SearchResultCard({ result }: { result: SearchResult }) {
             </div>
           )}
 
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             {/* Header */}
-            <div className="flex items-start justify-between gap-2">
-              <div>
+            <div className="flex min-w-0 items-start justify-between gap-2">
+              <div className="min-w-0">
                 <Link
                   href={result.url}
                   className="text-lg font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 hover:underline line-clamp-1"
@@ -517,6 +521,21 @@ function SearchResultCard({ result }: { result: SearchResult }) {
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
                 {result.description}
               </p>
+            )}
+
+            {showTrustBadges && (
+              <RecordTrustBadges
+                className="mt-2"
+                evidenceLevel={result.type === 'intervention' ? String(metadata.evidenceLevel || '') || null : undefined}
+                verificationStatus={typeof metadata.verificationStatus === 'string' ? metadata.verificationStatus : null}
+                reviewStatus={typeof metadata.reviewStatus === 'string' ? metadata.reviewStatus : null}
+                hasLocation={Boolean(metadata.hasLocation || result.metadata.state)}
+                locationLabel={typeof result.metadata.state === 'string' ? result.metadata.state : null}
+                hasCostData={Boolean(metadata.hasCostData)}
+                hasSource={Boolean(metadata.hasSource)}
+                communityControlled={Boolean(metadata.communityControlled)}
+                maxBadges={5}
+              />
             )}
 
             {/* Tags */}

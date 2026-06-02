@@ -158,7 +158,7 @@ export default function MomentumPage() {
           <div className="mm-section-title">Where People Want CONTAINED</div>
           <div className="mm-city-grid">
             <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Mount Druitt</div><div className="mm-city-count">May/June · small gathering</div><div className="mm-city-quote">Western Sydney build proof and community relationships shape what travels next.</div></div>
-            <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Adelaide</div><div className="mm-city-count">End June · Tandanya public launch</div><div className="mm-city-quote"><span className="mm-name">Hannah March</span>, JRI: &quot;The 2026 Reintegration Puzzle Conference is in Tandanya, Adelaide. It would be amazing to host the Container there.&quot;</div></div>
+            <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Adelaide</div><div className="mm-city-count">23 June · Tandanya public launch</div><div className="mm-city-quote"><span className="mm-name">Hannah March</span>, JRI: &quot;The 2026 Reintegration Puzzle Conference is in Tandanya, Adelaide. It would be amazing to host the Container there.&quot;</div></div>
             <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Perth</div><div className="mm-city-count">8 mentions · UWA partnership</div><div className="mm-city-quote"><span className="mm-name">Hayley Passmore</span>, Criminology Lecturer: &quot;We can&apos;t wait to have this in Perth!!!&quot;</div></div>
             <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Brisbane</div><div className="mm-city-count">Build story · YAC hosting</div><div className="mm-city-quote"><span className="mm-name">Jonty Bush</span>, QLD MP: &quot;I love this concept, where is it touring in Queensland?&quot;</div></div>
             <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Alice Springs / Central Australia</div><div className="mm-city-count">November · Oonchiumpa partnership</div><div className="mm-city-quote">Community-led activation with Oonchiumpa Aboriginal Corporation</div></div>
@@ -225,7 +225,7 @@ export default function MomentumPage() {
 
         <div className="mm-cta">
           <h2>Join the Coalition</h2>
-          <p>CONTAINED starts with Mount Druitt in May/June, launches publicly at Tandanya in Adelaide at the end of June, then moves through Perth, Brisbane, Northern Rivers, Central Australia, Sydney + Canberra, Victoria, and Tasmania, with every stop linked back to JusticeHub.</p>
+          <p>CONTAINED starts with Mount Druitt in May/June, launches publicly at Tandanya in Adelaide on 23 June 2026, then moves through Perth, Brisbane, Northern Rivers, Central Australia, Sydney + Canberra, Victoria, and Tasmania, with every stop linked back to JusticeHub.</p>
           <a href="https://www.justicehub.com.au/contained">SEE THE TOUR →</a>
         </div>
 

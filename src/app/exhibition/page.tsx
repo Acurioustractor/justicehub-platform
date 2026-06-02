@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Search, MapPin, Building2, FileText, Coins, Heart, Loader2, ExternalLink } from 'lucide-react';
+import { ArrowRight, Search, MapPin, Building2, FileText, Coins, Heart, Loader2, ExternalLink, Network } from 'lucide-react';
 
 interface ResultRow {
   result_type: string;
@@ -163,6 +163,25 @@ export default function ExhibitionPage() {
               )}
             </div>
           )}
+
+          <div className="mt-8 grid gap-4 rounded-lg border border-stone-700 bg-stone-800/80 p-4 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <div className="mb-2 flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-red-300">
+                <Network className="h-4 w-4" />
+                Flagship vertical
+              </div>
+              <p className="max-w-2xl text-sm leading-6 text-stone-200">
+                Searching after Contained? Start with Youth Remand to connect the human story to law, campaigns,
+                alternatives, organisations, funders, and the brief you can send.
+              </p>
+            </div>
+            <Link
+              href="/justice-network/youth-remand"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-stone-50 px-4 text-sm font-bold text-stone-900 hover:bg-white"
+            >
+              Open Youth Remand <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </section>
 

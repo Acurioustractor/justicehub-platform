@@ -77,8 +77,8 @@ Room 2 showed you the alternative. Here's the data behind it:
 → Programs like Diagrama achieve reoffending rates below 14%
 → Cost per young person: a fraction of detention
 
-You can explore all of this yourself:
-→ ${SITE}/intelligence/interventions
+You can explore the public evidence path here:
+→ ${SITE}/remand
 
 THE HARD QUESTION
 
@@ -86,8 +86,9 @@ Room 3 asked you to consider: what if the money we spend on locking kids up went
 
 That's not hypothetical. It's a policy choice. And your voice matters in making it.
 
-→ Nominate a decision maker: ${SITE}/contained#nominate
-→ Write to your MP: ${SITE}/contained/act
+→ Share the Adelaide path: ${SITE}/adelaide
+→ Compare global models: ${SITE}/justice-network/countries
+→ Share your reaction: ${SITE}/contained/reaction
 
 — The JusticeHub Team`,
         });
@@ -144,9 +145,9 @@ Every action counts.
 
 STILL WANT TO DO SOMETHING?
 
-→ Share your experience: ${SITE}/contained/tour/social
-→ Nominate someone who needs to see this: ${SITE}/contained#nominate
-→ Explore the evidence yourself: ${SITE}/intelligence/interventions
+→ Share the Adelaide path: ${SITE}/adelaide
+→ Open the remand evidence: ${SITE}/remand
+→ Follow the country reports: ${SITE}/justice-network/countries
 
 — The JusticeHub Team`,
         });
@@ -191,11 +192,11 @@ Your visit was part of something bigger. The data doesn't change. The evidence d
 
 ONE MORE THING YOU CAN DO
 
-If you haven't already, nominate one person — a politician, a CEO, a board member, a journalist — someone whose decision affects young people.
+If you haven't already, send one person the Adelaide path — a politician, a CEO, a board member, a journalist, a funder, or someone whose decision affects young people.
 
-We'll personally invite them to walk through. And when they do, they'll know you sent them.
+It is the easiest way to move someone from feeling into evidence, alternatives, and action.
 
-→ ${SITE}/contained#nominate
+→ ${SITE}/adelaide
 
 Thank you for being part of this.
 

@@ -4,26 +4,24 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import {
+  ArrowRight,
   ArrowLeft,
   MapPin,
   Phone,
-  Mail,
   Globe,
-  Star,
   Clock,
   DollarSign,
   Users,
   CheckCircle,
   AlertTriangle,
   ExternalLink,
-  Bot,
   FileText,
-  ArrowRight,
   Info,
-  ChevronRight
+  ShieldCheck
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import ProfileCard from '@/components/ProfileCard';
+import { RecordTrustBadges } from '@/components/trust/RecordTrustBadges';
 
 interface ProfileData {
   profile: {
@@ -183,7 +181,7 @@ function normalizeServiceDetail(input: unknown): ServiceDetail | null {
 
   const costRaw = asNullableString(record.cost)?.toLowerCase();
   const cost: ServiceDetail['cost'] =
-    costRaw === 'free' || costRaw === 'low' || costRaw === 'moderate' ? costRaw : 'free';
+    costRaw === 'free' || costRaw === 'low' || costRaw === 'moderate' || costRaw === 'unknown' ? costRaw : 'unknown';
 
   const rating = asNullableNumber(record.rating) ?? 0;
   const confidenceScore = asNullableNumber(record.confidenceScore);
@@ -260,6 +258,37 @@ function parseApiError(payload: unknown, fallback: string): string {
   return error || fallback;
 }
 
+function humanize(value: string | undefined): string {
+  if (!value) return 'Support';
+  return value
+    .replace(/[_-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function costLabel(cost: string): string {
+  switch (cost) {
+    case 'free':
+      return 'Free';
+    case 'low':
+      return 'Low cost';
+    case 'moderate':
+      return 'Moderate cost';
+    default:
+      return 'Cost unknown';
+  }
+}
+
+function sourceHost(url: string | undefined): string {
+  if (!url) return 'No public source linked';
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return url;
+  }
+}
+
 export default function ServiceDetailPage() {
   const params = useParams<{ id: string }>();
   const serviceId = params?.id;
@@ -267,7 +296,6 @@ export default function ServiceDetailPage() {
   const [profiles, setProfiles] = useState<ProfileData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [profilesLoading, setProfilesLoading] = useState(false);
 
   useEffect(() => {
     if (typeof serviceId === 'string' && serviceId.length > 0) {
@@ -307,8 +335,6 @@ export default function ServiceDetailPage() {
 
   const loadProfiles = async (serviceId: string) => {
     try {
-      setProfilesLoading(true);
-
       const response = await fetch(`/api/services/${encodeURIComponent(serviceId)}/profiles`);
       if (response.ok) {
         const data: unknown = await response.json();
@@ -321,33 +347,12 @@ export default function ServiceDetailPage() {
       }
     } catch (error) {
       console.error('Error loading profiles:', error);
-    } finally {
-      setProfilesLoading(false);
     }
   };
 
-  const getCostColor = (cost: string) => {
-    switch (cost) {
-      case 'free': return 'text-green-600 bg-green-50';
-      case 'low': return 'text-blue-600 bg-blue-50';
-      case 'moderate': return 'text-orange-600 bg-orange-50';
-      default: return 'text-gray-600 bg-gray-50';
-    }
-  };
-
-  const getCategoryColor = (category: string) => {
-    const colors: { [key: string]: string } = {
-      'legal': 'bg-blue-100 text-blue-800',
-      'emergency': 'bg-red-100 text-red-800',
-      'health': 'bg-green-100 text-green-800',
-      'education': 'bg-purple-100 text-purple-800',
-      'family': 'bg-orange-100 text-orange-800',
-      'housing': 'bg-indigo-100 text-indigo-800',
-      'employment': 'bg-yellow-100 text-yellow-800',
-      'substance': 'bg-pink-100 text-pink-800'
-    };
-    return colors[category] || 'bg-gray-100 text-gray-800';
-  };
+  const phoneNumber = service?.contactInfo?.phone || null;
+  const phoneHref = phoneNumber ? `tel:${phoneNumber.replace(/\D/g, '')}` : null;
+  const sourceHref = service?.source || service?.contactInfo?.website || null;
 
   if (loading) {
     return (
@@ -356,8 +361,8 @@ export default function ServiceDetailPage() {
         <main className="header-offset">
           <div className="container-justice py-16">
             <div className="text-center">
-              <div className="text-xl text-gray-600 mb-4">🤖 Loading AI-discovered service...</div>
-              <div className="text-sm text-gray-500">Fetching detailed information</div>
+              <div className="text-xl text-gray-600 mb-4">Loading service record...</div>
+              <div className="text-sm text-gray-500">Fetching detail and source metadata</div>
             </div>
           </div>
         </main>
@@ -368,246 +373,300 @@ export default function ServiceDetailPage() {
 
   if (error || !service) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#F7F3EA] text-[#0A0A0A]">
         <Navigation />
-        <main className="header-offset">
-          <div className="container-justice py-16">
-            <div className="text-center">
-              <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <h1 className="text-2xl font-bold mb-4">Service Not Found</h1>
-              <p className="text-gray-600 mb-8">{error || 'The service you\'re looking for doesn\'t exist.'}</p>
+        <main>
+          <section className="bg-[#0A0A0A] px-6 pt-48 pb-16 text-white md:pt-52">
+            <div className="mx-auto max-w-3xl text-center">
+              <AlertTriangle className="mx-auto mb-5 h-12 w-12 text-[#F97316]" />
+              <h1 className="text-3xl font-black md:text-5xl">Service record not found.</h1>
+              <p className="mx-auto mt-4 max-w-xl text-white/65">
+                {error || 'The service you are looking for does not exist or has been removed.'}
+              </p>
               <Link
                 href="/services"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-bold hover:bg-gray-800 transition-all"
+                className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#0A0A0A] transition-colors hover:bg-[#F7F3EA]"
               >
                 <ArrowLeft className="h-5 w-5" />
                 Back to Services
               </Link>
             </div>
-          </div>
+          </section>
         </main>
         <Footer />
       </div>
     );
   }
 
+  const categoryLabel = humanize(service.category);
+  const subcategoryLabel = service.subcategory ? humanize(service.subcategory) : null;
+  const hostLabel = sourceHost(sourceHref || undefined);
+  const contactWebsite = service.contactInfo?.website || sourceHref || null;
+  const email = service.contactInfo?.email || null;
+  const hasDirectContact = Boolean(phoneNumber || email || contactWebsite);
+  const confidenceLabel =
+    typeof service.confidenceScore === 'number'
+      ? `${Math.round(service.confidenceScore * 100)}%`
+      : 'Not scored';
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F7F3EA] text-[#0A0A0A]">
       <Navigation />
 
-      <main className="header-offset">
-        {/* Back Navigation */}
-        <section className="border-b-2 border-black py-4">
-          <div className="container-justice">
+      <main>
+        <section className="border-b border-[#0A0A0A] bg-[#0A0A0A] pt-48 pb-10 text-white md:pt-52">
+          <div className="mx-auto grid max-w-7xl gap-8 px-6 md:grid-cols-[1.35fr_0.65fr] md:px-10 lg:px-12">
             <Link
               href="/services"
-              className="inline-flex items-center gap-2 text-black hover:underline font-medium"
+              className="col-span-full inline-flex w-fit items-center gap-2 rounded-full border border-white/15 px-3 py-2 text-sm font-bold text-white/75 transition-colors hover:border-white/35 hover:text-white"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-4 w-4" />
               Back to Service Finder
             </Link>
-          </div>
-        </section>
 
-        {/* Service Header */}
-        <section className="section-padding border-b-2 border-black bg-gradient-to-br from-blue-50 to-purple-50">
-          <div className="container-justice">
-            <div className="flex flex-col lg:flex-row gap-8">
-              <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-3 mb-4">
-                  {service.aiDiscovered && (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                      <Bot className="h-4 w-4 mr-1" />
-                      AI-Discovered
-                    </span>
-                  )}
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(service.category)}`}>
-                    {service.category.charAt(0).toUpperCase() + service.category.slice(1)}
+            <div>
+              <p className="mb-3 font-mono text-xs font-bold uppercase tracking-[0.28em] text-[#F97316]">
+                Service record
+              </p>
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-white/10 px-3 py-1 text-sm font-bold text-white">
+                  {categoryLabel}
+                </span>
+                {subcategoryLabel && (
+                  <span className="rounded-full border border-white/15 px-3 py-1 text-sm font-bold text-white/65">
+                    {subcategoryLabel}
                   </span>
-                  {service.verified && (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                      Verified
-                    </span>
-                  )}
-                </div>
-
-                <h1 className="headline-truth mb-4">{service.name}</h1>
-
-                <p className="text-xl text-gray-700 leading-relaxed mb-6">
-                  {service.description}
-                </p>
-
-                <div className="flex items-center gap-6 flex-wrap">
-                  <div className="flex items-center gap-2">
-                    <Star className="h-5 w-5 fill-current text-yellow-400" />
-                    <span className="font-bold text-lg">{service.rating}</span>
-                    <span className="text-gray-600">rating</span>
-                  </div>
-
-                  <div className={`px-4 py-2 rounded-full font-bold ${getCostColor(service.cost)}`}>
-                    {service.cost.charAt(0).toUpperCase() + service.cost.slice(1)} Cost
-                  </div>
-
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Clock className="h-4 w-4" />
-                    <span>Updated {service.lastUpdated}</span>
-                  </div>
-                </div>
+                )}
               </div>
 
-              {service.source && service.aiDiscovered && (
-                <div className="lg:w-80 bg-white border-2 border-black p-6">
-                  <h3 className="font-bold mb-3 text-black">🤖 AI Discovery Info</h3>
-                  <div className="space-y-3 text-sm">
-                    <div>
-                      <div className="font-medium text-gray-700">Data Source:</div>
-                      <a
-                        href={service.source}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline flex items-center gap-1"
-                      >
-                        Government Website <ExternalLink className="h-3 w-3" />
-                      </a>
-                    </div>
-                    {service.confidenceScore && (
-                      <div>
-                        <div className="font-medium text-gray-700">AI Confidence:</div>
-                        <div className="text-green-600 font-bold">
-                          {Math.round(service.confidenceScore * 100)}%
-                        </div>
-                      </div>
-                    )}
-                    {service.extractionTimestamp && (
-                      <div>
-                        <div className="font-medium text-gray-700">Discovered:</div>
-                        <div>{new Date(service.extractionTimestamp).toLocaleDateString()}</div>
-                      </div>
-                    )}
+              <RecordTrustBadges
+                className="mb-5"
+                humanConfirmed={service.verified}
+                hasLocation={Boolean(service.location)}
+                locationLabel={service.location}
+                hasCostData={service.cost !== 'unknown'}
+                hasSource={Boolean(sourceHref)}
+                sourceLabel={sourceHref}
+                maxBadges={5}
+              />
+
+              <h1 className="max-w-4xl text-4xl font-black leading-[0.95] tracking-tight md:text-6xl">
+                {service.name}
+              </h1>
+
+              <p className="mt-5 max-w-3xl text-base leading-7 text-white/70 md:text-lg">
+                {service.description}
+              </p>
+
+              <div className="mt-6 flex flex-wrap gap-2 text-sm">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 font-bold text-[#0A0A0A]">
+                  <DollarSign className="h-4 w-4 text-[#059669]" />
+                  {costLabel(service.cost)}
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-2 font-bold text-white/75">
+                  <MapPin className="h-4 w-4 text-[#F97316]" />
+                  {service.location}
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-2 font-bold text-white/75">
+                  <Clock className="h-4 w-4 text-[#F97316]" />
+                  Updated {service.lastUpdated}
+                </span>
+              </div>
+            </div>
+
+            <aside className="rounded-lg border border-white/15 bg-white/8 p-5">
+              <p className="font-mono text-xs font-bold uppercase tracking-[0.24em] text-white/45">
+                Record status
+              </p>
+              <div className="mt-4 space-y-4">
+                <div>
+                  <div className="text-sm font-bold text-white">Review</div>
+                  <div className="mt-1 flex items-center gap-2 text-sm text-white/65">
+                    <ShieldCheck className="h-4 w-4 text-[#10B981]" />
+                    {service.verified ? 'Human verified' : 'Needs human review'}
                   </div>
                 </div>
-              )}
-            </div>
+
+                <div>
+                  <div className="text-sm font-bold text-white">Source</div>
+                  {sourceHref ? (
+                    <a
+                      href={sourceHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 inline-flex items-center gap-2 text-sm font-bold text-[#F97316] hover:text-white"
+                    >
+                      {hostLabel}
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  ) : (
+                    <div className="mt-1 text-sm text-white/55">No source link available</div>
+                  )}
+                </div>
+
+                <div>
+                  <div className="text-sm font-bold text-white">Extraction confidence</div>
+                  <div className="mt-1 text-sm text-white/65">{confidenceLabel}</div>
+                </div>
+
+                <div className="rounded-md border border-white/10 bg-black/20 p-3 text-xs leading-5 text-white/55">
+                  This is a catalogue record, not an endorsement. Check the source and contact the
+                  service before relying on it.
+                </div>
+              </div>
+            </aside>
           </div>
         </section>
 
-        {/* Service Details */}
-        <section className="section-padding">
-          <div className="container-justice">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Contact Information */}
-              <div className="border-2 border-black p-6 bg-white">
-                <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
-                  <Phone className="h-5 w-5" />
-                  Contact Information
-                </h3>
-
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <MapPin className="h-5 w-5 text-gray-500" />
+        <section className="border-b border-[#0A0A0A] bg-[#F7F3EA]">
+          <div className="mx-auto max-w-7xl px-6 py-8 md:px-10 lg:px-12">
+            <div className="grid gap-4 lg:grid-cols-3">
+              <article className="rounded-lg border border-[#0A0A0A]/12 bg-white p-5 shadow-sm">
+                <div className="mb-5 flex items-center gap-2">
+                  <Phone className="h-5 w-5 text-[#DC2626]" />
+                  <h2 className="text-xl font-black">Contact</h2>
+                </div>
+                <div className="space-y-4 text-sm">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#0A0A0A]/35" />
                     <div>
-                      <div className="font-medium">Location</div>
-                      <div className="text-gray-700">{service.location}</div>
+                      <div className="font-bold">Location</div>
+                      <div className="mt-1 text-[#0A0A0A]/65">{service.location}</div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <Phone className="h-5 w-5 text-gray-500" />
-                    <div>
-                      <div className="font-medium">Contact</div>
-                      <div className="text-gray-700">{service.contact}</div>
-                    </div>
-                  </div>
-
-                  {service.contactInfo?.website && (
-                    <div className="flex items-center gap-3">
-                      <Globe className="h-5 w-5 text-gray-500" />
+                  {phoneNumber && (
+                    <div className="flex items-start gap-3">
+                      <Phone className="mt-0.5 h-4 w-4 shrink-0 text-[#0A0A0A]/35" />
                       <div>
-                        <div className="font-medium">Website</div>
-                        <a
-                          href={service.contactInfo.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline"
-                        >
-                          Visit Website
+                        <div className="font-bold">Phone</div>
+                        <a href={phoneHref || undefined} className="mt-1 block text-[#0A0A0A]/65 hover:underline">
+                          {phoneNumber}
                         </a>
                       </div>
                     </div>
                   )}
-                </div>
-              </div>
 
-              {/* Eligibility */}
-              {service.eligibility && service.eligibility.length > 0 && (
-                <div className="border-2 border-black p-6 bg-white">
-                  <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
-                    <Users className="h-5 w-5" />
-                    Eligibility Criteria
-                  </h3>
-
-                  <ul className="space-y-2">
-                    {service.eligibility.map((criteria, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
-                        <span className="text-gray-700">{criteria}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Additional Info */}
-              <div className="border-2 border-black p-6 bg-white">
-                <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
-                  <DollarSign className="h-5 w-5" />
-                  Service Details
-                </h3>
-
-                <div className="space-y-4">
-                  <div>
-                    <div className="font-medium text-gray-700">Cost Structure</div>
-                    <div className={`inline-block px-3 py-1 rounded font-bold ${getCostColor(service.cost)}`}>
-                      {service.cost.charAt(0).toUpperCase() + service.cost.slice(1)}
-                    </div>
-                  </div>
-
-                  {service.subcategory && (
-                    <div>
-                      <div className="font-medium text-gray-700">Service Type</div>
-                      <div className="text-gray-900">{service.subcategory.replace('_', ' ')}</div>
+                  {email && (
+                    <div className="flex items-start gap-3">
+                      <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#0A0A0A]/35" />
+                      <div>
+                        <div className="font-bold">Email</div>
+                        <a href={`mailto:${email}`} className="mt-1 block text-[#0A0A0A]/65 hover:underline">
+                          {email}
+                        </a>
+                      </div>
                     </div>
                   )}
 
+                  {contactWebsite && (
+                    <div className="flex items-start gap-3">
+                      <Globe className="mt-0.5 h-4 w-4 shrink-0 text-[#0A0A0A]/35" />
+                      <div>
+                        <div className="font-bold">Website</div>
+                        <a
+                          href={contactWebsite}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 inline-flex items-center gap-1 font-bold text-[#DC2626] hover:underline"
+                        >
+                          Open source
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                      </div>
+                    </div>
+                  )}
+
+                  {!hasDirectContact && (
+                    <p className="rounded-md bg-[#F7F3EA] p-3 text-[#0A0A0A]/65">
+                      No direct contact details are attached yet. Use the source link or search for
+                      the service name before relying on this record.
+                    </p>
+                  )}
+                </div>
+              </article>
+
+              <article className="rounded-lg border border-[#0A0A0A]/12 bg-white p-5 shadow-sm">
+                <div className="mb-5 flex items-center gap-2">
+                  <Users className="h-5 w-5 text-[#DC2626]" />
+                  <h2 className="text-xl font-black">Who it appears to serve</h2>
+                </div>
+                {service.eligibility && service.eligibility.length > 0 ? (
+                  <ul className="space-y-3 text-sm">
+                    {service.eligibility.map((criteria) => (
+                      <li key={criteria} className="flex items-start gap-2 text-[#0A0A0A]/70">
+                        <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#059669]" />
+                        <span>{criteria}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm leading-6 text-[#0A0A0A]/65">
+                    Eligibility is not listed on this record yet. Check the source before sharing or
+                    referring.
+                  </p>
+                )}
+              </article>
+
+              <article className="rounded-lg border border-[#0A0A0A]/12 bg-white p-5 shadow-sm">
+                <div className="mb-5 flex items-center gap-2">
+                  <DollarSign className="h-5 w-5 text-[#DC2626]" />
+                  <h2 className="text-xl font-black">Record details</h2>
+                </div>
+                <div className="space-y-4 text-sm">
                   <div>
-                    <div className="font-medium text-gray-700">Last Updated</div>
-                    <div className="text-gray-900">{service.lastUpdated}</div>
+                    <div className="font-bold">Cost</div>
+                    <div className="mt-1 inline-flex rounded-full bg-[#ECFDF5] px-3 py-1 font-bold text-[#047857]">
+                      {costLabel(service.cost)}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-bold">Service type</div>
+                    <div className="mt-1 text-[#0A0A0A]/65">{subcategoryLabel || categoryLabel}</div>
+                  </div>
+                  <div>
+                    <div className="font-bold">Last updated</div>
+                    <div className="mt-1 text-[#0A0A0A]/65">{service.lastUpdated}</div>
                   </div>
                 </div>
-              </div>
+              </article>
             </div>
+          </div>
+        </section>
 
-            {/* Referral Information */}
-            <div className="mt-8 border-2 border-black p-6 bg-white">
-              <h3 className="font-bold text-xl mb-4 flex items-center gap-2">
-                <FileText className="h-5 w-5" />
+        <section className="bg-white">
+          <div className="mx-auto max-w-7xl px-6 py-8 md:px-10 lg:px-12">
+            <div className="rounded-lg border border-[#0A0A0A]/12 bg-white p-5 shadow-sm md:p-6">
+              <h2 className="mb-5 flex items-center gap-2 text-xl font-black">
+                <FileText className="h-5 w-5 text-[#DC2626]" />
                 How to Access This Service
-              </h3>
+              </h2>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <h4 className="font-bold mb-3">Referral Options</h4>
-                  <div className="space-y-2">
+                  <h3 className="mb-3 font-bold">Referral options</h3>
+                  <div className="space-y-3 text-sm">
                     <div className="flex items-center gap-2">
-                      <CheckCircle className={`h-4 w-4 ${service.referralInfo?.selfReferral !== false ? 'text-green-500' : 'text-gray-300'}`} />
-                      <span className={service.referralInfo?.selfReferral !== false ? 'text-gray-700' : 'text-gray-400'}>
+                      <CheckCircle
+                        className={`h-4 w-4 ${
+                          service.referralInfo?.selfReferral !== false
+                            ? 'text-[#059669]'
+                            : 'text-[#0A0A0A]/25'
+                        }`}
+                      />
+                      <span className={service.referralInfo?.selfReferral !== false ? 'text-[#0A0A0A]/70' : 'text-[#0A0A0A]/35'}>
                         Self-referral accepted
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle className={`h-4 w-4 ${service.referralInfo?.professionalReferral !== false ? 'text-green-500' : 'text-gray-300'}`} />
-                      <span className={service.referralInfo?.professionalReferral !== false ? 'text-gray-700' : 'text-gray-400'}>
+                      <CheckCircle
+                        className={`h-4 w-4 ${
+                          service.referralInfo?.professionalReferral !== false
+                            ? 'text-[#059669]'
+                            : 'text-[#0A0A0A]/25'
+                        }`}
+                      />
+                      <span className={service.referralInfo?.professionalReferral !== false ? 'text-[#0A0A0A]/70' : 'text-[#0A0A0A]/35'}>
                         Professional referral accepted
                       </span>
                     </div>
@@ -615,15 +674,15 @@ export default function ServiceDetailPage() {
 
                   {service.referralInfo?.referralProcess && (
                     <div className="mt-4">
-                      <h4 className="font-medium text-gray-700 mb-1">Referral Process</h4>
-                      <p className="text-gray-600 text-sm">{service.referralInfo.referralProcess}</p>
+                      <h4 className="mb-1 font-bold">Referral process</h4>
+                      <p className="text-sm leading-6 text-[#0A0A0A]/65">{service.referralInfo.referralProcess}</p>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <h4 className="font-bold mb-3">What to Expect</h4>
-                  <div className="space-y-2 text-sm text-gray-600">
+                  <h3 className="mb-3 font-bold">What to expect</h3>
+                  <div className="space-y-3 text-sm leading-6 text-[#0A0A0A]/65">
                     {service.referralInfo?.waitTime ? (
                       <p><strong>Typical wait time:</strong> {service.referralInfo.waitTime}</p>
                     ) : (
@@ -635,73 +694,113 @@ export default function ServiceDetailPage() {
                 </div>
               </div>
 
-              <div className="mt-4 p-3 bg-blue-50 border-l-4 border-blue-500 text-sm">
-                <div className="flex items-start gap-2">
-                  <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                  <p className="text-blue-800">
-                    Need help navigating services? <Link href="/intelligence#alma-chat" className="font-bold underline">Ask ALMA</Link> for personalized guidance on finding and accessing support.
+              <div className="mt-5 rounded-md border border-[#0A0A0A]/10 bg-[#F7F3EA] p-4 text-sm">
+                <div className="flex items-start gap-3">
+                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#DC2626]" />
+                  <p className="leading-6 text-[#0A0A0A]/70">
+                    Need help navigating services? <Link href="/alma" className="font-bold underline">Ask ALMA</Link> for broader guidance, then check the source before acting.
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Related Resources */}
-            <div className="mt-8">
-              <h3 className="font-bold text-xl mb-4">Related Resources</h3>
-              <div className="grid md:grid-cols-3 gap-4">
+            <div className="mt-8 grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
+              <div className="rounded-lg border border-[#0A0A0A]/12 bg-[#F7F3EA] p-5">
+                <p className="font-mono text-xs font-bold uppercase tracking-[0.22em] text-[#0A0A0A]/45">
+                  Next action
+                </p>
+                <h2 className="mt-2 text-2xl font-black">Use this record carefully.</h2>
+                <p className="mt-2 text-sm leading-6 text-[#0A0A0A]/65">
+                  This page helps you inspect a service record. If someone needs urgent support,
+                  confirm details directly with the service or a trusted local worker.
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {phoneHref && (
+                    <a
+                      href={phoneHref}
+                      className="inline-flex items-center gap-2 rounded-full bg-[#0A0A0A] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#DC2626]"
+                    >
+                      <Phone className="h-4 w-4" />
+                      Call
+                    </a>
+                  )}
+                  {sourceHref && (
+                    <a
+                      href={sourceHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full bg-[#DC2626] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#B91C1C]"
+                    >
+                      Visit source
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  )}
+                  <Link
+                    href="/services"
+                    className="inline-flex items-center gap-2 rounded-full border border-[#0A0A0A]/15 bg-white px-4 py-2 text-sm font-bold transition-colors hover:border-[#0A0A0A]"
+                  >
+                    Search again
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+
+              <div>
+                <h2 className="mb-3 text-xl font-black">Related routes</h2>
+                <div className="grid gap-3 sm:grid-cols-3">
                 <Link
                   href={`/services?category=${service.category}`}
-                  className="border-2 border-black p-4 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+                    className="group rounded-lg border border-[#0A0A0A]/12 bg-white p-4 shadow-sm transition-colors hover:border-[#0A0A0A]"
                 >
-                  <div className="text-ochre-600 font-bold text-sm uppercase tracking-wider mb-1">
+                    <div className="mb-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#DC2626]">
                     More Services
                   </div>
-                  <h4 className="font-bold mb-2">Similar {service.category} Services</h4>
-                  <span className="text-ochre-600 font-medium inline-flex items-center gap-1 text-sm">
-                    Browse <ChevronRight className="h-4 w-4" />
+                    <h3 className="font-bold">Similar {categoryLabel} records</h3>
+                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-[#0A0A0A]/65 group-hover:text-[#0A0A0A]">
+                      Browse <ArrowRight className="h-4 w-4" />
                   </span>
                 </Link>
 
                 <Link
                   href="/community-programs"
-                  className="border-2 border-black p-4 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+                    className="group rounded-lg border border-[#0A0A0A]/12 bg-white p-4 shadow-sm transition-colors hover:border-[#0A0A0A]"
                 >
-                  <div className="text-eucalyptus-600 font-bold text-sm uppercase tracking-wider mb-1">
+                    <div className="mb-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#DC2626]">
                     Programs
                   </div>
-                  <h4 className="font-bold mb-2">Community Programs</h4>
-                  <span className="text-eucalyptus-600 font-medium inline-flex items-center gap-1 text-sm">
-                    Explore <ChevronRight className="h-4 w-4" />
+                    <h3 className="font-bold">Curated community programs</h3>
+                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-[#0A0A0A]/65 group-hover:text-[#0A0A0A]">
+                      Explore <ArrowRight className="h-4 w-4" />
                   </span>
                 </Link>
 
                 <Link
-                  href="/youth-justice-report/interventions"
-                  className="border-2 border-black p-4 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+                  href="/alma"
+                    className="group rounded-lg border border-[#0A0A0A]/12 bg-white p-4 shadow-sm transition-colors hover:border-[#0A0A0A]"
                 >
-                  <div className="text-blue-600 font-bold text-sm uppercase tracking-wider mb-1">
-                    Evidence
+                    <div className="mb-1 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#DC2626]">
+                      ALMA
                   </div>
-                  <h4 className="font-bold mb-2">ALMA Interventions</h4>
-                  <span className="text-blue-600 font-medium inline-flex items-center gap-1 text-sm">
-                    Research <ChevronRight className="h-4 w-4" />
+                    <h3 className="font-bold">Alternative models</h3>
+                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-[#0A0A0A]/65 group-hover:text-[#0A0A0A]">
+                      Research <ArrowRight className="h-4 w-4" />
                   </span>
                 </Link>
+                </div>
               </div>
             </div>
 
-            {/* Real People Stories */}
             {profiles.length > 0 && (
-              <div className="mt-12 border-t-2 border-black pt-8">
-                <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-                  <Users className="h-8 w-8" />
-                  Real People, Real Impact
+              <div className="mt-10 border-t border-[#0A0A0A]/12 pt-8">
+                <h2 className="mb-3 flex items-center gap-2 text-2xl font-black">
+                  <Users className="h-6 w-6 text-[#DC2626]" />
+                  Story links
                 </h2>
-                <p className="text-lg text-gray-700 mb-8">
-                  Hear from people who have used this service and their experiences.
+                <p className="mb-6 max-w-2xl text-sm leading-6 text-[#0A0A0A]/65">
+                  These cards only appear when story/profile material is attached to the public record.
                 </p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {profiles.map((profileData, index) => (
                     <ProfileCard
                       key={profileData.profile.id + index}
@@ -713,7 +812,7 @@ export default function ServiceDetailPage() {
                   ))}
                 </div>
 
-                <div className="mt-6 text-sm text-gray-600 p-4 bg-blue-50 border-l-4 border-blue-500">
+                <div className="mt-6 rounded-lg border border-[#0A0A0A]/10 bg-[#F7F3EA] p-4 text-sm text-[#0A0A0A]/65">
                   <p>
                     These stories are shared through <strong>Empathy Ledger</strong>,
                     an Indigenous-led storytelling platform that maintains data sovereignty
@@ -722,32 +821,6 @@ export default function ServiceDetailPage() {
                 </div>
               </div>
             )}
-
-            {/* Action Buttons */}
-            <div className="mt-12 text-center border-t-2 border-black pt-8">
-              <h3 className="text-2xl font-bold mb-6">Ready to Get Help?</h3>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href={`tel:${service.contact.replace(/\D/g, '')}`}
-                  className="px-8 py-4 bg-black text-white font-bold hover:bg-gray-800 transition-all inline-flex items-center gap-2"
-                >
-                  <Phone className="h-5 w-5" />
-                  Call Now
-                </a>
-
-                {service.source && (
-                  <a
-                    href={service.source}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-8 py-4 border-2 border-black font-bold hover:bg-black hover:text-white transition-all inline-flex items-center gap-2"
-                  >
-                    <ExternalLink className="h-5 w-5" />
-                    Visit Source
-                  </a>
-                )}
-              </div>
-            </div>
           </div>
         </section>
       </main>

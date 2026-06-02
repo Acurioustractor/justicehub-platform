@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Search, ArrowUp, ArrowDown, ExternalLink } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { OrgDetailPanel } from './OrgDetailPanel';
+import { RecordTrustBadges } from '@/components/trust/RecordTrustBadges';
 
 interface OrgRow {
   org_id: string;
@@ -65,6 +66,9 @@ interface ProgramRow {
   org_remoteness: string | null;
   org_community_controlled: boolean;
   org_charity_size: string | null;
+  years_operating?: number | null;
+  cultural_authority?: string | null;
+  portfolio_score?: number | null;
 }
 
 type Tab = 'orgs' | 'programs' | 'funding';
@@ -88,20 +92,6 @@ function fmtMoney(n: number): string {
   if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
   if (n > 0) return `$${n.toLocaleString()}`;
   return '—';
-}
-
-function evidenceShort(level: string | null): string {
-  if (!level) return '—';
-  return level.split('(')[0].trim();
-}
-
-function evidenceColor(level: string | null): string {
-  const l = (level || '').toLowerCase();
-  if (l.startsWith('proven')) return '#10b981';
-  if (l.startsWith('effective')) return '#14b8a6';
-  if (l.startsWith('indigenous')) return '#dc2626';
-  if (l.startsWith('promising')) return '#f59e0b';
-  return '#9ca3af';
 }
 
 export function OrgsAndProgramsExplorer() {
@@ -404,6 +394,22 @@ export function OrgsAndProgramsExplorer() {
                         {r.ben_youth && <BadgeOutline>YOUTH</BadgeOutline>}
                         {r.acnc_registered && <BadgeOutline>ACNC</BadgeOutline>}
                       </div>
+                      <RecordTrustBadges
+                        className="mb-2"
+                        showReview={false}
+                        hasLocation={Boolean(r.state || r.locality || r.lga_name)}
+                        locationLabel={[r.locality, r.state].filter(Boolean).join(', ') || r.lga_name}
+                        hasSource={Boolean(r.abn || r.acnc_registered || r.is_oric_corporation)}
+                        sourceLabel={r.abn ? `ABN ${r.abn}` : 'Registry source'}
+                        communityControlled={r.community_controlled}
+                        extraBadges={
+                          r.strong_evidence_count > 0
+                            ? [{ label: 'Source linked', tone: 'source', title: `${r.strong_evidence_count} linked evidence signal${r.strong_evidence_count === 1 ? '' : 's'}.` }]
+                            : undefined
+                        }
+                        compact
+                        maxBadges={5}
+                      />
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-gray-600 font-mono">
                         {r.state && <span>{r.locality ? `${r.locality}, ` : ''}{r.state} {r.postcode ?? ''}</span>}
                         {r.lga_name && <span>LGA · {r.lga_name}</span>}
@@ -451,16 +457,19 @@ export function OrgsAndProgramsExplorer() {
                         <span className="text-[10px] uppercase tracking-widest text-gray-500 font-mono">{(i + 1).toString().padStart(4, '0')}</span>
                         <span className="font-bold text-sm md:text-base">{p.name}</span>
                         {p.type && <span className="text-[11px] uppercase tracking-wider px-1.5 py-0.5 border border-gray-400 text-gray-700 font-mono">{p.type}</span>}
-                        {p.evidence_level && (
-                          <span
-                            className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 font-mono font-bold text-white"
-                            style={{ backgroundColor: evidenceColor(p.evidence_level) }}
-                          >
-                            {evidenceShort(p.evidence_level)}
-                          </span>
-                        )}
                         {p.org_community_controlled && <Badge color="bg-red-600">CC</Badge>}
                       </div>
+                      <RecordTrustBadges
+                        className="mb-2"
+                        evidenceLevel={p.evidence_level}
+                        hasLocation={Boolean(p.org_state || p.geography?.length)}
+                        locationLabel={p.org_state || p.geography?.join(', ')}
+                        hasSource={Boolean(p.org_id || p.cultural_authority)}
+                        sourceLabel={p.org_name || p.cultural_authority || 'Linked organisation'}
+                        communityControlled={p.org_community_controlled}
+                        compact
+                        maxBadges={5}
+                      />
                       {p.description && (
                         <p className="text-[13px] text-gray-700 mb-1 line-clamp-2">{p.description.slice(0, 280)}{p.description.length > 280 ? '…' : ''}</p>
                       )}

@@ -163,7 +163,7 @@ interface StopThesis {
   closingSubhead: string;   // red-band closing CTA subhead
   closingPrimaryLabel: string;
   closingPrimaryHref: string;
-  closingDate: string;      // e.g. "Adelaide · End Jun 2026"
+  closingDate: string;      // e.g. "Adelaide · 23 Jun 2026"
 }
 
 const STOP_THESIS: Record<string, StopThesis> = {
@@ -194,10 +194,10 @@ const STOP_THESIS: Record<string, StopThesis> = {
     basecampHref: '/organizations/justice-reform-initiative',
     closingHeadline: 'The launch is where the whole process becomes public.',
     closingSubhead:
-      'Come to Tandanya in late June. Walk through the container during the Reintegration Puzzle Conference and leave with the evidence, local program asks, and JusticeHub links.',
+      'Come to Tandanya on 23 June. Walk through the container during the Reintegration Puzzle Conference and leave with the evidence, local program asks, and JusticeHub links.',
     closingPrimaryLabel: 'Register · Adelaide',
     closingPrimaryHref: '/contained/register?stop=adelaide',
-    closingDate: 'Adelaide · End Jun 2026',
+    closingDate: 'Adelaide · 23 Jun 2026',
   },
   'contained-brisbane': {
     kicker: 'Start here · Brisbane',

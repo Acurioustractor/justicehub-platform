@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, Calendar, MapPin, Clock, Check, Loader2 } from 'lucide-react';
 import { tourStops } from '@/content/campaign';
 import { TurnstileWidget } from '@/components/ui/turnstile-widget';
@@ -17,11 +18,24 @@ interface RegistrationData {
   newsletter: boolean;
 }
 
-export default function ContainedRegisterPage() {
+function findRequestedStop(stopParam: string | null) {
+  const normalized = (stopParam || 'adelaide').toLowerCase().trim();
+  return (
+    tourStops.find((stop) =>
+      stop.eventSlug.toLowerCase() === normalized ||
+      stop.eventSlug.toLowerCase().includes(normalized) ||
+      stop.city.toLowerCase().includes(normalized)
+    ) ||
+    tourStops.find((stop) => stop.eventSlug === 'contained-adelaide-tandanya') ||
+    tourStops[0]
+  );
+}
+
+function ContainedRegisterPageContent() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [registrationId, setRegistrationId] = useState('');
 
   const [turnstileToken, setTurnstileToken] = useState('');
 
@@ -36,10 +50,10 @@ export default function ContainedRegisterPage() {
     newsletter: true,
   });
 
-  const firstStop = tourStops[0];
-  const parsedDate = new Date(firstStop.date);
-  const displayDate = Number.isNaN(parsedDate.getTime()) || firstStop.date.startsWith('TBC')
-    ? firstStop.date
+  const selectedStop = findRequestedStop(searchParams.get('stop'));
+  const parsedDate = new Date(selectedStop.date);
+  const displayDate = Number.isNaN(parsedDate.getTime()) || selectedStop.date.startsWith('TBC')
+    ? selectedStop.date
     : parsedDate.toLocaleDateString('en-AU', {
       weekday: 'long',
       day: 'numeric',
@@ -47,11 +61,12 @@ export default function ContainedRegisterPage() {
       year: 'numeric',
     });
   const eventDetails = {
-    title: `CONTAINED: ${firstStop.city}`,
+    title: `CONTAINED: ${selectedStop.city}`,
     date: displayDate,
     time: 'Date and session details confirmed after registration',
-    venue: firstStop.venue,
-    address: `${firstStop.city}, ${firstStop.state}`,
+    venue: selectedStop.venue,
+    address: `${selectedStop.city}, ${selectedStop.state}`,
+    slug: selectedStop.eventSlug,
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -82,6 +97,13 @@ export default function ContainedRegisterPage() {
           how_heard: formData.how_heard,
           newsletter: formData.newsletter,
           event_name: eventDetails.title,
+          event_slug: eventDetails.slug,
+          tags: [
+            'contained_adelaide',
+            'public_visitor',
+            'youth_remand',
+            'country_reports',
+          ],
           turnstile_token: turnstileToken,
         }),
       });
@@ -92,10 +114,9 @@ export default function ContainedRegisterPage() {
         throw new Error(data.error || 'Failed to register');
       }
 
-      setRegistrationId(data.registration_id || 'confirmed');
       setStep(3);
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong. Please try again.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -416,5 +437,13 @@ export default function ContainedRegisterPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ContainedRegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black p-8 text-white">Loading registration...</div>}>
+      <ContainedRegisterPageContent />
+    </Suspense>
   );
 }

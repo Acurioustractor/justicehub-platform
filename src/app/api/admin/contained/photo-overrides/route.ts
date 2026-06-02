@@ -1,21 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase/service-lite';
-
-const CONFIG_KEY = 'contained-photo-overrides';
+import { getContainedPhotoOverrides, saveContainedPhotoOverrides } from '@/lib/contained/photo-overrides';
 
 /**
  * GET: Load photo overrides (public — needed at render time for all visitors)
  */
 export async function GET() {
   try {
-    const supabase = createServiceClient();
-    const { data } = await (supabase as any)
-      .from('site_config')
-      .select('value')
-      .eq('key', CONFIG_KEY)
-      .single();
-
-    return NextResponse.json({ overrides: data?.value || {} });
+    const overrides = await getContainedPhotoOverrides();
+    return NextResponse.json({ overrides });
   } catch {
     return NextResponse.json({ overrides: {} });
   }
@@ -31,13 +23,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid overrides' }, { status: 400 });
     }
 
-    const supabase = createServiceClient();
-    const { error } = await (supabase as any)
-      .from('site_config')
-      .upsert(
-        { key: CONFIG_KEY, value: overrides, updated_at: new Date().toISOString() },
-        { onConflict: 'key' }
-      );
+    const { error } = await saveContainedPhotoOverrides(overrides);
 
     if (error) {
       // If table doesn't exist, create it

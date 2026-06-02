@@ -95,6 +95,11 @@ const routeMap = [
     body: 'Use strategic questions when you want law, movement, people, and playbook in one place.',
   },
   {
+    route: '/justice-network/youth-remand',
+    label: 'Justice Network',
+    body: 'Use the Youth Remand scenario to compare countries, systems, campaigns, alternatives, funding, and consented human stories.',
+  },
+  {
     route: '/justice-matrix/cases/[id]',
     label: 'Cases',
     body: 'Use profiles to inspect citation, court, issue, holding, source, and verification state.',
@@ -141,6 +146,14 @@ const faqs = [
   {
     q: 'What is the difference between Ask, Explore, and Issues?',
     a: 'Ask is for plain-language questions. Explore is for search and filtering. Issues are curated strategy pages built around recurring questions such as third-country transfer, non-refoulement, or raising the age.',
+  },
+  {
+    q: 'Where does the Justice Network scenario fit?',
+    a: 'Justice Network is the demo layer for a real conversation. Youth Remand asks the same question across countries, then connects law, mapped systems, campaigns, alternatives, funding context, and consent-approved Empathy Ledger story cards.',
+  },
+  {
+    q: 'How are young people and lived experience protected?',
+    a: 'Raw field notes, private media, and sensitive story material stay in Empathy Ledger or partner-gated workspaces. JusticeHub only shows approved public cards with summary, place, attribution if approved, consent status, and revocation-safe source packets.',
   },
   {
     q: 'How does Ask the Matrix work?',
@@ -328,7 +341,7 @@ export default function JusticeMatrixHowItWorksPage() {
         </div>
       </section>
 
-      <section id="faq" className="scroll-mt-6 mx-auto max-w-6xl px-5 pb-16 md:px-8 md:pb-24">
+      <section id="faq" className="scroll-mt-28 mx-auto max-w-6xl px-5 pb-16 md:px-8 md:pb-24">
         <div className="grid gap-8 lg:grid-cols-[320px_1fr] lg:gap-10">
           <div>
             <Kicker>FAQ</Kicker>

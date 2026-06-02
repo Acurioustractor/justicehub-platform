@@ -3,19 +3,16 @@ import { Navigation, Footer } from '@/components/ui/navigation';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
-  MapPin,
   ArrowRight,
   Shield,
-  Users,
   TrendingUp,
   AlertTriangle,
   ExternalLink,
-  DollarSign,
-  Calendar,
 } from 'lucide-react';
 import { Metadata } from 'next';
 import { fmt } from '@/lib/format';
 import { STATE_NAMES } from '@/lib/constants';
+import { RecordTrustBadges } from '@/components/trust/RecordTrustBadges';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,7 +29,7 @@ export async function generateMetadata({ params }: { params: { state: string } }
   if (!name) return { title: 'State — JusticeHub' };
   return {
     title: `${name} — Youth Justice Scorecard | JusticeHub`,
-    description: `Youth justice funding, community organisations, ALMA models, and ministerial statements in ${name}. Follow the money.`,
+    description: `Youth justice funding, community organisations, ALMA records, and ministerial statements in ${name}. Follow the money.`,
   };
 }
 
@@ -47,7 +44,6 @@ export default async function StateScorecardPage({ params }: { params: { state: 
   const [
     fundingRes,
     basecampsRes,
-    minersRes,
     interventionsRes,
     orgsRes,
     indigenousOrgsRes,
@@ -68,15 +64,10 @@ export default async function StateScorecardPage({ params }: { params: { state: 
       .select('id, name, slug, is_indigenous_org')
       .or('partner_tier.eq.basecamp,type.eq.basecamp')
       .eq('state', state),
-    // Network miners
-    supabase
-      .from('network_memberships')
-      .select('id, contact_name, description, organizations(name, slug, state)')
-      .eq('status', 'active'),
     // ALMA interventions via org state
     supabase
       .from('alma_interventions')
-      .select('id, name, type, evidence_level, cost_per_young_person, operating_organization_id, organizations!inner(state)')
+      .select('id, name, type, evidence_level, cost_per_young_person, operating_organization_id, verification_status, review_status, source_documents, website, geography, organizations!inner(state)')
       .eq('organizations.state', state)
       .neq('verification_status', 'ai_generated')
       .order('evidence_level')
@@ -163,7 +154,6 @@ export default async function StateScorecardPage({ params }: { params: { state: 
   }
 
   const basecamps = basecampsRes.data || [];
-  const stateMiners = (minersRes.data || []).filter((m: any) => m.organizations?.state === state);
   const interventions = interventionsRes.data || [];
   const youthOpps = youthOppsRes.data || [];
   const statements = statementsRes.data || [];
@@ -204,7 +194,7 @@ export default async function StateScorecardPage({ params }: { params: { state: 
               </div>
               <div>
                 <p className="text-2xl font-bold text-white" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{interventions.length}</p>
-                <p className="text-xs text-white/50 mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>ALMA models</p>
+                <p className="text-xs text-white/50 mt-1" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>ALMA records</p>
               </div>
               <div>
                 <p className="text-2xl font-bold text-white" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{indigenousOrgsRes.count || 0}</p>
@@ -285,7 +275,7 @@ export default async function StateScorecardPage({ params }: { params: { state: 
           {interventions.length > 0 && (
             <section>
               <h2 className="text-xl font-bold tracking-tight mb-4" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                ALMA Models in {stateName}
+                ALMA Records in {stateName}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {interventions.slice(0, 12).map((int: any) => (
@@ -295,25 +285,31 @@ export default async function StateScorecardPage({ params }: { params: { state: 
                     </div>
                     <div className="min-w-0">
                       <p className="font-semibold text-sm truncate">{int.name}</p>
-                      <div className="flex flex-wrap gap-1.5 mt-1">
+                      <div className="flex flex-wrap gap-1.5 mt-1 mb-2">
                         <span className="text-xs px-1.5 py-0.5 rounded bg-[#0A0A0A]/5 text-[#0A0A0A]/50">{int.type}</span>
-                        {int.evidence_level && (
-                          <span className="text-xs px-1.5 py-0.5 rounded bg-[#059669]/10 text-[#059669]">
-                            {int.evidence_level.split('(')[0].trim()}
-                          </span>
-                        )}
                         {int.cost_per_young_person && (
                           <span className="text-xs px-1.5 py-0.5 rounded bg-amber-100 text-amber-700" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
                             {fmt(Number(int.cost_per_young_person))}/person
                           </span>
                         )}
                       </div>
+                      <RecordTrustBadges
+                        evidenceLevel={int.evidence_level ?? null}
+                        verificationStatus={int.verification_status ?? null}
+                        reviewStatus={int.review_status ?? null}
+                        hasLocation={Boolean(state || int.geography?.length)}
+                        locationLabel={state}
+                        hasCostData={int.cost_per_young_person != null}
+                        hasSource={Boolean(int.website || int.source_documents?.length)}
+                        compact
+                        maxBadges={5}
+                      />
                     </div>
                   </div>
                 ))}
               </div>
               {interventions.length > 12 && (
-                <p className="text-sm text-[#0A0A0A]/40 mt-3">+ {interventions.length - 12} more models</p>
+                <p className="text-sm text-[#0A0A0A]/40 mt-3">+ {interventions.length - 12} more records</p>
               )}
             </section>
           )}

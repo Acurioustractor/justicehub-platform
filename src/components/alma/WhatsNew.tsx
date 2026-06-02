@@ -1,6 +1,7 @@
 import { createServiceClient } from '@/lib/supabase/service';
 import Link from 'next/link';
-import { ArrowRight, Plus, Mail, Phone, Image as ImageIcon, FileText, BookOpen } from 'lucide-react';
+import { unstable_cache } from 'next/cache';
+import { Plus, Mail, Phone, Image as ImageIcon, FileText, BookOpen } from 'lucide-react';
 
 const FIELD_META: Record<string, { label: string; icon: React.ReactNode }> = {
   contact_email: { label: 'email', icon: <Mail className="w-3 h-3" /> },
@@ -17,7 +18,7 @@ const FIELD_META: Record<string, { label: string; icon: React.ReactNode }> = {
  *
  * Limits to last 14 days of approvals to keep the feed evergreen.
  */
-export async function WhatsNewFeed({ limit = 10 }: { limit?: number }) {
+async function loadWhatsNewItems(limit: number) {
   const supabase = createServiceClient() as any;
 
   const since = new Date(Date.now() - 14 * 86400_000).toISOString();
@@ -30,12 +31,12 @@ export async function WhatsNewFeed({ limit = 10 }: { limit?: number }) {
     .order('reviewed_at', { ascending: false })
     .limit(limit * 2); // overpull in case some orgs are Indigenous-led (filtered out below)
 
-  if (!candidates || candidates.length === 0) return null;
+  if (!candidates || candidates.length === 0) return [];
 
   const orgIds = Array.from(new Set(candidates.map((c: any) => c.organization_id)));
   const { data: orgs } = await supabase
     .from('organizations')
-    .select('id, name, slug, state, is_indigenous_org, logo_url')
+    .select('id, name, slug, state, is_indigenous_org')
     .in('id', orgIds);
   const orgsById: Record<string, any> = {};
   for (const o of orgs || []) orgsById[o.id] = o;
@@ -62,6 +63,17 @@ export async function WhatsNewFeed({ limit = 10 }: { limit?: number }) {
     });
     if (items.length >= limit) break;
   }
+
+  return items;
+}
+
+const getWhatsNewItems = unstable_cache(loadWhatsNewItems, ['alma-whats-new-v1'], {
+  revalidate: 300,
+  tags: ['alma-whats-new'],
+});
+
+export async function WhatsNewFeed({ limit = 10 }: { limit?: number }) {
+  const items = await getWhatsNewItems(limit);
 
   if (items.length === 0) return null;
 
@@ -93,21 +105,9 @@ export async function WhatsNewFeed({ limit = 10 }: { limit?: number }) {
               className="bg-white border border-[#0A0A0A]/10 rounded p-3 hover:border-[#0A0A0A]/30 transition-colors group"
             >
               <div className="flex items-start gap-2">
-                {item.org.logo_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={item.org.logo_url}
-                    alt=""
-                    className="w-8 h-8 rounded object-contain bg-[#F5F0E8] border border-[#0A0A0A]/5 shrink-0"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded bg-[#F5F0E8] flex items-center justify-center shrink-0 text-[10px] font-bold text-[#0A0A0A]/40">
-                    {item.org.name.charAt(0)}
-                  </div>
-                )}
+                <div className="w-8 h-8 rounded bg-[#F5F0E8] flex items-center justify-center shrink-0 text-[10px] font-bold text-[#0A0A0A]/40">
+                  {item.org.name.charAt(0)}
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold truncate">{item.org.name}</p>
                   <p

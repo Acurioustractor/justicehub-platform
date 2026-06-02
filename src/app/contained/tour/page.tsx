@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import { TourContent } from './tour-content';
 
-export default function ContainedTourRedirect() {
-  redirect('/contained');
+export default function ContainedTourPage() {
+  return <TourContent />;
 }

@@ -138,6 +138,34 @@ const WHAT_HAPPENS_HERE = [
   },
 ] as const;
 
+const RELEASE_PATHWAY = [
+  {
+    label: 'JusticeHub online',
+    href: '/',
+    body: 'The public search and guided doors help people find the work without needing to understand the whole platform.',
+  },
+  {
+    label: 'CONTAINED Adelaide',
+    href: '/adelaide',
+    body: 'The June 23 experience makes youth remand human before visitors move into evidence and action.',
+  },
+  {
+    label: 'ALMA alternatives',
+    href: '/alma',
+    body: 'The Australian Living Map of Alternatives shows the local models that can hold young people instead.',
+  },
+  {
+    label: 'Country reports',
+    href: '/justice-network/countries',
+    body: 'Africa and Europe reports widen the imagination while keeping scoping, sourcing, and consent boundaries visible.',
+  },
+  {
+    label: 'Basecamps',
+    href: '#basecamps',
+    body: 'Oonchiumpa, PICC, BG Fit, and MMEIC become the local learning anchors for a physical Centre of Excellence.',
+  },
+] as const;
+
 export default function CentreOfExcellencePage() {
   const [basecamps, setBasecamps] = useState<BasecampLocation[]>(FALLBACK_BASECAMPS);
 
@@ -209,6 +237,38 @@ export default function CentreOfExcellencePage() {
               >
                 System map <ArrowRight className="h-4 w-4" />
               </Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b-2 border-[#0A0A0A] bg-white">
+          <div className="mx-auto max-w-6xl px-6 py-14 md:py-16">
+            <p className="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-[#DC2626]">
+              Release pathway
+            </p>
+            <h2
+              className="mb-5 max-w-3xl text-3xl font-black leading-tight md:text-4xl"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
+              The public launch should point back to a real place where the people doing the work can gather.
+            </h2>
+            <div className="grid gap-3 md:grid-cols-5">
+              {RELEASE_PATHWAY.map((item, index) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="group border-2 border-[#0A0A0A] bg-[#F5F0E8] p-4 transition-colors hover:bg-white"
+                >
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className="font-mono text-xs uppercase tracking-[0.18em] text-[#DC2626]">
+                      0{index + 1}
+                    </span>
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </div>
+                  <h3 className="mb-2 font-black">{item.label}</h3>
+                  <p className="text-sm leading-6 text-gray-700">{item.body}</p>
+                </Link>
+              ))}
             </div>
           </div>
         </section>

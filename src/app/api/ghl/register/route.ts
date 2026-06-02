@@ -24,6 +24,8 @@ export async function POST(request: NextRequest) {
       how_heard,
       newsletter,
       event_name,
+      event_slug,
+      tags: customTags,
       turnstile_token,
     } = body;
 
@@ -49,16 +51,26 @@ export async function POST(request: NextRequest) {
 
     // 1. Create/update GHL contact
     let ghlContactId: string | null = null;
+    const safeCustomTags = Array.isArray(customTags)
+      ? customTags
+        .filter((tag): tag is string => typeof tag === 'string' && /^[\w\s:-]+$/.test(tag) && tag.length <= 60)
+        .slice(0, 8)
+      : [];
 
     if (ghl.isConfigured()) {
       const tags: string[] = [
         GHL_TAGS.EVENT,
         GHL_TAGS.JUSTICEHUB,
+        ...safeCustomTags,
       ];
 
       // Add CONTAINED tag if it's a CONTAINED event
       if (event_name?.toUpperCase().includes('CONTAINED')) {
-        tags.push(GHL_TAGS.CONTAINED);
+        tags.push(GHL_TAGS.CONTAINED, GHL_TAGS.PUBLIC_VISITOR);
+      }
+
+      if (event_slug === 'contained-adelaide-tandanya' || event_name?.toLowerCase().includes('adelaide')) {
+        tags.push(GHL_TAGS.CONTAINED_ADELAIDE, GHL_TAGS.YOUTH_REMAND, GHL_TAGS.COUNTRY_REPORTS);
       }
 
       if (newsletter) {
@@ -79,6 +91,7 @@ export async function POST(request: NextRequest) {
           organization: organization || '',
           role: role || '',
           how_heard: how_heard || '',
+          event_slug: event_slug || '',
         },
       });
     }
@@ -99,6 +112,8 @@ export async function POST(request: NextRequest) {
           how_heard,
           newsletter,
           event_name,
+          event_slug,
+          tags: safeCustomTags,
           registered_at: new Date().toISOString(),
         },
         registration_status: 'registered',
@@ -161,7 +176,7 @@ export async function POST(request: NextRequest) {
       await (supabase as any).from('member_actions').insert({
         user_id: matchedProfile.id,
         action_type: 'event_registration',
-        metadata: { event_name: event_name || null, event_id: event_id || null },
+        metadata: { event_name: event_name || null, event_slug: event_slug || null, event_id: event_id || null },
       }).catch(() => {});
     }
 

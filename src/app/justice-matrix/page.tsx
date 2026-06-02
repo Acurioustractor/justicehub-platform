@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { ArrowRight, Globe, Scale, Megaphone, Database, Search, BookOpen, Map as MapIcon } from 'lucide-react';
+import { ArrowRight, Globe, Scale, Megaphone, Database, Search, BookOpen, Map as MapIcon, Network } from 'lucide-react';
 import { bucketJurisdiction } from '@/lib/justice-matrix/jurisdiction';
 import { MatrixFlowNav } from './_components/MatrixFlowNav';
 
@@ -201,6 +201,7 @@ export default async function JusticeMatrixLandingPage() {
             <QuickLink href="/justice-matrix/issues">Issues</QuickLink>
             <QuickLink href="/justice-matrix/guide">Guide</QuickLink>
             <QuickLink href="/justice-matrix/map">Map</QuickLink>
+            <QuickLink href="/justice-network/youth-remand">Youth remand</QuickLink>
             <QuickLink href="/justice-matrix/explore?type=case">Cases {stats.cases}</QuickLink>
             <QuickLink href="/justice-matrix/explore?type=campaign">Campaigns {stats.campaigns}</QuickLink>
             <QuickLink href="/justice-matrix/explore?type=evidence">Evidence {stats.evidence}</QuickLink>
@@ -213,7 +214,7 @@ export default async function JusticeMatrixLandingPage() {
 
       {/* ENTRY TILES — the funnel, made tactile */}
       <section className="max-w-6xl mx-auto px-5 md:px-8 py-8 md:py-10">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
           <EntryTile
             href="/justice-matrix/explore?type=case"
             icon={<Scale className="w-5 h-5" />}
@@ -246,6 +247,15 @@ export default async function JusticeMatrixLandingPage() {
             count={stats.regions}
             body="Search the corpus geographically: recorded coordinates first, then labelled jurisdiction centroids."
             countLabel="regions"
+          />
+          <EntryTile
+            href="/justice-network/youth-remand"
+            icon={<Network className="w-5 h-5" />}
+            color="#256c42"
+            label="Network scenario"
+            count={1}
+            body="Compare youth remand across law, systems, campaigns, funders, countries, and consented stories."
+            countLabel="demo"
           />
         </div>
       </section>
@@ -314,6 +324,13 @@ export default async function JusticeMatrixLandingPage() {
               body="Switch to semantic mode to surface related ideas by meaning across cases, campaigns and evidence, beyond keyword matches."
               href="/justice-matrix/explore?mode=semantic"
               ctaLabel="Try semantic mode"
+            />
+            <SidePanel
+              kicker="Justice Network"
+              title="Youth remand scenario"
+              body="A partner-ready walkthrough for comparing how countries handle young people on remand, then linking the law to campaigns, alternatives, funders and consented field stories."
+              href="/justice-network/youth-remand"
+              ctaLabel="Open the scenario"
             />
           </aside>
         </div>

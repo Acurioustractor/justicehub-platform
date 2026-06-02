@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { EvidenceBadge } from './EvidenceBadge';
 import { ConsentIndicator } from './ConsentIndicator';
 import type { ALMAIntervention } from '@/types/alma';
+import { RecordTrustBadges } from '@/components/trust/RecordTrustBadges';
 
 interface PortfolioScore {
   composite: number;
@@ -71,6 +72,21 @@ export function InterventionCard({
           />
         </div>
       )}
+
+      <RecordTrustBadges
+        className="mb-4"
+        evidenceLevel={intervention.evidence_level ?? null}
+        verificationStatus={(intervention as any).verification_status ?? null}
+        reviewStatus={intervention.review_status ?? null}
+        hasLocation={Boolean(intervention.geography?.length || intervention.metadata?.state)}
+        locationLabel={intervention.geography?.join(', ') || String(intervention.metadata?.state || '')}
+        hasCostData={intervention.cost_per_young_person != null}
+        hasSource={Boolean(intervention.website || intervention.source_documents?.length)}
+        sourceLabel={intervention.website || intervention.source_documents?.[0]?.title || 'ALMA source trail'}
+        communityControlled={Boolean(intervention.cultural_authority)}
+        maxBadges={compact ? 4 : 6}
+        compact={compact}
+      />
 
       {/* Description */}
       {!compact && intervention.description && (

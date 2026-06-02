@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JusticeHub — Page Map</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0A0A0A; color: #F5F0E8; font-family: 'Space Grotesk', sans-serif; padding: 60px 40px; }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 8px; }
+  .subtitle { color: #888; margin-bottom: 48px; }
+  .section { margin-bottom: 48px; }
+  .section h2 { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; color: #666; margin-bottom: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+  a.card { display: block; background: #141414; border: 1px solid #222; border-radius: 10px; padding: 20px; text-decoration: none; color: #F5F0E8; transition: all 0.15s; }
+  a.card:hover { border-color: #059669; transform: translateY(-2px); }
+  .card .title { font-weight: 600; font-size: 1rem; margin-bottom: 4px; }
+  .card .url { font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: #059669; margin-bottom: 8px; }
+  .card .desc { font-size: 0.8rem; color: #888; line-height: 1.5; }
+  .card .tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 8px; }
+  .tag-campaign { background: #DC2626; }
+  .tag-intel { background: #059669; }
+  .tag-admin { background: #D97706; color: #0A0A0A; }
+  .tag-funder { background: #3B82F6; }
+  .tag-tool { background: #6B7280; }
+  .tag-public { background: #8B5CF6; }
+</style>
+</head>
+<body>
+<div style="max-width: 1200px; margin: 0 auto;">
+  <h1>Page Map</h1>
+  <p class="subtitle mono" style="font-size: 0.85rem;">Every page in JusticeHub. Bookmark this: <strong>localhost:3004/page-map.html</strong></p>
+
+  <!-- CAMPAIGN -->
+  <div class="section">
+    <h2>CONTAINED Campaign</h2>
+    <div class="grid">
+      <a class="card" href="/contained-campaign-overview.html">
+        <div class="title">Campaign Overview</div>
+        <div class="url">/contained-campaign-overview.html</div>
+        <div class="desc">All tour stops, every person, funding pipeline, urgent actions. The movement map.</div>
+        <span class="tag tag-campaign">Campaign</span>
+      </a>
+      <a class="card" href="/contained-momentum.html">
+        <div class="title">Movement Momentum Report</div>
+        <div class="url">/contained-momentum.html</div>
+        <div class="desc">Stats, comparisons, and momentum metrics for the CONTAINED campaign.</div>
+        <span class="tag tag-campaign">Campaign</span>
+      </a>
+      <a class="card" href="/campaign-hub.html">
+        <div class="title">Campaign Command Centre</div>
+        <div class="url">/campaign-hub.html</div>
+        <div class="desc">Brand guide, visual system, campaign assets, colour/typography reference.</div>
+        <span class="tag tag-campaign">Campaign</span>
+      </a>
+      <a class="card" href="/contained">
+        <div class="title">CONTAINED — Public Home</div>
+        <div class="url">/contained</div>
+        <div class="desc">Public-facing CONTAINED campaign landing page.</div>
+        <span class="tag tag-public">Public</span>
+      </a>
+      <a class="card" href="/contained/tour">
+        <div class="title">Tour Page (Public)</div>
+        <div class="url">/contained/tour</div>
+        <div class="desc">Public tour page with stop details, interactive map.</div>
+        <span class="tag tag-public">Public</span>
+      </a>
+      <a class="card" href="/contained/stories">
+        <div class="title">CONTAINED Stories</div>
+        <div class="url">/contained/stories</div>
+        <div class="desc">Community stories collected through the campaign.</div>
+        <span class="tag tag-public">Public</span>
+      </a>
+      <a class="card" href="/contained/experience">
+        <div class="title">CONTAINED Experience</div>
+        <div class="url">/contained/experience</div>
+        <div class="desc">What happens inside the container.</div>
+        <span class="tag tag-public">Public</span>
+      </a>
+      <a class="card" href="/contained/act">
+        <div class="title">Act Now</div>
+        <div class="url">/contained/act</div>
+        <div class="desc">Call to action page.</div>
+        <span class="tag tag-public">Public</span>
+      </a>
+      <a class="card" href="/contained/invest">
+        <div class="title">Invest</div>
+        <div class="url">/contained/invest</div>
+        <div class="desc">Investment/donation page for funders.</div>
+        <span class="tag tag-funder">Funder</span>
+      </a>
+      <a class="card" href="/contained/invest/one-pager">
+        <div class="title">Investment One-Pager</div>
+        <div class="url">/contained/invest/one-pager</div>
+        <div class="desc">Single-page investment summary for meetings.</div>
+        <span class="tag tag-funder">Funder</span>
+      </a>
+      <a class="card" href="/contained/nominations">
+        <div class="title">Nominations Wall</div>
+        <div class="url">/contained/nominations</div>
+        <div class="desc">Community nominations for CONTAINED visits.</div>
+        <span class="tag tag-public">Public</span>
+      </a>
+      <a class="card" href="/contained/register-interest">
+        <div class="title">Register Interest</div>
+        <div class="url">/contained/register-interest</div>
+        <div class="desc">Form for people to register interest in hosting/attending.</div>
+        <span class="tag tag-public">Public</span>
+      </a>
+      <a class="card" href="/contained/community">
+        <div class="title">Community</div>
+        <div class="url">/contained/community</div>
+        <div class="desc">Community hub page.</div>
+        <span class="tag tag-public">Public</span>
+      </a>
+      <a class="card" href="/contained/momentum">
+        <div class="title">Momentum (App Page)</div>
+        <div class="url">/contained/momentum</div>
+        <div class="desc">Next.js momentum page (app route, not static HTML).</div>
+        <span class="tag tag-public">Public</span>
+      </a>
+      <a class="card" href="/contained/share">
+        <div class="title">Share Your Story</div>
+        <div class="url">/contained/share</div>
+        <div class="desc">Story submission form.</div>
+        <span class="tag tag-public">Public</span>
+      </a>
+      <a class="card" href="/contained/tour/social">
+        <div class="title">Social Kit</div>
+        <div class="url">/contained/tour/social</div>
+        <div class="desc">Social media toolkit for tour stops.</div>
+        <span class="tag tag-campaign">Campaign</span>
+      </a>
+      <a class="card" href="/contained/tour/intelligence">
+        <div class="title">Tour Intelligence Map</div>
+        <div class="url">/contained/tour/intelligence</div>
+        <div class="desc">Intelligence overlay on tour stops.</div>
+        <span class="tag tag-intel">Intel</span>
+      </a>
+      <a class="card" href="/contained/brief">
+        <div class="title">Campaign Brief</div>
+        <div class="url">/contained/brief</div>
+        <div class="desc">CONTAINED campaign brief document.</div>
+        <span class="tag tag-campaign">Campaign</span>
+      </a>
+      <a class="card" href="/contained-gallery.html">
+        <div class="title">Photo Gallery</div>
+        <div class="url">/contained-gallery.html</div>
+        <div class="desc">CONTAINED campaign photo gallery.</div>
+        <span class="tag tag-tool">Tool</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- INTELLIGENCE -->
+  <div class="section">
+    <h2>Intelligence Platform</h2>
+    <div class="grid">
+      <a class="card" href="/intelligence/evidence">
+        <div class="title">Evidence Scatter</div>
+        <div class="url">/intelligence/evidence</div>
+        <div class="desc">550:1 cost ratio. 1,081 programs plotted against detention cost.</div>
+        <span class="tag tag-intel">Intel</span>
+      </a>
+      <a class="card" href="/intelligence/funding-map">
+        <div class="title">Funding Map (Million Dollar LGAs)</div>
+        <div class="url">/intelligence/funding-map</div>
+        <div class="desc">360 LGAs. 96 funding deserts. Where the money isn't.</div>
+        <span class="tag tag-intel">Intel</span>
+      </a>
+      <a class="card" href="/intelligence/funding-flows">
+        <div class="title">Funding Flows (Sankey)</div>
+        <div class="url">/intelligence/funding-flows</div>
+        <div class="desc">$114.9B tracked. Interactive Sankey of who funds whom.</div>
+        <span class="tag tag-intel">Intel</span>
+      </a>
+      <a class="card" href="/intelligence/network">
+        <div class="title">Network Explorer</div>
+        <div class="url">/intelligence/network</div>
+        <div class="desc">587K entities, 1.5M relationships. Cytoscape.js graph.</div>
+        <span class="tag tag-intel">Intel</span>
+      </a>
+      <a class="card" href="/intelligence/stories">
+        <div class="title">Story Bridge</div>
+        <div class="url">/intelligence/stories</div>
+        <div class="desc">Data connected to real human stories from Empathy Ledger.</div>
+        <span class="tag tag-intel">Intel</span>
+      </a>
+      <a class="card" href="/intelligence/nsw">
+        <div class="title">NSW Sector Report</div>
+        <div class="url">/intelligence/nsw</div>
+        <div class="desc">$327M/year. 34% detention surge. Bail crisis. Full report.</div>
+        <span class="tag tag-intel">Intel</span>
+      </a>
+      <a class="card" href="/viz/ecosystem-map.html">
+        <div class="title">Ecosystem Map</div>
+        <div class="url">/viz/ecosystem-map.html</div>
+        <div class="desc">Interactive ecosystem visualization.</div>
+        <span class="tag tag-intel">Intel</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- FUNDER PAGES -->
+  <div class="section">
+    <h2>Funder Pages</h2>
+    <div class="grid">
+      <a class="card" href="/for-funders">
+        <div class="title">For Funders Hub</div>
+        <div class="url">/for-funders</div>
+        <div class="desc">Main funder landing page with evidence, calculator, reports.</div>
+        <span class="tag tag-funder">Funder</span>
+      </a>
+      <a class="card" href="/for-funders/calculator">
+        <div class="title">Impact Calculator</div>
+        <div class="url">/for-funders/calculator</div>
+        <div class="desc">Cost comparison calculator for funders.</div>
+        <span class="tag tag-funder">Funder</span>
+      </a>
+      <a class="card" href="/for-funders/evidence-gaps">
+        <div class="title">Evidence Gap Matrix</div>
+        <div class="url">/for-funders/evidence-gaps</div>
+        <div class="desc">Where evidence is strong vs where it's missing.</div>
+        <span class="tag tag-funder">Funder</span>
+      </a>
+      <a class="card" href="/for-funders/compare">
+        <div class="title">Funder Comparison</div>
+        <div class="url">/for-funders/compare</div>
+        <div class="desc">Compare funder portfolios side by side.</div>
+        <span class="tag tag-funder">Funder</span>
+      </a>
+      <a class="card" href="/for-funders/report/dusseldorp">
+        <div class="title">Dusseldorp Report</div>
+        <div class="url">/for-funders/report/dusseldorp</div>
+        <div class="desc">Per-funder intelligence report for Dusseldorp Forum.</div>
+        <span class="tag tag-funder">Funder</span>
+      </a>
+      <a class="card" href="/for-funders/report/prf">
+        <div class="title">PRF Report</div>
+        <div class="url">/for-funders/report/prf</div>
+        <div class="desc">Per-funder intelligence report for Paul Ramsay Foundation.</div>
+        <span class="tag tag-funder">Funder</span>
+      </a>
+      <a class="card" href="/for-funders/report/minderoo">
+        <div class="title">Minderoo Report</div>
+        <div class="url">/for-funders/report/minderoo</div>
+        <div class="desc">Per-funder intelligence report for Minderoo Foundation.</div>
+        <span class="tag tag-funder">Funder</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div class="section">
+    <h2>Admin Pages</h2>
+    <div class="grid">
+      <a class="card" href="/admin">
+        <div class="title">Admin Dashboard</div>
+        <div class="url">/admin</div>
+        <div class="desc">Main admin dashboard.</div>
+        <span class="tag tag-admin">Admin</span>
+      </a>
+      <a class="card" href="/admin/contained">
+        <div class="title">CONTAINED Admin</div>
+        <div class="url">/admin/contained</div>
+        <div class="desc">Campaign admin hub.</div>
+        <span class="tag tag-admin">Admin</span>
+      </a>
+      <a class="card" href="/admin/contained/locations">
+        <div class="title">Locations Admin</div>
+        <div class="url">/admin/contained/locations</div>
+        <div class="desc">Tour stop locations management.</div>
+        <span class="tag tag-admin">Admin</span>
+      </a>
+      <a class="card" href="/admin/contained/campaign">
+        <div class="title">Campaign Admin</div>
+        <div class="url">/admin/contained/campaign</div>
+        <div class="desc">Campaign management dashboard.</div>
+        <span class="tag tag-admin">Admin</span>
+      </a>
+      <a class="card" href="/admin/contained/crm">
+        <div class="title">CRM</div>
+        <div class="url">/admin/contained/crm</div>
+        <div class="desc">Contact relationship management.</div>
+        <span class="tag tag-admin">Admin</span>
+      </a>
+      <a class="card" href="/admin/contained/stories">
+        <div class="title">Stories Admin</div>
+        <div class="url">/admin/contained/stories</div>
+        <div class="desc">Manage submitted stories.</div>
+        <span class="tag tag-admin">Admin</span>
+      </a>
+      <a class="card" href="/admin/contained/content">
+        <div class="title">Content Admin</div>
+        <div class="url">/admin/contained/content</div>
+        <div class="desc">Content management.</div>
+        <span class="tag tag-admin">Admin</span>
+      </a>
+      <a class="card" href="/admin/contained/templates">
+        <div class="title">Templates</div>
+        <div class="url">/admin/contained/templates</div>
+        <div class="desc">Email and message templates.</div>
+        <span class="tag tag-admin">Admin</span>
+      </a>
+      <a class="card" href="/admin/signal-engine">
+        <div class="title">Signal Engine</div>
+        <div class="url">/admin/signal-engine</div>
+        <div class="desc">Data health and signal monitoring.</div>
+        <span class="tag tag-admin">Admin</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- TOOLS -->
+  <div class="section">
+    <h2>Internal Tools (Static HTML)</h2>
+    <div class="grid">
+      <a class="card" href="/page-map.html">
+        <div class="title">This Page — Page Map</div>
+        <div class="url">/page-map.html</div>
+        <div class="desc">You are here. Master index of every page.</div>
+        <span class="tag tag-tool">Tool</span>
+      </a>
+      <a class="card" href="/email-photo-picker.html">
+        <div class="title">Email Photo Picker</div>
+        <div class="url">/email-photo-picker.html</div>
+        <div class="desc">Pick photos for email campaigns.</div>
+        <span class="tag tag-tool">Tool</span>
+      </a>
+      <a class="card" href="/el-media-picker.html">
+        <div class="title">EL Media Picker</div>
+        <div class="url">/el-media-picker.html</div>
+        <div class="desc">Browse and select Empathy Ledger media.</div>
+        <span class="tag tag-tool">Tool</span>
+      </a>
+      <a class="card" href="/photo-gallery.html">
+        <div class="title">Photo Gallery</div>
+        <div class="url">/photo-gallery.html</div>
+        <div class="desc">General photo gallery browser.</div>
+        <span class="tag tag-tool">Tool</span>
+      </a>
+      <a class="card" href="/photo-picker.html">
+        <div class="title">Photo Picker</div>
+        <div class="url">/photo-picker.html</div>
+        <div class="desc">Photo selection tool.</div>
+        <span class="tag tag-tool">Tool</span>
+      </a>
+    </div>
+  </div>
+
+  <div style="text-align: center; padding: 40px 0; color: #333; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;">
+    JusticeHub Page Map — Updated 30 March 2026 — Bookmark this page
+  </div>
+</div>
+</body>
+</html>

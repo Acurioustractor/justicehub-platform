@@ -19,6 +19,7 @@ import {
 import { STATE_NAMES } from '@/lib/constants';
 import { stateFromPostcode } from '@/lib/sa3-lookup';
 import { describeMissing, type CompletenessBreakdown } from '@/lib/alma/profile-completeness';
+import { RecordTrustBadges, TrustBadgeLegend } from '@/components/trust/RecordTrustBadges';
 
 export interface AlmaSearchModel {
   id: string;
@@ -26,6 +27,10 @@ export interface AlmaSearchModel {
   type: string | null;
   description: string | null;
   evidenceLevel: string | null;
+  verificationStatus: string | null;
+  reviewStatus: string | null;
+  geography: string[];
+  hasSource: boolean;
   costPerYoungPerson: number | null;
   updatedAt: string | null;
   org: {
@@ -221,14 +226,15 @@ export function AlmaSearchClient({ models, totalCount }: Props) {
             Search the Map.
           </h1>
           <p className="text-base text-white/70 max-w-2xl mb-2">
-            {totalCount.toLocaleString()} community-led models across Australia. Search by name,
-            place, or practice. Enter a postcode to see what is near you.
+            {totalCount.toLocaleString()} alternative-support records across Australia. Search by
+            name, place, or practice. Enter a postcode to see what is near you.
           </p>
           <p className="text-sm text-white/50 max-w-2xl mb-8">
             By default we show the {exemplarCount} exemplar profiles: orgs with photos, evidence,
-            named contact, and verified claim. Toggle "Show all" to see the long tail we are still
-            working to fill out.
+            named contact, and stronger source signals. Toggle "Show all" to see the long tail we
+            are still working to fill out.
           </p>
+          <TrustBadgeLegend className="mb-6 max-w-3xl bg-white/95 text-[#0A0A0A]" />
 
           {/* Search bar */}
           <div className="bg-white rounded-xl shadow-lg p-2 flex flex-col md:flex-row gap-2">
@@ -408,8 +414,8 @@ export function AlmaSearchClient({ models, totalCount }: Props) {
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
           >
             {filtered.length === totalCount
-              ? `All ${totalCount.toLocaleString()} models`
-              : `${filtered.length.toLocaleString()} of ${totalCount.toLocaleString()} models`}
+              ? `All ${totalCount.toLocaleString()} records`
+              : `${filtered.length.toLocaleString()} of ${totalCount.toLocaleString()} records`}
           </h2>
           <span
             className="text-xs text-[#0A0A0A]/40"
@@ -421,7 +427,7 @@ export function AlmaSearchClient({ models, totalCount }: Props) {
 
         {filtered.length === 0 ? (
           <div className="bg-white rounded-xl border border-[#0A0A0A]/10 p-8 text-center">
-            <p className="text-lg font-semibold mb-2">No models match those filters.</p>
+            <p className="text-lg font-semibold mb-2">No records match those filters.</p>
             <p className="text-sm text-[#0A0A0A]/60 mb-5 max-w-md mx-auto">
               The Map grows when communities add their own work. If you run a program that should
               be here, add it.
@@ -552,6 +558,20 @@ function ModelCard({ model, compact = false }: { model: AlmaSearchModel; compact
         </p>
       )}
 
+      <RecordTrustBadges
+        className="mb-3"
+        evidenceLevel={model.evidenceLevel}
+        verificationStatus={model.verificationStatus}
+        reviewStatus={model.reviewStatus}
+        hasLocation={Boolean(model.org?.state || model.geography.length)}
+        locationLabel={model.org?.state || model.geography.join(', ')}
+        hasCostData={model.costPerYoungPerson !== null}
+        hasSource={model.hasSource}
+        sourceLabel="ALMA source trail"
+        communityControlled={model.org?.isIndigenousOrg}
+        maxBadges={6}
+      />
+
       {!compact && model.description && (
         <p className="text-sm text-[#0A0A0A]/70 mb-3 line-clamp-2 leading-relaxed">
           {model.description}
@@ -577,7 +597,7 @@ function ModelCard({ model, compact = false }: { model: AlmaSearchModel; compact
             className="text-[10px] text-[#0A0A0A]/30"
             style={{ fontFamily: "'IBM Plex Mono', monospace" }}
           >
-            Verified {updatedLabel}
+            Updated {updatedLabel}
           </span>
         )}
       </div>

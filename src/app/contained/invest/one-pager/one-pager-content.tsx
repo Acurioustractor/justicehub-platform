@@ -150,12 +150,12 @@ export function OnePagerContent({ media }: { media: OnePagerMedia }) {
               2026-27 National Tour
             </h2>
             <p className="text-[12px] text-gray-700 leading-snug mb-2">
-              The Australian tour starts with a small Mount Druitt gathering in May/June, then publicly launches at Tandanya in Adelaide at the end of June 2026. The route stays flexible around partner readiness and community ask: Perth and surrounds, Brisbane, Northern Rivers, Alice Springs / Central Australia, Sydney + Canberra, Victoria, and Tasmania follow.
+              The Australian tour starts with a small Mount Druitt gathering in May/June, then publicly launches at Tandanya in Adelaide on 23 June 2026. The route stays flexible around partner readiness and community ask: Perth and surrounds, Brisbane, Northern Rivers, Alice Springs / Central Australia, Sydney + Canberra, Victoria, and Tasmania follow.
             </p>
             <div className="grid grid-cols-9 gap-1.5 text-[10px]">
               {[
                 { place: 'Mt Druitt', month: 'May/Jun', active: true },
-                { place: 'Adelaide', month: 'End Jun', active: true },
+                { place: 'Adelaide', month: '23 Jun', active: true },
                 { place: 'Perth+', month: 'Jul/Aug', active: true },
                 { place: 'Brisbane', month: 'Sep', active: true },
                 { place: 'N. Rivers', month: 'Oct', active: false },

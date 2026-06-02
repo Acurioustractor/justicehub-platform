@@ -1,5 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/service';
 import Link from 'next/link';
+import { unstable_cache } from 'next/cache';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import {
   ArrowRight,
@@ -12,18 +13,110 @@ import {
   Mic,
   Calendar,
   Sparkles,
+  Search,
+  Scale,
+  FileText,
+  Network,
 } from 'lucide-react';
 import { ActivityFeed } from '@/components/activity-feed';
+import { JusticePathwaysSection } from '@/components/justice-network/JusticePathwaysSection';
+import { YouthRemandVerticalCard } from '@/components/justice-network/YouthRemandVerticalCard';
 import { fmt } from '@/lib/format';
 import { getDetentionCosts } from '@/lib/detention-costs';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
-export default async function HomePage() {
+const audienceRoutes = [
+  {
+    label: 'I walked through CONTAINED',
+    href: '/justice-network/youth-remand',
+    icon: Network,
+    body: 'If the container stayed with you, start here. See why children are held on remand, what else could happen, and what you can share.',
+    action: 'Keep going',
+    color: '#DC2626',
+  },
+  {
+    label: 'I need support now',
+    href: '/services',
+    icon: Heart,
+    body: 'Find legal help, crisis support, mentoring, housing, and community services without needing to understand the whole system first.',
+    action: 'Find support',
+    color: '#9F1239',
+  },
+  {
+    label: 'I work with young people',
+    href: '/join',
+    icon: Users,
+    body: 'Add a service, program, place, or local example so families, workers, funders, and advocates can find what already helps.',
+    action: 'Add your work',
+    color: '#059669',
+  },
+  {
+    label: 'I do legal or advocacy work',
+    href: '/justice-matrix',
+    icon: Scale,
+    body: 'Find cases, campaigns, source links, and plain-language issue guides that help turn concern into a stronger public argument.',
+    action: 'Use the evidence',
+    color: '#4C1D95',
+  },
+  {
+    label: 'I fund or shape policy',
+    href: '/follow-the-money',
+    icon: DollarSign,
+    body: 'Compare what detention costs with the local support that could keep young people safer, connected, and out of custody.',
+    action: 'Compare costs',
+    color: '#0A0A0A',
+  },
+  {
+    label: 'I want to understand the proof',
+    href: '/proof',
+    icon: FileText,
+    body: 'Check the claims, named organisations, sources, and limits before you repeat anything or ask someone else to trust it.',
+    action: 'Check the claims',
+    color: '#1F6F78',
+  },
+];
+
+const journeySteps = [
+  {
+    label: 'Feel it',
+    href: '/contained',
+    icon: Heart,
+    body: 'CONTAINED turns youth detention from an abstract policy issue into a human encounter.',
+  },
+  {
+    label: 'Name it',
+    href: '/remand',
+    icon: Network,
+    body: 'Understand remand: why a child can be held before sentence, what it costs, and what support can change the path.',
+  },
+  {
+    label: 'Find help',
+    href: '/services',
+    icon: Search,
+    body: 'Look for services, community programs, and practical alternatives near the people who need them.',
+  },
+  {
+    label: 'Prove it',
+    href: '/proof',
+    icon: Shield,
+    body: 'Check the evidence trail before asking anyone to trust the claim.',
+  },
+  {
+    label: 'Move it',
+    href: '/join',
+    icon: ArrowRight,
+    body: 'Share the page, add a local program, back an organisation, brief a decision-maker, or bring people together.',
+  },
+];
+
+async function loadHomePageData() {
   const supabase = createServiceClient() as any;
 
   const [
     interventionsRes,
+    youthJusticeInterventionsRes,
+    evidenceRatedInterventionsRes,
     costDataRes,
     fundingRes,
     orgRes,
@@ -34,8 +127,18 @@ export default async function HomePage() {
   ] = await Promise.all([
     supabase
       .from('alma_interventions')
-      .select('id, evidence_level', { count: 'exact' })
+      .select('id', { count: 'exact', head: true })
       .neq('verification_status', 'ai_generated'),
+    supabase
+      .from('alma_interventions')
+      .select('id', { count: 'exact', head: true })
+      .neq('verification_status', 'ai_generated')
+      .eq('serves_youth_justice', true),
+    supabase
+      .from('alma_interventions')
+      .select('id', { count: 'exact', head: true })
+      .neq('verification_status', 'ai_generated')
+      .neq('evidence_level', 'Untested (theory/pilot stage)'),
     supabase
       .from('alma_interventions')
       .select('cost_per_young_person')
@@ -73,11 +176,13 @@ export default async function HomePage() {
       .eq('status', 'open'),
   ]);
 
-  const interventions = interventionsRes.data || [];
   const costData = (costDataRes.data || []).map((r: any) => Number(r.cost_per_young_person)).filter((n: number) => n > 0);
   const funding = fundingRes.data || [];
   const basecamps = basecampsRes.data || [];
   const stories = storiesRes.data || [];
+  const catalogueCount = interventionsRes.count || 0;
+  const youthJusticeCount = youthJusticeInterventionsRes.count || 0;
+  const evidenceRatedCount = evidenceRatedInterventionsRes.count || 0;
 
   // Centre of Excellence headline counts — triangulation tier distribution + ACCO tally.
   const [triangulationRes, accoRes, tier1ConfirmedRes] = await Promise.all([
@@ -102,7 +207,55 @@ export default async function HomePage() {
   const nationalDailyCost = detentionCostsData.national.dailyCost;
   const ntDailyCost = detentionCostsData.byState.NT?.dailyCost || nationalDailyCost;
   const ratio = Math.round(detentionCost / avgCost);
-  const evidenceBacked = interventions.filter((i: any) => i.evidence_level && !i.evidence_level.startsWith('Untested')).length;
+
+  return {
+    catalogueCount,
+    youthJusticeCount,
+    evidenceRatedCount,
+    costDataCount: costData.length,
+    basecamps,
+    stories,
+    evidenceCount: evidenceRes.count || 0,
+    youthOppsCount: youthOppsRes.count || 0,
+    orgCount: orgRes.count || 0,
+    tierCounts,
+    accoCount,
+    tier1Count,
+    totalFunding,
+    avgCost,
+    detentionCost,
+    nationalDailyCost,
+    ntDailyCost,
+    ratio,
+  };
+}
+
+const getHomePageData = unstable_cache(loadHomePageData, ['justicehub-home-public-v2'], {
+  revalidate: 300,
+  tags: ['homepage'],
+});
+
+export default async function HomePage() {
+  const {
+    catalogueCount,
+    youthJusticeCount,
+    evidenceRatedCount,
+    costDataCount,
+    basecamps,
+    stories,
+    evidenceCount,
+    youthOppsCount,
+    orgCount,
+    tierCounts,
+    accoCount,
+    tier1Count,
+    totalFunding,
+    avgCost,
+    detentionCost,
+    nationalDailyCost,
+    ntDailyCost,
+    ratio,
+  } = await getHomePageData();
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#0A0A0A]">
@@ -110,14 +263,14 @@ export default async function HomePage() {
       <Navigation />
 
       <main id="main-content">
-        {/* Hero — The one line that stops people */}
+        {/* Hero — make the system human, then make the action obvious */}
         <section className="bg-[#0A0A0A] text-white header-offset">
           <div className="max-w-6xl mx-auto px-6 sm:px-12 py-24 md:py-32">
             <p
               className="text-sm uppercase tracking-[0.3em] text-[#DC2626] mb-6"
               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
             >
-              {interventions.length.toLocaleString()} alternative models. {evidenceBacked} with evidence. {ratio}x cheaper than detention.
+              {youthJusticeCount.toLocaleString()} youth-justice records. {evidenceRatedCount.toLocaleString()} evidence-rated. {ratio}x average cost gap.
             </p>
             <h1
               className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.05]"
@@ -125,38 +278,178 @@ export default async function HomePage() {
             >
               Australia locks up children.
               <br />
-              <span className="text-[#059669]">The alternative exists.</span>
+              <span className="text-[#059669]">There are better answers.</span>
             </h1>
             <p className="text-lg md:text-xl text-white/60 max-w-2xl mb-10">
-              {interventions.length.toLocaleString()} community models proving it works better and costs
-              less. {fmt(totalFunding)} in funding tracked. {(orgRes.count || 0).toLocaleString()} organisations
-              mapped. This is the transparency engine for youth justice in Australia.
+              This is a public guide for people who have seen the harm and want to understand what can change.
+              Start with the human story, then find the evidence, services, alternatives, costs, and people already
+              working for a different future.
+            </p>
+            <p className="mb-8 max-w-2xl border-l-2 border-white/20 pl-4 text-sm leading-6 text-white/55">
+              The numbers are catalogue records, not endorsements. Each record should be read with its evidence level,
+              source trail, location, and review status so weak signals stay visible.
             </p>
 
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/proof"
+                href="/justice-network/youth-remand"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#0A0A0A] font-semibold rounded-lg hover:bg-white/90 transition-colors text-sm"
               >
-                See the Proof <ArrowRight className="w-4 h-4" />
+                Understand youth remand <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
-                href="/follow-the-money"
+                href="/contained"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-[#DC2626] text-white font-semibold rounded-lg hover:bg-[#DC2626]/90 transition-colors text-sm"
               >
-                Follow the Money
+                Visit CONTAINED
               </Link>
               <Link
-                href="/join"
+                href="/services"
                 className="inline-flex items-center gap-2 px-6 py-3 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm"
               >
-                Join the Network
+                Find support
+              </Link>
+              <Link
+                href="/proof"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm"
+              >
+                Check the proof
               </Link>
             </div>
           </div>
         </section>
 
-        {/* Centre of Excellence band — every fact earned its headline by N sources. */}
+        {/* Human route finder */}
+        <section className="bg-white border-b border-[#0A0A0A]/10">
+          <div className="max-w-6xl mx-auto px-6 sm:px-12 py-12">
+            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.7fr] lg:items-start">
+              <div>
+                <p
+                  className="text-xs uppercase tracking-[0.3em] text-[#7C2D12] mb-3"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
+                  Start where you are
+                </p>
+                <h2
+                  className="text-2xl md:text-3xl font-bold tracking-tight text-[#0A0A0A]"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
+                  Choose the door that matches why you came.
+                </h2>
+                <p className="mt-4 text-sm leading-6 text-[#0A0A0A]/65">
+                  You might be here after CONTAINED, looking for help, checking a claim, adding a local service, or
+                  trying to move money toward what works. Start with one path. You can go deeper later.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {audienceRoutes.map((route) => {
+                  const Icon = route.icon;
+                  return (
+                    <Link
+                      key={route.label}
+                      href={route.href}
+                      className="group rounded-lg border border-[#E5DDD2] bg-[#FBFAF7] p-4 transition-colors hover:border-[#0A0A0A]/30 hover:bg-white"
+                    >
+                      <div className="mb-3 flex items-start gap-3">
+                        <div
+                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-white"
+                          style={{ background: route.color }}
+                        >
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3
+                            className="text-base font-bold leading-tight text-[#0A0A0A] md:text-lg"
+                            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                          >
+                            {route.label}
+                          </h3>
+                          <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[#0A0A0A]/55 group-hover:text-[#0A0A0A]">
+                            {route.action} <ArrowRight className="h-3 w-3" />
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-sm leading-6 text-[#0A0A0A]/65">{route.body}</p>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Full user flow */}
+        <section className="bg-[#F5F0E8] border-b border-stone-200">
+          <div className="max-w-6xl mx-auto px-6 sm:px-12 py-12">
+            <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p
+                  className="text-xs uppercase tracking-[0.3em] text-stone-600 mb-3"
+                  style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                >
+                  A simple path
+                </p>
+                <h2
+                  className="text-2xl md:text-3xl font-bold text-stone-900 leading-tight"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
+                  From seeing the issue to knowing what to do next.
+                </h2>
+              </div>
+              <Link
+                href="/justice-network"
+                className="inline-flex items-center gap-2 self-start rounded-md bg-stone-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-stone-800 md:self-auto"
+              >
+                Explore the issue guide <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-5">
+              {journeySteps.map((step, index) => {
+                const Icon = step.icon;
+                return (
+                  <Link
+                    key={step.label}
+                    href={step.href}
+                    className="group relative rounded-lg border border-stone-200 bg-white p-4 transition-colors hover:border-stone-500"
+                  >
+                    <div className="mb-4 flex items-center justify-between gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-md bg-[#0A0A0A] text-white">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <span
+                        className="text-xs uppercase text-stone-400"
+                        style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.14em' }}
+                      >
+                        0{index + 1}
+                      </span>
+                    </div>
+                    <h3
+                      className="mb-2 text-lg font-bold text-stone-900"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
+                      {step.label}
+                    </h3>
+                    <p className="text-sm leading-6 text-stone-600">{step.body}</p>
+                    <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-stone-500 group-hover:text-stone-900">
+                      Open <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ALMA + local support path */}
+        <section className="bg-white border-b border-stone-200">
+          <div className="max-w-6xl mx-auto px-6 sm:px-12 py-14">
+            <JusticePathwaysSection variant="home" />
+          </div>
+        </section>
+
+        {/* Centre of Excellence band */}
         <section className="bg-[#F5F0E8] border-t border-stone-200">
           <div className="max-w-6xl mx-auto px-6 sm:px-12 py-12">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
@@ -171,30 +464,29 @@ export default async function HomePage() {
                   className="text-2xl md:text-3xl font-bold text-stone-900 leading-tight"
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                 >
-                  Every fact on this site earns its headline by{' '}
-                  <span className="text-[#059669]">multiple independent sources</span>.
+                  If we ask people to believe something, we show where it came from.
                 </h2>
                 <p className="mt-3 text-base text-stone-700 max-w-xl leading-relaxed">
-                  Triangulation, not assertion. Names, not abstractions. Every claim links back to the dataset and the named entities behind it.
+                  JusticeHub is careful with claims. We name the source, show the organisation where possible, and mark what is still being checked.
                 </p>
               </div>
               <Link
                 href="/intelligence/civic/centre-of-excellence"
                 className="inline-flex items-center gap-2 px-5 py-3 bg-stone-900 text-white text-sm font-semibold rounded shrink-0 hover:bg-stone-800 transition-colors self-start md:self-center"
               >
-                Open the Centre <ArrowRight className="w-4 h-4" />
+                See the evidence trail <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="border-2 border-emerald-300 bg-emerald-50 p-4 rounded">
                 <p className="text-3xl font-bold text-emerald-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{tierCounts.triangulated}</p>
                 <p className="text-xs font-mono uppercase tracking-widest text-emerald-800 mt-1">Triangulated claims</p>
-                <p className="text-xs text-stone-600 mt-1">3+ independent sources</p>
+                <p className="text-xs text-stone-600 mt-1">Checked against 3+ sources</p>
               </div>
               <div className="border-2 border-amber-300 bg-amber-50 p-4 rounded">
                 <p className="text-3xl font-bold text-amber-700" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{tierCounts.corroborated}</p>
                 <p className="text-xs font-mono uppercase tracking-widest text-amber-800 mt-1">Corroborated</p>
-                <p className="text-xs text-stone-600 mt-1">2 independent sources</p>
+                <p className="text-xs text-stone-600 mt-1">Checked against 2 sources</p>
               </div>
               <div className="border-2 border-stone-300 bg-white p-4 rounded">
                 <p className="text-3xl font-bold text-stone-900" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{tier1Count.toLocaleString()}</p>
@@ -248,7 +540,7 @@ export default async function HomePage() {
                   {fmt(avgCost)}
                 </p>
                 <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.8)' }}>per young person (average)</p>
-                <p className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.5)' }}>Across {costData.length} models with cost data.</p>
+                <p className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.5)' }}>Across {costDataCount} models with cost data.</p>
               </div>
               <div className="bg-white/5 rounded-xl p-6 border border-white/10 flex flex-col justify-center">
                 <p
@@ -269,16 +561,21 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Three Paths — Who are you? */}
+        {/* Youth remand guide */}
+        <section className="max-w-6xl mx-auto px-6 sm:px-12 py-14">
+          <YouthRemandVerticalCard />
+        </section>
+
+        {/* Three deeper modes */}
         <section className="max-w-6xl mx-auto px-6 sm:px-12 py-20">
           <h2
             className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-center"
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
           >
-            What do you need?
+            Three ways to go deeper.
           </h2>
           <p className="text-center text-[#0A0A0A]/60 mb-12 max-w-xl mx-auto">
-            Three doors. Pick yours.
+            Once you know why you are here, choose a practical next step: find help, add what you know, or use the proof.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -291,7 +588,7 @@ export default async function HomePage() {
                 className="text-xl font-bold mb-2"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
-                I need help
+                Find support
               </h3>
               <p className="text-sm text-[#0A0A0A]/60 mb-4">
                 Find services near you. Crisis support, legal help, mentorship, housing.
@@ -311,14 +608,13 @@ export default async function HomePage() {
                 className="text-xl font-bold mb-2"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
-                I do the work
+                Strengthen the work
               </h3>
               <p className="text-sm text-[#0A0A0A]/60 mb-4">
-                Join the ALMA Network. Get your model on the map, access matched grants,
-                connect with peers doing the same work.
+                Add your program, place, story, or local knowledge so people can find the alternatives already working.
               </p>
               <span className="inline-flex items-center gap-2 font-semibold text-sm text-[#059669] group-hover:underline">
-                Join the network <ArrowRight className="w-4 h-4" />
+                Add your work <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
 
@@ -331,11 +627,10 @@ export default async function HomePage() {
                 className="text-xl font-bold mb-2"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
-                I fund or shape policy
+                Shift policy and money
               </h3>
               <p className="text-sm text-[#0A0A0A]/60 mb-4">
-                See the evidence. {interventions.length} models, {evidenceBacked} proven. Follow the
-                money. Make decisions based on data, not lobby groups.
+                See the evidence. {catalogueCount.toLocaleString()} support records are catalogued, with {evidenceRatedCount.toLocaleString()} carrying an evidence signal. Use that to ask better questions.
               </p>
               <span className="inline-flex items-center gap-2 font-semibold text-sm text-[#0A0A0A]/60 group-hover:underline">
                 See the proof <ArrowRight className="w-4 h-4" />
@@ -370,9 +665,9 @@ export default async function HomePage() {
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   {[
                     { value: basecamps.length, label: 'Basecamps' },
-                    { value: interventions.length.toLocaleString(), label: 'ALMA Models' },
-                    { value: (evidenceRes.count || 0).toLocaleString(), label: 'Evidence Items' },
-                    { value: youthOppsRes.count || 0, label: 'Open Opportunities' },
+                    { value: catalogueCount.toLocaleString(), label: 'ALMA Records' },
+                    { value: evidenceCount.toLocaleString(), label: 'Evidence Items' },
+                    { value: youthOppsCount, label: 'Open Opportunities' },
                   ].map((s) => (
                     <div key={s.label}>
                       <p
@@ -441,17 +736,17 @@ export default async function HomePage() {
             className="text-3xl font-bold tracking-tight mb-4 text-center"
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
           >
-            The intelligence
+            The public record
           </h2>
           <p className="text-center text-[#0A0A0A]/60 mb-12 max-w-xl mx-auto">
-            Data that exposes, proves, and equips. Every number is live from the platform.
+            Numbers are not enough on their own. They help people see where money goes, what support exists, and which claims still need care.
           </p>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link href="/proof" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
               <Shield className="w-5 h-5 text-[#059669] mb-2" />
-              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{interventions.length}</p>
-              <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>verified models</p>
+              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{catalogueCount.toLocaleString()}</p>
+              <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>support records</p>
               <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">Wall of Proof <ArrowRight className="w-3 h-3" /></span>
             </Link>
             <Link href="/follow-the-money" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
@@ -462,14 +757,14 @@ export default async function HomePage() {
             </Link>
             <Link href="/funders" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
               <Users className="w-5 h-5 text-[#0A0A0A]/60 mb-2" />
-              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{(orgRes.count || 0).toLocaleString()}</p>
+              <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{orgCount.toLocaleString()}</p>
               <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>organisations</p>
               <span className="text-xs font-semibold text-[#0A0A0A]/60 mt-2 flex items-center gap-1 group-hover:underline">Funders <ArrowRight className="w-3 h-3" /></span>
             </Link>
             <Link href="/intelligence/chat" className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
               <Sparkles className="w-5 h-5 text-[#059669] mb-2" />
               <p className="text-2xl font-bold" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>ALMA</p>
-              <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>AI chat</p>
+              <p className="text-xs text-[#0A0A0A]/50 mt-0.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>ask a question</p>
               <span className="text-xs font-semibold text-[#059669] mt-2 flex items-center gap-1 group-hover:underline">Ask ALMA <ArrowRight className="w-3 h-3" /></span>
             </Link>
           </div>
@@ -517,7 +812,13 @@ export default async function HomePage() {
                 <Link key={story.id} href={`/stories/${story.slug}`} className="bg-white rounded-xl border border-[#0A0A0A]/10 p-5 hover:border-[#0A0A0A]/30 transition-colors group">
                   {story.featured_image_url && (
                     <div className="aspect-video rounded-lg overflow-hidden mb-3 bg-[#0A0A0A]/5">
-                      <img src={story.featured_image_url} alt={story.title} className="w-full h-full object-cover" />
+                      <img
+                        src={story.featured_image_url}
+                        alt={story.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   )}
                   <p className="font-semibold text-sm mb-1 group-hover:underline">{story.title}</p>
@@ -543,18 +844,17 @@ export default async function HomePage() {
               className="text-sm uppercase tracking-[0.3em] text-[#059669] mb-6"
               style={{ fontFamily: "'IBM Plex Mono', monospace" }}
             >
-              ALMA Network
+              Stay with the work
             </p>
             <h2
               className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-6"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
-              This is time for alternative models of Australia to rise up, support our
-              young kids, and build a safer community.
+              The alternative is already here. The next step is helping more people find it, trust it, fund it, and grow it.
             </h2>
             <p className="text-white/60 mb-10 max-w-2xl mx-auto">
-              The evidence is clear. The solutions exist. The network is growing. The only
-              question is whether we fund what works — or keep paying for what doesn&apos;t.
+              The work is happening in communities, services, courts, campaigns, and families. JusticeHub brings those
+              threads together so people can act with care instead of guessing.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Link

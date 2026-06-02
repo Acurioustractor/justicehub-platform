@@ -92,8 +92,9 @@ async function searchInterventions(
 ): Promise<SearchResult[]> {
   let query = supabase
     .from('alma_interventions')
-    .select('id, name, description, type, metadata')
+    .select('id, name, description, type, metadata, evidence_level, verification_status, review_status, cost_per_young_person, geography, source_documents, website')
     .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
+    .neq('verification_status', 'ai_generated')
     .limit(limit);
 
   if (context?.state) {
@@ -115,6 +116,15 @@ async function searchInterventions(
     metadata: {
       state: asOptionalString((item.metadata as Record<string, unknown> | null)?.state),
       category: asOptionalString(item.type),
+      evidenceLevel: asOptionalString(item.evidence_level),
+      verificationStatus: asOptionalString(item.verification_status),
+      reviewStatus: asOptionalString(item.review_status),
+      hasCostData: item.cost_per_young_person != null,
+      hasSource: Boolean(item.website || (Array.isArray(item.source_documents) && item.source_documents.length > 0)),
+      hasLocation: Boolean(
+        asOptionalString((item.metadata as Record<string, unknown> | null)?.state) ||
+        (Array.isArray(item.geography) && item.geography.length > 0)
+      ),
     },
   }));
 }
@@ -127,7 +137,7 @@ async function searchServices(
 ): Promise<SearchResult[]> {
   let query = supabase
     .from('services')
-    .select('id, name, description, location_state, service_type')
+    .select('id, name, description, location_state, service_type, verification_status, data_source_url, cost')
     .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
     .limit(limit);
 
@@ -150,6 +160,10 @@ async function searchServices(
     metadata: {
       state: asOptionalString(item.location_state),
       category: asOptionalString(item.service_type),
+      verificationStatus: asOptionalString(item.verification_status),
+      hasSource: Boolean(item.data_source_url),
+      hasCostData: Boolean(item.cost && item.cost !== 'unknown'),
+      hasLocation: Boolean(item.location_state),
     },
   }));
 }
@@ -162,7 +176,7 @@ async function searchOrganizations(
 ): Promise<SearchResult[]> {
   let query = supabase
     .from('organizations')
-    .select('id, name, slug, description, type, location, logo_url')
+    .select('id, name, slug, description, type, location, logo_url, verification_status, abn, gs_entity_id, state, city, is_indigenous_org')
     .or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
     .limit(limit);
 
@@ -187,9 +201,13 @@ async function searchOrganizations(
     score: calculateScore(searchTerm, item.name, item.description),
     source: { name: 'justicehub', table: 'organizations' },
     metadata: {
-      state: asOptionalString(item.location),
+      state: asOptionalString(item.state) || asOptionalString(item.location),
       category: asOptionalString(item.type),
       imageUrl: asOptionalString(item.logo_url),
+      verificationStatus: asOptionalString(item.verification_status),
+      hasSource: Boolean(item.abn || item.gs_entity_id),
+      hasLocation: Boolean(item.state || item.city || item.location),
+      communityControlled: Boolean(item.is_indigenous_org),
     },
   }));
 }

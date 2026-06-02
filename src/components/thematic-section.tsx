@@ -81,12 +81,12 @@ export function ThematicSection({
       <div className="bg-ochre-50 border-y-2 border-black">
         <div className="container-justice py-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
+            <div className="flex min-w-0 flex-wrap items-center gap-3">
               <span className="text-xs font-bold uppercase tracking-wider text-ochre-700">
                 Explore Themes
               </span>
               <span className="text-earth-400">|</span>
-              <div className="flex gap-4 text-sm">
+              <div className="flex min-w-0 flex-wrap gap-x-4 gap-y-2 text-sm">
                 {themes.slice(0, 4).map(theme => (
                   <Link 
                     key={theme.id}

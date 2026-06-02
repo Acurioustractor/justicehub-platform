@@ -553,6 +553,10 @@ export const GHL_TAGS = {
 
   // Campaign
   CONTAINED: 'CONTAINED',
+  CONTAINED_ADELAIDE: 'contained_adelaide',
+  PUBLIC_VISITOR: 'public_visitor',
+  YOUTH_REMAND: 'youth_remand',
+  COUNTRY_REPORTS: 'country_reports',
   NEWSLETTER: 'Newsletter',
   EVENT: 'Event',
 

@@ -89,7 +89,7 @@ const LOCATIONS: LocationInfo[] = [
     ],
   },
   {
-    city: 'Adelaide', state: 'SA', status: 'confirmed', date: 'End Jun 2026', partner: 'JRI + Tandanya',
+    city: 'Adelaide', state: 'SA', status: 'confirmed', date: '23 Jun 2026', partner: 'JRI + Tandanya',
     people: 5, headline: 'Public launch: Reintegration Puzzle Conference at Tandanya',
     quotes: [
       { name: 'Hannah March', org: 'JRI', text: 'The 2026 Reintegration Puzzle Conference is in Tandanya, Adelaide. It would be amazing to host the Container there.' },
@@ -103,7 +103,7 @@ const LOCATIONS: LocationInfo[] = [
       { name: 'SouthStart', detail: 'Adelaide tech community. Interest via Eloise Hall.' },
     ],
     politicians: [
-      { name: 'Reintegration Puzzle Conference delegates', role: 'Sector, government, university, and funder audience', angle: 'End of June at Tandanya. Delegates walk through the Adelaide launch between sessions.' },
+      { name: 'Reintegration Puzzle Conference delegates', role: 'Sector, government, university, and funder audience', angle: '23 June at Tandanya. Delegates walk through the Adelaide launch between sessions.' },
       { name: 'Nikki Boyd', role: 'Queensland MP', angle: 'Youth justice opposition voice. Potential political contact for Brisbane and Adelaide engagement.' },
     ],
     drivers: [
@@ -803,7 +803,7 @@ export default function CommunityPage() {
               <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#DC2626', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>First gathering</p>
               <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: 8, color: '#F5F0E8' }}>Mount Druitt, then Tandanya</h3>
               <p style={{ fontSize: '0.9rem', color: '#888', lineHeight: 1.5 }}>
-                May/June 2026 starts with a small Mount Druitt gathering. End of June is the Tandanya public launch, where Room 1 carries the Brisbane build story, Room 2 is anchored by David from Diagrama, and Room 3 is where Adelaide organisations talk about their programs.
+                May/June 2026 starts with a small Mount Druitt gathering. 23 June 2026 is the Tandanya public launch, where Room 1 carries the Brisbane build story, Room 2 is anchored by David from Diagrama, and Room 3 is where Adelaide organisations talk about their programs.
               </p>
             </div>
           </div>
@@ -851,7 +851,7 @@ export default function CommunityPage() {
                 <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> VIC: Cherry Creek — $7,304/day, most expensive in Australia</p>
                 <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> TAS: Ashley YDC closure — live political issue</p>
                 <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> ACT: Government insider says system is changing</p>
-                <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> Tandanya Adelaide launch at end of June</p>
+                <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> Tandanya Adelaide launch on 23 June</p>
               </div>
             </div>
           </div>
@@ -923,7 +923,7 @@ export default function CommunityPage() {
               { date: 'Jan-Feb 2026', text: 'QLD government announces $765M in youth justice spending. Zero to Aboriginal community-controlled organisations.' },
               { date: 'Mar 2026', text: '225+ contacts. YAC offers to host Brisbane. 86 people across 15 locations. JusticeHub maps 1,117 programs.' },
               { date: 'May-Jun 2026', text: 'Small Mount Druitt gathering. Western Sydney build proof and local relationships shape what travels next.' },
-              { date: 'End Jun 2026', text: 'Public launch at Tandanya in Adelaide. Brisbane young people carry Room 1, David from Diagrama holds Room 2, and Adelaide organisations build Room 3.' },
+              { date: '23 Jun 2026', text: 'Public launch at Tandanya in Adelaide. Brisbane young people carry Room 1, David from Diagrama holds Room 2, and Adelaide organisations build Room 3.' },
               { date: 'Jul-Nov 2026', text: 'Perth + surrounds, Brisbane, Northern Rivers, then Alice Springs / Central Australia. Community by community.' },
               { date: 'Dec 2026-Apr 2027', text: 'Sydney + Canberra, Victoria, then Tasmania. The tour links each stop back to JusticeHub.' },
               { date: '2027', text: 'JusticeHub carries the public record. Stories, organisations, data, and program evidence keep driving the national discussion through community.' },

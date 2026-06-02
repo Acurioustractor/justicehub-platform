@@ -12,386 +12,112 @@ export interface NavigationItem {
 const almaEnabled = process.env.NEXT_PUBLIC_ALMA_ENABLED !== 'false';
 
 /**
- * Navigation Configuration — 5 top-level items
- *
- * Explore: Content discovery (people, orgs, stories, services, map)
- * Intelligence: ALMA + evidence + research tools
- * Network: Centre of Excellence + partner pathways
- * Action: Blog, events, stewards, art, transparency
- * About: Mission, roadmap, how it works, contact
+ * Public navigation is intentionally small. The site has hundreds of useful
+ * routes, but first-time visitors need guided doors rather than a catalogue.
+ * Search, footer links, and the all-pages modal carry the deeper platform.
  */
 export const navigationItems: NavigationItem[] = [
     {
-        label: 'Explore',
+        label: 'Experience it',
         type: 'dropdown',
         items: [
             {
-                label: 'Stories',
-                href: '/stories',
-                description: 'Voices from the movement'
+                label: 'Adelaide launch',
+                href: '/adelaide',
+                description: 'June 23 public pathway for CONTAINED'
             },
             {
-                label: 'People',
-                href: '/people',
-                description: 'Advocates, artists, and changemakers'
+                label: 'THE CONTAINED',
+                href: '/contained',
+                description: 'The immersive youth detention experience'
             },
             {
-                label: 'Organizations',
-                href: '/organizations',
-                description: 'Youth justice organizations'
+                label: 'Tour',
+                href: '/contained/tour',
+                description: 'National tour stops and host pathway'
             },
             {
-                label: 'Programs',
-                href: '/community-programs',
-                description: 'Community-led solutions'
-            },
-            {
-                label: 'Services',
-                href: '/services',
-                description: 'Support services directory'
-            },
-            {
-                label: 'Service Map',
-                href: '/community-map',
-                description: 'Locate services nationwide'
-            },
-            {
-                label: 'Thematic Areas',
-                href: '/themes',
-                description: 'Disability, health, housing, and more'
-            },
-            {
-                label: 'Gallery',
-                href: '/gallery',
-                description: 'Programs in action'
-            },
-            {
-                label: 'Opportunities',
-                href: '/opportunities',
-                description: 'Jobs, scholarships, and apprenticeships'
+                label: 'Share a reaction',
+                href: '/contained/reaction',
+                description: 'Capture what changed after the walk-through'
             }
         ]
     },
     {
-        label: 'Intelligence',
-        type: 'dropdown',
-        items: [
-            ...(almaEnabled ? [{
-                label: 'State Leaderboard',
-                href: '/leaderboard',
-                description: 'Which states lead on community youth justice'
-            }] : []),
-            {
-                label: 'This Week',
-                href: '/this-week',
-                description: 'What changed on JusticeHub this week'
-            },
-            {
-                label: 'The Pulse',
-                href: '/pulse',
-                description: 'Live youth justice intelligence'
-            },
-            {
-                label: 'ALMA Dashboard',
-                href: '/intelligence/dashboard',
-                description: 'AI-powered evidence engine'
-            },
-            {
-                label: 'Ask ALMA',
-                href: '/intelligence/chat',
-                description: 'Chat with youth justice AI'
-            },
-            {
-                label: 'System Map',
-                href: '/intelligence/map',
-                description: 'Detention centres & programs'
-            },
-            {
-                label: 'Interventions',
-                href: '/intelligence/interventions',
-                description: 'Evidence-based programs database'
-            },
-            {
-                label: 'Research Agent',
-                href: '/intelligence/research',
-                description: 'AI research assistant'
-            },
-            {
-                label: 'Impact Calculator',
-                href: '/intelligence/impact-calculator',
-                description: 'Detention vs community costs'
-            },
-            {
-                label: 'Evidence Library',
-                href: '/intelligence/evidence',
-                description: 'Research and studies'
-            },
-            {
-                label: 'Funding',
-                href: '/intelligence/funding',
-                description: 'Grants and funding opportunities'
-            },
-            {
-                label: 'The Case for Change',
-                href: '/analysis',
-                description: 'Data-driven analysis of youth justice'
-            },
-            {
-                label: 'Sector Map',
-                href: '/sector-map',
-                description: 'Full sector landscape and funding flows'
-            },
-            {
-                label: 'Justice Spending',
-                href: '/justice-funding',
-                description: 'Track where QLD justice dollars go'
-            },
-            {
-                label: 'Reports',
-                href: '/intelligence/reports',
-                description: 'Weekly intelligence summaries'
-            },
-            {
-                label: 'Youth Justice Report',
-                href: '/youth-justice-report',
-                description: 'National youth justice analysis'
-            },
-            {
-                label: 'NSW Sector Report',
-                href: '/intelligence/nsw',
-                description: 'NSW youth justice — $327M, bail crisis, 154 programs'
-            }
-        ]
-    },
-    {
-        label: 'Network',
+        label: 'Understand it',
         type: 'dropdown',
         items: [
             {
-                label: 'Centre of Excellence',
-                href: '/centre-of-excellence',
-                description: 'Join the network proving what works'
+                label: 'Youth Remand evidence',
+                href: '/remand',
+                description: 'The sendable evidence path after CONTAINED'
             },
             {
-                label: 'Basecamps',
-                href: '/centre-of-excellence/map?category=basecamp',
-                description: '4 founding network hubs'
+                label: 'Youth Remand vertical',
+                href: '/justice-network/youth-remand',
+                description: 'Law, campaigns, alternatives, money, and stories'
             },
             {
-                label: 'Key People',
-                href: '/centre-of-excellence/people',
-                description: 'Practitioners & researchers'
-            },
-            {
-                label: 'Research Library',
-                href: '/centre-of-excellence/research',
-                description: '27+ peer-reviewed studies'
-            },
-            {
-                label: 'Best Practice',
-                href: '/centre-of-excellence/best-practice',
-                description: '4 Australian state frameworks'
-            },
-            {
-                label: 'Global Map',
-                href: '/centre-of-excellence/map',
-                description: '16+ international models'
-            },
-            ...(almaEnabled ? [
-            {
-                label: 'ALMA Network',
-                href: '/network/alma',
-                description: 'The alternative — community-led youth justice'
-            },
-            {
-                label: 'Network Impact',
-                href: '/network/alma/impact',
-                description: 'Collective proof that alternatives work'
-            },
-            {
-                label: 'Learning Trips',
-                href: '/trips',
-                description: 'Immersive exchanges between community orgs'
-            },
-            {
-                label: 'National Gathering',
-                href: '/network/alma/gathering',
-                description: 'First national gathering — July 2026'
-            },
-            {
-                label: 'Services',
-                href: '/network/alma/services',
-                description: 'Reports, consulting, and intelligence'
+                label: 'Justice Matrix',
+                href: '/justice-matrix',
+                description: 'Cases, campaigns, issues, and strategy'
             },
             {
                 label: 'Wall of Proof',
                 href: '/proof',
-                description: 'Every verified alternative model in Australia'
-            },
-            {
-                label: 'Cost Calculator',
-                href: '/calculator',
-                description: 'Detention vs community — interactive tool'
-            },
-            {
-                label: 'Community Voices',
-                href: '/voices',
-                description: 'Real stories from real people'
-            },
-            {
-                label: 'Share the Data',
-                href: '/share',
-                description: 'Branded data cards for LinkedIn and funder packs'
-            },
-            {
-                label: 'Amplify',
-                href: '/amplify',
-                description: 'Ready-to-post LinkedIn, Twitter, and funder content'
-            },
-            {
-                label: 'Write to Your MP',
-                href: '/write-your-mp',
-                description: 'Data-backed letter to your local member'
-            },
-            ] : []),
-            {
-                label: 'International Exchange',
-                href: '/international-exchange',
-                description: 'June 2026 learning mission'
-            },
-            {
-                label: 'For Community Leaders',
-                href: '/for-community-leaders',
-                description: 'Practical tools for local leadership'
-            },
-            {
-                label: 'For Funders',
-                href: '/for-funders',
-                description: 'Invest in proven community solutions'
-            },
-            {
-                label: 'For Government',
-                href: '/for-government',
-                description: 'Evidence for policy and systems reform'
-            },
-            {
-                label: 'For Researchers',
-                href: '/for-researchers',
-                description: 'Methods, datasets, and collaboration'
+                description: 'Evidence, claims, and verified alternatives'
             }
         ]
     },
     {
-        label: 'Action',
+        label: 'Find support',
         type: 'dropdown',
         items: [
             {
-                label: 'Blog',
-                href: '/blog',
-                description: 'News and updates'
+                label: 'Find services',
+                href: '/services',
+                description: 'Legal help, housing, mentoring, and crisis support'
             },
             {
-                label: 'Events',
-                href: '/events',
-                description: 'Upcoming gatherings'
+                label: 'Search ALMA',
+                href: '/alma',
+                description: 'Australian Living Map of Alternatives'
             },
             {
-                label: 'The Contained Tour',
-                href: '/contained/tour',
-                description: 'Immersive youth justice experience'
-            },
-            ...(almaEnabled ? [{
-                label: 'Basecamps',
-                href: '/basecamps',
-                description: 'The ALMA Network — community coordinators in every state'
-            }] : []),
-            {
-                label: 'Stewards',
-                href: '/stewards',
-                description: 'Protect what works'
-            },
-            ...(almaEnabled ? [
-            {
-                label: 'Art Competitions',
-                href: '/competitions',
-                description: 'Monthly art competitions for young people'
+                label: 'Community map',
+                href: '/community-map',
+                description: 'Locate programs and local alternatives'
             },
             {
-                label: 'Gig Guide',
-                href: '/gig-guide',
-                description: 'Youth-friendly events near basecamps'
-            },
-            ] : []),
+                label: 'Add your model',
+                href: '/join',
+                description: 'Put a program, service, or local model into the network'
+            }
+        ]
+    },
+    {
+        label: 'Back or build it',
+        type: 'dropdown',
+        items: [
             {
-                label: 'Art & Innovation',
-                href: '/art-innovation',
-                description: 'Creative solutions'
-            },
-            {
-                label: 'Follow the Money',
+                label: 'Follow the money',
                 href: '/follow-the-money',
-                description: 'Where youth justice funding actually goes'
+                description: 'Compare detention spend with community capability'
             },
             {
-                label: 'Funders',
-                href: '/funders',
-                description: 'Who funds what — 200+ foundations profiled'
+                label: 'For funders',
+                href: '/for-funders',
+                description: 'Back proven alternatives and field infrastructure'
             },
             {
-                label: 'State Scorecards',
-                href: '/states/qld',
-                description: 'Per-state youth justice intelligence'
-            },
-            {
-                label: 'The Authority',
-                href: '/authority',
-                description: '$97.9B in justice funding, exposed'
-            },
-            {
-                label: 'Transparency',
-                href: '/transparency',
-                description: 'Track funding and outcomes'
-            },
-            {
-                label: 'Call It Out',
-                href: '/call-it-out',
-                description: 'Report racism and injustice'
-            },
-            {
-                label: 'Back This',
+                label: 'Back this',
                 href: '/back-this',
-                description: 'Fund the infrastructure'
-            }
-        ]
-    },
-    {
-        label: 'About',
-        type: 'dropdown',
-        items: [
-            {
-                label: 'Our Vision',
-                href: '/vision',
-                description: 'The future of youth justice'
-            },
-            {
-                label: 'Our Mission',
-                href: '/about',
-                description: 'Why JusticeHub exists'
-            },
-            {
-                label: 'Roadmap',
-                href: '/about/roadmap',
-                description: '2026-2028 journey to community ownership'
-            },
-            {
-                label: 'How It Works',
-                href: '/how-it-works',
-                description: 'Platform and collaboration model'
+                description: 'Fund the JusticeHub and CONTAINED infrastructure'
             },
             {
                 label: 'Contact',
                 href: '/contact',
-                description: 'Get in touch'
+                description: 'Start a partner, venue, media, or support conversation'
             }
         ]
     }
@@ -420,6 +146,9 @@ export const footerSections = [
     {
         title: 'Intelligence',
         links: [
+            { label: 'Justice Network', href: '/justice-network', description: 'Issue verticals for action' },
+            { label: 'Youth Remand', href: '/justice-network/youth-remand', description: 'Flagship remand vertical' },
+            { label: 'Country Reports', href: '/justice-network/countries', description: 'Africa and Europe learning reports' },
             { label: 'ALMA Dashboard', href: '/intelligence/dashboard', description: 'AI evidence engine' },
             { label: 'Ask ALMA', href: '/intelligence/chat', description: 'Chat with AI' },
             { label: 'System Map', href: '/intelligence/map', description: 'Detention & programs' },
@@ -434,6 +163,10 @@ export const footerSections = [
     {
         title: 'Network',
         links: [
+            { label: 'Adelaide Launch', href: '/adelaide', description: 'June 23 public visitor pathway' },
+            { label: 'Justice Network', href: '/justice-network', description: 'Art, evidence, law, campaigns, and briefs' },
+            { label: 'Youth Remand Vertical', href: '/justice-network/youth-remand', description: 'First promoted vertical' },
+            { label: 'Country Reports', href: '/justice-network/countries', description: 'World-tour comparison reports' },
             ...(almaEnabled ? [
             { label: 'ALMA Network', href: '/network/alma', description: 'Community-led youth justice' },
             { label: 'Basecamps', href: '/basecamps', description: 'ALMA Network coordinators' },

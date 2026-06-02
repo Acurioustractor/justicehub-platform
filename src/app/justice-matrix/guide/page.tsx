@@ -12,6 +12,7 @@ import {
   MapPinned,
   Megaphone,
   MessageCircle,
+  Network,
   Scale,
   Search,
   ShieldCheck,
@@ -142,6 +143,13 @@ const publicSurfaces = [
     job: 'Start from a strategic question and see law, movement, people, and playbook in one place.',
   },
   {
+    route: '/justice-network/youth-remand',
+    href: '/justice-network/youth-remand',
+    label: 'Justice Network',
+    icon: <Network className="h-4 w-4" />,
+    job: 'Run a real scenario that compares youth remand across law, systems, campaigns, funders, tour countries, and consented stories.',
+  },
+  {
     route: '/justice-matrix/cases/[id]',
     href: '/justice-matrix/cases',
     label: 'Case profiles',
@@ -208,6 +216,11 @@ const journeys = [
     query: 'What is the state of protection and where are the gaps?',
     path: 'Hub -> issues -> insights -> future exportable brief',
   },
+  {
+    actor: 'World-tour conversation',
+    query: 'How does this country handle youth remand, and what can Australia learn without extracting private stories?',
+    path: 'Network -> Map -> Ask -> consent-card story -> brief',
+  },
 ];
 
 export default async function JusticeMatrixGuidePage() {
@@ -251,6 +264,7 @@ export default async function JusticeMatrixGuidePage() {
                 <HeroLink href="/justice-matrix/issues">Start from an issue</HeroLink>
                 <HeroLink href="/justice-matrix/explore">Open Explore</HeroLink>
                 <HeroLink href="/justice-matrix/map">Open Map</HeroLink>
+                <HeroLink href="/justice-network/youth-remand">Youth remand scenario</HeroLink>
               </div>
             </div>
             <div
@@ -422,6 +436,7 @@ export default async function JusticeMatrixGuidePage() {
                 'Open a case profile and point to the authoritative source and verified badge.',
                 'Open a campaign profile and point to tactics and coalition.',
                 'Return to Explore and search non-refoulement high seas.',
+                'Open the Youth Remand scenario to show the human layer, country comparison, alternatives, and partner brief.',
               ].map((step, index) => (
                 <li key={step} className="flex gap-3 text-[14px] leading-6" style={{ color: C.body }}>
                   <span className="shrink-0" style={{ fontFamily: MONO, color: C.accent }}>{String(index + 1).padStart(2, '0')}</span>

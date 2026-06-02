@@ -12,6 +12,7 @@ import {
   MapPinned,
   Megaphone,
   MessageCircle,
+  Network,
   Scale,
   Search,
 } from 'lucide-react';
@@ -26,7 +27,8 @@ export type MatrixFlowActive =
   | 'cases'
   | 'campaigns'
   | 'contribute'
-  | 'guide';
+  | 'guide'
+  | 'network';
 
 const MONO = "'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
 const C = {
@@ -97,6 +99,14 @@ const links: Array<{
     icon: <MapPinned className="h-4 w-4" />,
   },
   {
+    key: 'network',
+    href: '/justice-network/youth-remand',
+    label: 'Justice Network',
+    short: 'Network',
+    help: 'Scenario',
+    icon: <Network className="h-4 w-4" />,
+  },
+  {
     key: 'issues',
     href: '/justice-matrix/issues',
     label: 'Issues',
@@ -142,13 +152,13 @@ export function MatrixFlowNav({
       <nav className="mx-auto max-w-7xl px-5 py-3 md:px-8" aria-label="Justice Matrix flow">
         <div className="mb-2 flex items-center justify-between gap-3">
           <div className="uppercase" style={{ color: C.muted, fontFamily: MONO, fontSize: 10, letterSpacing: '0.18em' }}>
-            User flow
+            JusticeHub flow
           </div>
-          <Link href="/justice-matrix/how-it-works#faq" className="hidden items-center gap-1 text-xs font-semibold hover:underline sm:inline-flex" style={{ color: C.accent }}>
+          <Link href="/justice-matrix/how-it-works#faq" className="inline-flex items-center gap-1 text-xs font-semibold hover:underline" style={{ color: C.accent }}>
             FAQ <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-10">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-[repeat(11,minmax(0,1fr))]">
           {links.map((item) => {
             const selected = item.key === active;
             return (
@@ -190,6 +200,23 @@ export function MatrixFlowNav({
               </Link>
             );
           })}
+        </div>
+        <div className="mt-3 grid gap-2 lg:grid-cols-[1fr_auto] lg:items-center">
+          <p className="text-[12px] leading-5" style={{ color: C.body }}>
+            Search justice knowledge, map systems and campaigns, understand the issue, bring in consented human
+            stories, find partners and funders, then export a useful brief.
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {['Research, not legal advice', 'Consent-approved stories only', 'Partner-gated private work'].map((label) => (
+              <span
+                key={label}
+                className="rounded-full border px-2.5 py-1 text-[11px] font-semibold"
+                style={{ borderColor: C.border, background: C.surface, color: C.muted }}
+              >
+                {label}
+              </span>
+            ))}
+          </div>
         </div>
       </nav>
     </section>

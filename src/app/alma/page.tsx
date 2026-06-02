@@ -1,18 +1,19 @@
 import { createServiceClient } from '@/lib/supabase/service';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { Metadata } from 'next';
+import { unstable_cache } from 'next/cache';
 import { AlmaSearchClient, type AlmaSearchModel } from './AlmaSearchClient';
 import { WhatsNewFeed } from '@/components/alma/WhatsNew';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: 'Search the Map | Australian Living Map of Alternatives | JusticeHub',
   description:
-    'Search the Australian Living Map of Alternatives. Find community-led youth justice programs by postcode, state, practice type, or evidence level. Every entry verified.',
+    'Search the Australian Living Map of Alternatives. Find youth justice support records by postcode, state, practice type, evidence level, and review status.',
 };
 
-export default async function AlmaSearchPage() {
+async function loadAlmaSearchData(): Promise<{ models: AlmaSearchModel[]; totalCount: number }> {
   const supabase = createServiceClient() as any;
 
   // Fetch every verified intervention with its operating organisation.
@@ -23,6 +24,7 @@ export default async function AlmaSearchPage() {
     .select(
       `
       id, name, type, description, evidence_level, cost_per_young_person, updated_at,
+      geography, verification_status, review_status, source_documents, website,
       operating_organization_id,
       organizations!alma_interventions_operating_organization_id_fkey(
         name, slug, state, is_indigenous_org,
@@ -42,6 +44,10 @@ export default async function AlmaSearchPage() {
     type: m.type,
     description: m.description,
     evidenceLevel: m.evidence_level,
+    verificationStatus: m.verification_status,
+    reviewStatus: m.review_status,
+    geography: Array.isArray(m.geography) ? m.geography : [],
+    hasSource: Boolean(m.website || (Array.isArray(m.source_documents) && m.source_documents.length > 0)),
     costPerYoungPerson: m.cost_per_young_person ? Number(m.cost_per_young_person) : null,
     updatedAt: m.updated_at,
     org: m.organizations
@@ -59,12 +65,26 @@ export default async function AlmaSearchPage() {
       : null,
   }));
 
+  return {
+    models,
+    totalCount: count || models.length,
+  };
+}
+
+const getAlmaSearchData = unstable_cache(loadAlmaSearchData, ['alma-search-public-v2'], {
+  revalidate: 300,
+  tags: ['alma-search'],
+});
+
+export default async function AlmaSearchPage() {
+  const { models, totalCount } = await getAlmaSearchData();
+
   return (
     <div className="min-h-screen bg-[#F5F0E8] text-[#0A0A0A]">
       <Navigation />
       <main className="header-offset">
         <WhatsNewFeed limit={10} />
-        <AlmaSearchClient models={models} totalCount={count || models.length} />
+        <AlmaSearchClient models={models} totalCount={totalCount} />
       </main>
       <Footer />
     </div>
