@@ -1,226 +1,193 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { ArrowLeft, ArrowRight, Printer } from 'lucide-react';
 
-const STATE_STATS: Record<string, { detention_spend: string; community_spend: string; indigenous_ratio: string; detention_population: string }> = {
-  nsw: { detention_spend: '$364M', community_spend: '$89M', indigenous_ratio: '17.5x', detention_population: '282' },
-  vic: { detention_spend: '$298M', community_spend: '$76M', indigenous_ratio: '14.2x', detention_population: '178' },
-  qld: { detention_spend: '$412M', community_spend: '$95M', indigenous_ratio: '28.4x', detention_population: '335' },
-  wa: { detention_spend: '$178M', community_spend: '$42M', indigenous_ratio: '42.1x', detention_population: '147' },
-  sa: { detention_spend: '$89M', community_spend: '$28M', indigenous_ratio: '21.3x', detention_population: '68' },
-  tas: { detention_spend: '$32M', community_spend: '$11M', indigenous_ratio: '12.8x', detention_population: '18' },
-  act: { detention_spend: '$28M', community_spend: '$9M', indigenous_ratio: '16.7x', detention_population: '14' },
-  nt: { detention_spend: '$67M', community_spend: '$15M', indigenous_ratio: '96.2x', detention_population: '46' },
-};
+const MONO = "'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
 
-const STATE_NAMES: Record<string, string> = {
-  nsw: 'New South Wales', vic: 'Victoria', qld: 'Queensland', wa: 'Western Australia',
-  sa: 'South Australia', tas: 'Tasmania', act: 'Australian Capital Territory', nt: 'Northern Territory',
-};
+const evidence = [
+  {
+    value: '42%',
+    label: 'adult prisoners unsentenced',
+    detail: '19,850 of 46,998 adult prisoners at 30 June 2025.',
+    source: 'ABS Prisoners in Australia 2025',
+  },
+  {
+    value: '4 in 5',
+    label: 'children in detention unsentenced',
+    detail: 'Average day in 2024-25, reported by JRI citing AIHW.',
+    source: 'JRI, 12 May 2026',
+  },
+  {
+    value: '$1.1B',
+    label: 'youth detention spend',
+    detail: 'Detention-based supervision share of recurrent youth justice expenditure in 2024-25.',
+    source: 'Productivity Commission RoGS 2026',
+  },
+  {
+    value: '$1,414',
+    label: 'NSW youth detention per day',
+    detail: 'Compared with $135.51 per day for community-based supervision in 2018-19.',
+    source: 'NSW BOCSAR 2021',
+  },
+];
+
+const rooms = [
+  {
+    room: 'Room 1',
+    title: 'The system that detains',
+    body: 'A child can be held before sentence because the plan around them is missing: safe housing, transport, legal help, adult support, health care, or a realistic bail condition.',
+    color: '#DC2626',
+  },
+  {
+    room: 'Room 2',
+    title: 'The supports that change the path',
+    body: 'The alternative is not doing nothing. It is bail support, safe housing, legal help, cultural authority, family work, education, transport, and daily structure.',
+    color: '#059669',
+  },
+  {
+    room: 'Room 3',
+    title: 'The work already happening',
+    body: 'Local organisations name what they are doing, what evidence exists, what support is missing, and what needs to be funded before the next child reaches the cell.',
+    color: '#0A0A0A',
+  },
+];
+
+const actions = [
+  'Walk through THE CONTAINED and send the /remand explainer to five people with decision power.',
+  'Ask what youth detention receives compared with bail support, housing, legal help, and community-led programs.',
+  'Use JusticeHub to find local services, verified alternatives, funding gaps, and source-backed claims.',
+  'Back one practical support that would stop remand becoming the default answer.',
+];
 
 export default function DecisionMakerBriefPage() {
-  const [state, setState] = useState('qld');
-  const stats = STATE_STATS[state];
-
   return (
-    <div className="min-h-screen bg-white text-[#0A0A0A]">
+    <div className="min-h-screen bg-[#F5F0E8] text-[#0A0A0A]">
       <Navigation />
-
-      <main className="pt-40">
-        {/* Header */}
-        <section className="py-8 border-b-2 border-[#0A0A0A]">
+      <main className="pt-40 print:pt-4">
+        <section className="border-b-2 border-[#0A0A0A] py-8 print:py-3">
           <div className="container-justice">
-            <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <Link
                   href="/contained"
-                  className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-gray-500 hover:text-[#0A0A0A] mb-4 py-3"
+                  className="mb-4 inline-flex items-center gap-2 py-3 text-sm font-bold uppercase tracking-widest text-[#756d63] hover:text-[#0A0A0A] print:hidden"
                 >
-                  <ArrowLeft className="w-5 h-5 md:w-4 md:h-4" /> Back
+                  <ArrowLeft className="h-4 w-4" /> Back to CONTAINED
                 </Link>
-                <h1 className="text-2xl md:text-4xl font-black tracking-tighter uppercase">
-                  Decision-Maker Brief
+                <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#DC2626]" style={{ fontFamily: MONO }}>
+                  THE CONTAINED 2026
+                </p>
+                <h1 className="text-3xl font-black uppercase tracking-tight md:text-5xl">
+                  Youth Remand Brief
                 </h1>
-                <p className="text-gray-500 text-sm mt-1">
-                  One-page evidence summary for {STATE_NAMES[state]}
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-[#514a42]">
+                  A source-checked one-page brief for decision-makers walking through THE CONTAINED.
+                  Research, not legal advice. Checked as of 3 June 2026 AEST.
                 </p>
               </div>
-              <div className="flex items-center gap-3">
-                <select
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                  className="border-2 border-[#0A0A0A] bg-white px-4 py-2 text-sm font-bold uppercase"
-                >
-                  {Object.entries(STATE_NAMES).map(([code, name]) => (
-                    <option key={code} value={code}>{name}</option>
-                  ))}
-                </select>
-                <button
-                  onClick={() => window.print()}
-                  className="flex items-center gap-2 border-2 border-[#0A0A0A] px-4 py-2 text-sm font-bold uppercase hover:bg-[#0A0A0A] hover:text-white transition-colors"
-                >
-                  <Printer className="w-4 h-4" /> Print
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="inline-flex items-center gap-2 border-2 border-[#0A0A0A] px-4 py-3 text-sm font-bold uppercase tracking-widest hover:bg-[#0A0A0A] hover:text-[#F5F0E8] print:hidden"
+              >
+                <Printer className="h-4 w-4" /> Print
+              </button>
             </div>
           </div>
         </section>
 
-        {/* Brief Content — designed to print well */}
         <section className="py-8 print:py-4">
-          <div className="container-justice max-w-3xl">
-            {/* Headline */}
-            <div className="border-2 border-[#0A0A0A] p-6 mb-6 print:border print:p-4">
-              <div className="text-xs font-bold uppercase tracking-widest text-[#DC2626] mb-2">
-                THE CONTAINED — Australian Tour 2026
-              </div>
-              <h2 className="text-xl font-black mb-2">
-                Youth Justice in {STATE_NAMES[state]}: What the Evidence Shows
+          <div className="container-justice max-w-4xl">
+            <div className="mb-6 border-2 border-[#0A0A0A] bg-white p-6 print:p-4">
+              <h2 className="mb-3 text-2xl font-black">
+                Remand is custody before care has arrived.
               </h2>
-              <p className="text-sm text-gray-600">
-                You have been nominated to experience THE CONTAINED — a 30-minute immersive walk
-                through youth detention reality, international alternatives, and the community
-                organisations already doing what works. This brief summarises the evidence for
-                your jurisdiction. The route starts with a small Mount Druitt gathering, publicly launches at Tandanya in Adelaide, then links
-                every stop back to JusticeHub as the public evidence layer.
+              <p className="text-sm leading-7 text-[#514a42]">
+                Remand means custody before sentence. A child on remand has not been sentenced.
+                Many have not been convicted. They are held while the court process continues.
+                The first question is not whether detention can hold them. The first question is what
+                support would have kept the door open.
               </p>
             </div>
 
-            {/* Key Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div className="border-2 border-[#0A0A0A] p-4 text-center">
-                <div className="text-2xl font-black font-mono text-[#DC2626]">{stats.detention_spend}</div>
-                <div className="text-xs text-gray-500 uppercase tracking-widest mt-1">Detention spend</div>
-              </div>
-              <div className="border-2 border-[#0A0A0A] p-4 text-center">
-                <div className="text-2xl font-black font-mono text-[#059669]">{stats.community_spend}</div>
-                <div className="text-xs text-gray-500 uppercase tracking-widest mt-1">Community spend</div>
-              </div>
-              <div className="border-2 border-[#0A0A0A] p-4 text-center">
-                <div className="text-2xl font-black font-mono">{stats.indigenous_ratio}</div>
-                <div className="text-xs text-gray-500 uppercase tracking-widest mt-1">Indigenous overrep.</div>
-              </div>
-              <div className="border-2 border-[#0A0A0A] p-4 text-center">
-                <div className="text-2xl font-black font-mono">{stats.detention_population}</div>
-                <div className="text-xs text-gray-500 uppercase tracking-widest mt-1">Avg daily detention</div>
-              </div>
+            <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4 print:grid-cols-4">
+              {evidence.map((item) => (
+                <article key={item.label} className="border-2 border-[#0A0A0A] bg-white p-4">
+                  <div className="text-3xl font-black text-[#DC2626]" style={{ fontFamily: MONO }}>
+                    {item.value}
+                  </div>
+                  <h3 className="mt-2 text-sm font-black uppercase leading-tight">{item.label}</h3>
+                  <p className="mt-2 text-xs leading-5 text-[#514a42]">{item.detail}</p>
+                  <p className="mt-3 text-[10px] uppercase tracking-[0.12em] text-[#756d63]" style={{ fontFamily: MONO }}>
+                    {item.source}
+                  </p>
+                </article>
+              ))}
             </div>
 
-            {/* The Three Rooms */}
             <div className="mb-6">
-              <h3 className="text-lg font-black uppercase tracking-tighter mb-4 flex items-center gap-2">
-                <span className="w-6 h-1 bg-[#DC2626] inline-block" />
-                What You Will Experience
-              </h3>
-              <div className="space-y-4">
-                <div className="border-l-4 border-[#DC2626] pl-4">
-                  <h4 className="font-bold">Room 1 — Current Reality</h4>
-                  <p className="text-sm text-gray-600">
-                    10 minutes inside the reality of youth detention. The first build story is carried
-                    by Brisbane young people, then rebuilt locally by young people who have lived through
-                    the system. $3,640/day. $1.33M/year. 84% reoffend.
-                  </p>
-                </div>
-                <div className="border-l-4 border-[#059669] pl-4">
-                  <h4 className="font-bold">Room 2 — The Alternative (Diagrama, Spain)</h4>
-                  <p className="text-sm text-gray-600">
-                    10 minutes experiencing the therapeutic model, with David from Diagrama helping hold
-                    the practice lens. 1:1 staffing, weekly family engagement, 73% success rate,
-                    &euro;5.64 returned per &euro;1 invested. Proven at scale.
-                  </p>
-                </div>
-                <div className="border-l-4 border-[#0A0A0A] pl-4">
-                  <h4 className="font-bold">Room 3 — Community Organisations Already Doing It</h4>
-                  <p className="text-sm text-gray-600">
-                    10 minutes with the local organisations delivering results. From Mount Druitt through the Adelaide launch,
-                    local organisations talk about their programs, costs, evidence, and support needs.
-                    Changes at every tour stop, with local community telling the local story.
-                  </p>
-                </div>
+              <h2 className="mb-4 flex items-center gap-2 text-xl font-black uppercase tracking-tight">
+                <span className="inline-block h-1 w-8 bg-[#DC2626]" />
+                What the three rooms show
+              </h2>
+              <div className="grid gap-3 md:grid-cols-3 print:grid-cols-3">
+                {rooms.map((room) => (
+                  <article key={room.room} className="border-2 border-[#0A0A0A] bg-white p-4">
+                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ color: room.color, fontFamily: MONO }}>
+                      {room.room}
+                    </p>
+                    <h3 className="text-lg font-black">{room.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-[#514a42]">{room.body}</p>
+                  </article>
+                ))}
               </div>
             </div>
 
-            {/* National Facts */}
-            <div className="mb-6 bg-gray-50 border-2 border-gray-200 p-6 print:bg-white">
-              <h3 className="text-lg font-black uppercase tracking-tighter mb-3">
-                National Evidence Base
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
-                <div className="flex justify-between border-b border-gray-200 py-1">
-                  <span className="text-gray-600">Cost per child/year (detention)</span>
-                  <span className="font-bold">$1.33M</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-200 py-1">
-                  <span className="text-gray-600">Cost per day (detention)</span>
-                  <span className="font-bold">$3,640</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-200 py-1">
-                  <span className="text-gray-600">Detention reoffending rate</span>
-                  <span className="font-bold text-[#DC2626]">84%</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-200 py-1">
-                  <span className="text-gray-600">Community program reoffending</span>
-                  <span className="font-bold text-[#059669]">3%</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-200 py-1">
-                  <span className="text-gray-600">Community cost per day</span>
-                  <span className="font-bold text-[#059669]">$75</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-200 py-1">
-                  <span className="text-gray-600">Indigenous overrepresentation (national)</span>
-                  <span className="font-bold">24x</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-200 py-1">
-                  <span className="text-gray-600">Verified interventions on ALMA</span>
-                  <span className="font-bold">981</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-200 py-1">
-                  <span className="text-gray-600">Restorative justice success rate</span>
-                  <span className="font-bold text-[#059669]">88%</span>
-                </div>
-              </div>
-              <p className="text-xs text-gray-400 mt-3">
-                Sources: Productivity Commission ROGS 2024-25, QLD Youth Justice Strategy 2023,
-                Community Services Benchmark Study 2024, Diagrama Foundation evaluation
-              </p>
+            <div className="mb-6 grid gap-4 md:grid-cols-[1fr_320px]">
+              <section className="border-2 border-[#0A0A0A] bg-white p-5">
+                <h2 className="text-xl font-black">The design failure</h2>
+                <p className="mt-3 text-sm leading-7 text-[#514a42]">
+                  Bail was once a promise to return to court. It has become a prediction of risk.
+                  Risk follows poverty, racism, homelessness, disability, family violence, remote geography,
+                  and service gaps. When support is missing, detention starts to look like the only option.
+                </p>
+              </section>
+              <aside className="border-2 border-[#0A0A0A] bg-[#0A0A0A] p-5 text-[#F5F0E8]">
+                <h2 className="text-xl font-black text-[#F5F0E8]">The better question</h2>
+                <p className="mt-3 text-sm leading-7 text-[#F5F0E8]/75">
+                  What would it take to fund the supports that stop a child reaching the cell in the first place?
+                </p>
+              </aside>
             </div>
 
-            {/* What You Can Do */}
-            <div className="border-2 border-[#0A0A0A] bg-[#0A0A0A] text-white p-6">
-              <h3 className="text-lg font-black uppercase tracking-tighter mb-3 text-white">
-                What You Can Do
-              </h3>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-start gap-2">
-                  <ArrowRight className="w-4 h-4 mt-0.5 text-[#DC2626] flex-shrink-0" />
-                  <span>Walk through THE CONTAINED when it comes to your city</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <ArrowRight className="w-4 h-4 mt-0.5 text-[#DC2626] flex-shrink-0" />
-                  <span>Nominate 5 peers who should experience it</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <ArrowRight className="w-4 h-4 mt-0.5 text-[#DC2626] flex-shrink-0" />
-                  <span>Review the evidence at justicehub.com.au/intelligence/dashboard</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <ArrowRight className="w-4 h-4 mt-0.5 text-[#DC2626] flex-shrink-0" />
-                  <span>Ask your department what community programs receive vs detention</span>
-                </li>
+            <div className="border-2 border-[#0A0A0A] bg-white p-5">
+              <h2 className="text-xl font-black">What you can do after walking through</h2>
+              <ul className="mt-4 space-y-3">
+                {actions.map((action) => (
+                  <li key={action} className="flex gap-3 text-sm leading-6 text-[#514a42]">
+                    <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-[#DC2626]" />
+                    <span>{action}</span>
+                  </li>
+                ))}
               </ul>
-              <div className="mt-4 pt-4 border-t border-gray-700 text-xs text-gray-400">
-                CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
-                <br />
-                justicehub.com.au/contained | ben@justicehub.com.au
+              <div className="mt-5 grid gap-2 border-t-2 border-[#0A0A0A] pt-4 text-sm font-bold md:grid-cols-4 print:grid-cols-4">
+                <Link href="/remand" className="hover:text-[#DC2626]">justicehub.com.au/remand</Link>
+                <Link href="/proof" className="hover:text-[#DC2626]">/proof</Link>
+                <Link href="/follow-the-money" className="hover:text-[#DC2626]">/follow-the-money</Link>
+                <Link href="/contained/reaction" className="hover:text-[#DC2626]">/contained/reaction</Link>
               </div>
+            </div>
+
+            <div className="mt-6 text-xs leading-5 text-[#756d63]">
+              Sources: ABS Prisoners in Australia 2025; Productivity Commission RoGS 2026 Youth justice services;
+              Australian Institute of Criminology, Bail and remand across Australia, 2026; Justice Reform Initiative
+              releases dated 30 January 2026 and 12 May 2026; NSW BOCSAR Youth Bail Assistance Line evaluation, 2021.
             </div>
           </div>
         </section>
       </main>
-
       <Footer />
     </div>
   );

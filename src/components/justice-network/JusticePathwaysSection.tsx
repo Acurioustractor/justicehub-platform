@@ -6,6 +6,7 @@ import {
   Building2,
   ClipboardCheck,
   DoorOpen,
+  ExternalLink,
   FileText,
   HandHeart,
   HeartPulse,
@@ -19,7 +20,11 @@ import {
   ShieldCheck,
   Users,
 } from 'lucide-react';
-import { communityMapServices } from '@/content/community-map-services';
+import {
+  communityMapServices,
+  type CommunityMapCategory,
+  type CommunityMapService,
+} from '@/content/community-map-services';
 
 type Variant = 'full' | 'home' | 'physical';
 
@@ -126,7 +131,28 @@ const exampleIds = [
 
 const localModels = exampleIds
   .map((id) => communityMapServices.find((service) => service.id === id))
-  .filter(Boolean);
+  .filter((service): service is CommunityMapService => Boolean(service));
+
+const serviceCategoryMap: Record<CommunityMapCategory, string> = {
+  justice: 'legal',
+  healing: 'health',
+  skills: 'employment',
+  housing: 'housing',
+  mental_health: 'health',
+  education: 'education',
+  family: 'family',
+  emergency: 'emergency',
+};
+
+function serviceFinderHref(model: CommunityMapService) {
+  const params = new URLSearchParams({
+    q: model.name,
+    state: model.state,
+    category: serviceCategoryMap[model.category],
+  });
+
+  return `/services?${params.toString()}`;
+}
 
 const physicalHubZones = [
   {
@@ -324,23 +350,50 @@ export function JusticePathwaysSection({
             </div>
             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {localModels.map((model) => (
-                <article key={model!.id} className="rounded-lg border bg-white p-4" style={{ borderColor: C.border }}>
+                <article key={model.id} className="rounded-lg border bg-white p-4" style={{ borderColor: C.border }}>
                   <div className="mb-2 flex flex-wrap items-center gap-2">
                     <span className="rounded-full px-2.5 py-1 text-xs font-bold" style={{ background: C.sand, color: C.body }}>
-                      {model!.state}
+                      {model.state}
                     </span>
                     <span className="text-xs font-semibold" style={{ color: C.muted }}>
-                      {model!.focusAreas.slice(0, 2).join(' / ')}
+                      {model.focusAreas.slice(0, 2).join(' / ')}
                     </span>
                   </div>
-                  <h3 className="mb-2 font-bold" style={{ color: C.ink }}>{model!.name}</h3>
-                  <p className="text-sm leading-6" style={{ color: C.body }}>{model!.description}</p>
+                  <Link
+                    href={serviceFinderHref(model)}
+                    className="group/title mb-2 inline-flex items-start gap-2 font-bold hover:underline"
+                    style={{ color: C.ink }}
+                  >
+                    <span>{model.name}</span>
+                    <ArrowRight className="mt-1 h-3.5 w-3.5 flex-shrink-0 transition-transform group-hover/title:translate-x-0.5" />
+                  </Link>
+                  <p className="text-sm leading-6" style={{ color: C.body }}>{model.description}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {model!.tags.slice(0, 3).map((tag) => (
+                    {model.tags.slice(0, 3).map((tag) => (
                       <span key={tag} className="rounded-full border px-2 py-1 text-xs" style={{ borderColor: C.border, color: C.muted }}>
                         {tag}
                       </span>
                     ))}
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Link
+                      href={serviceFinderHref(model)}
+                      className="inline-flex min-h-9 items-center gap-2 rounded-md px-3 text-xs font-bold text-white"
+                      style={{ background: C.ink }}
+                    >
+                      Open in service finder <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                    {model.website && (
+                      <a
+                        href={model.website}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex min-h-9 items-center gap-2 rounded-md border bg-white px-3 text-xs font-bold"
+                        style={{ borderColor: C.border, color: C.ink }}
+                      >
+                        Official site <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    )}
                   </div>
                 </article>
               ))}

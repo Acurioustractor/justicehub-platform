@@ -89,24 +89,39 @@ const experienceFlow = [
 const roomQr = [
   {
     room: 'Room 1',
-    title: 'What is happening?',
-    href: '/justice-network/youth-remand#scenario',
-    body: 'Why are children held before sentence, and what does that do to family, school, culture, safety, and trust?',
+    title: 'The system that detains',
+    href: '/remand',
+    body: 'Start with remand: custody before sentence, the child pathway, and the difference between charged, bail, remand, convicted, and sentenced.',
     color: '#dc2626',
+    links: [
+      { label: 'Plain explainer', href: '/remand' },
+      { label: 'Issue path', href: '/justice-network/youth-remand#issue' },
+      { label: 'Map the issue', href: '/justice-matrix/map?surface=youth' },
+    ],
   },
   {
     room: 'Room 2',
-    title: 'What could happen instead?',
-    href: '/justice-network/youth-remand#search',
-    body: 'Search programs, services, evidence, and overseas examples that show how communities can support young people outside detention.',
+    title: 'The supports that change the path',
+    href: '/proof',
+    body: 'Open the evidence for bail support, community supervision, services, funding shifts, and alternatives to detention.',
     color: '#1f6f78',
+    links: [
+      { label: 'Wall of Proof', href: '/proof' },
+      { label: 'Follow the money', href: '/follow-the-money' },
+      { label: 'Find services', href: '/services' },
+    ],
   },
   {
     room: 'Room 3',
-    title: 'What can Adelaide do next?',
-    href: '/exhibition?q=South%20Australia%20youth%20justice',
-    body: 'Find South Australian organisations, services, funding needs, and practical asks people can take into meetings after the experience.',
+    title: 'The community-led future',
+    href: '/directory',
+    body: 'Find organisations, add missing models, send the evidence, nominate someone with power, and share what changed.',
     color: '#285d45',
+    links: [
+      { label: 'Directory', href: '/directory' },
+      { label: 'Add a model', href: '/join' },
+      { label: 'Share reaction', href: '/contained/reaction' },
+    ],
   },
 ];
 
@@ -353,6 +368,14 @@ export default async function ContainedAdelaidePage() {
                     </div>
                     <h3 className="mb-2 text-lg font-bold">{room.title}</h3>
                     <p className="text-sm leading-6 text-white/68">{room.body}</p>
+                    <div className="mt-4 space-y-2 border-t border-white/12 pt-3">
+                      {room.links.map((link) => (
+                        <span key={link.href} className="flex items-center justify-between gap-3 text-xs font-bold text-white/72">
+                          {link.label}
+                          <span className="text-white/35">{link.href}</span>
+                        </span>
+                      ))}
+                    </div>
                   </Link>
                 ))}
               </div>
