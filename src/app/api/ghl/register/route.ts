@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { getGHLClient, GHL_TAGS, STATE_TO_TAG } from '@/lib/ghl/client';
+import { getGHLClient, GHL_TAGS, STATE_TO_TAG, GHL_CANONICAL, STATE_TO_PLACE } from '@/lib/ghl/client';
 import { sendEmail } from '@/lib/email/send';
 import { preEventSequence } from '@/content/newsletter-sequences';
 import { verifyTurnstileToken } from '@/lib/turnstile';
@@ -110,34 +110,61 @@ export async function POST(request: NextRequest) {
     if (ghl.isConfigured()) {
       const isContained = Boolean(sanitizedEventName?.toUpperCase().includes('CONTAINED'));
 
-      const tags: string[] = [
-        GHL_TAGS.EVENT,
-        GHL_TAGS.JUSTICEHUB,
-        ...safeCustomTags,
-      ];
+      // Community lane (OCAP, R3): lived-experience is NEVER auto-enrolled into
+      // comms: or workflows. Used by both the tag set and customFields below.
+      const communityLane = sanitizedRole === 'lived_experience';
+      // cohort:<x> arrives from the page via safeCustomTags. Canonical contract
+      // (R4): drop the cohort: tag, capture the value into the cohort custom field.
+      const containedCohort = isContained
+        ? (safeCustomTags.find((tag) => tag.startsWith('cohort:'))?.slice('cohort:'.length) || null)
+        : null;
+
+      let tags: string[];
 
       if (isContained) {
-        // Colon canon: the live CRM is 100% colon/hyphen (verified 2026-06-09).
-        // Emit colon tags so registrations integrate with project:contained and
-        // newsletter-stream:contained-adelaide-invite. Shared GHL_TAGS (underscore)
-        // is intentionally NOT used on the contained path to avoid orphan tags.
-        // The cohort colon tag (cohort:<x>) arrives via safeCustomTags from the page.
-        tags.push('project:contained', 'source:form', 'engagement:warm');
-        if (sanitizedEventSlug === 'contained-adelaide-tandanya' || sanitizedEventName?.toLowerCase().includes('adelaide')) {
-          tags.push('project:contained-adelaide-2026');
+        // Canonical CONTAINED contract (R4). Every CONTAINED contact, regardless of
+        // CTA, carries the same identity base over project:act-jh. Adelaide is encoded
+        // by place:sa (from state), NOT a city-suffixed source or project tag.
+        // No legacy GHL_TAGS, no project:contained, no source:form, no cohort: tag.
+        tags = [
+          GHL_CANONICAL.PROJECT_JH,
+          GHL_CANONICAL.SOURCE_EVENT_CONTAINED,
+          GHL_CANONICAL.INTEREST_JUSTICE_REFORM,
+          'engagement:warm', // lifecycle layer (RC2) — refined by the scoring cron
+        ];
+        // place: regional segmentation (place:sa encodes the Adelaide cohort)
+        if (sanitizedState && STATE_TO_PLACE[sanitizedState]) {
+          tags.push(STATE_TO_PLACE[sanitizedState]);
         }
-        if (sanitizedState) tags.push(`state:${sanitizedState.toLowerCase()}`);
-        const ROLE_COLON: Record<string, string> = {
-          researcher: 'role:researcher', practitioner: 'role:practitioner',
-          lived_experience: 'role:lived-experience', media: 'role:media',
-          funder: 'role:funder', service_org: 'role:service', student: 'role:student',
-          policymaker: 'role:policy', advocate: 'role:advocate', artist: 'role:artist',
+        // role: via canonical RC1 map. Professional → partner; advocate/artist/
+        // student → supporter; researcher/media/funder/community 1:1;
+        // lived-experience → storyteller (+ lane:community below).
+        const CONTAINED_ROLE_MAP: Record<string, string> = {
+          researcher: GHL_CANONICAL.ROLE_RESEARCHER,
+          media: GHL_CANONICAL.ROLE_MEDIA,
+          funder: GHL_CANONICAL.ROLE_FUNDER,
           community: 'role:community',
+          practitioner: GHL_CANONICAL.ROLE_PARTNER,
+          service_org: GHL_CANONICAL.ROLE_PARTNER,
+          policymaker: GHL_CANONICAL.ROLE_PARTNER,
+          advocate: GHL_CANONICAL.ROLE_SUPPORTER,
+          artist: GHL_CANONICAL.ROLE_SUPPORTER,
+          student: GHL_CANONICAL.ROLE_SUPPORTER,
+          lived_experience: GHL_CANONICAL.ROLE_STORYTELLER,
+          supporter: GHL_CANONICAL.ROLE_SUPPORTER,
         };
-        if (ROLE_COLON[sanitizedRole]) tags.push(ROLE_COLON[sanitizedRole]);
-        if (newsletterOptIn) tags.push('newsletter-stream:contained-adelaide-invite');
+        const roleTag = CONTAINED_ROLE_MAP[sanitizedRole];
+        if (roleTag) tags.push(roleTag);
+        if (sanitizedRole === 'artist') tags.push('interest:storytelling'); // RC1
+        if (communityLane) tags.push(GHL_CANONICAL.LANE_COMMUNITY);
+        // Newsletter → comms send-trigger, granted ONLY with consent AND never for
+        // the community lane (Spam Act + OCAP R3).
+        if (newsletterOptIn && !communityLane) {
+          tags.push(GHL_CANONICAL.COMMS_JH_NEWSLETTER);
+        }
       } else {
         // Non-contained events keep the existing GHL_TAGS contract (other form routes).
+        tags = [GHL_TAGS.EVENT, GHL_TAGS.JUSTICEHUB, ...safeCustomTags];
         if (sanitizedState && STATE_TO_TAG[sanitizedState]) tags.push(STATE_TO_TAG[sanitizedState]);
         if (newsletterOptIn) tags.push(GHL_TAGS.NEWSLETTER);
         if (sanitizedRole === 'researcher') tags.push(GHL_TAGS.RESEARCHER);
@@ -153,17 +180,24 @@ export async function POST(request: NextRequest) {
         if (sanitizedRole === 'community') tags.push('community');
       }
 
+      const customFields: Record<string, string> = {
+        organization: sanitizedOrganization || '',
+        role: sanitizedRole,
+        how_heard: sanitizedHowHeard || '',
+        event_slug: sanitizedEventSlug || '',
+      };
+      if (isContained) {
+        if (containedCohort) customFields.cohort = containedCohort;
+        // Spam Act: record consent state alongside the comms: grant.
+        customFields.newsletter_consent = (newsletterOptIn && !communityLane) ? 'Yes' : '';
+      }
+
       ghlContactId = await ghl.upsertContact({
         email: sanitizedEmail,
         name: sanitizedFullName,
         tags,
         source: 'JusticeHub Event Registration',
-        customFields: {
-          organization: sanitizedOrganization || '',
-          role: sanitizedRole,
-          how_heard: sanitizedHowHeard || '',
-          event_slug: sanitizedEventSlug || '',
-        },
+        customFields,
       });
     }
 
