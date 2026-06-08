@@ -10,6 +10,7 @@ interface SendEmailOptions {
   name?: string; // Recipient name for GHL contact upsert
   tags?: string[]; // GHL tags to apply
   source?: string; // GHL source attribution
+  emailFrom?: string; // From/reply address (e.g. route funder replies to the team)
 }
 
 interface SendBatchOptions {
@@ -54,6 +55,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<{ id: string
       html,
       tags: options.tags,
       source: options.source,
+      emailFrom: options.emailFrom,
     });
 
     if (!result) {

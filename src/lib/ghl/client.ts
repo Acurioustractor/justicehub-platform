@@ -504,6 +504,7 @@ export class GHLClient {
     html: string;
     tags?: string[];
     source?: string;
+    emailFrom?: string;
   }): Promise<{ id: string } | null> {
     if (!this.isConfigured()) {
       return null;
@@ -527,6 +528,7 @@ export class GHLClient {
         contactId,
         subject: options.subject,
         html: options.html,
+        emailFrom: options.emailFrom,
       });
     } catch (error) {
       console.error('[GHL] sendEmailToAddress error:', error);
@@ -636,6 +638,9 @@ export const GHL_PIPELINES = {
   // Empty until the Phase D pipeline is created; opportunity creation is gated
   // on this being set, the same way STEWARD gates the steward opportunity.
   PARTNER: process.env.GHL_PARTNER_PIPELINE_ID || '',
+  // Funder pipeline (CONTAINED "reach out directly" → role:funder). Empty until
+  // the Phase D pipeline is created; opportunity creation is gated on this.
+  FUNDER: process.env.GHL_FUNDER_PIPELINE_ID || '',
 } as const;
 
 // Nurture workflow IDs — one per member role, configured in GHL
