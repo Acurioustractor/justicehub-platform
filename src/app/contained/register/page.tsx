@@ -18,6 +18,39 @@ interface RegistrationData {
   newsletter: boolean;
 }
 
+const cohortDetails: Record<string, { label: string; tag: string; note: string }> = {
+  'young-people': {
+    label: 'Young people / build pathway',
+    tag: 'cohort_young_people',
+    note: 'For supported participation in the build, hosting, or youth-led reflection pathway.',
+  },
+  'student-service': {
+    label: 'Students + services',
+    tag: 'cohort_student_service',
+    note: 'For Flinders, local services, youth organisations, arts/community groups, and supervised cohorts.',
+  },
+  'conference-delegate': {
+    label: 'Conference delegates',
+    tag: 'cohort_conference_delegate',
+    note: 'For Reintegration Puzzle delegates requesting a hosted walkthrough beside the conference.',
+  },
+  'vip-media': {
+    label: 'VIP / media / funder',
+    tag: 'cohort_vip_media',
+    note: 'For MPs, courts, public servants, funders, journalists, and decision-makers needing a priority window.',
+  },
+  'next-city': {
+    label: 'Next-city partner',
+    tag: 'cohort_next_city',
+    note: 'For Perth, Victoria/Melbourne, and future tour-stop partners.',
+  },
+  public: {
+    label: 'Public walkthrough',
+    tag: 'cohort_public',
+    note: 'For public visitors requesting a hosted walkthrough.',
+  },
+};
+
 function findRequestedStop(stopParam: string | null) {
   const normalized = (stopParam || 'adelaide').toLowerCase().trim();
   return (
@@ -51,22 +84,17 @@ function ContainedRegisterPageContent() {
   });
 
   const selectedStop = findRequestedStop(searchParams.get('stop'));
-  const parsedDate = new Date(selectedStop.date);
-  const displayDate = Number.isNaN(parsedDate.getTime()) || selectedStop.date.startsWith('TBC')
-    ? selectedStop.date
-    : parsedDate.toLocaleDateString('en-AU', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
+  const requestedCohort = searchParams.get('cohort') || 'public';
+  const cohort = cohortDetails[requestedCohort] || cohortDetails.public;
+  const displayDate = selectedStop.date;
   const eventDetails = {
     title: `CONTAINED: ${selectedStop.city}`,
     date: displayDate,
-    time: 'Date and session details confirmed after registration',
+    time: 'Hosted session details confirmed after registration',
     venue: selectedStop.venue,
     address: `${selectedStop.city}, ${selectedStop.state}`,
     slug: selectedStop.eventSlug,
+    cohort: cohort.label,
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -100,9 +128,11 @@ function ContainedRegisterPageContent() {
           event_slug: eventDetails.slug,
           tags: [
             'contained_adelaide',
+            'state_sa',
             'public_visitor',
             'youth_remand',
             'country_reports',
+            cohort.tag,
           ],
           turnstile_token: turnstileToken,
         }),
@@ -143,7 +173,7 @@ function ContainedRegisterPageContent() {
           {/* Event Summary */}
           <div className="border border-gray-800 p-6 mb-8 bg-gray-950">
             <h1 className="text-2xl font-bold mb-4">{eventDetails.title}</h1>
-            <div className="flex flex-wrap gap-6 text-sm text-gray-400">
+              <div className="flex flex-wrap gap-6 text-sm text-gray-400">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-ochre-500" />
                 {eventDetails.date}
@@ -156,6 +186,10 @@ function ContainedRegisterPageContent() {
                 <MapPin className="w-4 h-4 text-ochre-500" />
                 {eventDetails.venue}
               </div>
+            </div>
+            <div className="mt-4 border-t border-gray-800 pt-4 text-sm text-gray-300">
+              <div className="font-bold text-white">{eventDetails.cohort}</div>
+              <p className="mt-1 text-gray-500">{cohort.note}</p>
             </div>
           </div>
 
@@ -253,8 +287,11 @@ function ContainedRegisterPageContent() {
                 >
                   <option value="">Select your role...</option>
                   <option value="researcher">Researcher / Academic</option>
+                  <option value="student">Student</option>
                   <option value="practitioner">Youth Justice Practitioner</option>
+                  <option value="service_org">Service / Community Organisation</option>
                   <option value="policymaker">Policymaker / Government</option>
+                  <option value="funder">Funder / Philanthropy</option>
                   <option value="advocate">Advocate / Activist</option>
                   <option value="artist">Artist / Creative</option>
                   <option value="media">Media / Journalist</option>

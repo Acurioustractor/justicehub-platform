@@ -89,7 +89,7 @@ const ROOMS: Room[] = [
     title: "What's already running",
     builder: 'Local organisations + young people + their staff',
     hue: '#059669',
-    body: 'The third room is built by local organisations already running youth-justice work in that city. Mount Druitt gives the process a small first gathering; at the Adelaide public launch, South Australian organisations use the room to explain their programs, what they cost, and what support would let them keep young people connected.',
+    body: 'The third room is built by local organisations already running youth-justice work in that city. Mount Druitt gives the process a small first gathering; at the Adelaide activation, South Australian organisations use the room to explain their programs, what they cost, and what support would let them keep young people connected.',
     program: '5 days · co-design + build · the org owns the room',
     photoKey: 'how-it-works/room-3-community',
     defaultSrc: null,

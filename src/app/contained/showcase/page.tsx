@@ -52,7 +52,7 @@ const TOUR_SURFACES: Surface[] = [
   {
     href: '/contained/tour',
     title: 'Per-stop pages',
-    body: 'One page per stop, led by the Mount Druitt small gathering, Adelaide public launch, and the flexible nine-stop Australian route. Each includes state spending, detention facilities, basecamp orgs, civic intelligence, experience packages, and share-your-story.',
+    body: 'One page per stop, led by the Mount Druitt small gathering, Adelaide public activation, and the flexible nine-stop Australian route. Each includes state spending, detention facilities, basecamp orgs, civic intelligence, experience packages, and share-your-story.',
   },
   {
     href: '/contained/community',
@@ -178,7 +178,7 @@ export default function ContainedShowcasePage() {
       <Group
         kicker="02"
         title="The tour"
-        intro="Flexible route. Mount Druitt small gathering in May/June, Adelaide public launch at Tandanya on 23 June 2026, then Perth, Brisbane, Northern Rivers, Central Australia, Sydney + Canberra, Victoria, and Tasmania. The intelligence dashboard, the per-stop pages, and the community demand map sit here."
+        intro="Flexible route. Mount Druitt small gathering in May/June, then the Victoria Square, Tandanya/Adelaide public activation from 22-26 June 2026, then Perth, Brisbane, Northern Rivers, Central Australia, Sydney + Canberra, Victoria, and Tasmania. The intelligence dashboard, the per-stop pages, and the community demand map sit here."
         surfaces={TOUR_SURFACES}
         bg
       />
