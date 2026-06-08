@@ -110,7 +110,7 @@ const STATE_OPPORTUNITIES: Record<string, Array<{
     { name: 'Jonty Bush MP', org: 'QLD Parliament', role: 'Member for Cooper', quote: '"Looking forward to seeing the Sydney details. Hoping some NSW MPs come and look. And think. And act."', source: 'ally', score: 85 },
   ],
   SA: [
-    { name: 'Reintegration Puzzle Conference', org: 'Tandanya National Aboriginal Cultural Institute', role: 'Conference Partner', quote: 'National conference Jun 24-25 at Tandanya — delegates walk through between sessions. Complimentary pass confirmed.', source: 'conference', score: 98 },
+    { name: 'Reintegration Puzzle Conference', org: 'Hilton Adelaide / Reintegration Puzzle', role: 'Conference Partner', quote: 'National conference Jun 24-25 in Tandanya/Adelaide — delegates walk to the Victoria Square activation between sessions. Complimentary pass confirmed.', source: 'conference', score: 98 },
     { name: 'Louise Clarke', org: 'Justice Reform Initiative', role: 'Conference Logistics', quote: '"It would be fabulous to have it in Adelaide at the time of the conference!"', source: 'ally', score: 92 },
     { name: 'Emma Cother', org: 'Justice Reform Initiative', role: 'Program Coordinator', quote: '"Lovely to hear from you — I\'ve cc\'d in Louise who is looking after conference logistics."', source: 'ally', score: 88 },
     { name: 'Hannah March', org: 'Justice Reform Initiative', role: 'Campaign Adviser', quote: '"Give me a call any time." Phone: 0424 991 675. Key contact for JRI coordination.', source: 'email', score: 85 },

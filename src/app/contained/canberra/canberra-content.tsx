@@ -1145,7 +1145,7 @@ export function CanberraContent() {
                     className="text-[#F5F0E8]/85 text-sm leading-relaxed max-w-2xl"
                     style={{ fontFamily: "'IBM Plex Mono', monospace", lineHeight: 1.8 }}
                   >
-                    23 June at Tandanya on Kaurna Yarta. The public launch. The build week. The
+                    22-26 June at Victoria Square, Tandanya/Adelaide on Kaurna Yarta. The public activation. The build week. The
                     young people leading the walk-through. David from Diagrama anchoring Room 2.
                     Adelaide organisations opening Room 3 with their programs and asks named out
                     loud. One filmmaker. Three cuts. The hero film will replace this loop on the

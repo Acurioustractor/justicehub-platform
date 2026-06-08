@@ -9,9 +9,11 @@ import {
   MapPinned,
   MessageCircle,
   Network,
+  Newspaper,
   QrCode,
   Scale,
   ShieldCheck,
+  Users,
 } from 'lucide-react';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { CopyShortLink } from '@/components/contained/CopyShortLink';
@@ -26,7 +28,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Adelaide Youth Remand Experience · CONTAINED x JusticeHub',
   description:
-    'A public Adelaide pathway for people walking through THE CONTAINED at Tandanya: understand youth remand, find alternatives, and choose a useful next step.',
+    'A public Adelaide pathway for people walking through THE CONTAINED at Victoria Square, Tandanya/Adelaide: understand youth remand, find alternatives, and choose a useful next step.',
   openGraph: {
     title: 'Adelaide Youth Remand Experience',
     description:
@@ -41,6 +43,75 @@ const MONO = "'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
 const ADELAIDE_HERO = getHeroBackground('adelaide');
 const ADELAIDE_HERO_OVERRIDE_KEY = 'adelaide/hero';
 const adelaideStop = tourStops.find((stop) => stop.eventSlug === 'contained-adelaide-tandanya');
+
+const launchDays = [
+  {
+    day: 'Monday 22 June',
+    title: 'Build day',
+    audience: 'Young people, build crew, support leads',
+    body: 'Young people build the container with supported crew. Capture is limited to approved build photos and video after consent checks.',
+    cta: 'Build day is not an open public session.',
+  },
+  {
+    day: 'Tuesday 23 June',
+    title: 'Community + student day',
+    audience: 'Young people, Flinders, services, arts/community contacts',
+    body: 'Soft walkthroughs, host training, QR tests, support checks, and student/service participation if the site is ready.',
+    cta: 'Bring a student or service group',
+    href: '/contained/register?stop=adelaide&cohort=student-service',
+  },
+  {
+    day: 'Wednesday 24 June',
+    title: 'Conference day 1',
+    audience: 'Puzzle delegates, MPs, courts, funders, media, service leaders',
+    body: 'Hosted walkthroughs for delegates and priority guests, with hosts moving people from Hilton / Reintegration Puzzle to Victoria Square.',
+    cta: 'Book a conference walkthrough',
+    href: '/contained/register?stop=adelaide&cohort=conference-delegate',
+  },
+  {
+    day: 'Thursday 25 June',
+    title: 'Conference day 2',
+    audience: 'VIPs, media, funders, young people, public servants',
+    body: 'Morning VIP/media/funder window, youth-supported walkthroughs where paid and consented, and evening reflection if roster allows.',
+    cta: 'Request a VIP or media window',
+    href: '/contained/register?stop=adelaide&cohort=vip-media',
+  },
+  {
+    day: 'Friday 26 June',
+    title: 'Close + move',
+    audience: 'Final visitors, partners, Perth and Victoria/Melbourne leads',
+    body: 'Final walkthroughs, team debrief, pack-down, approved recap, then next-stop follow-up for Perth and Victoria/Melbourne.',
+    cta: 'Talk about the next stop',
+    href: '/contained/register?stop=adelaide&cohort=next-city',
+  },
+];
+
+const bookingCohorts = [
+  {
+    label: 'Young people / build pathway',
+    href: '/contained/register?stop=adelaide&cohort=young-people',
+    icon: Users,
+    body: 'For supported participation in the build, hosting, or youth-led reflection pathway.',
+  },
+  {
+    label: 'Students + services',
+    href: '/contained/register?stop=adelaide&cohort=student-service',
+    icon: Network,
+    body: 'For Flinders, local services, youth organisations, arts/community groups, and supervised cohorts.',
+  },
+  {
+    label: 'Conference delegates',
+    href: '/contained/register?stop=adelaide&cohort=conference-delegate',
+    icon: CalendarDays,
+    body: 'For people attending Reintegration Puzzle who want a hosted walkthrough beside the conference.',
+  },
+  {
+    label: 'VIP / media / funder',
+    href: '/contained/register?stop=adelaide&cohort=vip-media',
+    icon: Newspaper,
+    body: 'For MPs, courts, public servants, funders, journalists, and decision-makers needing a priority window.',
+  },
+];
 
 const quickLinks = [
   {
@@ -89,24 +160,39 @@ const experienceFlow = [
 const roomQr = [
   {
     room: 'Room 1',
-    title: 'What is happening?',
-    href: '/justice-network/youth-remand#scenario',
-    body: 'Why are children held before sentence, and what does that do to family, school, culture, safety, and trust?',
+    title: 'The system that detains',
+    href: '/remand',
+    body: 'Start with remand: custody before sentence, the child pathway, and the difference between charged, bail, remand, convicted, and sentenced.',
     color: '#dc2626',
+    links: [
+      { label: 'Plain explainer', href: '/remand' },
+      { label: 'Issue path', href: '/justice-network/youth-remand#issue' },
+      { label: 'Map the issue', href: '/justice-matrix/map?surface=youth' },
+    ],
   },
   {
     room: 'Room 2',
-    title: 'What could happen instead?',
-    href: '/justice-network/youth-remand#search',
-    body: 'Search programs, services, evidence, and overseas examples that show how communities can support young people outside detention.',
+    title: 'The supports that change the path',
+    href: '/proof',
+    body: 'Open the evidence for bail support, community supervision, services, funding shifts, and alternatives to detention.',
     color: '#1f6f78',
+    links: [
+      { label: 'Wall of Proof', href: '/proof' },
+      { label: 'Follow the money', href: '/follow-the-money' },
+      { label: 'Find services', href: '/services' },
+    ],
   },
   {
     room: 'Room 3',
-    title: 'What can Adelaide do next?',
-    href: '/exhibition?q=South%20Australia%20youth%20justice',
-    body: 'Find South Australian organisations, services, funding needs, and practical asks people can take into meetings after the experience.',
+    title: 'The community-led future',
+    href: '/directory',
+    body: 'Find organisations, add missing models, send the evidence, nominate someone with power, and share what changed.',
     color: '#285d45',
+    links: [
+      { label: 'Directory', href: '/directory' },
+      { label: 'Add a model', href: '/join' },
+      { label: 'Share reaction', href: '/contained/reaction' },
+    ],
   },
 ];
 
@@ -220,12 +306,13 @@ export default async function ContainedAdelaidePage() {
                 Walk through the experience. Leave knowing what can change.
               </h1>
               <p className="mt-5 max-w-3xl text-base leading-7 text-white/76 md:text-lg">
-                On 23 June, THE CONTAINED opens at Tandanya in Adelaide with one urgent question: why are children
-                being held before sentence, and what would keep them safely connected to family, school, culture,
-                housing, and support instead?
+                From 22-26 June 2026, THE CONTAINED is planned for public space at Victoria Square,
+                Tandanya/Adelaide on Kaurna Yarta, beside Reintegration Puzzle. The urgent question:
+                why are children being held before sentence, and what would keep them safely connected to family,
+                school, culture, housing, and support instead?
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
-                <PrimaryLink href="/contained/register?stop=adelaide">Register interest</PrimaryLink>
+                <PrimaryLink href="/contained/register?stop=adelaide">Book or request a walkthrough</PrimaryLink>
                 <Link
                   href="/justice-network/youth-remand"
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border px-5 text-sm font-bold text-white"
@@ -264,13 +351,13 @@ export default async function ContainedAdelaidePage() {
                 <div className="text-xs font-bold uppercase tracking-[0.18em] text-[#756d63]" style={{ fontFamily: MONO }}>
                   Where
                 </div>
-                <p className="mt-1 font-bold">{adelaideStop?.venue || 'Tandanya, Adelaide'}</p>
+                <p className="mt-1 font-bold">{adelaideStop?.venue || 'Victoria Square, Tandanya/Adelaide'}</p>
               </div>
               <div>
                 <div className="text-xs font-bold uppercase tracking-[0.18em] text-[#756d63]" style={{ fontFamily: MONO }}>
                   When
                 </div>
-                <p className="mt-1 font-bold">{adelaideStop?.date || '23 June 2026 · public launch'}</p>
+                <p className="mt-1 font-bold">{adelaideStop?.date || '22-26 June 2026 · Victoria Square activation'}</p>
               </div>
               <div>
                 <div className="text-xs font-bold uppercase tracking-[0.18em] text-[#756d63]" style={{ fontFamily: MONO }}>
@@ -278,6 +365,73 @@ export default async function ContainedAdelaidePage() {
                 </div>
                 <p className="mt-1 font-bold">So people can move from feeling something to doing something useful.</p>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-6 py-14 md:px-12">
+          <div className="mb-7 max-w-3xl">
+            <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#756d63]" style={{ fontFamily: MONO }}>
+              Launch week run sheet
+            </div>
+            <h2 className="text-3xl font-black tracking-tight md:text-4xl">
+              Five days, one public pathway from build to next stop.
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-[#514a42]">
+              Site details stay pending until access, safety, and signage are locked. The operating shape is clear:
+              build with young people, widen to students and services, then host conference delegates and decision-makers
+              through the full experience before closing and moving the container.
+            </p>
+          </div>
+          <div className="grid gap-3 lg:grid-cols-5">
+            {launchDays.map((item) => (
+              <div key={item.day} className="rounded-lg border border-[#ded8cf] bg-white p-4">
+                <div className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[#756d63]" style={{ fontFamily: MONO }}>
+                  {item.day}
+                </div>
+                <h3 className="mb-2 text-lg font-black">{item.title}</h3>
+                <p className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[#a8552c]" style={{ fontFamily: MONO }}>
+                  {item.audience}
+                </p>
+                <p className="text-sm leading-6 text-[#514a42]">{item.body}</p>
+                {item.href ? (
+                  <Link href={item.href} className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#171717] hover:text-[#dc2626]">
+                    {item.cta} <ArrowRight className="h-3 w-3" />
+                  </Link>
+                ) : (
+                  <p className="mt-4 text-xs font-bold text-[#756d63]">{item.cta}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="border-y border-[#ded8cf] bg-[#fbfaf7]">
+          <div className="mx-auto max-w-6xl px-6 py-14 md:px-12">
+            <div className="mb-7 max-w-3xl">
+              <div className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#756d63]" style={{ fontFamily: MONO }}>
+                Book the right pathway
+              </div>
+              <h2 className="text-3xl font-black tracking-tight md:text-4xl">
+                Register by cohort so the host, support, and follow-up fit.
+              </h2>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              {bookingCohorts.map((cohort) => {
+                const Icon = cohort.icon;
+                return (
+                  <Link key={cohort.href} href={cohort.href} className="group rounded-lg border border-[#ded8cf] bg-white p-4 hover:border-[#171717]/40">
+                    <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-md bg-[#171717] text-white">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="mb-2 font-black">{cohort.label}</h3>
+                    <p className="text-sm leading-6 text-[#514a42]">{cohort.body}</p>
+                    <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#756d63] group-hover:text-[#171717]">
+                      Register <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -353,6 +507,14 @@ export default async function ContainedAdelaidePage() {
                     </div>
                     <h3 className="mb-2 text-lg font-bold">{room.title}</h3>
                     <p className="text-sm leading-6 text-white/68">{room.body}</p>
+                    <div className="mt-4 space-y-2 border-t border-white/12 pt-3">
+                      {room.links.map((link) => (
+                        <span key={link.href} className="flex items-center justify-between gap-3 text-xs font-bold text-white/72">
+                          {link.label}
+                          <span className="text-white/35">{link.href}</span>
+                        </span>
+                      ))}
+                    </div>
                   </Link>
                 ))}
               </div>
@@ -369,14 +531,15 @@ export default async function ContainedAdelaidePage() {
               </div>
               <h2 className="mb-4 text-2xl font-black tracking-tight">The text to send with the link.</h2>
               <div className="rounded-lg border border-[#ded8cf] bg-[#fbfaf7] p-4 text-sm leading-7 text-[#3f3830]">
-                I am sending you this because THE CONTAINED opens in Adelaide at Tandanya on 23 June. It begins with
-                youth remand: why children are held before sentence, what support could prevent custody, and what we
-                can do next. Start here: justicehub.com.au/adelaide
+                I am sending you this because THE CONTAINED is planned for Victoria Square, Tandanya/Adelaide, from
+                22-26 June beside Reintegration Puzzle. It begins with youth remand: why children are held before
+                sentence, what support could prevent custody, and what we can do next. Start here:
+                justicehub.com.au/adelaide
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 <CopyShortLink
                   label="Copy Adelaide link"
-                  url="I am sending you this because THE CONTAINED opens in Adelaide at Tandanya on 23 June. It begins with youth remand: why children are held before sentence, what support could prevent custody, and what we can do next. Start here: https://justicehub.com.au/adelaide"
+                  url="I am sending you this because THE CONTAINED is planned for Victoria Square, Tandanya/Adelaide, from 22-26 June beside Reintegration Puzzle. It begins with youth remand: why children are held before sentence, what support could prevent custody, and what we can do next. Start here: https://justicehub.com.au/adelaide"
                 />
                 <PrimaryLink href="/contained/tour/social">Open social kit</PrimaryLink>
               </div>

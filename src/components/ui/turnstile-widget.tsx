@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Turnstile } from '@marsidev/react-turnstile';
 
 interface TurnstileWidgetProps {
@@ -17,11 +18,13 @@ const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
  * In production, the widget must be solved before form submission.
  */
 export function TurnstileWidget({ onSuccess, onError, theme = 'auto' }: TurnstileWidgetProps) {
-  if (!SITE_KEY) {
-    // In dev without keys, auto-pass
-    if (typeof window !== 'undefined') {
-      setTimeout(() => onSuccess('dev-bypass'), 0);
+  useEffect(() => {
+    if (!SITE_KEY) {
+      onSuccess('dev-bypass');
     }
+  }, [onSuccess]);
+
+  if (!SITE_KEY) {
     return null;
   }
 

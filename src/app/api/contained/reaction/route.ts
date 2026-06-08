@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
         }).catch(err => console.error('[Reaction] GHL tag failed:', err));
       }
 
-      // Send follow-up email — strike while the emotion is fresh
+      // Send follow-up email while the experience is still fresh.
       const visitorName = name || 'there';
       sendEmail({
         to: email,
@@ -109,23 +109,23 @@ Thank you for walking through THE CONTAINED. What you felt in there is real.
 
 ${response ? `You said: "${response.slice(0, 200)}"` : ''}
 
-That feeling is exactly why we built this. Now here's what you can do with it.
+That feeling is exactly why we built this. Here is what you can do with it.
 
 1. OPEN THE REMAND EVIDENCE
 See the law, campaigns, alternatives, funding context, and source links behind the experience.
-→ ${SITE}/remand
+-> ${SITE}/remand
 
 2. SHARE THE ADELAIDE PATH
 Send the public visitor pathway to someone who should walk through or understand what this is becoming.
-→ ${SITE}/adelaide
+-> ${SITE}/adelaide
 
 3. COMPARE GLOBAL MODELS
 Follow the country reports as the Africa and Europe learning route takes shape.
-→ ${SITE}/justice-network/countries
+-> ${SITE}/justice-network/countries
 
-981 community programs exist across Australia that work better than detention and cost a fraction. You've now seen the evidence. Help us make it impossible to ignore.
+You have now seen the issue in the room. JusticeHub holds the evidence, alternatives, and source links that help people act with care.
 
-— The JusticeHub Team`,
+The JusticeHub Team`,
       }).catch(err => console.error('[Reaction] Follow-up email failed:', err));
     }
 

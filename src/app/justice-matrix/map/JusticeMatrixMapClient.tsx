@@ -195,6 +195,12 @@ function popupHtml(record: MatrixMapRecord): string {
   `;
 }
 
+function profileActionLabel(kind: MatrixMapKind) {
+  if (kind === 'case') return 'Open case';
+  if (kind === 'campaign') return 'Open campaign';
+  return 'Open evidence';
+}
+
 export default function JusticeMatrixMapClient({
   records,
   facets,
@@ -519,7 +525,7 @@ export default function JusticeMatrixMapClient({
                 {selected.precisionLabel}. {selected.geoReason}
               </div>
               <Link href={selected.href} className="inline-flex items-center gap-1 text-sm font-semibold" style={{ color: C.accent }}>
-                Open profile <ArrowRight className="h-4 w-4" />
+                {profileActionLabel(selected.kind)} <ArrowRight className="h-4 w-4" />
               </Link>
             </>
           ) : (
@@ -546,11 +552,9 @@ export default function JusticeMatrixMapClient({
               </div>
             ) : (
               filtered.slice(0, 28).map((record) => (
-                <button
+                <article
                   key={record.id}
-                  type="button"
-                  onClick={() => setSelectedId(record.id)}
-                  className="block w-full border-b px-4 py-3 text-left transition-colors hover:bg-zinc-50"
+                  className="border-b px-4 py-3 transition-colors hover:bg-zinc-50"
                   style={{
                     borderColor: C.border,
                     background: selected?.id === record.id ? '#faf5ff' : C.surface,
@@ -561,13 +565,26 @@ export default function JusticeMatrixMapClient({
                     {record.year && <SmallBadge>{record.year}</SmallBadge>}
                     <SmallBadge>{record.precisionLabel}</SmallBadge>
                   </div>
-                  <div className="mb-1 text-sm font-semibold leading-snug" style={{ color: C.ink }}>
+                  <Link href={record.href} className="mb-1 block text-sm font-semibold leading-snug hover:underline" style={{ color: C.ink }}>
                     {record.title}
-                  </div>
+                  </Link>
                   <div className="text-xs leading-5" style={{ color: C.muted }}>
                     {record.geoText}
                   </div>
-                </button>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Link href={record.href} className="inline-flex min-h-8 items-center gap-1.5 rounded-md px-3 text-xs font-semibold text-white" style={{ background: C.accent }}>
+                      {profileActionLabel(record.kind)} <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedId(record.id)}
+                      className="inline-flex min-h-8 items-center gap-1.5 rounded-md border bg-white px-3 text-xs font-semibold transition-colors hover:border-zinc-400"
+                      style={{ borderColor: C.border, color: C.body }}
+                    >
+                      Show on map <Crosshair className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </article>
               ))
             )}
           </div>

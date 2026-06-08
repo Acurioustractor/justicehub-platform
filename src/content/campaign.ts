@@ -2,7 +2,7 @@ export const campaignMetadata = {
   name: "CONTAINED",
   tagline: "Transform Youth Justice Through Immersive Advocacy",
   launchDate: "2026",
-  location: "Mount Druitt gathering, then Tandanya Adelaide launch",
+  location: "Mount Druitt gathering, then Victoria Square, Tandanya/Adelaide activation",
   primaryCta: {
     label: "Nominate a Leader",
     href: "#nominate",
@@ -23,7 +23,7 @@ export const campaignMetadata = {
     current: 47,
   },
   description:
-    "Thirty minutes inside one shipping container, three rooms. The tour starts with a flexible Mount Druitt gathering, then launches publicly in Adelaide with the Brisbane build story, David from Diagrama's practice lens, and local organisations showing what already works.",
+    "Thirty minutes inside one shipping container, three rooms. The tour starts with a flexible Mount Druitt gathering, then activates publicly at Victoria Square, Tandanya/Adelaide, with the Brisbane build story, David from Diagrama's practice lens, and local organisations showing what already works.",
 };
 
 export const journeyContainers = [
@@ -33,7 +33,7 @@ export const journeyContainers = [
     title: "Current Reality",
     headline: "Designed by Young People",
     summary:
-      "Young people who supported the build carry the first Room 1 story into a flexible Mount Druitt gathering and then the Adelaide public launch. At every stop, local young people then shape the room from their own place and decide what the public needs to see.",
+      "Young people who supported the build carry the first Room 1 story into a flexible Mount Druitt gathering and then the Victoria Square, Tandanya/Adelaide activation. At every stop, local young people then shape the room from their own place and decide what the public needs to see.",
     stats: [
       { label: "Daily Cost", value: "$4,250" },
       { label: "Annual Cost", value: "$1.55M" },
@@ -65,7 +65,7 @@ export const journeyContainers = [
     title: "The Organisations Already Doing It",
     headline: "Changes Every Stop",
     summary:
-      "Room 3 is where local organisations show the programs already working and name what they need funded. Mount Druitt gives the process a small first gathering, Adelaide gives it a public launch during the Reintegration Puzzle Conference, then every stop rebuilds it with local hosts.",
+      "Room 3 is where local organisations show the programs already working and name what they need funded. Mount Druitt gives the process a small first gathering, Victoria Square gives Adelaide a public activation beside Reintegration Puzzle, then every stop rebuilds it with local hosts.",
     stats: [
       { label: "Community Programs", value: "$75/day" },
       { label: "Reoffending", value: "3%" },
@@ -238,12 +238,12 @@ export const tourStops: TourStop[] = [
   {
     city: 'Adelaide',
     state: 'SA',
-    venue: 'Tandanya · Reintegration Puzzle Conference',
-    partner: 'Justice Reform Initiative + Tandanya',
+    venue: 'Victoria Square · Tandanya/Adelaide',
+    partner: 'Justice Reform Initiative + Reintegration Puzzle',
     description:
-      'The public launch starts at Tandanya on 23 June 2026 alongside the Reintegration Puzzle Conference. Brisbane young people who supported the build carry the first Room 1 story. David from Diagrama anchors the Room 2 practice lens. Adelaide organisations use Room 3 to show their programs, evidence, costs, and what they need funded.',
+      'The Adelaide activation is planned for Monday 22 to Friday 26 June 2026 in public space at Victoria Square, Tandanya/Adelaide, beside the Reintegration Puzzle Conference at Hilton Adelaide. Brisbane young people who supported the build carry the first Room 1 story. David from Diagrama anchors the Room 2 practice lens. Adelaide organisations use Room 3 to show their programs, evidence, costs, and what they need funded.',
     eventSlug: 'contained-adelaide-tandanya',
-    date: '23 June 2026 · public launch',
+    date: '22-26 June 2026 · Victoria Square activation',
     status: 'planning',
     lat: -34.93,
     lng: 138.60,
@@ -359,8 +359,8 @@ export const campaignFundraising = {
     },
     {
       amount: 50000,
-      label: 'Adelaide · Tandanya · 23 June',
-      description: 'Public launch alongside the Reintegration Puzzle Conference. Brisbane build story, Diagrama practice lens, Adelaide organisations, documentation, and JusticeHub publishing.',
+      label: 'Adelaide · Victoria Square · 22-26 June',
+      description: 'Public activation beside Reintegration Puzzle. Brisbane build story, Diagrama practice lens, Adelaide organisations, documentation, and JusticeHub publishing.',
     },
     {
       amount: 50000,
@@ -470,7 +470,7 @@ export const tourSocialKits: TourSocialKit[] = [
 
 Young people, Mounty Yarns, Just Reinvest relationships, and Western Sydney build proof help shape what travels next.
 
-Then the public launch starts at Tandanya in Adelaide on 23 June 2026.`,
+Then the Adelaide activation runs at Victoria Square, Tandanya/Adelaide, from 22-26 June 2026 beside Reintegration Puzzle.`,
         hashtags: [...CORE_HASHTAGS, '#MountDruitt', '#WesternSydney'],
       },
       {
@@ -490,7 +490,7 @@ That matters. The tour is not a fixed roadshow dropped into communities. It is a
       {
         platform: 'twitter',
         label: 'Announcement',
-        content: `THE CONTAINED public launch starts at Tandanya in Adelaide on 23 June 2026.
+        content: `THE CONTAINED Adelaide activation runs at Victoria Square, Tandanya/Adelaide, from 22-26 June 2026.
 
 One shipping container. Three rooms. Thirty minutes.
 
@@ -502,7 +502,7 @@ Mount Druitt starts the process. Brisbane young people carry the build story. Da
         label: 'Community Post',
         content: `What if decision-makers could feel what youth detention is actually like?
 
-That is the idea behind THE CONTAINED, an immersive shipping container experience publicly launching its Australian tour at Tandanya in Adelaide on 23 June 2026 after a small Mount Druitt gathering.
+That is the idea behind THE CONTAINED, an immersive shipping container experience activating at Victoria Square, Tandanya/Adelaide, from 22-26 June 2026 after a small Mount Druitt gathering.
 
 Three rooms tell the story: detention reality, the therapeutic alternative shaped with David from Diagrama, and the local future held by Adelaide organisations talking about their programs, costs, and support needs.`,
         hashtags: [...CORE_HASHTAGS, '#Adelaide'],
@@ -510,7 +510,7 @@ Three rooms tell the story: detention reality, the therapeutic alternative shape
       {
         platform: 'linkedin',
         label: 'Professional',
-        content: `The process starts with a small Mount Druitt gathering, then the public tour launches at Tandanya in Adelaide on 23 June 2026 alongside the Reintegration Puzzle Conference.
+        content: `The process starts with a small Mount Druitt gathering, then the Adelaide public activation runs at Victoria Square, Tandanya/Adelaide, from 22-26 June 2026 beside the Reintegration Puzzle Conference.
 
 Brisbane young people who supported the build carry the first room. David from Diagrama anchors the practice lens. Adelaide organisations use Room 3 to show the programs already working and the support they need to grow.`,
         hashtags: [...CORE_HASHTAGS, '#SocialPolicy', '#Evidence', '#Reform'],
@@ -595,7 +595,7 @@ export const generalSocialPosts: SocialPost[] = [
     label: 'Tour Overview',
     content: `THE CONTAINED: Australian Tour 2026-27.
 
-Mount Druitt small gathering. Adelaide public launch. Nine-stop national arc.
+Mount Druitt small gathering. Adelaide public activation. Nine-stop national arc.
 
 Mount Druitt -> Adelaide -> Perth + surrounds -> Brisbane -> Northern Rivers -> Alice Springs / Central Australia -> Sydney + Canberra -> Victoria -> Tasmania
 
@@ -608,7 +608,7 @@ justicehub.com.au/contained`,
     content: `THE CONTAINED is going national.
 
 May/June: Mount Druitt small gathering
-23 June: Adelaide public launch
+22-26 June: Adelaide public activation at Victoria Square, Tandanya/Adelaide
 July/August: Perth and surrounds
 September: Brisbane
 October: Northern Rivers
@@ -637,7 +637,7 @@ THE CONTAINED makes you feel these numbers. Australian Tour 2026-27.`,
     content: `$500K funds THE CONTAINED Australian Tour.
 
 $20K -> Mount Druitt small gathering
-$50K -> Adelaide public launch at Tandanya on 23 June
+$50K -> Adelaide public activation at Victoria Square, Tandanya/Adelaide, 22-26 June
 $30K-$60K -> one tour stop
 $120K -> tour-wide backbone
 

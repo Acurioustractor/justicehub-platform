@@ -8,11 +8,11 @@ const TOUR_STOPS = [
   {
     city: 'Adelaide',
     state: 'SA',
-    date: 'June–July 2026',
-    partner: 'Justice Reform Initiative + ALP Conference',
+    date: '22-26 June 2026',
+    partner: 'Justice Reform Initiative + Reintegration Puzzle',
     status: 'Confirmed',
     cost: '$50,000',
-    description: 'National conference integration — delegates walk through between sessions.',
+    description: 'Victoria Square, Tandanya/Adelaide public activation beside Reintegration Puzzle.',
   },
   {
     city: 'Perth',

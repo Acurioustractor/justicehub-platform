@@ -1,9 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { getGHLClient, GHL_TAGS, STATE_TO_TAG } from '@/lib/ghl/client';
 import { sendEmail } from '@/lib/email/send';
 import { preEventSequence } from '@/content/newsletter-sequences';
 import { verifyTurnstileToken } from '@/lib/turnstile';
+import { sanitizeEmail, sanitizeInput } from '@/lib/security';
+
+const ALLOWED_ROLES = [
+  'researcher',
+  'practitioner',
+  'lived_experience',
+  'media',
+  'funder',
+  'service_org',
+  'student',
+  'policymaker',
+  'advocate',
+  'artist',
+  'community',
+  'supporter',
+];
 
 /**
  * POST /api/ghl/register
@@ -25,6 +41,7 @@ export async function POST(request: NextRequest) {
       newsletter,
       event_name,
       event_slug,
+      state,
       tags: customTags,
       turnstile_token,
     } = body;
@@ -38,10 +55,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const sanitizedEmail = sanitizeEmail(String(email || ''));
+    const sanitizedFullName = full_name
+      ? sanitizeInput(String(full_name), { maxLength: 200, allowNewlines: false })
+      : '';
+    const sanitizedOrganization = organization
+      ? sanitizeInput(String(organization), { maxLength: 200, allowNewlines: false })
+      : null;
+    const sanitizedRole = typeof role === 'string' && ALLOWED_ROLES.includes(role)
+      ? role
+      : 'supporter';
+    const sanitizedDietaryRequirements = dietary_requirements
+      ? sanitizeInput(String(dietary_requirements), { maxLength: 1000, allowNewlines: true })
+      : null;
+    const sanitizedAccessibilityNeeds = accessibility_needs
+      ? sanitizeInput(String(accessibility_needs), { maxLength: 1000, allowNewlines: true })
+      : null;
+    const sanitizedHowHeard = how_heard
+      ? sanitizeInput(String(how_heard), { maxLength: 500, allowNewlines: false })
+      : null;
+    const sanitizedEventName = event_name
+      ? sanitizeInput(String(event_name), { maxLength: 200, allowNewlines: false })
+      : null;
+    const sanitizedEventSlug = event_slug
+      ? sanitizeInput(String(event_slug), { maxLength: 120, allowNewlines: false })
+      : null;
+    const sanitizedState = typeof state === 'string' && /^[A-Za-z]{2,3}$/.test(state.trim())
+      ? state.trim().toUpperCase()
+      : null;
+    const sanitizedEventId = typeof event_id === 'string' && /^[\w-]+$/.test(event_id)
+      ? sanitizeInput(event_id, { maxLength: 120, allowNewlines: false })
+      : null;
+    const newsletterOptIn = newsletter === true || newsletter === 'true';
+
     // Validate required fields
-    if (!email || !full_name) {
+    if (!sanitizedEmail || !sanitizedFullName) {
       return NextResponse.json(
-        { error: 'Email and full name are required' },
+        { error: 'Valid email and full name are required' },
         { status: 400 }
       );
     }
@@ -58,40 +108,61 @@ export async function POST(request: NextRequest) {
       : [];
 
     if (ghl.isConfigured()) {
+      const isContained = Boolean(sanitizedEventName?.toUpperCase().includes('CONTAINED'));
+
       const tags: string[] = [
         GHL_TAGS.EVENT,
         GHL_TAGS.JUSTICEHUB,
         ...safeCustomTags,
       ];
 
-      // Add CONTAINED tag if it's a CONTAINED event
-      if (event_name?.toUpperCase().includes('CONTAINED')) {
-        tags.push(GHL_TAGS.CONTAINED, GHL_TAGS.PUBLIC_VISITOR);
+      if (isContained) {
+        // Colon canon: the live CRM is 100% colon/hyphen (verified 2026-06-09).
+        // Emit colon tags so registrations integrate with project:contained and
+        // newsletter-stream:contained-adelaide-invite. Shared GHL_TAGS (underscore)
+        // is intentionally NOT used on the contained path to avoid orphan tags.
+        // The cohort colon tag (cohort:<x>) arrives via safeCustomTags from the page.
+        tags.push('project:contained', 'source:form', 'engagement:warm');
+        if (sanitizedEventSlug === 'contained-adelaide-tandanya' || sanitizedEventName?.toLowerCase().includes('adelaide')) {
+          tags.push('project:contained-adelaide-2026');
+        }
+        if (sanitizedState) tags.push(`state:${sanitizedState.toLowerCase()}`);
+        const ROLE_COLON: Record<string, string> = {
+          researcher: 'role:researcher', practitioner: 'role:practitioner',
+          lived_experience: 'role:lived-experience', media: 'role:media',
+          funder: 'role:funder', service_org: 'role:service', student: 'role:student',
+          policymaker: 'role:policy', advocate: 'role:advocate', artist: 'role:artist',
+          community: 'role:community',
+        };
+        if (ROLE_COLON[sanitizedRole]) tags.push(ROLE_COLON[sanitizedRole]);
+        if (newsletterOptIn) tags.push('newsletter-stream:contained-adelaide-invite');
+      } else {
+        // Non-contained events keep the existing GHL_TAGS contract (other form routes).
+        if (sanitizedState && STATE_TO_TAG[sanitizedState]) tags.push(STATE_TO_TAG[sanitizedState]);
+        if (newsletterOptIn) tags.push(GHL_TAGS.NEWSLETTER);
+        if (sanitizedRole === 'researcher') tags.push(GHL_TAGS.RESEARCHER);
+        if (sanitizedRole === 'practitioner') tags.push(GHL_TAGS.PRACTITIONER);
+        if (sanitizedRole === 'lived_experience') tags.push(GHL_TAGS.YOUTH_VOICE);
+        if (sanitizedRole === 'media') tags.push(GHL_TAGS.MEDIA, GHL_TAGS.ROLE_MEDIA);
+        if (sanitizedRole === 'funder') tags.push(GHL_TAGS.PARTNER, GHL_TAGS.ROLE_FUNDER);
+        if (sanitizedRole === 'service_org') tags.push(GHL_TAGS.ROLE_ORGANIZATION, 'service');
+        if (sanitizedRole === 'student') tags.push('student', 'university');
+        if (sanitizedRole === 'policymaker') tags.push('policy');
+        if (sanitizedRole === 'advocate') tags.push('advocate');
+        if (sanitizedRole === 'artist') tags.push('artist');
+        if (sanitizedRole === 'community') tags.push('community');
       }
-
-      if (event_slug === 'contained-adelaide-tandanya' || event_name?.toLowerCase().includes('adelaide')) {
-        tags.push(GHL_TAGS.CONTAINED_ADELAIDE, GHL_TAGS.YOUTH_REMAND, GHL_TAGS.COUNTRY_REPORTS);
-      }
-
-      if (newsletter) {
-        tags.push(GHL_TAGS.NEWSLETTER);
-      }
-
-      // Map role to tag
-      if (role === 'researcher') tags.push(GHL_TAGS.RESEARCHER);
-      if (role === 'practitioner') tags.push(GHL_TAGS.PRACTITIONER);
-      if (role === 'lived_experience') tags.push(GHL_TAGS.YOUTH_VOICE);
 
       ghlContactId = await ghl.upsertContact({
-        email,
-        name: full_name,
+        email: sanitizedEmail,
+        name: sanitizedFullName,
         tags,
         source: 'JusticeHub Event Registration',
         customFields: {
-          organization: organization || '',
-          role: role || '',
-          how_heard: how_heard || '',
-          event_slug: event_slug || '',
+          organization: sanitizedOrganization || '',
+          role: sanitizedRole,
+          how_heard: sanitizedHowHeard || '',
+          event_slug: sanitizedEventSlug || '',
         },
       });
     }
@@ -100,20 +171,22 @@ export async function POST(request: NextRequest) {
     const { data: registration, error: regError } = await supabase
       .from('event_registrations')
       .insert({
-        event_id: event_id || null,
-        email,
-        full_name,
-        organization: organization || null,
+        event_id: sanitizedEventId,
+        email: sanitizedEmail,
+        full_name: sanitizedFullName,
+        organization: sanitizedOrganization,
         ghl_contact_id: ghlContactId,
         metadata: {
-          role,
-          dietary_requirements,
-          accessibility_needs,
-          how_heard,
-          newsletter,
-          event_name,
-          event_slug,
+          role: sanitizedRole,
+          dietary_requirements: sanitizedDietaryRequirements,
+          accessibility_needs: sanitizedAccessibilityNeeds,
+          how_heard: sanitizedHowHeard,
+          newsletter: newsletterOptIn,
+          event_name: sanitizedEventName,
+          event_slug: sanitizedEventSlug,
+          state: sanitizedState,
           tags: safeCustomTags,
+          cohort: safeCustomTags.find((tag) => tag.startsWith('cohort:') || tag.startsWith('cohort_')) || null,
           registered_at: new Date().toISOString(),
         },
         registration_status: 'registered',
@@ -130,15 +203,15 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. If newsletter opted in, also add to newsletter subscriptions
-    if (newsletter) {
+    if (newsletterOptIn) {
       await supabase
         .from('newsletter_subscriptions')
         .upsert(
           {
-            email,
-            full_name,
-            organization,
-            subscription_type: role === 'researcher' ? 'researcher' : 'general',
+            email: sanitizedEmail,
+            full_name: sanitizedFullName,
+            organization: sanitizedOrganization,
+            subscription_type: sanitizedRole === 'researcher' ? 'researcher' : 'general',
             ghl_contact_id: ghlContactId,
             source: 'event_registration',
           },
@@ -149,7 +222,7 @@ export async function POST(request: NextRequest) {
     // 4. Send event confirmation email immediately via Resend
     const confirmation = preEventSequence.emails[0];
     sendEmail({
-      to: email,
+      to: sanitizedEmail,
       subject: confirmation.subject,
       body: confirmation.body,
       preheader: confirmation.preheader,
@@ -169,14 +242,14 @@ export async function POST(request: NextRequest) {
     const { data: matchedProfile } = await supabase
       .from('profiles')
       .select('id')
-      .eq('email', email)
+      .eq('email', sanitizedEmail)
       .single();
 
     if (matchedProfile?.id) {
       await (supabase as any).from('member_actions').insert({
         user_id: matchedProfile.id,
         action_type: 'event_registration',
-        metadata: { event_name: event_name || null, event_slug: event_slug || null, event_id: event_id || null },
+        metadata: { event_name: sanitizedEventName, event_slug: sanitizedEventSlug, event_id: sanitizedEventId },
       }).catch(() => {});
     }
 

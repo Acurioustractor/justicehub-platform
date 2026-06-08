@@ -18,6 +18,41 @@ interface RegistrationData {
   newsletter: boolean;
 }
 
+// Colon canon to match the live GHL CRM (project:contained, cohort:<x>); the
+// route adds project:contained-adelaide-2026, state:<x>, role:<x> on top.
+const cohortDetails: Record<string, { label: string; tag: string; note: string }> = {
+  'young-people': {
+    label: 'Young people / build pathway',
+    tag: 'cohort:young-people',
+    note: 'For supported participation in the build, hosting, or youth-led reflection pathway.',
+  },
+  'student-service': {
+    label: 'Students + services',
+    tag: 'cohort:student-service',
+    note: 'For Flinders, local services, youth organisations, arts/community groups, and supervised cohorts.',
+  },
+  'conference-delegate': {
+    label: 'Conference delegates',
+    tag: 'cohort:conference-delegate',
+    note: 'For Reintegration Puzzle delegates requesting a hosted walkthrough beside the conference.',
+  },
+  'vip-media': {
+    label: 'VIP / media / funder',
+    tag: 'cohort:vip-media',
+    note: 'For MPs, courts, public servants, funders, journalists, and decision-makers needing a priority window.',
+  },
+  'next-city': {
+    label: 'Next-city partner',
+    tag: 'cohort:next-city',
+    note: 'For Perth, Victoria/Melbourne, and future tour-stop partners.',
+  },
+  public: {
+    label: 'Public walkthrough',
+    tag: 'cohort:public',
+    note: 'For public visitors requesting a hosted walkthrough.',
+  },
+};
+
 function findRequestedStop(stopParam: string | null) {
   const normalized = (stopParam || 'adelaide').toLowerCase().trim();
   return (
@@ -51,22 +86,17 @@ function ContainedRegisterPageContent() {
   });
 
   const selectedStop = findRequestedStop(searchParams.get('stop'));
-  const parsedDate = new Date(selectedStop.date);
-  const displayDate = Number.isNaN(parsedDate.getTime()) || selectedStop.date.startsWith('TBC')
-    ? selectedStop.date
-    : parsedDate.toLocaleDateString('en-AU', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
+  const requestedCohort = searchParams.get('cohort') || 'public';
+  const cohort = cohortDetails[requestedCohort] || cohortDetails.public;
+  const displayDate = selectedStop.date;
   const eventDetails = {
     title: `CONTAINED: ${selectedStop.city}`,
     date: displayDate,
-    time: 'Date and session details confirmed after registration',
+    time: 'Hosted session details confirmed after registration',
     venue: selectedStop.venue,
     address: `${selectedStop.city}, ${selectedStop.state}`,
     slug: selectedStop.eventSlug,
+    cohort: cohort.label,
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -83,7 +113,9 @@ function ContainedRegisterPageContent() {
     setError('');
 
     try {
-      // Use the GHL register API which handles both database and CRM sync
+      // Use the GHL register API which handles both database and CRM sync.
+      // Send only the tags the route cannot derive (the cohort) plus the stop
+      // state; the route applies the canonical CONTAINED/state tags itself.
       const response = await fetch('/api/ghl/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -98,12 +130,8 @@ function ContainedRegisterPageContent() {
           newsletter: formData.newsletter,
           event_name: eventDetails.title,
           event_slug: eventDetails.slug,
-          tags: [
-            'contained_adelaide',
-            'public_visitor',
-            'youth_remand',
-            'country_reports',
-          ],
+          state: selectedStop.state,
+          tags: [cohort.tag],
           turnstile_token: turnstileToken,
         }),
       });
@@ -123,13 +151,13 @@ function ContainedRegisterPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[#0a0a0a] text-[#f5f0e8]">
       {/* Header */}
-      <header className="border-b border-gray-800">
+      <header className="border-b border-white/12">
         <div className="container-justice py-4">
           <Link
             href="/contained"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 text-white/55 hover:text-[#f5f0e8] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to CONTAINED
@@ -141,21 +169,25 @@ function ContainedRegisterPageContent() {
       <main className="py-12">
         <div className="container-justice max-w-2xl">
           {/* Event Summary */}
-          <div className="border border-gray-800 p-6 mb-8 bg-gray-950">
+          <div className="border border-white/12 p-6 mb-8 bg-white/[0.04]">
             <h1 className="text-2xl font-bold mb-4">{eventDetails.title}</h1>
-            <div className="flex flex-wrap gap-6 text-sm text-gray-400">
+            <div className="flex flex-wrap gap-6 text-sm text-white/55">
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-ochre-500" />
+                <Calendar className="w-4 h-4 text-white/45" />
                 {eventDetails.date}
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-ochre-500" />
+                <Clock className="w-4 h-4 text-white/45" />
                 {eventDetails.time}
               </div>
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-ochre-500" />
+                <MapPin className="w-4 h-4 text-white/45" />
                 {eventDetails.venue}
               </div>
+            </div>
+            <div className="mt-4 border-t border-white/12 pt-4 text-sm text-white/80">
+              <div className="font-bold text-[#f5f0e8]">{eventDetails.cohort}</div>
+              <p className="mt-1 text-white/50">{cohort.note}</p>
             </div>
           </div>
 
@@ -166,17 +198,17 @@ function ContainedRegisterPageContent() {
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
                     step >= s
-                      ? 'bg-ochre-600 text-white'
-                      : 'bg-gray-800 text-gray-500'
+                      ? 'bg-[#dc2626] text-white'
+                      : 'bg-white/10 text-white/40'
                   }`}
                 >
                   {step > s ? <Check className="w-4 h-4" /> : s}
                 </div>
-                <span className={`hidden sm:inline text-sm ${step >= s ? 'text-white' : 'text-gray-500'}`}>
+                <span className={`hidden sm:inline text-sm ${step >= s ? 'text-[#f5f0e8]' : 'text-white/40'}`}>
                   {s === 1 ? 'Your Details' : s === 2 ? 'Preferences' : 'Confirmation'}
                 </span>
                 {s < 3 && (
-                  <div className={`w-8 h-0.5 ${step > s ? 'bg-ochre-600' : 'bg-gray-800'}`} />
+                  <div className={`w-8 h-0.5 ${step > s ? 'bg-[#dc2626]' : 'bg-white/10'}`} />
                 )}
               </div>
             ))}
@@ -195,7 +227,7 @@ function ContainedRegisterPageContent() {
 
               <div>
                 <label htmlFor="full_name" className="block text-sm font-medium mb-2">
-                  Full Name <span className="text-ochre-500">*</span>
+                  Full Name <span className="text-[#dc2626]">*</span>
                 </label>
                 <input
                   type="text"
@@ -204,14 +236,14 @@ function ContainedRegisterPageContent() {
                   value={formData.full_name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white focus:border-ochre-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-white/[0.04] border border-white/15 text-[#f5f0e8] focus:border-[#dc2626] focus:outline-none"
                   placeholder="Your full name"
                 />
               </div>
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium mb-2">
-                  Email Address <span className="text-ochre-500">*</span>
+                  Email Address <span className="text-[#dc2626]">*</span>
                 </label>
                 <input
                   type="email"
@@ -220,7 +252,7 @@ function ContainedRegisterPageContent() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white focus:border-ochre-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-white/[0.04] border border-white/15 text-[#f5f0e8] focus:border-[#dc2626] focus:outline-none"
                   placeholder="your@email.com"
                 />
               </div>
@@ -235,7 +267,7 @@ function ContainedRegisterPageContent() {
                   name="organization"
                   value={formData.organization}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white focus:border-ochre-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-white/[0.04] border border-white/15 text-[#f5f0e8] focus:border-[#dc2626] focus:outline-none"
                   placeholder="Your organization (optional)"
                 />
               </div>
@@ -249,12 +281,15 @@ function ContainedRegisterPageContent() {
                   name="role"
                   value={formData.role}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white focus:border-ochre-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-white/[0.04] border border-white/15 text-[#f5f0e8] focus:border-[#dc2626] focus:outline-none"
                 >
                   <option value="">Select your role...</option>
                   <option value="researcher">Researcher / Academic</option>
+                  <option value="student">Student</option>
                   <option value="practitioner">Youth Justice Practitioner</option>
+                  <option value="service_org">Service / Community Organisation</option>
                   <option value="policymaker">Policymaker / Government</option>
+                  <option value="funder">Funder / Philanthropy</option>
                   <option value="advocate">Advocate / Activist</option>
                   <option value="artist">Artist / Creative</option>
                   <option value="media">Media / Journalist</option>
@@ -266,7 +301,7 @@ function ContainedRegisterPageContent() {
 
               <button
                 type="submit"
-                className="w-full py-4 bg-ochre-600 text-white font-bold text-lg hover:bg-ochre-700 transition-colors"
+                className="w-full py-4 bg-[#dc2626] text-white font-bold text-lg hover:bg-[#b91c1c] transition-colors"
               >
                 Continue
               </button>
@@ -287,7 +322,7 @@ function ContainedRegisterPageContent() {
                   name="dietary_requirements"
                   value={formData.dietary_requirements}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white focus:border-ochre-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-white/[0.04] border border-white/15 text-[#f5f0e8] focus:border-[#dc2626] focus:outline-none"
                   placeholder="E.g., vegetarian, vegan, gluten-free, allergies..."
                 />
               </div>
@@ -302,10 +337,10 @@ function ContainedRegisterPageContent() {
                   value={formData.accessibility_needs}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white focus:border-ochre-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-white/[0.04] border border-white/15 text-[#f5f0e8] focus:border-[#dc2626] focus:outline-none"
                   placeholder="Please let us know if you have any accessibility needs we should accommodate..."
                 />
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-white/50 mt-2">
                   The venue is wheelchair accessible. Auslan interpretation available on request.
                 </p>
               </div>
@@ -319,7 +354,7 @@ function ContainedRegisterPageContent() {
                   name="how_heard"
                   value={formData.how_heard}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white focus:border-ochre-500 focus:outline-none"
+                  className="w-full px-4 py-3 bg-white/[0.04] border border-white/15 text-[#f5f0e8] focus:border-[#dc2626] focus:outline-none"
                 >
                   <option value="">Select...</option>
                   <option value="email">Email / Newsletter</option>
@@ -338,9 +373,9 @@ function ContainedRegisterPageContent() {
                   name="newsletter"
                   checked={formData.newsletter}
                   onChange={handleChange}
-                  className="mt-1 w-4 h-4 bg-gray-900 border border-gray-700"
+                  className="mt-1 w-4 h-4 bg-white/[0.04] border border-white/15"
                 />
-                <label htmlFor="newsletter" className="text-sm text-gray-300">
+                <label htmlFor="newsletter" className="text-sm text-white/80">
                   Keep me updated about JusticeHub events and youth justice reform news
                 </label>
               </div>
@@ -348,7 +383,7 @@ function ContainedRegisterPageContent() {
               <TurnstileWidget onSuccess={setTurnstileToken} theme="dark" />
 
               {error && (
-                <div className="p-4 bg-red-900/50 border border-red-500 text-red-200 text-sm">
+                <div className="p-4 bg-[#dc2626]/10 border border-[#dc2626]/40 text-[#fecaca] text-sm">
                   {error}
                 </div>
               )}
@@ -357,14 +392,14 @@ function ContainedRegisterPageContent() {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="flex-1 py-4 border border-gray-700 text-white font-bold hover:bg-gray-900 transition-colors"
+                  className="flex-1 py-4 border border-white/20 text-[#f5f0e8] font-bold hover:bg-white/[0.06] transition-colors"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
                   disabled={loading || !turnstileToken}
-                  className="flex-1 py-4 bg-ochre-600 text-white font-bold text-lg hover:bg-ochre-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 py-4 bg-[#dc2626] text-white font-bold text-lg hover:bg-[#b91c1c] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
@@ -381,52 +416,52 @@ function ContainedRegisterPageContent() {
 
           {step === 3 && (
             <div className="text-center py-12">
-              <div className="w-20 h-20 bg-eucalyptus-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-[#059669] rounded-full flex items-center justify-center mx-auto mb-6">
                 <Check className="w-10 h-10 text-white" />
               </div>
 
               <h2 className="text-3xl font-bold mb-4">You&apos;re Registered!</h2>
 
-              <p className="text-xl text-gray-300 mb-8">
+              <p className="text-xl text-white/80 mb-8">
                 Thank you for registering for the CONTAINED launch event, {formData.full_name.split(' ')[0]}.
               </p>
 
-              <div className="border border-gray-800 p-6 mb-8 bg-gray-950 text-left">
+              <div className="border border-white/12 p-6 mb-8 bg-white/[0.04] text-left">
                 <h3 className="font-bold mb-4">Event Details</h3>
-                <div className="space-y-3 text-gray-300">
+                <div className="space-y-3 text-white/80">
                   <div className="flex items-center gap-3">
-                    <Calendar className="w-5 h-5 text-ochre-500" />
+                    <Calendar className="w-5 h-5 text-white/45" />
                     {eventDetails.date}
                   </div>
                   <div className="flex items-center gap-3">
-                    <Clock className="w-5 h-5 text-ochre-500" />
+                    <Clock className="w-5 h-5 text-white/45" />
                     {eventDetails.time}
                   </div>
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-ochre-500 flex-shrink-0 mt-1" />
+                    <MapPin className="w-5 h-5 text-white/45 flex-shrink-0 mt-1" />
                     <div>
                       <div>{eventDetails.venue}</div>
-                      <div className="text-gray-500">{eventDetails.address}</div>
+                      <div className="text-white/50">{eventDetails.address}</div>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <p className="text-gray-400">
-                  A confirmation email has been sent to <strong className="text-white">{formData.email}</strong>
+                <p className="text-white/55">
+                  A confirmation email has been sent to <strong className="text-[#f5f0e8]">{formData.email}</strong>
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link
                     href="/contained"
-                    className="px-6 py-3 border border-gray-700 text-white font-bold hover:bg-gray-900 transition-colors"
+                    className="px-6 py-3 border border-white/20 text-[#f5f0e8] font-bold hover:bg-white/[0.06] transition-colors"
                   >
                     Explore CONTAINED
                   </Link>
                   <Link
                     href="/"
-                    className="px-6 py-3 bg-ochre-600 text-white font-bold hover:bg-ochre-700 transition-colors"
+                    className="px-6 py-3 bg-[#dc2626] text-white font-bold hover:bg-[#b91c1c] transition-colors"
                   >
                     Back to JusticeHub
                   </Link>
@@ -442,7 +477,7 @@ function ContainedRegisterPageContent() {
 
 export default function ContainedRegisterPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-black p-8 text-white">Loading registration...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#0a0a0a] p-8 text-[#f5f0e8]">Loading registration...</div>}>
       <ContainedRegisterPageContent />
     </Suspense>
   );

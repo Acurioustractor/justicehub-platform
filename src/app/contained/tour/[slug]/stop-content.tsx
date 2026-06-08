@@ -184,20 +184,20 @@ const STOP_THESIS: Record<string, StopThesis> = {
     closingDate: 'Mount Druitt · May-Jun 2026',
   },
   'contained-adelaide-tandanya': {
-    kicker: 'Launch here · Adelaide',
-    quote: 'The 2026 Reintegration Puzzle Conference is in Tandanya, Adelaide. It would be amazing to host the Container there.',
+    kicker: 'Activate here · Adelaide',
+    quote: 'The 2026 Reintegration Puzzle Conference brings the right people into Tandanya/Adelaide. The container needs to sit in public space where the conversation can widen.',
     author: 'Hannah March',
     role: 'Justice Reform Initiative · Adelaide',
     body:
-      'Adelaide is the public Australian tour launch after the Mount Druitt small gathering. Brisbane young people who supported the build carry Room 1 into the public process. David from Diagrama helps anchor Room 2. Local Adelaide organisations use Room 3 to show their programs, costs, evidence, and funding needs to conference delegates, MPs, universities, and funders.',
+      'Adelaide is the public Australian tour activation after the Mount Druitt small gathering. Brisbane young people who supported the build carry Room 1 into the public process. David from Diagrama helps anchor Room 2. Local Adelaide organisations use Room 3 to show their programs, costs, evidence, and funding needs to conference delegates, MPs, universities, and funders.',
     storyHref: '/contained/about',
     basecampHref: '/organizations/justice-reform-initiative',
-    closingHeadline: 'The launch is where the whole process becomes public.',
+    closingHeadline: 'The activation is where the whole process becomes public.',
     closingSubhead:
-      'Come to Tandanya on 23 June. Walk through the container during the Reintegration Puzzle Conference and leave with the evidence, local program asks, and JusticeHub links.',
+      'Request a hosted walkthrough at Victoria Square, Tandanya/Adelaide, during 22-26 June. Leave with the evidence, local program asks, and JusticeHub links.',
     closingPrimaryLabel: 'Register · Adelaide',
-    closingPrimaryHref: '/contained/register?stop=adelaide',
-    closingDate: 'Adelaide · 23 Jun 2026',
+    closingPrimaryHref: '/contained/register?stop=adelaide&cohort=conference-delegate',
+    closingDate: 'Adelaide · 22-26 Jun 2026',
   },
   'contained-brisbane': {
     kicker: 'Start here · Brisbane',

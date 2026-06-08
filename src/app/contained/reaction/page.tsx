@@ -12,7 +12,7 @@ const FEELINGS = [
   'Hopeful',
   'Motivated',
   'Shocked',
-  'Inspired',
+  'Clear',
   'Overwhelmed',
   'Determined',
 ];
@@ -80,18 +80,18 @@ export default function ReactionPage() {
                 Thank You
               </h1>
               <p className="text-gray-600 mb-8">
-                Your response matters. Every voice adds to the evidence that change is possible
-                and necessary.
+                Your response helps us understand what changed after the walk-through and what
+                people are ready to do next.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
-                  href="/contained/act"
+                  href="/remand"
                   className="inline-flex items-center justify-center gap-2 bg-[#DC2626] text-white px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-red-700 transition-colors"
                 >
-                  Take Action <ArrowRight className="w-4 h-4" />
+                  Open Remand Evidence <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="/contained#nominate"
+                  href="/contained/nominations"
                   className="inline-flex items-center justify-center gap-2 border-2 border-[#0A0A0A] px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-[#0A0A0A] hover:text-white transition-colors"
                 >
                   Nominate Someone
@@ -120,11 +120,12 @@ export default function ReactionPage() {
             </Link>
 
             <h1 className="text-3xl md:text-5xl font-black tracking-tighter uppercase mb-4">
-              What Did You Feel?
+              What Changed For You?
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl">
-              You just walked through THE CONTAINED. We want to know what that was like.
-              Your response is anonymous unless you choose to share your name.
+              You just walked through THE CONTAINED. Share what stayed with you, how you now
+              understand remand, and who needs to see this next. Your response is anonymous unless
+              you choose to share your name.
             </p>
           </div>
         </section>
@@ -135,7 +136,7 @@ export default function ReactionPage() {
               {/* Feelings */}
               <div>
                 <label className="block text-sm font-bold uppercase tracking-widest text-gray-500 mb-3">
-                  How do you feel right now? (Select all that apply)
+                  How are you leaving? (Select all that apply)
                 </label>
                 <div className="flex flex-wrap gap-3">
                   {FEELINGS.map((f) => (
@@ -161,7 +162,7 @@ export default function ReactionPage() {
                   htmlFor="response"
                   className="block text-sm font-bold uppercase tracking-widest text-gray-500 mb-3"
                 >
-                  What stays with you? (Optional)
+                  What stays with you, and what changed in how you understand remand? (Optional)
                 </label>
                 <textarea
                   id="response"
@@ -176,10 +177,15 @@ export default function ReactionPage() {
               {/* Would nominate */}
               <div>
                 <label className="block text-sm font-bold uppercase tracking-widest text-gray-500 mb-3">
-                  Is there someone who needs to see this?
+                  What action are you willing to take?
                 </label>
-                <div className="flex gap-3">
-                  {['Yes — I want to nominate someone', 'Not right now'].map((option) => (
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    'Nominate someone who needs to see this',
+                    'Send the /remand evidence to someone',
+                    'Find or support a local alternative',
+                    'Not right now',
+                  ].map((option) => (
                     <button
                       key={option}
                       type="button"
@@ -199,7 +205,7 @@ export default function ReactionPage() {
               {/* Optional identity */}
               <div className="border-t-2 border-gray-200 pt-8">
                 <p className="text-sm text-gray-500 mb-4">
-                  Optional — share your details if you want us to follow up or if your quote can
+                  Optional: share your details if you want us to follow up or if your quote can
                   be used publicly (with your permission).
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
