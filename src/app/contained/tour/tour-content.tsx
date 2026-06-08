@@ -6,6 +6,7 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { ELPhotoPickerModal } from '@/components/empathy-ledger/ELPhotoPickerModal';
 import { YouthRemandVerticalCard } from '@/components/justice-network/YouthRemandVerticalCard';
+import { NominateForm } from './nominate-form';
 import {
   tourStops as staticTourStops,
   journeyContainers,
@@ -858,7 +859,7 @@ export function TourContent() {
         <RedDivider />
 
         {/* ==================== SECTION 6: ACTION ==================== */}
-        <section id="nominate" />
+        <NominateForm />
         <section id="action" className="relative bg-[#F5F0E8] scanline-overlay-dark overflow-hidden" style={{ padding: 'clamp(60px, 10vw, 120px) 0' }}>
           <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16 text-center">
             <span className="text-[#DC2626] text-xs font-medium uppercase block mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.3em' }}>We Need You</span>
