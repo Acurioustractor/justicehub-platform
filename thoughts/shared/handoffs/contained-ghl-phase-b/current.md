@@ -15,7 +15,9 @@ status: active
 **Test:** `npm run type-check` (ignore database.types.ts errors)
 
 ### Now
-[->] Phase B not started. First task: migrate `/api/ghl/register` CONTAINED branch to canonical (the one big migration).
+[x] **Feature 1 (7-route migration) DONE + committed `f16db31e`.** All CONTAINED CTA capture routes emit canonical tags.
+[x] **GAP #16 (nominate form) DONE + committed `6f6eec06`.** GAP #8/#9/#12 verified done (no code needed).
+[->] Branch `feat/contained-canonical-ghl` NOT pushed (Tier 2 — awaiting Ben). Remaining: GAP #18/#21 (host/backer), GAP #20 (funder/partner/media routed form), calendar CTA. type-check clean throughout (0 new errors; 52 pre-existing ALMA-cron errors unrelated).
 
 ### This Session (alignment — DONE)
 - [x] GHL prereq probe (custom fields, pipeline, eligibility) — read-only, verified
@@ -26,14 +28,16 @@ status: active
 - [x] Merged JH PRs #39-43; cleaned branches; main synced
 
 ### Next (Phase B build — JusticeHub, Tier 1 code)
-- [ ] **Migrate `/api/ghl/register` CONTAINED branch** (`src/app/api/ghl/register/route.ts:113-154`): `project:contained`→`project:act-jh`; `source:form`→`source:event:contained-adelaide`; drop `project:contained-adelaide-2026`; `state:<x>`→`place:<x>` (use `STATE_TO_PLACE`); add `interest:justice-reform`; `newsletter-stream:contained-adelaide-invite`→`comms:justicehub-newsletter` (only if `newsletter_consent`); align role via canonical map; lived-experience→`lane:community`+`role:storyteller`+suppress comms/workflow; `cohort:<x>`→drop tag, set `cohort` custom field. **Keep the non-CONTAINED branch (other events) unchanged.**
-- [ ] Migrate legacy routes to canonical: `/api/contained/reaction` (route uses GHL_TAGS `Reacted`/`CONTAINED`/etc), tour-stories (`/api/projects/the-contained/tour-stories` + `/api/contained/tour-stories`)
-- [ ] **GAP build #16** — render a Nominate-a-Leader form on `/contained#nominate` (currently empty `<section id="nominate"/>` at `tour-content.tsx:861`) → POST `/api/projects/[slug]/nominations`; canonical tags + `nominated_person` field
-- [ ] **GAP build #18/#21** — host/backer form (Host the Container / Back the Tour) → canonical `role:partner`(host)/`role:supporter`(backer); host offer → GHL opportunity
-- [ ] **GAP build #20** — replace funder/partner/media `mailto:` with a routed form → `role:funder|partner|media` + opportunity; reply-to `benjamin@act.place`
-- [ ] **GAP build #8/#9/#12** — in-experience reflection/story widgets: upsert a canonical contact only when name/email attached (`role:storyteller`, `lane:community` if lived-exp, NO `comms:`)
+- [x] **Migrated `/api/ghl/register` CONTAINED branch**: now `project:act-jh` + `source:event:contained` (NO city, R5) + `interest:justice-reform` + `place:<x>` (STATE_TO_PLACE) + canonical role (RC1 map) + `engagement:warm`; lived-experience→`lane:community`+`role:storyteller`+comms/workflow suppressed; artist→`+interest:storytelling`; newsletter→`comms:justicehub-newsletter` only if opt-in AND not community lane; `cohort:`→`cohort` custom field + `newsletter_consent` field. Dropped `project:contained`/`project:contained-adelaide-2026`/`source:form`/legacy GHL_TAGS. Non-CONTAINED branch UNCHANGED.
+- [x] **Migrated 6 legacy routes** (scope was bigger than ledger — the `projects/[slug]/*` routes also emitted legacy GHL_TAGS, and 2 are GAP-form targets): `contained/reaction`, `contained/mp-letter`, `projects/[slug]/{nominations,backers,reactions,tour-stories}`. All → base3 + role (storyteller for reflection/story; supporter for nominate/back/write-MP). backers PARTNER→supporter (RC1 fix). nominations `nominated`→`nominated_person` field. `contained/tour-stories` has NO GHL emit — no change. NOT in scope (left as-is): crons (RC2 lifecycle layer), `admin/partner-pipeline`, `hub/actions`.
+- [x] **GAP build #16 DONE** — `NominateForm` component (`src/app/contained/tour/nominate-form.tsx`) rendered in place of the empty `<section id="nominate"/>`. Brand-compliant (locked palette + IBM Plex Mono, matches reaction-form pattern). POSTs to `/api/projects/the-contained/nominations` (canonical: role:supporter + nominated_person). Honeypot guard, inline success → nominations wall. Committed `6f6eec06`.
+- [x] **GAP #8/#9/#12 DONE (verify, no new code)** — only the email-capturing in-experience widget (`share/story-form.tsx` → `/api/projects/the-contained/tour-stories`) creates a GHL contact, and Feature 1 already made it canonical (role:storyteller, no comms). `/api/contained/reflections` (name only, no email) and `/api/contained/stories/submit` (private EL draft, device-enrolled) correctly create NO GHL contact — OCAP-safe by design. Nothing to build.
+- [ ] **GAP build #18/#21 (NOT started)** — host/backer form (Host the Container / Back the Tour). Backer half: `projects/[slug]/backers` already canonical (role:supporter) — just needs a brand form. Host half: needs `role:partner` + GHL **opportunity** creation (new route or extend backers; opportunity gated on Phase D pipeline/stage env vars, guard like signup's `GHL_PIPELINES.STEWARD`). Existing surfaces: `/contained/help`, `/contained/invest`, action cards at `tour-content.tsx:866-901` (currently Links).
+- [ ] **GAP build #20 (NOT started)** — funder/partner/media routed form. `mailto:` lives at `act-content.tsx:197` (+ help/invest). Needs a NEW API route: `role:funder|partner|media` + opportunity + email reply-to `benjamin@act.place`. Heaviest item (new route + opportunity + email routing + brand form).
 - [ ] Wire the GHL native-calendar CTA on the booking step (env var / placeholder URL until the calendar is created in Phase D)
 - [ ] `npm run type-check`; branch + PR
+
+> **Session checkpoint (2026-06-09):** Feature 1 (7-route migration) committed `f16db31e`; GAP #16 committed `6f6eec06`; GAP #8/#9/#12 verified done. Branch `feat/contained-canonical-ghl` NOT pushed. Remaining #18/#21 + #20 + calendar are fresh-context work (new routes + GHL opportunities + brand forms) — recommend `/clear` before continuing.
 
 ### Decisions (locked)
 - **R4 (2026-06-09):** CONTAINED conforms to the canonical one-account contract. NOT `project:contained`/`cohort:`/`newsletter-stream:`.
@@ -41,9 +45,10 @@ status: active
 - **RC2:** keep `engagement:`/`campaign-stage:` as the lifecycle layer (no migration).
 - **RC3:** strip `project:contained-adelaide-2026` after adding canonical (additive-then-strip) — that's a Tier-3 GHL migration, NOT Phase B code.
 - **RC4:** GHL native Calendar (not embedded form).
+- **R5 (2026-06-09, Ben):** CONTAINED source tag is **no-city** `source:event:contained` (NOT city-suffixed). Matches the 3 already-shipped canonical routes (signup/contact/contained-nominations). Adelaide is encoded by `place:sa`. Future CONTAINED cities share one campaign source, distinguished by `place:`. → resolves the source-constant open question; no constant change, no edits to the 3 shipped routes.
 
 ### Open Questions
-- UNCONFIRMED: `GHL_CANONICAL` in `src/lib/ghl/client.ts` may have `SOURCE_EVENT_CONTAINED = source:event:contained` (no city). R4 wants `source:event:contained-adelaide` (city-suffixed) — add the city-suffixed constant.
+- RESOLVED (R5): source constant stays `source:event:contained` (no city). No change to `GHL_CANONICAL.SOURCE_EVENT_CONTAINED`.
 - UNCONFIRMED: the GHL native-calendar URL does not exist yet (Phase D, gated to 16 Jun). Phase B wires the CTA to an env var / placeholder.
 - Phase B does NOT touch live GHL. The ~260-contact tag migration, calendar/pipeline/custom-field creation, automations, sends = Phase D (Tier 3, day-shift, gated to 16 Jun go/no-go).
 
