@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { getGHLClient, GHL_TAGS, STATE_TO_TAG } from '@/lib/ghl/client';
 import { sendEmail } from '@/lib/email/send';
 import { preEventSequence } from '@/content/newsletter-sequences';
 import { verifyTurnstileToken } from '@/lib/turnstile';
@@ -15,6 +15,9 @@ const ALLOWED_ROLES = [
   'service_org',
   'student',
   'policymaker',
+  'advocate',
+  'artist',
+  'community',
   'supporter',
 ];
 
@@ -38,6 +41,7 @@ export async function POST(request: NextRequest) {
       newsletter,
       event_name,
       event_slug,
+      state,
       tags: customTags,
       turnstile_token,
     } = body;
@@ -76,6 +80,9 @@ export async function POST(request: NextRequest) {
     const sanitizedEventSlug = event_slug
       ? sanitizeInput(String(event_slug), { maxLength: 120, allowNewlines: false })
       : null;
+    const sanitizedState = typeof state === 'string' && /^[A-Za-z]{2,3}$/.test(state.trim())
+      ? state.trim().toUpperCase()
+      : null;
     const sanitizedEventId = typeof event_id === 'string' && /^[\w-]+$/.test(event_id)
       ? sanitizeInput(event_id, { maxLength: 120, allowNewlines: false })
       : null;
@@ -101,19 +108,29 @@ export async function POST(request: NextRequest) {
       : [];
 
     if (ghl.isConfigured()) {
+      const cohortTag = safeCustomTags.find((tag) => tag.startsWith('cohort_'));
+      const isPublicCohort = !cohortTag || cohortTag === 'cohort_public';
+
       const tags: string[] = [
         GHL_TAGS.EVENT,
         GHL_TAGS.JUSTICEHUB,
         ...safeCustomTags,
       ];
 
-      // Add CONTAINED tag if it's a CONTAINED event
+      // Add CONTAINED tag if it's a CONTAINED event. public_visitor is reserved
+      // for the general public cohort, not VIP / funder / conference walkthroughs.
       if (sanitizedEventName?.toUpperCase().includes('CONTAINED')) {
-        tags.push(GHL_TAGS.CONTAINED, GHL_TAGS.PUBLIC_VISITOR);
+        tags.push(GHL_TAGS.CONTAINED);
+        if (isPublicCohort) tags.push(GHL_TAGS.PUBLIC_VISITOR);
       }
 
       if (sanitizedEventSlug === 'contained-adelaide-tandanya' || sanitizedEventName?.toLowerCase().includes('adelaide')) {
         tags.push(GHL_TAGS.CONTAINED_ADELAIDE, GHL_TAGS.YOUTH_REMAND, GHL_TAGS.COUNTRY_REPORTS);
+      }
+
+      // Canonical state tag derived from the stop, not hardcoded on the page.
+      if (sanitizedState && STATE_TO_TAG[sanitizedState]) {
+        tags.push(STATE_TO_TAG[sanitizedState]);
       }
 
       if (newsletterOptIn) {
@@ -129,6 +146,9 @@ export async function POST(request: NextRequest) {
       if (sanitizedRole === 'service_org') tags.push(GHL_TAGS.ROLE_ORGANIZATION, 'service');
       if (sanitizedRole === 'student') tags.push('student', 'university');
       if (sanitizedRole === 'policymaker') tags.push('policy');
+      if (sanitizedRole === 'advocate') tags.push('advocate');
+      if (sanitizedRole === 'artist') tags.push('artist');
+      if (sanitizedRole === 'community') tags.push('community');
 
       ghlContactId = await ghl.upsertContact({
         email: sanitizedEmail,
@@ -161,6 +181,7 @@ export async function POST(request: NextRequest) {
           newsletter: newsletterOptIn,
           event_name: sanitizedEventName,
           event_slug: sanitizedEventSlug,
+          state: sanitizedState,
           tags: safeCustomTags,
           cohort: safeCustomTags.find((tag) => tag.startsWith('cohort_')) || null,
           registered_at: new Date().toISOString(),

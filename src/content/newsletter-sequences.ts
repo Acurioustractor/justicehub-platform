@@ -144,8 +144,12 @@ WHAT TO EXPECT:
 
 WHAT TO BRING:
 - An open mind
-- A friend or colleague (share this link: ${SITE}/events)
+- A friend or colleague (share this link: ${SITE}/adelaide)
 - Your phone for photos and sharing
+
+GO DEEPER BEFORE YOU COME:
+- Why children are held before sentence: ${SITE}/remand
+- Share what changes for you afterwards: ${SITE}/contained/reaction
 
 This isn't a lecture. It's an experience designed to make you feel what the data shows.
 
