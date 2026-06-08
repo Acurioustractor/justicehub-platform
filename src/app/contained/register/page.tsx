@@ -18,35 +18,37 @@ interface RegistrationData {
   newsletter: boolean;
 }
 
+// Colon canon to match the live GHL CRM (project:contained, cohort:<x>); the
+// route adds project:contained-adelaide-2026, state:<x>, role:<x> on top.
 const cohortDetails: Record<string, { label: string; tag: string; note: string }> = {
   'young-people': {
     label: 'Young people / build pathway',
-    tag: 'cohort_young_people',
+    tag: 'cohort:young-people',
     note: 'For supported participation in the build, hosting, or youth-led reflection pathway.',
   },
   'student-service': {
     label: 'Students + services',
-    tag: 'cohort_student_service',
+    tag: 'cohort:student-service',
     note: 'For Flinders, local services, youth organisations, arts/community groups, and supervised cohorts.',
   },
   'conference-delegate': {
     label: 'Conference delegates',
-    tag: 'cohort_conference_delegate',
+    tag: 'cohort:conference-delegate',
     note: 'For Reintegration Puzzle delegates requesting a hosted walkthrough beside the conference.',
   },
   'vip-media': {
     label: 'VIP / media / funder',
-    tag: 'cohort_vip_media',
+    tag: 'cohort:vip-media',
     note: 'For MPs, courts, public servants, funders, journalists, and decision-makers needing a priority window.',
   },
   'next-city': {
     label: 'Next-city partner',
-    tag: 'cohort_next_city',
+    tag: 'cohort:next-city',
     note: 'For Perth, Victoria/Melbourne, and future tour-stop partners.',
   },
   public: {
     label: 'Public walkthrough',
-    tag: 'cohort_public',
+    tag: 'cohort:public',
     note: 'For public visitors requesting a hosted walkthrough.',
   },
 };

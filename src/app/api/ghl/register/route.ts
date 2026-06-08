@@ -108,8 +108,7 @@ export async function POST(request: NextRequest) {
       : [];
 
     if (ghl.isConfigured()) {
-      const cohortTag = safeCustomTags.find((tag) => tag.startsWith('cohort_'));
-      const isPublicCohort = !cohortTag || cohortTag === 'cohort_public';
+      const isContained = Boolean(sanitizedEventName?.toUpperCase().includes('CONTAINED'));
 
       const tags: string[] = [
         GHL_TAGS.EVENT,
@@ -117,38 +116,42 @@ export async function POST(request: NextRequest) {
         ...safeCustomTags,
       ];
 
-      // Add CONTAINED tag if it's a CONTAINED event. public_visitor is reserved
-      // for the general public cohort, not VIP / funder / conference walkthroughs.
-      if (sanitizedEventName?.toUpperCase().includes('CONTAINED')) {
-        tags.push(GHL_TAGS.CONTAINED);
-        if (isPublicCohort) tags.push(GHL_TAGS.PUBLIC_VISITOR);
+      if (isContained) {
+        // Colon canon: the live CRM is 100% colon/hyphen (verified 2026-06-09).
+        // Emit colon tags so registrations integrate with project:contained and
+        // newsletter-stream:contained-adelaide-invite. Shared GHL_TAGS (underscore)
+        // is intentionally NOT used on the contained path to avoid orphan tags.
+        // The cohort colon tag (cohort:<x>) arrives via safeCustomTags from the page.
+        tags.push('project:contained', 'source:form', 'engagement:warm');
+        if (sanitizedEventSlug === 'contained-adelaide-tandanya' || sanitizedEventName?.toLowerCase().includes('adelaide')) {
+          tags.push('project:contained-adelaide-2026');
+        }
+        if (sanitizedState) tags.push(`state:${sanitizedState.toLowerCase()}`);
+        const ROLE_COLON: Record<string, string> = {
+          researcher: 'role:researcher', practitioner: 'role:practitioner',
+          lived_experience: 'role:lived-experience', media: 'role:media',
+          funder: 'role:funder', service_org: 'role:service', student: 'role:student',
+          policymaker: 'role:policy', advocate: 'role:advocate', artist: 'role:artist',
+          community: 'role:community',
+        };
+        if (ROLE_COLON[sanitizedRole]) tags.push(ROLE_COLON[sanitizedRole]);
+        if (newsletterOptIn) tags.push('newsletter-stream:contained-adelaide-invite');
+      } else {
+        // Non-contained events keep the existing GHL_TAGS contract (other form routes).
+        if (sanitizedState && STATE_TO_TAG[sanitizedState]) tags.push(STATE_TO_TAG[sanitizedState]);
+        if (newsletterOptIn) tags.push(GHL_TAGS.NEWSLETTER);
+        if (sanitizedRole === 'researcher') tags.push(GHL_TAGS.RESEARCHER);
+        if (sanitizedRole === 'practitioner') tags.push(GHL_TAGS.PRACTITIONER);
+        if (sanitizedRole === 'lived_experience') tags.push(GHL_TAGS.YOUTH_VOICE);
+        if (sanitizedRole === 'media') tags.push(GHL_TAGS.MEDIA, GHL_TAGS.ROLE_MEDIA);
+        if (sanitizedRole === 'funder') tags.push(GHL_TAGS.PARTNER, GHL_TAGS.ROLE_FUNDER);
+        if (sanitizedRole === 'service_org') tags.push(GHL_TAGS.ROLE_ORGANIZATION, 'service');
+        if (sanitizedRole === 'student') tags.push('student', 'university');
+        if (sanitizedRole === 'policymaker') tags.push('policy');
+        if (sanitizedRole === 'advocate') tags.push('advocate');
+        if (sanitizedRole === 'artist') tags.push('artist');
+        if (sanitizedRole === 'community') tags.push('community');
       }
-
-      if (sanitizedEventSlug === 'contained-adelaide-tandanya' || sanitizedEventName?.toLowerCase().includes('adelaide')) {
-        tags.push(GHL_TAGS.CONTAINED_ADELAIDE, GHL_TAGS.YOUTH_REMAND, GHL_TAGS.COUNTRY_REPORTS);
-      }
-
-      // Canonical state tag derived from the stop, not hardcoded on the page.
-      if (sanitizedState && STATE_TO_TAG[sanitizedState]) {
-        tags.push(STATE_TO_TAG[sanitizedState]);
-      }
-
-      if (newsletterOptIn) {
-        tags.push(GHL_TAGS.NEWSLETTER);
-      }
-
-      // Map role to tag
-      if (sanitizedRole === 'researcher') tags.push(GHL_TAGS.RESEARCHER);
-      if (sanitizedRole === 'practitioner') tags.push(GHL_TAGS.PRACTITIONER);
-      if (sanitizedRole === 'lived_experience') tags.push(GHL_TAGS.YOUTH_VOICE);
-      if (sanitizedRole === 'media') tags.push(GHL_TAGS.MEDIA, GHL_TAGS.ROLE_MEDIA);
-      if (sanitizedRole === 'funder') tags.push(GHL_TAGS.PARTNER, GHL_TAGS.ROLE_FUNDER);
-      if (sanitizedRole === 'service_org') tags.push(GHL_TAGS.ROLE_ORGANIZATION, 'service');
-      if (sanitizedRole === 'student') tags.push('student', 'university');
-      if (sanitizedRole === 'policymaker') tags.push('policy');
-      if (sanitizedRole === 'advocate') tags.push('advocate');
-      if (sanitizedRole === 'artist') tags.push('artist');
-      if (sanitizedRole === 'community') tags.push('community');
 
       ghlContactId = await ghl.upsertContact({
         email: sanitizedEmail,
@@ -183,7 +186,7 @@ export async function POST(request: NextRequest) {
           event_slug: sanitizedEventSlug,
           state: sanitizedState,
           tags: safeCustomTags,
-          cohort: safeCustomTags.find((tag) => tag.startsWith('cohort_')) || null,
+          cohort: safeCustomTags.find((tag) => tag.startsWith('cohort:') || tag.startsWith('cohort_')) || null,
           registered_at: new Date().toISOString(),
         },
         registration_status: 'registered',
