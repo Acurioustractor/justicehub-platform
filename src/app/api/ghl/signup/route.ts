@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { getGHLClient, GHL_TAGS, GHL_PIPELINES, MEMBER_TYPE_TO_TAG, STATE_TO_TAG, GHL_NURTURE_WORKFLOWS } from '@/lib/ghl/client';
+import { getGHLClient, GHL_CANONICAL, GHL_PIPELINES, MEMBER_TYPE_TO_ROLE, STATE_TO_PLACE, GHL_NURTURE_WORKFLOWS } from '@/lib/ghl/client';
 
 /**
  * POST /api/ghl/signup
@@ -40,40 +40,40 @@ export async function POST(request: NextRequest) {
 
     let ghlContactId: string | null = null;
 
+    // Community lane (OCAP agency model, R3): lived-experience / youth voice are
+    // NEVER auto-enrolled into comms: or nurture automation — here, in the
+    // workflow trigger, or in the newsletter-list upsert below. A community-lane
+    // newsletter opt-in is honored only via a human-confirmed follow-up.
+    const communityLane = member_type === 'lived_experience';
+
     if (ghl.isConfigured()) {
-      // Build tags array based on signup type
-      const tags: string[] = [];
+      // Build canonical tags. project: is always present.
+      const tags: string[] = [GHL_CANONICAL.PROJECT_JH];
 
       if (is_steward) {
-        tags.push(GHL_TAGS.STEWARD);
+        tags.push(GHL_CANONICAL.TIER_STEWARD);
       }
 
-      if (newsletter) {
-        tags.push(GHL_TAGS.NEWSLETTER);
-      }
-
-      // Campaign member type tags
+      // Campaign member type → canonical role (+ CONTAINED source, R4)
       if (member_type) {
-        tags.push(GHL_TAGS.CONTAINED);
-        // Role-specific tag for workflow triggers
-        const roleTag = MEMBER_TYPE_TO_TAG[member_type];
+        tags.push(GHL_CANONICAL.SOURCE_EVENT_CONTAINED);
+        const roleTag = MEMBER_TYPE_TO_ROLE[member_type];
         if (roleTag) tags.push(roleTag);
-        // Legacy tags for backwards compatibility
-        if (member_type === 'media') tags.push(GHL_TAGS.MEDIA);
-        if (member_type === 'funder') tags.push(GHL_TAGS.PARTNER);
-        if (member_type === 'organization') tags.push(GHL_TAGS.WANTS_TO_HELP);
-        if (member_type === 'lived_experience') tags.push(GHL_TAGS.YOUTH_VOICE);
-        if (member_type === 'supporter') tags.push(GHL_TAGS.WANTS_TO_HELP);
+        if (communityLane) {
+          tags.push(GHL_CANONICAL.LANE_COMMUNITY);
+        }
       }
 
-      // State tag for regional segmentation
+      // State → canonical place: tag for regional segmentation
       if (state) {
-        const stateTag = STATE_TO_TAG[state.toUpperCase()];
-        if (stateTag) tags.push(stateTag);
+        const placeTag = STATE_TO_PLACE[state.toUpperCase()];
+        if (placeTag) tags.push(placeTag);
       }
 
-      // Steward commitments stored in custom fields (tags consolidated)
-      tags.push(GHL_TAGS.JUSTICEHUB);
+      // Newsletter opt-in → comms send-trigger, UNLESS community lane (OCAP).
+      if (newsletter && !communityLane) {
+        tags.push(GHL_CANONICAL.COMMS_JH_NEWSLETTER);
+      }
 
       // Create/update GHL contact
       ghlContactId = await ghl.upsertContact({
@@ -90,6 +90,7 @@ export async function POST(request: NextRequest) {
           steward_motivation: steward_motivation || '',
           steward_experience: steward_experience || '',
           steward_commitments: steward_commitments?.join(', ') || '',
+          newsletter_consent: (newsletter && !communityLane) ? 'Yes' : '',
         },
       });
 
@@ -103,8 +104,8 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Trigger role-specific nurture workflow
-      if (member_type && ghlContactId) {
+      // Trigger role-specific nurture workflow — NEVER for community lane (OCAP).
+      if (member_type && ghlContactId && !communityLane) {
         const workflowId = GHL_NURTURE_WORKFLOWS[member_type];
         if (workflowId) {
           ghl.addToWorkflow(ghlContactId, workflowId).catch(err =>
@@ -136,8 +137,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // If newsletter opted in, add to newsletter subscriptions
-    if (newsletter) {
+    // Newsletter list enrolment — skipped for community lane (OCAP): a
+    // community-lane opt-in is honored only via a human-confirmed follow-up.
+    if (newsletter && !communityLane) {
       await supabase
         .from('newsletter_subscriptions')
         .upsert(
