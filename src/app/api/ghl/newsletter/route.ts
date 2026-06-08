@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
 import { sanitizeEmail, sanitizeInput } from '@/lib/security';
 import { sendEmail } from '@/lib/email/send';
 import { welcomeSequence } from '@/content/newsletter-sequences';
@@ -65,11 +65,18 @@ export async function POST(request: NextRequest) {
     let ghlContactId: string | null = null;
 
     if (ghl.isConfigured()) {
-      const tags: string[] = [GHL_TAGS.NEWSLETTER, GHL_TAGS.JUSTICEHUB];
+      // Canonical contract: explicit newsletter opt-in → grant the send-trigger
+      // tag + capture consent (see whole-system forms→GHL alignment plan).
+      const tags: string[] = [
+        GHL_CANONICAL.SOURCE_WEBSITE,
+        GHL_CANONICAL.PROJECT_JH,
+        GHL_CANONICAL.ROLE_SUPPORTER,
+        GHL_CANONICAL.COMMS_JH_NEWSLETTER,
+      ];
 
       // Add subscription type tag
-      if (validSubscriptionType === 'steward') tags.push(GHL_TAGS.STEWARD);
-      if (validSubscriptionType === 'researcher') tags.push(GHL_TAGS.RESEARCHER);
+      if (validSubscriptionType === 'steward') tags.push(GHL_CANONICAL.TIER_STEWARD);
+      if (validSubscriptionType === 'researcher') tags.push(GHL_CANONICAL.ROLE_RESEARCHER);
 
       // Add validated custom tags
       if (validTags.length > 0) {
@@ -84,6 +91,7 @@ export async function POST(request: NextRequest) {
         customFields: {
           organization: sanitizedOrganization || '',
           subscription_type: validSubscriptionType,
+          newsletter_consent: 'Yes',
         },
       });
     }
@@ -190,7 +198,7 @@ export async function DELETE(request: NextRequest) {
     if (ghl.isConfigured()) {
       const contact = await ghl.findContactByEmail(sanitizedEmail);
       if (contact) {
-        await ghl.removeTags(contact.id, [GHL_TAGS.NEWSLETTER]);
+        await ghl.removeTags(contact.id, [GHL_CANONICAL.COMMS_JH_NEWSLETTER]);
       }
     }
 

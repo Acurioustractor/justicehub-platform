@@ -6,7 +6,7 @@ import {
   sanitizePhone,
   containsXssPatterns,
 } from '@/lib/security';
-import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
 import { sendEmail } from '@/lib/email/send';
 
 interface ContactFormData {
@@ -32,11 +32,11 @@ const ALLOWED_CATEGORIES = [
   'other',
 ];
 
-// Map contact categories to GHL tags
-const CATEGORY_TAGS: Record<string, string> = {
-  partnership: GHL_TAGS.PARTNER,
-  media: GHL_TAGS.MEDIA,
-  'contained-help': GHL_TAGS.WANTS_TO_HELP,
+// Map contact categories to canonical role: tags
+const CATEGORY_ROLE: Record<string, string> = {
+  partnership: GHL_CANONICAL.ROLE_PARTNER,
+  media: GHL_CANONICAL.ROLE_MEDIA,
+  'contained-help': GHL_CANONICAL.ROLE_SUPPORTER,
 };
 
 /**
@@ -80,20 +80,21 @@ async function syncToGHL(
     const ghl = getGHLClient();
     if (!ghl.isConfigured()) return;
 
-    const tags: string[] = [GHL_TAGS.JUSTICEHUB, 'act-inquiry', 'project-justicehub'];
+    const tags: string[] = [GHL_CANONICAL.PROJECT_JH, GHL_CANONICAL.SOURCE_WEBSITE];
 
-    // Add category-specific tag
-    if (CATEGORY_TAGS[category]) {
-      tags.push(CATEGORY_TAGS[category]);
+    // Add category-specific role: tag
+    if (CATEGORY_ROLE[category]) {
+      tags.push(CATEGORY_ROLE[category]);
     }
 
-    // For help form: single tag + details in custom fields
+    // For help form: CONTAINED source + details in custom fields
+    // (role:supporter is already added via CATEGORY_ROLE for contained-help)
     const helpOptions = (category === 'contained-help' && subject)
       ? extractHelpOptions(subject)
       : [];
 
     if (category === 'contained-help') {
-      tags.push(GHL_TAGS.WANTS_TO_HELP, GHL_TAGS.CONTAINED);
+      tags.push(GHL_CANONICAL.SOURCE_EVENT_CONTAINED);
     }
 
     await ghl.upsertContact({

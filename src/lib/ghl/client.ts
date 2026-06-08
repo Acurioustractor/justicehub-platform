@@ -642,3 +642,59 @@ export const GHL_NURTURE_WORKFLOWS: Record<string, string> = {
   funder: process.env.GHL_WORKFLOW_FUNDER || '',
   lived_experience: process.env.GHL_WORKFLOW_LIVED_EXPERIENCE || '',
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Canonical namespaced tag contract (ACT whole-system forms→GHL alignment).
+// Spec: thoughts/shared/plans/2026-06-08-whole-system-forms-tag-alignment.md
+//       (Acurioustractor/act-global-infrastructure).
+// ONE GHL account ("A Curious Tractor"), ONE contract across every ACT codebase.
+// Migrated routes emit ONLY these namespaced tags. The flat GHL_TAGS above are
+// legacy, kept for not-yet-migrated routes (e.g. /api/ghl/register), and are
+// being retired route-by-route.
+// ─────────────────────────────────────────────────────────────────────────────
+export const GHL_CANONICAL = {
+  // project: — which ACT project the contact touched
+  PROJECT_JH: 'project:act-jh',
+  // source: — how they arrived
+  SOURCE_WEBSITE: 'source:website',
+  SOURCE_EVENT_CONTAINED: 'source:event:contained', // CONTAINED campaign (R4)
+  // role: — what they are to ACT
+  ROLE_SUPPORTER: 'role:supporter',
+  ROLE_PARTNER: 'role:partner',
+  ROLE_MEDIA: 'role:media',
+  ROLE_FUNDER: 'role:funder',
+  ROLE_RESEARCHER: 'role:researcher',
+  ROLE_STORYTELLER: 'role:storyteller',
+  // tier: — belonging ladder (curious → … → steward)
+  TIER_CURIOUS: 'tier:curious',
+  TIER_STEWARD: 'tier:steward',
+  // interest: — topical
+  INTEREST_JUSTICE_REFORM: 'interest:justice-reform',
+  // comms: — newsletter send-trigger (granted ONLY with captured consent)
+  COMMS_JH_NEWSLETTER: 'comms:justicehub-newsletter',
+  // lane:community — OCAP guardrail: NEVER auto-enrolled into comms:/automation
+  LANE_COMMUNITY: 'lane:community',
+} as const;
+
+// state abbreviation → canonical place: tag
+export const STATE_TO_PLACE: Record<string, string> = {
+  NSW: 'place:nsw',
+  QLD: 'place:qld',
+  VIC: 'place:vic',
+  SA: 'place:sa',
+  WA: 'place:wa',
+  NT: 'place:nt',
+  TAS: 'place:tas',
+  ACT: 'place:act',
+};
+
+// CONTAINED member_type → canonical role: tag.
+// (lived_experience additionally gets lane:community + automation suppressed —
+//  see /api/ghl/signup; OCAP agency model, R3.)
+export const MEMBER_TYPE_TO_ROLE: Record<string, string> = {
+  organization: GHL_CANONICAL.ROLE_PARTNER,
+  media: GHL_CANONICAL.ROLE_MEDIA,
+  supporter: GHL_CANONICAL.ROLE_SUPPORTER,
+  funder: GHL_CANONICAL.ROLE_FUNDER,
+  lived_experience: GHL_CANONICAL.ROLE_STORYTELLER,
+};

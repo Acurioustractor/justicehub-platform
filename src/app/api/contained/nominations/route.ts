@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
 import { sanitizeEmail, sanitizeInput } from '@/lib/security';
 import { sendEmail } from '@/lib/email/send';
 
@@ -130,7 +130,8 @@ export async function POST(request: NextRequest) {
       ghl.upsertContact({
         email,
         name: sanitizedNominatorName,
-        tags: [GHL_TAGS.NOMINATED, GHL_TAGS.CONTAINED, GHL_TAGS.JUSTICEHUB],
+        // R5: NOMINATED dropped as a tag — captured in the nominated_person field.
+        tags: [GHL_CANONICAL.PROJECT_JH, GHL_CANONICAL.INTEREST_JUSTICE_REFORM, GHL_CANONICAL.SOURCE_EVENT_CONTAINED],
         source: 'JusticeHub CONTAINED Nomination',
         customFields: {
           nominated_person: sanitizedNomineeName,
