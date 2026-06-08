@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { Navigation } from '@/components/ui/navigation';
 import Link from 'next/link';
-import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink, Mail, Activity, Target, Workflow, Scale, Shield, UserCheck, Megaphone, Mic, BarChart3 } from 'lucide-react';
+import { Users, BookOpen, Palette, Building2, MapPin, TrendingUp, AlertCircle, FileText, Network, Database, GraduationCap, FlaskConical, Award, Calendar, Image, Globe, DollarSign, Zap, Handshake, ExternalLink, Mail, Activity, Target, Workflow, Scale, Shield, UserCheck, Megaphone, Mic, BarChart3, GitBranch } from 'lucide-react';
 import { SystemStatus } from '@/components/admin/SystemStatus';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
@@ -168,6 +168,7 @@ export default async function AdminDashboard() {
         { title: 'Justice Funding', count: fundingCount || 0, subtitle: 'National funding records', icon: DollarSign, href: '/admin/funding', bgColor: 'bg-green-50', textColor: 'text-green-600' },
         { title: 'Justice Matrix', count: matrixCasesCount || 0, subtitle: 'Legal cases & precedents', icon: Scale, href: '/admin/justice-matrix', bgColor: 'bg-indigo-50', textColor: 'text-indigo-600' },
         { title: 'ALMA Verify', count: almaVerifiedCount || 0, subtitle: `${almaUnverifiedCount || 0} need review`, icon: Shield, href: '/admin/alma/verify', bgColor: 'bg-emerald-50', textColor: 'text-emerald-600', alert: (almaUnverifiedCount || 0) > 20 ? `${almaUnverifiedCount} unverified` : undefined },
+        { title: 'Directory Review', count: '🧭' as string | number, subtitle: 'Clean links, agents, scrapers', icon: GitBranch, href: '/admin/directory/review', bgColor: 'bg-cyan-50', textColor: 'text-cyan-600' },
         { title: 'Data Operations', count: '📊' as string | number, subtitle: 'Sources, health, enrichment', icon: Database, href: '/admin/data-operations', bgColor: 'bg-slate-50', textColor: 'text-slate-600' },
         { title: 'Data Health', count: '📊' as string | number, subtitle: 'Tables, APIs, enrichment', icon: Activity, href: '/admin/data-health', bgColor: 'bg-slate-50', textColor: 'text-slate-600' },
         { title: 'Governed Proof', count: governedProofBundlesCount || 0, subtitle: 'Place bundles in control plane', icon: Workflow, href: '/admin/governed-proof', bgColor: 'bg-emerald-50', textColor: 'text-emerald-600' },
