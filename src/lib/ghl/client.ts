@@ -632,6 +632,10 @@ export const STATE_TO_TAG: Record<string, string> = {
 export const GHL_PIPELINES = {
   STEWARD: process.env.GHL_STEWARD_PIPELINE_ID || '',
   EVENT: process.env.GHL_EVENT_PIPELINE_ID || '',
+  // Partner / host pipeline (CONTAINED "Host the Container" → role:partner).
+  // Empty until the Phase D pipeline is created; opportunity creation is gated
+  // on this being set, the same way STEWARD gates the steward opportunity.
+  PARTNER: process.env.GHL_PARTNER_PIPELINE_ID || '',
 } as const;
 
 // Nurture workflow IDs — one per member role, configured in GHL
