@@ -17,7 +17,10 @@ status: active
 ### Now
 [x] **Feature 1 (7-route migration) DONE + committed `f16db31e`.** All CONTAINED CTA capture routes emit canonical tags.
 [x] **GAP #16 (nominate form) DONE + committed `6f6eec06`.** GAP #8/#9/#12 verified done (no code needed).
-[->] Branch `feat/contained-canonical-ghl` NOT pushed (Tier 2 — awaiting Ben). Remaining: GAP #18/#21 (host/backer), GAP #20 (funder/partner/media routed form), calendar CTA. type-check clean throughout (0 new errors; 52 pre-existing ALMA-cron errors unrelated).
+[x] **GAP #18/#21 (host/back form) DONE + committed `fcc0d4f5`.** Branded back/host toggle at `/contained#back-this-tour`; back→canonical backers route (role:supporter), host→new `/api/contained/host` (role:partner + gated PARTNER-pipeline opportunity). "Host the Container" card → `#host-the-container`. Added `GHL_PIPELINES.PARTNER`.
+[x] **GAP #20 (funder/partner/media connect form) DONE + committed `bb0e37c9`.** Branded role toggle at `/contained/act#connect`; new `/api/contained/connect` (role:funder|partner|media + gated FUNDER/PARTNER opportunity + routing emails to benjamin@act.place via threaded `emailFrom`). Added `GHL_PIPELINES.FUNDER`.
+[x] **Calendar CTA DONE + committed `cb973197`.** "Book your walk-through time" CTA on register step 3, gated on `NEXT_PUBLIC_GHL_CONTAINED_CALENDAR_URL` (RC4 native Calendar). Phase D env vars documented in `.env.example`.
+[->] **Phase B BUILD COMPLETE.** Branch `feat/contained-canonical-ghl` NOT pushed (Tier 2 — awaiting Ben), no PR opened (Tier 3). 3 new commits this session (`fcc0d4f5`, `bb0e37c9`, `cb973197`). type-check clean throughout (0 new errors; 52 pre-existing ALMA-cron errors unrelated). All session files lint clean. NO live GHL writes: opportunities no-op until Phase D pipeline env vars set; emails no-op unless EMAIL_ENABLED=true; calendar CTA hidden until its env var set.
 
 ### This Session (alignment — DONE)
 - [x] GHL prereq probe (custom fields, pipeline, eligibility) — read-only, verified
