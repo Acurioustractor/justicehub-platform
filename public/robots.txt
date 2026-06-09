@@ -1,6 +1,14 @@
 User-agent: *
 Allow: /
 
+# Faceted-navigation crawl-trap guard 2026-06-10 — bots were enumerating every
+# filter permutation of the matrix list pages (categories x outcome x strength
+# x offset), saturating the shared database. Base pages stay crawlable; only
+# query-stringed filter views are blocked.
+Disallow: /justice-matrix/cases?
+Disallow: /justice-matrix/campaigns?
+Disallow: /justice-matrix/explore?
+
 # Mounty Yarns takedown 2026-04-21 — pages removed, do not crawl or index
 Disallow: /organizations/mounty-yarns
 Disallow: /alma/mounty-yarns
