@@ -145,6 +145,26 @@ async function fetchProfile(id: string) {
   return { caseRow, similar, campaigns, media, research };
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createServiceClient() as any;
+  const { data: c } = await supabase
+    .from('justice_matrix_cases')
+    .select('case_citation,jurisdiction,year,strategic_issue,key_holding')
+    .eq('id', id)
+    .single();
+  if (!c) return { title: 'Case · Justice Matrix' };
+  const description =
+    c.strategic_issue ||
+    (c.key_holding ? String(c.key_holding).slice(0, 160) : null) ||
+    `Strategic litigation record from ${c.jurisdiction}${c.year ? `, ${c.year}` : ''}.`;
+  return {
+    title: `${c.case_citation} · Justice Matrix`,
+    description,
+  };
+}
+
 export default async function CaseProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const profile = await fetchProfile(id);

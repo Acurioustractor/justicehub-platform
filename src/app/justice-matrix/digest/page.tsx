@@ -2,6 +2,12 @@ import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { ArrowLeft, Scale, Megaphone, ChevronRight } from 'lucide-react';
 
+export const metadata = {
+  title: 'Digest · Justice Matrix',
+  description:
+    'What is new in the Justice Matrix. The latest cases and campaigns added to the clearing house, week by week.',
+};
+
 export const dynamic = 'force-dynamic';
 
 // Local "research tool" tokens — matches /justice-matrix/explore and the

@@ -7,6 +7,8 @@ const DISPLAY = "'Cormorant Garamond', Georgia, serif";
 
 export const metadata = {
   title: 'Contribute · Justice Matrix',
+  description:
+    'Add a case or campaign to the Justice Matrix. Submissions go to editorial review before they join the public record.',
 };
 
 export default function ContributePage() {

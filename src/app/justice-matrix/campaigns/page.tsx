@@ -3,6 +3,12 @@ import { createServiceClient } from '@/lib/supabase/service-lite';
 import { Search, ChevronLeft, ChevronRight, Megaphone, X } from 'lucide-react';
 import { MatrixFlowNav } from '../_components/MatrixFlowNav';
 
+export const metadata = {
+  title: 'Campaigns · Justice Matrix',
+  description:
+    'Advocacy, organised. Browse campaigns by country, tactic, and outcome, each one a playbook another community can adapt.',
+};
+
 const DISPLAY = "'Cormorant Garamond', Georgia, serif";
 const LIMIT = 20;
 

@@ -4,6 +4,12 @@ import { ArrowRight, Globe, Scale, Megaphone, Database, Search, BookOpen, Map as
 import { bucketJurisdiction } from '@/lib/justice-matrix/jurisdiction';
 import { MatrixFlowNav } from './_components/MatrixFlowNav';
 
+export const metadata = {
+  title: 'Justice Matrix · JusticeHub',
+  description:
+    'A living clearing house of strategic litigation, advocacy campaigns, and youth justice evidence across jurisdictions. Find the precedent, playbook, or evidence, then move.',
+};
+
 export const dynamic = 'force-dynamic';
 
 // Local "research tool" tokens — matches /justice-matrix/explore so the entry

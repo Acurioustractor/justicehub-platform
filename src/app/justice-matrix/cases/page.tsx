@@ -3,6 +3,12 @@ import { createServiceClient } from '@/lib/supabase/service-lite';
 import { Search, ChevronLeft, ChevronRight, Scale, X } from 'lucide-react';
 import { MatrixFlowNav } from '../_components/MatrixFlowNav';
 
+export const metadata = {
+  title: 'Cases · Justice Matrix',
+  description:
+    'Strategic litigation, searchable. Browse cases by jurisdiction, outcome, precedent strength, and issue, each linked to its authoritative source.',
+};
+
 const DISPLAY = "'Cormorant Garamond', Georgia, serif";
 const LIMIT = 20;
 

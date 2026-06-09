@@ -2,6 +2,12 @@ import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { ChevronLeft, Scale, Megaphone } from 'lucide-react';
 
+export const metadata = {
+  title: 'Insights · Justice Matrix',
+  description:
+    'The shape of the corpus. Outcomes, jurisdictions, and issue patterns across every case and campaign in the Justice Matrix.',
+};
+
 const DISPLAY = "'Cormorant Garamond', Georgia, serif";
 export const dynamic = 'force-dynamic';
 

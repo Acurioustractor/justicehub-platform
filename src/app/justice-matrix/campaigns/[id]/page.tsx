@@ -95,6 +95,24 @@ async function fetchProfile(id: string) {
   return { campaignRow, similar, cases };
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createServiceClient() as any;
+  const { data: c } = await supabase
+    .from('justice_matrix_campaigns')
+    .select('campaign_name,country_region,goals')
+    .eq('id', id)
+    .single();
+  if (!c) return { title: 'Campaign · Justice Matrix' };
+  return {
+    title: `${c.campaign_name} · Justice Matrix`,
+    description:
+      (c.goals ? String(c.goals).slice(0, 160) : null) ||
+      `Advocacy campaign record${c.country_region ? ` from ${c.country_region}` : ''} in the Justice Matrix clearing house.`,
+  };
+}
+
 export default async function CampaignProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const profile = await fetchProfile(id);
