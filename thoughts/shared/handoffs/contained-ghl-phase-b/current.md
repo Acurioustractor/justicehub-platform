@@ -47,6 +47,8 @@ status: complete-merged
 
 > **Session checkpoint (2026-06-09):** Feature 1 (7-route migration) committed `f16db31e`; GAP #16 committed `6f6eec06`; GAP #8/#9/#12 verified done. Branch `feat/contained-canonical-ghl` NOT pushed. Remaining #18/#21 + #20 + calendar are fresh-context work (new routes + GHL opportunities + brand forms) — recommend `/clear` before continuing.
 
+> **Session checkpoint (2026-06-10):** Phase D prep (Tier 1, no live writes) committed **locally** as `74cc447d` on `main` — **NOT pushed** (`main` is ahead of origin/main by 1). Two artifacts: `scripts/contained-ghl-phase-d-migrate.mjs` (dry-run-default, gated additive-then-strip, `--self-test` 3/3, lint clean) + `thoughts/shared/handoffs/contained-ghl-phase-b/phase-d-runbook.md` (day-shift checklist). NOTHING executed against live GHL. **Resume note:** Phase D execution stays gated to the 16-Jun go/no-go (Tier 3, day-shift, human-in-loop) — do NOT start autonomously. Pushing `74cc447d` is Tier 3 (push to main) and needs an explicit go from Ben; offer a branch+PR instead. Working tree clean; safe to `/clear`.
+
 ### Decisions (locked)
 - **R4 (2026-06-09):** CONTAINED conforms to the canonical one-account contract. NOT `project:contained`/`cohort:`/`newsletter-stream:`.
 - **RC1:** Professional→partner. `service_org`/`practitioner`/`policymaker`→`role:partner`; `advocate`/`artist`/`student`→`role:supporter` (artist also `interest:storytelling`); researcher/media/funder/community 1:1; lived-experience→`lane:community`+`role:storyteller`.
