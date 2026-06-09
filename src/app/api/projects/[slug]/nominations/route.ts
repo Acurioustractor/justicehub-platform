@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
 
 const VALID_CATEGORIES = [
   'politician',
@@ -195,10 +195,16 @@ export async function POST(
         ghl.upsertContact({
           email: nominator_email.trim().toLowerCase(),
           name: nominator_name?.trim() || '',
-          tags: [GHL_TAGS.NOMINATED, GHL_TAGS.CONTAINED, GHL_TAGS.JUSTICEHUB],
+          // Nominator is a supporter taking an action (R4 canonical; RC1).
+          tags: [
+            GHL_CANONICAL.PROJECT_JH,
+            GHL_CANONICAL.SOURCE_EVENT_CONTAINED,
+            GHL_CANONICAL.INTEREST_JUSTICE_REFORM,
+            GHL_CANONICAL.ROLE_SUPPORTER,
+          ],
           source: 'JusticeHub CONTAINED Nomination',
           customFields: {
-            nominated: nominee_name.trim(),
+            nominated_person: nominee_name.trim(),
             nomination_category: category,
           },
         }).catch(console.error); // fire-and-forget

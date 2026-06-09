@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
 
 const VALID_TOUR_STOPS = [
   'Mount Druitt',
@@ -136,7 +136,12 @@ export async function POST(
         ghl.upsertContact({
           email: email.trim().toLowerCase(),
           name: name.trim(),
-          tags: [GHL_TAGS.REACTED, GHL_TAGS.CONTAINED, GHL_TAGS.JUSTICEHUB],
+          tags: [
+            GHL_CANONICAL.PROJECT_JH,
+            GHL_CANONICAL.SOURCE_EVENT_CONTAINED,
+            GHL_CANONICAL.INTEREST_JUSTICE_REFORM,
+            GHL_CANONICAL.ROLE_STORYTELLER,
+          ],
           source: 'JusticeHub CONTAINED Story',
           customFields: {
             tour_stop,

@@ -6,6 +6,8 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { ELPhotoPickerModal } from '@/components/empathy-ledger/ELPhotoPickerModal';
 import { YouthRemandVerticalCard } from '@/components/justice-network/YouthRemandVerticalCard';
+import { NominateForm } from './nominate-form';
+import { HostBackForm } from './host-back-form';
 import {
   tourStops as staticTourStops,
   journeyContainers,
@@ -763,7 +765,8 @@ export function TourContent() {
         <RedDivider />
 
         {/* ==================== SECTION 5: THE TOUR ==================== */}
-        <section id="back-this-tour" />
+        {/* GAP #18/#21 — Back the Tour / Host the Container capture form. */}
+        <HostBackForm />
         <section id="tour" className="relative bg-[#0A0A0A] scanline-overlay concrete-texture overflow-hidden" style={{ padding: 'clamp(60px, 10vw, 120px) 0 clamp(80px, 12vw, 160px)' }}>
           <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16">
             <span className="text-[#DC2626] text-xs font-medium uppercase block mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.3em' }}>The Tour</span>
@@ -858,7 +861,7 @@ export function TourContent() {
         <RedDivider />
 
         {/* ==================== SECTION 6: ACTION ==================== */}
-        <section id="nominate" />
+        <NominateForm />
         <section id="action" className="relative bg-[#F5F0E8] scanline-overlay-dark overflow-hidden" style={{ padding: 'clamp(60px, 10vw, 120px) 0' }}>
           <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-16 text-center">
             <span className="text-[#DC2626] text-xs font-medium uppercase block mb-4" style={{ fontFamily: "'IBM Plex Mono', monospace", letterSpacing: '0.3em' }}>We Need You</span>
@@ -884,7 +887,7 @@ export function TourContent() {
                   title: 'Host the Container',
                   desc: 'Have a venue, festival, or community space? Partner with us to bring it to your area.',
                   cta: 'Get in Touch',
-                  href: '/contained/help',
+                  href: '#host-the-container',
                 },
               ].map((action) => (
                 <Link key={action.title} href={action.href} className="bg-[#0A0A0A] p-8 relative scanline-overlay block group hover:ring-2 hover:ring-[#DC2626]/30 transition-all">

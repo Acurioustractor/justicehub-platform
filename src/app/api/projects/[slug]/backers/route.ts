@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
 
 /**
  * Resolve art_innovation project by slug
@@ -148,7 +148,13 @@ export async function POST(
       ghl.upsertContact({
         email: email.trim().toLowerCase(),
         name: name.trim(),
-        tags: [GHL_TAGS.PARTNER, GHL_TAGS.CONTAINED, GHL_TAGS.JUSTICEHUB],
+        // A backer is a supporter, not a partner (RC1 fix from legacy PARTNER tag).
+        tags: [
+          GHL_CANONICAL.PROJECT_JH,
+          GHL_CANONICAL.SOURCE_EVENT_CONTAINED,
+          GHL_CANONICAL.INTEREST_JUSTICE_REFORM,
+          GHL_CANONICAL.ROLE_SUPPORTER,
+        ],
         source: `JusticeHub CONTAINED Backer`,
         customFields: {
           backer_message: message?.trim() || '',

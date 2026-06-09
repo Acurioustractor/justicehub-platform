@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
 import { sanitizeEmail, sanitizeInput } from '@/lib/security';
 import { sendEmail } from '@/lib/email/send';
 
@@ -200,7 +200,13 @@ export async function POST(request: NextRequest) {
       ghl.upsertContact({
         email,
         name: sanitizedName,
-        tags: [GHL_TAGS.WROTE_MP, GHL_TAGS.CONTAINED, GHL_TAGS.JUSTICEHUB],
+        // Writing an MP is a supporter action (R4 canonical; RC1).
+        tags: [
+          GHL_CANONICAL.PROJECT_JH,
+          GHL_CANONICAL.SOURCE_EVENT_CONTAINED,
+          GHL_CANONICAL.INTEREST_JUSTICE_REFORM,
+          GHL_CANONICAL.ROLE_SUPPORTER,
+        ],
         source: 'JusticeHub MP Letter Tool',
         customFields: {
           mp_contacted: sanitizedMPName || 'Unknown',

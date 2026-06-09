@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
+import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
 import { sendEmail } from '@/lib/email/send';
 import { verifyTurnstileToken } from '@/lib/turnstile';
 
@@ -80,14 +80,13 @@ export async function POST(request: NextRequest) {
         ghl.upsertContact({
           email,
           name: name || undefined,
+          // Canonical CONTAINED reflection (R4): identity base + storyteller role.
+          // No comms: — an in-experience reflection is never an auto opt-in (OCAP).
           tags: [
-            GHL_TAGS.REACTED,
-            GHL_TAGS.CONTAINED,
-            GHL_TAGS.JUSTICEHUB,
-            GHL_TAGS.CONTAINED_ADELAIDE,
-            GHL_TAGS.PUBLIC_VISITOR,
-            GHL_TAGS.YOUTH_REMAND,
-            GHL_TAGS.COUNTRY_REPORTS,
+            GHL_CANONICAL.PROJECT_JH,
+            GHL_CANONICAL.SOURCE_EVENT_CONTAINED,
+            GHL_CANONICAL.INTEREST_JUSTICE_REFORM,
+            GHL_CANONICAL.ROLE_STORYTELLER,
           ],
           source: 'CONTAINED Reaction Form',
           customFields: {

@@ -3,7 +3,7 @@
 import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { ArrowLeft, Calendar, MapPin, Clock, Check, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Calendar, MapPin, Clock, Check, Loader2 } from 'lucide-react';
 import { tourStops } from '@/content/campaign';
 import { TurnstileWidget } from '@/components/ui/turnstile-widget';
 
@@ -52,6 +52,11 @@ const cohortDetails: Record<string, { label: string; tag: string; note: string }
     note: 'For public visitors requesting a hosted walkthrough.',
   },
 };
+
+// GHL native booking-calendar URL (RC4: native Calendar, not an embedded form).
+// Empty until the Phase D calendar is created — the "book your time" CTA only
+// renders once this is set, so no broken link ships before then.
+const CONTAINED_CALENDAR_URL = process.env.NEXT_PUBLIC_GHL_CONTAINED_CALENDAR_URL || '';
 
 function findRequestedStop(stopParam: string | null) {
   const normalized = (stopParam || 'adelaide').toLowerCase().trim();
@@ -425,6 +430,28 @@ function ContainedRegisterPageContent() {
               <p className="text-xl text-white/80 mb-8">
                 Thank you for registering for the CONTAINED launch event, {formData.full_name.split(' ')[0]}.
               </p>
+
+              {/* GHL native-calendar booking CTA (RC4) — gated on Phase D env var */}
+              {CONTAINED_CALENDAR_URL && (
+                <div className="border border-[#dc2626]/40 bg-[#dc2626]/10 p-6 mb-8 text-left">
+                  <h3 className="font-bold mb-2 flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-[#dc2626]" />
+                    Book your walk-through time
+                  </h3>
+                  <p className="text-white/70 text-sm mb-4">
+                    Pick a 30-minute slot. Walk-throughs run in small groups, so choosing a time now
+                    secures your place.
+                  </p>
+                  <a
+                    href={CONTAINED_CALENDAR_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#dc2626] text-white font-bold hover:bg-[#b91c1c] transition-colors"
+                  >
+                    Choose a Time <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              )}
 
               <div className="border border-white/12 p-6 mb-8 bg-white/[0.04] text-left">
                 <h3 className="font-bold mb-4">Event Details</h3>

@@ -17,6 +17,7 @@ import {
   Users,
 } from 'lucide-react';
 import { NewsletterSignup } from '@/components/contained/NewsletterSignup';
+import { ConnectForm } from './connect-form';
 
 const SITE_URL = 'https://justicehub.com.au';
 
@@ -512,6 +513,9 @@ export function ActContent() {
             </div>
           </div>
         </section>
+
+        {/* GAP #20 — funder / partner / media self-identify & route to the team */}
+        <ConnectForm />
 
         {/* Social Media Posts */}
         <section className="py-12 border-b-2 border-black">
