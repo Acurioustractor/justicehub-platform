@@ -2,7 +2,7 @@
 date: 2026-06-09T00:00:00Z
 session_name: contained-ghl-phase-b
 branch: main
-status: active
+status: complete-merged
 ---
 
 # Work Stream: contained-ghl-phase-b
@@ -20,7 +20,12 @@ status: active
 [x] **GAP #18/#21 (host/back form) DONE + committed `fcc0d4f5`.** Branded back/host toggle at `/contained#back-this-tour`; back→canonical backers route (role:supporter), host→new `/api/contained/host` (role:partner + gated PARTNER-pipeline opportunity). "Host the Container" card → `#host-the-container`. Added `GHL_PIPELINES.PARTNER`.
 [x] **GAP #20 (funder/partner/media connect form) DONE + committed `bb0e37c9`.** Branded role toggle at `/contained/act#connect`; new `/api/contained/connect` (role:funder|partner|media + gated FUNDER/PARTNER opportunity + routing emails to benjamin@act.place via threaded `emailFrom`). Added `GHL_PIPELINES.FUNDER`.
 [x] **Calendar CTA DONE + committed `cb973197`.** "Book your walk-through time" CTA on register step 3, gated on `NEXT_PUBLIC_GHL_CONTAINED_CALENDAR_URL` (RC4 native Calendar). Phase D env vars documented in `.env.example`.
-[->] **Phase B BUILD COMPLETE.** Branch `feat/contained-canonical-ghl` NOT pushed (Tier 2 — awaiting Ben), no PR opened (Tier 3). 3 new commits this session (`fcc0d4f5`, `bb0e37c9`, `cb973197`). type-check clean throughout (0 new errors; 52 pre-existing ALMA-cron errors unrelated). All session files lint clean. NO live GHL writes: opportunities no-op until Phase D pipeline env vars set; emails no-op unless EMAIL_ENABLED=true; calendar CTA hidden until its env var set.
+[x] **Phase B SHIPPED + MERGED.** Branch `feat/contained-canonical-ghl` pushed; **PR #44 MERGED into main 2026-06-09T05:45Z** (merge commit `e8f6e675`). type-check clean throughout (0 new errors; 52 pre-existing ALMA-cron errors unrelated). All session files lint clean. NO live GHL writes shipped: opportunities no-op until Phase D pipeline env vars set; emails no-op unless EMAIL_ENABLED=true; calendar CTA hidden until its env var set.
+[->] **NEXT = Phase D only (NOT now).** Live GHL: the ~260-contact canonical-tag migration (RC3 additive-then-strip), GHL native-calendar + pipeline + custom-field creation, smart-list segments, automations, any send. Tier 3, day-shift, human-in-loop, gated to the **16 Jun go/no-go**. Do NOT start autonomously. The wrong-direction colon→underscore `tag-normalize` artifact in `output/ghl-contained-adelaide-audit/` must NOT be applied.
+[x] **Phase D PREP DONE (Tier 1, no live writes) 2026-06-09.** Two push-button artifacts authored + lint-clean + self-test green, NOTHING executed:
+  - `scripts/contained-ghl-phase-d-migrate.mjs` — RC3 additive-then-strip migration. **Dry-run is the default + read-only**; writes require `CONTAINED_PHASE_D_APPLY=yes-write-live-ghl` + confirm flag; two separate passes (`--apply` additive, then `--strip` after UI verify) ARE the additive-then-strip guarantee; `--self-test` validates the planner offline (3/3 pass). Per-contact plan mirrors the shipped register CONTAINED branch: ADD `project:act-jh`+`source:event:contained`+`interest:justice-reform`+`place:sa`(+`engagement:warm` only if no `engagement:*`, RC2); STRIP `project:contained`+`project:contained-adelaide-2026`; PRESERVE all role/comms/engagement/source/interest + flat `contained-*`; `role:*` never invented (→ `needsRoleReview` list). Asserts colon-namespace only (cannot emit the underscore wrong-turn).
+  - `thoughts/shared/handoffs/contained-ghl-phase-b/phase-d-runbook.md` — full day-shift checklist: 9 custom fields to create (else writes silently drop), Partner/Funder/Steward pipelines + `*_STAGE_NEW` env vars, native calendar, consolidated Phase D env, migration command sequence, post-migration verification, do-NOT-apply tag-normalize banner.
+  - Live inventory grounded (read-only): 260 contacts on `project:contained`+`project:contained-adelaide-2026`; CRM already on colon namespace; **no** `cohort:`/`newsletter-stream:`/`source:form` tags and **no** `place:*` tags exist yet → migration is narrow + clean.
 
 ### This Session (alignment — DONE)
 - [x] GHL prereq probe (custom fields, pipeline, eligibility) — read-only, verified
