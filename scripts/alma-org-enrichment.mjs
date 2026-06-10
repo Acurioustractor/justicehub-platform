@@ -106,7 +106,11 @@ const PROVIDERS = [
     name: 'cerebras',
     key: env.CEREBRAS_API_KEY,
     url: 'https://api.cerebras.ai/v1/chat/completions',
-    model: 'qwen-3-235b-a22b-instruct-2507',
+    // 2026-06-11: Cerebras retired qwen-3-235b (the model the calibration
+    // stats above were measured on). Only zai-glm-4.7 and gpt-oss-120b are
+    // served now; glm-4.7 picked for extraction quality. Stats unverified
+    // for the new model — re-calibrate if mismatch rates drift.
+    model: 'zai-glm-4.7',
     jsonMode: true,
   },
   {
