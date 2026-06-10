@@ -6,6 +6,8 @@ import {
   loadJusticeReinvestmentNetwork,
   loadJusticeReinvestmentSites,
   buildSiteEnrichmentIndex,
+  buildSiteOrgIndex,
+  loadJrConnectionIndex,
 } from '@/lib/communities/justice-reinvestment';
 import { serifDisplay } from '@/lib/communities/style';
 import historyData from '@/data/justice-reinvestment/history.json';
@@ -32,6 +34,12 @@ export default async function JusticeReinvestmentNetworkPage() {
   const { groups, counts } = await loadJusticeReinvestmentNetwork();
   const sites = loadJusticeReinvestmentSites();
   const enrichmentIndex = buildSiteEnrichmentIndex(sites);
+
+  // Per-site organisation detail for the full-screen sidebar, loaded once on
+  // the server. The optional curated connections layer is omitted silently when
+  // its data file is absent.
+  const detailIndex = await buildSiteOrgIndex(sites);
+  const connectionIndex = loadJrConnectionIndex();
 
   // Honest count for the hero: curated sites on the map (34 today).
   const placedSites = sites.filter((s) => s.lat !== null && s.lng !== null);
@@ -169,7 +177,12 @@ export default async function JusticeReinvestmentNetworkPage() {
       </section>
 
       {/* Map + state filter + enriched, state-grouped list */}
-      <JRNetworkExplorer sites={sites} groups={enrichedGroups} />
+      <JRNetworkExplorer
+        sites={sites}
+        groups={enrichedGroups}
+        detailIndex={detailIndex}
+        connectionIndex={connectionIndex}
+      />
 
       {/* From data to network */}
       <section className="border-t border-[#eadfce] bg-[#faf5ec]">

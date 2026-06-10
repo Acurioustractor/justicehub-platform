@@ -3,7 +3,12 @@
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
-import type { JrSite, JrStateGroup } from '@/lib/communities/justice-reinvestment';
+import type {
+  JrSite,
+  JrStateGroup,
+  JrSiteDetailIndex,
+  JrConnectionIndex,
+} from '@/lib/communities/justice-reinvestment';
 
 const JRMap = dynamic(() => import('./JRMap'), {
   ssr: false,
@@ -64,9 +69,13 @@ function VerificationChip({ status }: { status: string | null }) {
 export default function JRNetworkExplorer({
   sites,
   groups,
+  detailIndex,
+  connectionIndex,
 }: {
   sites: JrSite[];
   groups: EnrichedGroup[];
+  detailIndex: JrSiteDetailIndex;
+  connectionIndex: JrConnectionIndex;
 }) {
   const [activeState, setActiveState] = useState<StateChip>('All');
 
@@ -95,7 +104,12 @@ export default function JRNetworkExplorer({
         </p>
 
         <div className="mt-10">
-          <JRMap sites={sites} onStateChange={(s) => setActiveState(s)} />
+          <JRMap
+            sites={sites}
+            detailIndex={detailIndex}
+            connectionIndex={connectionIndex}
+            onStateChange={(s) => setActiveState(s)}
+          />
         </div>
       </section>
 
