@@ -1,0 +1,526 @@
+{
+  "sites": [
+    {
+      "match_name": "Maranguka Justice Reinvestment - Bourke",
+      "display_name": "Maranguka, Bourke",
+      "org": "Maranguka / Just Reinvest NSW",
+      "state": "NSW",
+      "town": "Bourke",
+      "lat": -30.0934,
+      "lng": 145.9379,
+      "website": "https://maranguka.org.au/",
+      "logo_url": null,
+      "blurb": "Aboriginal community-led justice reinvestment hub in Bourke, often described as Australia's first major place-based justice reinvestment site.",
+      "source_urls": [
+        "https://maranguka.org.au/",
+        "https://www.justreinvest.org.au/"
+      ]
+    },
+    {
+      "match_name": "Moree Justice Reinvestment",
+      "display_name": "Moree Justice Reinvestment",
+      "org": "Just Reinvest NSW",
+      "state": "NSW",
+      "town": "Moree",
+      "lat": -29.4658,
+      "lng": 149.8416,
+      "website": "https://www.justreinvest.org.au/",
+      "logo_url": null,
+      "blurb": "A community-led justice reinvestment site in Moree working with Just Reinvest NSW to keep young Aboriginal people out of the justice system.",
+      "source_urls": [
+        "https://www.justreinvest.org.au/"
+      ]
+    },
+    {
+      "match_name": "Mount Druitt Justice Reinvestment",
+      "display_name": "Mount Druitt Justice Reinvestment",
+      "org": "Just Reinvest NSW",
+      "state": "NSW",
+      "town": "Mount Druitt",
+      "lat": -33.7686,
+      "lng": 150.8186,
+      "website": "https://www.justreinvest.org.au/",
+      "logo_url": null,
+      "blurb": "A western Sydney justice reinvestment site working with Just Reinvest NSW alongside local Aboriginal community organisations.",
+      "source_urls": [
+        "https://www.justreinvest.org.au/"
+      ]
+    },
+    {
+      "match_name": "Cowra Justice Reinvestment",
+      "display_name": "Cowra Justice Reinvestment",
+      "org": "Cowra Information and Neighbourhood Centre Inc",
+      "state": "NSW",
+      "town": "Cowra",
+      "lat": -33.8345,
+      "lng": 148.6929,
+      "website": "https://www.ag.gov.au/legal-system/justice-reinvestment",
+      "logo_url": null,
+      "blurb": "A Commonwealth-funded justice reinvestment initiative led by the Cowra Information and Neighbourhood Centre.",
+      "source_urls": [
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Nowra Justice Reinvestment",
+      "display_name": "Nowra Justice Reinvestment",
+      "org": "Just Reinvest NSW",
+      "state": "NSW",
+      "town": "Nowra",
+      "lat": -34.881,
+      "lng": 150.6014,
+      "website": "https://justicereinvestment.net.au/",
+      "logo_url": null,
+      "blurb": "A justice reinvestment site on Yuin Country supported by Just Reinvest NSW and the national network.",
+      "source_urls": [
+        "https://justicereinvestment.net.au/"
+      ]
+    },
+    {
+      "match_name": "Learning the Macleay - Kempsey Systems Change Partnership",
+      "display_name": "Learning the Macleay, Kempsey",
+      "org": "Just Reinvest NSW",
+      "state": "NSW",
+      "town": "Kempsey",
+      "lat": -31.0833,
+      "lng": 152.8333,
+      "website": "https://www.justreinvest.org.au/",
+      "logo_url": null,
+      "blurb": "A systems change partnership in the Macleay Valley working with Just Reinvest NSW to shift investment toward community-led prevention.",
+      "source_urls": [
+        "https://www.justreinvest.org.au/"
+      ]
+    },
+    {
+      "match_name": "Lajamanu Justice Reinvestment",
+      "display_name": "Kurdiji, Lajamanu",
+      "org": "Kurdiji Aboriginal Corporation",
+      "state": "NT",
+      "town": "Lajamanu",
+      "lat": -18.3333,
+      "lng": 130.6333,
+      "website": "https://www.ag.gov.au/legal-system/justice-reinvestment",
+      "logo_url": null,
+      "blurb": "A Commonwealth-funded justice reinvestment initiative led by Kurdiji Aboriginal Corporation in the remote Warlpiri community of Lajamanu.",
+      "source_urls": [
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Central Australia Justice Reinvestment Initiative",
+      "display_name": "Central Australia Justice Reinvestment Initiative",
+      "org": "NT Govt Community Justice Centre with Tangentyere Council and Lhere Artepe Aboriginal Corporation",
+      "state": "NT",
+      "town": "Mparntwe (Alice Springs)",
+      "lat": -23.698,
+      "lng": 133.8807,
+      "website": "https://ministers.ag.gov.au/media-centre/central-australia-justice-reinvestment-initiative-announced-17-07-2025",
+      "logo_url": null,
+      "blurb": "A Central Australia Program initiative delivering justice reinvestment in Mparntwe (Alice Springs) with Tangentyere Council and Lhere Artepe.",
+      "source_urls": [
+        "https://ministers.ag.gov.au/media-centre/central-australia-justice-reinvestment-initiative-announced-17-07-2025"
+      ]
+    },
+    {
+      "match_name": "Ngurratjuta/Pmara Ntjarra Justice Reinvestment (Papunya, Mt Liebig, Haasts Bluff)",
+      "display_name": "Ngurratjuta Pmara Ntjarra Justice Reinvestment",
+      "org": "Ngurratjuta/Pmara Ntjarra Aboriginal Corporation",
+      "state": "NT",
+      "town": "Papunya",
+      "lat": -23.2167,
+      "lng": 131.9,
+      "website": "https://www.ag.gov.au/legal-system/justice-reinvestment",
+      "logo_url": null,
+      "blurb": "A Commonwealth-funded justice reinvestment initiative across Papunya, Mt Liebig and Haasts Bluff led by Ngurratjuta/Pmara Ntjarra Aboriginal Corporation.",
+      "source_urls": [
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Maningrida Justice Reinvestment",
+      "display_name": "Maningrida Justice Reinvestment",
+      "org": "Nja-marleya Cultural Leaders and Justice Group Ltd",
+      "state": "NT",
+      "town": "Maningrida",
+      "lat": -12.0561,
+      "lng": 134.2272,
+      "website": "https://njamarleya.org.au/",
+      "logo_url": null,
+      "blurb": "A justice reinvestment initiative in Maningrida led by the Nja-marleya Cultural Leaders and Justice Group.",
+      "source_urls": [
+        "https://njamarleya.org.au/",
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Groote Eylandt Justice Reinvestment",
+      "display_name": "Groote Eylandt Justice Reinvestment",
+      "org": "Anindilyakwa Royalties Aboriginal Corporation",
+      "state": "NT",
+      "town": "Groote Eylandt",
+      "lat": -13.9667,
+      "lng": 136.45,
+      "website": "https://www.anindilyakwa.com.au/",
+      "logo_url": null,
+      "blurb": "A justice reinvestment initiative on Anindilyakwa Country, Groote Eylandt, led by the Anindilyakwa Royalties Aboriginal Corporation.",
+      "source_urls": [
+        "https://www.anindilyakwa.com.au/",
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Doomadgee Justice Reinvestment",
+      "display_name": "Doomadgee Justice Reinvestment",
+      "org": "Gunawuna Jungai Limited",
+      "state": "QLD",
+      "town": "Doomadgee",
+      "lat": -17.9333,
+      "lng": 138.8167,
+      "website": "https://jungai.com.au/projects/justice-reinvestment/",
+      "logo_url": null,
+      "blurb": "A community-led justice reinvestment project in Doomadgee delivered by Gunawuna Jungai Limited.",
+      "source_urls": [
+        "https://jungai.com.au/projects/justice-reinvestment/"
+      ]
+    },
+    {
+      "match_name": "Cherbourg Justice Reinvestment Project",
+      "display_name": "Cherbourg Justice Reinvestment",
+      "org": "Cherbourg Wellbeing Indigenous Corporation",
+      "state": "QLD",
+      "town": "Cherbourg",
+      "lat": -26.2917,
+      "lng": 151.95,
+      "website": "https://www.ag.gov.au/legal-system/justice-reinvestment",
+      "logo_url": null,
+      "blurb": "A Commonwealth-funded justice reinvestment project in Cherbourg led by Cherbourg Wellbeing Indigenous Corporation.",
+      "source_urls": [
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Yarrabah Justice Reinvestment",
+      "display_name": "Yarrabah Justice Reinvestment (Gindaja)",
+      "org": "Gindaja Treatment and Healing Indigenous Corporation",
+      "state": "QLD",
+      "town": "Yarrabah",
+      "lat": -16.9167,
+      "lng": 145.8833,
+      "website": "https://www.ag.gov.au/legal-system/justice-reinvestment",
+      "logo_url": null,
+      "blurb": "A justice reinvestment initiative in Yarrabah led by Gindaja Treatment and Healing Indigenous Corporation.",
+      "source_urls": [
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Mornington Island Justice Reinvestment",
+      "display_name": "Mornington Island Justice Reinvestment",
+      "org": "Jika Kangka Gununamanda Limited",
+      "state": "QLD",
+      "town": "Mornington Island",
+      "lat": -16.6667,
+      "lng": 139.1667,
+      "website": "https://www.ag.gov.au/legal-system/justice-reinvestment",
+      "logo_url": null,
+      "blurb": "A Commonwealth-funded justice reinvestment initiative on Mornington Island led by Jika Kangka Gununamanda Limited.",
+      "source_urls": [
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Napranum Justice Reinvestment",
+      "display_name": "Napranum Justice Reinvestment",
+      "org": "Napranum Aboriginal Shire Council",
+      "state": "QLD",
+      "town": "Napranum",
+      "lat": -12.6667,
+      "lng": 141.8833,
+      "website": "https://www.napranum.qld.gov.au/",
+      "logo_url": null,
+      "blurb": "A justice reinvestment initiative in west Cape York led by the Napranum Aboriginal Shire Council.",
+      "source_urls": [
+        "https://www.napranum.qld.gov.au/",
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Tiraapendi Wodli Justice Reinvestment",
+      "display_name": "Tiraapendi Wodli, Port Adelaide",
+      "org": "Tiraapendi Wodli",
+      "state": "SA",
+      "town": "Port Adelaide",
+      "lat": -34.8472,
+      "lng": 138.5028,
+      "website": "https://www.tiraapendiwodli.org.au/aboutjr",
+      "logo_url": null,
+      "blurb": "A Kaurna and Aboriginal community-led justice reinvestment initiative in the Port Adelaide area.",
+      "source_urls": [
+        "https://www.tiraapendiwodli.org.au/aboutjr"
+      ]
+    },
+    {
+      "match_name": "KNYA Justice Reinvestment",
+      "display_name": "Ngarrindjeri (KNYA) Justice Reinvestment",
+      "org": "Ngarrindjeri Regional Authority Inc",
+      "state": "SA",
+      "town": "Murray Bridge",
+      "lat": -35.1167,
+      "lng": 139.2667,
+      "website": "https://www.ngarrindjeri.org.au/justice-reinvestment",
+      "logo_url": null,
+      "blurb": "A justice reinvestment initiative across Ngarrindjeri Country led by the Ngarrindjeri Regional Authority.",
+      "source_urls": [
+        "https://www.ngarrindjeri.org.au/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Ceduna Justice Reinvestment",
+      "display_name": "Ceduna Justice Reinvestment",
+      "org": "community-led (Justice Reinvestment SA linked)",
+      "state": "SA",
+      "town": "Ceduna",
+      "lat": -32.1264,
+      "lng": 133.6764,
+      "website": "https://www.justicereinvestmentsa.org/projectsaust",
+      "logo_url": null,
+      "blurb": "A community-led justice reinvestment effort in Ceduna connected to the Justice Reinvestment SA network.",
+      "source_urls": [
+        "https://www.justicereinvestmentsa.org/projectsaust"
+      ]
+    },
+    {
+      "match_name": "Kinchela Boys Home Justice Reinvestment",
+      "display_name": "Kinchela Boys Home Justice Reinvestment",
+      "org": "Kinchela Boys Home Aboriginal Corporation",
+      "state": "NSW",
+      "town": "Sydney",
+      "lat": -33.9,
+      "lng": 151.205,
+      "website": "https://kinchelaboyshome.org.au/",
+      "logo_url": null,
+      "blurb": "A justice reinvestment initiative led by Kinchela Boys Home Aboriginal Corporation, an organisation built by Stolen Generations survivors.",
+      "source_urls": [
+        "https://kinchelaboyshome.org.au/",
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Derby Justice Reinvestment",
+      "display_name": "Derby Justice Reinvestment",
+      "org": "Emama Nguda Aboriginal Corporation",
+      "state": "WA",
+      "town": "Derby",
+      "lat": -17.305,
+      "lng": 123.6286,
+      "website": "https://www.emamanguda.org.au/",
+      "logo_url": null,
+      "blurb": "A justice reinvestment initiative in Derby led by Emama Nguda Aboriginal Corporation in the West Kimberley.",
+      "source_urls": [
+        "https://www.emamanguda.org.au/",
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Katherine Justice Reinvestment",
+      "display_name": "Katherine Justice Reinvestment",
+      "org": "Savanna Solutions Business Services Pty Ltd",
+      "state": "NT",
+      "town": "Katherine",
+      "lat": -14.4667,
+      "lng": 132.2667,
+      "website": "https://www.savannasolutions.com.au/",
+      "logo_url": null,
+      "blurb": "A justice reinvestment initiative in Katherine delivered by Savanna Solutions Business Services.",
+      "source_urls": [
+        "https://www.savannasolutions.com.au/",
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Balga Justice Reinvestment",
+      "display_name": "Balga Justice Reinvestment",
+      "org": "Ebenezer Aboriginal Corporation",
+      "state": "WA",
+      "town": "Balga (Perth)",
+      "lat": -31.8556,
+      "lng": 115.8389,
+      "website": "https://www.ag.gov.au/legal-system/justice-reinvestment",
+      "logo_url": null,
+      "blurb": "A Commonwealth-funded justice reinvestment initiative in Balga, Perth, led by Ebenezer Aboriginal Corporation.",
+      "source_urls": [
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Carnarvon Justice Reinvestment",
+      "display_name": "Carnarvon Justice Reinvestment",
+      "org": "Gascoyne Development Commission",
+      "state": "WA",
+      "town": "Carnarvon",
+      "lat": -24.8828,
+      "lng": 113.6611,
+      "website": "https://www.gdc.wa.gov.au/",
+      "logo_url": null,
+      "blurb": "A justice reinvestment initiative in Carnarvon supported by the Gascoyne Development Commission.",
+      "source_urls": [
+        "https://www.gdc.wa.gov.au/",
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Perth Justice Reinvestment (ALSWA)",
+      "display_name": "Perth Justice Reinvestment (ALSWA)",
+      "org": "Aboriginal Legal Service of Western Australia Ltd",
+      "state": "WA",
+      "town": "Perth",
+      "lat": -31.9523,
+      "lng": 115.8613,
+      "website": "https://als.org.au/",
+      "logo_url": null,
+      "blurb": "A justice reinvestment initiative in Perth led by the Aboriginal Legal Service of Western Australia, the largest Aboriginal legal organisation in the country.",
+      "source_urls": [
+        "https://als.org.au/",
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Newman / Pilbara Men's Healing Justice Reinvestment",
+      "display_name": "Newman / Pilbara Men's Healing Justice Reinvestment",
+      "org": "Aboriginal Male's Healing Centre",
+      "state": "WA",
+      "town": "Newman",
+      "lat": -23.355,
+      "lng": 119.7311,
+      "website": "https://www.ag.gov.au/legal-system/justice-reinvestment",
+      "logo_url": null,
+      "blurb": "A justice reinvestment initiative across Newman and Port Hedland led by the Aboriginal Male's Healing Centre in the Pilbara.",
+      "source_urls": [
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Mampu-Maninjaku (CAYLUS) Justice Reinvestment",
+      "display_name": "Mampu-Maninjaku (CAYLUS)",
+      "org": "Central Australian Youth Link-Up Service (CAYLUS)",
+      "state": "NT",
+      "town": "Yuendumu",
+      "lat": -22.2556,
+      "lng": 131.7972,
+      "website": "https://www.caylus.org.au/",
+      "logo_url": null,
+      "blurb": "A Central Australia Program justice reinvestment initiative across Nyirripi, Willowra and Yuendumu delivered by CAYLUS with Tangentyere Council.",
+      "source_urls": [
+        "https://www.caylus.org.au/",
+        "https://ministers.ag.gov.au/media-centre/central-australia-justice-reinvestment-initiative-announced-17-07-2025"
+      ]
+    },
+    {
+      "match_name": "Social Reinvestment WA",
+      "display_name": "Social Reinvestment WA",
+      "org": "Social Reinvestment WA coalition",
+      "state": "WA",
+      "town": "Perth",
+      "lat": -31.9523,
+      "lng": 115.8613,
+      "website": "https://www.socialreinvestmentwa.org.au/",
+      "logo_url": null,
+      "blurb": "A coalition of around 30 non-government organisations advocating for justice reinvestment and reform across Western Australia.",
+      "source_urls": [
+        "https://www.socialreinvestmentwa.org.au/"
+      ]
+    },
+    {
+      "match_name": "RR25by25 ACT Justice Reinvestment Strategy",
+      "display_name": "RR25by25 ACT Justice Reinvestment Strategy",
+      "org": "ACT Government with Yeddung Mura Aboriginal Corporation",
+      "state": "ACT",
+      "town": "Canberra",
+      "lat": -35.2809,
+      "lng": 149.13,
+      "website": "https://www.act.gov.au/law-and-justice/justice-services-for-first-nations-people",
+      "logo_url": null,
+      "blurb": "The ACT Government strategy to reduce Aboriginal and Torres Strait Islander recidivism by 25 percent by 2025 and beyond, through justice reinvestment.",
+      "source_urls": [
+        "https://www.act.gov.au/__data/assets/pdf_file/0010/2563831/RR25by25-and-Beyond-A-Justice-Reinvestment-Strategy-for-the-ACT.pdf"
+      ]
+    },
+    {
+      "match_name": "Yeddung Mura Justice Reinvestment Programs",
+      "display_name": "Yeddung Mura (Good Pathways)",
+      "org": "Yeddung Mura Aboriginal Corporation",
+      "state": "ACT",
+      "town": "Canberra",
+      "lat": -35.2809,
+      "lng": 149.13,
+      "website": "https://goodpathways.org.au/",
+      "logo_url": null,
+      "blurb": "Yeddung Mura means good pathways in Ngunnawal. A community-led corporation supporting Aboriginal people on their justice journey in Canberra.",
+      "source_urls": [
+        "https://goodpathways.org.au/",
+        "https://goodpathways.org.au/act-justice-challenges/"
+      ]
+    },
+    {
+      "match_name": "Justice Reinvestment SA",
+      "display_name": "Justice Reinvestment SA",
+      "org": "Justice Reinvestment SA",
+      "state": "SA",
+      "town": "Adelaide",
+      "lat": -34.9285,
+      "lng": 138.6007,
+      "website": "https://www.justicereinvestmentsa.org/",
+      "logo_url": null,
+      "blurb": "A coalition committed to approaches to justice that tackle the root causes of crime, with a special focus on Aboriginal over-representation in South Australia.",
+      "source_urls": [
+        "https://www.justicereinvestmentsa.org/",
+        "https://www.justicereinvestmentsa.org/aboutus"
+      ]
+    },
+    {
+      "match_name": "Justice Reinvestment Network Australia",
+      "display_name": "Justice Reinvestment Network Australia",
+      "org": "Justice Reinvestment Network Australia Ltd",
+      "state": "National",
+      "town": "National",
+      "lat": null,
+      "lng": null,
+      "website": "https://justicereinvestment.net.au/",
+      "logo_url": null,
+      "blurb": "The national peak body connecting and supporting community-led justice reinvestment initiatives across Australia.",
+      "source_urls": [
+        "https://justicereinvestment.net.au/"
+      ]
+    },
+    {
+      "match_name": "National Justice Reinvestment Program",
+      "display_name": "National Justice Reinvestment Program",
+      "org": "Attorney-General's Department (Commonwealth)",
+      "state": "National",
+      "town": "National",
+      "lat": null,
+      "lng": null,
+      "website": "https://www.ag.gov.au/legal-system/justice-reinvestment",
+      "logo_url": null,
+      "blurb": "The Commonwealth program funding community-led justice reinvestment, with an interim national unit and a delivery-organisation tender released in 2026.",
+      "source_urls": [
+        "https://www.ag.gov.au/legal-system/justice-reinvestment"
+      ]
+    },
+    {
+      "match_name": "Olabud Doogethu",
+      "display_name": "Olabud Doogethu, Halls Creek",
+      "org": "Shire of Halls Creek (Olabud Doogethu)",
+      "state": "WA",
+      "town": "Halls Creek",
+      "lat": -18.2256,
+      "lng": 127.6694,
+      "website": "https://olabuddoogethu.org.au/about-us/",
+      "logo_url": null,
+      "blurb": "Western Australia's first justice reinvestment site, led by the Shire of Halls Creek across Halls Creek, Mulan, Kundat Djaru and Mindibungu.",
+      "source_urls": [
+        "https://olabuddoogethu.org.au/about-us/"
+      ]
+    }
+  ]
+}
