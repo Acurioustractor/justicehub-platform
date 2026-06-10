@@ -5,11 +5,10 @@ import { useState } from 'react';
 export interface ClaimRow {
   id: string;
   organization_id: string;
-  claimant_email: string;
-  claimant_name: string;
-  role_in_org: string | null;
-  status: 'pending' | 'approved' | 'declined' | 'expired';
-  invite_token: string | null;
+  contact_email: string;
+  contact_name: string;
+  role_at_org: string | null;
+  status: 'pending' | 'verified' | 'rejected' | 'revoked' | 'expired';
   invite_expires_at: string | null;
   created_at: string;
   organizations: { id: string; name: string; slug: string | null } | null;
@@ -17,8 +16,9 @@ export interface ClaimRow {
 
 const STATUS_STYLES: Record<ClaimRow['status'], string> = {
   pending: 'bg-amber-100 text-amber-900',
-  approved: 'bg-emerald-100 text-emerald-900',
-  declined: 'bg-neutral-200 text-neutral-700',
+  verified: 'bg-emerald-100 text-emerald-900',
+  rejected: 'bg-neutral-200 text-neutral-700',
+  revoked: 'bg-neutral-200 text-neutral-700',
   expired: 'bg-neutral-200 text-neutral-700',
 };
 
@@ -43,7 +43,7 @@ export function ClaimsQueueClient({ initialClaims }: { initialClaims: ClaimRow[]
       setClaims((prev) =>
         prev.map((c) =>
           c.id === id
-            ? { ...c, status: action === 'approve' ? 'approved' : 'declined' }
+            ? { ...c, status: action === 'approve' ? 'verified' : 'rejected' }
             : c
         )
       );
@@ -90,8 +90,8 @@ export function ClaimsQueueClient({ initialClaims }: { initialClaims: ClaimRow[]
             </span>
           </div>
           <p className="text-sm">
-            {c.claimant_name} &lt;{c.claimant_email}&gt;
-            {c.role_in_org ? ` · ${c.role_in_org}` : ''}
+            {c.contact_name} &lt;{c.contact_email}&gt;
+            {c.role_at_org ? ` · ${c.role_at_org}` : ''}
           </p>
           {c.status === 'pending' && (
             <div className="flex gap-2 mt-1">
@@ -100,7 +100,7 @@ export function ClaimsQueueClient({ initialClaims }: { initialClaims: ClaimRow[]
                 disabled={busy === c.id}
                 className="text-sm px-3 py-1.5 rounded bg-emerald-700 text-white disabled:opacity-50"
               >
-                Approve and create invite
+                Verify and create invite
               </button>
               <button
                 onClick={() => act(c.id, 'decline')}
@@ -114,7 +114,7 @@ export function ClaimsQueueClient({ initialClaims }: { initialClaims: ClaimRow[]
           {inviteUrls[c.id] && (
             <div className="mt-1 text-sm bg-emerald-50 border border-emerald-200 rounded px-3 py-2">
               <p className="font-medium mb-1">
-                Invite link (send this to {c.claimant_email} personally):
+                Invite link (send this to {c.contact_email} personally):
               </p>
               <code className="text-xs break-all select-all">{inviteUrls[c.id]}</code>
             </div>

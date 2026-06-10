@@ -13,8 +13,10 @@ export default async function CommunityClaimsPage() {
   const { supabase } = await requireAdmin('/admin/community-claims');
 
   const { data: claims, error } = await supabase
-    .from('org_claims')
-    .select('*, organizations(id, name, slug)')
+    .from('organization_claims')
+    .select(
+      'id, organization_id, contact_name, contact_email, role_at_org, status, invite_expires_at, created_at, organizations(id, name, slug)'
+    )
     .order('created_at', { ascending: false })
     .limit(200);
   if (error) console.error('[community-claims] fetch failed:', error.message);

@@ -1,7 +1,8 @@
 /**
  * POST /api/admin/community-claims/[id]/decline
  *
- * Decline a pending claim. Stamps the decision and voids the invite token.
+ * Reject a pending claim (status 'rejected', the existing claim system's
+ * vocabulary). Voids any invite token.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -20,12 +21,11 @@ export async function POST(
   const { id } = await params;
 
   const { data, error } = await admin.supabase
-    .from('org_claims')
+    .from('organization_claims')
     .update({
-      status: 'declined',
+      status: 'rejected',
       invite_token: null,
-      decided_by: admin.user.id,
-      decided_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     })
     .eq('id', id)
     .eq('status', 'pending')
@@ -38,5 +38,5 @@ export async function POST(
       { status: 404 }
     );
   }
-  return NextResponse.json({ id: data.id, status: 'declined' });
+  return NextResponse.json({ id: data.id, status: 'rejected' });
 }

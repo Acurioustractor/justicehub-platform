@@ -1,12 +1,15 @@
 /**
- * Admin claim queue (dashboard backend increment 1).
+ * Admin community-claim queue (dashboard backend increment 1).
+ *
+ * Backed by the pre-existing `organization_claims` table. Claims can arrive
+ * two ways: a signed-in user via /api/organizations/[id]/claim (older flow,
+ * user_id set), or recorded here by an admin after the GHL confirming
+ * conversation that /api/communities/claim triggers (user_id null; the
+ * claimant gets an account when they accept the invite).
  *
  * GET  — list claims with org names, newest first, optional ?status= filter.
- * POST — record a claim. Claims arrive as GHL contacts via
- *        /api/communities/claim (unchanged); after the confirming
- *        conversation (engagement-model step 3) the admin records the claim
- *        here so it can be approved into an invite. RLS on org_claims is
- *        admin-only, so both handlers run on the user's own client.
+ * POST — record a claim after the confirming conversation.
+ * RLS: organization_claims_admin_all, so both run on the user's own client.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -17,9 +20,9 @@ export const dynamic = 'force-dynamic';
 
 const CreateSchema = z.object({
   organization_id: z.string().uuid(),
-  claimant_email: z.string().email().max(200),
-  claimant_name: z.string().min(2).max(120),
-  role_in_org: z.string().max(80).optional(),
+  contact_email: z.string().email().max(200),
+  contact_name: z.string().min(2).max(120),
+  role_at_org: z.string().max(80).optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -30,8 +33,10 @@ export async function GET(request: NextRequest) {
 
   const status = request.nextUrl.searchParams.get('status');
   let query = admin.supabase
-    .from('org_claims')
-    .select('*, organizations(id, name, slug)')
+    .from('organization_claims')
+    .select(
+      'id, organization_id, contact_name, contact_email, role_at_org, status, invite_token, invite_expires_at, created_at, organizations(id, name, slug)'
+    )
     .order('created_at', { ascending: false })
     .limit(100);
   if (status) query = query.eq('status', status);
@@ -61,12 +66,13 @@ export async function POST(request: NextRequest) {
   }
 
   const { data, error } = await admin.supabase
-    .from('org_claims')
+    .from('organization_claims')
     .insert({
       organization_id: parsed.data.organization_id,
-      claimant_email: parsed.data.claimant_email.toLowerCase(),
-      claimant_name: parsed.data.claimant_name,
-      role_in_org: parsed.data.role_in_org ?? null,
+      contact_email: parsed.data.contact_email.toLowerCase(),
+      contact_name: parsed.data.contact_name,
+      role_at_org: parsed.data.role_at_org ?? null,
+      status: 'pending',
     })
     .select('id')
     .single();

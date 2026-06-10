@@ -2,15 +2,15 @@
  * POST /api/dashboard/invites/accept  { token }
  *
  * The signed-in invitee redeems their single-use invite token and becomes
- * the org's first owner (or an additional member when invited by an owner).
+ * an active owner in `organization_members`.
  *
  * This is the ONLY service-role write in the dashboard system (never-rule 3:
  * funders never get a back door, so nothing else may bypass RLS). The service
- * role is required because the first owner row cannot satisfy any org_members
- * client policy — no owner exists yet to authorise it.
+ * role is required because the first owner row cannot satisfy any client
+ * policy — no owner exists yet to authorise it.
  *
- * Guards, in order: valid UUID token → claim is approved + token unconsumed →
- * window not expired → signed-in user's email matches claimant_email.
+ * Guards, in order: valid UUID token → claim verified + token unconsumed →
+ * window not expired → signed-in user's email matches contact_email.
  * Consumption = invite_token set NULL, so a token can never be redeemed twice.
  */
 
@@ -44,41 +44,50 @@ export async function POST(request: NextRequest) {
   const service = createServiceClient();
 
   const { data: claim } = await service
-    .from('org_claims')
-    .select('id, organization_id, claimant_email, status, invite_expires_at')
+    .from('organization_claims')
+    .select('id, organization_id, contact_email, status, invite_expires_at')
     .eq('invite_token', parsed.data.token)
-    .eq('status', 'approved')
+    .eq('status', 'verified')
     .single();
 
   if (!claim) {
     return NextResponse.json({ error: 'Invite not found or already used' }, { status: 404 });
   }
   if (claim.invite_expires_at && new Date(claim.invite_expires_at) < new Date()) {
-    await service.from('org_claims').update({ status: 'expired' }).eq('id', claim.id);
+    await service
+      .from('organization_claims')
+      .update({ status: 'expired', invite_token: null })
+      .eq('id', claim.id);
     return NextResponse.json({ error: 'Invite has expired' }, { status: 410 });
   }
-  if (claim.claimant_email.toLowerCase() !== user.email.toLowerCase()) {
+  if ((claim.contact_email ?? '').toLowerCase() !== user.email.toLowerCase()) {
     return NextResponse.json(
       { error: 'This invite was issued to a different email address' },
       { status: 403 }
     );
   }
 
-  const { error: memberError } = await service.from('org_members').upsert(
+  const { error: memberError } = await service.from('organization_members').upsert(
     {
-      profile_id: user.id,
+      user_id: user.id,
       organization_id: claim.organization_id,
       role: 'owner',
+      status: 'active',
+      joined_at: new Date().toISOString(),
     },
-    { onConflict: 'profile_id,organization_id' }
+    { onConflict: 'organization_id,user_id' }
   );
   if (memberError) {
-    console.error('invite accept: org_members upsert failed', memberError);
+    console.error('invite accept: organization_members upsert failed', memberError);
     return NextResponse.json({ error: 'Could not add membership' }, { status: 500 });
   }
 
-  // Consume the token only after the membership write succeeded.
-  await service.from('org_claims').update({ invite_token: null }).eq('id', claim.id);
+  // Consume the token only after the membership write succeeded. Also link
+  // the accepting user to the claim for the audit trail.
+  await service
+    .from('organization_claims')
+    .update({ invite_token: null, user_id: user.id })
+    .eq('id', claim.id);
 
   return NextResponse.json({
     success: true,

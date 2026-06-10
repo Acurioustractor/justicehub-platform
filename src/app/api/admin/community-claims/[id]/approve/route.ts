@@ -1,15 +1,16 @@
 /**
  * POST /api/admin/community-claims/[id]/approve
  *
- * Approve a pending claim after the confirming conversation. Stamps the
- * decision, opens a 14-day invite window, and returns the invite link.
- * There is no automated email: the admin sends the link personally, which
- * is the relationship model working as intended (claiming is confirmed by
- * talking to the organisation).
+ * Verify a pending claim after the confirming conversation. Stamps the
+ * decision (status 'verified', the vocabulary the existing claim system
+ * uses), mints a single-use invite token with a 14 day window, and returns
+ * the invite link. There is no automated email: the admin sends the link
+ * personally, which is the relationship model working as intended.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAdmin } from '@/lib/supabase/admin';
+import { randomUUID } from 'crypto';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,21 +30,24 @@ export async function POST(
   }
   const { id } = await params;
 
+  const token = randomUUID();
   const expires = new Date(
     Date.now() + INVITE_WINDOW_DAYS * 24 * 60 * 60 * 1000
   ).toISOString();
 
   const { data, error } = await admin.supabase
-    .from('org_claims')
+    .from('organization_claims')
     .update({
-      status: 'approved',
+      status: 'verified',
+      invite_token: token,
       invite_expires_at: expires,
-      decided_by: admin.user.id,
-      decided_at: new Date().toISOString(),
+      verified_by: admin.user.id,
+      verified_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     })
     .eq('id', id)
     .eq('status', 'pending')
-    .select('id, invite_token, claimant_email, invite_expires_at')
+    .select('id, contact_email, invite_expires_at')
     .single();
 
   if (error || !data) {
@@ -55,8 +59,8 @@ export async function POST(
 
   return NextResponse.json({
     id: data.id,
-    claimant_email: data.claimant_email,
+    contact_email: data.contact_email,
     invite_expires_at: data.invite_expires_at,
-    invite_url: `${siteUrl()}/dashboard/accept-invite?token=${data.invite_token}`,
+    invite_url: `${siteUrl()}/dashboard/accept-invite?token=${token}`,
   });
 }
