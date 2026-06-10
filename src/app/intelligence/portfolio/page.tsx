@@ -30,7 +30,8 @@ async function getPortfolioAnalytics(): Promise<PortfolioAnalytics> {
       *,
       evidence:alma_evidence(count),
       outcomes:alma_outcomes(count)
-    `);
+    `)
+    .neq('verification_status', 'ai_generated');
 
   const interventions = (allInterventions || []) as any[];
 
@@ -96,10 +97,11 @@ async function getStats() {
     { count: totalInterventions },
     { count: communityControlled },
   ] = await Promise.all([
-    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated'),
     supabase
       .from('alma_interventions')
       .select('*', { count: 'exact', head: true })
+      .neq('verification_status', 'ai_generated')
       .eq('consent_level', 'Community Controlled'),
   ]);
 
@@ -107,6 +109,7 @@ async function getStats() {
   const { data: interventionsWithEvidence } = await supabase
     .from('alma_interventions')
     .select('id, evidence:alma_evidence(count)')
+    .neq('verification_status', 'ai_generated')
     .limit(2000);
 
   const withEvidence = interventionsWithEvidence?.filter(

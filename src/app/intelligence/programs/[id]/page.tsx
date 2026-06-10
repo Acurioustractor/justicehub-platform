@@ -21,6 +21,7 @@ export default async function InterventionDetailPage({ params }: PageProps) {
     .from('alma_interventions')
     .select('*')
     .eq('id', id)
+    .neq('verification_status', 'ai_generated')
     .single();
 
   if (error || !intervention) {

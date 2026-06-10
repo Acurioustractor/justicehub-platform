@@ -118,6 +118,7 @@ export class InterventionService {
         .from('alma_interventions')
         .select('*')
         .eq('id', id)
+        .neq('verification_status', 'ai_generated')
         .single();
 
       if (error) {
@@ -150,7 +151,10 @@ export class InterventionService {
     offset?: number;
   } = {}): Promise<{ data: ALMAIntervention[]; error: Error | null; count: number }> {
     try {
-      let query = getSupabase().from('alma_interventions').select('*', { count: 'exact' });
+      let query = getSupabase()
+        .from('alma_interventions')
+        .select('*', { count: 'exact' })
+        .neq('verification_status', 'ai_generated');
 
       // Apply filters
       if (filters.consent_level) {

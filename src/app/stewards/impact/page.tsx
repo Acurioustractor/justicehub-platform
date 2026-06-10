@@ -23,12 +23,12 @@ async function getComprehensiveStats() {
     { data: byType },
     { data: recentUpdates },
   ] = await Promise.all([
-    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
-    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).not('outcomes', 'is', null),
-    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).or('name.ilike.%Aboriginal%,name.ilike.%Indigenous%'),
-    supabase.from('alma_interventions').select('metadata'),
-    supabase.from('alma_interventions').select('intervention_type'),
-    supabase.from('alma_interventions').select('name, intervention_type, created_at').order('created_at', { ascending: false }).limit(5),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated'),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated').not('outcomes', 'is', null),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated').or('name.ilike.%Aboriginal%,name.ilike.%Indigenous%'),
+    supabase.from('alma_interventions').select('metadata').neq('verification_status', 'ai_generated'),
+    supabase.from('alma_interventions').select('intervention_type').neq('verification_status', 'ai_generated'),
+    supabase.from('alma_interventions').select('name, intervention_type, created_at').neq('verification_status', 'ai_generated').order('created_at', { ascending: false }).limit(5),
   ]);
 
   // Process state distribution

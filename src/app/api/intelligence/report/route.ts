@@ -32,7 +32,7 @@ export async function GET() {
         .neq('verification_status', 'ai_generated')
         .order('portfolio_score', { ascending: false })
         .limit(20),
-      supabase.from('alma_interventions').select('type'),
+      supabase.from('alma_interventions').select('type').neq('verification_status', 'ai_generated'),
       supabase
         .from('alma_outcomes')
         .select('outcome_type'),

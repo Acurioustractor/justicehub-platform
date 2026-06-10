@@ -75,6 +75,7 @@ export async function GET(req: NextRequest) {
     const { data, error } = await supabase
       .from('alma_interventions')
       .select('id, name, type, portfolio_score, evidence_level, community_authority_signal, harm_risk_level, geography')
+      .neq('verification_status', 'ai_generated')
       .not('portfolio_score', 'is', null)
       .overlaps('geography', geoMatches)
       .order('portfolio_score', { ascending: false })

@@ -45,6 +45,7 @@ export default function NetworkPage() {
         const { data: interventions } = await supabase
           .from('alma_interventions')
           .select('metadata')
+          .neq('verification_status', 'ai_generated')
           .limit(2000);
 
         const counts: Record<string, number> = {};

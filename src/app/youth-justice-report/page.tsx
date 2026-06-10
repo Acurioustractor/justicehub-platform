@@ -9,7 +9,7 @@ async function getReportStats() {
     const supabase = createServiceClient();
 
     const [interventions, evidence, inquiries, international] = await Promise.all([
-      supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
+      supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated'),
       supabase.from('alma_evidence').select('*', { count: 'exact', head: true }),
       supabase.from('historical_inquiries').select('*', { count: 'exact', head: true }),
       supabase.from('international_programs').select('*', { count: 'exact', head: true }),
@@ -19,6 +19,7 @@ async function getReportStats() {
     const { data: stateData } = await supabase
       .from('alma_interventions')
       .select('metadata')
+      .neq('verification_status', 'ai_generated')
       .limit(1500);
 
     const stateCounts: Record<string, number> = {};
@@ -33,6 +34,7 @@ async function getReportStats() {
     const { data: typeData } = await supabase
       .from('alma_interventions')
       .select('type')
+      .neq('verification_status', 'ai_generated')
       .limit(1500);
 
     const typeCounts: Record<string, number> = {};

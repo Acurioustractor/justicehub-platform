@@ -37,6 +37,7 @@ export async function GET() {
     const { data: interventions, error: interventionsError } = await supabase
       .from('alma_interventions')
       .select('id, name, description, type, geography, latitude, longitude, evidence_level')
+      .neq('verification_status', 'ai_generated')
       .not('latitude', 'is', null)
       .not('longitude', 'is', null);
 

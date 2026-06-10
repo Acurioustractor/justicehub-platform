@@ -29,7 +29,7 @@ export async function GET() {
             { data: recentScrapes },
         ] = await Promise.all([
             // Total interventions discovered
-            supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
+            supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated'),
 
             // Scraped links (completed)
             supabase.from('alma_discovered_links').select('*', { count: 'exact', head: true }).eq('status', 'scraped'),

@@ -20,10 +20,10 @@ async function getImpactStats() {
     { count: aboriginalPrograms },
     { data: stateData },
   ] = await Promise.all([
-    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
-    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).not('outcomes', 'is', null),
-    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).ilike('name', '%Aboriginal%'),
-    supabase.from('alma_interventions').select('metadata').not('metadata->>state', 'is', null),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated'),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated').not('outcomes', 'is', null),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated').ilike('name', '%Aboriginal%'),
+    supabase.from('alma_interventions').select('metadata').neq('verification_status', 'ai_generated').not('metadata->>state', 'is', null),
   ]);
 
   const states = new Set(stateData?.map((row: any) => row.metadata?.state).filter(Boolean));

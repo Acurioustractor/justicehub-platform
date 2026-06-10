@@ -467,6 +467,7 @@ async function handleFindIntervention(
   let query = supabase
     .from('alma_interventions')
     .select('id, name, type, geography, evidence_level')
+    .neq('verification_status', 'ai_generated')
     .limit(5);
 
   if (jurisdiction) {
@@ -516,7 +517,7 @@ async function handleSystemStats(supabase: any): Promise<Partial<ChatResponse>> 
   // Get counts from database
   const [interventionsResult, evidenceResult, outcomesResult] =
     await Promise.all([
-      supabase.from('alma_interventions').select('id', { count: 'exact', head: true }),
+      supabase.from('alma_interventions').select('id', { count: 'exact', head: true }).neq('verification_status', 'ai_generated'),
       supabase.from('alma_evidence').select('id', { count: 'exact', head: true }),
       supabase.from('alma_outcomes').select('id', { count: 'exact', head: true }),
     ]);

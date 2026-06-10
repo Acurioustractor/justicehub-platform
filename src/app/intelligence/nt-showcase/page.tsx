@@ -23,6 +23,7 @@ async function getNTInterventions() {
   const { data, error } = await supabase
     .from('alma_interventions')
     .select('*')
+    .neq('verification_status', 'ai_generated')
     .order('evidence_level', { ascending: false });
 
   if (error) {

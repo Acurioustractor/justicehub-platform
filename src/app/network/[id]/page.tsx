@@ -98,6 +98,7 @@ async function getInterventionCount(stateCode: string | null): Promise<number> {
   const { data, error } = await supabase
     .from('alma_interventions')
     .select('metadata')
+    .neq('verification_status', 'ai_generated')
     .limit(2000);
 
   if (error) {

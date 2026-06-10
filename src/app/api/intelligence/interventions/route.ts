@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
 
     if (filteredIds && filteredIds.size === 0) {
       const [interventionFilterRows, outcomeFilterRows, contextFilterRows] = await Promise.all([
-        supabase.from('alma_interventions').select('type, evidence_level'),
+        supabase.from('alma_interventions').select('type, evidence_level').neq('verification_status', 'ai_generated'),
         supabase.from('alma_outcomes').select('outcome_type').not('outcome_type', 'is', null),
         supabase.from('alma_community_contexts').select('context_type').not('context_type', 'is', null),
       ]);
@@ -189,7 +189,7 @@ export async function GET(request: NextRequest) {
 
     const [interventionsResult, interventionFilterRows, outcomeFilterRows, contextFilterRows] = await Promise.all([
       query,
-      supabase.from('alma_interventions').select('type, evidence_level'),
+      supabase.from('alma_interventions').select('type, evidence_level').neq('verification_status', 'ai_generated'),
       supabase.from('alma_outcomes').select('outcome_type').not('outcome_type', 'is', null),
       supabase.from('alma_community_contexts').select('context_type').not('context_type', 'is', null),
     ]);

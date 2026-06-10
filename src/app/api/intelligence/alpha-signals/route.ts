@@ -39,6 +39,7 @@ export async function GET() {
                 alma_intervention_evidence (count),
                 linked_community_program_id
             `)
+            .neq('verification_status', 'ai_generated')
             .limit(50);
 
         if (error) throw error;

@@ -82,6 +82,7 @@ export class PortfolioService {
     const { data: interventions } = await getSupabase()
       .from('alma_interventions')
       .select('*')
+      .neq('verification_status', 'ai_generated')
       .in('review_status', ['Approved', 'Published'])
       .order('portfolio_score', { ascending: false, nullsFirst: false });
 
@@ -263,6 +264,7 @@ export class PortfolioService {
     const { data: interventions } = await getSupabase()
       .from('alma_interventions')
       .select('geography, target_cohort, type, current_funding, portfolio_score')
+      .neq('verification_status', 'ai_generated')
       .in('review_status', ['Approved', 'Published']);
 
     if (!interventions || interventions.length === 0) {

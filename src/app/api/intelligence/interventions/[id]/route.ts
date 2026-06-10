@@ -112,6 +112,7 @@ export async function GET(
       .from('alma_interventions')
       .select('*')
       .eq('id', interventionId)
+      .neq('verification_status', 'ai_generated')
       .single();
 
     if (interventionError) {
@@ -134,6 +135,7 @@ export async function GET(
           .from('alma_interventions')
           .select('*')
           .neq('id', interventionId)
+          .neq('verification_status', 'ai_generated')
           .eq('type', (intervention as Intervention).type || '')
           .limit(3),
       ]);

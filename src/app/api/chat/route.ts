@@ -125,6 +125,7 @@ async function searchKnowledgeBase(query: string): Promise<SearchResult[]> {
   const { data: interventions } = await supabase
     .from('alma_interventions')
     .select('id, name, description, type, metadata')
+    .neq('verification_status', 'ai_generated')
     .or(searchTerms.map(t => `name.ilike.%${t}%,description.ilike.%${t}%`).join(','))
     .limit(5);
 
@@ -307,8 +308,8 @@ async function getStats() {
     { count: inquiries },
     { count: international }
   ] = await Promise.all([
-    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }),
-    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).not('evidence_level', 'is', null),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated'),
+    supabase.from('alma_interventions').select('*', { count: 'exact', head: true }).neq('verification_status', 'ai_generated').not('evidence_level', 'is', null),
     supabase.from('services').select('*', { count: 'exact', head: true }),
     supabase.from('public_profiles').select('*', { count: 'exact', head: true }),
     supabase.from('organizations').select('*', { count: 'exact', head: true }),

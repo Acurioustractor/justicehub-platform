@@ -18,7 +18,7 @@ export async function GET() {
             { data: intOutcomes },
             { data: intContexts }
         ] = await Promise.all([
-            supabase.from('alma_interventions').select('id, name, type, category:type, geography, evidence_level, cultural_authority').limit(500),
+            supabase.from('alma_interventions').select('id, name, type, category:type, geography, evidence_level, cultural_authority').neq('verification_status', 'ai_generated').limit(500),
             supabase.from('alma_evidence').select('id, title, type:evidence_type, publication_date').limit(500),
             supabase.from('alma_outcomes').select('id, name, description, type:outcome_type').limit(500),
             supabase.from('alma_community_contexts').select('id, name, type:context_type, state').limit(200),
