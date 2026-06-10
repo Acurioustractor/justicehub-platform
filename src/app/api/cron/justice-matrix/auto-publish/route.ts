@@ -24,6 +24,7 @@
 
 import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
+import { canonicaliseCategories } from '@/lib/justice-matrix/categories';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -146,7 +147,7 @@ export async function GET(request: Request) {
             campaign_name: d.extracted_title,
             country_region: d.extracted_jurisdiction,
             goals: d.extracted_summary,
-            categories: d.extracted_categories ?? [],
+            categories: canonicaliseCategories(d.extracted_categories),
             country_code: d.extracted_country_code,
             source: 'ai_scraped',
             campaign_link: d.source_url,
@@ -175,7 +176,7 @@ export async function GET(request: Request) {
             jurisdiction: d.extracted_jurisdiction,
             year: d.extracted_year,
             strategic_issue: d.extracted_summary,
-            categories: d.extracted_categories ?? [],
+            categories: canonicaliseCategories(d.extracted_categories),
             country_code: d.extracted_country_code,
             case_type: 'court_decision',
             authoritative_link: d.source_url,

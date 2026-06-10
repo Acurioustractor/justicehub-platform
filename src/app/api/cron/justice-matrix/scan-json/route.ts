@@ -12,6 +12,7 @@
 
 import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
+import { canonicaliseCategories } from '@/lib/justice-matrix/categories';
 import { curiaApiItems } from '@/lib/justice-matrix/curia-adapter';
 // NEW (2026-05-29): live-verified global adapters. First cron run that touches a
 // HUDOC or CourtListener source SHOULD BE WATCHED — these have not yet run
@@ -123,7 +124,7 @@ async function scanWithAdapter(supabase: Db, source: SourceRow, adapter: Adapter
       extracted_title: item.title,
       extracted_jurisdiction: item.jurisdiction ?? null,
       extracted_year: item.year ?? null,
-      extracted_categories: item.categories ?? [],
+      extracted_categories: canonicaliseCategories(item.categories),
       extracted_summary: item.summary ?? null,
       extracted_country_code: item.country_code ?? null,
       extraction_confidence: item.confidence,

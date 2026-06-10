@@ -1,5 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/service-lite'
 import { checkAdmin } from '@/lib/supabase/admin-lite'
+import { canonicaliseCategories } from '@/lib/justice-matrix/categories'
 import {
   caseEmbeddingText,
   campaignEmbeddingText,
@@ -126,7 +127,7 @@ export async function PUT(
           country_code: body.country_code || discovery.extracted_country_code,
           lat: body.lat || discovery.extracted_lat,
           lng: body.lng || discovery.extracted_lng,
-          categories: body.categories || discovery.extracted_categories,
+          categories: canonicaliseCategories(body.categories || discovery.extracted_categories),
           outcome: body.outcome,
           precedent_strength: body.precedent_strength,
           source: 'ai_scraped',
@@ -196,7 +197,7 @@ export async function PUT(
           country_code: body.country_code || discovery.extracted_country_code,
           lat: body.lat || discovery.extracted_lat,
           lng: body.lng || discovery.extracted_lng,
-          categories: body.categories || discovery.extracted_categories,
+          categories: canonicaliseCategories(body.categories || discovery.extracted_categories),
           source: 'ai_scraped',
           verified: true,
           verified_by: body.reviewed_by,
