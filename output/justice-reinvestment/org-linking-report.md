@@ -98,10 +98,21 @@ backfill target. Its links were re-homed instead.
 - JRNSW dedupe: 7 interventions moved `01b85c9d` → canonical `9de1b435` (Just Reinvest NSW, which holds the funding rows)
 - Bonus: dup row `894c005a` was a junk collector — 5 unrelated interventions re-homed to their real orgs: Dumbartung `338e7b97`, Katungul `3407eb01`, Yorgum `e9545cd5`, Tharawal AC `630ef81e`, Redfern Youth Connect `bbefc5a8`
 
-**Leftover (NOT done — deletion is Tier 3, needs explicit ask):** four org rows now have
-zero interventions and zero funding rows, safe to delete or merge-archive:
-`01b85c9d` (JRNSW dup), `894c005a` (Njamarleya dup), `a4a2720d` (Maranguka placeholder),
-`c809fdd3` (Maningrida placeholder).
+**Round 2 (applied later on 2026-06-11, on explicit ask):** the four empty rows above were
+deleted after a full FK scan across all 57 tables referencing `organizations` (5 stray
+references found and re-homed first: 3 `services` rows re-pointed to the correct orgs,
+1 stale `civic_org_classifications` row and 1 rejected enrichment candidate deleted).
+
+The ABN sweep for the enrichment run then exposed **five more duplicate pairs** (same ABN,
+two org rows). Each was merged into the canonical after a per-row FK scan, with zero data loss:
+- Gindaja: `446fa0b5` (short name; 22 justice_funding + 1 service moved) → **`61c94805`** Gindaja Treatment and Healing Indigenous Corporation
+- Gunawuna Jungai: `f83b5547` (no refs) → **`505bb44a`** (also corrected `is_indigenous_org` false→true)
+- Ngurratjuta/Pmara Ntjarra: `a7dfdc8c` (no refs) → **`fb4463f5`**
+- Olabud Doogethu: `1a2d188d` (empty stub) → **`a17b1b92`** Olabud Doogethu Aboriginal Corporation
+- Tiraapendi Wodli: `c10a70d8` TIRAAPENDI WODLI LTD (no refs) → **`673d4b2d`** (kept its 7 interventions; took the twin's website and legal name "Tiraapendi Wodli Ltd")
+
+A targeted enrichment run (`--apply --ids`, new flag) was launched for the 15 canonical JR
+orgs with websites; candidates land in `alma_org_enrichment_candidates` as pending_review.
 
 ## Proposed `organizations` updates (original proposal, superseded by APPLIED above)
 
