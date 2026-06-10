@@ -4,11 +4,10 @@ import { notFound } from 'next/navigation';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { ANCHOR_COMMUNITIES, getAnchorBySlug } from '@/lib/communities/anchors';
 import { loadCommunityProfile } from '@/lib/communities/data';
+import { loadCommunityStories } from '@/lib/communities/stories';
 import { serifDisplay } from '@/lib/communities/style';
 
 export const revalidate = 300;
-
-const CLAIM_EMAIL = 'hello@justicehub.com.au';
 
 const currency = new Intl.NumberFormat('en-AU', {
   style: 'currency',
@@ -47,16 +46,13 @@ export default async function CommunityProfilePage({
     notFound();
   }
 
-  const profile = await loadCommunityProfile(anchor);
+  const [profile, stories] = await Promise.all([
+    loadCommunityProfile(anchor),
+    loadCommunityStories(anchor),
+  ]);
   const { org, programs, funding, matched } = profile;
 
-  const claimSubject = encodeURIComponent(
-    `Claim our profile: ${anchor.name}`
-  );
-  const claimBody = encodeURIComponent(
-    `Kia ora, we are the organisation behind the ${anchor.name} profile on JusticeHub and would like to claim and confirm it.`
-  );
-  const claimHref = `mailto:${CLAIM_EMAIL}?subject=${claimSubject}&body=${claimBody}`;
+  const claimHref = `/communities/${anchor.slug}/claim`;
 
   return (
     <div className="min-h-screen bg-[#f8f1e6] text-[#2b2530]">
@@ -122,12 +118,12 @@ export default async function CommunityProfilePage({
               awaiting the organisation's own review.
             </p>
           </div>
-          <a
+          <Link
             href={claimHref}
             className="inline-flex shrink-0 items-center justify-center rounded-full border border-[#4a2560] bg-[#4a2560] px-5 py-2.5 text-sm font-semibold text-[#f5ecdf] transition-colors duration-150 hover:bg-[#3c1d50]"
           >
-            This is your organisation?
-          </a>
+            Claim this profile
+          </Link>
         </div>
       </section>
 
@@ -211,6 +207,97 @@ export default async function CommunityProfilePage({
         </div>
       </section>
 
+      {/* Stories (Empathy Ledger) */}
+      <section className="border-t border-[#eadfce] bg-[#faf5ec]">
+        <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-16">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8d6a44]">
+            Told in their own words
+          </p>
+          <h2 className="mt-3 font-serif text-5xl leading-none" style={serifDisplay}>
+            Stories
+          </h2>
+
+          {stories.length > 0 ? (
+            <>
+              <p className="mt-5 max-w-3xl text-base leading-7 text-[#584b40]">
+                These stories live on Empathy Ledger and are shown here because
+                this community chose to share them. Each one opens on Empathy
+                Ledger, where the teller holds the consent.
+              </p>
+              <div className="mt-8 grid gap-5 sm:grid-cols-2">
+                {stories.map((story) => (
+                  <a
+                    key={story.id}
+                    href={story.detailUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex flex-col overflow-hidden rounded-[22px] border border-[#eadfce] bg-[#fffaf3] shadow-[0_16px_40px_rgba(49,31,15,0.06)] transition-shadow duration-150 hover:shadow-[0_20px_50px_rgba(49,31,15,0.1)]"
+                  >
+                    {/* Real photos only, from Empathy Ledger. No placeholder. */}
+                    {story.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={story.imageUrl}
+                        alt=""
+                        className="h-44 w-full object-cover"
+                      />
+                    ) : null}
+                    <div className="flex flex-1 flex-col p-6">
+                      <h3
+                        className="font-serif text-2xl leading-7 text-[#2b2530]"
+                        style={serifDisplay}
+                      >
+                        {story.title}
+                      </h3>
+                      {story.storytellerName ? (
+                        <p className="mt-2 text-sm font-medium text-[#7d5f3d]">
+                          {story.storytellerName}
+                        </p>
+                      ) : null}
+                      {story.excerpt ? (
+                        <p className="mt-3 text-[15px] leading-6 text-[#584b40]">
+                          {story.excerpt}
+                        </p>
+                      ) : null}
+                      <span className="mt-4 inline-flex items-center text-sm font-semibold text-[#4a2560] group-hover:underline">
+                        Read on Empathy Ledger
+                      </span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="mt-6 max-w-3xl rounded-[24px] border border-[#eadfce] bg-[#fff8ef] p-8 shadow-[0_16px_40px_rgba(49,31,15,0.05)]">
+              <p className="text-base leading-7 text-[#584b40]">
+                Stories live here when this community chooses to put them here.
+                None are shared yet. When they are, they sit under the teller's
+                own consent, held on Empathy Ledger.
+              </p>
+              <p className="mt-5 text-sm font-semibold uppercase tracking-[0.12em] text-[#8d6a44]">
+                Who the story belongs to, the teller decides, every time
+              </p>
+              <ul className="mt-3 space-y-2 text-[15px] leading-6 text-[#584b40]">
+                <li>A story can be an individual's, theirs alone to share.</li>
+                <li>It can be a family's, shared with the family's say-so.</li>
+                <li>It can be a kinship group's, held by that group.</li>
+                <li>It can be the community's, carried by the community.</li>
+                <li>Or it can be public, open to anyone.</li>
+              </ul>
+              <p className="mt-5 text-[15px] leading-6 text-[#584b40]">
+                The teller chooses which, every time, and can change it later.
+              </p>
+              <Link
+                href={claimHref}
+                className="mt-6 inline-flex items-center justify-center rounded-full border border-[#4a2560] bg-[#4a2560] px-6 py-3 text-sm font-semibold text-[#f5ecdf] transition-colors duration-150 hover:bg-[#3c1d50]"
+              >
+                Claim this profile to begin
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Funding */}
       {funding.length > 0 ? (
         <section className="border-t border-[#eadfce] bg-[#faf5ec]">
@@ -276,15 +363,16 @@ export default async function CommunityProfilePage({
               If this is your organisation, the pen is yours
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-7 text-[#584b40]">
-              Email us and we will hand you the page. You decide what it shows,
-              what stays private, and what the world may see.
+              Tell us who you are and we will hand you the page. You decide what
+              it shows, what stays private, and what the world may see. We
+              confirm by talking with you, not by an automated check.
             </p>
-            <a
+            <Link
               href={claimHref}
               className="mt-6 inline-flex items-center justify-center rounded-full border border-[#4a2560] bg-[#4a2560] px-6 py-3 text-sm font-semibold text-[#f5ecdf] transition-colors duration-150 hover:bg-[#3c1d50]"
             >
-              Email {CLAIM_EMAIL}
-            </a>
+              Claim this profile
+            </Link>
           </div>
         </div>
       </section>

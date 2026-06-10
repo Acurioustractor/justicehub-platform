@@ -34,6 +34,13 @@ export interface AnchorCommunity {
     state: string | null;
     isIndigenousOrg: boolean;
   };
+  /**
+   * Optional Empathy Ledger v2 project id. When set, the stories loader fetches
+   * the community's published stories scoped to this project. Left unset until
+   * a community confirms its Empathy Ledger project; until then the profile
+   * renders the standing consent-tier frame instead of any stories.
+   */
+  empathyLedgerProjectId?: string;
 }
 
 export const ANCHOR_COMMUNITIES: AnchorCommunity[] = [
