@@ -15,6 +15,7 @@
  *   node scripts/alma-org-enrichment.mjs --apply --retry-failed --batch 50  # re-attempt past fetch failures
  *   node scripts/alma-org-enrichment.mjs --apply --refresh-stale --batch 50 # re-pull orgs >90 days since last approval
  *   node scripts/alma-org-enrichment.mjs --apply --refresh-stale --refresh-days 180  # custom staleness window
+ *   node scripts/alma-org-enrichment.mjs --apply --ids <uuid,uuid,...>     # targeted run on specific orgs
  *
  * Recommended scaling cadence:
  *   - Daily: `--apply --batch 200 --concurrency 4` (~600 orgs/run, ~10 min wall-clock)
@@ -77,6 +78,16 @@ const retryFailed = args.includes('--retry-failed');
 // pending_review (not auto-applied) so admin sees the drift before it lands.
 const refreshStale = args.includes('--refresh-stale');
 const refreshDays = parseInt(args.find((_, i) => args[i - 1] === '--refresh-days') || '90', 10);
+// Targeted run: comma-separated organizations.id UUIDs. Bypasses the
+// eligibility filters (is_indigenous_org, featured_on_map, completeness
+// ordering) and the 14-day dedupe — a targeted run is an explicit operator
+// decision, e.g. the justice reinvestment site orgs, most of which are
+// Indigenous-led and deliberately excluded from broad sweeps. Orgs without
+// a website are still skipped (nothing to scrape) and are logged by name.
+const targetIds = (args.find((_, i) => args[i - 1] === '--ids') || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
 
 // Provider order — calibrated against the first ~1400 candidates produced:
 //   cerebras: 0.715 avg confidence, 26% URL-mismatch (best by a wide margin)
@@ -719,21 +730,37 @@ async function main() {
   // - not Indigenous-led (those route through basecamp referral)
   // - not already a featured exemplar
   // - no recent candidate (avoid re-processing)
-  const { data: orgs, error } = await supabase
-    .from('organizations')
-    .select(
-      'id, name, slug, website_url, website, suburb, city, state, is_indigenous_org, profile_completeness_score, featured_on_map'
-    )
-    .neq('archived', true)
-    .eq('is_indigenous_org', false)
-    .neq('featured_on_map', true)
-    .or('website_url.not.is.null,website.not.is.null')
-    .order('profile_completeness_score', { ascending: false, nullsFirst: false })
-    .limit(Math.max(batchSize * 50, 5000));
+  // With --ids: exactly those orgs, no eligibility filters (see flag comment).
+  const orgSelect =
+    'id, name, slug, website_url, website, suburb, city, state, is_indigenous_org, profile_completeness_score, featured_on_map';
+  const { data: orgs, error } =
+    targetIds.length > 0
+      ? await supabase.from('organizations').select(orgSelect).in('id', targetIds)
+      : await supabase
+          .from('organizations')
+          .select(orgSelect)
+          .neq('archived', true)
+          .eq('is_indigenous_org', false)
+          .neq('featured_on_map', true)
+          .or('website_url.not.is.null,website.not.is.null')
+          .order('profile_completeness_score', { ascending: false, nullsFirst: false })
+          .limit(Math.max(batchSize * 50, 5000));
 
   if (error) {
     console.error('Failed to fetch orgs:', error.message);
     process.exit(1);
+  }
+
+  if (targetIds.length > 0) {
+    const foundIds = new Set((orgs || []).map((o) => o.id));
+    for (const id of targetIds) {
+      if (!foundIds.has(id)) console.warn(`--ids: no organization found for ${id}`);
+    }
+    for (const o of orgs || []) {
+      if (!(o.website_url || o.website || '').length) {
+        console.warn(`--ids: skipping "${o.name}" (${o.id}) — no website to scrape`);
+      }
+    }
   }
 
   const candidates = (orgs || []).filter((o) => (o.website_url || o.website || '').length > 0);
@@ -756,8 +783,9 @@ async function main() {
   const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
   const refreshCutoff = new Date(Date.now() - refreshDays * 24 * 60 * 60 * 1000).toISOString();
 
-  // First pass — populate recentSet (last 14 days of any activity)
-  for (let from = 0; ; from += 1000) {
+  // First pass — populate recentSet (last 14 days of any activity).
+  // Skipped entirely for --ids runs: targeted means "do these now".
+  for (let from = 0; targetIds.length === 0; from += 1000) {
     const { data: existing, error: existingErr } = await supabase
       .from('alma_org_enrichment_candidates')
       .select('organization_id, status, rejection_reason')
@@ -808,11 +836,14 @@ async function main() {
 
   const afterDedup = candidates.filter((c) => !recentSet.has(c.id));
   const dedupedOut = candidates.length - afterDedup.length;
-  const todo = afterDedup.slice(0, batchSize);
+  // --ids runs process every targeted org; batch size only paces broad sweeps.
+  const todo = targetIds.length > 0 ? afterDedup : afterDedup.slice(0, batchSize);
   const trimmed = afterDedup.length - todo.length;
 
   console.log(
     `Found ${candidates.length} eligible orgs · ${dedupedOut} already have a candidate from the last 14 days · ${trimmed} held back by batch size · processing ${todo.length}${
+      targetIds.length > 0 ? ` · --ids: targeted run on ${targetIds.length} org IDs` : ''
+    }${
       retryFailed ? ' · --retry-failed: previous skip markers ignored' : ''
     }${refreshStale ? ` · --refresh-stale: ${staleApprovals.size} stale orgs queued for refresh (>${refreshDays} days)` : ''}.`
   );
