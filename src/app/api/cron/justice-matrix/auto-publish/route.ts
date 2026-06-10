@@ -38,6 +38,7 @@ type Db = any;
 interface Discovery {
   id: string;
   item_type: string | null;
+  source_id: string | null;
   source_url: string | null;
   extracted_title: string | null;
   extracted_jurisdiction: string | null;
@@ -85,7 +86,7 @@ export async function GET(request: Request) {
   const { data, error } = await supabase
     .from('justice_matrix_discovered')
     .select(
-      'id,item_type,source_url,extracted_title,extracted_jurisdiction,extracted_year,extracted_categories,extracted_summary,extracted_country_code,similarity_score,raw_data',
+      'id,item_type,source_id,source_url,extracted_title,extracted_jurisdiction,extracted_year,extracted_categories,extracted_summary,extracted_country_code,similarity_score,raw_data',
     )
     .eq('status', 'pending')
     .order('discovered_at', { ascending: true })
@@ -120,6 +121,15 @@ export async function GET(request: Request) {
         .eq('id', d.id);
       deduped++;
       continue;
+    }
+
+    // Provenance gate: only discoveries from a registered scanner source may
+    // auto-publish. Partner contributions and anything else without a source_id
+    // (e.g. the public contribute form) stay pending until a human approves them —
+    // otherwise a form submission could reach the public record unreviewed.
+    if (!d.source_id) {
+      held++;
+      continue; // stays pending; manual approval only
     }
 
     // Publication-law gate: hold AU youth matters for human review.

@@ -12,6 +12,7 @@
 
 import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
+import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
 import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
@@ -85,6 +86,29 @@ export async function POST(request: Request) {
 
   if (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+
+  // Best-effort CRM upsert so the contributor gets a confirmation and a
+  // published/declined notice (GHL workflow keyed on interest:justice-matrix).
+  // Canonical tag contract only; no comms: tag — no newsletter consent was
+  // captured here. Never blocks the submission.
+  try {
+    const ghl = getGHLClient();
+    if (ghl.isConfigured()) {
+      await ghl.upsertContact({
+        email: p.contributor_email,
+        name: p.contributor_name,
+        source: 'justice-matrix-contribute',
+        tags: [
+          GHL_CANONICAL.PROJECT_JH,
+          GHL_CANONICAL.SOURCE_WEBSITE,
+          GHL_CANONICAL.ROLE_PARTNER,
+          GHL_CANONICAL.INTEREST_JUSTICE_MATRIX,
+        ],
+      });
+    }
+  } catch (e) {
+    console.error('justice-matrix contribute: GHL upsert failed (non-blocking)', e);
   }
 
   return NextResponse.json({ success: true });

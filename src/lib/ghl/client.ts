@@ -679,6 +679,7 @@ export const GHL_CANONICAL = {
   TIER_STEWARD: 'tier:steward',
   // interest: — topical
   INTEREST_JUSTICE_REFORM: 'interest:justice-reform',
+  INTEREST_JUSTICE_MATRIX: 'interest:justice-matrix',
   // comms: — newsletter send-trigger (granted ONLY with captured consent)
   COMMS_JH_NEWSLETTER: 'comms:justicehub-newsletter',
   // lane:community — OCAP guardrail: NEVER auto-enrolled into comms:/automation
