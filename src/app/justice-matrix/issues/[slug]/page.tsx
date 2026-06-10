@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { ArrowRight, Scale, Megaphone, Users, ExternalLink } from 'lucide-react';
+import { FollowIssue } from './FollowIssue';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,6 +44,8 @@ interface CaseRow {
   outcome: string | null;
   precedent_strength: string | null;
   categories: string[] | null;
+  key_holding: string | null;
+  created_at: string | null;
 }
 interface CampaignRow {
   id: string;
@@ -70,7 +73,7 @@ async function loadIssue(
   const [casesRes, campaignsRes] = await Promise.all([
     supabase
       .from('justice_matrix_cases')
-      .select('id,case_citation,court,year,jurisdiction,region,outcome,precedent_strength,categories')
+      .select('id,case_citation,court,year,jurisdiction,region,outcome,precedent_strength,categories,key_holding,created_at')
       .overlaps('categories', issue.category_tags)
       .limit(40),
     supabase
@@ -128,7 +131,17 @@ export default async function IssuePage({ params }: { params: { slug: string } }
   );
   const minY = years.length ? Math.min(...years) : null;
   const maxY = years.length ? Math.max(...years) : null;
-  const exploreHref = `/justice-matrix/explore?cat=${encodeURIComponent(issue.category_tags.join(','))}&surface=refugee`;
+  const surfaceParam = issue.surface === 'refugee' || issue.surface === 'youth' ? `&surface=${issue.surface}` : '';
+  const exploreHref = `/justice-matrix/explore?cat=${encodeURIComponent(issue.category_tags.join(','))}${surfaceParam}`;
+
+  // Computed playbook layer: the holdings the corpus already carries, grouped
+  // by outcome. Complements (does not replace) the curated playbook text.
+  const heldFavorable = cases.filter((c) => c.outcome === 'favorable' && c.key_holding);
+  const heldAdverse = cases.filter((c) => c.outcome === 'adverse' && c.key_holding);
+
+  // Scoped digest: what landed on this issue in the last 90 days.
+  const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
+  const recent = cases.filter((c) => c.created_at && new Date(c.created_at).getTime() > cutoff);
 
   return (
     <main style={{ background: C.page, color: C.ink, fontFamily: SANS }} className="min-h-screen">
@@ -165,12 +178,15 @@ export default async function IssuePage({ params }: { params: { slug: string } }
             <div className="absolute left-0 right-0 top-4 h-px" style={{ background: C.border }} />
             {cases.filter((c) => c.year).map((c) => {
               const x = maxY === minY ? 50 : ((c.year! - minY) / (maxY - minY)) * 100;
+              // Outcome-coloured: the spine reads as doctrine movement, not
+              // just density. Green favorable, red adverse, purple unknown.
+              const dot = c.outcome === 'favorable' ? '#047857' : c.outcome === 'adverse' ? '#b91c1c' : C.accent;
               return (
                 <span
                   key={c.id}
-                  title={`${c.case_citation} (${c.year})`}
+                  title={`${c.case_citation} (${c.year})${c.outcome ? ` — ${c.outcome}` : ''}`}
                   className="absolute top-[10px] w-2.5 h-2.5 rounded-full -translate-x-1/2"
-                  style={{ left: `${x}%`, background: C.accent, border: '2px solid #fff', boxShadow: '0 0 0 1px ' + C.border }}
+                  style={{ left: `${x}%`, background: dot, border: '2px solid #fff', boxShadow: '0 0 0 1px ' + C.border }}
                 />
               );
             })}
@@ -209,6 +225,65 @@ export default async function IssuePage({ params }: { params: { slug: string } }
         </div>
       </section>
 
+      {/* WHAT THE COURTS HELD — computed from the corpus, grouped by outcome.
+          The curated playbook narrates; this block is the raw movement of the
+          doctrine, and it updates itself as new cases land. */}
+      {heldFavorable.length + heldAdverse.length > 0 && (
+        <section className="max-w-6xl mx-auto px-5 md:px-8 pb-8 md:pb-10">
+          <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.18em', color: C.muted }} className="uppercase mb-1">
+            What the courts held
+          </div>
+          <h2 className="text-xl md:text-2xl font-semibold tracking-tight mb-4" style={{ color: C.ink }}>
+            The doctrine, in the courts&rsquo; own holdings.
+          </h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="rounded-lg border p-5" style={{ background: 'rgba(5,150,105,0.04)', borderColor: C.border }}>
+              <div className="text-[13px] font-semibold mb-3" style={{ color: '#047857' }}>
+                Held for protection ({heldFavorable.length})
+              </div>
+              <div className="space-y-3">
+                {heldFavorable.slice(0, 4).map((c) => (
+                  <Link key={c.id} href={`/justice-matrix/cases/${c.id}`} className="block group">
+                    <div className="text-[13px] leading-6" style={{ color: C.body }}>
+                      &ldquo;{(c.key_holding ?? '').slice(0, 220)}
+                      {(c.key_holding ?? '').length > 220 ? '…' : ''}&rdquo;
+                    </div>
+                    <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.muted }} className="mt-1 group-hover:underline">
+                      {c.case_citation}
+                      {c.year ? ` (${c.year})` : ''}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-lg border p-5" style={{ background: 'rgba(220,38,38,0.04)', borderColor: C.border }}>
+              <div className="text-[13px] font-semibold mb-3" style={{ color: '#b91c1c' }}>
+                Held against ({heldAdverse.length})
+              </div>
+              <div className="space-y-3">
+                {heldAdverse.slice(0, 4).map((c) => (
+                  <Link key={c.id} href={`/justice-matrix/cases/${c.id}`} className="block group">
+                    <div className="text-[13px] leading-6" style={{ color: C.body }}>
+                      &ldquo;{(c.key_holding ?? '').slice(0, 220)}
+                      {(c.key_holding ?? '').length > 220 ? '…' : ''}&rdquo;
+                    </div>
+                    <div style={{ fontFamily: MONO, fontSize: 10.5, color: C.muted }} className="mt-1 group-hover:underline">
+                      {c.case_citation}
+                      {c.year ? ` (${c.year})` : ''}
+                    </div>
+                  </Link>
+                ))}
+                {heldAdverse.length === 0 && (
+                  <div className="text-[13px]" style={{ color: C.muted }}>
+                    No adverse holdings with extracted text yet.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* PLAYBOOK */}
       {issue.playbook && (
         <section className="max-w-6xl mx-auto px-5 md:px-8 pb-10 md:pb-14">
@@ -228,11 +303,47 @@ export default async function IssuePage({ params }: { params: { slug: string } }
         </section>
       )}
 
+      {/* MOVEMENT + FOLLOW — what landed recently, and the subscribe loop */}
+      <section className="max-w-6xl mx-auto px-5 md:px-8 pb-10 md:pb-12">
+        <div className="grid md:grid-cols-2 gap-4 items-start">
+          <div className="rounded-lg border p-5" style={{ background: C.surface, borderColor: C.border }}>
+            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.18em', color: C.muted }} className="uppercase mb-1">
+              On this issue recently
+            </div>
+            {recent.length === 0 ? (
+              <p className="text-[13px] leading-5 mt-2" style={{ color: C.muted }}>
+                Nothing new in the last 90 days. The scanners watch the courts weekly;{' '}
+                <Link href="/justice-matrix/digest" className="underline" style={{ color: C.accent }}>
+                  see what is moving across the whole matrix
+                </Link>
+                .
+              </p>
+            ) : (
+              <div className="space-y-2 mt-2">
+                {recent.slice(0, 4).map((c) => (
+                  <Link key={c.id} href={`/justice-matrix/cases/${c.id}`} className="block text-[13px] leading-5 hover:underline" style={{ color: C.body }}>
+                    {c.case_citation}
+                    {c.year ? ` (${c.year})` : ''}
+                  </Link>
+                ))}
+                <Link href="/justice-matrix/digest" className="inline-flex items-center gap-1 text-[12px] font-semibold mt-1" style={{ color: C.accent }}>
+                  Full digest <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            )}
+          </div>
+          <FollowIssue slug={issue.slug} title={issue.title} />
+        </div>
+      </section>
+
       {/* FOOTER LINKS */}
       <section className="max-w-6xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
         <div className="flex flex-wrap gap-3">
           <Link href={exploreHref} className="inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold" style={{ background: C.accent, color: '#fff' }}>
             Open these in explore <ArrowRight className="w-4 h-4" />
+          </Link>
+          <Link href="/justice-matrix/ask" className="inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium" style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}>
+            Ask the Matrix about this
           </Link>
           <Link href="/justice-matrix/issues" className="inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium" style={{ background: C.surface, color: C.ink, border: `1px solid ${C.border}` }}>
             All issues
