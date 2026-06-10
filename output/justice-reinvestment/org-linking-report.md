@@ -76,7 +76,34 @@ Method: name+ABN matching per project rule (link counted only when name match wa
 - **Funder-side:** `gs_entities` contains "PRF Justice Reinvestment Portfolio" program entities spanning WA/NSW/NT/QLD/SA — Paul Ramsay Foundation runs a multi-state JR portfolio touching these sites.
 - **No board/officer data exists** in any of the four tables (checked information_schema), so `board_links` is empty everywhere — person-level links would need ACNC Responsible People or ORIC officer extracts, which we do not hold.
 
-## Proposed `organizations` updates (NOT applied — review first)
+## APPLIED 2026-06-11 (verified against live DB before and after each write)
+
+All fixes below were applied and verified on 2026-06-11. One deviation from the proposal:
+the Njamarleya ABN backfill was **not** applied — the real org row
+`367a6654` (NJA-MARLEYA CULTURAL LEADERS AND JUSTICE GROUP LTD) already holds ABN
+59661706430, so `894c005a` "Njamarleya Aboriginal Corporation" is a duplicate, not a
+backfill target. Its links were re-homed instead.
+
+**organizations:**
+- Savanna Solutions `4391bb43` → abn 15642049152 ✓
+- Tiraapendi Wodli `673d4b2d` → abn 53685983831 ✓
+- ATSI Wellbeing Services `2847ddd7` → abn NULLed (was 21132666525 = QATSICPP, confirmed in acnc_charities) ✓
+
+**alma_interventions re-points (flag 4 + spin-out + dedupes):**
+- Cherbourg JR Project `2d8573e8`: Gindaja → Cherbourg Wellbeing Indigenous Corporation `7a0d9112`
+- Groote Eylandt JR `23009d68`: Njamarleya dup → Anindilyakwa Royalties AC `aaa22309`
+- Tiraapendi Wodli `b61cd1c3`: Australian Red Cross → Tiraapendi Wodli Ltd `673d4b2d`
+- Maningrida JR `e0697853` + Maningrida JR Program `396044f9` (was NULL): → NJA-MARLEYA `367a6654`
+- Maranguka JR Project `b6566592`: placeholder → MARANGUKA LIMITED `adef8959`
+- JRNSW dedupe: 7 interventions moved `01b85c9d` → canonical `9de1b435` (Just Reinvest NSW, which holds the funding rows)
+- Bonus: dup row `894c005a` was a junk collector — 5 unrelated interventions re-homed to their real orgs: Dumbartung `338e7b97`, Katungul `3407eb01`, Yorgum `e9545cd5`, Tharawal AC `630ef81e`, Redfern Youth Connect `bbefc5a8`
+
+**Leftover (NOT done — deletion is Tier 3, needs explicit ask):** four org rows now have
+zero interventions and zero funding rows, safe to delete or merge-archive:
+`01b85c9d` (JRNSW dup), `894c005a` (Njamarleya dup), `a4a2720d` (Maranguka placeholder),
+`c809fdd3` (Maningrida placeholder).
+
+## Proposed `organizations` updates (original proposal, superseded by APPLIED above)
 
 `organizations.abn` exists and is NULL for several matched orgs:
 
