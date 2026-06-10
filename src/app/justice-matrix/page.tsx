@@ -137,8 +137,30 @@ async function loadFeatured(): Promise<FeaturedSets> {
   };
 }
 
+interface IssueLite {
+  slug: string;
+  title: string;
+  question: string;
+  surface: string;
+}
+
+// Issues are the front door: a first-time visitor orients faster from a live
+// question ("Can a state send asylum seekers to a third country?") than from a
+// 360-row corpus. Lightweight query — no per-issue counts on the hub.
+async function loadIssues(): Promise<IssueLite[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createServiceClient() as any;
+  const { data } = await supabase
+    .from('justice_matrix_issues')
+    .select('slug,title,question,surface')
+    .eq('is_published', true)
+    .order('sort_order', { ascending: true })
+    .limit(8);
+  return (data ?? []) as IssueLite[];
+}
+
 export default async function JusticeMatrixLandingPage() {
-  const [stats, featured] = await Promise.all([loadStats(), loadFeatured()]);
+  const [stats, featured, issues] = await Promise.all([loadStats(), loadFeatured(), loadIssues()]);
   const hasFeatured =
     featured.refugeeCases.length +
       featured.refugeeCampaigns.length +
@@ -265,6 +287,43 @@ export default async function JusticeMatrixLandingPage() {
           />
         </div>
       </section>
+
+      {/* ISSUES — start from a question. The orientation layer for first-time
+          visitors; each card opens the issue profile with its cases, campaigns
+          and evidence gathered under one question. */}
+      {issues.length > 0 && (
+        <section className="max-w-6xl mx-auto px-5 md:px-8 pb-6 md:pb-8">
+          <Kicker>Start from a question</Kicker>
+          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-2" style={{ color: C.ink }}>
+            The live questions the matrix can answer.
+          </h2>
+          <p className="text-[14px] leading-6 mb-6 max-w-2xl" style={{ color: C.muted }}>
+            Each issue gathers the cases, campaigns, and evidence on one fight, so you can see what has been tried and what
+            held.
+          </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {issues.map((it) => (
+              <Link
+                key={it.slug}
+                href={`/justice-matrix/issues/${it.slug}`}
+                className="group block rounded-lg border p-4 transition-colors hover:border-zinc-300"
+                style={{ background: C.surface, borderColor: C.border }}
+              >
+                <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.2em', color: C.gold }} className="uppercase mb-2">
+                  {it.surface === 'refugee' ? 'Refugee & asylum' : it.surface === 'youth' ? 'Youth justice' : 'Cross-cutting'}
+                </div>
+                <div className="text-[14px] font-semibold leading-5 mb-1.5" style={{ color: C.ink }}>
+                  {it.question}
+                </div>
+                <div className="inline-flex items-center gap-1 text-[12px] font-semibold" style={{ color: C.accent }}>
+                  {it.title}
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Featured — start here. One rail per surface, from the curated featured set. */}
       {hasFeatured && (

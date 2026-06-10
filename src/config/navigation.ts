@@ -153,6 +153,7 @@ export const footerSections = [
     {
         title: 'Intelligence',
         links: [
+            { label: 'Justice Matrix', href: '/justice-matrix', description: 'Strategic cases, campaigns, and issues' },
             { label: 'Justice Network', href: '/justice-network', description: 'Issue verticals for action' },
             { label: 'Youth Remand', href: '/justice-network/youth-remand', description: 'Flagship remand vertical' },
             { label: 'Country Reports', href: '/justice-network/countries', description: 'Africa and Europe learning reports' },
