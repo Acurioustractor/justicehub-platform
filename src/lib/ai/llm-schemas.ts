@@ -325,6 +325,16 @@ export const JusticeMatrixDiscoveryResponseSchema = z.object({
 export type JusticeMatrixDiscoveryItem = z.infer<typeof JusticeMatrixDiscoveryItemSchema>;
 export type JusticeMatrixDiscoveryResponse = z.infer<typeof JusticeMatrixDiscoveryResponseSchema>;
 
+// Theme-mapper: assigns canonical themes to a staged discovery from a
+// CONTROLLED vocabulary (issue category_tags + domain tags). The schema
+// deliberately cannot carry free text — the caller intersects against the
+// allowed list again after validation, so a hallucinated theme is dropped,
+// never published.
+export const JusticeMatrixThemeMapSchema = z.object({
+  themes: z.array(z.string().min(2).max(60)).max(8).default([]),
+});
+export type JusticeMatrixThemeMap = z.infer<typeof JusticeMatrixThemeMapSchema>;
+
 // ---------------------------------------------------------------------------
 // Validated parse helper
 // ---------------------------------------------------------------------------

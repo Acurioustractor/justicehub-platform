@@ -231,10 +231,20 @@ export default async function CampaignsListPage({ searchParams }: { searchParams
             </aside>
 
             <div>
-              <div className="flex items-baseline justify-between mb-6">
+              <div className="flex items-baseline justify-between gap-3 mb-6">
                 <div className="text-sm" style={{ color: '#5e5145' }}>
                   Showing <strong style={{ color: '#2b2530' }}>{rows.length}</strong> of {total.toLocaleString()} {total === 1 ? 'campaign' : 'campaigns'}
                   {totalPages > 1 && ` · page ${page} of ${totalPages}`}
+                </div>
+                <div className="text-xs whitespace-nowrap" style={{ color: '#5e5145' }}>
+                  Export this set:{' '}
+                  <a href={`/api/justice-matrix/export${urlWith(current, { type: 'campaign', format: 'csv' })}`} className="underline font-semibold" style={{ color: '#8d6a44' }}>
+                    CSV
+                  </a>
+                  {' · '}
+                  <a href={`/api/justice-matrix/export${urlWith(current, { type: 'campaign', format: 'json' })}`} className="underline font-semibold" style={{ color: '#8d6a44' }}>
+                    JSON
+                  </a>
                 </div>
               </div>
 

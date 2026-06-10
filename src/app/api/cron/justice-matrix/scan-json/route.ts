@@ -13,6 +13,7 @@
 import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { canonicaliseCategories } from '@/lib/justice-matrix/categories';
+import { loadControlledVocabulary, mapToCanonicalThemes } from '@/lib/justice-matrix/theme-mapper';
 import { curiaApiItems } from '@/lib/justice-matrix/curia-adapter';
 // NEW (2026-05-29): live-verified global adapters. First cron run that touches a
 // HUDOC or CourtListener source SHOULD BE WATCHED — these have not yet run
@@ -85,11 +86,21 @@ type AdapterFn = (limit: number) => Promise<JusticeMatrixDiscoveryItem[]>;
  * through here — the only thing that varies per source is the adapter fn picked
  * by the host-branch in GET().
  */
-async function scanWithAdapter(supabase: Db, source: SourceRow, adapter: AdapterFn) {
+async function scanWithAdapter(supabase: Db, source: SourceRow, adapter: AdapterFn, vocabulary: string[]) {
   const items = await adapter(LIMIT_PER_SOURCE);
   let staged = 0;
   for (const item of items) {
     if (await exactDuplicate(supabase, item)) continue;
+
+    // Issue-mapper: extend the source's pass-through tags with canonical
+    // themes from the controlled vocabulary, so new items land on issue pages
+    // by design rather than keyword luck. Best-effort; never blocks staging.
+    let themes: string[] = [];
+    try {
+      themes = await mapToCanonicalThemes(item, vocabulary);
+    } catch {
+      // best-effort only
+    }
 
     // Semantic dedup: compute the candidate's embedding and look for a close
     // existing case / campaign. If found, stage anyway but flag the candidate
@@ -124,7 +135,7 @@ async function scanWithAdapter(supabase: Db, source: SourceRow, adapter: Adapter
       extracted_title: item.title,
       extracted_jurisdiction: item.jurisdiction ?? null,
       extracted_year: item.year ?? null,
-      extracted_categories: canonicaliseCategories(item.categories),
+      extracted_categories: canonicaliseCategories([...(item.categories ?? []), ...themes]),
       extracted_summary: item.summary ?? null,
       extracted_country_code: item.country_code ?? null,
       extraction_confidence: item.confidence,
@@ -157,6 +168,15 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
   }
 
+  // Controlled vocabulary for the LLM issue-mapper, loaded once per run.
+  // Empty array (load failure / no issues) disables mapping for the run.
+  let vocabulary: string[] = [];
+  try {
+    vocabulary = await loadControlledVocabulary(supabase);
+  } catch {
+    // mapper is best-effort
+  }
+
   const results: Array<{ source: string; staged: number; error?: string }> = [];
   let totalStaged = 0;
   for (const source of (sources ?? []) as SourceRow[]) {
@@ -171,15 +191,15 @@ export async function GET(request: Request) {
       // counts look sane and last_error stays null before trusting them weekly.
       let staged = 0;
       if (/curia\.europa\.eu/.test(source.url)) {
-        staged = await scanWithAdapter(supabase, source, curiaApiItems);
+        staged = await scanWithAdapter(supabase, source, curiaApiItems, vocabulary);
       } else if (/hudoc\.echr\.coe\.int/.test(source.url)) {
-        staged = await scanWithAdapter(supabase, source, hudocApiItems);
+        staged = await scanWithAdapter(supabase, source, hudocApiItems, vocabulary);
       } else if (/courtlistener\.com/.test(source.url)) {
-        staged = await scanWithAdapter(supabase, source, courtlistenerApiItems);
+        staged = await scanWithAdapter(supabase, source, courtlistenerApiItems, vocabulary);
       } else if (/asylumlawdatabase\.eu/.test(source.url)) {
-        staged = await scanWithAdapter(supabase, source, edalApiItems);
+        staged = await scanWithAdapter(supabase, source, edalApiItems, vocabulary);
       } else if (/canlii\.org/.test(source.url)) {
-        staged = await scanWithAdapter(supabase, source, canliiApiItems);
+        staged = await scanWithAdapter(supabase, source, canliiApiItems, vocabulary);
       } else {
         results.push({ source: source.name, staged: 0, error: 'no adapter for this JSON source yet' });
         continue;
