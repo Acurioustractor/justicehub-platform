@@ -105,6 +105,47 @@ export default async function CommunitiesIndexPage() {
         </div>
       </section>
 
+      {/* The justice reinvestment map */}
+      <section className="border-t border-[#eadfce] bg-[#faf5ec]">
+        <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-16">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8d6a44]">
+            The justice reinvestment map
+          </p>
+          <h2 className="mt-3 font-serif text-5xl leading-none" style={serifDisplay}>
+            The whole movement, on one map
+          </h2>
+          <p className="mt-5 max-w-3xl text-base leading-7 text-[#584b40]">
+            Beyond the four founding profiles sits the wider network. Every
+            justice reinvestment initiative we can find, grouped by the place it
+            serves, with the lead organisation named wherever the record holds
+            one and the gaps shown openly.
+          </p>
+
+          <Link
+            href="/communities/justice-reinvestment"
+            className="group mt-8 block rounded-[24px] border border-[#4a2560]/30 bg-[#4a2560] p-8 text-[#f1e6f7] shadow-[0_18px_44px_rgba(49,18,68,0.18)] transition-colors duration-150 hover:bg-[#5a2f6f]"
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#d7c2e3]">
+              The Network
+            </p>
+            <h3
+              className="mt-4 font-serif text-3xl leading-none group-hover:underline"
+              style={serifDisplay}
+            >
+              Open the justice reinvestment network view
+            </h3>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-[#eadff2]">
+              The view the network co-directors see: an honest count, grouped by
+              state, with a clear section for the initiatives whose place is
+              still to confirm.
+            </p>
+            <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#cbb1dc]">
+              See the map
+            </p>
+          </Link>
+        </div>
+      </section>
+
       {/* How the model works */}
       <section className="border-t border-[#eadfce] bg-[#faf5ec]">
         <div className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-16">
