@@ -2,42 +2,55 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { ANCHOR_COMMUNITIES } from '@/lib/communities/anchors';
-import { loadJusticeReinvestmentNetwork } from '@/lib/communities/justice-reinvestment';
+import {
+  loadJusticeReinvestmentNetwork,
+  loadJusticeReinvestmentSites,
+  buildSiteEnrichmentIndex,
+} from '@/lib/communities/justice-reinvestment';
 import { serifDisplay } from '@/lib/communities/style';
+import historyData from '@/data/justice-reinvestment/history.json';
+import JRNetworkExplorer, {
+  type EnrichedGroup,
+} from './JRNetworkExplorer';
 
 export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: 'The justice reinvestment network | JusticeHub',
   description:
-    'Every justice reinvestment initiative we can find, on one map, grouped by place. An honest count, lead organisations named where known, and the gaps shown openly so the network can correct them.',
+    'Every justice reinvestment initiative we can find, on one national map, grouped by place. An honest count, lead organisations named where known, and twenty years of the movement on one timeline.',
 };
 
-function VerificationChip({ status }: { status: string | null }) {
-  if (status === 'community_verified') {
-    return (
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-[#7a9a6b] bg-[#eef3e6] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#4a6138]">
-        <span aria-hidden className="text-base leading-none">&#9733;</span>
-        Community verified
-      </span>
-    );
-  }
-  if (status === 'verified') {
-    return (
-      <span className="rounded-full border border-[#e6d7c1] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#7d5f3d]">
-        Verified record
-      </span>
-    );
-  }
-  return (
-    <span className="rounded-full border border-[#e6d7c1] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#7d5f3d]">
-      On record
-    </span>
-  );
+interface HistoryEntry {
+  year: number;
+  title: string;
+  body: string;
+  source_url: string;
 }
 
 export default async function JusticeReinvestmentNetworkPage() {
   const { groups, counts } = await loadJusticeReinvestmentNetwork();
+  const sites = loadJusticeReinvestmentSites();
+  const enrichmentIndex = buildSiteEnrichmentIndex(sites);
+
+  // Honest count for the hero: curated sites on the map (34 today).
+  const placedSites = sites.filter((s) => s.lat !== null && s.lng !== null);
+  const siteStates = new Set(placedSites.map((s) => s.state));
+
+  // Enrich each DB list row with a curated website + blurb when the name matches.
+  const enrichedGroups: EnrichedGroup[] = groups.map((group) => ({
+    ...group,
+    initiatives: group.initiatives.map((initiative) => {
+      const enrichment = enrichmentIndex.get(initiative.name.trim().toLowerCase());
+      return {
+        ...initiative,
+        website: enrichment?.website ?? null,
+        blurb: enrichment?.blurb ?? null,
+      };
+    }),
+  }));
+
+  const history = (historyData as { timeline: HistoryEntry[] }).timeline;
 
   return (
     <div className="min-h-screen bg-[#f8f1e6] text-[#2b2530]">
@@ -59,41 +72,41 @@ export default async function JusticeReinvestmentNetworkPage() {
             The Network
           </p>
           <h1
-            className="mt-5 max-w-4xl font-serif text-5xl leading-none md:text-6xl"
+            className="mt-5 max-w-4xl text-5xl leading-none md:text-6xl"
             style={serifDisplay}
           >
             The justice reinvestment movement, seeing itself on one map
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-7 text-[#eadff2]">
-            A movement is easier to fund and harder to ignore once it can see
-            its own shape. Here is every justice reinvestment initiative we have
-            been able to find, grouped by the place it serves, with the lead
+            A movement is easier to fund and harder to ignore once it can see its
+            own shape. Here is every justice reinvestment site we have been able
+            to place, grouped by the Country it serves, with the lead
             organisation named wherever the record holds one.
           </p>
 
           <dl className="mt-10 grid max-w-3xl gap-6 sm:grid-cols-3">
             <div className="rounded-[18px] border border-[#6a4a82] bg-[#3c1d53] px-5 py-4">
               <dt className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#cbb1dc]">
-                Initiatives on the map
+                Sites on the map
               </dt>
-              <dd className="mt-2 font-serif text-4xl" style={serifDisplay}>
-                {counts.total}
+              <dd className="mt-2 text-4xl" style={serifDisplay}>
+                {placedSites.length}
               </dd>
             </div>
             <div className="rounded-[18px] border border-[#6a4a82] bg-[#3c1d53] px-5 py-4">
               <dt className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#cbb1dc]">
-                With a known lead organisation
+                Records in the database
               </dt>
-              <dd className="mt-2 font-serif text-4xl" style={serifDisplay}>
-                {counts.withLeadOrg}
+              <dd className="mt-2 text-4xl" style={serifDisplay}>
+                {counts.total}
               </dd>
             </div>
             <div className="rounded-[18px] border border-[#6a4a82] bg-[#3c1d53] px-5 py-4">
               <dt className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#cbb1dc]">
                 States and territories
               </dt>
-              <dd className="mt-2 font-serif text-4xl" style={serifDisplay}>
-                {counts.states}
+              <dd className="mt-2 text-4xl" style={serifDisplay}>
+                {siteStates.size}
               </dd>
             </div>
           </dl>
@@ -106,87 +119,57 @@ export default async function JusticeReinvestmentNetworkPage() {
         </div>
       </section>
 
-      {/* Grouped sections by state */}
+      {/* History timeline */}
       <section className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-16">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8d6a44]">
-          Grouped by place
+          The arc
         </p>
-        <h2 className="mt-3 font-serif text-5xl leading-none" style={serifDisplay}>
-          The map, state by state
+        <h2 className="mt-3 text-5xl leading-none" style={serifDisplay}>
+          Twenty years of justice reinvestment
         </h2>
         <p className="mt-5 max-w-3xl text-base leading-7 text-[#584b40]">
-          Each initiative sits with the place it serves, drawn from the lead
-          organisation on record. Read the verification mark beside each one as
-          a trust signal: a record we hold, a record confirmed, or outcomes a
-          community has verified with its own evidence.
+          From a concept named in 2003 to a national tender in 2026, the idea
+          travelled from the page to the Country it now serves. Each step below
+          carries the source that records it.
         </p>
 
-        <div className="mt-12 space-y-14">
-          {groups.map((group) => {
-            const isConfirmBucket = group.key === 'place-to-confirm';
-            return (
-              <div key={group.key}>
-                <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-[#eadfce] pb-4">
-                  <h3
-                    className="font-serif text-4xl leading-none"
-                    style={serifDisplay}
-                  >
-                    {group.label}
-                  </h3>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8d6a44]">
-                    {group.initiatives.length}{' '}
-                    {group.initiatives.length === 1
-                      ? 'initiative'
-                      : 'initiatives'}
-                  </p>
-                </div>
-
-                {isConfirmBucket ? (
-                  <p className="mt-5 max-w-3xl rounded-[16px] border border-[#e6d7c1] bg-[#f3eadb] px-5 py-4 text-sm leading-6 text-[#5e5145]">
-                    These initiatives are real and on the record, but we do not
-                    yet hold the place or the lead organisation for them. If one
-                    of these is yours, or you know where it belongs, tell us and
-                    we will move it to its Country. The gap is the invitation.
-                  </p>
-                ) : null}
-
-                <div className="mt-6 grid gap-5 md:grid-cols-2">
-                  {group.initiatives.map((initiative) => (
-                    <div
-                      key={initiative.id}
-                      className="rounded-[20px] border border-[#eadfce] bg-[#fff8ef] p-6 shadow-[0_14px_36px_rgba(49,31,15,0.05)]"
-                    >
-                      <div className="flex flex-wrap items-center gap-2">
-                        <VerificationChip
-                          status={initiative.verificationStatus}
-                        />
-                        {initiative.isIndigenousOrg ? (
-                          <span className="rounded-full border border-[#dbc7a9] bg-[#f3eadb] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6e5a42]">
-                            Aboriginal community-controlled
-                          </span>
-                        ) : null}
-                      </div>
-
-                      <h4
-                        className="mt-4 font-serif text-2xl leading-7"
-                        style={serifDisplay}
-                      >
-                        {initiative.name}
-                      </h4>
-
-                      <p className="mt-3 text-sm font-medium text-[#7d5f3d]">
-                        {initiative.orgName
-                          ? initiative.orgName
-                          : 'Lead organisation to confirm'}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <ol className="mt-12 space-y-0 border-l border-[#e2d3bd]">
+          {history.map((entry, index) => (
+            <li
+              key={`${entry.year}-${index}`}
+              className="relative pl-8 pb-10 last:pb-0"
+            >
+              <span
+                aria-hidden
+                className="absolute left-[-7px] top-1.5 h-3.5 w-3.5 rounded-full border-2 border-[#f8f1e6] bg-[#4a2560]"
+              />
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8d6a44]">
+                {entry.year}
+              </p>
+              <h3
+                className="mt-1 text-2xl leading-7"
+                style={serifDisplay}
+              >
+                {entry.title}
+              </h3>
+              <p className="mt-2 max-w-3xl text-base leading-7 text-[#584b40]">
+                {entry.body}
+              </p>
+              <Link
+                href={entry.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex text-xs font-semibold text-[#4a2560]"
+              >
+                Read the source &rarr;
+              </Link>
+            </li>
+          ))}
+        </ol>
       </section>
+
+      {/* Map + state filter + enriched, state-grouped list */}
+      <JRNetworkExplorer sites={sites} groups={enrichedGroups} />
 
       {/* From data to network */}
       <section className="border-t border-[#eadfce] bg-[#faf5ec]">
@@ -194,16 +177,13 @@ export default async function JusticeReinvestmentNetworkPage() {
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8d6a44]">
             What this becomes
           </p>
-          <h2 className="mt-3 font-serif text-5xl leading-none" style={serifDisplay}>
+          <h2 className="mt-3 text-5xl leading-none" style={serifDisplay}>
             From data to network
           </h2>
 
           <div className="mt-8 grid gap-8 md:grid-cols-3">
             <div>
-              <h3
-                className="font-serif text-2xl leading-7"
-                style={serifDisplay}
-              >
+              <h3 className="text-2xl leading-7" style={serifDisplay}>
                 Profiles the community holds
               </h3>
               <p className="mt-3 text-base leading-7 text-[#584b40]">
@@ -221,10 +201,7 @@ export default async function JusticeReinvestmentNetworkPage() {
             </div>
 
             <div>
-              <h3
-                className="font-serif text-2xl leading-7"
-                style={serifDisplay}
-              >
+              <h3 className="text-2xl leading-7" style={serifDisplay}>
                 Evidence beside detention costs
               </h3>
               <p className="mt-3 text-base leading-7 text-[#584b40]">
@@ -236,17 +213,14 @@ export default async function JusticeReinvestmentNetworkPage() {
             </div>
 
             <div>
-              <h3
-                className="font-serif text-2xl leading-7"
-                style={serifDisplay}
-              >
+              <h3 className="text-2xl leading-7" style={serifDisplay}>
                 The law reform case
               </h3>
               <p className="mt-3 text-base leading-7 text-[#584b40]">
                 One site proves a model. Many sites, read together, become an
                 argument a parliament cannot wave away. The map is how the
-                movement makes that argument site by site, in its own words,
-                with its own evidence.
+                movement makes that argument site by site, in its own words, with
+                its own evidence.
               </p>
             </div>
           </div>
@@ -256,8 +230,8 @@ export default async function JusticeReinvestmentNetworkPage() {
               The four founding profiles
             </p>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-[#5e5145]">
-              Four communities are shaping the profile with us before anyone
-              else is listed. Each is the editor of record for its own page.
+              Four communities are shaping the profile with us before anyone else
+              is listed. Each is the editor of record for its own page.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               {ANCHOR_COMMUNITIES.map((anchor) => (

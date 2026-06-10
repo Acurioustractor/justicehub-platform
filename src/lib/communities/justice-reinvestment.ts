@@ -1,4 +1,5 @@
 import { createServiceClient } from '@/lib/supabase/service';
+import sitesData from '@/data/justice-reinvestment/sites.json';
 
 /**
  * Server-only data access for the justice reinvestment network view.
@@ -183,4 +184,99 @@ export async function loadJusticeReinvestmentNetwork(): Promise<JrNetworkData> {
       ).length,
     },
   };
+}
+
+/**
+ * A justice reinvestment site from the curated sites.json layer. This is the
+ * hand-sourced map dataset, kept separate from the DB-driven list above so the
+ * list still renders DB rows that have no curated enrichment yet.
+ */
+export interface JrSite {
+  matchName: string;
+  displayName: string;
+  org: string;
+  state: string;
+  town: string;
+  lat: number | null;
+  lng: number | null;
+  website: string | null;
+  logoUrl: string | null;
+  blurb: string;
+  profileSlug: string | null;
+}
+
+/** A curated site shaped for enriching a DB list row, joined by match_name. */
+export interface JrSiteEnrichment {
+  website: string | null;
+  blurb: string;
+  town: string;
+}
+
+/**
+ * Maps a curated site to an anchor profile slug, only for the four founding
+ * profiles. Matched by a stable substring of the site's org / display name so
+ * a wording change does not silently break the link.
+ */
+const PROFILE_SLUG_RULES: { slug: string; needle: string }[] = [
+  { slug: 'oonchiumpa', needle: 'oonchiumpa' },
+  { slug: 'palm-island-community-company', needle: 'palm island' },
+  { slug: 'bg-fit', needle: 'bg fit' },
+  { slug: 'mmeic', needle: 'minjerribah moorgumpin' },
+];
+
+function profileSlugFor(displayName: string, org: string): string | null {
+  const haystack = `${displayName} ${org}`.toLowerCase();
+  for (const rule of PROFILE_SLUG_RULES) {
+    if (haystack.includes(rule.needle)) return rule.slug;
+  }
+  return null;
+}
+
+interface RawSite {
+  match_name: string;
+  display_name: string;
+  org: string;
+  state: string;
+  town: string;
+  lat: number | null;
+  lng: number | null;
+  website: string | null;
+  logo_url: string | null;
+  blurb: string;
+}
+
+/** Loads and shapes the curated sites.json layer for the map and enrichment. */
+export function loadJusticeReinvestmentSites(): JrSite[] {
+  const raw = (sitesData as { sites: RawSite[] }).sites;
+  return raw.map((s) => ({
+    matchName: s.match_name,
+    displayName: s.display_name,
+    org: s.org,
+    state: s.state,
+    town: s.town,
+    lat: s.lat,
+    lng: s.lng,
+    website: s.website,
+    logoUrl: s.logo_url,
+    blurb: s.blurb,
+    profileSlug: profileSlugFor(s.display_name, s.org),
+  }));
+}
+
+/**
+ * Builds a match_name -> enrichment index so a DB list row can be enriched with
+ * the curated website and blurb when its name matches a curated site exactly.
+ */
+export function buildSiteEnrichmentIndex(
+  sites: JrSite[]
+): Map<string, JrSiteEnrichment> {
+  const index = new Map<string, JrSiteEnrichment>();
+  for (const site of sites) {
+    index.set(site.matchName.trim().toLowerCase(), {
+      website: site.website,
+      blurb: site.blurb,
+      town: site.town,
+    });
+  }
+  return index;
 }
