@@ -202,7 +202,10 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Save registration to database
-    const { data: registration, error: regError } = await supabase
+    // event_registrations is not in the generated DB types yet; match the
+    // service-lite `as any` convention used across the matrix routes.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: registration, error: regError } = await (supabase as any)
       .from('event_registrations')
       .insert({
         event_id: sanitizedEventId,
