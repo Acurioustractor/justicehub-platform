@@ -184,7 +184,7 @@ export default async function IssuePage({ params }: { params: { slug: string } }
               return (
                 <span
                   key={c.id}
-                  title={`${c.case_citation} (${c.year})${c.outcome ? ` — ${c.outcome}` : ''}`}
+                  title={`${c.case_citation} (${c.year})${c.outcome ? `: ${c.outcome}` : ''}`}
                   className="absolute top-[10px] w-2.5 h-2.5 rounded-full -translate-x-1/2"
                   style={{ left: `${x}%`, background: dot, border: '2px solid #fff', boxShadow: '0 0 0 1px ' + C.border }}
                 />
