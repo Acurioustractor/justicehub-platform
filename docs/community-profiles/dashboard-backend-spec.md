@@ -4,6 +4,20 @@
 **Status:** spec only. No code, no migrations, no DB writes until the co-design checkpoint and day-shift migration approval below.
 **Companions:** `org-profile-spec.md` (profile anatomy + governance), `engagement-model.md` (the five never-rules this spec enforces), `src/app/api/communities/claim/route.ts` (claim entry point, GHL-only today)
 
+> **Correction (2026-06-11, increment 1 shipped):** the "no membership surface"
+> premise below was wrong. The DB already had `organization_claims` (claim
+> queue, used by `/api/organizations/[id]/claim` and `/api/admin/org-claims`)
+> and `organization_members` (portal membership behind `/portal` and the admin
+> cockpit). A third table `org_members` belongs to the separate `org_profiles`
+> feature and is NOT ours. Increment 1 was adapted onto the existing tables:
+> `organization_claims` gained `invite_token`/`invite_expires_at` and the
+> `expired` status; `organization_members` gained `editor`/`viewer` roles and
+> the `is_org_member()` helper; the open `org_members_basic_access` policy
+> (self-insert as owner of any org) was replaced with scoped policies. Section
+> 1's table DDL is therefore historical; the live shapes differ. Sections 2-8
+> should target `organization_members`/`organization_claims` column names
+> (`user_id`, `contact_email`, status `verified` not `approved`).
+
 ## What exists today (verified 2026-06-11)
 
 - Auth is Supabase email/password + GitHub OAuth. `profiles.role = 'admin'` gates `/admin` via `requireAdmin()` / `checkAdmin()` in `src/lib/supabase/admin.ts`. There is no non-admin role surface yet.
