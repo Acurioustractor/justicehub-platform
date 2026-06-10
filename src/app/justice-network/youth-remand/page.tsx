@@ -124,8 +124,8 @@ const unlocks = [
     color: C.green,
   },
   {
-    label: 'World-tour learning',
-    body: 'Turn visits into consented learning cards that link place, people, law, story, and Australian relevance.',
+    label: 'Pacific scoping trip',
+    body: 'Scope Papua New Guinea, the Pacific, or another partner-nominated place into a practical learning path with consent-safe notes, roles, and next steps.',
     icon: <Globe2 className="h-5 w-5" />,
     color: C.rust,
   },
@@ -518,7 +518,9 @@ export default async function YouthRemandNetworkPage() {
                 JusticeHub helps people search justice knowledge in one place. Youth remand shows why that matters:
                 the same young person can be affected by bail law, detention conditions, service gaps, family pressure,
                 school exclusion, housing, funding decisions, and public campaigns. This page links those parts
-                together while keeping private stories and sensitive material protected.
+                together while keeping private stories and sensitive material protected. It also gives George and
+                Justice Network a concrete next step: choose the first jurisdiction, scope the right people to meet,
+                and turn the visit into a small pilot plan.
               </p>
             </div>
             <div className="rounded-lg border bg-white p-4" style={{ borderColor: C.border }}>

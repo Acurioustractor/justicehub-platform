@@ -198,15 +198,59 @@ function ReadinessCard({ country }: { country: CountryReadiness }) {
   );
 }
 
-function buildGeorgeNote(payload: YouthRemandNetworkPayload) {
-  return `George, the JusticeHub Network youth remand demo is ready as an open-core partner artifact. It connects ${payload.totals.records} records across cases, campaigns, evidence, organisations, funding, detention sites, Empathy Ledger consent-card pathways, and world-tour countries. The wedge is simple: show why children are on remand, what the law and campaigns say, what community alternatives exist, where funding flows, and what Australia can learn from partners globally.`;
+function buildGeorgeEmail(payload: YouthRemandNetworkPayload) {
+  return `Subject: JusticeHub Network demo + Pacific scoping next step
+
+Hey George,
+
+Sending this through today, Thursday 11 June 2026, before our Friday 12 June 2026 conversation.
+
+We have the JusticeHub Network youth remand page working as a live partner demo now. It is not a deck. It connects ${payload.totals.records} records across cases, campaigns, evidence, organisations, funding, detention sites, Empathy Ledger consent-card pathways, and country learning nodes.
+
+The simple wedge is: why are children held on remand before sentence, what does the law and campaign history say, what community alternatives already exist, where does the money currently flow, and what could Australia learn from partners in other places?
+
+What I think we can do together:
+
+- Use the page as a 15-minute walkthrough for the strategic litigation, campaign, and partner-introduction layer.
+- Scope a first learning and partner trip, starting with Papua New Guinea if that is the right place, or another Pacific / regional jurisdiction you think has stronger need and relationship readiness.
+- Meet local legal, community, youth justice, and civil society partners, then map what can be public, what should stay private, and what needs consent-controlled handling.
+- Come back with a short next-step plan: location, people to involve, roles, timeline, budget, and the smallest useful pilot.
+
+The ask for Friday is simple: can we agree the best first jurisdiction, who should be in the room, and whether Justice Network / National Justice Project would be comfortable helping anchor the legal and partner-introduction layer?
+
+Hope to talk tomorrow,
+Ben`;
+}
+
+async function copyTextToClipboard(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '0';
+    textarea.style.top = '0';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    try {
+      return document.execCommand('copy');
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
 }
 
 export default function YouthRemandSearch({ initialPayload }: { initialPayload: YouthRemandNetworkPayload }) {
   const [payload, setPayload] = useState(initialPayload);
   const [query, setQuery] = useState(initialPayload.query);
   const [selectedKind, setSelectedKind] = useState<JusticeNetworkKind | 'all'>('all');
-  const [copied, setCopied] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [isPending, startTransition] = useTransition();
 
   const filteredRecords = useMemo(() => {
@@ -227,9 +271,9 @@ export default function YouthRemandSearch({ initialPayload }: { initialPayload: 
   }
 
   async function copyNote() {
-    await navigator.clipboard.writeText(buildGeorgeNote(payload));
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1800);
+    const didCopy = await copyTextToClipboard(buildGeorgeEmail(payload));
+    setCopyStatus(didCopy ? 'copied' : 'failed');
+    window.setTimeout(() => setCopyStatus('idle'), 1800);
   }
 
   return (
@@ -261,7 +305,7 @@ export default function YouthRemandSearch({ initialPayload }: { initialPayload: 
               style={{ background: C.green }}
             >
               <Clipboard className="h-4 w-4" />
-              {copied ? 'Copied' : 'Copy George note'}
+              {copyStatus === 'copied' ? 'Copied' : copyStatus === 'failed' ? 'Copy failed' : 'Copy George email'}
             </button>
           </div>
         </div>
@@ -378,9 +422,17 @@ export default function YouthRemandSearch({ initialPayload }: { initialPayload: 
           </div>
         </div>
         <aside className="rounded-lg border p-5" style={{ borderColor: C.border, background: C.cream }}>
-          <h3 className="mb-3 font-semibold" style={{ color: C.ink }}>Demo flow for George</h3>
+          <h3 className="mb-3 font-semibold" style={{ color: C.ink }}>Friday flow for George</h3>
           <ol className="space-y-2 text-sm" style={{ color: C.body }}>
-            {['Open Youth Remand', 'Search children on remand', 'Show cases, campaigns, evidence', 'Open map', 'Show alternatives and funding', 'Show consent-card pathway', 'Print or copy brief'].map((step, index) => (
+            {[
+              'Open Youth Remand',
+              'Search children on remand',
+              'Show cases, campaigns, evidence',
+              'Show alternatives and funding',
+              'Show consent-card pathway',
+              'Scope PNG or best first jurisdiction',
+              'Copy George email',
+            ].map((step, index) => (
               <li key={step} className="flex gap-2">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white" style={{ background: C.purple }}>{index + 1}</span>
                 <span>{step}</span>
