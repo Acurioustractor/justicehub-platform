@@ -46,7 +46,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, rejected: true });
   }
 
-  const { error } = await sc.from('campaign_nominations').update({ is_public: true }).eq('id', id);
+  // Approve, with optional edits (fix names/titles/reasons before they publish).
+  const patch: Record<string, string | boolean | null> = { is_public: true };
+  const u = body.updates || {};
+  const clean = (v: unknown, max: number) => {
+    const s = String(v ?? '').trim().slice(0, max);
+    return s || null;
+  };
+  if (u.nominee_name !== undefined) {
+    const name = clean(u.nominee_name, 200);
+    if (!name) return NextResponse.json({ error: 'nominee_name cannot be empty' }, { status: 400 });
+    patch.nominee_name = name;
+  }
+  if (u.nominee_title !== undefined) patch.nominee_title = clean(u.nominee_title, 200);
+  if (u.nominee_org !== undefined) patch.nominee_org = clean(u.nominee_org, 200);
+  if (u.reason !== undefined) {
+    const reason = clean(u.reason, 2000);
+    if (!reason) return NextResponse.json({ error: 'reason cannot be empty' }, { status: 400 });
+    patch.reason = reason;
+  }
+
+  const { error } = await sc.from('campaign_nominations').update(patch).eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });
 }
