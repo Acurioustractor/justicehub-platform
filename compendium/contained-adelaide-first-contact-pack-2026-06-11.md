@@ -103,6 +103,31 @@ You will spend Wednesday and Thursday at Reintegration Puzzle talking about what
 
 ---
 
+## Share blurbs (paste-ready, one per channel)
+
+**Universal forward** (email, WhatsApp, anywhere):
+> A shipping container is coming to public space in Adelaide, on Kaurna Yarta, 22 to 26 June. Young people are building it. Inside are three rooms: a cell like the ones we send children into, what Spain does instead, and what South Australia could do next. You walk through alone. Thirty minutes. Book a slot, and bring someone who would never normally come to something like this: justicehub.com.au/contained/adelaide
+
+**Short version** (SMS, captions):
+> One container. Three rooms. Thirty minutes. Adelaide, 22 to 26 June. Walk through it, then name who should: justicehub.com.au/contained/adelaide
+
+**Booking nudge** (someone already interested):
+> Walkthroughs run Wednesday 24 to Friday 26 June, free, booked to an exact time. Phone and shoes stay at the door. The address goes to everyone booked the moment it is confirmed: justicehub.com.au/contained/register
+
+**Decision-makers** (personal sends only, from the relationship owner):
+> This one is thirty minutes, private, and unfilmed. Nothing is asked of you inside, and the evidence behind every wall is citable. The one-page brief is here: justicehub.com.au/contained/brief. Reply and we will hold a priority slot for you on Wednesday or Thursday morning.
+
+**The nomination ask** (P.S. on any message, or alone):
+> Who needs to walk through this before they make the next decision? Name them, it takes one minute: justicehub.com.au/contained#nominate. Nominations go on the public wall, and we personally invite the decision-makers Adelaide names most.
+
+**Funders** (personal only):
+> Mount Druitt was the proof. Adelaide is the pattern: young people build it, decision-makers walk it, and JusticeHub turns every walkthrough into evidence and action. Walk through it, then give us twenty minutes on what the next stop needs: justicehub.com.au/contained/invest
+
+**Services and SA organisations:**
+> Room 3 carries a wall of South Australian organisations doing the work. One line, your sign-off, your door open to whoever walks through. Book a walkthrough, and bring one colleague who holds budget or caseload decisions: justicehub.com.au/contained/adelaide
+
+Link pairing: /contained/adelaide for almost everyone · /contained/register once they are ready to book · /contained/brief for decision-makers · /contained#nominate for recruiters · /contained/invest for funders.
+
 ## What this pack deliberately leaves out
 
 - Dollar figures (stat pack unlocked; the brief link carries sourced evidence)
