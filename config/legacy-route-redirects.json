@@ -8,7 +8,6 @@
   { "source": "/admin/funding/reports", "destination": "/admin/funding", "permanent": false },
   { "source": "/admin/research/scrape", "destination": "/admin/research", "permanent": false },
 
-  { "source": "/dashboard", "destination": "/admin", "permanent": false },
   { "source": "/dashboard/youth", "destination": "/youth-scout/youth-login", "permanent": false },
   { "source": "/dashboard/dreamtrack", "destination": "/youth-scout/talent-login", "permanent": false },
 
