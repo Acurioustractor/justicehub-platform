@@ -46,9 +46,11 @@ export async function GET(request: NextRequest) {
     // public wall at /contained/nominations).
     const { data: allNoms } = await supabase
       .from('campaign_nominations')
-      .select('nominee_name, nominee_title, nominee_org, reason, nominator_name, created_at')
+      .select('nominee_name, nominee_title, nominee_org, reason, nominator_name, created_at, is_public')
       .order('created_at', { ascending: false })
       .limit(500);
+
+    const pendingCount = (allNoms || []).filter((n: any) => !n.is_public).length;
 
     const newNominations = (allNoms || []).filter((n: any) => n.created_at >= since);
     const countsByNominee: Record<string, number> = {};
@@ -70,7 +72,7 @@ export async function GET(request: NextRequest) {
     };
     const fmtNom = (n: any) => {
       const count = n.count || countsByNominee[n.nominee_name] || 1;
-      return `- ${n.nominee_name}${n.nominee_title ? `, ${n.nominee_title}` : ''}${n.nominee_org ? ` (${n.nominee_org})` : ''} — ${count} nomination${count > 1 ? 's' : ''}${n.reason ? `\n  "${String(n.reason).slice(0, 160)}"` : ''}${n.nominator_name ? ` — nominated by ${n.nominator_name}` : ''}`;
+      return `- ${n.nominee_name}${n.nominee_title ? `, ${n.nominee_title}` : ''}${n.nominee_org ? ` (${n.nominee_org})` : ''}: ${count} nomination${count > 1 ? 's' : ''}${n.is_public === false ? ' [AWAITING REVIEW]' : ''}${n.reason ? `\n  "${String(n.reason).slice(0, 160)}"` : ''}${n.nominator_name ? ` (nominated by ${n.nominator_name})` : ''}`;
     };
 
     const sections: string[] = [];
@@ -88,7 +90,7 @@ export async function GET(request: NextRequest) {
 
 ${sections.join('\n\n')}
 
-Boards:
+${pendingCount > 0 ? `${pendingCount} nomination message${pendingCount > 1 ? 's' : ''} awaiting your review: https://justicehub.com.au/admin/contained/flow\n\n` : ''}Boards:
 Engagement: https://app.gohighlevel.com/v2/location/agzsSZWgovjwgpcoASWG/opportunities/list
 Adelaide experience pipeline: same view, switch pipeline top-left.
 

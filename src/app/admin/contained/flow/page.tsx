@@ -2,6 +2,7 @@ import { requireAdmin } from '@/lib/supabase/admin-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { getGHLClient, CONTAINED_PIPELINES } from '@/lib/ghl/client';
 import { eoiReceipt, supporterReceipt, nominatorReceipt } from '@/content/contained-receipts';
+import { ModerationQueue } from './moderation-queue';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -146,6 +147,16 @@ export default async function ContainedFlowPage() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Moderation queue */}
+        <section className="mt-12">
+          <h2 className="font-display text-2xl font-bold">Nomination review queue</h2>
+          <p className="mb-3 text-sm text-[#0A0A0A]/75">
+            New nominations land here first. The name and the pressure count go live instantly;
+            the message text publishes when you approve it. Reject deletes it.
+          </p>
+          <ModerationQueue />
         </section>
 
         {/* Live boards */}

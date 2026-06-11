@@ -91,9 +91,8 @@ export async function GET(
       const [{ data: noms, error: nomsError }, { data: votes, error: votesError }] = await Promise.all([
         supabase
           .from('campaign_nominations')
-          .select('nominee_name, nominee_title, nominee_org, category, reason, nominator_name, created_at')
+          .select('nominee_name, nominee_title, nominee_org, category, reason, nominator_name, created_at, is_public')
           .eq('project_id', project.id)
-          .eq('is_public', true)
           .order('created_at', { ascending: true })
           .limit(1000),
         supabase
@@ -127,17 +126,22 @@ export async function GET(
         // Prefer the most complete title/org seen
         if (!byNominee[key].nominee_title && n.nominee_title) byNominee[key].nominee_title = n.nominee_title;
         if (!byNominee[key].nominee_org && n.nominee_org) byNominee[key].nominee_org = n.nominee_org;
-        byNominee[key].messages.push({
-          reason: n.reason,
-          nominator_name: n.nominator_name || null,
-          created_at: n.created_at,
-        });
+        // Counts include pending nominations; message TEXT shows only after
+        // moderation (approve on /admin/contained/flow).
+        byNominee[key].total_count = (byNominee[key].total_count || 0) + 1;
+        if (n.is_public) {
+          byNominee[key].messages.push({
+            reason: n.reason,
+            nominator_name: n.nominator_name || null,
+            created_at: n.created_at,
+          });
+        }
       }
 
       const leaderboard = Object.values(byNominee)
         .map((n: any) => ({
           ...n,
-          nomination_count: n.messages.length,
+          nomination_count: n.total_count,
           upvotes: upvotesByKey[n.nominee_key] || 0,
         }))
         .sort(
@@ -295,7 +299,9 @@ export async function POST(
       reason: reason.trim(),
       nominator_name: nominator_name?.trim() || null,
       nominator_email: nominator_email?.trim().toLowerCase() || null,
-      is_public: true,
+      // Moderation gate: messages publish after human review (approve on
+      // /admin/contained/flow). Counts include pending so pressure ticks live.
+      is_public: false,
     });
 
     if (error) throw error;
@@ -381,12 +387,11 @@ Nominator: ${cleanNominatorName || '(anonymous)'}${cleanNominatorEmail ? ` <${cl
 Review: ${SITE}/admin/contained`,
     }).catch((err) => console.error('Failed to send team nomination alert:', err));
 
-    // Return updated count
+    // Return updated count (includes pending — the pressure number is live)
     const { count } = await supabase
       .from('campaign_nominations')
       .select('id', { count: 'exact', head: true })
-      .eq('project_id', project.id)
-      .eq('is_public', true);
+      .eq('project_id', project.id);
 
     return NextResponse.json({ success: true, count: count || 0 }, { status: 201 });
   } catch (error) {

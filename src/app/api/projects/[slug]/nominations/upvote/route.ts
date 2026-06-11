@@ -50,12 +50,13 @@ export async function POST(
     }
     const nomineeKey = nomineeName.toLowerCase();
 
-    // Only nominees who actually exist on the public wall can be voted on.
+    // Only nominees who actually exist on the board can be voted on.
+    // Pending (unmoderated) nominees count — their name is on the board even
+    // while their message text awaits review.
     const { count: exists } = await supabase
       .from('campaign_nominations')
       .select('id', { count: 'exact', head: true })
       .eq('project_id', project.id)
-      .eq('is_public', true)
       .ilike('nominee_name', nomineeName);
     if (!exists) {
       return NextResponse.json({ error: 'Nominee not found' }, { status: 404 });
