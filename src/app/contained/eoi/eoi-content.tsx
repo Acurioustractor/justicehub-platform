@@ -5,7 +5,7 @@ import { NominateForm } from '../tour/nominate-form';
 import { TurnstileWidget } from '@/components/ui/turnstile-widget';
 
 const EVENT_NAME = 'CONTAINED Adelaide 2026';
-const EVENT_SLUG = 'contained-adelaide-2026';
+const EVENT_SLUG = 'contained-adelaide-tandanya';
 
 type Door = 'nominate' | 'eoi' | 'support';
 

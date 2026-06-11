@@ -195,6 +195,14 @@ const routeGroups: RouteGroup[] = [
         uxQuestion: 'Is the registration route clear enough without separate interest and join pages?',
       },
       {
+        href: '/contained/eoi',
+        label: 'Nominate / EOI',
+        status: 'Conversion',
+        audience: 'Nominees, invited guests, supporters',
+        purpose: 'Nominate a decision-maker, express interest, or stand with the Adelaide activation.',
+        uxQuestion: 'Should this replace register-interest for Adelaide-specific demand capture?',
+      },
+      {
         href: '/contained/enroll',
         label: 'Enroll with code',
         status: 'Conversion',

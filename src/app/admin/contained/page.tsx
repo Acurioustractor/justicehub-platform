@@ -63,7 +63,7 @@ export default async function AdminContainedPage() {
 
       <div className="pt-8 pb-16">
         <div className="container-justice">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between mb-8">
             <div>
               <Link href="/admin" className="text-sm text-gray-600 hover:text-black mb-2 inline-block">
                 ← Back to Dashboard
@@ -73,7 +73,7 @@ export default async function AdminContainedPage() {
                 Campaign metrics, recent activity, and content moderation
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3 lg:justify-end">
               <Link
                 href="/contained"
                 target="_blank"
@@ -215,36 +215,38 @@ export default async function AdminContainedPage() {
               <h2 className="font-black text-sm uppercase">Tour Events</h2>
             </div>
             {events.length > 0 ? (
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200 text-left">
-                    <th className="px-6 py-3 text-xs font-black uppercase">Event</th>
-                    <th className="px-6 py-3 text-xs font-black uppercase">Date</th>
-                    <th className="px-6 py-3 text-xs font-black uppercase">Location</th>
-                    <th className="px-6 py-3 text-xs font-black uppercase text-right">Link</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {events.map((event: { id: string; title: string; date: string; location: string; slug: string }) => (
-                    <tr key={event.id}>
-                      <td className="px-6 py-3 font-medium">{event.title}</td>
-                      <td className="px-6 py-3 text-sm text-gray-600">
-                        {event.date ? new Date(event.date).toLocaleDateString('en-AU') : '—'}
-                      </td>
-                      <td className="px-6 py-3 text-sm text-gray-600">{event.location || '—'}</td>
-                      <td className="px-6 py-3 text-right">
-                        <Link
-                          href={`/events/${event.slug}`}
-                          target="_blank"
-                          className="text-sm font-bold text-blue-600 hover:text-blue-800"
-                        >
-                          View →
-                        </Link>
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="min-w-[720px] w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200 text-left">
+                      <th className="px-6 py-3 text-xs font-black uppercase">Event</th>
+                      <th className="px-6 py-3 text-xs font-black uppercase">Date</th>
+                      <th className="px-6 py-3 text-xs font-black uppercase">Location</th>
+                      <th className="px-6 py-3 text-xs font-black uppercase text-right">Link</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {events.map((event: { id: string; title: string; date: string; location: string; slug: string }) => (
+                      <tr key={event.id}>
+                        <td className="px-6 py-3 font-medium">{event.title}</td>
+                        <td className="px-6 py-3 text-sm text-gray-600">
+                          {event.date ? new Date(event.date).toLocaleDateString('en-AU') : '—'}
+                        </td>
+                        <td className="px-6 py-3 text-sm text-gray-600">{event.location || '—'}</td>
+                        <td className="px-6 py-3 text-right">
+                          <Link
+                            href={`/events/${event.slug}`}
+                            target="_blank"
+                            className="text-sm font-bold text-blue-600 hover:text-blue-800"
+                          >
+                            View →
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <div className="p-6 text-center text-gray-500">No events found</div>
             )}
@@ -255,7 +257,7 @@ export default async function AdminContainedPage() {
             <div className="px-6 py-4 border-b-2 border-black bg-gray-50">
               <h2 className="font-black text-sm uppercase">Quick Links</h2>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-5 divide-x divide-gray-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 sm:divide-x divide-gray-200">
               {[
                 { label: 'Tour Page', href: '/contained' },
                 { label: 'Route Review', href: '/admin/contained/routes' },

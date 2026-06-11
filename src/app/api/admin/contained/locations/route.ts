@@ -72,6 +72,7 @@ export async function GET() {
   const cityKeywords: Record<string, string[]> = {
     'contained-mount-druitt-launch': ['mount druitt', 'mt druitt', 'western sydney', 'wsu', 'sydney details', 'sydney plans', 'redfern', 'parramatta', 'uniting', 'thread together', 'alexandria'],
     'contained-brisbane': ['brisbane', 'yac', 'south brisbane', 'fortitude valley', 'west end', 'noosa', 'toowoomba', 'qld youth justice', 'queensland safer', 'futures radio', 'tamborine', 'epic pathways', 'kalianah'],
+    'contained-adelaide-tandanya': ['adelaide', 'onkaparinga', 'south australia', 'sa ', 'mclaren vale', 'southstart', 'good bank gallery'],
     'contained-adelaide-reintegration': ['adelaide', 'onkaparinga', 'south australia', 'sa ', 'mclaren vale', 'southstart', 'good bank gallery'],
     'contained-townsville-picc': ['townsville', 'palm island', 'picc', 'cleveland ydc', 'garbutt', 'north queensland', 'rachel atkinson'],
     'contained-perth-uwa': ['perth', 'forest chase', 'western australia', 'minderoo', 'banksia hill', 'unit 18', 'kununurra', 'jri perth'],

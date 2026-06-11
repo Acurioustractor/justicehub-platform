@@ -9,6 +9,7 @@ import { MapPin, Calendar, Users, Building2, ChevronLeft, Send, Loader2, DollarS
 import { AccessGate } from '@/components/contained/AccessGate';
 import { ExperiencePackages } from '@/components/contained/ExperiencePackages';
 import { CivicIntelSection } from '@/components/contained/CivicIntelSection';
+import { tourStops as staticTourStops } from '@/content/campaign';
 
 const TourMap = dynamic(() => import('@/components/contained/TourMap'), {
   ssr: false,
@@ -228,6 +229,7 @@ export function StopContent({ slug }: { slug: string }) {
   const [data, setData] = useState<StopData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const staticStop = staticTourStops.find((stop) => stop.eventSlug === slug);
 
   // Story submission state
   const [storyName, setStoryName] = useState('');
@@ -279,7 +281,20 @@ export function StopContent({ slug }: { slug: string }) {
       <>
         <Navigation />
         <main className="bg-black text-white min-h-screen flex items-center justify-center">
-          <Loader2 className="w-12 h-12 animate-spin text-gray-600" />
+          <div className="max-w-xl px-6 text-center">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#DC2626]">
+              Loading tour stop
+            </p>
+            <h1 className="text-4xl font-bold md:text-5xl">
+              {staticStop?.city || 'CONTAINED Tour Stop'}
+            </h1>
+            {staticStop && (
+              <p className="mt-4 text-sm text-gray-400">
+                {staticStop.date} · {staticStop.venue}
+              </p>
+            )}
+            <Loader2 className="mx-auto mt-8 h-10 w-10 animate-spin text-gray-600" />
+          </div>
         </main>
         <Footer />
       </>

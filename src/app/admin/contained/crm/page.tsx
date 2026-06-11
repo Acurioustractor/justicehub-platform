@@ -116,6 +116,7 @@ export default function ContainedCRMPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
+        <h1 className="sr-only">CONTAINED CRM</h1>
         <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
       </div>
     );
@@ -126,6 +127,7 @@ export default function ContainedCRMPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <XCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h1 className="text-xl font-black mb-2">CONTAINED CRM</h1>
           <p className="text-lg font-bold mb-2">{error}</p>
           <Link href="/admin" className="text-blue-600 underline">
             Back to Admin

@@ -186,6 +186,18 @@ export function ContainedStoriesContent() {
           </Link>
         </div>
 
+        <section className="container-justice mb-12">
+          <p className="text-sm font-bold uppercase tracking-[0.24em] text-red-600 mb-3">
+            CONTAINED Stories
+          </p>
+          <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-4">
+            Real Stories of Justice
+          </h1>
+          <p className="max-w-3xl text-lg text-gray-700">
+            Community voices, campaign stories, and evidence from the CONTAINED tour and the organisations building youth justice alternatives.
+          </p>
+        </section>
+
         {/* Hero Quote */}
         {heroStory && (
           <section className="bg-black text-white py-20 mb-16">

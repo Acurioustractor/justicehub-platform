@@ -171,7 +171,7 @@ export function SocialKitContent() {
             </div>
 
             <h1 className="text-3xl md:text-5xl font-black tracking-tighter uppercase mb-4">
-              CONTAINED<br />SOCIAL CONTENT
+              CONTAINED{' '}<br />SOCIAL CONTENT
             </h1>
 
             <p className="text-lg text-gray-600 max-w-2xl">

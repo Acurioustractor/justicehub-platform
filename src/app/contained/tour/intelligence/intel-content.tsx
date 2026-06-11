@@ -912,6 +912,7 @@ export function TourIntelligenceContent() {
     return (
       <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
+          <h1 className="sr-only">CONTAINED Tour Intelligence</h1>
           <Loader2 className="w-8 h-8 animate-spin text-[#DC2626] mx-auto mb-4" />
           <p className="text-xs text-[#F5F0E8]/95 uppercase tracking-[0.2em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
             Loading Intelligence
@@ -924,15 +925,19 @@ export function TourIntelligenceContent() {
   if (!data) {
     return (
       <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-        <p className="text-xs text-[#DC2626] uppercase tracking-[0.2em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
-          Failed to load intelligence data.
-        </p>
+        <div className="text-center">
+          <h1 className="text-lg font-bold text-[#F5F0E8]">CONTAINED Tour Intelligence</h1>
+          <p className="mt-3 text-xs text-[#DC2626] uppercase tracking-[0.2em]" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+            Failed to load intelligence data.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
     <div ref={containerRef} className="h-screen bg-[#0A0A0A] flex flex-col overflow-hidden" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+      <h1 className="sr-only">CONTAINED Tour Intelligence</h1>
       {/* Top bar */}
       <div className="flex-shrink-0 h-12 border-b border-white/10 flex items-center justify-between px-4 bg-[#0A0A0A]/95 backdrop-blur-sm z-[600]">
         <div className="flex items-center gap-4">

@@ -326,7 +326,7 @@ export default function CampaignCommandCentre() {
       <div className="pt-8 pb-16">
         <div className="container-justice">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between mb-8">
             <div>
               <Link href="/admin/contained" className="text-sm text-gray-600 hover:text-black mb-2 inline-block">
                 ← Back to Contained Admin
@@ -336,7 +336,7 @@ export default function CampaignCommandCentre() {
                 Media, stories, stats, and cross-links — everything for the Contained campaign
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3 lg:justify-end">
               <Link
                 href="/contained"
                 target="_blank"
@@ -354,12 +354,12 @@ export default function CampaignCommandCentre() {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-1 mb-8 border-b-2 border-black">
+          <div className="flex gap-1 mb-8 border-b-2 border-black overflow-x-auto">
             {tabs.map(t => (
               <button
                 key={t.key}
                 onClick={() => setTab(t.key)}
-                className={`flex items-center gap-2 px-6 py-3 text-sm font-bold uppercase tracking-widest transition-colors border-b-2 -mb-[2px] ${
+                className={`flex shrink-0 items-center gap-2 px-6 py-3 text-sm font-bold uppercase tracking-widest transition-colors border-b-2 -mb-[2px] ${
                   tab === t.key
                     ? 'border-red-600 text-black bg-white'
                     : 'border-transparent text-gray-500 hover:text-black'

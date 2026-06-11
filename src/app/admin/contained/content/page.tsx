@@ -135,6 +135,7 @@ export default function CampaignContentPage() {
     return (
       <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center">
         <Navigation />
+        <h1 className="sr-only">CONTAINED Campaign Hub</h1>
         <Loader2 className="w-6 h-6 animate-spin text-[#0A0A0A]/30" />
       </div>
     );
