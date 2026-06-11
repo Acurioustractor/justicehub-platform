@@ -35,7 +35,12 @@ export function ModerationQueue() {
     load();
   }, [load]);
 
-  async function act(payload: { id?: string; all?: boolean; reject?: boolean }) {
+  async function act(payload: {
+    id?: string;
+    all?: boolean;
+    reject?: boolean;
+    updates?: Partial<Pick<PendingNomination, 'nominee_name' | 'nominee_title' | 'nominee_org' | 'reason'>>;
+  }) {
     setBusy(payload.id || 'all');
     try {
       await fetch('/api/admin/contained/nomination-moderation', {
@@ -48,6 +53,10 @@ export function ModerationQueue() {
     } finally {
       setBusy(null);
     }
+  }
+
+  function edit(id: string, field: keyof PendingNomination, value: string) {
+    setPending((prev) => prev.map((p) => (p.id === id ? { ...p, [field]: value } : p)));
   }
 
   if (loading) {
@@ -78,25 +87,59 @@ export function ModerationQueue() {
       </div>
       {pending.map((p) => (
         <div key={p.id} className="border border-[#DC2626]/40 bg-white/60 p-4">
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="font-bold">{p.nominee_name}</span>
-            <span className="font-mono text-xs text-[#0A0A0A]/60">{p.category}</span>
+          <div className="grid gap-2 md:grid-cols-3">
+            <input
+              className="border border-[#0A0A0A]/25 bg-white px-3 py-2 text-sm font-bold focus:border-[#0A0A0A] focus:outline-none"
+              value={p.nominee_name}
+              onChange={(e) => edit(p.id, 'nominee_name', e.target.value)}
+              aria-label="Nominee name"
+            />
+            <input
+              className="border border-[#0A0A0A]/25 bg-white px-3 py-2 text-sm focus:border-[#0A0A0A] focus:outline-none"
+              value={p.nominee_title || ''}
+              placeholder="Title or role"
+              onChange={(e) => edit(p.id, 'nominee_title', e.target.value)}
+              aria-label="Nominee title"
+            />
+            <input
+              className="border border-[#0A0A0A]/25 bg-white px-3 py-2 text-sm focus:border-[#0A0A0A] focus:outline-none"
+              value={p.nominee_org || ''}
+              placeholder="Organisation"
+              onChange={(e) => edit(p.id, 'nominee_org', e.target.value)}
+              aria-label="Nominee organisation"
+            />
           </div>
-          <div className="font-mono text-xs text-[#0A0A0A]/60">
-            {[p.nominee_title, p.nominee_org].filter(Boolean).join(' · ')}
-          </div>
-          <p className="mt-2 text-sm text-[#0A0A0A]/85">“{p.reason}”</p>
-          <div className="mt-1 font-mono text-xs text-[#0A0A0A]/50">
-            by {p.nominator_name || 'Anonymous'}
-            {p.nominator_email ? ` <${p.nominator_email}>` : ''}
+          <textarea
+            className="mt-2 w-full border border-[#0A0A0A]/25 bg-white px-3 py-2 text-sm focus:border-[#0A0A0A] focus:outline-none"
+            rows={2}
+            value={p.reason}
+            onChange={(e) => edit(p.id, 'reason', e.target.value)}
+            aria-label="Nomination reason"
+          />
+          <div className="mt-1 flex items-baseline justify-between font-mono text-xs text-[#0A0A0A]/50">
+            <span>
+              by {p.nominator_name || 'Anonymous'}
+              {p.nominator_email ? ` <${p.nominator_email}>` : ''}
+            </span>
+            <span>{p.category}</span>
           </div>
           <div className="mt-3 flex gap-2">
             <button
-              onClick={() => act({ id: p.id })}
+              onClick={() =>
+                act({
+                  id: p.id,
+                  updates: {
+                    nominee_name: p.nominee_name,
+                    nominee_title: p.nominee_title || '',
+                    nominee_org: p.nominee_org || '',
+                    reason: p.reason,
+                  },
+                })
+              }
               disabled={busy !== null}
               className="bg-[#059669] px-4 py-1.5 font-mono text-xs font-medium uppercase tracking-wider text-white hover:bg-[#059669]/85 disabled:opacity-50"
             >
-              Approve
+              Approve as shown
             </button>
             <button
               onClick={() => act({ id: p.id, reject: true })}
