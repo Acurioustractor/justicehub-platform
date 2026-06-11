@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { ArrowRight, Download, FileText, Globe2, Sheet } from 'lucide-react';
+import { ArrowRight, Download, FilePlus2, FileText, Globe2, MessageCircle, Search, Sheet, ShieldCheck } from 'lucide-react';
 import { MatrixFlowNav } from '../_components/MatrixFlowNav';
 import { unPackDownloads, unPackPages } from './_content';
 
@@ -80,6 +80,55 @@ export default function UnMatrixPackPage() {
         <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
           <div>
             <p className="mb-2 text-xs uppercase tracking-[0.18em]" style={{ color: C.muted, fontFamily: MONO }}>
+              Use this pack
+            </p>
+            <h2 className="mb-4 text-2xl font-semibold tracking-tight md:text-3xl" style={{ color: C.ink }}>
+              Give reviewers a clear next action.
+            </h2>
+            <div className="grid gap-3 md:grid-cols-3">
+              <ActionCard
+                href="/justice-matrix/ask?q=What%20cases%20and%20campaigns%20connect%20to%20offshore%20detention%2C%20third-country%20transfer%2C%20and%20non-refoulement%3F&surface=refugee"
+                icon={<MessageCircle className="h-5 w-5" />}
+                label="Ask the Matrix"
+                body="Use AI support for a cited research packet from the Matrix corpus. It stays inside the records and keeps the legal-advice boundary clear."
+              />
+              <ActionCard
+                href="/justice-matrix/explore?mode=semantic&surface=refugee&q=non-refoulement%20third-country%20transfer"
+                icon={<Search className="h-5 w-5" />}
+                label="Search the corpus"
+                body="Open Explore with a refugee and asylum lens, then filter cases, campaigns, evidence, jurisdictions, issues, and source strength."
+              />
+              <ActionCard
+                href="/justice-matrix/contribute"
+                icon={<FilePlus2 className="h-5 w-5" />}
+                label="Submit a source"
+                body="Send a missing case, campaign, correction, source link, or note into the review queue. Nothing publishes without curator approval."
+              />
+            </div>
+          </div>
+
+          <aside className="rounded-lg border bg-white p-5" style={{ borderColor: C.border }}>
+            <div className="mb-3 flex items-center gap-2 font-semibold" style={{ color: C.ink }}>
+              <ShieldCheck className="h-4 w-4" style={{ color: C.teal }} />
+              How information is collected
+            </div>
+            <ol className="space-y-3 text-sm leading-6" style={{ color: C.body }}>
+              <li><strong style={{ color: C.ink }}>1.</strong> Source rows register courts, legal databases, NGOs, media, and partner leads.</li>
+              <li><strong style={{ color: C.ink }}>2.</strong> Scanners and adapters stage candidate cases and campaigns as discoveries.</li>
+              <li><strong style={{ color: C.ink }}>3.</strong> Partner submissions enter the same pending review queue.</li>
+              <li><strong style={{ color: C.ink }}>4.</strong> Curators check the source, normalise fields, and approve only trusted records.</li>
+            </ol>
+            <Link href="/justice-matrix/how-it-works" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold hover:underline" style={{ color: C.accent }}>
+              Read the trust model <ArrowRight className="h-4 w-4" />
+            </Link>
+          </aside>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-5 py-10 md:px-8 md:py-12">
+        <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
+          <div>
+            <p className="mb-2 text-xs uppercase tracking-[0.18em]" style={{ color: C.muted, fontFamily: MONO }}>
               Read online
             </p>
             <h2 className="mb-4 text-2xl font-semibold tracking-tight md:text-3xl" style={{ color: C.ink }}>
@@ -118,7 +167,7 @@ export default function UnMatrixPackPage() {
               <li><strong style={{ color: C.ink }}>1.</strong> Open the status brief to show the infrastructure already runs.</li>
               <li><strong style={{ color: C.ink }}>2.</strong> Open the UI plan to show the next build priorities.</li>
               <li><strong style={{ color: C.ink }}>3.</strong> Download the background paper and matrices when George wants source files.</li>
-              <li><strong style={{ color: C.ink }}>4.</strong> Jump back into the live Matrix or youth remand scenario.</li>
+              <li><strong style={{ color: C.ink }}>4.</strong> Ask, search, or contribute from this page when a reviewer wants the next step.</li>
             </ol>
           </aside>
         </div>
@@ -154,5 +203,24 @@ export default function UnMatrixPackPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+function ActionCard({ href, icon, label, body }: { href: string; icon: React.ReactNode; label: string; body: string }) {
+  return (
+    <Link
+      href={href}
+      className="group rounded-lg border bg-white p-4 transition-colors hover:border-zinc-300"
+      style={{ borderColor: C.border }}
+    >
+      <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-md text-white" style={{ background: C.accent }}>
+        {icon}
+      </span>
+      <h3 className="mb-1 font-semibold" style={{ color: C.ink }}>{label}</h3>
+      <p className="text-sm leading-6" style={{ color: C.body }}>{body}</p>
+      <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold group-hover:underline" style={{ color: C.accent }}>
+        Open <ArrowRight className="h-4 w-4" />
+      </span>
+    </Link>
   );
 }

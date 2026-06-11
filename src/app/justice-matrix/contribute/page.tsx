@@ -41,7 +41,7 @@ export default function ContributePage() {
               style={{ fontFamily: DISPLAY, fontWeight: 500, lineHeight: 1.05 }}
               className="text-4xl md:text-5xl lg:text-6xl text-white max-w-3xl mb-4"
             >
-              Add a case or campaign.
+              Add a case, campaign, source note, or correction.
             </h1>
             <p className="text-[#eadff2] text-base md:text-lg max-w-2xl">
               Practitioners, NGOs, clinics, and academics keep this matrix current. Send what you have and a curator will review it. Nothing publishes without that review.
@@ -55,7 +55,7 @@ export default function ContributePage() {
         <section className="max-w-3xl mx-auto px-6 md:px-10 py-12 md:py-16">
           <div className="mb-8 text-sm leading-7" style={{ color: '#584b40' }}>
             <p>
-              Submit one case or campaign per form. If you have a batch, email the curator directly rather than filling this in repeatedly. The fields below mirror what we publish on the public profile, so the more grounded what you write here, the less back-and-forth before it lands in the matrix.
+              Submit one case or campaign per form. If you are sending a correction, source link, pleading, or related note, choose the closest record type and explain the correction in the notes field. If you have a batch, email the curator directly rather than filling this in repeatedly. The fields below mirror what we publish on the public profile, so the more grounded what you write here, the less back-and-forth before it lands in the matrix.
             </p>
           </div>
           <ContributeForm />

@@ -5,6 +5,7 @@ import {
   BookOpenCheck,
   CircleHelp,
   FileText,
+  FilePlus2,
   LifeBuoy,
   Link as LinkIcon,
   MessageCircle,
@@ -65,6 +66,11 @@ const sendLinks = [
     label: 'Youth remand walkthrough',
     href: '/justice-network/youth-remand',
     body: 'Use this when the question is about children, remand, custody, detention, or alternatives.',
+  },
+  {
+    label: 'Contribute or correct',
+    href: '/justice-matrix/contribute',
+    body: 'Use this for missing cases, campaign updates, source links, corrections, or notes that need curator review.',
   },
 ];
 
@@ -139,7 +145,7 @@ const supportMoves = [
   'Tell them this is research support, not legal advice.',
   'If they type a full question and get no results, send them to Ask the Matrix.',
   'If the question mentions a child, detention, custody, watchhouses, remand, or age, send the Youth Remand guide too.',
-  'If they find a missing case, campaign, source, or correction, send Contribute.',
+  'If they find a missing case, campaign, source, or correction, send /justice-matrix/contribute.',
   'If they need partner help, ask what jurisdiction, issue, audience, and deadline they are working with.',
 ];
 
@@ -156,6 +162,7 @@ The shortest way to use it is:
 3. Use Explore if you already know a case, campaign, issue, country, or keyword.
 4. Use the UN / OHCHR pack if you are reviewing the NJP / OHCHR material.
 5. Use the Youth Remand guide for questions about children in detention, remand, custody, watchhouses, or alternatives.
+6. Use Contribute if you have a missing source, correction, or update that should go into review.
 
 Important boundary: this is research support and a way to find cited records. It is not legal advice.
 
@@ -303,6 +310,7 @@ function SectionKicker({ children }: { children: React.ReactNode }) {
 }
 
 function LinkCard({ href, title, body }: { href: string; title: string; body: string }) {
+  const Icon = href === '/justice-matrix/contribute' ? FilePlus2 : LinkIcon;
   return (
     <Link
       href={href}
@@ -310,7 +318,7 @@ function LinkCard({ href, title, body }: { href: string; title: string; body: st
       style={{ borderColor: C.border }}
     >
       <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-md text-white" style={{ background: C.accent }}>
-        <LinkIcon className="h-5 w-5" />
+        <Icon className="h-5 w-5" />
       </div>
       <h2 className="font-semibold" style={{ color: C.ink }}>
         {title}

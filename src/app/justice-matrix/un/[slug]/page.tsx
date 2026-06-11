@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { ArrowLeft, Download, FileText } from 'lucide-react';
+import { ArrowLeft, Download, FilePlus2, MessageCircle, Search } from 'lucide-react';
 import { MatrixFlowNav } from '../../_components/MatrixFlowNav';
 import { getUnPackPage, readUnPackMarkdown, unPackPages, type UnPackPageSlug } from '../_content';
 
@@ -45,6 +45,11 @@ export default async function UnMatrixPackDetailPage({ params }: { params: { slu
   const markdown = await readUnPackMarkdown(page.slug as UnPackPageSlug);
   if (!markdown) notFound();
 
+  const askHref = `/justice-matrix/ask?${new URLSearchParams({
+    q: `What should I take from ${page.title} for the NJP / OHCHR review?`,
+    surface: 'refugee',
+  }).toString()}`;
+
   return (
     <main className="min-h-screen" style={{ background: C.page, color: C.ink, fontFamily: SANS }}>
       <section className="border-b" style={{ background: C.surface, borderColor: C.border }}>
@@ -72,12 +77,28 @@ export default async function UnMatrixPackDetailPage({ params }: { params: { slu
               Download markdown
             </a>
             <Link
-              href="/justice-matrix"
+              href="/justice-matrix/explore?mode=semantic&surface=refugee&q=non-refoulement%20third-country%20transfer"
               className="inline-flex min-h-11 items-center gap-2 rounded-md border px-4 text-sm font-semibold"
               style={{ borderColor: C.border, color: C.body }}
             >
-              <FileText className="h-4 w-4" />
-              Open Matrix
+              <Search className="h-4 w-4" />
+              Search Matrix
+            </Link>
+            <Link
+              href={askHref}
+              className="inline-flex min-h-11 items-center gap-2 rounded-md border px-4 text-sm font-semibold"
+              style={{ borderColor: C.border, color: C.body }}
+            >
+              <MessageCircle className="h-4 w-4" />
+              Ask about this brief
+            </Link>
+            <Link
+              href="/justice-matrix/contribute"
+              className="inline-flex min-h-11 items-center gap-2 rounded-md border px-4 text-sm font-semibold"
+              style={{ borderColor: C.border, color: C.body }}
+            >
+              <FilePlus2 className="h-4 w-4" />
+              Submit correction
             </Link>
           </div>
         </div>
@@ -86,9 +107,11 @@ export default async function UnMatrixPackDetailPage({ params }: { params: { slu
       <MatrixFlowNav active="un" />
 
       <article className="mx-auto max-w-4xl px-5 py-10 md:px-8 md:py-12">
-        <div className="rounded-lg border bg-white p-5 md:p-8" style={{ borderColor: C.border }}>
-          <div className="prose prose-zinc max-w-none prose-headings:tracking-tight prose-a:font-semibold prose-a:text-[#4a2560] prose-table:text-sm prose-th:bg-zinc-50">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
+        <div className="overflow-hidden rounded-lg border bg-white" style={{ borderColor: C.border }}>
+          <div className="max-w-full overflow-x-auto p-5 md:p-8">
+            <div className="prose prose-zinc max-w-none prose-headings:tracking-tight prose-a:font-semibold prose-a:text-[#4a2560] prose-table:text-sm prose-table:min-w-[640px] prose-th:bg-zinc-50">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
+            </div>
           </div>
         </div>
       </article>

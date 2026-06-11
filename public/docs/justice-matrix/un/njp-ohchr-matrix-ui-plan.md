@@ -2,22 +2,25 @@
 
 **Companion to:** `NJP-OHCHR-matrix-status-brief.md`
 **Written:** 28 May 2026
-**Frame:** the pipeline now genuinely runs end to end. The next leverage is the human side: the curator who turns raw discoveries into trusted records, and the practitioner who reuses them. This doc maps what is already built, where the gaps are, and a priority order for the UI work, with the scraping lessons folded in at the end.
+**Refreshed:** 12 June 2026
+**Frame:** the pipeline now genuinely runs end to end. The next leverage is the human side: the curator who turns raw discoveries into trusted records, the practitioner who reuses them, and the reviewer who needs a sendable public route. This doc maps what is already built, where the gaps are, and a priority order for the UI work, with the scraping lessons folded in at the end.
 
 ## What I walked
 
-**Public preview** at `/preview/justice-matrix` (password-gated):
-- Five tabs: Overview, Global Map, Cases (98), Campaigns (60), Insights.
-- Overview is the OHCHR pitch page: badge, stats (100/60/13/48-favorable), four-capability grid, technical architecture, ten-month timeline. Backed by real data.
-- Global Map is a Leaflet world map with colour-coded markers (favorable green, adverse red, pending grey), circles for cases, triangles for campaigns, sized by precedent strength. Working legend.
-- Cases tab is a flat unpaginated list of 98 rows. Each card carries jurisdiction chip, year, region, outcome chip, precedent-strength chip, case title, court, strategic issue, category tags, and a "View Source" outbound link.
-- Search is one free-text box across citation, jurisdiction and issue, plus a "All Regions" select.
-- Visual language is generic dashboard blue gradient. Nothing of the JusticeHub house style (Cormorant Garamond, cream `#f8f1e6`, deep purple hero, warm gold kicker) is present.
+**Public Matrix routes**:
+- `/justice-matrix` is the public hub with search entry, corpus counts, quick links, featured rails, and routes into Ask, Explore, Issues, Map, Guide, UN pack, and Youth Remand.
+- `/justice-matrix/explore` is the main research surface. It supports keyword and semantic search, cases/campaigns/evidence tabs, decision/report filtering, jurisdiction grouping, URL-shareable state, and no-result recovery links into semantic search, Ask, Youth Remand, and clear filters.
+- `/justice-matrix/ask` is the grounded AI support route. It retrieves Matrix records first, cites returned cases/campaigns/evidence, and falls back to a retrieval-only packet if no chat provider is configured.
+- `/justice-matrix/map`, `/justice-matrix/issues`, `/justice-matrix/cases/[id]`, and `/justice-matrix/campaigns/[id]` are public exploration and profile routes.
+- `/justice-matrix/un` is the public NJP / OHCHR review pack with status brief, UI plan, background paper, source matrices, Ask/Search/Contribute support, and a plain explanation of how information enters review.
+- `/justice-matrix/user-guide` is the sendable guide for partners, AI assistants, and first-time users.
+- Live counts refreshed 12 June 2026: 360 case records, 67 campaigns, 48 configured sources, 32 active sources, 285 discovered items, 278 approved discoveries, 7 rejected discoveries, 0 pending discoveries.
 
 **Admin discoveries** at `/admin/justice-matrix/discoveries` (code-read, not screenshot-walked because it requires admin auth):
-- 451 lines. State filters by status (`pending` / `approved` / `rejected`) plus item-type and a search box.
-- Discoveries render as expandable rows; one-click `approve` / `reject` / `duplicate` actions hit the API.
-- The empty-state for the pending tab still says "Run `/ralph-matrix-scan` to discover new items" — a command that does not exist. Code drift versus the real scanner I built.
+- Split list/detail layout. Filters by status (`pending` / `approved` / `rejected` / `duplicate` / `all`), item type, and search.
+- Discovery rows show source name, jurisdiction, year, extraction confidence, duplicate flags, and item type.
+- Detail pane supports enrichment, inline field editing, approve with edits, reject with reason, duplicate marking, and bulk rejection.
+- Empty-state copy now points to the real scanner command: `npx tsx scripts/scan-justice-matrix.ts --apply`.
 
 ## The shape of the experience — three audiences
 
@@ -30,7 +33,7 @@ The current build serves the practitioner thinly, the curator very thinly, and t
 ## Gap list, in honest priority order
 
 ### Reviewer / curator (the trust machine)
-- Empty-state copy references a command that does not exist (`/ralph-matrix-scan`). Replace with a real "Run scan" button or an honest "Scheduled scans run nightly" line.
+- The queue now supports inline edits, enrichment, duplicate marking, rejection reasons, and bulk rejection. The next gap is source-health context beside each candidate.
 - No view of the source row alongside the discovery — the reviewer cannot see whose page this came from without leaving.
 - No view of the *potential duplicate* alongside the candidate. The DB has `potential_duplicate_id` and `similarity_score`; the UI does not surface them.
 - One-click approve passes raw extracted fields straight through. There is no inline edit form, so a typo or a missing year stays in the published record.
@@ -48,8 +51,8 @@ The current build serves the practitioner thinly, the curator very thinly, and t
 - The Insights tab exists in nav but I have not seen what it does. (To audit on the next pass.)
 
 ### Visual / brand
-- The whole preview lives in a dashboard-blue / white aesthetic. JusticeHub's brand is editorial / warm (Cormorant Garamond, cream `#f8f1e6`, deep purple `#4a2560` hero, warm gold `#8d6a44` kicker). The preview was probably built fast before that lock-in. Whole experience needs a design pass.
-- No photography. The CLAUDE.md photo rule (real photos only, no AI-photoreal) leaves room for editorial portrait images on case profiles where lawful and consented, but currently there is none.
+- The public Matrix routes have moved to the Justice Matrix research-tool visual system: neutral surfaces, deep purple, gold labels, compact controls, and mono trust labels.
+- Case/campaign/evidence profiles are functional and source-forward. A later pass can add lawful, consented editorial media where it helps, but the core review flow should stay dense and text-first.
 
 ### Scanner / pipeline ops
 - No UI surface for source health. `last_scraped_at`, `last_error`, `total_items_found`, `success_rate` all exist on `justice_matrix_sources`, none are rendered.
@@ -63,16 +66,13 @@ The current build serves the practitioner thinly, the curator very thinly, and t
 - Action bar in the detail: Approve, Approve with Edits, Reject (with reason), Mark Duplicate (linked to the duplicate id).
 - Bulk actions on the list: select N rows, reject with one reason.
 - Provenance shown: source name, scanner, model, confidence, discovered-at, with a clickable link to the source URL.
-- Replace the `/ralph-matrix-scan` empty-state copy with truth ("Scheduled nightly. Last scan: X. Next scan: Y. Sources: N active, M failing.").
+- Add a real "Run now" scan trigger once source-health controls are ready. The dashboard quick action now links to source health instead of showing a dead scan button.
 - Reviewer identity from the real auth session, not the string `'admin'`.
 
-**P2. Case profile page** at `/justice-matrix/cases/[id]`. The atomic unit of value.
-- Citation, jurisdiction, court, year, outcome, precedent strength, status banner.
-- Holding (rendered), strategic issue, key categories as filter chips.
-- Source link, related pleadings and documents (placeholder for now), copy-citation button, permalink.
-- "Similar cases" panel: same-issue cases (use the categories array and the `idx_cases_fts` index already present), other cases in the same jurisdiction.
-- "Linked campaigns" panel: campaigns tagged with overlapping categories.
-- Provenance and verification block at the bottom (verified by / when, contributor org, source).
+**P2. Case and campaign profile depth.** The atomic unit exists; deepen it.
+- Keep citation, jurisdiction, court, year, outcome, precedent strength, source link, related records, and verification state visible.
+- Add stronger provenance: source row, contributor org, scanner/model where applicable, legal-review timestamp, and source freshness.
+- Add export-ready source packets for reviewers who need to forward a case or campaign.
 
 **P3. Faceted search and list view.**
 - Use the cleaned category tags as filters (the refugee / asylum domain tag now works as a chip). Add facets for outcome, precedent strength, year range, country.
@@ -80,7 +80,7 @@ The current build serves the practitioner thinly, the curator very thinly, and t
 - Save and share a filter set via URL query params.
 - Apply the same pattern to campaigns.
 
-**P4. House-style design pass.** Apply the JusticeHub aesthetic from DESIGN.md across the preview and admin pages: typography, palette, the warm institutional voice. Run the brand voice rules over the copy (no em dash, no AI-tells, names over abstractions).
+**P4. Public review polish.** Keep the public Matrix design consistent, then tighten the UN review path: clearer State-of-Protection brief export, source freshness, and reviewer handoff text.
 
 **P5. Map enhancements.**
 - Marker clustering so 100 to 1,000 markers stay legible.
