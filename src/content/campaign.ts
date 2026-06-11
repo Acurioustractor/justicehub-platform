@@ -35,9 +35,9 @@ export const journeyContainers = [
     summary:
       "Young people who supported the build carry the first Room 1 story into a flexible Mount Druitt gathering and then the Adelaide activation on Kaurna Yarta. At every stop, local young people then shape the room from their own place and decide what the public needs to see.",
     stats: [
-      { label: "Daily Cost", value: "$4,250" },
-      { label: "Annual Cost", value: "$1.55M" },
-      { label: "Reoffending", value: "84%" },
+      { label: "Daily Cost (SA)", value: "$3,261" },
+      { label: "Annual Cost (SA)", value: "$1.19M" },
+      { label: "Back within 12 months", value: "84%" },
       { label: "Education Completion", value: "18%" },
     ],
     duration: "10 minutes locked inside",
@@ -114,14 +114,14 @@ export type EvidenceHighlight = {
 
 export const evidenceHighlights: EvidenceHighlight[] = [
   {
-    label: "Cost per detained youth",
-    value: "$1.55M",
-    source: "Productivity Commission ROGS 2024-25",
+    label: "Cost per detained youth (national avg)",
+    value: "$1.33M",
+    source: "Productivity Commission ROGS 2024-25 Table 17A.20",
   },
   {
-    label: "Detention reoffending",
+    label: "Back under supervision within 12 months of release",
     value: "84%",
-    source: "Queensland Youth Justice Strategy 2023",
+    source: "AIHW Young people returning to sentenced youth justice supervision 2023-24",
   },
   {
     label: "Community reoffending",
@@ -623,8 +623,8 @@ The route is flexible because the process follows community need, partner readin
   {
     platform: 'twitter',
     label: 'Stats Hook',
-    content: `$1.55 million per child per year on youth detention.
-84% reoffend within 2 years.
+    content: `$1.33 million per child per year on youth detention.
+84% back under supervision within 12 months of release.
 
 Community programs: $75/day. 88% success rate.
 
