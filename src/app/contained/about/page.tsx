@@ -4,10 +4,10 @@ import { ArrowRight } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'About Contained — A Curious Tractor | JusticeHub',
-  description: 'A shipping container. Three rooms. Built through young people, Diagrama practice, and local organisations. The route starts with Mount Druitt, then activates publicly at Victoria Square, Tandanya/Adelaide.',
+  description: 'A shipping container. Three rooms. Built through young people, Diagrama practice, and local organisations. The route starts with Mount Druitt, then activates publicly in Adelaide on Kaurna Yarta.',
   openGraph: {
     title: 'About Contained — A Curious Tractor',
-    description: 'A shipping container. Three rooms. Mount Druitt small gathering, then Victoria Square, Tandanya/Adelaide activation.',
+    description: 'A shipping container. Three rooms. Mount Druitt small gathering, then the Adelaide activation on Kaurna Yarta.',
     type: 'website',
     url: '/contained/about',
   },
@@ -30,7 +30,7 @@ export default function ContainedAboutPage() {
           An art piece<br />that travels
         </h1>
         <p className="mt-8 text-lg md:text-xl max-w-3xl text-[#F5F0E8]/95 leading-relaxed">
-          A shipping container. Three rooms. Thirty minutes. Built by Ben Knight and Nic Marchesi with young people carrying the first room, David from Diagrama helping hold the alternative, and local organisations building the room that shows what already works. The route starts with a Mount Druitt small gathering, then activates publicly at Victoria Square, Tandanya/Adelaide.
+          A shipping container. Three rooms. Thirty minutes. Built by Ben Knight and Nic Marchesi with young people carrying the first room, David from Diagrama helping hold the alternative, and local organisations building the room that shows what already works. The route starts with a Mount Druitt small gathering, then activates publicly in Adelaide on Kaurna Yarta.
         </p>
         <div className="mt-10 flex flex-wrap gap-4">
           <Link href="/contained/how-it-works" className="bg-[#DC2626] text-white px-6 py-3 text-sm font-bold uppercase tracking-[0.2em] hover:bg-[#b91c1c] transition-colors" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
@@ -185,7 +185,7 @@ export default function ContainedAboutPage() {
         <div className="grid md:grid-cols-2 gap-12 items-start">
           <div className="space-y-4">
             <p className="text-[#F5F0E8]/95 leading-relaxed">
-              The route starts with a small Mount Druitt gathering in May/June, then activates publicly at Victoria Square, Tandanya/Adelaide, from 22-26 June 2026 beside Reintegration Puzzle. Brisbane young people carry the build story, David from Diagrama helps hold Room 2, and Adelaide organisations use Room 3 to put their programs in front of delegates, MPs, universities, and funders. The route remains flexible as communities and partners ask for it.
+              The route starts with a small Mount Druitt gathering in May/June, then activates publicly in Adelaide on Kaurna Yarta, from 22-26 June 2026 beside Reintegration Puzzle. Brisbane young people carry the build story, David from Diagrama helps hold Room 2, and Adelaide organisations use Room 3 to put their programs in front of delegates, MPs, universities, and funders. The route remains flexible as communities and partners ask for it.
             </p>
             <p className="text-[#F5F0E8]/95 leading-relaxed">
               Mount Druitt. Adelaide. Perth + surrounds. Brisbane. Northern Rivers. Alice Springs / Central Australia. Sydney + Canberra. Victoria. Tasmania. One container. One travelling team of young facilitators. Nine partner organisations on the ground.

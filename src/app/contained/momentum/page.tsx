@@ -108,6 +108,25 @@ export default function MomentumPage() {
         }
       `}} />
       <div className="mm-body">
+        <div className="mm-section" style={{ paddingTop: 24, paddingBottom: 0 }}>
+          <div
+            className="mm-mono"
+            style={{
+              border: '1px solid #D97706',
+              background: 'rgba(217,119,6,0.08)',
+              color: '#F5F0E8',
+              padding: '16px 20px',
+              fontSize: '0.85rem',
+              lineHeight: 1.6,
+            }}
+          >
+            March 2026 snapshot. This page is a historical record of early campaign momentum. For the current campaign see{' '}
+            <a href="https://justicehub.com.au/contained/adelaide" style={{ color: '#D97706', textDecoration: 'underline' }}>
+              justicehub.com.au/contained/adelaide
+            </a>
+            .
+          </div>
+        </div>
         <div className="mm-hero">
           <div className="mm-date">MOMENTUM REPORT — MARCH 2026</div>
           <h1>CONTAINED is building a movement.</h1>
@@ -158,7 +177,7 @@ export default function MomentumPage() {
           <div className="mm-section-title">Where People Want CONTAINED</div>
           <div className="mm-city-grid">
             <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Mount Druitt</div><div className="mm-city-count">May/June · small gathering</div><div className="mm-city-quote">Western Sydney build proof and community relationships shape what travels next.</div></div>
-            <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Adelaide</div><div className="mm-city-count">22-26 June · Victoria Square activation</div><div className="mm-city-quote"><span className="mm-name">Hannah March</span>, JRI: &quot;The 2026 Reintegration Puzzle Conference is in Tandanya/Adelaide. It would be amazing to host the Container nearby.&quot;</div></div>
+            <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Adelaide</div><div className="mm-city-count">22-26 June · activation on Kaurna Yarta</div><div className="mm-city-quote"><span className="mm-name">Hannah March</span>, JRI: &quot;The 2026 Reintegration Puzzle Conference is in Adelaide. It would be amazing to host the Container nearby.&quot;</div></div>
             <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Perth</div><div className="mm-city-count">8 mentions · UWA partnership</div><div className="mm-city-quote"><span className="mm-name">Hayley Passmore</span>, Criminology Lecturer: &quot;We can&apos;t wait to have this in Perth!!!&quot;</div></div>
             <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Brisbane</div><div className="mm-city-count">Build story · YAC hosting</div><div className="mm-city-quote"><span className="mm-name">Jonty Bush</span>, QLD MP: &quot;I love this concept, where is it touring in Queensland?&quot;</div></div>
             <div className="mm-city-card mm-confirmed"><div className="mm-city-name">Alice Springs / Central Australia</div><div className="mm-city-count">November · Oonchiumpa partnership</div><div className="mm-city-quote">Community-led activation with Oonchiumpa Aboriginal Corporation</div></div>
@@ -217,15 +236,15 @@ export default function MomentumPage() {
           <div className="mm-section-title">The Opportunity</div>
           <div style={{maxWidth: 800}}>
             <p style={{fontSize: '1.1rem', lineHeight: 1.8, color: '#ccc', marginBottom: 24}}>CONTAINED is not a campaign looking for an audience. The audience is already here — asking where, when, and how they can help. The demand outstrips our capacity to deliver.</p>
-            <p style={{fontSize: '1.1rem', lineHeight: 1.8, color: '#ccc', marginBottom: 24}}>Mount Druitt starts the process and Adelaide activates it publicly at Victoria Square, Tandanya/Adelaide. Perth, Brisbane, Northern Rivers, Central Australia, Sydney + Canberra, Victoria, and Tasmania are supported by demand signals, host conversations, and local program evidence. Two state MPs have publicly asked for tour dates. A former Chief Medical Officer called the current system &quot;delusional.&quot;</p>
-            <p style={{fontSize: '1.1rem', lineHeight: 1.8, color: '#ccc', marginBottom: 24}}>Behind the Container sits <strong>ALMA</strong> — 981 verified community alternatives to youth detention, mapped nationally with cost data. And <strong>JusticeHub</strong> — tracking $71M+ in youth justice funding across every state.</p>
+            <p style={{fontSize: '1.1rem', lineHeight: 1.8, color: '#ccc', marginBottom: 24}}>Mount Druitt starts the process and Adelaide activates it publicly in Adelaide on Kaurna Yarta. Perth, Brisbane, Northern Rivers, Central Australia, Sydney + Canberra, Victoria, and Tasmania are supported by demand signals, host conversations, and local program evidence. Two state MPs have publicly asked for tour dates. A former Chief Medical Officer called the current system &quot;delusional.&quot;</p>
+            <p style={{fontSize: '1.1rem', lineHeight: 1.8, color: '#ccc', marginBottom: 24}}>Behind the Container sits the <strong>Australian Living Map of Alternatives</strong> — 981 verified community alternatives to youth detention, mapped nationally with cost data. And <strong>JusticeHub</strong> — tracking $71M+ in youth justice funding across every state.</p>
             <p style={{fontSize: '1.1rem', lineHeight: 1.8, color: '#F5F0E8', fontWeight: 500}}>Mount Druitt is a smaller $20K gathering. Flexible tour stops cost $30–60K. Each one generates measurable community engagement, coalition formation, and policy pressure. The infrastructure exists. The demand is proven. The coalition is forming. We need partners who want to accelerate it.</p>
           </div>
         </div>
 
         <div className="mm-cta">
           <h2>Join the Coalition</h2>
-          <p>CONTAINED starts with Mount Druitt in May/June, activates publicly at Victoria Square, Tandanya/Adelaide from 22-26 June 2026, then moves through Perth, Brisbane, Northern Rivers, Central Australia, Sydney + Canberra, Victoria, and Tasmania, with every stop linked back to JusticeHub.</p>
+          <p>CONTAINED starts with Mount Druitt in May/June, activates publicly in Adelaide on Kaurna Yarta from 22-26 June 2026, then moves through Perth, Brisbane, Northern Rivers, Central Australia, Sydney + Canberra, Victoria, and Tasmania, with every stop linked back to JusticeHub.</p>
           <a href="https://www.justicehub.com.au/contained">SEE THE TOUR →</a>
         </div>
 

@@ -84,11 +84,14 @@ export async function GET(request: NextRequest) {
       errors: 0,
     };
 
-    // Get all pipeline entities that are in active stages
+    // Get all pipeline entities that are in active stages.
+    // The nominated status was removed from this query — nominations now live in
+    // campaign_nominations, not campaign_alignment_entities, so this pipeline no
+    // longer follows them up.
     const { data: entities, error } = await supabase
       .from('campaign_alignment_entities')
       .select('id, name, email, outreach_status, alignment_signals, updated_at')
-      .in('outreach_status', [...STALE_STATUSES, 'nominated'])
+      .in('outreach_status', STALE_STATUSES)
       .not('email', 'is', null);
 
     if (error) {

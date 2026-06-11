@@ -115,11 +115,11 @@ That's not hypothetical. It's a policy choice. And your voice matters in making 
           .select('id', { count: 'exact', head: true })
           .gte('created_at', weekAgo);
 
-        // Get total nominations
+        // Get total nominations (canonical store: campaign_nominations)
         const { count: totalNominations } = await supabase
-          .from('campaign_alignment_entities')
+          .from('campaign_nominations')
           .select('id', { count: 'exact', head: true })
-          .eq('outreach_status', 'nominated');
+          .eq('is_public', true);
 
         const result = await sendEmail({
           to: email,

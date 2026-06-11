@@ -10,7 +10,7 @@ interface NewsletterSignupProps {
 
 export function NewsletterSignup({
   source = 'contained_launch',
-  tags = ['CONTAINED_LAUNCH', 'NEWSLETTER'],
+  tags = [],
 }: NewsletterSignupProps) {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -25,7 +25,7 @@ export function NewsletterSignup({
       await fetch('/api/ghl/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, full_name: name, source, tags }),
+        body: JSON.stringify({ email, full_name: name, source, ...(tags.length ? { tags } : {}) }),
       });
       setSubmitted(true);
     } catch {

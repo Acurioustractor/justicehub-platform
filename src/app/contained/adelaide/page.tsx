@@ -28,7 +28,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Adelaide Youth Remand Experience · CONTAINED x JusticeHub',
   description:
-    'A public Adelaide pathway for people walking through THE CONTAINED at Victoria Square, Tandanya/Adelaide: understand youth remand, find alternatives, and choose a useful next step.',
+    'A public Adelaide pathway for people walking through THE CONTAINED in Adelaide on Kaurna Yarta: understand youth remand, find alternatives, and choose a useful next step.',
   openGraph: {
     title: 'Adelaide Youth Remand Experience',
     description:
@@ -64,7 +64,7 @@ const launchDays = [
     day: 'Wednesday 24 June',
     title: 'Conference day 1',
     audience: 'Puzzle delegates, MPs, courts, funders, media, service leaders',
-    body: 'Hosted walkthroughs for delegates and priority guests, with hosts moving people from Hilton / Reintegration Puzzle to Victoria Square.',
+    body: 'Hosted walkthroughs for delegates and priority guests, with hosts moving people from Reintegration Puzzle to the site.',
     cta: 'Book a conference walkthrough',
     href: '/contained/register?stop=adelaide&cohort=conference-delegate',
   },
@@ -306,8 +306,8 @@ export default async function ContainedAdelaidePage() {
                 Walk through the experience. Leave knowing what can change.
               </h1>
               <p className="mt-5 max-w-3xl text-base leading-7 text-white/76 md:text-lg">
-                From 22-26 June 2026, THE CONTAINED is planned for public space at Victoria Square,
-                Tandanya/Adelaide on Kaurna Yarta, beside Reintegration Puzzle. The urgent question:
+                From 22-26 June 2026, THE CONTAINED is planned for public space in Adelaide
+                on Kaurna Yarta, beside Reintegration Puzzle. The exact site is announced once confirmed. The urgent question:
                 why are children being held before sentence, and what would keep them safely connected to family,
                 school, culture, housing, and support instead?
               </p>
@@ -351,13 +351,13 @@ export default async function ContainedAdelaidePage() {
                 <div className="text-xs font-bold uppercase tracking-[0.18em] text-[#756d63]" style={{ fontFamily: MONO }}>
                   Where
                 </div>
-                <p className="mt-1 font-bold">{adelaideStop?.venue || 'Victoria Square, Tandanya/Adelaide'}</p>
+                <p className="mt-1 font-bold">{adelaideStop?.venue || 'Adelaide · Kaurna Yarta (site announced soon)'}</p>
               </div>
               <div>
                 <div className="text-xs font-bold uppercase tracking-[0.18em] text-[#756d63]" style={{ fontFamily: MONO }}>
                   When
                 </div>
-                <p className="mt-1 font-bold">{adelaideStop?.date || '22-26 June 2026 · Victoria Square activation'}</p>
+                <p className="mt-1 font-bold">{adelaideStop?.date || '22-26 June 2026 · Adelaide activation'}</p>
               </div>
               <div>
                 <div className="text-xs font-bold uppercase tracking-[0.18em] text-[#756d63]" style={{ fontFamily: MONO }}>
@@ -531,7 +531,7 @@ export default async function ContainedAdelaidePage() {
               </div>
               <h2 className="mb-4 text-2xl font-black tracking-tight">The text to send with the link.</h2>
               <div className="rounded-lg border border-[#ded8cf] bg-[#fbfaf7] p-4 text-sm leading-7 text-[#3f3830]">
-                I am sending you this because THE CONTAINED is planned for Victoria Square, Tandanya/Adelaide, from
+                I am sending you this because THE CONTAINED is planned for public space in Adelaide on Kaurna Yarta, from
                 22-26 June beside Reintegration Puzzle. It begins with youth remand: why children are held before
                 sentence, what support could prevent custody, and what we can do next. Start here:
                 justicehub.com.au/adelaide
@@ -539,7 +539,7 @@ export default async function ContainedAdelaidePage() {
               <div className="mt-4 flex flex-wrap gap-2">
                 <CopyShortLink
                   label="Copy Adelaide link"
-                  url="I am sending you this because THE CONTAINED is planned for Victoria Square, Tandanya/Adelaide, from 22-26 June beside Reintegration Puzzle. It begins with youth remand: why children are held before sentence, what support could prevent custody, and what we can do next. Start here: https://justicehub.com.au/adelaide"
+                  url="I am sending you this because THE CONTAINED is planned for public space in Adelaide on Kaurna Yarta, from 22-26 June beside Reintegration Puzzle. It begins with youth remand: why children are held before sentence, what support could prevent custody, and what we can do next. Start here: https://justicehub.com.au/adelaide"
                 />
                 <PrimaryLink href="/contained/tour/social">Open social kit</PrimaryLink>
               </div>

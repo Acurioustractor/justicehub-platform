@@ -3,60 +3,37 @@
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { tourStops, type TourStopStatus } from '@/content/campaign';
 
-const TOUR_STOPS = [
-  {
-    city: 'Adelaide',
-    state: 'SA',
-    date: '22-26 June 2026',
-    partner: 'Justice Reform Initiative + Reintegration Puzzle',
-    status: 'Confirmed',
-    cost: '$50,000',
-    description: 'Victoria Square, Tandanya/Adelaide public activation beside Reintegration Puzzle.',
-  },
-  {
-    city: 'Perth',
-    state: 'WA',
-    date: 'July–August 2026',
-    partner: 'UWA + JRI Perth',
-    status: 'Confirmed',
-    cost: '$50,000',
-    description: 'University campus deployment — academic + reform-network anchor.',
-  },
-  {
-    city: 'Tennant Creek',
-    state: 'NT',
-    date: 'August–September 2026',
-    partner: 'Oonchiumpa',
-    status: 'Confirmed',
-    cost: '$50,000',
-    description: 'Aboriginal community-controlled stop. Cultural safety, local facilitation, community authority.',
-  },
-  {
-    city: 'Townsville / Palm Island',
-    state: 'QLD',
-    date: 'September 2026',
-    partner: 'Palm Island Community Company (PICC)',
-    status: 'Confirmed',
-    cost: '$50,000',
-    description: 'Far North hosted by PICC — Aboriginal organisation with deep custodial roots.',
-  },
-  {
-    city: 'Hobart',
-    state: 'TAS',
-    date: 'June 2027 — close',
-    partner: 'DarkLab + Prevention Not Detention',
-    status: 'Confirmed',
-    cost: '$50,000',
-    description: 'Tour close — civic memory, public exhibition, legacy.',
-  },
-];
+// Status labels mirror the canonical statuses in src/content/campaign.ts.
+// We never relabel a stop "Confirmed" unless campaign.ts says 'confirmed'/'funded'.
+const STATUS_LABEL: Record<TourStopStatus, string> = {
+  funded: 'Funded',
+  confirmed: 'Confirmed',
+  planning: 'Planning',
+  tentative: 'Exploring',
+  exploring: 'Exploring',
+};
+
+// Derive the funder-facing stop cards from the single source of truth so the
+// invest page can never drift from the canonical tour route again.
+const TOUR_STOPS = tourStops.map((stop) => ({
+  city: stop.city,
+  state: stop.state,
+  date: stop.date,
+  partner: stop.partner || '',
+  status: STATUS_LABEL[stop.status],
+  // Per-stop ask: the Adelaide and most stops sit at $50K in campaignFundraising;
+  // a single representative figure keeps the funder card honest without implying
+  // every stop is locked at the same number.
+  cost: '$50,000',
+  description: stop.description,
+}));
 
 const WHAT_MONEY_BUYS = [
   { amount: '$50–70K', gets: 'Container build (3-room fit-out). Reusable infrastructure — every future stop runs on this asset. ~7 years of tours from one build.' },
   { amount: '$50K', gets: 'One full tour stop. 500+ decision-makers walk through. Anchor partner: Oonchiumpa, PICC, BG Fit, JRI, or DarkLab. Local policy window opens.' },
-  { amount: '$200K', gets: 'Full 5-city tour + documentation + research output. 2,500+ decision-makers nationally. JusticeHub + Australian Living Map + Empathy Ledger evidence layer published.' },
-  { amount: '$500K', gets: 'Tour + permanent platform underwrite. Above PLUS JusticeHub civic intelligence layer funded for 12 months — ongoing oversight infrastructure beyond the tour.' },
+  { amount: '$500K', gets: 'Full national tour + documentation + research output. Decision-makers nationally. JusticeHub + Australian Living Map of Alternatives + Empathy Ledger evidence layer published, plus the JusticeHub civic intelligence layer funded for 12 months — ongoing oversight infrastructure beyond the tour.' },
   { amount: 'Bespoke', gets: 'Pop-up Contained, co-designed with you. Custom build for your audience, place, or moment. We co-design rooms, story, and outputs. Priced to scope.' },
 ];
 
@@ -86,7 +63,7 @@ export default function ContainedInvestPage() {
 
             <p className="text-lg text-gray-600 max-w-2xl leading-relaxed">
               CONTAINED is evidence-led immersive advocacy. One shipping container, three rooms,
-              five cities. Every dollar funds infrastructure for community-led justice reform.
+              a national tour. Every dollar funds infrastructure for community-led justice reform.
             </p>
           </div>
         </section>
@@ -97,7 +74,7 @@ export default function ContainedInvestPage() {
             <h2 className="text-2xl font-black uppercase tracking-tighter mb-8 text-white">
               The Investment Case
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="border border-gray-700 p-6">
                 <div className="text-3xl font-black text-[#DC2626] mb-2 font-mono">$1.33M</div>
                 <div className="text-sm text-gray-400 uppercase tracking-widest mb-3">Per child/year in detention</div>
@@ -105,15 +82,6 @@ export default function ContainedInvestPage() {
                   Australia spends $1.33 million per child per year in detention. 84% reoffend within two years.
                 </p>
                 <p className="text-xs text-gray-500 mt-2">Source: Productivity Commission ROGS 2024-25</p>
-              </div>
-              <div className="border border-gray-700 p-6">
-                <div className="text-3xl font-black text-[#059669] mb-2 font-mono">$75/day</div>
-                <div className="text-sm text-gray-400 uppercase tracking-widest mb-3">Community alternatives</div>
-                <p className="text-gray-300 text-sm">
-                  Community-led programs cost $75/day with 88% success rate. For the same cost as one
-                  child in detention, 16 young people can be supported.
-                </p>
-                <p className="text-xs text-gray-500 mt-2">Source: Community Services Benchmark Study 2024</p>
               </div>
               <div className="border border-gray-700 p-6">
                 <div className="text-3xl font-black text-white mb-2 font-mono">95%</div>
@@ -172,10 +140,10 @@ export default function ContainedInvestPage() {
             </div>
 
             <div className="mt-8 border-2 border-[#0A0A0A] bg-[#0A0A0A] text-white p-6 text-center">
-              <div className="text-3xl font-black font-mono mb-2">$200,000</div>
+              <div className="text-3xl font-black font-mono mb-2">$500,000</div>
               <div className="text-sm text-gray-400 uppercase tracking-widest mb-4">Full National Tour</div>
               <p className="text-gray-300 max-w-lg mx-auto">
-                Fund all five cities including transport, documentation, community engagement,
+                Fund the full national tour including transport, documentation, community engagement,
                 and partner activation. Your name on the movement.
               </p>
             </div>

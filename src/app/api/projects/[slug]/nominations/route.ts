@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
+import { verifyTurnstileToken } from '@/lib/turnstile';
+import { checkRateLimit } from '@/lib/security';
+import { sendEmail } from '@/lib/email/send';
+
+const SITE = 'https://justicehub.com.au';
+
+// Internal team notification address (canonical CONTAINED inbox, matching
+// /api/contained/connect). The nominee is NEVER emailed — VIP/decision-maker
+// invites only ever come from a relationship owner, by hand.
+const TEAM_EMAIL = 'benjamin@act.place';
 
 const VALID_CATEGORIES = [
   'politician',
@@ -147,7 +157,45 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { nominee_name, nominee_title, nominee_org, category, reason, nominator_name, nominator_email } = body;
+    const {
+      nominee_name,
+      nominee_title,
+      nominee_org,
+      category,
+      reason,
+      nominator_name,
+      nominator_email,
+      honeypot,
+      turnstile_token,
+    } = body;
+
+    // Honeypot — bots fill the hidden field. Return a success shape with no
+    // insert so the bot cannot distinguish a block from a real submission.
+    if (typeof honeypot === 'string' && honeypot.trim().length > 0) {
+      return NextResponse.json({ success: true, count: 0 }, { status: 200 });
+    }
+
+    // Bot verification (Cloudflare Turnstile). Skipped in dev when no secret set.
+    const turnstileValid = await verifyTurnstileToken(turnstile_token);
+    if (!turnstileValid) {
+      return NextResponse.json(
+        { error: 'Bot verification failed. Please try again.' },
+        { status: 403 }
+      );
+    }
+
+    // Rate limit: ~5 nominations per IP per hour.
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
+    const limit = checkRateLimit(`nominations:${ip}`, { limit: 5, windowMs: 60 * 60 * 1000 });
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: 'Too many nominations from this connection. Please try again later.' },
+        { status: 429 }
+      );
+    }
 
     if (!nominee_name || !category || !reason) {
       return NextResponse.json(
@@ -210,6 +258,58 @@ export async function POST(
         }).catch(console.error); // fire-and-forget
       }
     }
+
+    const cleanNomineeName = nominee_name.trim();
+    const cleanNomineeTitle = nominee_title?.trim() || null;
+    const cleanNomineeOrg = nominee_org?.trim() || null;
+    const cleanNominatorName = nominator_name?.trim() || null;
+    const cleanNominatorEmail = nominator_email?.trim().toLowerCase() || null;
+    const cleanReason = reason.trim();
+
+    // Notification 1 — confirmation to the nominator (only if they left an
+    // email). Fire-and-forget; never blocks the response. Adapted from the
+    // orphaned /api/contained/nominations template. No site/venue language —
+    // the nominee gets a personal invite from a relationship owner, not us.
+    if (cleanNominatorEmail) {
+      sendEmail({
+        to: cleanNominatorEmail,
+        subject: 'Your nomination has been received',
+        preheader: `You nominated ${cleanNomineeName} for THE CONTAINED experience.`,
+        body: `Thank you${cleanNominatorName ? `, ${cleanNominatorName}` : ''}.
+
+Your nomination has been received.
+
+You nominated ${cleanNomineeName}${cleanNomineeOrg ? ` (${cleanNomineeOrg})` : ''} to experience THE CONTAINED.
+
+${cleanReason ? `Your reason: "${cleanReason}"` : ''}
+
+WHAT HAPPENS NEXT
+Our team reviews every nomination. When THE CONTAINED reaches their city, we will reach out to them with a personal invitation backed by your endorsement.
+
+The more people who nominate the same leader, the harder it is to ignore.
+
+Share the nomination link: ${SITE}/contained#nominate
+
+— The JusticeHub Team`,
+      }).catch((err) => console.error('Failed to send nominator confirmation:', err));
+    }
+
+    // Notification 2 — internal alert to the team on EVERY nomination.
+    // Fire-and-forget; never blocks the response. The nominee is never emailed.
+    sendEmail({
+      to: TEAM_EMAIL,
+      subject: `[CONTAINED] New nomination: ${cleanNomineeName}`,
+      preheader: `${cleanNominatorName || 'Someone'} nominated ${cleanNomineeName}.`,
+      body: `New CONTAINED nomination.
+
+Nominee: ${cleanNomineeName}${cleanNomineeTitle ? `, ${cleanNomineeTitle}` : ''}${cleanNomineeOrg ? ` (${cleanNomineeOrg})` : ''}
+Category: ${category}
+Reason: ${cleanReason}
+
+Nominator: ${cleanNominatorName || '(anonymous)'}${cleanNominatorEmail ? ` <${cleanNominatorEmail}>` : ''}
+
+Review: ${SITE}/admin/contained`,
+    }).catch((err) => console.error('Failed to send team nomination alert:', err));
 
     // Return updated count
     const { count } = await supabase
