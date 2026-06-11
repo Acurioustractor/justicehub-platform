@@ -252,10 +252,15 @@ export function NominationsWall() {
                           {getCategoryLabel(nom.category)}
                         </span>
                       </div>
-                      <p className="mt-2 text-sm text-gray-700 line-clamp-2">“{nom.messages[nom.messages.length - 1]?.reason}”</p>
+                      {nom.messages.length > 0 ? (
+                        <p className="mt-2 text-sm text-gray-700 line-clamp-2">“{nom.messages[nom.messages.length - 1]?.reason}”</p>
+                      ) : (
+                        <p className="mt-2 text-sm italic text-gray-400">Voices awaiting review.</p>
+                      )}
                       <p className="mt-2 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-red-600">
                         <MessageSquare className="w-3.5 h-3.5" />
-                        {nom.nomination_count} {nom.nomination_count === 1 ? 'voice' : 'voices'} · read why
+                        {nom.nomination_count} {nom.nomination_count === 1 ? 'voice' : 'voices'}
+                        {nom.messages.length > 0 ? ' · read why' : ''}
                       </p>
                     </button>
                   </div>
@@ -315,6 +320,13 @@ export function NominationsWall() {
               <p className="text-sm font-bold uppercase tracking-widest text-gray-500">
                 Why people want them inside
               </p>
+              {selected.messages.length === 0 && (
+                <p className="text-sm italic text-gray-400">
+                  {selected.nomination_count}{' '}
+                  {selected.nomination_count === 1 ? 'voice is' : 'voices are'} awaiting review and
+                  will appear here soon.
+                </p>
+              )}
               {selected.messages
                 .slice()
                 .reverse()
