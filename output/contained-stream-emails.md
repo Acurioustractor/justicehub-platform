@@ -8,6 +8,14 @@ Sign-off: "The JusticeHub team" (no dash). Every send carries an unsubscribe foo
 Figures used are the established campaign numbers (source: `src/content/campaign.ts`): a child in
 detention costs about $4,250 a day and $1.55M a year; community programs run near $75 a day.
 
+> **Gates before any send (updated 11 June):** (1) The dollar figures above are NOT cleared: the
+> detention cost conflict ($1.33M repo canon vs $1.55M here) is Mission Control conflict 3, and no
+> stat sends until source/year/jurisdiction lock. (2) Site language was scrubbed 11 June: the
+> formula is "public space in Adelaide, on Kaurna Yarta", no site naming until council confirms.
+> (3) `/adelaide` is a live alias of `/contained/adelaide`, so links here work; copy canon is
+> `/contained/adelaide`. (4) Email 1 below is SUPERSEDED for the warm invite: template 7 in
+> `compendium/contained-adelaide-email-templates.md` is the canon body (conflict 8).
+
 ---
 
 ## 1. Adelaide Warm Invite
@@ -15,7 +23,7 @@ detention costs about $4,250 a day and $1.55M a year; community programs run nea
 **Subject:** Walk through CONTAINED in Adelaide, 22 to 26 June
 **Preheader:** One container. Three rooms. Thirty minutes.
 
-A shipping container is coming to Victoria Square, Tandanya/Adelaide on Kaurna Yarta, from 22 to 26 June, beside the Reintegration Puzzle conference.
+A shipping container is coming to public space in Adelaide, on Kaurna Yarta, from 22 to 26 June, beside the Reintegration Puzzle conference. Walkthroughs run Wednesday 24 to Friday 26; the address goes to everyone booked the moment it is confirmed.
 
 Inside, three rooms. The first shows what remand feels like for a child held before sentence. The second shows the supports that would have kept that child at home, with David McGuire from Diagrama. The third belongs to the organisations already doing the work here, and what they need backed.
 
@@ -34,7 +42,7 @@ The JusticeHub team
 **Subject:** CONTAINED, day [N]: what happened
 **Preheader:** One thing that moved today.
 
-Today at Victoria Square:
+Today at the container:
 
 What happened: [one line on the day].
 
@@ -78,7 +86,7 @@ The JusticeHub team
 **Subject:** A container, a child held before sentence, and the cost
 **Preheader:** Vision, access, and contacts for CONTAINED Adelaide.
 
-CONTAINED is a shipping container at Victoria Square, Tandanya/Adelaide from 22 to 26 June, beside the Reintegration Puzzle conference. Three rooms take a visitor from what youth remand feels like, to the practice that prevents it, to the organisations already doing the work in South Australia.
+CONTAINED is a shipping container in public space in Adelaide, on Kaurna Yarta, from 22 to 26 June, beside the Reintegration Puzzle conference. Three rooms take a visitor from what youth remand feels like, to the practice that prevents it, to the organisations already doing the work in South Australia.
 
 The story in one line: a child can be held before sentence, often before conviction, because the support around them is missing. A day of that costs about $4,250. The alternative costs a fraction and keeps the child connected to family, school, and Country.
 
@@ -99,7 +107,7 @@ Picture a child who never sees the inside of a cell, because the night they were
 
 That is not a wish. It is a budget line we have not moved yet.
 
-CONTAINED makes the choice visible. A container at Victoria Square, Tandanya/Adelaide, three rooms, thirty minutes. The first holds the cost of detention, about $1.55 million a year for one child. The second holds the practice that prevents it, drawn from David McGuire and Diagrama. The third holds the South Australian organisations already doing the work and waiting on funding.
+CONTAINED makes the choice visible. A container in public space in Adelaide, three rooms, thirty minutes. The first holds the cost of detention, about $1.55 million a year for one child. The second holds the practice that prevents it, drawn from David McGuire and Diagrama. The third holds the South Australian organisations already doing the work and waiting on funding.
 
 The architecture is simple. The reality, the alternative, the people. What it needs is patient money behind the third room, so the organisations that change a child's path can plan past a single grant.
 
@@ -114,7 +122,7 @@ The JusticeHub team
 **Subject:** Bring CONTAINED to your city
 **Preheader:** After Adelaide, the container moves.
 
-Adelaide is the first public stop. After it, the container moves, and every stop is rebuilt by local young people and local organisations so the rooms speak from that place.
+Mount Druitt was the first stop. Adelaide is the second, and the first full public activation. After it, the container moves, and every stop is rebuilt by local young people and local organisations so the rooms speak from that place.
 
 If you want CONTAINED in Perth, Melbourne, or your own community, the work starts with local hosts: the organisations, the young people, and the partners who can carry Room 3.
 
