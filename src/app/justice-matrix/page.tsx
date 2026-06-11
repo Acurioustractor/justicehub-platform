@@ -228,6 +228,7 @@ export default async function JusticeMatrixLandingPage() {
             <QuickLink href="/justice-matrix/how-it-works">How it works</QuickLink>
             <QuickLink href="/justice-matrix/issues">Issues</QuickLink>
             <QuickLink href="/justice-matrix/guide">Guide</QuickLink>
+            <QuickLink href="/justice-matrix/user-guide">User guide</QuickLink>
             <QuickLink href="/justice-matrix/un">UN / OHCHR pack</QuickLink>
             <QuickLink href="/justice-matrix/map">Map</QuickLink>
             <QuickLink href="/justice-network/youth-remand">Youth remand</QuickLink>

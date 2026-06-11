@@ -122,6 +122,13 @@ const publicSurfaces = [
     job: 'Review the public status brief, UI plan, background paper, and source matrices for the NJP / OHCHR conversation.',
   },
   {
+    route: '/justice-matrix/user-guide',
+    href: '/justice-matrix/user-guide',
+    label: 'Sendable user guide',
+    icon: <BookOpenCheck className="h-4 w-4" />,
+    job: 'Share one route that explains who Matrix is for, which link to send, and how to support new users.',
+  },
+  {
     route: '/justice-matrix/map',
     href: '/justice-matrix/map',
     label: 'Map',
