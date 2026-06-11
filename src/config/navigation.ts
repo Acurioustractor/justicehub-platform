@@ -63,6 +63,11 @@ export const navigationItems: NavigationItem[] = [
                 description: 'Cases, campaigns, issues, and strategy'
             },
             {
+                label: 'UN / OHCHR Matrix pack',
+                href: '/justice-matrix/un',
+                description: 'Public review pack and source files'
+            },
+            {
                 label: 'Wall of Proof',
                 href: '/proof',
                 description: 'Evidence, claims, and verified alternatives'

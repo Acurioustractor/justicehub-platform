@@ -115,6 +115,13 @@ const publicSurfaces = [
     job: 'Search by keyword or meaning, then filter by type, scope, category, outcome, or strength.',
   },
   {
+    route: '/justice-matrix/un',
+    href: '/justice-matrix/un',
+    label: 'UN / OHCHR pack',
+    icon: <FileText className="h-4 w-4" />,
+    job: 'Review the public status brief, UI plan, background paper, and source matrices for the NJP / OHCHR conversation.',
+  },
+  {
     route: '/justice-matrix/map',
     href: '/justice-matrix/map',
     label: 'Map',
