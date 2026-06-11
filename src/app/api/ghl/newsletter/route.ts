@@ -9,7 +9,7 @@ import { welcomeSequence } from '@/content/newsletter-sequences';
 const ALLOWED_SUBSCRIPTION_TYPES = ['general', 'steward', 'researcher', 'organization'];
 
 // Allowed source values
-const ALLOWED_SOURCES = ['newsletter_form', 'homepage', 'signup', 'footer', 'contained_launch', 'contained_tour', 'get_involved_form', 'storyteller_registration'];
+const ALLOWED_SOURCES = ['newsletter_form', 'homepage', 'signup', 'footer', 'contained_launch', 'contained_tour', 'contained_experience', 'contained_stories', 'contained_act_page', 'get_involved_form', 'storyteller_registration'];
 
 /**
  * POST /api/ghl/newsletter
@@ -73,6 +73,9 @@ export async function POST(request: NextRequest) {
         GHL_CANONICAL.ROLE_SUPPORTER,
         GHL_CANONICAL.COMMS_JH_NEWSLETTER,
       ];
+
+      // CONTAINED surfaces also carry the campaign event tag (R4)
+      if (validSource.startsWith('contained')) { tags.push(GHL_CANONICAL.SOURCE_EVENT_CONTAINED); }
 
       // Add subscription type tag
       if (validSubscriptionType === 'steward') tags.push(GHL_CANONICAL.TIER_STEWARD);

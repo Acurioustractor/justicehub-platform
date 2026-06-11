@@ -150,7 +150,7 @@ export function OnePagerContent({ media }: { media: OnePagerMedia }) {
               2026-27 National Tour
             </h2>
             <p className="text-[12px] text-gray-700 leading-snug mb-2">
-              The Australian tour starts with a small Mount Druitt gathering in May/June, then activates publicly at Victoria Square, Tandanya/Adelaide from 22-26 June 2026. The route stays flexible around partner readiness and community ask: Perth and surrounds, Brisbane, Northern Rivers, Alice Springs / Central Australia, Sydney + Canberra, Victoria, and Tasmania follow.
+              The Australian tour starts with a small Mount Druitt gathering in May/June, then activates publicly in Adelaide on Kaurna Yarta from 22-26 June 2026. The route stays flexible around partner readiness and community ask: Perth and surrounds, Brisbane, Northern Rivers, Alice Springs / Central Australia, Sydney + Canberra, Victoria, and Tasmania follow.
             </p>
             <div className="grid grid-cols-9 gap-1.5 text-[10px]">
               {[
@@ -189,7 +189,7 @@ export function OnePagerContent({ media }: { media: OnePagerMedia }) {
                 },
                 {
                   amount: '$50K',
-                  builds: 'Adelaide public activation at Victoria Square',
+                  builds: 'Adelaide public activation',
                   impact: 'Conference delegates, Brisbane build story, David from Diagrama, and local Room 3 program evidence.',
                 },
                 {

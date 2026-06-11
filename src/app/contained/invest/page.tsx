@@ -12,7 +12,7 @@ const TOUR_STOPS = [
     partner: 'Justice Reform Initiative + Reintegration Puzzle',
     status: 'Confirmed',
     cost: '$50,000',
-    description: 'Victoria Square, Tandanya/Adelaide public activation beside Reintegration Puzzle.',
+    description: 'Adelaide public activation on Kaurna Yarta beside Reintegration Puzzle.',
   },
   {
     city: 'Perth',

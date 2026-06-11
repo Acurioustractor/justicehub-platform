@@ -194,7 +194,7 @@ const STOP_THESIS: Record<string, StopThesis> = {
     basecampHref: '/organizations/justice-reform-initiative',
     closingHeadline: 'The activation is where the whole process becomes public.',
     closingSubhead:
-      'Request a hosted walkthrough at Victoria Square, Tandanya/Adelaide, during 22-26 June. Leave with the evidence, local program asks, and JusticeHub links.',
+      'Request a hosted walkthrough in Adelaide during 22-26 June. Leave with the evidence, local program asks, and JusticeHub links.',
     closingPrimaryLabel: 'Register · Adelaide',
     closingPrimaryHref: '/contained/register?stop=adelaide&cohort=conference-delegate',
     closingDate: 'Adelaide · 22-26 Jun 2026',

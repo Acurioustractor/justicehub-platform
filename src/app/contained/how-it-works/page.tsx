@@ -134,7 +134,7 @@ export default function HowItWorksPage() {
           Three rooms. Three builders.
         </h2>
         <p className="max-w-3xl text-[#F5F0E8]/95 leading-relaxed mb-12">
-          The container is not a museum. Each room is built before each city, with the people from that city. The first room remembers detention. The second room shows the alternative. The third room hands the conversation to the community already doing the work. In Adelaide, that means local organisations talking about their programs during the Victoria Square, Tandanya/Adelaide activation week.
+          The container is not a museum. Each room is built before each city, with the people from that city. The first room remembers detention. The second room shows the alternative. The third room hands the conversation to the community already doing the work. In Adelaide, that means local organisations talking about their programs during the Adelaide activation week.
         </p>
 
         <RoomsGrid />

@@ -1741,7 +1741,7 @@ const ActionSection = forwardRef<HTMLElement, { active: boolean }>(
 
         <div className="border-t border-gray-800 pt-12">
           <h3 className="text-lg font-bold mb-6">Stay in the loop</h3>
-          <NewsletterSignup source="contained_experience" tags={['CONTAINED_EXPERIENCE', 'NEWSLETTER']} />
+          <NewsletterSignup source="contained_experience" />
         </div>
       </div>
     </section>

@@ -2,7 +2,7 @@ export const campaignMetadata = {
   name: "CONTAINED",
   tagline: "Transform Youth Justice Through Immersive Advocacy",
   launchDate: "2026",
-  location: "Mount Druitt gathering, then Victoria Square, Tandanya/Adelaide activation",
+  location: "Mount Druitt gathering, then the Adelaide activation on Kaurna Yarta",
   primaryCta: {
     label: "Nominate a Leader",
     href: "#nominate",
@@ -23,7 +23,7 @@ export const campaignMetadata = {
     current: 47,
   },
   description:
-    "Thirty minutes inside one shipping container, three rooms. The tour starts with a flexible Mount Druitt gathering, then activates publicly at Victoria Square, Tandanya/Adelaide, with the Brisbane build story, David from Diagrama's practice lens, and local organisations showing what already works.",
+    "Thirty minutes inside one shipping container, three rooms. The tour starts with a flexible Mount Druitt gathering, then activates publicly in Adelaide on Kaurna Yarta, with the Brisbane build story, David from Diagrama's practice lens, and local organisations showing what already works.",
 };
 
 export const journeyContainers = [
@@ -33,7 +33,7 @@ export const journeyContainers = [
     title: "Current Reality",
     headline: "Designed by Young People",
     summary:
-      "Young people who supported the build carry the first Room 1 story into a flexible Mount Druitt gathering and then the Victoria Square, Tandanya/Adelaide activation. At every stop, local young people then shape the room from their own place and decide what the public needs to see.",
+      "Young people who supported the build carry the first Room 1 story into a flexible Mount Druitt gathering and then the Adelaide activation on Kaurna Yarta. At every stop, local young people then shape the room from their own place and decide what the public needs to see.",
     stats: [
       { label: "Daily Cost", value: "$4,250" },
       { label: "Annual Cost", value: "$1.55M" },
@@ -65,7 +65,7 @@ export const journeyContainers = [
     title: "The Organisations Already Doing It",
     headline: "Changes Every Stop",
     summary:
-      "Room 3 is where local organisations show the programs already working and name what they need funded. Mount Druitt gives the process a small first gathering, Victoria Square gives Adelaide a public activation beside Reintegration Puzzle, then every stop rebuilds it with local hosts.",
+      "Room 3 is where local organisations show the programs already working and name what they need funded. Mount Druitt gives the process a small first gathering, Adelaide gets a public activation beside Reintegration Puzzle, then every stop rebuilds it with local hosts.",
     stats: [
       { label: "Community Programs", value: "$75/day" },
       { label: "Reoffending", value: "3%" },
@@ -224,10 +224,10 @@ export const tourStops: TourStop[] = [
   {
     city: 'Mount Druitt',
     state: 'NSW',
-    venue: 'Mounty Yarns · Western Sydney small gathering',
-    partner: 'Mounty Yarns + Just Reinvest NSW',
+    venue: 'Mount Druitt · Western Sydney small gathering',
+    partner: 'Just Reinvest NSW + Western Sydney youth network',
     description:
-      'A flexible May/June small gathering in Western Sydney before the public launch. Mount Druitt holds the early proof: young people, Mounty Yarns, Just Reinvest relationships, and the first local conversation about how Room 1 and Room 3 should travel.',
+      'A flexible May/June small gathering in Western Sydney before the public launch. Mount Druitt holds the early proof: young people, Just Reinvest relationships, and the first local conversation about how Room 1 and Room 3 should travel.',
     eventSlug: 'contained-mount-druitt-gathering',
     date: 'May-Jun 2026 · small gathering',
     status: 'planning',
@@ -238,12 +238,12 @@ export const tourStops: TourStop[] = [
   {
     city: 'Adelaide',
     state: 'SA',
-    venue: 'Victoria Square · Tandanya/Adelaide',
+    venue: 'Adelaide · Kaurna Yarta (site announced soon)',
     partner: 'Justice Reform Initiative + Reintegration Puzzle',
     description:
-      'The Adelaide activation is planned for Monday 22 to Friday 26 June 2026 in public space at Victoria Square, Tandanya/Adelaide, beside the Reintegration Puzzle Conference at Hilton Adelaide. Brisbane young people who supported the build carry the first Room 1 story. David from Diagrama anchors the Room 2 practice lens. Adelaide organisations use Room 3 to show their programs, evidence, costs, and what they need funded.',
+      'The Adelaide activation is planned for Monday 22 to Friday 26 June 2026 in public space in Adelaide on Kaurna Yarta, alongside the Reintegration Puzzle Conference. The exact site is announced once confirmed. Brisbane young people who supported the build carry the first Room 1 story. David from Diagrama anchors the Room 2 practice lens. Adelaide organisations use Room 3 to show their programs, evidence, costs, and what they need funded.',
     eventSlug: 'contained-adelaide-tandanya',
-    date: '22-26 June 2026 · Victoria Square activation',
+    date: '22-26 June 2026 · Adelaide activation',
     status: 'planning',
     lat: -34.93,
     lng: 138.60,
@@ -355,11 +355,11 @@ export const campaignFundraising = {
     {
       amount: 20000,
       label: 'Mount Druitt · May-Jun · small gathering',
-      description: 'Flexible Western Sydney gathering, young people paid, Mounty Yarns and Just Reinvest relationships held, first local proof captured.',
+      description: 'Flexible Western Sydney gathering, young people paid, Just Reinvest relationships held, first local proof captured.',
     },
     {
       amount: 50000,
-      label: 'Adelaide · Victoria Square · 22-26 June',
+      label: 'Adelaide · 22-26 June',
       description: 'Public activation beside Reintegration Puzzle. Brisbane build story, Diagrama practice lens, Adelaide organisations, documentation, and JusticeHub publishing.',
     },
     {
@@ -468,9 +468,9 @@ export const tourSocialKits: TourSocialKit[] = [
         label: 'Small Gathering',
         content: `THE CONTAINED starts with a small Mount Druitt gathering in May/June.
 
-Young people, Mounty Yarns, Just Reinvest relationships, and Western Sydney build proof help shape what travels next.
+Young people, Just Reinvest relationships, and Western Sydney build proof help shape what travels next.
 
-Then the Adelaide activation runs at Victoria Square, Tandanya/Adelaide, from 22-26 June 2026 beside Reintegration Puzzle.`,
+Then the Adelaide activation runs on Kaurna Yarta from 22-26 June 2026 beside Reintegration Puzzle.`,
         hashtags: [...CORE_HASHTAGS, '#MountDruitt', '#WesternSydney'],
       },
       {
@@ -490,7 +490,7 @@ That matters. The tour is not a fixed roadshow dropped into communities. It is a
       {
         platform: 'twitter',
         label: 'Announcement',
-        content: `THE CONTAINED Adelaide activation runs at Victoria Square, Tandanya/Adelaide, from 22-26 June 2026.
+        content: `THE CONTAINED Adelaide activation runs in public space on Kaurna Yarta from 22-26 June 2026.
 
 One shipping container. Three rooms. Thirty minutes.
 
@@ -502,7 +502,7 @@ Mount Druitt starts the process. Brisbane young people carry the build story. Da
         label: 'Community Post',
         content: `What if decision-makers could feel what youth detention is actually like?
 
-That is the idea behind THE CONTAINED, an immersive shipping container experience activating at Victoria Square, Tandanya/Adelaide, from 22-26 June 2026 after a small Mount Druitt gathering.
+That is the idea behind THE CONTAINED, an immersive shipping container experience activating in Adelaide on Kaurna Yarta from 22-26 June 2026 after a small Mount Druitt gathering.
 
 Three rooms tell the story: detention reality, the therapeutic alternative shaped with David from Diagrama, and the local future held by Adelaide organisations talking about their programs, costs, and support needs.`,
         hashtags: [...CORE_HASHTAGS, '#Adelaide'],
@@ -510,7 +510,7 @@ Three rooms tell the story: detention reality, the therapeutic alternative shape
       {
         platform: 'linkedin',
         label: 'Professional',
-        content: `The process starts with a small Mount Druitt gathering, then the Adelaide public activation runs at Victoria Square, Tandanya/Adelaide, from 22-26 June 2026 beside the Reintegration Puzzle Conference.
+        content: `The process starts with a small Mount Druitt gathering, then the Adelaide public activation runs in Adelaide on Kaurna Yarta from 22-26 June 2026 beside the Reintegration Puzzle Conference.
 
 Brisbane young people who supported the build carry the first room. David from Diagrama anchors the practice lens. Adelaide organisations use Room 3 to show the programs already working and the support they need to grow.`,
         hashtags: [...CORE_HASHTAGS, '#SocialPolicy', '#Evidence', '#Reform'],
@@ -608,7 +608,7 @@ justicehub.com.au/contained`,
     content: `THE CONTAINED is going national.
 
 May/June: Mount Druitt small gathering
-22-26 June: Adelaide public activation at Victoria Square, Tandanya/Adelaide
+22-26 June: Adelaide public activation on Kaurna Yarta
 July/August: Perth and surrounds
 September: Brisbane
 October: Northern Rivers
@@ -637,7 +637,7 @@ THE CONTAINED makes you feel these numbers. Australian Tour 2026-27.`,
     content: `$500K funds THE CONTAINED Australian Tour.
 
 $20K -> Mount Druitt small gathering
-$50K -> Adelaide public activation at Victoria Square, Tandanya/Adelaide, 22-26 June
+$50K -> Adelaide public activation, 22-26 June
 $30K-$60K -> one tour stop
 $120K -> tour-wide backbone
 

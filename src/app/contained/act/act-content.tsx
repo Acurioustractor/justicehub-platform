@@ -53,7 +53,7 @@ Meanwhile, ${s.programs} proven community programs get a fraction. Indigenous yo
 
 CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
 
-Route: Mount Druitt small gathering in May/June, then Victoria Square, Tandanya/Adelaide activation from 22-26 June 2026.
+Route: Mount Druitt small gathering in May/June, then the Adelaide activation on Kaurna Yarta from 22-26 June 2026.
 
 ${SITE_URL}/contained`,
     },
@@ -64,7 +64,7 @@ ${SITE_URL}/contained`,
 I'm nominating leaders who need to see this. You can too:
 ${SITE_URL}/contained#nominate
 
-Route: Mount Druitt small gathering in May/June, then Victoria Square, Tandanya/Adelaide activation from 22-26 June 2026.
+Route: Mount Druitt small gathering in May/June, then the Adelaide activation on Kaurna Yarta from 22-26 June 2026.
 
 Every nomination builds public pressure for change.`,
     },
@@ -82,7 +82,7 @@ CONTAINED shows what youth detention feels like. JusticeHub shows what works ins
 
 I'm inviting you to experience 30 minutes inside this container. Your constituents have nominated you.
 
-Route: Mount Druitt small gathering in May/June, then Victoria Square, Tandanya/Adelaide activation from 22-26 June 2026.
+Route: Mount Druitt small gathering in May/June, then the Adelaide activation on Kaurna Yarta from 22-26 June 2026.
 
 Learn more: ${SITE_URL}/contained
 Nominations: ${SITE_URL}/contained#nominate`,
@@ -91,7 +91,7 @@ Nominations: ${SITE_URL}/contained#nominate`,
       subject: 'Story: CONTAINED tour reveals youth detention reality',
       body: `Hi,
 
-CONTAINED is an immersive experience starting with a small Mount Druitt gathering in May/June, then activating publicly at Victoria Square, Tandanya/Adelaide from 22-26 June 2026. One shipping container, three rooms, thirty minutes: the reality of youth detention, the therapeutic alternative shaped with David from Diagrama, and local community solutions.
+CONTAINED is an immersive experience starting with a small Mount Druitt gathering in May/June, then activating publicly in Adelaide on Kaurna Yarta from 22-26 June 2026. One shipping container, three rooms, thirty minutes: the reality of youth detention, the therapeutic alternative shaped with David from Diagrama, and local community solutions.
 
 Key stats (Productivity Commission ROGS 2024-25):
 - $${s.totalPunitiveBillions}B/year total punitive system (police + prisons + detention)
@@ -101,7 +101,7 @@ Key stats (Productivity Commission ROGS 2024-25):
 
 CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
 
-Launch path: Mount Druitt small gathering, then Victoria Square, Tandanya/Adelaide activation
+Launch path: Mount Druitt small gathering, then the Adelaide activation on Kaurna Yarta
 Tour route: Mount Druitt, Adelaide, Perth + surrounds, Brisbane, Northern Rivers, Alice Springs / Central Australia, Sydney + Canberra, Victoria, Tasmania
 
 Press kit & details: ${SITE_URL}/contained
@@ -129,7 +129,7 @@ function buildSocialPosts(s: LiveStats) {
 
 $${s.totalPunitiveBillions}B/year on the punitive system. ${s.programs} proven alternatives get a fraction.
 
-Route: Mount Druitt May/June, then Victoria Square, Tandanya/Adelaide, 22-26 June. Nominate a leader: ${SITE_URL}/contained#nominate
+Route: Mount Druitt May/June, then Adelaide on Kaurna Yarta, 22-26 June. Nominate a leader: ${SITE_URL}/contained#nominate
 
 #TheContained #YouthJustice`,
     facebook: `Just learned about CONTAINED — a shipping container touring Australia that lets you experience 30 minutes of what youth detention is actually like.
@@ -142,7 +142,7 @@ The stats are staggering (Productivity Commission data):
 
 CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
 
-Route: Mount Druitt May/June, then Victoria Square, Tandanya/Adelaide, 22-26 June. Nominate someone: ${SITE_URL}/contained#nominate`,
+Route: Mount Druitt May/June, then Adelaide on Kaurna Yarta, 22-26 June. Nominate someone: ${SITE_URL}/contained#nominate`,
     linkedin: `Australia spends $${s.totalPunitiveBillions}B/year on its punitive justice system. $${s.detentionBillions}B on youth detention alone — for 734 children.
 
 Indigenous youth are incarcerated at ${s.indigenousRatio}x the rate of non-Indigenous youth.
@@ -153,14 +153,14 @@ CONTAINED is a national tour taking this evidence directly to decision-makers �
 
 CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
 
-Route: Mount Druitt May/June, then Victoria Square, Tandanya/Adelaide, 22-26 June. Nominate a leader: ${SITE_URL}/contained
+Route: Mount Druitt May/June, then Adelaide on Kaurna Yarta, 22-26 June. Nominate a leader: ${SITE_URL}/contained
 
 #YouthJustice #TheContained #SocialImpact #PolicyReform`,
   };
 }
 
 function buildSmsTemplate(s: LiveStats) {
-  return `Check this out: CONTAINED is one shipping container, three rooms, showing what youth detention is really like. Route starts with Mount Druitt May/June, then Victoria Square, Tandanya/Adelaide, 22-26 June. $${s.totalPunitiveBillions}B/yr on the punitive system, ${s.programs} proven alternatives get a fraction. Nominate a leader: ${SITE_URL}/contained#nominate`;
+  return `Check this out: CONTAINED is one shipping container, three rooms, showing what youth detention is really like. Route starts with Mount Druitt May/June, then Adelaide on Kaurna Yarta, 22-26 June. $${s.totalPunitiveBillions}B/yr on the punitive system, ${s.programs} proven alternatives get a fraction. Nominate a leader: ${SITE_URL}/contained#nominate`;
 }
 
 function CopyButton({ text, label }: { text: string; label?: string }) {

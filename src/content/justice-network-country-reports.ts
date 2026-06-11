@@ -45,7 +45,7 @@ export const countryReports: CountryReport[] = [
       'Link legal strategy, funding, family support, and cultural authority into one pathway.',
       'Use CONTAINED as the public doorway and ALMA as the practical alternatives map.',
     ],
-    nextFieldwork: ['Adelaide CONTAINED activation at Victoria Square, Tandanya/Adelaide from 22-26 June 2026', 'Room 3 South Australian model capture', 'Basecamp exchange and Centre of Excellence pathway'],
+    nextFieldwork: ['Adelaide CONTAINED activation on Kaurna Yarta from 22-26 June 2026', 'Room 3 South Australian model capture', 'Basecamp exchange and Centre of Excellence pathway'],
     publicBoundary:
       'Australia can show more detail because JusticeHub already holds public cases, campaigns, ALMA models, and consent-governed local story material.',
   },

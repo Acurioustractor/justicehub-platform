@@ -274,7 +274,7 @@ function NewsletterSignup() {
       const res = await fetch('/api/ghl/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, full_name: name || undefined, subscription_type: 'general', source: 'contained_tour', tags: ['Contained Tour 2026'] }),
+        body: JSON.stringify({ email, full_name: name || undefined, subscription_type: 'general', source: 'contained_tour' }),
       });
       if (!res.ok) { const data = await res.json(); throw new Error(data.error || 'Failed to subscribe'); }
       setStatus('success');
