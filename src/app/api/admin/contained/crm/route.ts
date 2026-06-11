@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server-lite';
+import { requireAdminApi } from '@/lib/admin-api-auth';
 
 /**
  * GET /api/admin/contained/crm
@@ -8,21 +8,11 @@ import { createClient } from '@/lib/supabase/server-lite';
  */
 export async function GET() {
   try {
-    const supabase = await createClient();
-
-    // Auth check
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const admin = await requireAdminApi();
+    if ('error' in admin) {
+      return admin.error;
     }
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-    if (profile?.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const { supabase } = admin;
 
     // Fetch all 6 tables in parallel
     const [

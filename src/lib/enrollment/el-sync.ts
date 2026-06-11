@@ -48,7 +48,7 @@ export async function createVisitorELProfile(
       id: profileId,
       tenant_id: JH_TENANT_ID,
       display_name: displayName,
-      bio: `Visitor to THE CONTAINED installation${locationText ? ` — ${locationText}` : ''}`,
+      bio: `Visitor to CONTAINED installation${locationText ? ` — ${locationText}` : ''}`,
       primary_organization_id: JH_ORG_ID,
       justicehub_enabled: true,
       location: locationText || null,

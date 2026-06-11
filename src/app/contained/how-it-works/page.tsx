@@ -108,7 +108,7 @@ export default function HowItWorksPage() {
           ← Back to Contained
         </Link>
         <h1 className="mt-6 text-5xl md:text-7xl font-bold leading-[0.95] uppercase tracking-tight">
-          How it<br />works
+          How it{' '}<br />works
         </h1>
         <p className="mt-8 text-lg md:text-xl max-w-3xl text-[#F5F0E8]/95 leading-relaxed">
           Three rooms. Three builders. Ten minutes per room. Brisbane young people carry the first build story. David from Diagrama helps hold the therapeutic alternative. Adelaide organisations open the tour by showing their programs, costs, evidence, and support needs.

@@ -171,7 +171,7 @@ export function SocialKitContent() {
             </div>
 
             <h1 className="text-3xl md:text-5xl font-black tracking-tighter uppercase mb-4">
-              THE CONTAINED<br />SOCIAL CONTENT
+              CONTAINED{' '}<br />SOCIAL CONTENT
             </h1>
 
             <p className="text-lg text-gray-600 max-w-2xl">
@@ -207,7 +207,7 @@ export function SocialKitContent() {
                 <div className="border-2 border-black overflow-hidden">
                   <img
                     src={campaignMedia.containerRoom}
-                    alt="THE CONTAINED — two rooms side by side: therapeutic model vs detention reality"
+                    alt="CONTAINED — two rooms side by side: therapeutic model vs detention reality"
                     className="w-full h-auto"
                   />
                   <div className="p-4 bg-black text-white flex items-start justify-between gap-4">
@@ -223,13 +223,13 @@ export function SocialKitContent() {
                   <div className="space-y-4">
                     <div className="border-l-2 border-red-600 pl-4">
                       <p className="text-sm text-gray-300 mb-1">Instagram / Facebook</p>
-                      <p className="text-white">&ldquo;This is THE CONTAINED. One shipping container. Three rooms. This image shows two of them: detention reality and the therapeutic alternative. The third room asks what we fund next. Route starts with Mount Druitt, then Adelaide on Kaurna Yarta.&rdquo;</p>
-                      <CopyButton text="This is THE CONTAINED. One shipping container. Three rooms. This image shows two of them: detention reality and the therapeutic alternative. The third room asks what we fund next. Route starts with Mount Druitt, then Adelaide on Kaurna Yarta.\n\n#TheContained #YouthJustice #JusticeHub" />
+                      <p className="text-white">&ldquo;This is CONTAINED. One shipping container. Three rooms. This image shows two of them: detention reality and the therapeutic alternative. The third room asks what we fund next. Route starts with Mount Druitt, then Adelaide on Kaurna Yarta.&rdquo;</p>
+                      <CopyButton text="This is CONTAINED. One shipping container. Three rooms. This image shows two of them: detention reality and the therapeutic alternative. The third room asks what we fund next. Route starts with Mount Druitt, then Adelaide on Kaurna Yarta.\n\n#TheContained #YouthJustice #JusticeHub" />
                     </div>
                     <div className="border-l-2 border-red-600 pl-4">
                       <p className="text-sm text-gray-300 mb-1">X / Twitter</p>
-                      <p className="text-white">&ldquo;Left: therapeutic care. Right: detention reality. THE CONTAINED puts both inside one shipping container, then asks what we back next. Mount Druitt first gathering, Adelaide activation on Kaurna Yarta.&rdquo;</p>
-                      <CopyButton text="Left: therapeutic care. Right: detention reality. THE CONTAINED puts both inside one shipping container, then asks what we back next. Mount Druitt first gathering, Adelaide activation on Kaurna Yarta. #TheContained #YouthJustice" />
+                      <p className="text-white">&ldquo;Left: therapeutic care. Right: detention reality. CONTAINED puts both inside one shipping container, then asks what we back next. Mount Druitt first gathering, Adelaide activation on Kaurna Yarta.&rdquo;</p>
+                      <CopyButton text="Left: therapeutic care. Right: detention reality. CONTAINED puts both inside one shipping container, then asks what we back next. Mount Druitt first gathering, Adelaide activation on Kaurna Yarta. #TheContained #YouthJustice" />
                     </div>
                   </div>
                 </div>
@@ -274,7 +274,7 @@ export function SocialKitContent() {
                         <span className="text-xs font-bold text-gray-500 truncate">{voice.name}</span>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <DownloadButton url={voice.image_url} filename={`contained-${voice.name.toLowerCase().replace(/\s+/g, '-')}.jpg`} />
-                          <CopyButton text={`"${voice.quote.substring(0, 150)}${voice.quote.length > 150 ? '...' : ''}" — ${voice.name}\n\nTHE CONTAINED: Australian Tour 2026\njusticehub.com.au/contained\n\n#TheContained #YouthJustice #JusticeHub`} />
+                          <CopyButton text={`"${voice.quote.substring(0, 150)}${voice.quote.length > 150 ? '...' : ''}" — ${voice.name}\n\nCONTAINED: Australian Tour 2026\njusticehub.com.au/contained\n\n#TheContained #YouthJustice #JusticeHub`} />
                         </div>
                       </div>
                     </div>

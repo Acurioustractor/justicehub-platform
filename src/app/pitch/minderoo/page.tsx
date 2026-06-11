@@ -1029,7 +1029,7 @@ export default function MinderooPitchPage() {
               {
                 kicker: 'Already running',
                 title: 'Not a proposal. A practice.',
-                body: 'Fifty-five judges sat on Country at Oonchiumpa on 17 April. The Contained tour is moving with eighty-six people across fifteen locations. Four anchors are holding children right now. ACT is asking Minderoo to back the next twelve months of a thing that is already breathing.',
+                body: 'Fifty-five judges sat on Country at Oonchiumpa on 17 April. The CONTAINED tour is moving with eighty-six people across fifteen locations. Four anchors are holding children right now. ACT is asking Minderoo to back the next twelve months of a thing that is already breathing.',
               },
               {
                 kicker: 'Money lands on community',

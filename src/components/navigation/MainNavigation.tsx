@@ -123,14 +123,14 @@ export function MainNavigation({ variant = 'default' }: NavigationProps) {
                         >
                             <div className="text-center">
                                 <div className="relative">
-                                    <h1 className="text-2xl md:text-3xl font-black tracking-tighter">
+                                    <div className="text-2xl md:text-3xl font-black tracking-tighter" aria-hidden="true">
                                         <span className="bg-gradient-to-r from-black via-red-600 to-black bg-clip-text text-transparent group-hover:from-red-600 group-hover:via-black group-hover:to-red-600 transition-all duration-500">
                                             JUSTICE
                                         </span>
                                         <span className="text-black group-hover:text-red-600 transition-colors duration-500">
                                             HUB
                                         </span>
-                                    </h1>
+                                    </div>
                                     <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 </div>
                                 <div className="text-xs font-bold tracking-widest text-gray-600 group-hover:text-black transition-colors duration-300 mt-1">

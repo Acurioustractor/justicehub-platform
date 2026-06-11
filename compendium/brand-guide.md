@@ -162,15 +162,16 @@ All statistics have named sources and are maintained in `src/content/campaign.ts
 
 | Stat | Value | Source |
 |------|-------|--------|
-| Cost per detained youth/year | **$1.55M** | Productivity Commission ROGS 2024-25 |
-| Detention reoffending rate | **84%** | Queensland Youth Justice Strategy 2023 |
+| Cost per detained youth/year (national avg) | **$1.33M** ($3,635/day) | Productivity Commission ROGS 2024-25 Table 17A.20 |
+| Cost per detained youth (SA / Kurlana Tapa) | **$3,261/day** ($1.19M/yr) | Productivity Commission ROGS 2024-25 Table 17A.20 |
+| Return to sentenced supervision after detention | **84% within 12 months** (70% within 6) | AIHW Young people returning to sentenced youth justice supervision 2023-24 |
 | Community program reoffending | **3%** | Community Accountability Pilot 2024 |
 | Daily cost of alternatives | **$75/day** | Community Services Benchmark Study 2024 |
 | Restorative justice success | **88%** | Queensland Department of Justice 2024 |
 | Youth helped for same cost | **16x** | Queensland Productivity Commission 2024 |
 | Indigenous overrepresentation | **23x** | National youth detention statistics |
 | Youth detained in Finland | **4** | Finnish Ministry of Justice 2024 |
-| Daily cost of detention | **$4,250** | Productivity Commission ROGS 2024-25 |
+| ~~Daily cost of detention $4,250~~ | RETIRED 2026-06-11 | superseded by per-state ROGS figures above; do not reuse |
 | Tour stop cost | **$30K** | CONTAINED Campaign Budget |
 | New container build | **$50–70K** | CONTAINED Campaign Budget |
 | Diagrama (Spain) reoffending | **13.6%** | Diagrama Foundation evaluation |

@@ -39,7 +39,7 @@ export function OnePagerContent({ media }: { media: OnePagerMedia }) {
                 Investment Brief &middot; May 2026
               </div>
               <h1 className="text-3xl font-black uppercase tracking-tighter leading-none">
-                THE CONTAINED
+                CONTAINED
               </h1>
               <p className="text-sm text-gray-600 mt-1 max-w-md">
                 One shipping container. Three rooms. The cure already exists.

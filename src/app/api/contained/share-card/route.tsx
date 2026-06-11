@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
     return new ImageResponse(
       <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', background: BRAND.black, padding: pad, justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', fontSize: hSz, fontFamily: df, fontWeight: 700, color: BRAND.red, letterSpacing: 6 }}>THE CONTAINED</div>
+          <div style={{ display: 'flex', fontSize: hSz, fontFamily: df, fontWeight: 700, color: BRAND.red, letterSpacing: 6 }}>CONTAINED</div>
           <div style={{ display: 'flex', fontSize: sSz, fontFamily: mf, color: BRAND.gray[500], letterSpacing: 4, marginTop: 4 }}>AUSTRALIAN TOUR 2026</div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
     return new ImageResponse(
       <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', background: BRAND.black, padding: pad, justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', fontSize: hSz, fontFamily: df, fontWeight: 700, color: BRAND.red, letterSpacing: 6 }}>THE CONTAINED</div>
+          <div style={{ display: 'flex', fontSize: hSz, fontFamily: df, fontWeight: 700, color: BRAND.red, letterSpacing: 6 }}>CONTAINED</div>
           <div style={{ display: 'flex', fontSize: sSz, fontFamily: mf, color: BRAND.gray[500], letterSpacing: 4, marginTop: 4 }}>AUSTRALIAN TOUR 2026</div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
@@ -169,7 +169,7 @@ export async function GET(request: NextRequest) {
         <img src={imageUrl} style={{ width: '100%', height: `${format.height - 200}px`, objectFit: 'cover' }} />
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 40px', flex: 1 }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', fontSize: 13, fontFamily: df, fontWeight: 700, color: BRAND.red, letterSpacing: 4 }}>THE CONTAINED</div>
+            <div style={{ display: 'flex', fontSize: 13, fontFamily: df, fontWeight: 700, color: BRAND.red, letterSpacing: 4 }}>CONTAINED</div>
             {caption ? <div style={{ display: 'flex', fontSize: 18, fontFamily: df, fontWeight: 700, color: BRAND.offWhite, marginTop: 8, lineHeight: 1.3 }}>{caption}</div> : <div style={{ display: 'flex' }} />}
             {location ? <div style={{ display: 'flex', fontSize: 12, fontFamily: mf, color: BRAND.gray[400], letterSpacing: 2, marginTop: 4 }}>{location.toUpperCase()}</div> : <div style={{ display: 'flex' }} />}
             {credit ? <div style={{ display: 'flex', fontSize: 11, fontFamily: mf, color: BRAND.gray[600], marginTop: 4 }}>Photo: {credit}</div> : <div style={{ display: 'flex' }} />}

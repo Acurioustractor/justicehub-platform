@@ -86,6 +86,12 @@ jobs:
             sleep 2
           done
 
+          if ! curl -sf "http://127.0.0.1:3000/" >/dev/null; then
+            echo "::group::next-dev.log (server failed to boot)"
+            tail -200 /tmp/next-dev.log || true
+            echo "::endgroup::"
+          fi
+
           FRONTEND_SMOKE_BASE_URL=http://127.0.0.1:3000 npm run check:frontend-smoke
 
       - name: Upload frontend smoke artifacts

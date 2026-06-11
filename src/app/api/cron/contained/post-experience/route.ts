@@ -7,7 +7,7 @@ const SITE = 'https://justicehub.com.au';
 /**
  * GET /api/cron/contained/post-experience
  *
- * Timed email sequence for people who walked through THE CONTAINED.
+ * Timed email sequence for people who walked through CONTAINED.
  * Checks community_reflections timestamps and sends:
  *   - 24hr: Evidence email (while emotion is fresh)
  *   - 7 days: Social proof compilation (X people walked through this week)
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
           preheader: '981 programs. Exposed in three rooms.',
           body: `Hey ${visitorName},
 
-Yesterday you walked through THE CONTAINED. We wanted to follow up with something concrete.
+Yesterday you walked through CONTAINED. We wanted to follow up with something concrete.
 
 THE EVIDENCE
 
@@ -124,10 +124,10 @@ That's not hypothetical. It's a policy choice. And your voice matters in making 
         const result = await sendEmail({
           to: email,
           subject: "You're not the only one who felt it",
-          preheader: `${weeklyVisitors || 0} people walked through THE CONTAINED this week.`,
+          preheader: `${weeklyVisitors || 0} people walked through CONTAINED this week.`,
           body: `Hey ${visitorName},
 
-A week ago you walked through THE CONTAINED. Here's what happened since.
+A week ago you walked through CONTAINED. Here's what happened since.
 
 THIS WEEK
 
@@ -178,7 +178,7 @@ STILL WANT TO DO SOMETHING?
           preheader: 'One month later. The movement is growing.',
           body: `Hey ${visitorName},
 
-A month ago you walked through THE CONTAINED.
+A month ago you walked through CONTAINED.
 
 We wanted you to know: it's working.
 

@@ -55,7 +55,7 @@ const rooms = [
 ];
 
 const actions = [
-  'Walk through THE CONTAINED and send the /remand explainer to five people with decision power.',
+  'Walk through CONTAINED and send the /remand explainer to five people with decision power.',
   'Ask what youth detention receives compared with bail support, housing, legal help, and community-led programs.',
   'Use JusticeHub to find local services, verified alternatives, funding gaps, and source-backed claims.',
   'Back one practical support that would stop remand becoming the default answer.',
@@ -77,13 +77,13 @@ export default function DecisionMakerBriefPage() {
                   <ArrowLeft className="h-4 w-4" /> Back to CONTAINED
                 </Link>
                 <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#DC2626]" style={{ fontFamily: MONO }}>
-                  THE CONTAINED 2026
+                  CONTAINED 2026
                 </p>
                 <h1 className="text-3xl font-black uppercase tracking-tight md:text-5xl">
                   Youth Remand Brief
                 </h1>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-[#514a42]">
-                  A source-checked one-page brief for decision-makers walking through THE CONTAINED.
+                  A source-checked one-page brief for decision-makers walking through CONTAINED.
                   Research, not legal advice. Checked as of 3 June 2026 AEST.
                 </p>
               </div>

@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
+import { getGHLClient, GHL_CANONICAL, CONTAINED_PIPELINES } from '@/lib/ghl/client';
 import { sanitizeEmail, sanitizeInput } from '@/lib/security';
 import { sendEmail } from '@/lib/email/send';
+import { verifyTurnstileToken } from '@/lib/turnstile';
+import { nominatorReceipt } from '@/content/contained-receipts';
 
 const SITE = 'https://justicehub.com.au';
 
 /**
  * POST /api/contained/nominations
  *
- * Accepts nominations for THE CONTAINED experience.
+ * Accepts nominations for CONTAINED experience.
  * - Saves to campaign_alignment_entities (or increments existing nominee)
  * - Syncs nominator to GHL
  * - Sends confirmation to nominator
@@ -28,7 +30,18 @@ export async function POST(request: NextRequest) {
       nominator_name,
       nominator_email,
       reason,
+      turnstile_token,
     } = body;
+
+    // Bot check — this endpoint sends email to arbitrary nominee addresses,
+    // so it must not be scriptable. The nominate form sends the token.
+    const turnstileValid = await verifyTurnstileToken(turnstile_token);
+    if (!turnstileValid) {
+      return NextResponse.json(
+        { error: 'Bot verification failed. Please try again.' },
+        { status: 403 }
+      );
+    }
 
     // Validate required fields
     if (!nominee_name || !nominator_email || !nominator_name) {
@@ -58,7 +71,7 @@ export async function POST(request: NextRequest) {
       .from('campaign_alignment_entities')
       .select('id, alignment_signals')
       .ilike('name', sanitizedNomineeName)
-      .eq('outreach_status', 'nominated')
+      .eq('alignment_signals->>nomination_type', 'contained_experience')
       .limit(1)
       .single();
 
@@ -96,12 +109,16 @@ export async function POST(request: NextRequest) {
         .from('campaign_alignment_entities')
         .insert({
           name: sanitizedNomineeName,
-          entity_type: 'individual',
+          entity_type: 'person',
           position: sanitizedNomineeRole,
           organization: sanitizedNomineeOrg,
-          alignment_category: sanitizedCategory,
+          // alignment_category is a stance enum (ally/potential_ally/neutral/
+          // opponent/unknown), NOT the nominee type — that lives in
+          // alignment_signals.nomination_category.
+          alignment_category: 'potential_ally',
+          campaign_list: 'decision_makers',
           email: sanitizedNomineeEmail,
-          outreach_status: 'nominated',
+          outreach_status: 'pending',
           alignment_signals: {
             nominators: [{
               name: sanitizedNominatorName,
@@ -111,6 +128,7 @@ export async function POST(request: NextRequest) {
             }],
             nomination_count: 1,
             nomination_type: 'contained_experience',
+            nomination_category: sanitizedCategory,
           },
         })
         .select('id')
@@ -137,49 +155,51 @@ export async function POST(request: NextRequest) {
           nominated_person: sanitizedNomineeName,
           nomination_category: sanitizedCategory,
         },
-      }).catch(err => console.error('GHL sync error (nomination):', err));
+      })
+        .then((contactId) => {
+          // Nominators are warm — surface them on the Engagement board.
+          if (!contactId) return;
+          return ghl.ensureOpportunity({
+            pipelineId: CONTAINED_PIPELINES.CONTAINED_ENGAGEMENT.id,
+            pipelineStageId: CONTAINED_PIPELINES.CONTAINED_ENGAGEMENT.stageIdentified,
+            contactId,
+            name: `${sanitizedNominatorName} — nominator`,
+          });
+        })
+        .catch(err => console.error('GHL sync error (nomination):', err));
     }
 
     // Send confirmation email to nominator
     sendEmail({
       to: email,
-      subject: 'Your nomination has been received',
-      preheader: `You nominated ${sanitizedNomineeName} for THE CONTAINED experience.`,
-      body: `Thank you, ${sanitizedNominatorName}.
-
-Your nomination has been received.
-
-You nominated ${sanitizedNomineeName}${sanitizedNomineeOrg ? ` (${sanitizedNomineeOrg})` : ''} to experience THE CONTAINED.
-
-${sanitizedReason ? `Your reason: "${sanitizedReason}"` : ''}
-
-${nominationCount > 1 ? `${nominationCount} people have now nominated ${sanitizedNomineeName}. The pressure is building.` : ''}
-
-WHAT HAPPENS NEXT
-Our team reviews every nomination. When THE CONTAINED arrives in their city, we'll reach out with a personal invitation backed by your endorsement.
-
-The more people who nominate the same leader, the harder it is to ignore.
-
-Share the nomination link: ${SITE}/contained#nominate
-
-— The JusticeHub Team`,
+      ...nominatorReceipt({
+        nominatorName: sanitizedNominatorName,
+        nomineeName: sanitizedNomineeName,
+        nomineeOrg: sanitizedNomineeOrg,
+        reason: sanitizedReason,
+        nominationCount,
+      }),
     }).catch(err => console.error('Failed to send nominator confirmation:', err));
 
-    // Send invitation to nominee (if we have their email)
-    if (sanitizedNomineeEmail) {
+    // Send invitation to nominee (if we have their email).
+    // OFF by default: the campaign promise is "we make the personal invitation;
+    // nobody gets doorstepped" — an automated email on every nomination breaks
+    // that (and repeats on re-nominations). Enable only with
+    // CONTAINED_NOMINEE_AUTO_EMAIL=true.
+    if (sanitizedNomineeEmail && process.env.CONTAINED_NOMINEE_AUTO_EMAIL === 'true') {
       sendEmail({
         to: sanitizedNomineeEmail,
         subject: 'Someone thinks you need to see this',
-        preheader: `You've been nominated for THE CONTAINED experience.`,
+        preheader: `You've been nominated for CONTAINED experience.`,
         body: `${sanitizedNomineeName},
 
-Someone who respects your work has nominated you to experience THE CONTAINED.
+Someone who respects your work has nominated you to experience CONTAINED.
 
 ${sanitizedNominatorName} believes you should walk through a shipping container that shows what youth detention looks like in Australia — and what actually works instead.
 
 ${sanitizedReason ? `They said: "${sanitizedReason}"` : ''}
 
-THE CONTAINED is three rooms. Thirty minutes.
+CONTAINED is three rooms. Thirty minutes.
 
 Room 1: The reality of youth detention, designed by young people who know what it feels like.
 Room 2: The therapeutic alternative — what happens when you actually fund what works.

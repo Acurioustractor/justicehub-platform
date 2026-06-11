@@ -883,7 +883,7 @@ export function CanberraContent() {
               className="font-bold text-[#F5F0E8] uppercase leading-none hero-animate hero-animate-delay-2"
               style={{ fontSize: 'clamp(40px, 6.5vw, 88px)', letterSpacing: '-0.02em' }}
             >
-              Canberra.
+              Canberra.{' '}
               <br />
               The room that has to walk through it.
             </h1>

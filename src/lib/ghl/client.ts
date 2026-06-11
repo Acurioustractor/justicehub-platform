@@ -22,6 +22,7 @@ interface GHLContact {
   lastName?: string;
   name?: string;
   phone?: string;
+  companyName?: string;
   tags?: string[];
   customFields?: Record<string, string>;
   source?: string;
@@ -104,6 +105,7 @@ export class GHLClient {
           firstName: contact.firstName || contact.name?.split(' ')[0] || '',
           lastName: contact.lastName || contact.name?.split(' ').slice(1).join(' ') || '',
           phone: contact.phone,
+          companyName: contact.companyName,
           tags: contact.tags || [],
           source: contact.source || 'JusticeHub',
           customFields: contact.customFields ? Object.entries(contact.customFields).map(([key, value]) => ({
@@ -115,6 +117,20 @@ export class GHLClient {
 
       if (!response.ok) {
         const error = await response.text();
+        // Duplicate race: two concurrent upserts for a new contact both miss
+        // the findContactByEmail check; GHL rejects the second create but
+        // returns the existing id in meta.contactId — recover with it.
+        try {
+          const parsed = JSON.parse(error);
+          const existingId = parsed?.meta?.contactId;
+          if (existingId && /duplicated contacts/i.test(parsed?.message || '')) {
+            await this.updateContact(existingId, contact);
+            if (contact.tags && contact.tags.length > 0) {
+              await this.addTags(existingId, contact.tags);
+            }
+            return existingId;
+          }
+        } catch { /* fall through to throw */ }
         throw new Error(`GHL create contact failed: ${error}`);
       }
 
@@ -178,6 +194,7 @@ export class GHLClient {
           firstName: contact.firstName,
           lastName: contact.lastName,
           phone: contact.phone,
+          companyName: contact.companyName,
           customFields: contact.customFields ? Object.entries(contact.customFields).map(([key, value]) => ({
             key,
             field_value: value,
@@ -250,6 +267,7 @@ export class GHLClient {
         headers: this.headers,
         body: JSON.stringify({
           locationId: this.locationId,
+          status: 'open', // required by the GHL API
           ...opportunity,
         }),
       });
@@ -263,6 +281,46 @@ export class GHLClient {
       return data.opportunity?.id || null;
     } catch (error) {
       console.error('GHL createOpportunity error:', error);
+      return null;
+    }
+  }
+
+  /**
+   * List opportunities in a pipeline (paginates, capped at `max`).
+   * Used by the admin flow board to count people per stage.
+   */
+  async getPipelineOpportunities(pipelineId: string, max = 500): Promise<any[]> {
+    if (!this.isConfigured()) return [];
+    const all: any[] = [];
+    try {
+      let url: string | null =
+        `${GHL_API_BASE}/opportunities/search?location_id=${this.locationId}&pipeline_id=${pipelineId}&limit=100`;
+      while (url && all.length < max) {
+        const response: Response = await fetch(url, { method: 'GET', headers: this.headers });
+        if (!response.ok) break;
+        const data: any = await response.json();
+        all.push(...(data.opportunities || []));
+        url = data.meta?.nextPageUrl || null;
+      }
+    } catch (error) {
+      console.error('GHL getPipelineOpportunities error:', error);
+    }
+    return all;
+  }
+
+  /**
+   * Create an opportunity unless the contact already has one in this pipeline
+   * (keeps repeat form submissions from stacking duplicate cards).
+   */
+  async ensureOpportunity(opportunity: GHLOpportunity): Promise<string | null> {
+    if (!this.isConfigured()) return null;
+    try {
+      const existing = await this.getOpportunities(opportunity.contactId);
+      const match = existing.find((o: any) => o.pipelineId === opportunity.pipelineId);
+      if (match) return match.id;
+      return await this.createOpportunity(opportunity);
+    } catch (error) {
+      console.error('GHL ensureOpportunity error:', error);
       return null;
     }
   }
@@ -661,6 +719,21 @@ export const GHL_NURTURE_WORKFLOWS: Record<string, string> = {
 // legacy, kept for not-yet-migrated routes (e.g. /api/ghl/register), and are
 // being retired route-by-route.
 // ─────────────────────────────────────────────────────────────────────────────
+/**
+ * CONTAINED pipelines (IDs verified against live GHL 2026-06-12).
+ * Engagement = wide front door; Adelaide = scarce experience (EOI/nominated only).
+ */
+export const CONTAINED_PIPELINES = {
+  CONTAINED_ENGAGEMENT: {
+    id: 'vzatUY4dwN8t63ZoFIpH',
+    stageIdentified: 'e0fdce64-5102-458c-95b5-6ab6629f5296',
+  },
+  CONTAINED_ADELAIDE: {
+    id: 'SxzINmfZMjvqAMPmFCKa',
+    stageCaptured: 'f8d2acd7-8ced-43c7-a485-3950d190bbc9',
+  },
+} as const;
+
 export const GHL_CANONICAL = {
   // project: — which ACT project the contact touched
   PROJECT_JH: 'project:act-jh',

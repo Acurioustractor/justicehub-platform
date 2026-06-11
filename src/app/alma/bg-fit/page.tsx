@@ -335,7 +335,7 @@ export default async function BGFitPage() {
               },
               {
                 title: 'CONTAINED Tour',
-                desc: 'BG Fit is part of THE CONTAINED story \u2014 real programs, real people, real communities doing what the system won\u2019t. Mount Isa is on the map.',
+                desc: 'BG Fit is part of CONTAINED story \u2014 real programs, real people, real communities doing what the system won\u2019t. Mount Isa is on the map.',
               },
               {
                 title: 'Gym Expansion & Staffing',

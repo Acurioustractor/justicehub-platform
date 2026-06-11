@@ -157,7 +157,7 @@ export default function ContainedShowcasePage() {
           The full pack
         </p>
         <h1 className="mt-3 text-5xl md:text-7xl font-bold leading-[0.95] uppercase tracking-tight">
-          Everything<br />in one place
+          Everything{' '}<br />in one place
         </h1>
         <p className="mt-8 text-lg md:text-xl max-w-3xl text-[#F5F0E8]/95 leading-relaxed">
           Every surface that holds part of the Contained story. The case, the build model, the nine stops, the data layer, the participation routes, the funding ask. One curated index so a funder, a host, a journalist, or a young person can land anywhere and find what they need next.

@@ -27,7 +27,7 @@ export default function ContainedAboutPage() {
           About
         </p>
         <h1 className="mt-3 text-5xl md:text-7xl font-bold leading-[0.95] uppercase tracking-tight">
-          An art piece<br />that travels
+          An art piece{' '}<br />that travels
         </h1>
         <p className="mt-8 text-lg md:text-xl max-w-3xl text-[#F5F0E8]/95 leading-relaxed">
           A shipping container. Three rooms. Thirty minutes. Built by Ben Knight and Nic Marchesi with young people carrying the first room, David from Diagrama helping hold the alternative, and local organisations building the room that shows what already works. The route starts with a Mount Druitt small gathering, then activates publicly in Adelaide on Kaurna Yarta.

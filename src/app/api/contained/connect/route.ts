@@ -180,7 +180,7 @@ ${cleanMessage || '(no message)'}`,
 
 Thank you for reaching out about CONTAINED. We will be in touch shortly. If you need us sooner, just reply to this email.
 
-THE CONTAINED tour: https://justicehub.com.au/contained
+CONTAINED tour: https://justicehub.com.au/contained
 ${typedRole === 'funder' ? 'Investment thesis: https://justicehub.com.au/for-funders\n' : ''}
 — The JusticeHub Team`,
     }).catch((err) => console.error('[contained/connect] confirmation email failed:', err));

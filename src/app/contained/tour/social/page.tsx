@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import { SocialKitContent } from './social-kit-content';
 
 export const metadata: Metadata = {
-  title: 'Social Media Kit — THE CONTAINED Tour 2026 | JusticeHub',
+  title: 'Social Media Kit — CONTAINED Tour 2026 | JusticeHub',
   description:
-    'Ready-to-post social media content for THE CONTAINED Australian Tour 2026. Copy, customise, share.',
+    'Ready-to-post social media content for CONTAINED Australian Tour 2026. Copy, customise, share.',
   openGraph: {
-    title: 'Social Media Kit — THE CONTAINED Tour 2026',
+    title: 'Social Media Kit — CONTAINED Tour 2026',
     description:
       'Ready-to-post content, visuals, and talking points for the CONTAINED tour across Australia.',
     type: 'website',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Social Media Kit — THE CONTAINED Tour 2026',
+    title: 'Social Media Kit — CONTAINED Tour 2026',
     description:
       'Ready-to-post content, visuals, and talking points for the CONTAINED tour across Australia.',
   },

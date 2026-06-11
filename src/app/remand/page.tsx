@@ -88,7 +88,7 @@ const supports = [
 
 const nextSteps = [
   {
-    title: 'Walk through THE CONTAINED',
+    title: 'Walk through CONTAINED',
     body: 'The experience turns the policy question into a physical pathway.',
     href: '/contained',
     icon: MapPinned,

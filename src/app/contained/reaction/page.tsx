@@ -123,7 +123,7 @@ export default function ReactionPage() {
               What Changed For You?
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl">
-              You just walked through THE CONTAINED. Share what stayed with you, how you now
+              You just walked through CONTAINED. Share what stayed with you, how you now
               understand remand, and who needs to see this next. Your response is anonymous unless
               you choose to share your name.
             </p>

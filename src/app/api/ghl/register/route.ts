@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { getGHLClient, GHL_TAGS, STATE_TO_TAG, GHL_CANONICAL, STATE_TO_PLACE } from '@/lib/ghl/client';
+import { getGHLClient, GHL_TAGS, STATE_TO_TAG, GHL_CANONICAL, STATE_TO_PLACE, CONTAINED_PIPELINES } from '@/lib/ghl/client';
 import { sendEmail } from '@/lib/email/send';
 import { preEventSequence } from '@/content/newsletter-sequences';
+import { eoiReceipt, supporterReceipt } from '@/content/contained-receipts';
 import { verifyTurnstileToken } from '@/lib/turnstile';
 import { sanitizeEmail, sanitizeInput } from '@/lib/security';
 
@@ -155,6 +156,10 @@ export async function POST(request: NextRequest) {
         };
         const roleTag = CONTAINED_ROLE_MAP[sanitizedRole];
         if (roleTag) tags.push(roleTag);
+        // experience:* gates entry to the CONTAINED Adelaide pipeline
+        // (experience:eoi / experience:nominated) — the one custom-tag family
+        // that passes through the canonical contract.
+        tags.push(...safeCustomTags.filter((tag) => tag.startsWith('experience:')));
         if (sanitizedRole === 'artist') tags.push('interest:storytelling'); // RC1
         if (communityLane) tags.push(GHL_CANONICAL.LANE_COMMUNITY);
         // Newsletter → comms send-trigger, granted ONLY with consent AND never for
@@ -180,12 +185,11 @@ export async function POST(request: NextRequest) {
         if (sanitizedRole === 'community') tags.push('community');
       }
 
-      const customFields: Record<string, string> = {
-        organization: sanitizedOrganization || '',
-        role: sanitizedRole,
-        how_heard: sanitizedHowHeard || '',
-        event_slug: sanitizedEventSlug || '',
-      };
+      // Only keys with a matching GHL custom field actually land (verified
+      // 2026-06-12): message (LARGE_TEXT), cohort, newsletter_consent.
+      // Organisation goes via the standard companyName field; role lives in tags.
+      const customFields: Record<string, string> = {};
+      if (sanitizedHowHeard) customFields.message = sanitizedHowHeard;
       if (isContained) {
         if (containedCohort) customFields.cohort = containedCohort;
         // Spam Act: record consent state alongside the comms: grant.
@@ -195,10 +199,26 @@ export async function POST(request: NextRequest) {
       ghlContactId = await ghl.upsertContact({
         email: sanitizedEmail,
         name: sanitizedFullName,
+        companyName: sanitizedOrganization || undefined,
         tags,
         source: 'JusticeHub Event Registration',
         customFields,
       });
+
+      // Pipeline card so incoming people are visible on the boards:
+      // EOI → Adelaide experience pipeline (Captured, human triage from there);
+      // everything else CONTAINED → Engagement (Identified).
+      if (isContained && ghlContactId) {
+        const isEoiCapture = safeCustomTags.includes('experience:eoi');
+        const pipeline = isEoiCapture
+          ? { pipelineId: CONTAINED_PIPELINES.CONTAINED_ADELAIDE.id, pipelineStageId: CONTAINED_PIPELINES.CONTAINED_ADELAIDE.stageCaptured }
+          : { pipelineId: CONTAINED_PIPELINES.CONTAINED_ENGAGEMENT.id, pipelineStageId: CONTAINED_PIPELINES.CONTAINED_ENGAGEMENT.stageIdentified };
+        ghl.ensureOpportunity({
+          ...pipeline,
+          contactId: ghlContactId,
+          name: `${sanitizedFullName} — ${isEoiCapture ? 'EOI' : 'CONTAINED'}`,
+        }).catch(err => console.error('GHL opportunity create failed (non-blocking):', err));
+      }
     }
 
     // 2. Save registration to database
@@ -256,13 +276,28 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    // 4. Send event confirmation email immediately via Resend
-    const confirmation = preEventSequence.emails[0];
+    // 4. Send pathway-specific receipt immediately via Resend.
+    // EOI and supporter captures must NOT get the "You're registered" event
+    // confirmation — an EOI is not a slot, and saying so breaks the scarcity
+    // contract. Pathway is inferred from the custom tags the form sent.
+    const requestTags: string[] = Array.isArray(customTags) ? customTags : [];
+    const isEoi = requestTags.includes('experience:eoi');
+    const isSupporter = requestTags.includes('engagement:supporter');
+    const firstName = (sanitizedFullName || '').split(' ')[0] || 'there';
+    const confirmation = isEoi
+      ? eoiReceipt(firstName)
+      : isSupporter
+        ? supporterReceipt(firstName)
+        : preEventSequence.emails[0];
     sendEmail({
       to: sanitizedEmail,
       subject: confirmation.subject,
       body: confirmation.body,
       preheader: confirmation.preheader,
+      heroImage: {
+        src: 'https://www.justicehub.com.au/images/contained/contained-brand-square.png',
+        alt: 'CONTAINED. 3 rooms. 30 minutes. The truth.',
+      },
     }).catch(err => console.error('Failed to send event confirmation email:', err));
 
     // 5. Trigger GHL pre-event workflow if configured (legacy/supplementary)

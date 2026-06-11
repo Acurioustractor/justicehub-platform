@@ -14,7 +14,7 @@ const LETTER_TEMPLATES: Record<string, { subject: string; body: string }> = {
 
 I am writing to you as a constituent in {{electorate}} about youth justice policy in Australia.
 
-I recently walked through THE CONTAINED — a travelling exhibition that presents verified evidence on youth detention outcomes in Australia. The data is confronting:
+I recently walked through CONTAINED — a travelling exhibition that presents verified evidence on youth detention outcomes in Australia. The data is confronting:
 
 - $4,250 per day to detain one child
 - 85% reoffending rate within 12 months of release
@@ -26,7 +26,7 @@ This is not an ideological argument. It is an economic and evidence-based one.
 
 I am asking you to:
 1. Review the evidence at justicehub.com.au/intelligence/interventions
-2. Walk through THE CONTAINED when it arrives in our region
+2. Walk through CONTAINED when it arrives in our region
 3. Support investment in evidence-backed community alternatives
 
 I would welcome the opportunity to discuss this further.
@@ -45,7 +45,7 @@ Sincerely,
 
 981 community programs work better. For less.
 
-I just walked through @JusticeHubAU's THE CONTAINED. The evidence is impossible to ignore.
+I just walked through @JusticeHubAU's CONTAINED. The evidence is impossible to ignore.
 
 Will you look at it? justicehub.com.au/contained`,
   },
@@ -235,7 +235,7 @@ Your letter joins a growing body of constituent pressure. MPs track incoming cor
 
 WANT TO DO MORE?
 
-→ Nominate a decision maker for THE CONTAINED: ${SITE}/contained#nominate
+→ Nominate a decision maker for CONTAINED: ${SITE}/contained#nominate
 → Share the evidence on social: ${SITE}/contained/tour/social
 → Forward this to someone who cares: ${SITE}/contained
 

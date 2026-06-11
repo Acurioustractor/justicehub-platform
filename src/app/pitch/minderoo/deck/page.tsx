@@ -67,7 +67,7 @@ const actionPath = [
 ];
 
 const whyTeam = [
-  { head: 'Already running, not proposing', body: 'Fifty-five judges sat on Country on 17 April. The Contained tour is moving with eighty-six people. Four anchors are holding children right now.' },
+  { head: 'Already running, not proposing', body: 'Fifty-five judges sat on Country on 17 April. The CONTAINED tour is moving with eighty-six people. Four anchors are holding children right now.' },
   { head: 'Money lands on community first', body: '$530K of $1.1M direct to Oonchiumpa, PICC, BG Fit, and MMEIC as untied support. Cultural authority paid.' },
   { head: 'The data layer is built and audited', body: 'JusticeHub, Empathy Ledger, the Australian Living Map of Alternatives, CivicGraph. External technical audit publishes month 10.' },
   { head: 'Speed of community, not speed of institution', body: 'No university IP committee. No grant subcommittee. No press office. Decisions move at the speed Mparntwe or Bwgcolman or Kalkadoon move.' },

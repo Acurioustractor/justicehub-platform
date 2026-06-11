@@ -266,7 +266,7 @@ export function ExperienceContent() {
             Virtual Exhibition
           </p>
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6">
-            You Can&apos;t<br />Unsee It
+            You Can&apos;t{' '}<br />Unsee It
           </h1>
           <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto mb-12">
             One shipping container. Three rooms. Thirty minutes.

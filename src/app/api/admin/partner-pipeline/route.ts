@@ -15,12 +15,12 @@ const SITE = 'https://justicehub.com.au';
 const FOLLOW_UP_TEMPLATES: Partial<Record<PipelineStage, { subject: string; body: string; days: number }>> = {
   warm: {
     days: 7,
-    subject: 'Following up — THE CONTAINED',
+    subject: 'Following up — CONTAINED',
     body: `Hey {{name}},
 
-Just a quick follow-up on THE CONTAINED. I know you expressed interest and wanted to make sure you had everything you needed.
+Just a quick follow-up on CONTAINED. I know you expressed interest and wanted to make sure you had everything you needed.
 
-Quick recap: THE CONTAINED is a shipping container experience that shows what youth detention looks like in Australia — and what 981 verified community programs can do instead. Three rooms. Thirty minutes. Evidence you can feel.
+Quick recap: CONTAINED is a shipping container experience that shows what youth detention looks like in Australia — and what 981 verified community programs can do instead. Three rooms. Thirty minutes. Evidence you can feel.
 
 We're currently booking tour stops and looking for hosting partners, funders, and community connectors.
 
@@ -36,7 +36,7 @@ JusticeHub`,
     subject: 'Checking in — CONTAINED partnership',
     body: `Hey {{name}},
 
-Wanted to check in on our conversation about THE CONTAINED. I know these things take time on your end, so no rush.
+Wanted to check in on our conversation about CONTAINED. I know these things take time on your end, so no rush.
 
 Just wanted to flag that we're finalising the tour schedule and would love to have you part of it.
 
@@ -47,10 +47,10 @@ JusticeHub`,
   },
   stale: {
     days: 30,
-    subject: 'Still thinking about THE CONTAINED?',
+    subject: 'Still thinking about CONTAINED?',
     body: `Hey {{name}},
 
-It's been a while since we chatted about THE CONTAINED. I know timing is everything.
+It's been a while since we chatted about CONTAINED. I know timing is everything.
 
 Just wanted to let you know the tour is still happening, the evidence is still growing, and we'd still love to have you involved — in whatever capacity makes sense.
 

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
+import { getGHLClient, GHL_CANONICAL, CONTAINED_PIPELINES } from '@/lib/ghl/client';
 import { verifyTurnstileToken } from '@/lib/turnstile';
 import { checkRateLimit } from '@/lib/security';
 import { sendEmail } from '@/lib/email/send';
+import { nominatorReceipt } from '@/content/contained-receipts';
 
 const SITE = 'https://justicehub.com.au';
 
@@ -82,6 +83,69 @@ export async function GET(
         limit,
         hasMore: (totalCount || 0) > offset + limit,
       });
+    }
+
+    // Leaderboard mode: nominations grouped by nominee with upvote counts and
+    // every public message, for /contained/nominations.
+    if (mode === 'leaderboard') {
+      const [{ data: noms, error: nomsError }, { data: votes, error: votesError }] = await Promise.all([
+        supabase
+          .from('campaign_nominations')
+          .select('nominee_name, nominee_title, nominee_org, category, reason, nominator_name, created_at')
+          .eq('project_id', project.id)
+          .eq('is_public', true)
+          .order('created_at', { ascending: true })
+          .limit(1000),
+        supabase
+          .from('campaign_nomination_upvotes')
+          .select('nominee_key')
+          .eq('project_id', project.id)
+          .limit(10000),
+      ]);
+      if (nomsError) throw nomsError;
+      if (votesError) throw votesError;
+
+      const upvotesByKey: Record<string, number> = {};
+      for (const v of votes || []) {
+        upvotesByKey[v.nominee_key] = (upvotesByKey[v.nominee_key] || 0) + 1;
+      }
+
+      const byNominee: Record<string, any> = {};
+      for (const n of noms || []) {
+        const key = n.nominee_name.trim().toLowerCase();
+        if (!byNominee[key]) {
+          byNominee[key] = {
+            nominee_key: key,
+            nominee_name: n.nominee_name,
+            nominee_title: n.nominee_title,
+            nominee_org: n.nominee_org,
+            category: n.category,
+            first_nominated_at: n.created_at,
+            messages: [],
+          };
+        }
+        // Prefer the most complete title/org seen
+        if (!byNominee[key].nominee_title && n.nominee_title) byNominee[key].nominee_title = n.nominee_title;
+        if (!byNominee[key].nominee_org && n.nominee_org) byNominee[key].nominee_org = n.nominee_org;
+        byNominee[key].messages.push({
+          reason: n.reason,
+          nominator_name: n.nominator_name || null,
+          created_at: n.created_at,
+        });
+      }
+
+      const leaderboard = Object.values(byNominee)
+        .map((n: any) => ({
+          ...n,
+          nomination_count: n.messages.length,
+          upvotes: upvotesByKey[n.nominee_key] || 0,
+        }))
+        .sort(
+          (a: any, b: any) =>
+            b.upvotes + b.nomination_count * 2 - (a.upvotes + a.nomination_count * 2)
+        );
+
+      return NextResponse.json({ leaderboard, total: (noms || []).length });
     }
 
     // Default mode: summary with counts and truncated recent
@@ -255,7 +319,18 @@ export async function POST(
             nominated_person: nominee_name.trim(),
             nomination_category: category,
           },
-        }).catch(console.error); // fire-and-forget
+        })
+          .then((contactId) => {
+            // Nominators are warm — surface them on the Engagement board.
+            if (!contactId) return;
+            return ghl.ensureOpportunity({
+              pipelineId: CONTAINED_PIPELINES.CONTAINED_ENGAGEMENT.id,
+              pipelineStageId: CONTAINED_PIPELINES.CONTAINED_ENGAGEMENT.stageIdentified,
+              contactId,
+              name: `${nominator_name?.trim() || nominator_email.trim().toLowerCase()} — nominator`,
+            });
+          })
+          .catch(console.error); // fire-and-forget
       }
     }
 
@@ -271,26 +346,21 @@ export async function POST(
     // orphaned /api/contained/nominations template. No site/venue language —
     // the nominee gets a personal invite from a relationship owner, not us.
     if (cleanNominatorEmail) {
+      // Per-nominee count for the "pressure is building" line.
+      const { count: nomineeCount } = await supabase
+        .from('campaign_nominations')
+        .select('id', { count: 'exact', head: true })
+        .eq('project_id', project.id)
+        .ilike('nominee_name', cleanNomineeName);
       sendEmail({
         to: cleanNominatorEmail,
-        subject: 'Your nomination has been received',
-        preheader: `You nominated ${cleanNomineeName} for THE CONTAINED experience.`,
-        body: `Thank you${cleanNominatorName ? `, ${cleanNominatorName}` : ''}.
-
-Your nomination has been received.
-
-You nominated ${cleanNomineeName}${cleanNomineeOrg ? ` (${cleanNomineeOrg})` : ''} to experience THE CONTAINED.
-
-${cleanReason ? `Your reason: "${cleanReason}"` : ''}
-
-WHAT HAPPENS NEXT
-Our team reviews every nomination. When THE CONTAINED reaches their city, we will reach out to them with a personal invitation backed by your endorsement.
-
-The more people who nominate the same leader, the harder it is to ignore.
-
-Share the nomination link: ${SITE}/contained#nominate
-
-— The JusticeHub Team`,
+        ...nominatorReceipt({
+          nominatorName: cleanNominatorName || 'friend',
+          nomineeName: cleanNomineeName,
+          nomineeOrg: cleanNomineeOrg,
+          reason: cleanReason,
+          nominationCount: nomineeCount || 1,
+        }),
       }).catch((err) => console.error('Failed to send nominator confirmation:', err));
     }
 

@@ -819,7 +819,7 @@ export default function CommunityPage() {
         {/* First stop callout */}
         <section style={{ maxWidth: 1000, margin: '0 auto', padding: '0 40px 40px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 24, alignItems: 'center', background: '#111', border: '1px solid #333', padding: 24 }}>
-            <img src="/images/contained/poster-tour.png" alt="Mount Druitt gathering and Adelaide activation — THE CONTAINED Australian tour 2026" style={{ width: '100%', borderRadius: 4 }} />
+            <img src="/images/contained/poster-tour.png" alt="Mount Druitt gathering and Adelaide activation — CONTAINED Australian tour 2026" style={{ width: '100%', borderRadius: 4 }} />
             <div>
               <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#DC2626', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>First gathering</p>
               <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: 8, color: '#F5F0E8' }}>Mount Druitt, then Adelaide</h3>

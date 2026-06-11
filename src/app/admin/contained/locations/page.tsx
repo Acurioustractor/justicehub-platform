@@ -243,6 +243,7 @@ export default function ContainedLocationsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F5F0E8] flex items-center justify-center">
+        <h1 className="sr-only">Tour Stop Locations</h1>
         <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
       </div>
     );

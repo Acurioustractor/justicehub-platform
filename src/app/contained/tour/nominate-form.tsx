@@ -180,7 +180,7 @@ export function NominateForm() {
                     className={`px-5 py-3 text-sm font-bold border-2 transition-colors ${
                       category === cat.value
                         ? 'bg-[#0A0A0A] text-white border-[#0A0A0A]'
-                        : 'border-gray-300 hover:border-[#0A0A0A]'
+                        : 'text-[#0A0A0A] border-gray-300 hover:border-[#0A0A0A]'
                     }`}
                   >
                     {cat.label}
