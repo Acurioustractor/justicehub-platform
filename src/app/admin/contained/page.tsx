@@ -54,7 +54,7 @@ export default async function AdminContainedPage() {
     .order('created_at', { ascending: false })
     .limit(5);
 
-  const GOAL = 2500;
+  const GOAL = 100;
   const progress = Math.min((nominations / GOAL) * 100, 100);
 
   return (

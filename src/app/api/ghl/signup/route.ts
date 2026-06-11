@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getGHLClient, GHL_CANONICAL, GHL_PIPELINES, MEMBER_TYPE_TO_ROLE, STATE_TO_PLACE, GHL_NURTURE_WORKFLOWS } from '@/lib/ghl/client';
+import { sanitizeInput } from '@/lib/security';
 
 /**
  * POST /api/ghl/signup
@@ -25,7 +26,14 @@ export async function POST(request: NextRequest) {
       source,
       member_type,
       state,
+      message,
     } = body;
+
+    // Free-text note from the register-interest form. Sanitised before it
+    // reaches GHL custom fields (newlines kept, capped at 1000 chars).
+    const sanitizedMessage = message
+      ? sanitizeInput(String(message), { maxLength: 1000, allowNewlines: true })
+      : '';
 
     // Validate required fields
     if (!email) {
@@ -91,6 +99,7 @@ export async function POST(request: NextRequest) {
           steward_experience: steward_experience || '',
           steward_commitments: steward_commitments?.join(', ') || '',
           newsletter_consent: (newsletter && !communityLane) ? 'Yes' : '',
+          message: sanitizedMessage,
         },
       });
 

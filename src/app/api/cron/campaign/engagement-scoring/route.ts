@@ -72,11 +72,13 @@ export async function GET(request: NextRequest) {
       .select('metadata->>email, metadata->>type')
       .not('metadata->email', 'is', null);
 
-    // 3. Get nomination activity
+    // 3. Get nomination activity (canonical store: campaign_nominations).
+    // Each row is one nomination by one nominator; count per nominator_email
+    // so 2+ nominations earns the multiple_nominations bonus below.
     const { data: nominations } = await supabase
-      .from('campaign_alignment_entities')
-      .select('alignment_signals')
-      .eq('outreach_status', 'nominated');
+      .from('campaign_nominations')
+      .select('nominator_email')
+      .not('nominator_email', 'is', null);
 
     // Build email→actions map
     const emailActions: Record<string, Set<string>> = {};
@@ -112,14 +114,19 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Score nominations (from nominators stored in alignment_signals)
+    // Score nominations: nomination_made (3 pts), plus the multiple_nominations
+    // bonus (2 pts) for any nominator who has made 2 or more nominations.
+    const nominationsByEmail: Record<string, number> = {};
     for (const nom of (nominations || [])) {
-      const nominators = nom.alignment_signals?.nominators || [];
-      for (const nominator of nominators) {
-        const email = nominator.email;
-        if (!email) continue;
-        if (!emailActions[email]) emailActions[email] = new Set();
-        emailActions[email].add('nomination_made');
+      const email = nom.nominator_email?.trim().toLowerCase();
+      if (!email) continue;
+      nominationsByEmail[email] = (nominationsByEmail[email] || 0) + 1;
+    }
+    for (const [email, count] of Object.entries(nominationsByEmail)) {
+      if (!emailActions[email]) emailActions[email] = new Set();
+      emailActions[email].add('nomination_made');
+      if (count >= 2) {
+        emailActions[email].add('multiple_nominations');
       }
     }
 

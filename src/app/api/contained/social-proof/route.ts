@@ -28,11 +28,11 @@ export async function GET() {
         .select('id', { count: 'exact', head: true })
         .eq('metadata->>type', 'contained_reaction'),
 
-      // Total nominations
+      // Total nominations (canonical store: campaign_nominations)
       supabase
-        .from('campaign_alignment_entities')
+        .from('campaign_nominations')
         .select('id', { count: 'exact', head: true })
-        .eq('outreach_status', 'nominated'),
+        .eq('is_public', true),
 
       // Total MP letters sent
       supabase

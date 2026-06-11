@@ -90,9 +90,9 @@ const LOCATIONS: LocationInfo[] = [
   },
   {
     city: 'Adelaide', state: 'SA', status: 'confirmed', date: '22-26 Jun 2026', partner: 'JRI + Reintegration Puzzle',
-    people: 5, headline: 'Public activation: Victoria Square, Tandanya/Adelaide',
+    people: 5, headline: 'Public activation in Adelaide on Kaurna Yarta',
     quotes: [
-      { name: 'Hannah March', org: 'JRI', text: 'The 2026 Reintegration Puzzle Conference is in Tandanya/Adelaide. It would be amazing to host the Container nearby.' },
+      { name: 'Hannah March', org: 'JRI', text: 'The 2026 Reintegration Puzzle Conference is in Adelaide. It would be amazing to host the Container nearby.' },
     ],
     orgs: [
       { name: 'Grandparents for Grandchildren SA', detail: '5 programs. Kinship care angle. Most programs in SA.' },
@@ -103,7 +103,7 @@ const LOCATIONS: LocationInfo[] = [
       { name: 'SouthStart', detail: 'Adelaide tech community. Interest via Eloise Hall.' },
     ],
     politicians: [
-      { name: 'Reintegration Puzzle Conference delegates', role: 'Sector, government, university, and funder audience', angle: '24-25 June at Hilton Adelaide / Reintegration Puzzle. Delegates walk to Victoria Square for hosted CONTAINED walkthroughs between sessions.' },
+      { name: 'Reintegration Puzzle Conference delegates', role: 'Sector, government, university, and funder audience', angle: '24-25 June alongside Reintegration Puzzle in Adelaide. Delegates walk to the activation site between sessions for hosted CONTAINED walkthroughs.' },
       { name: 'Nikki Boyd', role: 'Queensland MP', angle: 'Youth justice opposition voice. Potential political contact for Brisbane and Adelaide engagement.' },
     ],
     drivers: [
@@ -623,6 +623,27 @@ export default function CommunityPage() {
       <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
       <div style={{ background: '#0A0A0A', color: '#F5F0E8', minHeight: '100vh', fontFamily: "'Space Grotesk', sans-serif" }}>
 
+        {/* Historical-record banner */}
+        <div style={{ maxWidth: 1000, margin: '0 auto', padding: '24px 40px 0' }}>
+          <div
+            style={{
+              border: '1px solid #D97706',
+              background: 'rgba(217,119,6,0.08)',
+              color: '#F5F0E8',
+              padding: '16px 20px',
+              fontSize: '0.85rem',
+              lineHeight: 1.6,
+              fontFamily: "'IBM Plex Mono', monospace",
+            }}
+          >
+            March 2026 snapshot. This page is a historical record of early campaign momentum. For the current campaign see{' '}
+            <a href="https://justicehub.com.au/contained/adelaide" style={{ color: '#D97706', textDecoration: 'underline' }}>
+              justicehub.com.au/contained/adelaide
+            </a>
+            .
+          </div>
+        </div>
+
         {/* ═══ 1. THE ART ═══ */}
         <section style={{ padding: '80px 40px 60px', maxWidth: 1000, margin: '0 auto' }}>
           <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.75rem', color: '#666', marginBottom: 16, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
@@ -661,7 +682,7 @@ export default function CommunityPage() {
             </div>
             <p style={{ fontSize: '1.1rem', color: '#999', lineHeight: 1.8 }}>
               The first container proof went public in October 2025. Within weeks, 29 people filled out the website form asking for
-              it in their community. The Australian route now starts with a small Mount Druitt gathering, then activates publicly at Victoria Square, Tandanya/Adelaide, with the Brisbane build story, Diagrama practice, and local program evidence held together.
+              it in their community. The Australian route now starts with a small Mount Druitt gathering, then activates publicly in Adelaide on Kaurna Yarta, with the Brisbane build story, Diagrama practice, and local program evidence held together.
             </p>
           </div>
         </section>
@@ -801,9 +822,9 @@ export default function CommunityPage() {
             <img src="/images/contained/poster-tour.png" alt="Mount Druitt gathering and Adelaide activation — THE CONTAINED Australian tour 2026" style={{ width: '100%', borderRadius: 4 }} />
             <div>
               <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.65rem', color: '#DC2626', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>First gathering</p>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: 8, color: '#F5F0E8' }}>Mount Druitt, then Victoria Square</h3>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: 8, color: '#F5F0E8' }}>Mount Druitt, then Adelaide</h3>
               <p style={{ fontSize: '0.9rem', color: '#888', lineHeight: 1.5 }}>
-                May/June 2026 starts with a small Mount Druitt gathering. From 22-26 June 2026, the Victoria Square, Tandanya/Adelaide activation carries the Brisbane build story in Room 1, David from Diagrama in Room 2, and Adelaide organisations naming their programs in Room 3.
+                May/June 2026 starts with a small Mount Druitt gathering. From 22-26 June 2026, the Adelaide activation on Kaurna Yarta carries the Brisbane build story in Room 1, David from Diagrama in Room 2, and Adelaide organisations naming their programs in Room 3.
               </p>
             </div>
           </div>
@@ -851,7 +872,7 @@ export default function CommunityPage() {
                 <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> VIC: Cherry Creek — $7,304/day, most expensive in Australia</p>
                 <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> TAS: Ashley YDC closure — live political issue</p>
                 <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> ACT: Government insider says system is changing</p>
-                <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> Victoria Square, Tandanya/Adelaide activation, 22-26 June</p>
+                <p style={{ color: '#ccc' }}><span style={{ color: '#DC2626' }}>●</span> Adelaide activation on Kaurna Yarta, 22-26 June</p>
               </div>
             </div>
           </div>
@@ -923,7 +944,7 @@ export default function CommunityPage() {
               { date: 'Jan-Feb 2026', text: 'QLD government announces $765M in youth justice spending. Zero to Aboriginal community-controlled organisations.' },
               { date: 'Mar 2026', text: '225+ contacts. YAC offers to host Brisbane. 86 people across 15 locations. JusticeHub maps 1,117 programs.' },
               { date: 'May-Jun 2026', text: 'Small Mount Druitt gathering. Western Sydney build proof and local relationships shape what travels next.' },
-              { date: '22-26 Jun 2026', text: 'Public activation at Victoria Square, Tandanya/Adelaide. Young people carry Room 1, David from Diagrama holds Room 2, and Adelaide organisations build Room 3.' },
+              { date: '22-26 Jun 2026', text: 'Public activation in Adelaide on Kaurna Yarta. Young people carry Room 1, David from Diagrama holds Room 2, and Adelaide organisations build Room 3.' },
               { date: 'Jul-Nov 2026', text: 'Perth + surrounds, Brisbane, Northern Rivers, then Alice Springs / Central Australia. Community by community.' },
               { date: 'Dec 2026-Apr 2027', text: 'Sydney + Canberra, Victoria, then Tasmania. The tour links each stop back to JusticeHub.' },
               { date: '2027', text: 'JusticeHub carries the public record. Stories, organisations, data, and program evidence keep driving the national discussion through community.' },

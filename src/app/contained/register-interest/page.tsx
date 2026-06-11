@@ -51,7 +51,7 @@ export default function RegisterInterestPage() {
           organization: formData.organization,
           source: 'register-interest',
           newsletter: formData.newsletter,
-          tags: ['register-interest', 'contained', `contained_${formData.role}`],
+          message: formData.message,
         }),
       });
 

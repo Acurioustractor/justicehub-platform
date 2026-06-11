@@ -3,6 +3,7 @@
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
 import { Send, CheckCircle, ArrowRight } from 'lucide-react';
+import { TurnstileWidget } from '@/components/ui/turnstile-widget';
 
 // User-facing labels map to the API's VALID_CATEGORIES values
 // (/api/projects/[slug]/nominations).
@@ -31,6 +32,7 @@ export function NominateForm() {
   const [nominatorName, setNominatorName] = useState('');
   const [nominatorEmail, setNominatorEmail] = useState('');
   const [honeypot, setHoneypot] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,6 +72,8 @@ export function NominateForm() {
           reason,
           nominator_name: nominatorName || undefined,
           nominator_email: nominatorEmail || undefined,
+          honeypot,
+          turnstile_token: turnstileToken,
         }),
       });
       if (!res.ok) {
@@ -237,11 +241,13 @@ export function NominateForm() {
               />
             </div>
 
+            <TurnstileWidget onSuccess={setTurnstileToken} />
+
             {error && <p className="text-[#DC2626] text-sm font-bold">{error}</p>}
 
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || !turnstileToken}
               className="w-full flex items-center justify-center gap-2 bg-[#DC2626] text-white px-8 py-4 text-sm font-bold uppercase tracking-widest hover:bg-red-700 disabled:opacity-50 transition-colors"
             >
               {submitting ? (

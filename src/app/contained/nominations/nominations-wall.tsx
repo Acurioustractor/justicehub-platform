@@ -45,7 +45,7 @@ interface Nomination {
   created_at: string;
 }
 
-const GOAL = 2500;
+const GOAL = 100;
 const LIMIT = 20;
 
 export function NominationsWall() {
@@ -128,7 +128,7 @@ export function NominationsWall() {
               <div className="max-w-md">
                 <div className="flex justify-between text-sm mb-2">
                   <span className="font-black text-3xl">{total.toLocaleString()}</span>
-                  <span className="text-gray-400 self-end">of {GOAL.toLocaleString()} goal</span>
+                  <span className="text-gray-400 self-end">of {GOAL.toLocaleString()} for Adelaide week</span>
                 </div>
                 <div className="h-3 bg-gray-800 w-full">
                   <div
