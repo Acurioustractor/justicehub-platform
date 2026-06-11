@@ -84,9 +84,15 @@ function kindColor(kind: SourceKind) {
   return C.teal;
 }
 
-export function AskMatrixClient() {
-  const [question, setQuestion] = useState(starters[0]);
-  const [surface, setSurface] = useState<Surface>('all');
+export function AskMatrixClient({
+  initialQuestion = '',
+  initialSurface = 'all',
+}: {
+  initialQuestion?: string;
+  initialSurface?: Surface;
+}) {
+  const [question, setQuestion] = useState(initialQuestion.trim() || starters[0]);
+  const [surface, setSurface] = useState<Surface>(initialSurface);
   const [response, setResponse] = useState<AskResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

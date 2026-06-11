@@ -9,6 +9,17 @@ export const metadata: Metadata = {
     'Ask grounded questions across Justice Matrix cases, campaigns, and evidence with cited records and legal-advice boundaries.',
 };
 
-export default function AskMatrixPage() {
-  return <AskMatrixClient />;
+type SP = Record<string, string | string[] | undefined>;
+
+function sp(value: SP[string], def = ''): string {
+  return typeof value === 'string' ? value : Array.isArray(value) ? value[0] ?? def : def;
+}
+
+export default async function AskMatrixPage({ searchParams }: { searchParams: Promise<SP> }) {
+  const raw = await searchParams;
+  const q = sp(raw.q).trim().slice(0, 500);
+  const surfaceParam = sp(raw.surface);
+  const surface = surfaceParam === 'refugee' || surfaceParam === 'youth' ? surfaceParam : 'all';
+
+  return <AskMatrixClient initialQuestion={q} initialSurface={surface} />;
 }
