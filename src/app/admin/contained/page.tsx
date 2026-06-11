@@ -82,6 +82,12 @@ export default async function AdminContainedPage() {
                 View Public Page
               </Link>
               <Link
+                href="/admin/contained/routes"
+                className="px-4 py-2 text-sm font-bold border-2 border-black hover:bg-black hover:text-white transition-colors"
+              >
+                Route Review
+              </Link>
+              <Link
                 href="/admin/contained/campaign"
                 className="px-4 py-2 text-sm font-bold border-2 border-black hover:bg-black hover:text-white transition-colors"
               >
@@ -249,9 +255,10 @@ export default async function AdminContainedPage() {
             <div className="px-6 py-4 border-b-2 border-black bg-gray-50">
               <h2 className="font-black text-sm uppercase">Quick Links</h2>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-gray-200">
+            <div className="grid grid-cols-2 lg:grid-cols-5 divide-x divide-gray-200">
               {[
                 { label: 'Tour Page', href: '/contained' },
+                { label: 'Route Review', href: '/admin/contained/routes' },
                 { label: 'Campaign Centre', href: '/admin/contained/campaign' },
                 { label: 'Social Templates', href: '/admin/contained/templates' },
                 { label: 'Take Action', href: '/contained/act' },
