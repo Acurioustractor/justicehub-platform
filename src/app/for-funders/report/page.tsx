@@ -490,7 +490,7 @@ export default function FoundationReportPage() {
                 See the Evidence in Person
               </div>
               <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-6">
-                THE CONTAINED:<br />AUSTRALIAN TOUR 2026
+                CONTAINED:<br />AUSTRALIAN TOUR 2026
               </h2>
               <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
                 Three shipping containers. One powerful experience. The CONTAINED tour brings

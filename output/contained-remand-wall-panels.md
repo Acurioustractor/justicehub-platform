@@ -138,7 +138,7 @@ JusticeHub is the evidence layer after the experience.
 
 Search the law. Find the programs. Follow the money. Check the sources. Share the brief. Add the missing model.
 
-THE CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
+CONTAINED shows what youth detention feels like. JusticeHub shows what works instead.
 
 **QR**
 

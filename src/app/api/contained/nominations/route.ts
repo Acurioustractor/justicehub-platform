@@ -9,7 +9,7 @@ const SITE = 'https://justicehub.com.au';
 /**
  * POST /api/contained/nominations
  *
- * Accepts nominations for THE CONTAINED experience.
+ * Accepts nominations for CONTAINED experience.
  * - Saves to campaign_alignment_entities (or increments existing nominee)
  * - Syncs nominator to GHL
  * - Sends confirmation to nominator
@@ -144,19 +144,19 @@ export async function POST(request: NextRequest) {
     sendEmail({
       to: email,
       subject: 'Your nomination has been received',
-      preheader: `You nominated ${sanitizedNomineeName} for THE CONTAINED experience.`,
+      preheader: `You nominated ${sanitizedNomineeName} for CONTAINED experience.`,
       body: `Thank you, ${sanitizedNominatorName}.
 
 Your nomination has been received.
 
-You nominated ${sanitizedNomineeName}${sanitizedNomineeOrg ? ` (${sanitizedNomineeOrg})` : ''} to experience THE CONTAINED.
+You nominated ${sanitizedNomineeName}${sanitizedNomineeOrg ? ` (${sanitizedNomineeOrg})` : ''} to experience CONTAINED.
 
 ${sanitizedReason ? `Your reason: "${sanitizedReason}"` : ''}
 
 ${nominationCount > 1 ? `${nominationCount} people have now nominated ${sanitizedNomineeName}. The pressure is building.` : ''}
 
 WHAT HAPPENS NEXT
-Our team reviews every nomination. When THE CONTAINED arrives in their city, we'll reach out with a personal invitation backed by your endorsement.
+Our team reviews every nomination. When CONTAINED arrives in their city, we'll reach out with a personal invitation backed by your endorsement.
 
 The more people who nominate the same leader, the harder it is to ignore.
 
@@ -170,16 +170,16 @@ Share the nomination link: ${SITE}/contained#nominate
       sendEmail({
         to: sanitizedNomineeEmail,
         subject: 'Someone thinks you need to see this',
-        preheader: `You've been nominated for THE CONTAINED experience.`,
+        preheader: `You've been nominated for CONTAINED experience.`,
         body: `${sanitizedNomineeName},
 
-Someone who respects your work has nominated you to experience THE CONTAINED.
+Someone who respects your work has nominated you to experience CONTAINED.
 
 ${sanitizedNominatorName} believes you should walk through a shipping container that shows what youth detention looks like in Australia — and what actually works instead.
 
 ${sanitizedReason ? `They said: "${sanitizedReason}"` : ''}
 
-THE CONTAINED is three rooms. Thirty minutes.
+CONTAINED is three rooms. Thirty minutes.
 
 Room 1: The reality of youth detention, designed by young people who know what it feels like.
 Room 2: The therapeutic alternative — what happens when you actually fund what works.

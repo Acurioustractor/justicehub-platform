@@ -49,7 +49,7 @@ const PARTNERS: Record<string, Partner> = {
         path: '/judges-on-country',
       },
       {
-        label: 'THE CONTAINED tour',
+        label: 'CONTAINED tour',
         detail:
           'Five-city tour Apr–Jun 2026. Live tracker at /contained/momentum. Nominations, bookings, stakeholder engagement, political attention.',
         path: '/contained/momentum',

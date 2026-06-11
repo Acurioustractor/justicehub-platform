@@ -1,5 +1,5 @@
 /**
- * Branded HTML email templates for JusticeHub / THE CONTAINED
+ * Branded HTML email templates for JusticeHub / CONTAINED
  *
  * Uses brand colors:
  * - Primary Black: #0A0A0A
@@ -16,10 +16,15 @@ const BRAND = {
   site: 'https://justicehub.com.au',
 };
 
+export interface BrandedTemplateOptions {
+  /** Absolute URL + alt text for a full-width hero image under the header */
+  heroImage?: { src: string; alt: string };
+}
+
 /**
  * Wraps plain text email body in branded HTML with header and footer
  */
-export function wrapInBrandedTemplate(body: string, preheader?: string): string {
+export function wrapInBrandedTemplate(body: string, preheader?: string, opts?: BrandedTemplateOptions): string {
   // Convert plain text to HTML paragraphs
   const htmlBody = body
     .split('\n\n')
@@ -83,6 +88,13 @@ export function wrapInBrandedTemplate(body: string, preheader?: string): string 
               </a>
             </td>
           </tr>
+
+          ${opts?.heroImage ? `<!-- Hero image -->
+          <tr>
+            <td style="padding: 24px 0 0;">
+              <img src="${opts.heroImage.src}" alt="${escapeHtml(opts.heroImage.alt)}" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0;">
+            </td>
+          </tr>` : ''}
 
           <!-- Body -->
           <tr>

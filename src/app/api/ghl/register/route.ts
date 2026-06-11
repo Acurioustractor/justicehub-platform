@@ -263,6 +263,10 @@ export async function POST(request: NextRequest) {
       subject: confirmation.subject,
       body: confirmation.body,
       preheader: confirmation.preheader,
+      heroImage: {
+        src: 'https://www.justicehub.com.au/images/contained/contained-brand-square.png',
+        alt: 'CONTAINED. 3 rooms. 30 minutes. The truth.',
+      },
     }).catch(err => console.error('Failed to send event confirmation email:', err));
 
     // 5. Trigger GHL pre-event workflow if configured (legacy/supplementary)

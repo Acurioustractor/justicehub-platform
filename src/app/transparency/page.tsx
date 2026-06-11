@@ -662,7 +662,7 @@ export default function TransparencyPage() {
                 Community Programs
               </Link>
               <Link href="/contained/tour" className="border-2 border-white text-white px-8 py-4 font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-all">
-                THE CONTAINED
+                CONTAINED
               </Link>
             </div>
           </div>

@@ -103,7 +103,7 @@ function EnrollForm() {
       <div className="mb-8">
         <Image
           src={campaignMedia.logoSquare}
-          alt="THE CONTAINED"
+          alt="CONTAINED"
           width={120}
           height={120}
           className="mx-auto"

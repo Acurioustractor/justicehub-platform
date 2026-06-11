@@ -8,7 +8,7 @@ const SITE = 'https://justicehub.com.au';
 
 /**
  * POST /api/contained/reaction
- * Captures visitor reactions after walking through THE CONTAINED.
+ * Captures visitor reactions after walking through CONTAINED.
  * - Saves to community_reflections
  * - Tags in GHL with Reacted + CONTAINED
  * - Sends follow-up email with action prompts
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
         preheader: 'Three actions. Five minutes. Real impact.',
         body: `Hey ${visitorName},
 
-Thank you for walking through THE CONTAINED. What you felt in there is real.
+Thank you for walking through CONTAINED. What you felt in there is real.
 
 ${response ? `You said: "${response.slice(0, 200)}"` : ''}
 

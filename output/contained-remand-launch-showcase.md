@@ -1,6 +1,6 @@
 # CONTAINED Remand Launch Showcase
 
-Working concept for JusticeHub, THE CONTAINED, and the Adelaide youth remand pathway.
+Working concept for JusticeHub, CONTAINED, and the Adelaide youth remand pathway.
 
 Status: Draft v1 for launch shaping
 Checked against source files and key public sources on 3 June 2026 AEST
@@ -22,7 +22,7 @@ It has to begin with a child who has not been sentenced.
 
 Not a named child without consent. Not a trauma role-play. Not a visitor pretending to be locked up. A human pathway: one young person, one charge, one missing address, one impossible condition, one court delay, one night that becomes the first door into detention.
 
-The visitor should understand three things before they walk through THE CONTAINED:
+The visitor should understand three things before they walk through CONTAINED:
 
 1. A charge is an accusation, not a finding of guilt.
 2. Remand is custody before sentence.
@@ -36,7 +36,7 @@ The public line is:
 
 The sharper launch frame is:
 
-> Remand is how a child can be locked up before sentence. THE CONTAINED shows the cost of that choice. JusticeHub shows the choices we could make instead.
+> Remand is how a child can be locked up before sentence. CONTAINED shows the cost of that choice. JusticeHub shows the choices we could make instead.
 
 ---
 
@@ -406,7 +406,7 @@ Use these as QR destinations.
 
 ### 20-Second Door Script
 
-You are about to walk through THE CONTAINED.
+You are about to walk through CONTAINED.
 
 The first thing to understand is remand. Remand means custody before sentence. A child can be locked up while their case is still unfinished.
 
@@ -422,7 +422,7 @@ For children, that matters. A bail decision can depend on things a child does no
 
 When those supports are missing, the system can call the child a risk and use detention as the answer.
 
-THE CONTAINED lets you feel the cost of that answer. JusticeHub shows the evidence, the alternatives, and the practical next step after you leave.
+CONTAINED lets you feel the cost of that answer. JusticeHub shows the evidence, the alternatives, and the practical next step after you leave.
 
 ### Social Caption
 
@@ -432,13 +432,13 @@ Remand breaks that story.
 
 A child can be held before sentence because bail support, housing, legal help, transport, or safe adult support is missing.
 
-THE CONTAINED shows the cost of that choice. JusticeHub shows what works instead.
+CONTAINED shows the cost of that choice. JusticeHub shows what works instead.
 
 Start here: justicehub.com.au/remand
 
 ### Decision-Maker Invite
 
-You are invited to walk through THE CONTAINED at Tandanya.
+You are invited to walk through CONTAINED at Tandanya.
 
 This is not a standard exhibition. It is a 30-minute public evidence experience about youth remand: how children are held before sentence, why that pathway is growing, what it costs, and what community-led alternatives already exist.
 
@@ -518,4 +518,4 @@ Needs manual source confirmation before wall or media use:
 
 ## The One-Sentence Spine
 
-> Remand is custody before care has arrived, and THE CONTAINED exists to show what that costs, what could have happened instead, and who is already building the alternative.
+> Remand is custody before care has arrived, and CONTAINED exists to show what that costs, what could have happened instead, and who is already building the alternative.

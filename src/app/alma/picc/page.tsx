@@ -413,7 +413,7 @@ export default async function PICCPage() {
               },
               {
                 title: 'CONTAINED Tour \u2014 QLD Stops',
-                desc: 'THE CONTAINED touring exhibition is coming to Queensland. Palm Island and Townsville represent the most powerful story in the tour \u2014 an island community that built its own infrastructure while Australia looked away.',
+                desc: 'CONTAINED touring exhibition is coming to Queensland. Palm Island and Townsville represent the most powerful story in the tour \u2014 an island community that built its own infrastructure while Australia looked away.',
               },
               {
                 title: 'ALMA Network \u2014 QLD Basecamp',

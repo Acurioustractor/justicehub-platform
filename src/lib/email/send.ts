@@ -6,6 +6,7 @@ interface SendEmailOptions {
   subject: string;
   body: string; // Plain text — will be wrapped in branded HTML
   preheader?: string;
+  heroImage?: { src: string; alt: string }; // Full-width image under the header
   replyTo?: string;
   name?: string; // Recipient name for GHL contact upsert
   tags?: string[]; // GHL tags to apply
@@ -46,7 +47,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<{ id: string
   }
 
   try {
-    const html = wrapInBrandedTemplate(options.body, options.preheader);
+    const html = wrapInBrandedTemplate(options.body, options.preheader, { heroImage: options.heroImage });
 
     const result = await ghl.sendEmailToAddress({
       to: options.to,

@@ -279,7 +279,7 @@ export default function Compose({ onInsertStat }: { onInsertStat?: string }) {
             </div>
             <div>
               <div className="text-sm font-semibold text-gray-900">Benjamin Knight</div>
-              <div className="text-xs text-gray-500">Founder, THE CONTAINED</div>
+              <div className="text-xs text-gray-500">Founder, CONTAINED</div>
             </div>
           </div>
 

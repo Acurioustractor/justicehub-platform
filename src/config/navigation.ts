@@ -27,7 +27,7 @@ export const navigationItems: NavigationItem[] = [
                 description: 'June 23 public pathway for CONTAINED'
             },
             {
-                label: 'THE CONTAINED',
+                label: 'CONTAINED',
                 href: '/contained',
                 description: 'The immersive youth detention experience'
             },

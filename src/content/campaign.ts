@@ -466,7 +466,7 @@ export const tourSocialKits: TourSocialKit[] = [
       {
         platform: 'twitter',
         label: 'Small Gathering',
-        content: `THE CONTAINED starts with a small Mount Druitt gathering in May/June.
+        content: `CONTAINED starts with a small Mount Druitt gathering in May/June.
 
 Young people, Just Reinvest relationships, and Western Sydney build proof help shape what travels next.
 
@@ -476,7 +476,7 @@ Then the Adelaide activation runs on Kaurna Yarta from 22-26 June 2026 beside Re
       {
         platform: 'linkedin',
         label: 'Process Signal',
-        content: `Before THE CONTAINED launches publicly in Adelaide, the process starts with a smaller Mount Druitt gathering.
+        content: `Before CONTAINED launches publicly in Adelaide, the process starts with a smaller Mount Druitt gathering.
 
 That matters. The tour is not a fixed roadshow dropped into communities. It is a flexible process: young people and local organisations help shape what the container carries, what evidence is shown, and what funders are asked to back next.`,
         hashtags: [...CORE_HASHTAGS, '#CommunityLed', '#YouthJustice'],
@@ -490,7 +490,7 @@ That matters. The tour is not a fixed roadshow dropped into communities. It is a
       {
         platform: 'twitter',
         label: 'Announcement',
-        content: `THE CONTAINED Adelaide activation runs in public space on Kaurna Yarta from 22-26 June 2026.
+        content: `CONTAINED Adelaide activation runs in public space on Kaurna Yarta from 22-26 June 2026.
 
 One shipping container. Three rooms. Thirty minutes.
 
@@ -502,7 +502,7 @@ Mount Druitt starts the process. Brisbane young people carry the build story. Da
         label: 'Community Post',
         content: `What if decision-makers could feel what youth detention is actually like?
 
-That is the idea behind THE CONTAINED, an immersive shipping container experience activating in Adelaide on Kaurna Yarta from 22-26 June 2026 after a small Mount Druitt gathering.
+That is the idea behind CONTAINED, an immersive shipping container experience activating in Adelaide on Kaurna Yarta from 22-26 June 2026 after a small Mount Druitt gathering.
 
 Three rooms tell the story: detention reality, the therapeutic alternative shaped with David from Diagrama, and the local future held by Adelaide organisations talking about their programs, costs, and support needs.`,
         hashtags: [...CORE_HASHTAGS, '#Adelaide'],
@@ -550,7 +550,7 @@ When the container lands in Brisbane in September, YAC and EPIC Pathways bring t
       {
         platform: 'twitter',
         label: 'Announcement',
-        content: `THE CONTAINED is coming to Perth and surrounds.
+        content: `CONTAINED is coming to Perth and surrounds.
 
 University of Western Australia. July/August 2026. Academic rigour meets immersive advocacy.`,
         hashtags: [...CORE_HASHTAGS, '#Perth', '#UWA'],
@@ -558,7 +558,7 @@ University of Western Australia. July/August 2026. Academic rigour meets immersi
       {
         platform: 'linkedin',
         label: 'Professional',
-        content: `THE CONTAINED partners with the University of Western Australia for the Western Australian stop on its Australian tour, July/August 2026.
+        content: `CONTAINED partners with the University of Western Australia for the Western Australian stop on its Australian tour, July/August 2026.
 
 After Mount Druitt and Adelaide, the tour brings the immersive experience to campus and surrounds, where youth justice researchers, students, and community can walk through three rooms that make the case for change.`,
         hashtags: [...CORE_HASHTAGS, '#UWA', '#Research', '#YouthJustice'],
@@ -572,7 +572,7 @@ After Mount Druitt and Adelaide, the tour brings the immersive experience to cam
       {
         platform: 'twitter',
         label: 'Announcement',
-        content: `THE CONTAINED goes to Central Australia.
+        content: `CONTAINED goes to Central Australia.
 
 Alice Springs and Central Australia. November 2026. Community-controlled. Culture-centred.`,
         hashtags: [...CORE_HASHTAGS, '#CentralAustralia', '#NT', '#FirstNations'],
@@ -580,7 +580,7 @@ Alice Springs and Central Australia. November 2026. Community-controlled. Cultur
       {
         platform: 'linkedin',
         label: 'Professional',
-        content: `THE CONTAINED travels to Alice Springs and Central Australia in November 2026.
+        content: `CONTAINED travels to Alice Springs and Central Australia in November 2026.
 
 A community-controlled activation centring First Nations leadership in youth justice reform. The communities most affected must lead the conversation about alternatives.`,
         hashtags: [...CORE_HASHTAGS, '#FirstNations', '#CommunityLed', '#SelfDetermination'],
@@ -593,7 +593,7 @@ export const generalSocialPosts: SocialPost[] = [
   {
     platform: 'twitter',
     label: 'Tour Overview',
-    content: `THE CONTAINED: Australian Tour 2026-27.
+    content: `CONTAINED: Australian Tour 2026-27.
 
 Mount Druitt small gathering. Adelaide public activation. Nine-stop national arc.
 
@@ -605,7 +605,7 @@ justicehub.com.au/contained`,
   {
     platform: 'instagram',
     label: 'Tour Overview',
-    content: `THE CONTAINED is going national.
+    content: `CONTAINED is going national.
 
 May/June: Mount Druitt small gathering
 22-26 June: Adelaide public activation on Kaurna Yarta
@@ -628,13 +628,13 @@ The route is flexible because the process follows community need, partner readin
 
 Community programs: $75/day. 88% success rate.
 
-THE CONTAINED makes you feel these numbers. Australian Tour 2026-27.`,
+CONTAINED makes you feel these numbers. Australian Tour 2026-27.`,
     hashtags: CORE_HASHTAGS,
   },
   {
     platform: 'twitter',
     label: 'Fundraising',
-    content: `$500K funds THE CONTAINED Australian Tour.
+    content: `$500K funds CONTAINED Australian Tour.
 
 $20K -> Mount Druitt small gathering
 $50K -> Adelaide public activation, 22-26 June
@@ -657,7 +657,7 @@ export const campaignPages = {
   },
   tour: {
     path: '/contained/tour',
-    title: 'THE CONTAINED: Australian Tour 2026',
+    title: 'CONTAINED: Australian Tour 2026',
     description: 'One shipping container, three rooms, thirty minutes.',
     navLabel: 'Tour',
   },

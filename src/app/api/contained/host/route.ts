@@ -136,7 +136,7 @@ Thank you for offering to host CONTAINED. We will be in touch about what it take
 
 In the meantime:
 
-THE CONTAINED tour: https://justicehub.com.au/contained
+CONTAINED tour: https://justicehub.com.au/contained
 How it works: https://justicehub.com.au/contained/how-it-works
 
 — The JusticeHub Team`,

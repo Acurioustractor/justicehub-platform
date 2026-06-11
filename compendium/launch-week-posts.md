@@ -16,7 +16,7 @@
 
 One shipping container. Three rooms. Thirty minutes.
 
-THE CONTAINED launches this Friday at Mounty Yarns in Mount Druitt, Western Sydney.
+CONTAINED launches this Friday at Mounty Yarns in Mount Druitt, Western Sydney.
 
 Room 1: The reality of youth detention in Australia. Designed by young people who know what it feels like.
 Room 2: The therapeutic alternative. Spain's Diagrama model — 86% success (13.6% reoffending), not 84% failure.
@@ -30,7 +30,7 @@ Back this stop: justicehub.com.au/contained
 
 ### Twitter/X
 
-THE CONTAINED launches Friday in Mount Druitt.
+CONTAINED launches Friday in Mount Druitt.
 
 One shipping container. Three rooms. Thirty minutes inside youth detention reality — then the alternative.
 
@@ -60,7 +60,7 @@ For the same cost of detaining one child, community programs could support 16 yo
 
 These aren't our numbers. They're the Productivity Commission's. The Queensland Government's. The evidence base that ALMA tracks across 981 verified programs.
 
-THE CONTAINED puts these numbers into physical space. Three rooms. Thirty minutes. The cost becomes real.
+CONTAINED puts these numbers into physical space. Three rooms. Thirty minutes. The cost becomes real.
 
 Back this stop: justicehub.com.au/contained
 
@@ -78,7 +78,7 @@ Same money. 16x more young people helped.
 
 These are not opinions. They are the Productivity Commission's own numbers.
 
-THE CONTAINED makes you feel them. Friday.
+CONTAINED makes you feel them. Friday.
 
 `#TheContained #YouthJustice`
 
@@ -99,7 +99,7 @@ Spain's Diagrama Foundation runs youth detention centres with 1:1 staffing, fami
 
 86% success rate (13.6% reoffending). €5.64 returned for every €1 invested.
 
-Room 2 of THE CONTAINED brings the Diagrama model to Australia — not as theory, but as lived experience documented across our trip to Spain.
+Room 2 of CONTAINED brings the Diagrama model to Australia — not as theory, but as lived experience documented across our trip to Spain.
 
 The photo above is real. From inside a Diagrama centre. No bars. No isolation cells. Just people doing the work.
 
@@ -115,7 +115,7 @@ Spain's Diagrama Foundation: 1:1 staffing, weekly family contact, therapeutic ca
 
 Australia: $1.55M per child. 84% failure.
 
-Room 2 of THE CONTAINED brings this alternative to life.
+Room 2 of CONTAINED brings this alternative to life.
 
 Real photos. Real programs. Real results.
 
@@ -133,7 +133,7 @@ Real photos. Real programs. Real results.
 
 ### Instagram
 
-Room 3 of THE CONTAINED changes every tour stop.
+Room 3 of CONTAINED changes every tour stop.
 
 Because the answer to youth detention isn't one model. It's the hundreds of community organisations across Australia already doing the work — underfunded, underreported, and delivering results the system can't match.
 
@@ -149,7 +149,7 @@ These organisations don't need permission. They need resources.
 
 ### Twitter/X
 
-Room 3 of THE CONTAINED celebrates the organisations already doing it.
+Room 3 of CONTAINED celebrates the organisations already doing it.
 
 981 verified programs on ALMA. Community-led. Culture-centred. Evidence-backed.
 
@@ -173,7 +173,7 @@ Path: `/images/articles/spotlight-on-changemaker-brodie-germaine.jpg`
 
 ### Instagram
 
-Today THE CONTAINED opens its doors for the first time.
+Today CONTAINED opens its doors for the first time.
 
 Room 1 was designed by young people. They are the experts. They know what detention feels like. They decided what the public needs to see.
 
@@ -189,7 +189,7 @@ justicehub.com.au/contained
 
 ### Twitter/X
 
-THE CONTAINED is open.
+CONTAINED is open.
 
 Room 1: designed by young people. They're the experts.
 

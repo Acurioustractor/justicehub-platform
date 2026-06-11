@@ -274,17 +274,17 @@ export async function POST(
       sendEmail({
         to: cleanNominatorEmail,
         subject: 'Your nomination has been received',
-        preheader: `You nominated ${cleanNomineeName} for THE CONTAINED experience.`,
+        preheader: `You nominated ${cleanNomineeName} for CONTAINED experience.`,
         body: `Thank you${cleanNominatorName ? `, ${cleanNominatorName}` : ''}.
 
 Your nomination has been received.
 
-You nominated ${cleanNomineeName}${cleanNomineeOrg ? ` (${cleanNomineeOrg})` : ''} to experience THE CONTAINED.
+You nominated ${cleanNomineeName}${cleanNomineeOrg ? ` (${cleanNomineeOrg})` : ''} to experience CONTAINED.
 
 ${cleanReason ? `Your reason: "${cleanReason}"` : ''}
 
 WHAT HAPPENS NEXT
-Our team reviews every nomination. When THE CONTAINED reaches their city, we will reach out to them with a personal invitation backed by your endorsement.
+Our team reviews every nomination. When CONTAINED reaches their city, we will reach out to them with a personal invitation backed by your endorsement.
 
 The more people who nominate the same leader, the harder it is to ignore.
 

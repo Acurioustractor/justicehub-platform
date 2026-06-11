@@ -138,7 +138,7 @@ export default function SupportersWall({
                   Tour Supporters
                 </DialogTitle>
                 <DialogDescription>
-                  {totalCount} people backing THE CONTAINED Australian Tour
+                  {totalCount} people backing CONTAINED Australian Tour
                 </DialogDescription>
               </DialogHeader>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4">

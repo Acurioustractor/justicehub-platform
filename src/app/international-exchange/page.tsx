@@ -306,7 +306,7 @@ export default function InternationalExchangePage() {
                   href="/contained/tour"
                   className="inline-flex items-center px-6 py-3 bg-ochre-500 text-white rounded-lg font-medium hover:bg-ochre-600 transition-colors"
                 >
-                  The Contained Tour 2026
+                  CONTAINED Tour 2026
                 </a>
               </div>
             </div>

@@ -50,7 +50,7 @@ We built ALMA (Authentic Learning for Meaningful Accountability), the largest da
 
 And now we're taking this evidence on the road.
 
-THE CONTAINED is a shipping container touring Australia in 2026. Three rooms. Thirty minutes. The reality, the alternative, and the solution.
+CONTAINED is a shipping container touring Australia in 2026. Three rooms. Thirty minutes. The reality, the alternative, and the solution.
 
 See the tour: ${SITE}/contained
 
@@ -93,7 +93,7 @@ The data is clear. The question is whether decision-makers will act on it.
 Now here's how you can help:
 
 1. NOMINATE A LEADER
-Know a politician, CEO, or decision-maker? Nominate them to experience THE CONTAINED.
+Know a politician, CEO, or decision-maker? Nominate them to experience CONTAINED.
 → ${SITE}/contained#nominate
 
 2. SHARE THE STATS
@@ -134,35 +134,35 @@ export const preEventSequence: EmailSequence = {
       delayDays: 0,
       body: `You're in.
 
-Your registration for THE CONTAINED is confirmed.
+Your registration for CONTAINED is confirmed.
 
-WHAT TO EXPECT:
-- 30 minutes inside a shipping container
-- Three rooms: the reality, the therapeutic alternative, the community solution
-- Evidence-based briefing materials on arrival
-- Action cards to take with you
+WHAT TO EXPECT
+- Thirty minutes inside a shipping container. You walk through alone.
+- Three rooms: the reality, the alternative, and what South Australia could do next
+- Your exact session time, confirmed closer to the week
+- The Adelaide site address, sent to you the moment it is confirmed
 
-WHAT TO BRING:
+WHAT TO BRING
 - An open mind
-- A friend or colleague (share this link: ${SITE}/adelaide)
-- Your phone for photos and sharing
+- One person who would never normally come to something like this (share this link: ${SITE}/contained/adelaide)
+- Phones and shoes wait at the door. We hold both while you walk.
 
-GO DEEPER BEFORE YOU COME:
+GO DEEPER BEFORE YOU COME
 - Why children are held before sentence: ${SITE}/remand
 - Share what changes for you afterwards: ${SITE}/contained/reaction
 
-This isn't a lecture. It's an experience designed to make you feel what the data shows.
+Thirty minutes inside what the data means. You leave with one action chosen, not a pamphlet.
 
-We'll send you more details as the date approaches.
+We will send your session details as the week approaches.
 
-— The JusticeHub Team`,
+The JusticeHub team`,
     },
     {
       id: 'event-story',
       subject: 'Before you arrive, read this story',
       preheader: 'The voice behind the numbers.',
       delayDays: -3, // 3 days BEFORE event
-      body: `In a few days, you'll step inside THE CONTAINED.
+      body: `In a few days, you'll step inside CONTAINED.
 
 Before you do, we want you to meet someone.
 
@@ -257,7 +257,7 @@ export const launchEmail: EmailSequence = {
       delayDays: 0,
       body: `One shipping container. Three rooms. Thirty minutes.
 
-THE CONTAINED is an immersive experience that puts Australia's youth justice crisis into physical reality. You walk through it. You feel it. You can never unsee it.
+CONTAINED is an immersive experience that puts Australia's youth justice crisis into physical reality. You walk through it. You feel it. You can never unsee it.
 
 THREE ROOMS
 
@@ -304,7 +304,7 @@ Download stat cards and social templates. Same message, every platform.
 
 The evidence is overwhelming. Community-led alternatives work better, cost less, and keep young people connected to family and culture.
 
-THE CONTAINED makes you feel it. Your action makes it impossible to ignore.
+CONTAINED makes you feel it. Your action makes it impossible to ignore.
 
 — The JusticeHub Team`,
     },
@@ -491,10 +491,10 @@ The best youth justice stories aren't about incidents. They're about the 1,165 p
     },
     {
       id: 'media-4-tour',
-      subject: 'Press access: THE CONTAINED tour',
+      subject: 'Press access: CONTAINED tour',
       preheader: 'One shipping container. Three rooms. Press passes available.',
       delayDays: 9,
-      body: `THE CONTAINED is an immersive experience touring Australia in 2026. Three rooms inside a shipping container — current reality, the therapeutic alternative, and the local organisations already doing it.
+      body: `CONTAINED is an immersive experience touring Australia in 2026. Three rooms inside a shipping container — current reality, the therapeutic alternative, and the local organisations already doing it.
 
 AS A MEDIA MEMBER, YOU GET:
 - Priority press passes at each tour stop
@@ -550,7 +550,7 @@ ${SITE}/hub/supporter
 Download stat cards designed for social media. Same message, every platform.
 
 3. ATTEND A TOUR STOP
-THE CONTAINED is touring Australia in 2026. Find the stop nearest you.
+CONTAINED is touring Australia in 2026. Find the stop nearest you.
 
 LOG IN TO YOUR HUB
 ${SITE}/hub/supporter
@@ -579,9 +579,9 @@ Every letter sent through the network gets counted. We're building visible press
     {
       id: 'supporter-3-tour',
       subject: 'A tour stop is coming to your state',
-      preheader: 'THE CONTAINED — 30 minutes that change how you see youth justice.',
+      preheader: 'CONTAINED — 30 minutes that change how you see youth justice.',
       delayDays: 5,
-      body: `THE CONTAINED is an immersive experience inside a shipping container. Three rooms. Thirty minutes. You walk through Australia's youth justice crisis — and you meet the organisations fixing it.
+      body: `CONTAINED is an immersive experience inside a shipping container. Three rooms. Thirty minutes. You walk through Australia's youth justice crisis — and you meet the organisations fixing it.
 
 TOUR STOPS 2026
 Western Sydney, NSW — April
@@ -631,7 +631,7 @@ ${SITE}/hub/supporter
 Your dashboard tracks every action — MP letters sent, pages shared, events registered for. The network's collective impact is growing.
 
 KEEP GOING
-The most effective supporters do one small thing each week. Write a letter. Share a stat card. Tell one person about THE CONTAINED.
+The most effective supporters do one small thing each week. Write a letter. Share a stat card. Tell one person about CONTAINED.
 
 Consistency beats intensity. Thank you for being here.
 
@@ -821,7 +821,7 @@ If you need something specific that's not listed, reply to this email. We'll try
       body: `Some people with lived experience want to share their story. Some don't. Both are completely valid.
 
 If you ever want to:
-- THE CONTAINED tour features lived experience voices in Room 1
+- CONTAINED tour features lived experience voices in Room 1
 - The ALMA evidence library includes community stories
 - Media members in the network are looking for authentic voices (on your terms)
 

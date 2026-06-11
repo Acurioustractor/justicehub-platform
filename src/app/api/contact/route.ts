@@ -259,7 +259,7 @@ We've received your message${sanitizedSubject ? ` regarding "${sanitizedSubject}
 In the meantime, you might find these resources helpful:
 
 Explore ALMA: https://justicehub.com.au/intelligence/interventions
-THE CONTAINED tour: https://justicehub.com.au/contained
+CONTAINED tour: https://justicehub.com.au/contained
 
 — The JusticeHub Team`,
     }).catch(err => console.error('Failed to send contact confirmation email:', err));
