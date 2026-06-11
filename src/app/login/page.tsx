@@ -19,12 +19,16 @@ function LoginForm() {
   const [mode, setMode] = useState<'login' | 'reset' | 'magic-link' | 'phone'>('magic-link');
   const [devBypassing, setDevBypassing] = useState(false);
 
-  // Dev bypass: on localhost, skip login entirely
+  // Dev bypass: on localhost, /admin pages use the dev-admin-bypass cookie,
+  // so skip the form for them only. Pages needing a REAL Supabase session
+  // (e.g. /dashboard) must show the form, otherwise login redirect-loops.
   useState(() => {
     if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-      setDevBypassing(true);
       const redirect = searchParams.get('redirect') || '/';
-      window.location.href = redirect;
+      if (redirect.startsWith('/admin')) {
+        setDevBypassing(true);
+        window.location.href = redirect;
+      }
     }
   });
 
