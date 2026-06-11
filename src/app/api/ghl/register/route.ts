@@ -256,8 +256,59 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    // 4. Send event confirmation email immediately via Resend
-    const confirmation = preEventSequence.emails[0];
+    // 4. Send pathway-specific receipt immediately via Resend.
+    // EOI and supporter captures must NOT get the "You're registered" event
+    // confirmation — an EOI is not a slot, and saying so breaks the scarcity
+    // contract. Pathway is inferred from the custom tags the form sent.
+    const requestTags: string[] = Array.isArray(customTags) ? customTags : [];
+    const isEoi = requestTags.includes('experience:eoi');
+    const isSupporter = requestTags.includes('engagement:supporter');
+    const firstName = (sanitizedFullName || '').split(' ')[0] || 'there';
+    const confirmation = isEoi
+      ? {
+          subject: 'Your expression of interest is in',
+          preheader: 'The slots are few and the triage is human.',
+          body: `${firstName},
+
+Your expression of interest for CONTAINED Adelaide is in.
+
+Here is the honest version: the container holds one person at a time, thirty minutes each, four days. Most people who ask will not get inside. That is the point. Detention is easy to get into. The alternative should not be.
+
+Every EOI is read by a person, not a filter. If a place opens for you, the invitation comes personally, with a time and everything you need.
+
+While you wait, two things you can do that matter as much as walking through:
+
+NOMINATE the person whose decisions touch children's lives — a magistrate, an MP, a CEO. We make the personal invitation: ${'https://justicehub.com.au/contained/eoi'}
+
+STAND WITH IT if you want CONTAINED in your city next.
+
+You can't unknow what you're about to know.
+
+— The CONTAINED team at JusticeHub`,
+        }
+      : isSupporter
+        ? {
+            subject: "You're standing with it",
+            preheader: 'Here is how your support becomes the next city.',
+            body: `${firstName},
+
+You're standing with CONTAINED. That matters more than it might feel like from where you sit.
+
+The machine exists: one container, three rooms, thirty minutes that change how people vote, fund, sentence and report. A tour stop costs $30K. A new container costs $50-70K. Backing extends it; invitations multiply it.
+
+What happens next: a real person reads what you sent and follows up about the way you offered to stand with it — funding, your city, partnership, media or spreading the word.
+
+Two doors you can open today:
+
+NOMINATE the decision-maker who needs the thirty minutes: ${'https://justicehub.com.au/contained/eoi'}
+
+FORWARD this to one person who would never normally come to this.
+
+You can't unknow what you know now.
+
+— The CONTAINED team at JusticeHub`,
+          }
+        : preEventSequence.emails[0];
     sendEmail({
       to: sanitizedEmail,
       subject: confirmation.subject,
