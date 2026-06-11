@@ -355,6 +355,18 @@ interface AlmaStats {
 // ---------------------------------------------------------------------------
 export function TourContent() {
   const [projectStories, setProjectStories] = useState<ProjectStory[]>([]);
+
+  // Hash deep-links (e.g. /contained#nominate from receipt emails): the page
+  // is client-rendered, so the browser's native anchor jump fires before the
+  // sections exist. Re-scroll once content has mounted.
+  useEffect(() => {
+    const hash = window.location.hash?.slice(1);
+    if (!hash) return;
+    const timer = setTimeout(() => {
+      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+    }, 400);
+    return () => clearTimeout(timer);
+  }, []);
   const [almaStats, setAlmaStats] = useState<AlmaStats | null>(null);
   const [stateSpending, setStateSpending] = useState<Record<string, { detention_millions: number | null; community_millions: number | null; indigenous_ratio: number | null; cost_per_child: number | null; detention_population: number | null }>>({});
   const [tourStops, setTourStops] = useState<TourStop[]>(staticTourStops);

@@ -129,6 +129,10 @@
       "schedule": "0 12 * * *"
     },
     {
+      "path": "/api/cron/contained/daily-digest",
+      "schedule": "0 21 * * *"
+    },
+    {
       "path": "/api/cron/contained/nurture",
       "schedule": "0 9 * * *"
     },

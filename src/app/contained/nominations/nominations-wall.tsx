@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Navigation, Footer } from '@/components/ui/navigation';
-import { ArrowRight, Megaphone } from 'lucide-react';
+import { ArrowRight, Megaphone, ChevronUp, MessageSquare, X } from 'lucide-react';
 
 const CATEGORIES = [
   { value: '', label: 'All' },
@@ -36,68 +36,94 @@ function timeAgo(dateStr: string) {
   return `${months}mo ago`;
 }
 
-interface Nomination {
+interface NomineeMessage {
+  reason: string;
+  nominator_name: string | null;
+  created_at: string;
+}
+
+interface Nominee {
+  nominee_key: string;
   nominee_name: string;
   nominee_title?: string;
   nominee_org?: string;
   category: string;
-  reason: string;
-  created_at: string;
+  nomination_count: number;
+  upvotes: number;
+  first_nominated_at: string;
+  messages: NomineeMessage[];
 }
 
 const GOAL = 100;
-const LIMIT = 20;
+const VOTED_KEY = 'contained-nomination-votes';
 
 export function NominationsWall() {
-  const [nominations, setNominations] = useState<Nomination[]>([]);
+  const [leaderboard, setLeaderboard] = useState<Nominee[]>([]);
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [activeCategory, setActiveCategory] = useState('');
+  const [selected, setSelected] = useState<Nominee | null>(null);
+  const [voted, setVoted] = useState<Record<string, boolean>>({});
 
-  const fetchNominations = useCallback(async (p: number, category: string, append: boolean) => {
-    const isFirst = p === 1 && !append;
-    if (isFirst) setLoading(true);
-    else setLoadingMore(true);
-
+  useEffect(() => {
     try {
-      const params = new URLSearchParams({
-        mode: 'wall',
-        page: String(p),
-        limit: String(LIMIT),
-      });
-      if (category) params.set('category', category);
+      setVoted(JSON.parse(localStorage.getItem(VOTED_KEY) || '{}'));
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
-      const res = await fetch(`/api/projects/the-contained/nominations?${params}`);
+  const fetchLeaderboard = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/projects/the-contained/nominations?mode=leaderboard');
       const data = await res.json();
-
-      if (append) {
-        setNominations((prev) => [...prev, ...(data.nominations || [])]);
-      } else {
-        setNominations(data.nominations || []);
-      }
+      setLeaderboard(data.leaderboard || []);
       setTotal(data.total || 0);
-      setHasMore(data.hasMore || false);
     } catch {
       // silent fail
     } finally {
       setLoading(false);
-      setLoadingMore(false);
     }
   }, []);
 
   useEffect(() => {
-    setPage(1);
-    fetchNominations(1, activeCategory, false);
-  }, [activeCategory, fetchNominations]);
+    fetchLeaderboard();
+  }, [fetchLeaderboard]);
 
-  const loadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchNominations(nextPage, activeCategory, true);
-  };
+  async function upvote(nominee: Nominee) {
+    if (voted[nominee.nominee_key]) return;
+    // optimistic
+    setLeaderboard((prev) =>
+      prev.map((n) => (n.nominee_key === nominee.nominee_key ? { ...n, upvotes: n.upvotes + 1 } : n))
+    );
+    const nextVoted = { ...voted, [nominee.nominee_key]: true };
+    setVoted(nextVoted);
+    try {
+      localStorage.setItem(VOTED_KEY, JSON.stringify(nextVoted));
+    } catch {
+      /* ignore */
+    }
+    try {
+      const res = await fetch('/api/projects/the-contained/nominations/upvote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nominee_name: nominee.nominee_name }),
+      });
+      const data = await res.json();
+      if (res.ok && typeof data.upvotes === 'number') {
+        setLeaderboard((prev) =>
+          prev.map((n) => (n.nominee_key === nominee.nominee_key ? { ...n, upvotes: data.upvotes } : n))
+        );
+      }
+    } catch {
+      /* keep optimistic value */
+    }
+  }
+
+  const filtered = activeCategory
+    ? leaderboard.filter((n) => n.category === activeCategory)
+    : leaderboard;
 
   const progress = Math.min((total / GOAL) * 100, 100);
 
@@ -117,24 +143,22 @@ export function NominationsWall() {
                 ← Back to CONTAINED
               </Link>
               <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-4">
-                Nominations Wall
+                Who needs to walk through?
               </h1>
               <p className="text-xl text-gray-300 mb-8">
-                Australians are nominating the decision-makers who need to experience
-                youth detention reality. Every name builds public pressure.
+                Australians are nominating the decision-makers who need thirty minutes inside.
+                Vote the names up. The most-needed people rise to the top, and every name carries
+                the messages of the people who put them there.
               </p>
 
               {/* Progress */}
               <div className="max-w-md">
                 <div className="flex justify-between text-sm mb-2">
                   <span className="font-black text-3xl">{total.toLocaleString()}</span>
-                  <span className="text-gray-400 self-end">of {GOAL.toLocaleString()} for Adelaide week</span>
+                  <span className="text-gray-400 self-end">of {GOAL.toLocaleString()} nominations for Adelaide week</span>
                 </div>
                 <div className="h-3 bg-gray-800 w-full">
-                  <div
-                    className="h-full bg-red-600 transition-all duration-500"
-                    style={{ width: `${progress}%` }}
-                  />
+                  <div className="h-full bg-red-600 transition-all duration-500" style={{ width: `${progress}%` }} />
                 </div>
               </div>
             </div>
@@ -162,16 +186,14 @@ export function NominationsWall() {
           </div>
         </section>
 
-        {/* Grid */}
+        {/* Leaderboard */}
         <section className="py-12">
           <div className="container-justice">
             {loading ? (
               <div className="text-center py-16">
-                <div className="text-lg font-bold text-gray-400 animate-pulse">
-                  Loading nominations...
-                </div>
+                <div className="text-lg font-bold text-gray-400 animate-pulse">Loading the board...</div>
               </div>
-            ) : nominations.length === 0 ? (
+            ) : filtered.length === 0 ? (
               <div className="text-center py-16">
                 <p className="text-lg font-bold text-gray-500 mb-4">
                   No nominations yet{activeCategory ? ' in this category' : ''}.
@@ -184,50 +206,61 @@ export function NominationsWall() {
                 </Link>
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {nominations.map((nom, i) => (
-                    <div
-                      key={`${nom.nominee_name}-${nom.created_at}-${i}`}
-                      className="border-2 border-black bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
-                    >
-                      <div className="p-5">
-                        <div className="flex items-start justify-between gap-3 mb-3">
-                          <div>
-                            <h3 className="font-black text-lg">{nom.nominee_name}</h3>
-                            {(nom.nominee_title || nom.nominee_org) && (
-                              <p className="text-sm text-gray-600">
-                                {[nom.nominee_title, nom.nominee_org].filter(Boolean).join(' — ')}
-                              </p>
-                            )}
-                          </div>
-                          <span
-                            className={`text-xs font-bold px-2 py-1 border whitespace-nowrap ${getCategoryStyle(nom.category)}`}
-                          >
-                            {getCategoryLabel(nom.category)}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-700 leading-relaxed mb-3">
-                          {nom.reason}
-                        </p>
-                        <p className="text-xs text-gray-400">{timeAgo(nom.created_at)}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {hasMore && (
-                  <div className="text-center mt-10">
+              <div className="max-w-4xl mx-auto space-y-3">
+                {filtered.map((nom, i) => (
+                  <div
+                    key={nom.nominee_key}
+                    className="flex items-stretch border-2 border-black bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow"
+                  >
+                    {/* Upvote */}
                     <button
-                      onClick={loadMore}
-                      disabled={loadingMore}
-                      className="px-8 py-3 text-sm font-bold uppercase tracking-widest border-2 border-black hover:bg-black hover:text-white transition-colors disabled:opacity-50"
+                      onClick={() => upvote(nom)}
+                      disabled={!!voted[nom.nominee_key]}
+                      aria-label={`Vote for ${nom.nominee_name} to walk through`}
+                      className={`flex w-20 shrink-0 flex-col items-center justify-center border-r-2 border-black px-2 py-4 transition-colors ${
+                        voted[nom.nominee_key]
+                          ? 'bg-red-600 text-white cursor-default'
+                          : 'bg-white text-black hover:bg-red-600 hover:text-white'
+                      }`}
                     >
-                      {loadingMore ? 'Loading...' : 'Load More'}
+                      <ChevronUp className="w-6 h-6" />
+                      <span className="font-black text-xl leading-none">{nom.upvotes}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider mt-1">
+                        {voted[nom.nominee_key] ? 'Voted' : 'Vote'}
+                      </span>
+                    </button>
+
+                    {/* Body */}
+                    <button
+                      onClick={() => setSelected(nom)}
+                      className="flex-1 p-4 text-left hover:bg-gray-50 transition-colors"
+                      aria-label={`Read why people nominated ${nom.nominee_name}`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="font-black text-lg leading-tight">
+                            <span className="text-gray-400 mr-2">#{i + 1}</span>
+                            {nom.nominee_name}
+                          </h3>
+                          {(nom.nominee_title || nom.nominee_org) && (
+                            <p className="text-sm text-gray-600">
+                              {[nom.nominee_title, nom.nominee_org].filter(Boolean).join(' · ')}
+                            </p>
+                          )}
+                        </div>
+                        <span className={`text-xs font-bold px-2 py-1 border whitespace-nowrap ${getCategoryStyle(nom.category)}`}>
+                          {getCategoryLabel(nom.category)}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-sm text-gray-700 line-clamp-2">“{nom.messages[nom.messages.length - 1]?.reason}”</p>
+                      <p className="mt-2 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-red-600">
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        {nom.nomination_count} {nom.nomination_count === 1 ? 'voice' : 'voices'} · read why
+                      </p>
                     </button>
                   </div>
-                )}
-              </>
+                ))}
+              </div>
             )}
           </div>
         </section>
@@ -235,12 +268,10 @@ export function NominationsWall() {
         {/* CTA */}
         <section className="py-12 bg-red-600 text-white">
           <div className="container-justice text-center">
-            <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">
-              Add Your Nomination
-            </h2>
+            <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">Add Your Nomination</h2>
             <p className="text-lg text-red-100 mb-6 max-w-xl mx-auto">
-              Who needs to experience what youth detention is really like?
-              Every nomination builds public pressure for change.
+              Who needs to experience what youth detention is really like? Add their name, or add
+              your voice to a name already on the board.
             </p>
             <Link
               href="/contained#nominate"
@@ -251,6 +282,60 @@ export function NominationsWall() {
           </div>
         </section>
       </main>
+
+      {/* Messages sidebar */}
+      {selected && (
+        <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={`Why ${selected.nominee_name} needs to walk through`}>
+          <button
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setSelected(null)}
+            aria-label="Close"
+          />
+          <aside className="absolute right-0 top-0 h-full w-full max-w-md overflow-y-auto bg-white border-l-4 border-black shadow-2xl">
+            <div className="sticky top-0 bg-black text-white p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-black text-xl leading-tight">{selected.nominee_name}</h3>
+                  {(selected.nominee_title || selected.nominee_org) && (
+                    <p className="text-sm text-gray-300">
+                      {[selected.nominee_title, selected.nominee_org].filter(Boolean).join(' · ')}
+                    </p>
+                  )}
+                  <p className="mt-2 text-xs font-bold uppercase tracking-wider text-red-400">
+                    {selected.upvotes} votes · {selected.nomination_count}{' '}
+                    {selected.nomination_count === 1 ? 'voice' : 'voices'}
+                  </p>
+                </div>
+                <button onClick={() => setSelected(null)} aria-label="Close" className="p-1 hover:text-red-400">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+            <div className="p-5 space-y-4">
+              <p className="text-sm font-bold uppercase tracking-widest text-gray-500">
+                Why people want them inside
+              </p>
+              {selected.messages
+                .slice()
+                .reverse()
+                .map((m, i) => (
+                  <blockquote key={i} className="border-l-4 border-red-600 bg-gray-50 p-4">
+                    <p className="text-sm leading-relaxed text-gray-800">“{m.reason}”</p>
+                    <footer className="mt-2 text-xs text-gray-500">
+                      {m.nominator_name || 'Anonymous'} · {timeAgo(m.created_at)}
+                    </footer>
+                  </blockquote>
+                ))}
+              <Link
+                href="/contained#nominate"
+                className="block w-full bg-red-600 px-4 py-3 text-center font-bold uppercase tracking-widest text-white hover:bg-red-700 transition-colors"
+              >
+                Add your voice
+              </Link>
+            </div>
+          </aside>
+        </div>
+      )}
 
       <Footer />
     </div>

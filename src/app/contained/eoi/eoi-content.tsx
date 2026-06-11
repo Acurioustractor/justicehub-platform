@@ -5,7 +5,8 @@ import { NominateForm } from '../tour/nominate-form';
 import { TurnstileWidget } from '@/components/ui/turnstile-widget';
 
 const EVENT_NAME = 'CONTAINED Adelaide 2026';
-const EVENT_SLUG = 'contained-adelaide-tandanya';
+// No site naming until council confirms (language lock, Mission Control 11 June)
+const EVENT_SLUG = 'contained-adelaide-2026';
 
 type Door = 'nominate' | 'eoi' | 'support';
 
@@ -28,6 +29,23 @@ const DOORS: { key: Door; label: string; detail: string }[] = [
     detail:
       'Funding, partnership, hosting the next city, spreading the word. This door is open to everyone.',
   },
+];
+
+// Values must match the register API's ALLOWED_ROLES enum — free text gets
+// discarded server-side and everyone collapses to 'supporter'.
+const ROLE_OPTIONS: { value: string; label: string }[] = [
+  { value: 'policymaker', label: 'Policy / government / courts' },
+  { value: 'funder', label: 'Funder / philanthropy' },
+  { value: 'media', label: 'Media / journalist' },
+  { value: 'practitioner', label: 'Youth justice practitioner' },
+  { value: 'service_org', label: 'Service organisation' },
+  { value: 'researcher', label: 'Researcher / academic' },
+  { value: 'student', label: 'Student' },
+  { value: 'lived_experience', label: 'Lived experience' },
+  { value: 'advocate', label: 'Advocate' },
+  { value: 'artist', label: 'Artist / creative' },
+  { value: 'community', label: 'Community member' },
+  { value: 'supporter', label: 'Supporter / other' },
 ];
 
 const SUPPORT_KINDS = [
@@ -171,7 +189,16 @@ function RegisterDoorForm({ kind }: { kind: 'eoi' | 'support' }) {
         <input className={inputClass} placeholder="Full name *" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
         <input className={inputClass} type="email" placeholder="Email *" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <input className={inputClass} placeholder="Organisation" value={organization} onChange={(e) => setOrganization(e.target.value)} />
-        <input className={inputClass} placeholder="Role" value={role} onChange={(e) => setRole(e.target.value)} />
+        <select className={inputClass} value={role} onChange={(e) => setRole(e.target.value)} aria-label="Your role">
+          <option value="" className="bg-[#0A0A0A]">
+            Your role
+          </option>
+          {ROLE_OPTIONS.map((r) => (
+            <option key={r.value} value={r.value} className="bg-[#0A0A0A]">
+              {r.label}
+            </option>
+          ))}
+        </select>
       </div>
       {!isEoi && (
         <>
