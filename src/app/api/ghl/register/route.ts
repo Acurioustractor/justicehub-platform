@@ -283,11 +283,16 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (matchedProfile?.id) {
-      await (supabase as any).from('member_actions').insert({
+      // Supabase query builders are thenables without .catch; calling it throws
+      // a TypeError that 500s any registrant whose email has an account.
+      const { error: actionError } = await (supabase as any).from('member_actions').insert({
         user_id: matchedProfile.id,
         action_type: 'event_registration',
         metadata: { event_name: sanitizedEventName, event_slug: sanitizedEventSlug, event_id: sanitizedEventId },
-      }).catch(() => {});
+      });
+      if (actionError) {
+        console.error('member_actions insert failed (non-blocking):', actionError);
+      }
     }
 
     return NextResponse.json({
