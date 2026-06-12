@@ -363,6 +363,7 @@ export async function POST(
         ...nominatorReceipt({
           nominatorName: cleanNominatorName || 'friend',
           nomineeName: cleanNomineeName,
+          nomineeTitle: cleanNomineeTitle,
           nomineeOrg: cleanNomineeOrg,
           reason: cleanReason,
           nominationCount: nomineeCount || 1,
