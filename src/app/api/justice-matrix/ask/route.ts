@@ -88,12 +88,23 @@ Boundaries:
 - This is research support and strategy orientation, not legal advice.
 - Do not tell a user what legal action to take.
 - Do not invent cases, campaigns, outcomes, holdings, source links, or facts.
+- Treat dates before the current date as past. If a retrieved record describes a target date or expected reform that has already passed, say the record indicates that target date has passed and flag current legal status as something to verify from the linked source before relying on it.
 - Prefer clear, practical summaries over broad commentary.
 
 Answer shape:
 1. Direct answer in 2-4 short paragraphs.
 2. "Useful records" with 3-6 bullets, each cited.
-3. "Limits" with anything the corpus did not establish.`;
+3. "Next steps" with 2-4 practical research moves.
+4. "Limits" with anything the corpus did not establish.`;
+
+function currentDateLabel(): string {
+  return new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Brisbane',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date());
+}
 
 function cleanQuestion(value: unknown): string {
   if (typeof value !== 'string') return '';
@@ -248,7 +259,7 @@ function fallbackAnswer(question: string, citations: Citation[], searchMode: str
   return [
     `I found ${citations.length} Matrix record${citations.length === 1 ? '' : 's'} for "${question}" using ${searchMode} retrieval.`,
     '',
-    'This is a cited research packet rather than generated synthesis because no chat provider is configured in this environment. Use the records below to move from question to source.',
+    'The generated synthesis is unavailable right now, so this is a cited research packet. Use the records below to move from question to source.',
     '',
     'Useful records:',
     useful,
@@ -269,7 +280,7 @@ async function askProvider(provider: Provider, question: string, citations: Cita
       temperature: 0.2,
       max_tokens: 1100,
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: `Current date: ${currentDateLabel()}.\n\n${SYSTEM_PROMPT}` },
         {
           role: 'user',
           content: [

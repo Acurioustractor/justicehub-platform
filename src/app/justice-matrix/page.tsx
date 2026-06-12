@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { ArrowRight, Globe, Scale, Megaphone, Database, Search, BookOpen, Map as MapIcon, Network, FileText } from 'lucide-react';
+import { ArrowRight, Globe, Scale, Megaphone, Database, BookOpen, Map as MapIcon, Network, FileText } from 'lucide-react';
 import { bucketJurisdiction } from '@/lib/justice-matrix/jurisdiction';
 import { MatrixFlowNav } from './_components/MatrixFlowNav';
+import { MatrixHomeAsk } from './MatrixHomeAsk';
 
 export const metadata = {
   title: 'Justice Matrix · JusticeHub',
   description:
-    'A living clearing house of strategic litigation, advocacy campaigns, and youth justice evidence across jurisdictions. Find the precedent, playbook, or evidence, then move.',
+    'Ask plain-language justice questions and get grounded answers with cited cases, campaigns, evidence, and source links.',
 };
 
 export const dynamic = 'force-dynamic';
@@ -26,7 +27,6 @@ const C = {
   muted: '#71717a',
   accent: '#4a2560',
   accentSoft: 'rgba(74,37,96,0.08)',
-  barBg: '#1c1420',
   gold: '#d3b583',
 };
 
@@ -37,6 +37,12 @@ interface Stats {
   sources: number;
   regions: number;
   refugeeCases: number;
+}
+
+type SP = Record<string, string | string[] | undefined>;
+
+function sp(value: SP[string], def = ''): string {
+  return typeof value === 'string' ? value : Array.isArray(value) ? value[0] ?? def : def;
 }
 
 async function loadStats(): Promise<Stats> {
@@ -144,9 +150,8 @@ interface IssueLite {
   surface: string;
 }
 
-// Issues are the front door: a first-time visitor orients faster from a live
-// question ("Can a state send asylum seekers to a third country?") than from a
-// 360-row corpus. Lightweight query — no per-issue counts on the hub.
+// Issues are the stable wiki layer under the ask-first front door. Lightweight
+// query — no per-issue counts on the hub.
 async function loadIssues(): Promise<IssueLite[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = createServiceClient() as any;
@@ -159,7 +164,11 @@ async function loadIssues(): Promise<IssueLite[]> {
   return (data ?? []) as IssueLite[];
 }
 
-export default async function JusticeMatrixLandingPage() {
+export default async function JusticeMatrixLandingPage({ searchParams }: { searchParams?: Promise<SP> }) {
+  const rawParams = searchParams ? await searchParams : {};
+  const initialQuestion = sp(rawParams.q).trim().slice(0, 500);
+  const surfaceParam = sp(rawParams.surface);
+  const initialSurface = surfaceParam === 'refugee' || surfaceParam === 'youth' ? surfaceParam : 'all';
   const [stats, featured, issues] = await Promise.all([loadStats(), loadFeatured(), loadIssues()]);
   const hasFeatured =
     featured.refugeeCases.length +
@@ -167,83 +176,23 @@ export default async function JusticeMatrixLandingPage() {
       featured.youthCases.length +
       featured.youthCampaigns.length >
     0;
-  const total = stats.cases + stats.campaigns + stats.evidence;
 
   return (
     <main style={{ background: C.page, color: C.ink, fontFamily: SANS }} className="min-h-screen">
-      {/* HERO — dark panel matching the explore search bar, with the funnel */}
-      <section
-        className="relative overflow-hidden"
-        style={{ background: 'radial-gradient(circle at 22% 0%, #3a1f4d, #1c1420 70%)' }}
-      >
-        <div
-          className="absolute inset-0 opacity-40 pointer-events-none"
-          style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1px)', backgroundSize: '40px 40px' }}
-        />
-        <div className="relative max-w-6xl mx-auto px-5 md:px-8 pt-16 md:pt-24 pb-12 md:pb-16">
-          <div style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '0.26em', color: C.gold }} className="uppercase mb-5">
-            Justice Matrix
-          </div>
-          <h1 className="text-white font-semibold tracking-tight text-4xl md:text-6xl max-w-3xl leading-[1.05] mb-5">
-            Find the precedent, playbook, or evidence, then move.
-          </h1>
-          <p className="text-[15px] md:text-base max-w-2xl leading-7 mb-8" style={{ color: '#cbb8d6' }}>
-            A searchable clearing house for strategic litigation, advocacy, and Australian youth-justice evidence.
-            Mapped and connected across {stats.regions} regions so a win in one place can be reused in another.
-          </p>
-
-          {/* Governance v1: one-line disclaimer, kept verbatim with the shared
-              LegalDisclaimer DISCLAIMER_SHORT string. Styled to the hero tokens
-              here rather than the cream footer block used on profile pages. */}
-          <p className="text-[12px] leading-5 mb-8" style={{ color: C.muted }}>
-            Research resource, not legal advice. Read the original source before acting.
-          </p>
-
-          {/* Funnel: native GET form → lands in the explore tool */}
-          <form action="/justice-matrix/explore" className="max-w-2xl flex items-stretch gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: C.muted }} />
-              <input
-                type="text"
-                name="q"
-                placeholder="Search cases, campaigns, evidence…"
-                aria-label="Search the Justice Matrix"
-                className="w-full rounded-md pl-9 pr-3 py-3 text-[15px] focus:outline-none"
-                style={{ background: '#fff', color: C.ink, border: '1px solid #d4d4d8' }}
-              />
-            </div>
-            <button
-              type="submit"
-              className="rounded-md px-5 text-sm font-semibold"
-              style={{ background: C.gold, color: '#1c1420' }}
-            >
-              Search
-            </button>
-          </form>
-
-          {/* Quick entries — all deep-link into the explore tool */}
-          <div className="flex flex-wrap gap-2 mt-4" style={{ fontFamily: MONO, fontSize: 12 }}>
-            <QuickLink href="/justice-matrix/explore">Browse all {total.toLocaleString()}</QuickLink>
-            <QuickLink href="/justice-matrix/ask">Ask</QuickLink>
-            <QuickLink href="/justice-matrix/how-it-works">How it works</QuickLink>
-            <QuickLink href="/justice-matrix/issues">Issues</QuickLink>
-            <QuickLink href="/justice-matrix/guide">Guide</QuickLink>
-            <QuickLink href="/justice-matrix/user-guide">User guide</QuickLink>
-            <QuickLink href="/justice-matrix/un">UN / OHCHR pack</QuickLink>
-            <QuickLink href="/justice-matrix/map">Map</QuickLink>
-            <QuickLink href="/justice-network/youth-remand">Youth remand</QuickLink>
-            <QuickLink href="/justice-matrix/explore?type=case">Cases {stats.cases}</QuickLink>
-            <QuickLink href="/justice-matrix/explore?type=campaign">Campaigns {stats.campaigns}</QuickLink>
-            <QuickLink href="/justice-matrix/explore?type=evidence">Evidence {stats.evidence}</QuickLink>
-            <QuickLink href="/justice-matrix/explore?view=jurisdiction">By jurisdiction</QuickLink>
-          </div>
-        </div>
-      </section>
+      <MatrixHomeAsk stats={stats} issues={issues} initialQuestion={initialQuestion} initialSurface={initialSurface} />
 
       <MatrixFlowNav active="hub" />
 
-      {/* ENTRY TILES — the funnel, made tactile */}
+      {/* ENTRY TILES — the evidence, wiki, map and contribution layers under the ask surface. */}
       <section className="max-w-6xl mx-auto px-5 md:px-8 py-8 md:py-10">
+        <Kicker>Under the answer</Kicker>
+        <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-2" style={{ color: C.ink }}>
+          Open the records, maps, guides and source queues behind the AI response.
+        </h2>
+        <p className="text-[14px] leading-6 mb-6 max-w-2xl" style={{ color: C.muted }}>
+          The opening question box is the primary interface. These are the deeper layers when a user needs to inspect,
+          browse, export, correct or add information.
+        </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-6 gap-3">
           <EntryTile
             href="/justice-matrix/explore?type=case"
@@ -304,13 +253,13 @@ export default async function JusticeMatrixLandingPage() {
           and evidence gathered under one question. */}
       {issues.length > 0 && (
         <section className="max-w-6xl mx-auto px-5 md:px-8 pb-6 md:pb-8">
-          <Kicker>Start from a question</Kicker>
+          <Kicker>Wiki questions</Kicker>
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-2" style={{ color: C.ink }}>
-            The live questions the matrix can answer.
+            Curated issue pages for the questions people ask again and again.
           </h2>
           <p className="text-[14px] leading-6 mb-6 max-w-2xl" style={{ color: C.muted }}>
-            Each issue gathers the cases, campaigns, and evidence on one fight, so you can see what has been tried and what
-            held.
+            The LLM can answer in simple language; the wiki layer gives reviewers a stable page with cases, campaigns,
+            evidence and source context gathered under one question.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {issues.map((it) => (
@@ -341,10 +290,11 @@ export default async function JusticeMatrixLandingPage() {
         <section className="max-w-6xl mx-auto px-5 md:px-8 pb-4 md:pb-6">
           <Kicker>Start here</Kicker>
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-2" style={{ color: C.ink }}>
-            The landmark cases and campaigns that anchor the matrix.
+            Landmark records the answer engine can cite.
           </h2>
           <p className="text-[14px] leading-6 mb-3 max-w-2xl" style={{ color: C.muted }}>
             Curated entry points for each surface: refugee and asylum law across borders, and the Australian youth-justice record.
+            These records are the evidence layer beneath plain-language answers.
           </p>
           <Link href="/justice-matrix/issues" className="inline-flex items-center gap-1.5 mb-7 text-sm font-semibold" style={{ color: C.accent }}>
             Or start from a question: browse all issues
@@ -372,17 +322,17 @@ export default async function JusticeMatrixLandingPage() {
           <div>
             <Kicker>What this is</Kicker>
             <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-4" style={{ color: C.ink }}>
-              Built so wins don&apos;t stay isolated.
+              LLM first, evidence underneath.
             </h2>
             <div className="space-y-4 text-[15px] leading-7" style={{ color: C.body }}>
               <p>
-                Civil-rights and social-justice lawyers pursue landmark cases that defend fundamental freedoms,
-                but their victories often stay siloed, and strategies and pleadings get replicated inefficiently or lost.
+                A visitor should not have to know whether they need a case, campaign, treaty, report, source or guide.
+                They can ask a normal question first, then follow the citations into the deeper Matrix.
               </p>
               <p>
-                The Justice Matrix maps, classifies and connects strategic litigation, advocacy, and the
-                Australian evidence base. An AI-assisted scanner pulls candidates from court databases and
-                civil-society sources; a human review queue decides what becomes part of the matrix.
+                The Justice Matrix maps, classifies and connects strategic litigation, advocacy, and the Australian
+                evidence base. The ask layer retrieves Matrix records first, generates a cited answer second, and keeps
+                the boundary clear: research support, not legal advice.
               </p>
             </div>
           </div>
@@ -421,9 +371,9 @@ export default async function JusticeMatrixLandingPage() {
 
       {/* How it stays current */}
       <section className="max-w-6xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
-        <Kicker>How it stays current</Kicker>
+        <Kicker>How information is collected</Kicker>
         <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-8 max-w-2xl" style={{ color: C.ink }}>
-          Sources to queue to matrix.
+          Sources and corrections flow through a review queue before they become answerable knowledge.
         </h2>
         <div className="grid md:grid-cols-3 gap-3">
           <StepCard
@@ -459,19 +409,6 @@ function Kicker({ children }: { children: React.ReactNode }) {
     <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: '0.18em', color: C.muted }} className="uppercase mb-2.5">
       {children}
     </div>
-  );
-}
-
-function QuickLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <Link
-      href={href}
-      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors"
-      style={{ background: 'rgba(255,255,255,0.08)', color: '#e6dcea', border: '1px solid rgba(255,255,255,0.16)' }}
-    >
-      {children}
-      <ArrowRight className="w-3 h-3" />
-    </Link>
   );
 }
 
