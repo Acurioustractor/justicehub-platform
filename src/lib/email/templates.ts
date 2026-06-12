@@ -19,6 +19,8 @@ const BRAND = {
 export interface BrandedTemplateOptions {
   /** Absolute URL + alt text for a full-width hero image under the header */
   heroImage?: { src: string; alt: string };
+  /** Recipient address for the unsubscribe link in the footer */
+  recipientEmail?: string;
 }
 
 /**
@@ -121,7 +123,7 @@ export function wrapInBrandedTemplate(body: string, preheader?: string, opts?: B
                 <a href="${BRAND.site}" style="color: #6b7280; text-decoration: underline;">JusticeHub</a> · Evidence-driven justice reform
               </p>
               <p style="margin: 0; font-size: 13px; color: #6b7280;">
-                <a href="${BRAND.site}/api/ghl/newsletter?email={{email}}" style="color: #6b7280; text-decoration: underline;">Unsubscribe</a>
+                <a href="${BRAND.site}/api/ghl/newsletter${opts?.recipientEmail ? `?email=${encodeURIComponent(opts.recipientEmail)}` : ''}" style="color: #6b7280; text-decoration: underline;">Unsubscribe</a>
               </p>
             </td>
           </tr>

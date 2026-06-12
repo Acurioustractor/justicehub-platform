@@ -47,7 +47,10 @@ export async function sendEmail(options: SendEmailOptions): Promise<{ id: string
   }
 
   try {
-    const html = wrapInBrandedTemplate(options.body, options.preheader, { heroImage: options.heroImage });
+    const html = wrapInBrandedTemplate(options.body, options.preheader, {
+      heroImage: options.heroImage,
+      recipientEmail: options.to,
+    });
 
     const result = await ghl.sendEmailToAddress({
       to: options.to,
@@ -94,7 +97,7 @@ export async function sendBatchEmail(options: SendBatchOptions): Promise<number>
     const email = options.emails[i];
 
     try {
-      const html = wrapInBrandedTemplate(email.body, email.preheader);
+      const html = wrapInBrandedTemplate(email.body, email.preheader, { recipientEmail: email.to });
 
       const result = await ghl.sendEmailToAddress({
         to: email.to,
