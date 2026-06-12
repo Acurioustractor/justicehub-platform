@@ -4,6 +4,8 @@ import { SURFACES } from '@/lib/justice-matrix/surfaces';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 45;
 
+const SEARCH_TIMEOUT_MS = 3500;
+
 type Surface = 'all' | 'refugee' | 'youth';
 type SourceKind = 'case' | 'campaign' | 'evidence';
 type Audience = 'plain' | 'easy' | 'legal';
@@ -835,6 +837,30 @@ async function searchMatrix(
   return (await res.json()) as SearchPayload;
 }
 
+async function searchMatrixWithTimeout(
+  request: Request,
+  question: string,
+  surface: Surface,
+  mode: 'keyword' | 'semantic',
+): Promise<SearchPayload | null> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<null>((resolve) => {
+    timer = setTimeout(() => {
+      console.warn(`[Ask the Matrix] ${mode} search timed out after ${SEARCH_TIMEOUT_MS}ms: ${question}`);
+      resolve(null);
+    }, SEARCH_TIMEOUT_MS);
+  });
+
+  try {
+    return await Promise.race([searchMatrix(request, question, surface, mode), timeout]);
+  } catch (error) {
+    console.warn(`[Ask the Matrix] ${mode} search failed: ${question}`, error);
+    return null;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 async function retrieve(request: Request, question: string, surface: Surface, history: ChatMessage[]): Promise<{
   citations: Citation[];
   mode: string;
@@ -851,14 +877,13 @@ async function retrieve(request: Request, question: string, surface: Surface, hi
     })),
   ];
 
-  const settled = await Promise.allSettled(attempts.map((attempt) => searchMatrix(request, attempt.query, surface, attempt.mode)));
+  const payloads = await Promise.all(attempts.map((attempt) => searchMatrixWithTimeout(request, attempt.query, surface, attempt.mode)));
   const scored = new Map<string, ScoredHit>();
   let total = 0;
   const modes = new Set<string>();
 
-  settled.forEach((result, index) => {
-    if (result.status !== 'fulfilled') return;
-    const payload = result.value;
+  payloads.forEach((payload, index) => {
+    if (!payload) return;
     const attempt = attempts[index];
     total = Math.max(total, payload.total ?? 0);
     modes.add(attempt.label.includes('fallback') ? 'keyword fallback' : payload.mode ?? attempt.mode);

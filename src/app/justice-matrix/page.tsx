@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { unstable_cache } from 'next/cache';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { ArrowRight, Globe, Scale, Megaphone, Database, BookOpen, Map as MapIcon, Network, FileText } from 'lucide-react';
 import { bucketJurisdiction } from '@/lib/justice-matrix/jurisdiction';
@@ -12,6 +13,8 @@ export const metadata = {
 };
 
 export const dynamic = 'force-dynamic';
+
+const LANDING_DATA_TIMEOUT_MS = 1500;
 
 // Local "research tool" tokens — matches /justice-matrix/explore so the entry
 // point and the tool feel like one experience. Scoped to this route; the global
@@ -38,6 +41,15 @@ interface Stats {
   regions: number;
   refugeeCases: number;
 }
+
+const DEFAULT_STATS: Stats = {
+  cases: 360,
+  campaigns: 67,
+  evidence: 595,
+  sources: 32,
+  regions: 8,
+  refugeeCases: 220,
+};
 
 type SP = Record<string, string | string[] | undefined>;
 
@@ -110,6 +122,13 @@ interface FeaturedSets {
   youthCampaigns: FeaturedCampaign[];
 }
 
+const EMPTY_FEATURED: FeaturedSets = {
+  refugeeCases: [],
+  refugeeCampaigns: [],
+  youthCases: [],
+  youthCampaigns: [],
+};
+
 const isRefugee = (cats: string[] | null) => !!cats?.some((c) => c === 'refugee' || c === 'asylum');
 
 // Two curated anchor sets share the `featured` flag: refugee & asylum (global)
@@ -150,6 +169,57 @@ interface IssueLite {
   surface: string;
 }
 
+const DEFAULT_ISSUES: IssueLite[] = [
+  {
+    slug: 'offshore-detention-third-country-transfer',
+    title: 'Offshore detention & third-country transfer',
+    question: 'When a state tries to move asylum seekers to a third country for processing, when does the law stop it?',
+    surface: 'refugee',
+  },
+  {
+    slug: 'non-refoulement-high-seas',
+    title: 'Non-refoulement on the high seas',
+    question: 'Does the duty not to return people to danger apply before they reach your shore?',
+    surface: 'refugee',
+  },
+  {
+    slug: 'immigration-detention-oversight',
+    title: 'Immigration detention & judicial oversight',
+    question: 'Can a state detain non-citizens without a court promptly checking why?',
+    surface: 'refugee',
+  },
+  {
+    slug: 'raise-the-age',
+    title: 'Raising the age of criminal responsibility',
+    question: 'How young is too young to be held criminally responsible, and why does the line keep moving?',
+    surface: 'youth',
+  },
+  {
+    slug: 'children-in-detention-inquiries',
+    title: 'Children in detention: the inquiries that exposed it',
+    question: 'What happens to children inside youth detention, and what have the inquiries found?',
+    surface: 'youth',
+  },
+  {
+    slug: 'justice-reinvestment-community-led',
+    title: 'Justice reinvestment & community-led alternatives',
+    question: 'What works instead of detention, and who should hold the money?',
+    surface: 'youth',
+  },
+  {
+    slug: 'deaths-in-custody-recommendations',
+    title: 'Deaths in custody & the unfinished recommendations',
+    question: 'Thirty years after the royal commission, why do First Nations people keep dying in custody?',
+    surface: 'youth',
+  },
+  {
+    slug: 'access-to-asylum-transit-bans',
+    title: 'Access to asylum & the spread of transit bans',
+    question: 'Can a government switch off the right to claim asylum at its border?',
+    surface: 'refugee',
+  },
+];
+
 // Issues are the stable wiki layer under the ask-first front door. Lightweight
 // query — no per-issue counts on the hub.
 async function loadIssues(): Promise<IssueLite[]> {
@@ -164,12 +234,47 @@ async function loadIssues(): Promise<IssueLite[]> {
   return (data ?? []) as IssueLite[];
 }
 
+const getCachedStats = unstable_cache(loadStats, ['justice-matrix-landing-stats-v2'], {
+  revalidate: 900,
+});
+
+const getCachedFeatured = unstable_cache(loadFeatured, ['justice-matrix-landing-featured-v2'], {
+  revalidate: 900,
+});
+
+const getCachedIssues = unstable_cache(loadIssues, ['justice-matrix-landing-issues-v2'], {
+  revalidate: 900,
+});
+
+async function withLandingFallback<T>(label: string, promise: Promise<T>, fallback: T): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<T>((resolve) => {
+    timer = setTimeout(() => {
+      console.warn(`[Justice Matrix] ${label} loader exceeded ${LANDING_DATA_TIMEOUT_MS}ms; rendering fallback.`);
+      resolve(fallback);
+    }, LANDING_DATA_TIMEOUT_MS);
+  });
+
+  try {
+    return await Promise.race([promise, timeout]);
+  } catch (error) {
+    console.warn(`[Justice Matrix] ${label} loader failed; rendering fallback.`, error);
+    return fallback;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 export default async function JusticeMatrixLandingPage({ searchParams }: { searchParams?: Promise<SP> }) {
   const rawParams = searchParams ? await searchParams : {};
   const initialQuestion = sp(rawParams.q).trim().slice(0, 500);
   const surfaceParam = sp(rawParams.surface);
   const initialSurface = surfaceParam === 'refugee' || surfaceParam === 'youth' ? surfaceParam : 'all';
-  const [stats, featured, issues] = await Promise.all([loadStats(), loadFeatured(), loadIssues()]);
+  const [stats, featured, issues] = await Promise.all([
+    withLandingFallback('stats', getCachedStats(), DEFAULT_STATS),
+    withLandingFallback('featured', getCachedFeatured(), EMPTY_FEATURED),
+    withLandingFallback('issues', getCachedIssues(), DEFAULT_ISSUES),
+  ]);
   const hasFeatured =
     featured.refugeeCases.length +
       featured.refugeeCampaigns.length +
