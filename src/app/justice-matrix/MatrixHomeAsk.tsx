@@ -19,6 +19,8 @@ import {
 
 type Surface = 'all' | 'refugee' | 'youth';
 type SourceKind = 'case' | 'campaign' | 'evidence';
+type Audience = 'plain' | 'easy' | 'legal';
+type Language = 'en' | 'es' | 'ar' | 'zh' | 'fr' | 'tok';
 
 interface Stats {
   cases: number;
@@ -60,6 +62,9 @@ interface AskResponse {
     total: number;
     provider: string;
   };
+  audience?: Audience;
+  language?: Language;
+  followUps?: string[];
 }
 
 const SANS = "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
@@ -90,6 +95,21 @@ const surfaces: Array<{ key: Surface; label: string; help: string }> = [
   { key: 'all', label: 'All', help: 'cases, campaigns, evidence' },
   { key: 'refugee', label: 'Refugee', help: 'asylum and borders' },
   { key: 'youth', label: 'Youth', help: 'children and detention' },
+];
+
+const audiences: Array<{ key: Audience; label: string }> = [
+  { key: 'plain', label: 'Plain' },
+  { key: 'easy', label: 'Easy' },
+  { key: 'legal', label: 'Legal detail' },
+];
+
+const languages: Array<{ key: Language; label: string }> = [
+  { key: 'en', label: 'English' },
+  { key: 'es', label: 'Español' },
+  { key: 'ar', label: 'العربية' },
+  { key: 'zh', label: '中文' },
+  { key: 'fr', label: 'Français' },
+  { key: 'tok', label: 'Tok Pisin' },
 ];
 
 function kindIcon(kind: SourceKind) {
@@ -127,13 +147,15 @@ export function MatrixHomeAsk({
   }, [issues]);
   const [question, setQuestion] = useState(initialQuestion.trim() || starters[0] || defaultPrompts[0]);
   const [surface, setSurface] = useState<Surface>(initialSurface);
+  const [audience, setAudience] = useState<Audience>('plain');
+  const [language, setLanguage] = useState<Language>('en');
   const [response, setResponse] = useState<AskResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const totalRecords = stats.cases + stats.campaigns + stats.evidence;
   const canSubmit = question.trim().length >= 3 && !loading;
 
-  async function submitQuestion(value = question, nextSurface = surface) {
+  async function submitQuestion(value = question, nextSurface = surface, history: Array<{ role: 'user' | 'assistant'; content: string }> = []) {
     const cleaned = value.trim();
     if (cleaned.length < 3 || loading) return;
 
@@ -145,7 +167,7 @@ export function MatrixHomeAsk({
       const res = await fetch('/api/justice-matrix/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: cleaned, surface: nextSurface }),
+        body: JSON.stringify({ question: cleaned, surface: nextSurface, history, audience, language }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error ?? 'Ask the Matrix failed.');
@@ -217,7 +239,7 @@ export function MatrixHomeAsk({
                 style={{ color: C.ink }}
                 placeholder="Ask in plain language..."
               />
-              <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="mt-2 grid gap-2 lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.9fr)_auto] lg:items-end">
                 <div className="grid grid-cols-3 gap-1 rounded-md border p-1" style={{ borderColor: C.border, background: '#fff' }}>
                   {surfaces.map((item) => {
                     const selected = surface === item.key;
@@ -236,10 +258,46 @@ export function MatrixHomeAsk({
                     );
                   })}
                 </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="block">
+                    <span className="mb-1 block text-[10px] uppercase" style={{ color: C.muted, fontFamily: MONO, letterSpacing: '0.12em' }}>
+                      Style
+                    </span>
+                    <select
+                      value={audience}
+                      onChange={(event) => setAudience(event.target.value as Audience)}
+                      className="h-10 w-full rounded-md border bg-white px-2 text-sm outline-none"
+                      style={{ borderColor: C.border, color: C.ink }}
+                    >
+                      {audiences.map((item) => (
+                        <option key={item.key} value={item.key}>
+                          {item.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="mb-1 block text-[10px] uppercase" style={{ color: C.muted, fontFamily: MONO, letterSpacing: '0.12em' }}>
+                      Language
+                    </span>
+                    <select
+                      value={language}
+                      onChange={(event) => setLanguage(event.target.value as Language)}
+                      className="h-10 w-full rounded-md border bg-white px-2 text-sm outline-none"
+                      style={{ borderColor: C.border, color: C.ink }}
+                    >
+                      {languages.map((item) => (
+                        <option key={item.key} value={item.key}>
+                          {item.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className="inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold disabled:opacity-50"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold disabled:opacity-50"
                   style={{ background: C.gold, color: C.dark }}
                 >
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
@@ -257,7 +315,16 @@ export function MatrixHomeAsk({
                 Searching Matrix records and preparing citations...
               </div>
             ) : response ? (
-              <AnswerPanel response={response} surface={surface} />
+              <AnswerPanel
+                response={response}
+                surface={surface}
+                onFollowUp={(followUp) =>
+                  void submitQuestion(followUp, surface, [
+                    { role: 'user', content: response.question },
+                    { role: 'assistant', content: response.answer },
+                  ])
+                }
+              />
             ) : (
               <ReadyPanel starters={starters} surface={surface} onAsk={(starter) => void submitQuestion(starter, surface)} />
             )}
@@ -376,7 +443,8 @@ function ReadyPanel({
         </div>
         <div className="grid gap-2 sm:grid-cols-2">
           {[
-            'A short answer in plain language',
+            'A short answer at the chosen reading level',
+            'Language options for first-pass understanding',
             'Cited cases, campaigns and evidence',
             'Direct source links where available',
             'Limits and not-legal-advice boundary',
@@ -420,7 +488,28 @@ function ReadyPanel({
   );
 }
 
-function AnswerPanel({ response, surface }: { response: AskResponse; surface: Surface }) {
+function AnswerPanel({
+  response,
+  surface,
+  onFollowUp,
+}: {
+  response: AskResponse;
+  surface: Surface;
+  onFollowUp: (question: string) => void;
+}) {
+  const [followUp, setFollowUp] = useState('');
+  const suggestions = response.followUps ?? [];
+  const audienceLabel = audiences.find((item) => item.key === response.audience)?.label ?? 'Plain';
+  const languageLabel = languages.find((item) => item.key === response.language)?.label ?? 'English';
+
+  function submitFollowUp(e: FormEvent) {
+    e.preventDefault();
+    const cleaned = followUp.trim();
+    if (!cleaned) return;
+    setFollowUp('');
+    onFollowUp(cleaned);
+  }
+
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -433,7 +522,7 @@ function AnswerPanel({ response, surface }: { response: AskResponse; surface: Su
           </p>
         </div>
         <div className="rounded px-2 py-1 text-xs" style={{ background: '#f4f4f5', color: C.muted, fontFamily: MONO }}>
-          {response.retrieval.provider} | {response.retrieval.mode} | {response.citations.length} cited
+          {audienceLabel} | {languageLabel} | {response.retrieval.mode} | {response.citations.length} cited
         </div>
       </div>
 
@@ -459,6 +548,44 @@ function AnswerPanel({ response, surface }: { response: AskResponse; surface: Su
             {response.answer}
           </ReactMarkdown>
         </div>
+      </div>
+
+      <div className="rounded-lg border p-3" style={{ borderColor: C.border, background: '#fff' }}>
+        <div className="mb-2 text-xs uppercase" style={{ color: C.muted, fontFamily: MONO, letterSpacing: '0.14em' }}>
+          Ask a follow-up
+        </div>
+        {suggestions.length ? (
+          <div className="mb-3 grid gap-2">
+            {suggestions.map((suggestion) => (
+              <button
+                key={suggestion}
+                type="button"
+                onClick={() => onFollowUp(suggestion)}
+                className="group flex items-center justify-between gap-3 rounded-md border px-3 py-2 text-left text-sm leading-5 transition-colors hover:border-zinc-300"
+                style={{ borderColor: C.border, color: C.body, background: C.page }}
+              >
+                <span>{suggestion}</span>
+                <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" style={{ color: C.accent }} />
+              </button>
+            ))}
+          </div>
+        ) : null}
+        <form onSubmit={submitFollowUp} className="flex flex-col gap-2 sm:flex-row">
+          <input
+            value={followUp}
+            onChange={(event) => setFollowUp(event.target.value)}
+            placeholder="Ask another question about this answer..."
+            className="min-w-0 flex-1 rounded-md border px-3 py-2 text-sm outline-none"
+            style={{ borderColor: C.border, color: C.ink }}
+          />
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-semibold"
+            style={{ background: C.accent, color: '#fff' }}
+          >
+            Follow up <ArrowRight className="h-4 w-4" />
+          </button>
+        </form>
       </div>
 
       <div>

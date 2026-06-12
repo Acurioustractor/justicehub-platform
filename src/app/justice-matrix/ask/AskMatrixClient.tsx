@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState } from 'react';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
 import {
   ArrowRight,
   BookOpenCheck,
@@ -16,6 +17,8 @@ import { MatrixFlowNav } from '../_components/MatrixFlowNav';
 
 type Surface = 'all' | 'refugee' | 'youth';
 type SourceKind = 'case' | 'campaign' | 'evidence';
+type Audience = 'plain' | 'easy' | 'legal';
+type Language = 'en' | 'es' | 'ar' | 'zh' | 'fr' | 'tok';
 
 interface Citation {
   id: string;
@@ -41,6 +44,14 @@ interface AskResponse {
     total: number;
     provider: string;
   };
+  audience?: Audience;
+  language?: Language;
+  followUps?: string[];
+}
+
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
 }
 
 const SANS = "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
@@ -72,6 +83,21 @@ const surfaces: Array<{ key: Surface; label: string }> = [
   { key: 'youth', label: 'Youth' },
 ];
 
+const audiences: Array<{ key: Audience; label: string }> = [
+  { key: 'plain', label: 'Plain' },
+  { key: 'easy', label: 'Easy' },
+  { key: 'legal', label: 'Legal detail' },
+];
+
+const languages: Array<{ key: Language; label: string }> = [
+  { key: 'en', label: 'English' },
+  { key: 'es', label: 'Español' },
+  { key: 'ar', label: 'العربية' },
+  { key: 'zh', label: '中文' },
+  { key: 'fr', label: 'Français' },
+  { key: 'tok', label: 'Tok Pisin' },
+];
+
 function kindIcon(kind: SourceKind) {
   if (kind === 'case') return <Scale className="h-4 w-4" />;
   if (kind === 'campaign') return <Megaphone className="h-4 w-4" />;
@@ -93,16 +119,20 @@ export function AskMatrixClient({
 }) {
   const [question, setQuestion] = useState(initialQuestion.trim() || starters[0]);
   const [surface, setSurface] = useState<Surface>(initialSurface);
+  const [audience, setAudience] = useState<Audience>('plain');
+  const [language, setLanguage] = useState<Language>('en');
   const [response, setResponse] = useState<AskResponse | null>(null);
+  const [history, setHistory] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const canSubmit = useMemo(() => question.trim().length >= 3 && !loading, [question, loading]);
 
-  async function submit(e?: FormEvent) {
-    e?.preventDefault();
-    if (!canSubmit) return;
+  async function submitQuestion(value: string, nextHistory = history) {
+    const cleaned = value.trim();
+    if (cleaned.length < 3 || loading) return;
 
+    setQuestion(cleaned);
     setLoading(true);
     setError(null);
 
@@ -110,11 +140,17 @@ export function AskMatrixClient({
       const res = await fetch('/api/justice-matrix/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question, surface }),
+        body: JSON.stringify({ question: cleaned, surface, history: nextHistory, audience, language }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error ?? 'Ask the Matrix failed.');
-      setResponse(json as AskResponse);
+      const nextResponse = json as AskResponse;
+      setResponse(nextResponse);
+      setHistory([
+        ...nextHistory,
+        { role: 'user', content: cleaned },
+        { role: 'assistant', content: nextResponse.answer },
+      ].slice(-8));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ask the Matrix failed.');
     } finally {
@@ -122,25 +158,18 @@ export function AskMatrixClient({
     }
   }
 
-  async function askStarter(value: string) {
-    setQuestion(value);
-    setLoading(true);
-    setError(null);
+  async function submit(e?: FormEvent) {
+    e?.preventDefault();
+    if (!canSubmit) return;
+    await submitQuestion(question);
+  }
 
-    try {
-      const res = await fetch('/api/justice-matrix/ask', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: value, surface }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error ?? 'Ask the Matrix failed.');
-      setResponse(json as AskResponse);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ask the Matrix failed.');
-    } finally {
-      setLoading(false);
-    }
+  async function askStarter(value: string) {
+    await submitQuestion(value);
+  }
+
+  async function askFollowUp(value: string) {
+    await submitQuestion(value, history);
   }
 
   return (
@@ -241,6 +270,43 @@ export function AskMatrixClient({
               </div>
             </div>
 
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <label className="block">
+                <span className="mb-2 block text-xs uppercase" style={{ color: C.muted, fontFamily: MONO, letterSpacing: '0.14em' }}>
+                  Style
+                </span>
+                <select
+                  value={audience}
+                  onChange={(event) => setAudience(event.target.value as Audience)}
+                  className="h-10 w-full rounded-md border bg-white px-3 text-sm outline-none"
+                  style={{ borderColor: C.border, color: C.ink }}
+                >
+                  {audiences.map((item) => (
+                    <option key={item.key} value={item.key}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block">
+                <span className="mb-2 block text-xs uppercase" style={{ color: C.muted, fontFamily: MONO, letterSpacing: '0.14em' }}>
+                  Language
+                </span>
+                <select
+                  value={language}
+                  onChange={(event) => setLanguage(event.target.value as Language)}
+                  className="h-10 w-full rounded-md border bg-white px-3 text-sm outline-none"
+                  style={{ borderColor: C.border, color: C.ink }}
+                >
+                  {languages.map((item) => (
+                    <option key={item.key} value={item.key}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
             <button
               type="submit"
               disabled={!canSubmit}
@@ -284,7 +350,9 @@ export function AskMatrixClient({
               </div>
               {response ? (
                 <div className="rounded px-2 py-1 text-xs" style={{ background: '#f4f4f5', color: C.muted, fontFamily: MONO }}>
-                  {response.retrieval.provider} | {response.retrieval.mode} | {response.citations.length} cited
+                  {(audiences.find((item) => item.key === response.audience)?.label ?? 'Plain')} |{' '}
+                  {(languages.find((item) => item.key === response.language)?.label ?? 'English')} | {response.retrieval.mode} |{' '}
+                  {response.citations.length} cited
                 </div>
               ) : null}
             </div>
@@ -298,9 +366,29 @@ export function AskMatrixClient({
               </div>
             ) : response ? (
               <div className="space-y-5">
-                <div className="whitespace-pre-wrap text-[15px] leading-7" style={{ color: C.body }}>
-                  {response.answer}
+                <div className="space-y-3 text-[15px] leading-7" style={{ color: C.body }}>
+                  <ReactMarkdown
+                    components={{
+                      p: ({ children }) => <p style={{ color: C.body }}>{children}</p>,
+                      strong: ({ children }) => <strong style={{ color: C.ink }}>{children}</strong>,
+                      ul: ({ children }) => (
+                        <ul className="list-disc space-y-1 pl-5" style={{ color: C.body }}>
+                          {children}
+                        </ul>
+                      ),
+                      ol: ({ children }) => (
+                        <ol className="list-decimal space-y-1 pl-5" style={{ color: C.body }}>
+                          {children}
+                        </ol>
+                      ),
+                      li: ({ children }) => <li>{children}</li>,
+                    }}
+                  >
+                    {response.answer}
+                  </ReactMarkdown>
                 </div>
+
+                <FollowUpBox suggestions={response.followUps ?? []} onFollowUp={(value) => void askFollowUp(value)} />
 
                 <div>
                   <div className="mb-3 text-xs uppercase" style={{ color: C.muted, fontFamily: MONO, letterSpacing: '0.14em' }}>
@@ -327,6 +415,64 @@ export function AskMatrixClient({
         </section>
       </section>
     </main>
+  );
+}
+
+function FollowUpBox({
+  suggestions,
+  onFollowUp,
+}: {
+  suggestions: string[];
+  onFollowUp: (value: string) => void;
+}) {
+  const [value, setValue] = useState('');
+
+  function submit(e: FormEvent) {
+    e.preventDefault();
+    const cleaned = value.trim();
+    if (!cleaned) return;
+    setValue('');
+    onFollowUp(cleaned);
+  }
+
+  return (
+    <div className="rounded-lg border p-4" style={{ background: '#fff', borderColor: C.border }}>
+      <div className="mb-3 text-xs uppercase" style={{ color: C.muted, fontFamily: MONO, letterSpacing: '0.14em' }}>
+        Ask a follow-up
+      </div>
+      {suggestions.length ? (
+        <div className="mb-3 grid gap-2 md:grid-cols-2">
+          {suggestions.map((suggestion) => (
+            <button
+              key={suggestion}
+              type="button"
+              onClick={() => onFollowUp(suggestion)}
+              className="group flex items-center justify-between gap-3 rounded-md border px-3 py-2 text-left text-sm leading-5 transition-colors hover:border-zinc-300"
+              style={{ borderColor: C.border, color: C.body, background: C.page }}
+            >
+              <span>{suggestion}</span>
+              <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" style={{ color: C.accent }} />
+            </button>
+          ))}
+        </div>
+      ) : null}
+      <form onSubmit={submit} className="flex flex-col gap-2 sm:flex-row">
+        <input
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+          placeholder="Ask another question about this answer..."
+          className="min-w-0 flex-1 rounded-md border px-3 py-2 text-sm outline-none"
+          style={{ borderColor: C.border, color: C.ink }}
+        />
+        <button
+          type="submit"
+          className="inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-semibold"
+          style={{ background: C.accent, color: '#fff' }}
+        >
+          Ask follow-up <ArrowRight className="h-4 w-4" />
+        </button>
+      </form>
+    </div>
   );
 }
 
