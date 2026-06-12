@@ -156,12 +156,16 @@ function RegisterDoorForm({ kind }: { kind: 'eoi' | 'support' }) {
           tags: isEoi ? ['experience:eoi'] : ['engagement:supporter'],
           turnstile_token: turnstileToken,
         }),
+        signal: AbortSignal.timeout(15000),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Something went wrong. Try again.');
       setSubmitted(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Try again.');
+      const msg = err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError')
+        ? 'The site is taking too long to respond and your details were NOT saved.'
+        : err instanceof Error ? err.message : 'Something went wrong and your details were NOT saved.';
+      setError(`${msg} Please try again, or email ben@justicehub.com.au and we'll register you directly.`);
     } finally {
       setSubmitting(false);
     }

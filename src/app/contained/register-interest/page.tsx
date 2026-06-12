@@ -53,6 +53,7 @@ export default function RegisterInterestPage() {
           newsletter: formData.newsletter,
           message: formData.message,
         }),
+        signal: AbortSignal.timeout(15000),
       });
 
       if (!res.ok) {
@@ -62,7 +63,10 @@ export default function RegisterInterestPage() {
 
       setSubmitted(true);
     } catch (err: any) {
-      setError(err.message || 'Something went wrong. Please try again.');
+      const msg = err?.name === 'TimeoutError' || err?.name === 'AbortError'
+        ? 'The site is taking too long to respond and your details were NOT saved.'
+        : err.message || 'Something went wrong and your details were NOT saved.';
+      setError(`${msg} Please try again, or email ben@justicehub.com.au and we'll register you directly.`);
     } finally {
       setLoading(false);
     }

@@ -139,6 +139,7 @@ function ContainedRegisterPageContent() {
           tags: [cohort.tag],
           turnstile_token: turnstileToken,
         }),
+        signal: AbortSignal.timeout(15000),
       });
 
       const data = await response.json();
@@ -149,7 +150,10 @@ function ContainedRegisterPageContent() {
 
       setStep(3);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      const msg = err instanceof Error && (err.name === 'TimeoutError' || err.name === 'AbortError')
+        ? 'The site is taking too long to respond and your registration was NOT saved.'
+        : err instanceof Error ? err.message : 'Something went wrong and your registration was NOT saved.';
+      setError(`${msg} Please try again, or email ben@justicehub.com.au and we'll register you directly.`);
     } finally {
       setLoading(false);
     }
