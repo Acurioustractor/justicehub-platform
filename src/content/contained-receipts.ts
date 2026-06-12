@@ -63,11 +63,16 @@ The CONTAINED team at JusticeHub`,
 export function nominatorReceipt(opts: {
   nominatorName: string;
   nomineeName: string;
+  nomineeTitle?: string | null;
   nomineeOrg?: string | null;
   reason?: string | null;
   nominationCount: number;
 }): ReceiptEmail {
-  const { nominatorName, nomineeName, nomineeOrg, reason, nominationCount } = opts;
+  const { nominatorName, nomineeName, nomineeTitle, nomineeOrg, reason, nominationCount } = opts;
+  const tileParams = new URLSearchParams({ name: nomineeName });
+  if (nomineeTitle) tileParams.set('title', nomineeTitle);
+  if (reason) tileParams.set('reason', reason);
+  const tileUrl = `${SITE}/api/contained/nomination-tile?${tileParams.toString()}`;
   return {
     subject: 'Your nomination has been received',
     preheader: `You nominated ${nomineeName} for CONTAINED experience.`,
@@ -85,6 +90,10 @@ WHAT HAPPENS NEXT
 Our team reviews every nomination. When CONTAINED arrives in their city, we'll reach out with a personal invitation backed by your endorsement.
 
 The more people who nominate the same leader, the harder it is to ignore.
+
+MAKE IT PUBLIC
+We made you a share tile with ${nomineeName}'s name on it. Download it, post it, tag them:
+${tileUrl}
 
 Share the nomination link: ${SITE}/contained#nominate
 

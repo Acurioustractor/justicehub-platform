@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
-import { Send, CheckCircle, ArrowRight } from 'lucide-react';
+import { Send, CheckCircle, ArrowRight, Download, Share2 } from 'lucide-react';
 import { TurnstileWidget } from '@/components/ui/turnstile-widget';
 
 // User-facing labels map to the API's VALID_CATEGORIES values
@@ -35,7 +35,31 @@ export function NominateForm() {
   const [turnstileToken, setTurnstileToken] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const tileUrl = `/api/contained/nomination-tile?${new URLSearchParams({
+    name: nomineeName.trim(),
+    ...(nomineeTitle.trim() ? { title: nomineeTitle.trim() } : {}),
+    reason: reason.trim(),
+  }).toString()}`;
+
+  const shareText = `I just nominated ${nomineeName.trim()} to walk through CONTAINED — three rooms, ten minutes in each, inside the system they fund. Decision-makers should feel what they sign off on. Add your nomination: justicehub.com.au/contained#nominate`;
+
+  async function handleShare() {
+    const absoluteTile = `${window.location.origin}${tileUrl}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ text: shareText, url: absoluteTile });
+        return;
+      } catch {
+        // fall through to clipboard if the user cancels share
+      }
+    }
+    await navigator.clipboard.writeText(`${shareText}\n${absoluteTile}`).catch(() => {});
+    setShareCopied(true);
+    setTimeout(() => setShareCopied(false), 2500);
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -123,6 +147,43 @@ export function NominateForm() {
               Thank you. {nomineeName.trim()} has been added to the wall. The more
               names that stack up, the harder this is to ignore.
             </p>
+
+            {/* Share tile: generated from this nomination so it can go straight to social */}
+            <div className="border-2 border-[#0A0A0A] bg-[#F5F0E8] p-6 mb-8 text-left">
+              <span
+                className="text-[#DC2626] text-xs font-medium uppercase block mb-3"
+                style={{ fontFamily: MONO, letterSpacing: '0.3em' }}
+              >
+                Make it public
+              </span>
+              <p className="text-[#0A0A0A]/70 text-sm mb-4" style={{ fontFamily: MONO }}>
+                Download your nomination tile and post it. Tag them. Pressure works
+                in public.
+              </p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={tileUrl}
+                alt={`${nomineeName.trim()} has been nominated to walk through CONTAINED`}
+                className="w-full max-w-sm mx-auto border-2 border-[#0A0A0A] mb-4"
+              />
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <a
+                  href={tileUrl}
+                  download="contained-nominated.png"
+                  className="inline-flex items-center justify-center gap-2 bg-[#0A0A0A] text-white px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-[#DC2626] transition-colors"
+                >
+                  <Download className="w-4 h-4" /> Download Tile
+                </a>
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  className="inline-flex items-center justify-center gap-2 border-2 border-[#0A0A0A] text-[#0A0A0A] px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-[#0A0A0A] hover:text-white transition-colors"
+                >
+                  <Share2 className="w-4 h-4" /> {shareCopied ? 'Caption Copied' : 'Share'}
+                </button>
+              </div>
+            </div>
+
             <Link
               href="/contained/nominations"
               className="inline-flex items-center justify-center gap-2 bg-[#DC2626] text-white px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-red-700 transition-colors"
