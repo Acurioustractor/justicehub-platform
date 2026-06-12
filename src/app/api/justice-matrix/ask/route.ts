@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 export const maxDuration = 45;
 
 const SEARCH_TIMEOUT_MS = 3500;
+const PROVIDER_TIMEOUT_MS = 3500;
 
 type Surface = 'all' | 'refugee' | 'youth';
 type SourceKind = 'case' | 'campaign' | 'evidence';
@@ -270,6 +271,21 @@ function isRefugeeQuestion(value: string, surface: Surface): boolean {
       value,
     )
   );
+}
+
+function inferredSurfaceForQuestion(value: string): Surface {
+  const youth = isYouthQuestion(value, 'all');
+  const refugee = isRefugeeQuestion(value, 'all');
+  if (youth && !refugee) return 'youth';
+  if (refugee && !youth) return 'refugee';
+  return 'all';
+}
+
+function retrievalSurfaceForQuestion(value: string, requestedSurface: Surface): Surface {
+  const inferred = inferredSurfaceForQuestion(value);
+  if (requestedSurface === 'all') return inferred;
+  if (inferred !== 'all' && inferred !== requestedSurface) return inferred;
+  return requestedSurface;
 }
 
 function fallbackQueries(question: string, surface: Surface, history: ChatMessage[] = []): string[] {
@@ -764,8 +780,11 @@ async function askProvider(
   language: Language,
 ): Promise<string> {
   const contextualQuestion = standaloneQuestion(question, history);
+  const controller = new AbortController();
+  const providerTimer = setTimeout(() => controller.abort(), PROVIDER_TIMEOUT_MS);
   const res = await fetch(provider.url, {
     method: 'POST',
+    signal: controller.signal,
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${provider.key}`,
@@ -773,7 +792,7 @@ async function askProvider(
     body: JSON.stringify({
       model: provider.model,
       temperature: 0.2,
-      max_tokens: 1100,
+      max_tokens: 1800,
       messages: [
         { role: 'system', content: `Current date: ${currentDateLabel()}.\n\n${SYSTEM_PROMPT}` },
         {
@@ -793,7 +812,7 @@ async function askProvider(
         },
       ],
     }),
-  });
+  }).finally(() => clearTimeout(providerTimer));
 
   if (!res.ok) {
     const text = await res.text().catch(() => '');
@@ -805,7 +824,20 @@ async function askProvider(
   if (typeof content !== 'string' || !content.trim()) {
     throw new Error(`${provider.name} returned no answer`);
   }
-  return content.trim();
+  const answer = content.trim();
+  const finishReason = json?.choices?.[0]?.finish_reason;
+  if (finishReason === 'length' || looksTruncated(answer)) {
+    throw new Error(`${provider.name} returned a truncated answer`);
+  }
+  return answer;
+}
+
+function looksTruncated(answer: string): boolean {
+  const trimmed = answer.trim();
+  if (trimmed.length < 80) return true;
+  if (/[.!?。！？:：)\]]$/.test(trimmed)) return false;
+  if (/\[[C]\d+\]$/.test(trimmed)) return false;
+  return /\b(and|or|but|the|a|an|of|to|for|with|by|from|whether|because|including|la|el|y|o|de|que|et|ou|avec)$/i.test(trimmed) || !/[.!?。！？]$/.test(trimmed);
 }
 
 async function searchMatrix(
@@ -1004,27 +1036,29 @@ export async function POST(request: Request) {
     const audience = normaliseAudience(body.audience);
     const language = normaliseLanguage(body.language);
     const contextualQuestion = standaloneQuestion(question, history);
+    const retrievalSurface = retrievalSurfaceForQuestion(contextualQuestion, surface);
 
     if (question.length < 3) {
       return NextResponse.json({ error: 'Question must be at least 3 characters.' }, { status: 400 });
     }
 
-    const retrieved = await retrieve(request, question, surface, history);
+    const retrieved = await retrieve(request, question, retrievalSurface, history);
     const provider = chooseProvider();
+    const directAnswerAvailable = directFrame(contextualQuestion, retrievalSurface, audience, language) !== null;
 
     let answer: string;
     let providerName = 'retrieval-only';
     try {
-      if (provider && retrieved.citations.length) {
-        answer = await askProvider(provider, question, surface, retrieved.citations, history, audience, language);
-        answer = enforceDirectOpening(answer, contextualQuestion, surface, audience, language);
+      if (provider && retrieved.citations.length && !directAnswerAvailable) {
+        answer = await askProvider(provider, question, retrievalSurface, retrieved.citations, history, audience, language);
+        answer = enforceDirectOpening(answer, contextualQuestion, retrievalSurface, audience, language);
         providerName = provider.name;
       } else {
-        answer = fallbackAnswer(contextualQuestion, surface, retrieved.citations, retrieved.mode, audience, language);
+        answer = fallbackAnswer(contextualQuestion, retrievalSurface, retrieved.citations, retrieved.mode, audience, language);
       }
     } catch (error) {
       console.warn('[Ask the Matrix] provider failed, falling back:', error);
-      answer = fallbackAnswer(contextualQuestion, surface, retrieved.citations, retrieved.mode, audience, language);
+      answer = fallbackAnswer(contextualQuestion, retrievalSurface, retrieved.citations, retrieved.mode, audience, language);
     }
 
     return NextResponse.json({
@@ -1036,10 +1070,11 @@ export async function POST(request: Request) {
         mode: retrieved.mode,
         total: retrieved.total,
         provider: providerName,
+        surface: retrievalSurface,
       },
       audience,
       language,
-      followUps: suggestedFollowUps(contextualQuestion, surface, retrieved.citations),
+      followUps: suggestedFollowUps(contextualQuestion, retrievalSurface, retrieved.citations),
     });
   } catch (error) {
     console.error('[Ask the Matrix] failed:', error);

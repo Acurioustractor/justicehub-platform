@@ -84,12 +84,28 @@ const C = {
   purpleWash: 'rgba(74,37,96,0.10)',
 };
 
-const defaultPrompts = [
-  'Can Australia send people seeking asylum to PNG or another third country?',
-  'Can they keep a boy of 10 in youth detention?',
-  'What UN rules apply to offshore detention and non-refoulement?',
-  'Who is working on campaigns about immigration detention?',
-];
+const defaultPromptsBySurface: Record<Surface, string[]> = {
+  all: [
+    'Can Australia send people seeking asylum to PNG or another third country?',
+    'Can they keep a boy of 10 in youth detention?',
+    'What UN rules apply to offshore detention and non-refoulement?',
+    'Who is working on campaigns about immigration detention?',
+  ],
+  refugee: [
+    'Can Australia send people seeking asylum to PNG or another third country?',
+    'When does non-refoulement stop a transfer to another country?',
+    'What UN rules apply to offshore detention and non-refoulement?',
+    'Who is working on campaigns about immigration detention?',
+  ],
+  youth: [
+    'Can they keep a boy of 10 in youth detention?',
+    'What is the current minimum age of criminal responsibility in Queensland?',
+    'Show me the records about watch houses, remand, and children.',
+    'What works instead of detention for children?',
+  ],
+};
+
+const allDefaultPrompts = Array.from(new Set(Object.values(defaultPromptsBySurface).flat()));
 
 const surfaces: Array<{ key: Surface; label: string; help: string }> = [
   { key: 'all', label: 'All', help: 'cases, campaigns, evidence' },
@@ -130,6 +146,20 @@ function askHref(question: string, surface: Surface) {
   return `/justice-matrix/ask?${params.toString()}`;
 }
 
+function starterQuestions(issues: IssueLite[], surface: Surface): string[] {
+  const issueQuestions = issues
+    .filter((issue) => surface === 'all' || issue.surface === surface)
+    .map((issue) => issue.question)
+    .filter(Boolean)
+    .slice(0, 3);
+  return Array.from(new Set([...issueQuestions, ...defaultPromptsBySurface[surface], ...allDefaultPrompts])).slice(0, 6);
+}
+
+function isStarterQuestion(question: string, issues: IssueLite[]): boolean {
+  const knownQuestions = new Set([...issues.map((issue) => issue.question), ...allDefaultPrompts]);
+  return knownQuestions.has(question);
+}
+
 export function MatrixHomeAsk({
   stats,
   issues,
@@ -141,12 +171,10 @@ export function MatrixHomeAsk({
   initialQuestion?: string;
   initialSurface?: Surface;
 }) {
-  const starters = useMemo(() => {
-    const issueQuestions = issues.map((issue) => issue.question).filter(Boolean).slice(0, 3);
-    return Array.from(new Set([...issueQuestions, ...defaultPrompts])).slice(0, 6);
-  }, [issues]);
-  const [question, setQuestion] = useState(initialQuestion.trim() || starters[0] || defaultPrompts[0]);
+  const initialStarters = useMemo(() => starterQuestions(issues, initialSurface), [issues, initialSurface]);
   const [surface, setSurface] = useState<Surface>(initialSurface);
+  const starters = useMemo(() => starterQuestions(issues, surface), [issues, surface]);
+  const [question, setQuestion] = useState(initialQuestion.trim() || initialStarters[0] || defaultPromptsBySurface.all[0]);
   const [audience, setAudience] = useState<Audience>('plain');
   const [language, setLanguage] = useState<Language>('en');
   const [response, setResponse] = useState<AskResponse | null>(null);
@@ -249,7 +277,15 @@ export function MatrixHomeAsk({
                         type="button"
                         title={item.help}
                         aria-pressed={selected}
-                        onClick={() => setSurface(item.key)}
+                        onClick={() => {
+                          const nextStarters = starterQuestions(issues, item.key);
+                          setSurface(item.key);
+                          setResponse(null);
+                          setError(null);
+                          if (isStarterQuestion(question, issues)) {
+                            setQuestion(nextStarters[0] ?? question);
+                          }
+                        }}
                         className="rounded px-2 py-1.5 text-xs font-semibold"
                         style={{ background: selected ? C.accent : 'transparent', color: selected ? '#fff' : C.body }}
                       >
@@ -477,7 +513,7 @@ function ReadyPanel({
       </div>
 
       <div className="flex flex-wrap gap-2 text-xs font-semibold">
-        <Link href={askHref(starters[0] ?? defaultPrompts[0], surface)} className="inline-flex items-center gap-1 rounded-full border px-3 py-1.5" style={{ borderColor: C.border, color: C.accent }}>
+        <Link href={askHref(starters[0] ?? defaultPromptsBySurface.all[0], surface)} className="inline-flex items-center gap-1 rounded-full border px-3 py-1.5" style={{ borderColor: C.border, color: C.accent }}>
           Open full ask workspace <ArrowRight className="h-3 w-3" />
         </Link>
         <Link href="/justice-matrix/how-it-works" className="inline-flex items-center gap-1 rounded-full border px-3 py-1.5" style={{ borderColor: C.border, color: C.muted }}>
@@ -526,7 +562,7 @@ function AnswerPanel({
         </div>
       </div>
 
-      <div className="max-h-[380px] overflow-y-auto rounded-lg border p-4" style={{ borderColor: C.border, background: C.page }}>
+      <div className="rounded-lg border p-4" style={{ borderColor: C.border, background: C.page }}>
         <div className="space-y-3 text-[14px] leading-7">
           <ReactMarkdown
             components={{
