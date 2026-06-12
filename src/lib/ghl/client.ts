@@ -520,6 +520,7 @@ export class GHLClient {
     subject: string;
     html: string;
     emailFrom?: string;
+    emailTo?: string;
   }): Promise<{ id: string } | null> {
     if (!this.isConfigured()) {
       return null;
@@ -535,6 +536,10 @@ export class GHLClient {
           subject: options.subject,
           html: options.html,
           emailFrom: options.emailFrom || 'JusticeHub <hello@justicehub.com.au>',
+          // Deliver to the address the person actually typed — without this,
+          // GHL sends to the contact's PRIMARY email, which is wrong when the
+          // typed address is an additionalEmail of a merged contact.
+          ...(options.emailTo ? { emailTo: options.emailTo } : {}),
         }),
       });
 
@@ -587,6 +592,7 @@ export class GHLClient {
         subject: options.subject,
         html: options.html,
         emailFrom: options.emailFrom,
+        emailTo: options.to,
       });
     } catch (error) {
       console.error('[GHL] sendEmailToAddress error:', error);

@@ -159,6 +159,70 @@ export async function POST(request: NextRequest) {
 }
 
 /**
+ * GET /api/ghl/newsletter?email=...
+ *
+ * Unsubscribe link target from email footers — browsers issue a GET,
+ * so this performs the unsubscribe and renders a confirmation page.
+ */
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const sanitizedEmail = sanitizeEmail(searchParams.get('email') || '');
+
+  if (!sanitizedEmail) {
+    return unsubscribePage('That unsubscribe link is missing a valid email address. Reply to any of our emails and we will remove you by hand.', 400);
+  }
+
+  try {
+    await unsubscribe(sanitizedEmail);
+    return unsubscribePage(`${sanitizedEmail} has been unsubscribed. You will not hear from us again.`, 200);
+  } catch (error) {
+    console.error('GHL newsletter unsubscribe (GET) error:', error);
+    return unsubscribePage('Something went wrong unsubscribing you. Reply to any of our emails and we will remove you by hand.', 500);
+  }
+}
+
+function unsubscribePage(message: string, status: number) {
+  return new NextResponse(
+    `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Unsubscribe · JusticeHub</title></head>
+<body style="margin: 0; background-color: #F5F0E8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #0A0A0A;">
+  <div style="max-width: 560px; margin: 80px auto; padding: 0 20px;">
+    <p style="font-weight: 700; font-size: 22px; letter-spacing: -0.03em; border-bottom: 3px solid #DC2626; padding-bottom: 20px;">JUSTICEHUB</p>
+    <p style="font-size: 17px; line-height: 1.6;">${message}</p>
+    <p style="font-size: 14px;"><a href="https://justicehub.com.au" style="color: #DC2626;">justicehub.com.au</a></p>
+  </div>
+</body>
+</html>`,
+    { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+  );
+}
+
+async function unsubscribe(sanitizedEmail: string) {
+  const supabase = createServiceClient();
+  const ghl = getGHLClient();
+
+  const { error: updateError } = await supabase
+    .from('newsletter_subscriptions')
+    .update({
+      is_active: false,
+      unsubscribed_at: new Date().toISOString(),
+    })
+    .eq('email', sanitizedEmail);
+
+  if (updateError) {
+    throw new Error(`Failed to unsubscribe: ${updateError.message}`);
+  }
+
+  if (ghl.isConfigured()) {
+    const contact = await ghl.findContactByEmail(sanitizedEmail);
+    if (contact) {
+      await ghl.removeTags(contact.id, [GHL_CANONICAL.COMMS_JH_NEWSLETTER]);
+    }
+  }
+}
+
+/**
  * DELETE /api/ghl/newsletter
  *
  * Unsubscribes a user from the newsletter
