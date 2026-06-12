@@ -73,6 +73,46 @@ interface SearchPayload {
   total?: number;
 }
 
+const STOP_WORDS = new Set([
+  'about',
+  'after',
+  'again',
+  'against',
+  'also',
+  'another',
+  'any',
+  'are',
+  'can',
+  'could',
+  'does',
+  'for',
+  'from',
+  'have',
+  'how',
+  'into',
+  'keep',
+  'law',
+  'legal',
+  'people',
+  'person',
+  'should',
+  'state',
+  'states',
+  'that',
+  'the',
+  'their',
+  'them',
+  'they',
+  'this',
+  'what',
+  'when',
+  'where',
+  'which',
+  'with',
+  'would',
+  'you',
+]);
+
 interface Provider {
   name: string;
   url: string;
@@ -113,6 +153,53 @@ function cleanQuestion(value: unknown): string {
 
 function normaliseSurface(value: unknown): Surface {
   return value === 'refugee' || value === 'youth' ? value : 'all';
+}
+
+function addUnique(target: string[], value: string) {
+  const cleaned = value.replace(/\s+/g, ' ').trim();
+  if (cleaned.length >= 3 && !target.some((item) => item.toLowerCase() === cleaned.toLowerCase())) {
+    target.push(cleaned);
+  }
+}
+
+function fallbackQueries(question: string, surface: Surface): string[] {
+  const lower = question.toLowerCase();
+  const queries: string[] = [];
+
+  if (
+    surface === 'youth' ||
+    /\b(youth|child|children|boy|girl|juvenile|teen|remand|detention|watch\s*house|criminal responsibility|age of criminal)\b/.test(
+      lower,
+    )
+  ) {
+    addUnique(queries, 'youth detention');
+    addUnique(queries, 'raise the age');
+    addUnique(queries, 'detention');
+  }
+
+  if (
+    surface === 'refugee' ||
+    /\b(refugee|asylum|offshore|png|papua|third[-\s]?country|non[-\s]?refoulement|refoulement|deport|return|border|boat|immigration detention)\b/.test(
+      lower,
+    )
+  ) {
+    addUnique(queries, 'non-refoulement');
+    addUnique(queries, 'offshore detention');
+    addUnique(queries, 'third country');
+    addUnique(queries, 'asylum');
+    addUnique(queries, 'refugee');
+  }
+
+  const tokens = lower
+    .replace(/[^a-z0-9\s-]/g, ' ')
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter((token) => token.length >= 4 && !STOP_WORDS.has(token));
+
+  addUnique(queries, tokens.slice(0, 3).join(' '));
+  for (const token of tokens.slice(0, 5)) addUnique(queries, token);
+
+  return queries.slice(0, 8);
 }
 
 function chooseProvider(): Provider | null {
@@ -307,15 +394,16 @@ async function askProvider(provider: Provider, question: string, citations: Cita
   return content.trim();
 }
 
-async function retrieve(request: Request, question: string, surface: Surface): Promise<{
-  citations: Citation[];
-  mode: string;
-  total: number;
-}> {
+async function searchMatrix(
+  request: Request,
+  question: string,
+  surface: Surface,
+  mode: 'keyword' | 'semantic',
+): Promise<SearchPayload> {
   const origin = new URL(request.url).origin;
   const params = new URLSearchParams({
     q: question,
-    mode: 'semantic',
+    mode,
     type: 'all',
     limit: surface === 'youth' ? '8' : '10',
   });
@@ -332,12 +420,45 @@ async function retrieve(request: Request, question: string, surface: Surface): P
 
   if (!res.ok) throw new Error(`Matrix search failed: ${res.status}`);
 
-  const payload = (await res.json()) as SearchPayload;
-  const hits = orderedHits(payload, surface).slice(0, 10);
+  return (await res.json()) as SearchPayload;
+}
+
+async function retrieve(request: Request, question: string, surface: Surface): Promise<{
+  citations: Citation[];
+  mode: string;
+  total: number;
+}> {
+  const attempts: Array<{ query: string; mode: 'keyword' | 'semantic'; label: string }> = [
+    { query: question, mode: 'semantic', label: 'semantic' },
+    ...fallbackQueries(question, surface).map((query) => ({
+      query,
+      mode: 'keyword' as const,
+      label: `keyword fallback: ${query}`,
+    })),
+  ];
+
+  let lastPayload: SearchPayload | null = null;
+  let lastLabel = 'semantic';
+
+  for (const attempt of attempts) {
+    const payload = await searchMatrix(request, attempt.query, surface, attempt.mode);
+    lastPayload = payload;
+    lastLabel = attempt.label;
+    const hits = orderedHits(payload, surface).slice(0, 10);
+    if (hits.length > 0) {
+      return {
+        citations: hits.map(toCitation),
+        mode: attempt.label === 'semantic' ? (payload.mode ?? 'keyword') : `${payload.mode ?? 'keyword'} fallback`,
+        total: payload.total ?? hits.length,
+      };
+    }
+  }
+
+  const hits = lastPayload ? orderedHits(lastPayload, surface).slice(0, 10) : [];
   return {
     citations: hits.map(toCitation),
-    mode: payload.mode ?? 'keyword',
-    total: payload.total ?? hits.length,
+    mode: lastLabel,
+    total: lastPayload?.total ?? hits.length,
   };
 }
 
