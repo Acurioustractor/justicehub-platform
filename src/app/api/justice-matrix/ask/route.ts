@@ -21,7 +21,13 @@ import { NextResponse } from 'next/server';
 import { SURFACES } from '@/lib/justice-matrix/surfaces';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { planQuery, type QueryPlan, type QueryIntent } from '@/lib/justice-matrix/query-understanding';
-import { AskMatrixAnswerSchema, validateLLMOutput } from '@/lib/ai/llm-schemas';
+import { AskMatrixAnswerSchema, validateLLMOutput, type MatrixFaithfulness } from '@/lib/ai/llm-schemas';
+import {
+  mechanicalFaithfulness,
+  stripInvalidCitations,
+  checkFaithfulness,
+  faithCacheKey,
+} from '@/lib/justice-matrix/faithfulness';
 import {
   citationCategories,
   buildRelatedIssues,
@@ -542,6 +548,38 @@ function clampToPartial(c: 'strong' | 'partial' | 'thin'): 'partial' | 'thin' {
 }
 
 // ---------------------------------------------------------------------------
+// Faithfulness (post-hoc NLI check) — cache + limits helper
+// ---------------------------------------------------------------------------
+
+// Module-level, best-effort cache. Persists only within a warm serverless
+// instance; a cold start starts empty. Keyed on (question + citation-set +
+// answer) so a hit means the identical answer is being re-checked, never a
+// stale verdict for a different one. Stores null too, so a transient provider
+// failure is not retried for the same answer.
+const faithCache = new Map<string, MatrixFaithfulness | null>();
+const FAITH_CACHE_MAX = 200;
+function faithCachePut(key: string, value: MatrixFaithfulness | null): void {
+  if (faithCache.size >= FAITH_CACHE_MAX) {
+    const oldest = faithCache.keys().next().value;
+    if (oldest !== undefined) faithCache.delete(oldest);
+  }
+  faithCache.set(key, value);
+}
+
+function appendLimit(existing: string, note: string): string {
+  const e = existing.trim();
+  return e ? `${e} ${note}` : note;
+}
+
+// Surfaced on the response so a later UI phase (and the team) can see what the
+// post-hoc check did. checked=false means the NLI half was skipped or failed.
+interface FaithfulnessMeta {
+  checked: boolean;
+  verdict: 'entailed' | 'partial' | 'contradicted' | 'unchecked';
+  unsupportedClaims: string[];
+}
+
+// ---------------------------------------------------------------------------
 // Provider call (route-local, preserves provider name). JSON grounding prompt.
 // ---------------------------------------------------------------------------
 
@@ -867,33 +905,72 @@ export async function POST(request: Request) {
     let providerName = 'retrieval-only';
     let structured: StructuredAnswer;
 
+    // Faithfulness: the mechanical pass runs synchronously in the parsed branch;
+    // the NLI half (gated) runs as a promise resolved after amplification so it
+    // overlaps the issues read + follow-ups instead of adding serial latency.
+    const validLabels = new Set(citations.map((c) => c.label));
+    let nliPromise: Promise<MatrixFaithfulness | null> | null = null;
+    let faithfulness: FaithfulnessMeta | null = null;
+
     if (provider && citations.length) {
       try {
         const raw = await askProvider(provider, question, citations, surface, baseConfidence);
         const parsed = parseStructured(raw);
         if (parsed) {
+          // MECHANICAL faithfulness pass (pure): strip [C#] not in the retrieved
+          // set from the prose + whatHeld, drop unlabelled whatHeld entries, keep
+          // only real keyRecords. Ungrounded prose (no surviving citation) cannot
+          // read as strong or partial, so clamp it to thin.
+          const mech = mechanicalFaithfulness(parsed, validLabels);
           structured = {
-            directAnswer: parsed.directAnswer,
-            // keep only keyRecords whose label maps to a real citation
-            keyRecords: parsed.keyRecords.filter((r) =>
-              citations.some((c) => c.label === r.label),
-            ),
-            whatHeld: parsed.whatHeld,
+            directAnswer: mech.directAnswer,
+            keyRecords: mech.keyRecords,
+            whatHeld: mech.whatHeld,
             limits: parsed.limits,
-            confidence: baseConfidence, // overwritten below regardless
+            confidence: mech.directAnswerHadCitation ? baseConfidence : 'thin',
             boundaryNote: BOUNDARY_NOTE,
           };
           providerName = provider.name;
+
+          // NLI half: gated to grounded answers with >=3 citations. Cached by
+          // (question + citation-set + answer) within a warm instance.
+          if (mech.directAnswerHadCitation && citations.length >= 3) {
+            const records = citations.map((c) => ({
+              label: c.label,
+              title: c.title,
+              excerpt: c.excerpt,
+            }));
+            const cacheKey = faithCacheKey(
+              question,
+              citations.map((c) => `${c.kind}:${c.id}`),
+              structured.directAnswer,
+            );
+            if (faithCache.has(cacheKey)) {
+              nliPromise = Promise.resolve(faithCache.get(cacheKey) ?? null);
+            } else {
+              nliPromise = checkFaithfulness(question, structured.directAnswer, records).then(
+                (v) => {
+                  faithCachePut(cacheKey, v);
+                  return v;
+                },
+              );
+            }
+          }
         } else {
           // SALVAGE: JSON/Zod validation failed. Pull clean prose out of the raw
           // (never leak the JSON braces to the UI); clamp confidence to 'partial'.
           const loose = looseProse(raw);
+          // Salvage prose is still model output: strip any [C#] it invented so
+          // the degraded path never leaks a fabricated citation either.
+          const looseDirect = loose?.directAnswer
+            ? stripInvalidCitations(loose.directAnswer, validLabels).text
+            : '';
           const looseRecords = (loose?.keyRecords ?? []).filter((r) =>
             citations.some((c) => c.label === r.label),
           );
           structured = {
             directAnswer:
-              loose?.directAnswer ||
+              looseDirect ||
               `The Matrix returned ${citations.length} record${citations.length === 1 ? '' : 's'} for "${question}". Use the cited records below to move from question to source.`,
             keyRecords: looseRecords.length
               ? looseRecords
@@ -938,6 +1015,36 @@ export async function POST(request: Request) {
     }
     const followups = await buildFollowups(provider, question, citations, relatedIssues, cats, surface);
 
+    // 5b. Resolve the post-hoc NLI verdict (overlapped the amplification above).
+    // It only ever DOWN-ranks: a 'contradicted' answer drops to thin, a 'partial'
+    // one is clamped, and a null/entailed verdict leaves confidence untouched.
+    // Applied before flattenAnswer so the limits note lands in the prose too.
+    if (nliPromise) {
+      const verdict = await nliPromise;
+      if (verdict) {
+        faithfulness = {
+          checked: true,
+          verdict: verdict.verdict,
+          unsupportedClaims: verdict.unsupportedClaims,
+        };
+        if (verdict.verdict === 'contradicted') {
+          structured.confidence = 'thin';
+          structured.limits = appendLimit(
+            structured.limits,
+            'A faithfulness check flagged a claim the cited records do not support. Treat this with caution and read each linked source.',
+          );
+        } else if (verdict.verdict === 'partial') {
+          structured.confidence = clampToPartial(structured.confidence);
+          structured.limits = appendLimit(
+            structured.limits,
+            'A faithfulness check found claims the cited records do not fully support. Lean on the linked records below.',
+          );
+        }
+      } else {
+        faithfulness = { checked: false, verdict: 'unchecked', unsupportedClaims: [] };
+      }
+    }
+
     // 6. Back-compat prose + public citations.
     const answer = flattenAnswer(structured);
     const publicCitations = citations.map(publicCitation);
@@ -959,6 +1066,9 @@ export async function POST(request: Request) {
         planSource: plan.source,
         weak,
       },
+      // Additive + nullable. Present only when the answer cleared the >=3-citation
+      // gate; null otherwise (no UI consumes it yet, surfaced for the next phase).
+      faithfulness,
       followups,
       relatedIssues,
       gaps,

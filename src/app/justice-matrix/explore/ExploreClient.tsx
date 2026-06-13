@@ -72,6 +72,7 @@ interface CaseHit {
   verified: boolean | null;
   human_confirmed: boolean | null;
   distance: number | null;
+  rrf_score: number | null;
 }
 interface CampaignHit {
   kind: 'campaign';
@@ -86,6 +87,7 @@ interface CampaignHit {
   lead_organizations: string | null;
   campaign_link: string | null;
   distance: number | null;
+  rrf_score: number | null;
 }
 interface EvidenceHit {
   kind: 'evidence';
@@ -165,6 +167,21 @@ function hitJurisdictionText(h: Hit): string {
 }
 function hitYear(h: Hit): number {
   return h.kind === 'campaign' ? h.start_year ?? 0 : h.year ?? 0;
+}
+
+// Unified relevance score for the "relevance" sort. Higher is better.
+// Hybrid cases + campaigns carry rrf_score from the fused SQL ranking, which
+// (unlike distance) is non-null for keyword-only rescues too, so those rescues
+// rank by their true fused score instead of sinking to the bottom. Evidence and
+// legacy hits carry only a vector distance: map it to a small positive score so
+// a close evidence match still orders by closeness, just below the fused
+// cases/campaigns. No-signal rows (keyword mode, both null) score 0 and sort
+// last, exactly as before.
+function relScore(h: Hit): number {
+  const rrf = 'rrf_score' in h ? h.rrf_score : null;
+  if (typeof rrf === 'number') return rrf;
+  if (typeof h.distance === 'number') return (1 - h.distance) * 0.01;
+  return 0;
 }
 
 // A "decision" is a court ruling. Everything else in the cases table (reports,
@@ -397,7 +414,11 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
 
   const sorted = useMemo(() => {
     const items = [...facetFiltered];
-    if (sort === 'relevance') items.sort((a, b) => (a.distance ?? 1) - (b.distance ?? 1));
+    if (sort === 'relevance')
+      items.sort((a, b) => {
+        const d = relScore(b) - relScore(a); // higher relevance first
+        return d !== 0 ? d : (a.distance ?? 1) - (b.distance ?? 1); // tie: closer first
+      });
     else if (sort === 'az') items.sort((a, b) => (a.title ?? '').localeCompare(b.title ?? ''));
     else if (sort === 'jurisdiction')
       items.sort((a, b) => {

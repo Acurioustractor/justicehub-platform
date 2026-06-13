@@ -166,6 +166,7 @@ async function loadInitial(params: {
     verified: r.verified ?? null,
     human_confirmed: typeof r.human_confirmed === 'boolean' ? r.human_confirmed : null,
     distance: null,
+    rrf_score: null,
   }));
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -182,6 +183,7 @@ async function loadInitial(params: {
     lead_organizations: r.lead_organizations ?? null,
     campaign_link: r.campaign_link ?? null,
     distance: null,
+    rrf_score: null,
   }));
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
