@@ -6,6 +6,8 @@ import {
   GRANT_MATCH_REVIEW_TASK_TYPE,
 } from '@/lib/funding/grant-matching';
 
+export const dynamic = 'force-dynamic';
+
 function getServiceClient() {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!serviceRoleKey) {

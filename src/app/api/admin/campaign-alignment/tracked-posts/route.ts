@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/admin/campaign-alignment/tracked-posts
  * Returns all tracked LinkedIn posts.

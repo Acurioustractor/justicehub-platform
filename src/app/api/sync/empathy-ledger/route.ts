@@ -16,6 +16,8 @@ import {
   type SyncOptions,
 } from '@/services/empathy-ledger-sync';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
 

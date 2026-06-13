@@ -8,6 +8,8 @@ import {
   type FundingDiscoveryReviewWorkspaceInput,
 } from '@/lib/funding/funding-operating-system';
 
+export const dynamic = 'force-dynamic';
+
 function parseOrganizationIds(searchParams: URLSearchParams) {
   return (searchParams.get('organizationIds') || '')
     .split(',')

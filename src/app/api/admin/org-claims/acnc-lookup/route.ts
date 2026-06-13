@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAdmin } from '@/lib/supabase/admin-lite';
 
+export const dynamic = 'force-dynamic';
+
 const ABN_REGEX = /^\d{11}$/;
 
 export async function GET(request: NextRequest) {

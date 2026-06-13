@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkAdmin } from '@/lib/supabase/admin-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
+export const dynamic = 'force-dynamic';
+
 const VALID_CATEGORIES = [
   'direct_yj_service', 'yj_research_or_review', 'yj_advisory_consultancy',
   'yj_infrastructure_or_capital', 'broader_justice_includes_yj', 'not_yj_related',

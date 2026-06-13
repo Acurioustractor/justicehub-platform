@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getContainedPhotoOverrides, saveContainedPhotoOverrides } from '@/lib/contained/photo-overrides';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET: Load photo overrides (public — needed at render time for all visitors)
  */

@@ -8,6 +8,8 @@ import {
 } from '@/lib/funding/system0-orchestrator';
 import { logSystem0Event } from '@/lib/funding/system0-audit';
 
+export const dynamic = 'force-dynamic';
+
 function getServiceClient() {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!serviceRoleKey) {

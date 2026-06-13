@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/supabase/admin-lite';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const { supabase } = await requireAdmin('/admin/contained/enrollment');
   const { data, error } = await supabase

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { tourStops as staticTourStops } from '@/content/campaign';
 
+export const dynamic = 'force-dynamic';
+
 export const revalidate = 300; // 5 min cache
 
 /**

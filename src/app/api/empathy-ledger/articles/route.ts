@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchContentHubArticles } from '@/lib/empathy-ledger-content-hub';
 
+export const dynamic = 'force-dynamic';
+
 export const revalidate = 300;
 
 /**

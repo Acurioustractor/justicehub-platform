@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { runFundingOperatingSystemCycle } from '@/lib/funding/funding-operating-system';
 
+export const dynamic = 'force-dynamic';
+
 function getCronSecret(): string | null {
   return process.env.FUNDING_OS_CRON_SECRET || process.env.CRON_SECRET || null;
 }

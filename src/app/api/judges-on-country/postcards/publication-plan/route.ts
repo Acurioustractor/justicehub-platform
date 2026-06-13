@@ -5,6 +5,8 @@ import {
   buildJudgesPostcardPublicationQueue,
 } from '@/lib/judges-postcard-publication-plan';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const auth = await requireAdminApi();

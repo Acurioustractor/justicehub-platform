@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger-lite';
 import { createClient } from '@/lib/supabase/server-lite';
 
+export const dynamic = 'force-dynamic';
+
 // Channel IDs from syndication_channels table
 const CONTAINED_CHANNEL = '31ec3bee-4c2c-4264-a39f-33c421cdf2d6';
 const JH_CHANNEL = 'ee99f4c9-68b2-474c-9563-f5a513993aba';

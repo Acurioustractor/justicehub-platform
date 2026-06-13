@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getProjects, isV2Configured } from '@/lib/empathy-ledger/v2-client';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/empathy-ledger/projects
  *

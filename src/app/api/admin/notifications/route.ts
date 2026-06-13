@@ -10,6 +10,8 @@ import {
   type NotificationPayload,
 } from '@/lib/funding/notification-engine';
 
+export const dynamic = 'force-dynamic';
+
 function getServiceClient() {
   return createServiceClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

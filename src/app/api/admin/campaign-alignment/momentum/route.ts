@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { STATUS_TO_STAGE } from '@/lib/campaign/pipeline-stages';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/admin/campaign-alignment/momentum
  * Aggregated campaign momentum metrics: pipeline funnel, newsletter, social, reactions, actions.

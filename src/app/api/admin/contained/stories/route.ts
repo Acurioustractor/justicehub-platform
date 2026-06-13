@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAdmin } from '@/lib/supabase/admin-lite';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/admin/contained/stories
  * Admin: list stories for management.

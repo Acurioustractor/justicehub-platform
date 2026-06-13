@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getFeaturedProfiles } from '@/lib/integrations/profile-linking';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const profiles = await getFeaturedProfiles(6);

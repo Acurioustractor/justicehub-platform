@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSignalEngineClient } from '@/lib/supabase/signal-engine';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Signal Events API
  * GET /api/signal-engine/events — List signal events (with content)

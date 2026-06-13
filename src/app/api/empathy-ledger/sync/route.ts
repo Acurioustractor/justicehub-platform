@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { empathyLedgerClient, empathyLedgerServiceClient } from '@/lib/supabase/empathy-ledger';
 
+export const dynamic = 'force-dynamic';
+
 /** Normalise themes — handles strings, objects, and stringified JSON */
 function normalizeThemes(themes: unknown): string[] {
   if (!Array.isArray(themes)) return [];

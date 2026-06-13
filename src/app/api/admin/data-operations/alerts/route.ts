@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { requireAdminApi } from '@/lib/admin-api-auth';
 
+export const dynamic = 'force-dynamic';
+
 interface Alert {
   id: string;
   type: 'warning' | 'error' | 'info';

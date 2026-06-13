@@ -9,6 +9,8 @@ import {
   type CapabilitySignalInput,
 } from '@/lib/funding/funding-operating-system';
 
+export const dynamic = 'force-dynamic';
+
 function parseStringArray(value: unknown): string[] {
   return Array.isArray(value)
     ? value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)

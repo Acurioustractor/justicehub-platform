@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { requireAdminApi } from '@/lib/admin-api-auth';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Shared photo overrides for the Judges on Country surfaces.
  * Persists to the `site_config` table so overrides apply to every visitor.

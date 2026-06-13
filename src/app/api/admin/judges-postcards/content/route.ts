@@ -9,6 +9,8 @@ import {
   type JudgesPostcardOverridesDocument,
 } from '@/content/judges-postcards';
 
+export const dynamic = 'force-dynamic';
+
 const OVERRIDES_PATH = path.join(
   process.cwd(),
   'src/content/judges-postcards-overrides.json'

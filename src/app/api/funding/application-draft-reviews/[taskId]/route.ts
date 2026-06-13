@@ -5,6 +5,8 @@ import {
   submitFundingApplicationDraftCommunityReviewResponse,
 } from '@/lib/funding/funding-operating-system';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ taskId: string }> }

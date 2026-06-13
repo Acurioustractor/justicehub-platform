@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { checkOrgAccess } from '@/lib/org-hub/auth';
 import { getPracticeReflexState } from '@/lib/org-hub/practice-reflex';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { orgId: string } }

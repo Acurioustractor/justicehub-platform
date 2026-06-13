@@ -4,6 +4,8 @@ import {
   getFundingOutcomeCommitmentDetail,
 } from '@/lib/funding/funding-operating-system';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   _request: NextRequest,
   context: { params: Promise<{ commitmentId: string }> | { commitmentId: string } }

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { requireAdminApi } from '@/lib/admin-api-auth';
 import { resolveJudgesPostcardCards } from '@/lib/judges-postcard-source-resolver';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const auth = await requireAdminApi();

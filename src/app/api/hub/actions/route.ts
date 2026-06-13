@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
 
+export const dynamic = 'force-dynamic';
+
 const VALID_ACTION_TYPES = [
   'mp_letter',
   'social_share',

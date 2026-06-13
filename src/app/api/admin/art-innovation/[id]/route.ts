@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAdmin } from '@/lib/supabase/admin-lite';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/admin/art-innovation/[id]
  * Fetch a single art_innovation project by ID. Admin only.

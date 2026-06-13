@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
 
+export const dynamic = 'force-dynamic';
+
 const VALID_CATEGORIES = [
   'politician',
   'justice_official',

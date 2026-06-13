@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createJHClient } from '@/lib/supabase/server-lite';
 
+export const dynamic = 'force-dynamic';
+
 export const revalidate = 300; // 5 min cache
 
 const JH_ORG_ID = '0e878fa2-0b44-49b7-86d7-ecf169345582';

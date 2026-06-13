@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/cron/campaign/linkedin-monitor
  * Weekly cron: triggers re-scrape of active tracked posts.

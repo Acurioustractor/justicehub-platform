@@ -1,6 +1,8 @@
 import { createServiceClient } from '@/lib/supabase/service';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 // Trip stop org profiles — enriched from DB where available, static fallback for external orgs
 const TRIP_STOPS: Record<string, TripStop[]> = {
   'oonchiumpa-seq-2026': [

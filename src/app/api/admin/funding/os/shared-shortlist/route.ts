@@ -6,6 +6,8 @@ import {
   requireAdminUser,
 } from '@/lib/funding/funding-operating-system';
 
+export const dynamic = 'force-dynamic';
+
 function parseOrganizationIds(value: unknown) {
   return Array.isArray(value)
     ? value

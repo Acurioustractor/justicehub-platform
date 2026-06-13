@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
+export const dynamic = 'force-dynamic';
+
 const CONFIG_KEY = 'minderoo-pitch-slot-overrides';
 const COOKIE = 'pitch_auth';
 

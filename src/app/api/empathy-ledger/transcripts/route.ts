@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { getTranscripts, getStoryDetail, isV2Configured } from '@/lib/empathy-ledger/v2-client';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/empathy-ledger/transcripts
  * Admin-only: list transcripts with metadata (no full content)
