@@ -154,6 +154,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // AWAIT both sends before returning: no further awaited work follows, so a
+    // fire-and-forget send would be frozen by the serverless runtime before the
+    // GHL email call completes. Run concurrently; each swallows its own error.
+    await Promise.all([
     // Notify the team so a host offer is never invisible (Defect A3). Reply-to =
     // the submitter so the team can respond directly. No-op unless email is on.
     sendEmail({
@@ -168,9 +172,9 @@ Email: ${cleanEmail}
 ${cleanOrg ? `Organisation: ${cleanOrg}\n` : ''}${cleanState ? `State: ${cleanState}\n` : ''}${cleanVenue ? `Venue / space: ${cleanVenue}\n` : ''}Reply directly to: ${cleanEmail}
 
 ${cleanMessage || '(no message)'}`,
-    }).catch((err) => console.error('[contained/host] team notification failed:', err));
+    }).catch((err) => console.error('[contained/host] team notification failed:', err)),
 
-    // Thank-you confirmation (fire-and-forget).
+    // Thank-you confirmation to the submitter.
     sendEmail({
       to: cleanEmail,
       subject: 'Thanks for offering to host CONTAINED',
@@ -185,7 +189,8 @@ CONTAINED tour: https://justicehub.com.au/contained
 How it works: https://justicehub.com.au/contained/how-it-works
 
 — The JusticeHub Team`,
-    }).catch((err) => console.error('[contained/host] confirmation email failed:', err));
+    }).catch((err) => console.error('[contained/host] confirmation email failed:', err)),
+    ]);
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {

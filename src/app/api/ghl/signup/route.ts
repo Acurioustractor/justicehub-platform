@@ -169,20 +169,25 @@ export async function POST(request: NextRequest) {
     if (!communityLane) {
       const firstName = (full_name || '').split(' ')[0] || 'there';
       const receipt = signupReceipt(firstName);
-      sendEmail({
-        to: email,
-        subject: receipt.subject,
-        body: receipt.body,
-        preheader: receipt.preheader,
-        heroImage: {
-          src: 'https://www.justicehub.com.au/images/contained/contained-brand-square.png',
-          alt: 'CONTAINED. 3 rooms. 30 minutes. The truth.',
-        },
-      })
-        .then((result) => {
-          if (result) void backfillCaptureSync(supabase, captureId, { receipt_sent: true });
-        })
-        .catch((err) => console.error('[signup] receipt email failed:', err));
+      // AWAIT the send: there is no further awaited work before the response, so
+      // a fire-and-forget here would be frozen by the serverless runtime before
+      // the GHL email call completes. Awaiting guarantees the receipt actually
+      // sends (adds ~1s; acceptable for a confirmation).
+      try {
+        const result = await sendEmail({
+          to: email,
+          subject: receipt.subject,
+          body: receipt.body,
+          preheader: receipt.preheader,
+          heroImage: {
+            src: 'https://www.justicehub.com.au/images/contained/contained-brand-square.png',
+            alt: 'CONTAINED. 3 rooms. 30 minutes. The truth.',
+          },
+        });
+        if (result) await backfillCaptureSync(supabase, captureId, { receipt_sent: true });
+      } catch (err) {
+        console.error('[signup] receipt email failed:', err);
+      }
     }
 
     // Update profile with GHL contact ID

@@ -181,6 +181,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // AWAIT both sends before returning: no further awaited work follows, so a
+    // fire-and-forget send would be frozen by the serverless runtime before the
+    // GHL email call completes. Run concurrently; each swallows its own error so
+    // the pair never rejects.
+    await Promise.all([
     // Route the enquiry to the team — reply-to = submitter so they can respond
     // directly. (No-op unless EMAIL_ENABLED=true and GHL is configured.)
     sendEmail({
@@ -195,7 +200,7 @@ Email: ${cleanEmail}
 ${cleanOrg ? `Organisation: ${cleanOrg}\n` : ''}Reply directly to: ${cleanEmail}
 
 ${cleanMessage || '(no message)'}`,
-    }).catch((err) => console.error('[contained/connect] team notification failed:', err));
+    }).catch((err) => console.error('[contained/connect] team notification failed:', err)),
 
     // Confirmation to the submitter — replies route to benjamin@act.place.
     sendEmail({
@@ -210,7 +215,8 @@ Thank you for reaching out about CONTAINED. We will be in touch shortly. If you 
 CONTAINED tour: https://justicehub.com.au/contained
 ${typedRole === 'funder' ? 'Investment thesis: https://justicehub.com.au/for-funders\n' : ''}
 — The JusticeHub Team`,
-    }).catch((err) => console.error('[contained/connect] confirmation email failed:', err));
+    }).catch((err) => console.error('[contained/connect] confirmation email failed:', err)),
+    ]);
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
