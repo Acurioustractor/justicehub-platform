@@ -95,6 +95,7 @@ const ENTITY_KEYWORDS: Record<SearchResultType, string[]> = {
   story: ['story', 'stories', 'narrative', 'experience', 'journey'],
   research: ['research', 'study', 'evidence', 'data', 'report'],
   news: ['news', 'article', 'press', 'announcement'],
+  site: ['justice reinvestment', 'reinvestment site', 'jr site'],
 };
 
 /**

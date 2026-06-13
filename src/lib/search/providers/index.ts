@@ -7,6 +7,7 @@
 
 export { internalSearchProvider } from './internal';
 export { empathyLedgerSearchProvider } from './empathy-ledger';
+export { jrSitesSearchProvider } from './jr-sites';
 
 // Re-export types
 export type { SearchProvider } from '../types';

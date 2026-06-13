@@ -130,7 +130,7 @@ interface Citation {
 }
 
 interface SearchPayload {
-  mode: 'keyword' | 'semantic';
+  mode: 'keyword' | 'semantic' | 'hybrid';
   cases?: RawCase[];
   campaigns?: RawCampaign[];
   evidence?: RawEvidence[];
@@ -359,7 +359,7 @@ function orderedHits(payload: SearchPayload, surface: Surface): RawHit[] {
 
 interface RetrievalResult {
   citations: Citation[];
-  mode: 'keyword' | 'semantic';
+  mode: 'keyword' | 'semantic' | 'hybrid';
   total: number;
   bestDistance: number | null;
   fusedHits: RawHit[];
@@ -376,7 +376,7 @@ function buildSearchParams(query: string, plan: QueryPlan): URLSearchParams {
   const f = plan.filters;
   const params = new URLSearchParams({
     q: query,
-    mode: 'semantic',
+    mode: 'hybrid',
     type: f.type,
     limit: '10',
   });
@@ -428,8 +428,10 @@ async function retrievePlan(request: Request, plan: QueryPlan, surface: Surface)
     return { citations: [], mode: 'keyword', total: 0, bestDistance: null, fusedHits: [] };
   }
 
-  const mode: 'keyword' | 'semantic' = payloads.some((p) => p.mode === 'semantic')
-    ? 'semantic'
+  // Any non-keyword payload means at least one leg returned embedding-ranked
+  // hits (distances present), so the fused set is treated as the richer mode.
+  const mode: 'keyword' | 'semantic' | 'hybrid' = payloads.some((p) => p.mode !== 'keyword')
+    ? 'hybrid'
     : 'keyword';
 
   // FUSION: per-kind, keyed by id, keep the MIN effective distance across queries.

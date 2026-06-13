@@ -109,7 +109,12 @@ export async function GET(req: Request) {
   const sp = url.searchParams;
 
   const q = safeIlike(sp.get('q') ?? '');
-  const mode = sp.get('mode') === 'semantic' ? 'semantic' : 'keyword';
+  // Hybrid (RRF over ts_rank_cd + pgvector cosine, facets pushed into the RPC)
+  // is the default retrieval path. 'keyword' forces the pure ilike list path
+  // (exact substring, no embedding, list mode). 'semantic' is a legacy alias
+  // that now resolves to hybrid — callers asking for semantic get the superset.
+  const modeParam = sp.get('mode');
+  const mode: 'keyword' | 'hybrid' = modeParam === 'keyword' ? 'keyword' : 'hybrid';
   const typeParam = sp.get('type') ?? 'all';
   const type: 'all' | 'case' | 'campaign' | 'evidence' =
     typeParam === 'case' || typeParam === 'campaign' || typeParam === 'evidence'
@@ -147,15 +152,15 @@ export async function GET(req: Request) {
   const includeEvidence =
     (type === 'all' || type === 'evidence') && evidenceEligible && scope !== 'global';
 
-  // Semantic mode requires an embedding for the query string. If q is empty we
-  // silently fall back to keyword mode (no point semantic-searching for "").
-  const useSemantic = mode === 'semantic' && q.length >= 3 && !!process.env.OPENAI_API_KEY;
+  // Hybrid mode needs an embedding for the query string. Empty / very short q
+  // silently falls back to the keyword list path (no point fusing on "").
+  const useHybrid = mode === 'hybrid' && q.length >= 2 && !!process.env.OPENAI_API_KEY;
 
   let cases: CaseResult[] = [];
   let campaigns: CampaignResult[] = [];
   let evidence: EvidenceResult[] = [];
 
-  if (useSemantic) {
+  if (useHybrid) {
     let queryVec: string;
     try {
       const vec = await embed(q);
@@ -165,22 +170,38 @@ export async function GET(req: Request) {
       return runKeywordSearch();
     }
 
+    // Facets are pushed INTO the RPC (applied before each leg's candidate cut),
+    // so a filter can no longer silently empty a strong result set the way the
+    // old fetch-top-N-then-filter-in-memory path could. null = "no filter".
     if (includeCases) {
-      const { data } = await supabase.rpc('justice_matrix_search_cases', {
+      const { data } = await supabase.rpc('justice_matrix_hybrid_cases', {
+        query_text: q,
         query_embedding: queryVec,
         match_limit: limit,
-        max_distance: 0.6,
+        p_cats: cats.length ? cats : null,
+        p_outcome: outcome || null,
+        p_strength: strength || null,
+        p_region: region || null,
+        p_country: country || null,
+        p_scope: scope,
       });
       cases = (data ?? []).map(mapCaseRow);
     }
     if (includeCampaigns) {
-      const { data } = await supabase.rpc('justice_matrix_search_campaigns', {
+      const { data } = await supabase.rpc('justice_matrix_hybrid_campaigns', {
+        query_text: q,
         query_embedding: queryVec,
         match_limit: limit,
-        max_distance: 0.6,
+        p_cats: cats.length ? cats : null,
+        p_region: region || null,
+        p_country: country || null,
+        p_scope: scope,
       });
       campaigns = (data ?? []).map(mapCampaignRow);
     }
+    // Evidence (alma_evidence) has no FTS index, so it stays on the pure
+    // semantic RPC. includeEvidence already gates it to the no-incompatible
+    // -facet case, so no facet push-down is needed here.
     if (includeEvidence) {
       const { data } = await supabase.rpc('justice_matrix_search_evidence', {
         query_embedding: queryVec,
@@ -189,23 +210,12 @@ export async function GET(req: Request) {
       });
       evidence = (data ?? []).map(mapEvidenceRow);
     }
-
-    // Apply non-semantic facet filters in-memory — the RPCs return a small set.
-    cases = applyCaseFilters(cases, { cats, outcome, strength, region, country });
-    campaigns = applyCampaignFilters(campaigns, { cats, region, country });
-    // AU-vs-global lens (case by jurisdiction, campaign by region text).
-    if (scope !== 'all') {
-      cases = cases.filter((c) => inScope(c.jurisdiction, scope));
-      campaigns = campaigns.filter((m) => inScope(m.region, scope));
-    }
-    // Evidence needs no in-memory facet filtering: includeEvidence already
-    // gates it to the no-incompatible-filter case (and excludes it under global).
   } else {
     return runKeywordSearch();
   }
 
   return NextResponse.json({
-    mode: useSemantic ? 'semantic' : 'keyword',
+    mode: useHybrid ? 'hybrid' : 'keyword',
     q,
     type,
     cases,
@@ -321,14 +331,6 @@ function mapCaseRow(r: any): CaseResult {
   };
 }
 
-// AU-vs-global lens. Case `country_code` is ~40% null, so we read the
-// jurisdiction/region text instead ("... Australia" vs "European Court ...").
-function inScope(text: string | null, scope: 'all' | 'au' | 'global'): boolean {
-  if (scope === 'all') return true;
-  const isAu = /australia/i.test(text ?? '');
-  return scope === 'au' ? isAu : !isAu;
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapCampaignRow(r: any): CampaignResult {
   return {
@@ -378,30 +380,4 @@ function mapEvidenceRow(r: any): EvidenceResult {
     restricted,
     distance: typeof r.distance === 'number' ? r.distance : null,
   };
-}
-
-function applyCaseFilters(
-  rows: CaseResult[],
-  opts: { cats: string[]; outcome: string; strength: string; region: string; country: string },
-): CaseResult[] {
-  return rows.filter((r) => {
-    if (opts.cats.length && !(r.categories ?? []).some((c) => opts.cats.includes(c))) return false;
-    if (opts.outcome && r.outcome !== opts.outcome) return false;
-    if (opts.strength && r.precedent_strength !== opts.strength) return false;
-    if (opts.region && !(r.region ?? '').toLowerCase().includes(opts.region.toLowerCase())) return false;
-    if (opts.country && r.country_code !== opts.country) return false;
-    return true;
-  });
-}
-
-function applyCampaignFilters(
-  rows: CampaignResult[],
-  opts: { cats: string[]; region: string; country: string },
-): CampaignResult[] {
-  return rows.filter((r) => {
-    if (opts.cats.length && !(r.categories ?? []).some((c) => opts.cats.includes(c))) return false;
-    if (opts.region && !(r.region ?? '').toLowerCase().includes(opts.region.toLowerCase())) return false;
-    if (opts.country && r.country_code !== opts.country) return false;
-    return true;
-  });
 }

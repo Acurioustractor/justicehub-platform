@@ -226,7 +226,9 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   const raw = await searchParams;
   const q = sp(raw.q).replace(/[,()*%]/g, ' ').trim().slice(0, 120);
   const modeParam = sp(raw.mode);
-  const mode: 'keyword' | 'semantic' = modeParam === 'semantic' ? 'semantic' : 'keyword';
+  // Hybrid (RRF) is the default retrieval path; 'keyword' is the opt-out. A
+  // legacy ?mode=semantic link resolves to hybrid (the API treats it as an alias).
+  const mode: 'keyword' | 'hybrid' = modeParam === 'keyword' ? 'keyword' : 'hybrid';
   const typeParam = sp(raw.type);
   const type: 'all' | 'case' | 'campaign' | 'evidence' =
     typeParam === 'case' || typeParam === 'campaign' || typeParam === 'evidence'

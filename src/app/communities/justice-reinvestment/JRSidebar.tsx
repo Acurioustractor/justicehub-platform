@@ -39,13 +39,31 @@ function formatAmount(amount: number | null): string {
   }).format(amount);
 }
 
-function VerificationChip() {
+function ProfileStatusChip({ detail }: { detail: JrSiteDetail | null }) {
+  const claimed =
+    detail?.claimStatus === 'verified' ||
+    detail?.claimStatus === 'community_verified';
+  const label =
+    claimed
+      ? 'Community-claimed'
+      : detail?.claimStatus === 'pending'
+        ? 'Claim pending'
+        : detail?.orgVerificationStatus === 'verified' ||
+            detail?.orgVerificationStatus === 'acnc_verified'
+          ? 'Verified organisation'
+          : 'On record';
+
   return (
     <span
       className="rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em]"
       style={{ borderColor: '#e6d7c1', color: '#7d5f3d' }}
+      title={
+        detail?.claimContactName
+          ? `Claimed by ${detail.claimContactName}`
+          : undefined
+      }
     >
-      On record
+      {label}
     </span>
   );
 }
@@ -80,9 +98,20 @@ export default function JRSidebar({
   const place = [site.town, site.state].filter(Boolean).join(', ');
   const initials = initialsOf(site.displayName);
   const leadOrg = detail?.orgName ?? site.org;
+  const siteProgram = detail?.siteProgram ?? null;
   const programs = detail?.programs ?? [];
   const funding = detail?.funding ?? [];
-  const claimHref = site.profileSlug
+  const isClaimed =
+    detail?.claimStatus === 'verified' ||
+    detail?.claimStatus === 'community_verified';
+  const profileHref = detail?.orgSlug
+    ? `/organizations/${detail.orgSlug}`
+    : site.profileSlug
+      ? `/communities/${site.profileSlug}`
+      : null;
+  const claimHref = detail?.orgSlug
+    ? `/organizations/${detail.orgSlug}#claim-organization`
+    : site.profileSlug
     ? `/communities/${site.profileSlug}/claim`
     : '/communities';
 
@@ -149,7 +178,7 @@ export default function JRSidebar({
       {/* Scroll body */}
       <div className="flex-1 overflow-y-auto px-6 py-6">
         <div className="flex flex-wrap items-center gap-2">
-          <VerificationChip />
+          <ProfileStatusChip detail={detail} />
           {leadOrg ? (
             <span
               className="rounded-full border px-3 py-1 text-[11px] font-medium"
@@ -178,10 +207,83 @@ export default function JRSidebar({
           ) : null}
         </section>
 
-        {/* Programs */}
+        <section className="mt-6">
+          <SectionLabel>Profile record</SectionLabel>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="rounded-[14px] border p-3" style={{ borderColor: C.border, background: C.surface }}>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: C.muted }}>
+                Public profile
+              </p>
+              <p className="mt-1 text-sm font-semibold" style={{ color: C.ink }}>
+                {profileHref ? 'Linked' : 'To connect'}
+              </p>
+            </div>
+            <div className="rounded-[14px] border p-3" style={{ borderColor: C.border, background: C.surface }}>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: C.muted }}>
+                Story consent
+              </p>
+              <p className="mt-1 text-sm font-semibold" style={{ color: C.ink }}>
+                {isClaimed ? 'Org controlled' : 'Needs setup'}
+              </p>
+            </div>
+            <div className="rounded-[14px] border p-3" style={{ borderColor: C.border, background: C.surface }}>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: C.muted }}>
+                Data status
+              </p>
+              <p className="mt-1 text-sm font-semibold" style={{ color: C.ink }}>
+                {detail ? 'Matched record' : 'Curated only'}
+              </p>
+            </div>
+            <div className="rounded-[14px] border p-3" style={{ borderColor: C.border, background: C.surface }}>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em]" style={{ color: C.muted }}>
+                Network
+              </p>
+              <p className="mt-1 text-sm font-semibold" style={{ color: C.ink }}>
+                {connection?.relatedSites.length ? `${connection.relatedSites.length} links` : 'Open'}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Exact site program */}
+        {siteProgram ? (
+          <section className="mt-7">
+            <SectionLabel>This site</SectionLabel>
+            <article
+              className="mt-3 rounded-[16px] border p-4"
+              style={{ borderColor: C.border, background: C.surface }}
+            >
+              <div className="flex flex-wrap gap-2">
+                {siteProgram.type ? (
+                  <span className="rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ borderColor: C.border, color: C.muted }}>
+                    {siteProgram.type}
+                  </span>
+                ) : null}
+                {siteProgram.evidenceLevel ? (
+                  <span className="rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ borderColor: C.border, color: C.muted }}>
+                    {siteProgram.evidenceLevel}
+                  </span>
+                ) : null}
+              </div>
+              <p
+                className="mt-3 text-base leading-6"
+                style={{ fontFamily: SERIF, fontWeight: 500, color: C.ink }}
+              >
+                {siteProgram.name}
+              </p>
+              {siteProgram.description ? (
+                <p className="mt-1.5 text-[13px] leading-5" style={{ color: C.body }}>
+                  {siteProgram.description}
+                </p>
+              ) : null}
+            </article>
+          </section>
+        ) : null}
+
+        {/* Other lead organisation programs */}
         {programs.length > 0 ? (
           <section className="mt-7">
-            <SectionLabel>Programs they run</SectionLabel>
+            <SectionLabel>Lead organisation also supports</SectionLabel>
             <ul className="mt-3 space-y-3">
               {programs.map((program, i) => (
                 <li
@@ -195,6 +297,18 @@ export default function JRSidebar({
                   >
                     {program.name}
                   </p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {program.type ? (
+                      <span className="rounded-full border px-2 py-0.5 text-[10px] font-medium" style={{ borderColor: C.border, color: C.muted }}>
+                        {program.type}
+                      </span>
+                    ) : null}
+                    {program.evidenceLevel ? (
+                      <span className="rounded-full border px-2 py-0.5 text-[10px] font-medium" style={{ borderColor: C.border, color: C.muted }}>
+                        {program.evidenceLevel}
+                      </span>
+                    ) : null}
+                  </div>
                   {program.description ? (
                     <p
                       className="mt-1.5 text-[13px] leading-5"
@@ -212,7 +326,7 @@ export default function JRSidebar({
         {/* Funding */}
         {funding.length > 0 ? (
           <section className="mt-7">
-            <SectionLabel>Funding record</SectionLabel>
+            <SectionLabel>Funding attached to lead organisation</SectionLabel>
             <ul className="mt-3 space-y-2">
               {funding.map((record, i) => (
                 <li
@@ -294,24 +408,46 @@ export default function JRSidebar({
         className="flex flex-wrap items-center gap-3 border-t px-6 py-4"
         style={{ borderColor: C.border, background: C.surface }}
       >
+        <Link
+          href={`/communities/justice-reinvestment/${site.siteSlug}`}
+          className="rounded-full px-4 py-2 text-xs font-semibold transition-colors duration-150"
+          style={{ background: C.purple, color: '#f1e6f7' }}
+        >
+          Full site profile &rarr;
+        </Link>
+        {profileHref ? (
+          <Link
+            href={profileHref}
+            className="rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-150"
+            style={{ borderColor: C.border, color: C.body, background: C.surface }}
+          >
+            Open organisation &rarr;
+          </Link>
+        ) : null}
         {site.website ? (
           <Link
             href={site.website}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-full px-4 py-2 text-xs font-semibold transition-colors duration-150"
-            style={{ background: C.purple, color: '#f1e6f7' }}
+            style={{
+              border: `1px solid ${C.border}`,
+              color: C.body,
+              background: C.surface,
+            }}
           >
             Visit website &rarr;
           </Link>
         ) : null}
-        <Link
-          href={claimHref}
-          className="rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-150"
-          style={{ borderColor: C.border, color: C.body }}
-        >
-          Claim this profile &rarr;
-        </Link>
+        {!isClaimed ? (
+          <Link
+            href={claimHref}
+            className="rounded-full border px-4 py-2 text-xs font-semibold transition-colors duration-150"
+            style={{ borderColor: C.border, color: C.body }}
+          >
+            Claim this profile &rarr;
+          </Link>
+        ) : null}
       </div>
     </aside>
   );

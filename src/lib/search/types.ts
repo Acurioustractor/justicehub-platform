@@ -14,7 +14,8 @@ export type SearchResultType =
   | 'media'
   | 'story'
   | 'research'
-  | 'news';
+  | 'news'
+  | 'site'; // A justice reinvestment site (place), spanning its programs/people/metrics
 
 // Base search result interface
 export interface SearchResult {
@@ -88,6 +89,7 @@ export interface UnifiedSearchOptions {
     internal?: boolean; // JusticeHub Supabase
     empathyLedger?: boolean; // EL Content Hub
     external?: boolean; // Research APIs, news
+    jrSites?: boolean; // Justice reinvestment network (curated JSON layer)
   };
   // Search mode
   mode?: 'fast' | 'comprehensive';
