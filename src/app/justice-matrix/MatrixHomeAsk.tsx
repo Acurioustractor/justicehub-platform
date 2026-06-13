@@ -152,7 +152,7 @@ function starterQuestions(issues: IssueLite[], surface: Surface): string[] {
     .map((issue) => issue.question)
     .filter(Boolean)
     .slice(0, 3);
-  return Array.from(new Set([...issueQuestions, ...defaultPromptsBySurface[surface], ...allDefaultPrompts])).slice(0, 6);
+  return Array.from(new Set([...defaultPromptsBySurface[surface], ...issueQuestions, ...allDefaultPrompts])).slice(0, 6);
 }
 
 function isStarterQuestion(question: string, issues: IssueLite[]): boolean {

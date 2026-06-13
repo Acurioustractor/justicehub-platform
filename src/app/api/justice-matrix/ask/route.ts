@@ -704,6 +704,17 @@ function directFrame(question: string, surface: Surface, audience: Audience = 'p
 function fallbackAnswer(question: string, surface: Surface, citations: Citation[], searchMode: string, audience: Audience, language: Language): string {
   const label = shortAnswerLabel(language);
   if (!citations.length) {
+    const framed = directFrame(question, surface, audience, language);
+    if (framed) {
+      return [
+        framed,
+        '',
+        'Source limit: this is a guided Matrix issue frame. No supporting records were returned for this exact wording, so use the follow-up questions or search links to inspect source records before relying on it.',
+        '',
+        'This is research support, not legal advice.',
+      ].join('\n');
+    }
+
     return [
       `${label}: I could not find a strong Matrix match for "${question}".`,
       '',
@@ -1045,6 +1056,7 @@ export async function POST(request: Request) {
     const retrieved = await retrieve(request, question, retrievalSurface, history);
     const provider = chooseProvider();
     const directAnswerAvailable = directFrame(contextualQuestion, retrievalSurface, audience, language) !== null;
+    const responseMode = !retrieved.citations.length && directAnswerAvailable ? 'guided fallback' : retrieved.mode;
 
     let answer: string;
     let providerName = 'retrieval-only';
@@ -1054,11 +1066,11 @@ export async function POST(request: Request) {
         answer = enforceDirectOpening(answer, contextualQuestion, retrievalSurface, audience, language);
         providerName = provider.name;
       } else {
-        answer = fallbackAnswer(contextualQuestion, retrievalSurface, retrieved.citations, retrieved.mode, audience, language);
+        answer = fallbackAnswer(contextualQuestion, retrievalSurface, retrieved.citations, responseMode, audience, language);
       }
     } catch (error) {
       console.warn('[Ask the Matrix] provider failed, falling back:', error);
-      answer = fallbackAnswer(contextualQuestion, retrievalSurface, retrieved.citations, retrieved.mode, audience, language);
+      answer = fallbackAnswer(contextualQuestion, retrievalSurface, retrieved.citations, responseMode, audience, language);
     }
 
     return NextResponse.json({
@@ -1067,7 +1079,7 @@ export async function POST(request: Request) {
       answer,
       citations: retrieved.citations,
       retrieval: {
-        mode: retrieved.mode,
+        mode: responseMode,
         total: retrieved.total,
         provider: providerName,
         surface: retrievalSurface,
