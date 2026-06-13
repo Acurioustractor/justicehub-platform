@@ -24,6 +24,8 @@ export interface JrSite {
   blurb: string;
   /** Anchor profile slug when this site maps to a founding profile, else null. */
   profileSlug: string | null;
+  /** Per-site detail-page slug for /communities/justice-reinvestment/[siteSlug]. */
+  siteSlug: string;
 }
 
 const C = {
