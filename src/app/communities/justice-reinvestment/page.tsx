@@ -14,6 +14,7 @@ import historyData from '@/data/justice-reinvestment/history.json';
 import JRNetworkExplorer, {
   type EnrichedGroup,
 } from './JRNetworkExplorer';
+import JRSearchBar from './JRSearchBar';
 
 export const revalidate = 300;
 const JR_DATA_TIMEOUT_MS = 1800;
@@ -204,6 +205,9 @@ export default async function JusticeReinvestmentNetworkPage() {
           </p>
         </div>
       </section>
+
+      {/* Cross-site search */}
+      <JRSearchBar />
 
       {/* History timeline */}
       <section className="mx-auto max-w-7xl px-6 py-14 md:px-10 md:py-16">
