@@ -107,7 +107,7 @@ interface EvidenceHit {
 }
 type Hit = CaseHit | CampaignHit | EvidenceHit;
 
-type Mode = 'keyword' | 'semantic';
+type Mode = 'keyword' | 'hybrid';
 type TypeFilter = 'all' | 'case' | 'campaign' | 'evidence';
 // Within the Cases experience, split court rulings from everything else
 // (reports, inquiries, legislation). Only 52 of the corpus rows are actual
@@ -332,7 +332,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
     setType('all');
     setCaseClass('all');
     setScope('all');
-    setMode('keyword');
+    setMode('hybrid');
     setRegion(null);
     setCourt(null);
     setDecade(null);
@@ -519,8 +519,8 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
             value={mode}
             onChange={(v) => setMode(v as Mode)}
             options={[
+              { value: 'hybrid', label: 'Hybrid', icon: <Sparkles className="w-3 h-3" /> },
               { value: 'keyword', label: 'Keyword' },
-              { value: 'semantic', label: 'Semantic', icon: <Sparkles className="w-3 h-3" /> },
             ]}
           />
           <Seg
@@ -564,7 +564,7 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
       <div className="max-w-7xl mx-auto px-4 md:px-6 pt-4 flex flex-wrap items-center gap-2">
         <span style={{ fontFamily: MONO, fontSize: 12, color: C.muted }}>
           <strong style={{ color: C.ink }}>{totalShown.toLocaleString()}</strong> result{totalShown === 1 ? '' : 's'}
-          {results.mode === 'semantic' && ' · semantic'}
+          {results.mode === 'hybrid' && ' · hybrid'}
           {region && ` · ${region}`}
         </span>
         <div className="flex flex-wrap items-center gap-1.5">
@@ -1113,7 +1113,7 @@ function Empty() {
         No results.
       </p>
       <p className="text-sm" style={{ color: C.muted }}>
-        Try a different term, switch to semantic mode, widen the scope, or clear filters.
+        Try a different term, switch to keyword mode, widen the scope, or clear filters.
       </p>
     </div>
   );
