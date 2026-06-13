@@ -7,6 +7,8 @@ import { ALMAChat } from '@/components/ui/alma-chat';
 import { PageTracker } from '@/components/ui/page-tracker';
 import './globals.css';
 
+export const dynamic = 'force-dynamic';
+
 const metadataBaseUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
   process.env.NEXT_PUBLIC_APP_URL ||
