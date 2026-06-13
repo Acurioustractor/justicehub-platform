@@ -1,11 +1,58 @@
+/**
+ * POST /api/justice-matrix/ask — Ask the Matrix (grounded RAG).
+ *
+ * Pipeline:
+ *   1. planQuery(question, uiSurface)        — intent/surface/filters/expanded queries
+ *   2. retrievePlan(request, plan)           — multi-query /search fan-out, distance-min fusion
+ *   3. structured answer                     — citation-forced JSON grounding prompt
+ *   4. amplification                         — followups / relatedIssues / gaps / researchTrail / actions
+ *
+ * Backwards-compatible: `answer` stays a STRING (the existing client renders it).
+ * `answerStructured` is ADDITIVE and nullable. The provider chain + retrieval-only
+ * fallback are preserved (route-local chooseProvider/askProvider keep the
+ * retrieval.provider name). Confidence and the boundary note are computed in TS
+ * and OVERWRITTEN server-side in every branch — never trusted from the model.
+ *
+ * Copy rules: no em-dash, no AI-vocab, the not-legal-advice boundary on every
+ * answer, the consent gate on evidence (enforced upstream in /search).
+ */
+
 import { NextResponse } from 'next/server';
 import { SURFACES } from '@/lib/justice-matrix/surfaces';
+import { createServiceClient } from '@/lib/supabase/service-lite';
+import { planQuery, type QueryPlan, type QueryIntent } from '@/lib/justice-matrix/query-understanding';
+import { AskMatrixAnswerSchema, validateLLMOutput } from '@/lib/ai/llm-schemas';
+import {
+  citationCategories,
+  buildRelatedIssues,
+  buildGaps,
+  buildResearchTrail,
+  buildActions,
+  templateFollowups,
+  followupSystemPrompt,
+  followupUserPrompt,
+  parseFollowups,
+  type IssueRow,
+  type Followup,
+  type RelatedIssue,
+  type Gap,
+  type TrailMove,
+  type Action,
+} from '@/lib/justice-matrix/amplify';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 45;
 
 type Surface = 'all' | 'refugee' | 'youth';
 type SourceKind = 'case' | 'campaign' | 'evidence';
+
+// Soft threshold: a fused hit beyond this distance is a weak match (drives the
+// gap path + clamps confidence). Cosine distance in text-embedding-3-small space.
+const WEAK_MATCH = 0.45;
+
+// Exact boundary line. Set in EVERY branch, no exceptions.
+const BOUNDARY_NOTE =
+  'This is a research resource, not legal advice. Read the linked source before acting on it.';
 
 interface AskRequest {
   question?: string;
@@ -23,6 +70,11 @@ interface RawCase {
   authoritative_link: string | null;
   verified: boolean | null;
   human_confirmed: boolean | null;
+  // Threaded from the /search payload (already present, previously discarded).
+  distance: number | null;
+  precedent_strength: string | null;
+  categories: string[] | null;
+  country_code: string | null;
 }
 
 interface RawCampaign {
@@ -34,6 +86,8 @@ interface RawCampaign {
   excerpt: string | null;
   lead_organizations: string | null;
   campaign_link: string | null;
+  distance: number | null;
+  categories: string[] | null;
 }
 
 interface RawEvidence {
@@ -47,6 +101,7 @@ interface RawEvidence {
   organization: string | null;
   source_url: string | null;
   restricted: boolean;
+  distance: number | null;
 }
 
 type RawHit = RawCase | RawCampaign | RawEvidence;
@@ -63,6 +118,15 @@ interface Citation {
   verified?: boolean | null;
   humanConfirmed?: boolean | null;
   restricted?: boolean;
+  // Threaded so amplification (related issues, adjacent-jurisdiction trail) and
+  // confidence can read them. Cases+campaigns carry categories; cases carry
+  // jurisdiction/country_code.
+  categories?: string[] | null;
+  jurisdiction?: string | null;
+  country_code?: string | null;
+  // Internal: the fused min-distance for this hit (null in keyword mode). Not
+  // serialised onto the public citation, used only to derive confidence.
+  _distance?: number | null;
 }
 
 interface SearchPayload {
@@ -80,20 +144,61 @@ interface Provider {
   key: string;
 }
 
-const SYSTEM_PROMPT = `You are Ask the Matrix, a grounded research assistant for JusticeHub's Justice Matrix.
+interface StructuredAnswer {
+  directAnswer: string;
+  keyRecords: { label: string; point: string }[];
+  whatHeld: string[];
+  limits: string;
+  confidence: 'strong' | 'partial' | 'thin';
+  boundaryNote: string;
+}
 
-Use only the retrieved Matrix records provided by the API. Cite every substantive factual claim with bracket citations like [C1] or [C2]. If the records do not support an answer, say what is missing and suggest a better search.
+// ---------------------------------------------------------------------------
+// Grounding system prompt (citation-forced JSON). {{N}} = number of records,
+// {{SURFACE_FRAMING}} = the lens framing line.
+// ---------------------------------------------------------------------------
 
-Boundaries:
-- This is research support and strategy orientation, not legal advice.
-- Do not tell a user what legal action to take.
-- Do not invent cases, campaigns, outcomes, holdings, source links, or facts.
-- Prefer clear, practical summaries over broad commentary.
+const SYSTEM_PROMPT_TEMPLATE = [
+  'You are Ask the Matrix, a grounded research assistant for JusticeHub\'s Justice Matrix.',
+  '',
+  'You are given {{N}} retrieved Matrix records, labelled [C1] to [C{{N}}]. {{SURFACE_FRAMING}}',
+  '',
+  'Use ONLY these records. Cite every substantive factual claim with a bracket label like [C1].',
+  'Never invent a case, campaign, outcome, holding, source link, or a label that is not in the list.',
+  'If the records do not establish something, say so plainly in "limits". Leave "whatHeld" empty when no record states a holding.',
+  '',
+  'Return ONLY JSON with these keys:',
+  '{"directAnswer","keyRecords","whatHeld","limits","boundaryNote"}',
+  '- directAnswer: 2 to 4 sentences of plain prose, with [C#] citations inline.',
+  '- keyRecords: 3 to 6 items, each {"label","point"}; label MUST be one of the [C#] labels shown.',
+  '- whatHeld: each string is "[C#] <what that record actually established>"; use [] when none stated.',
+  '- limits: what the corpus did NOT establish for this question.',
+  '- boundaryNote: leave it as an empty string; it is set by the system.',
+  '',
+  'Boundaries: this is research support and strategy orientation, not legal advice. Do not tell a user what legal action to take.',
+  'Write in plain English. No em-dashes. Do not use the words delve, crucial, pivotal, seamless, robust, comprehensive, or nuanced.',
+].join('\n');
 
-Answer shape:
-1. Direct answer in 2-4 short paragraphs.
-2. "Useful records" with 3-6 bullets, each cited.
-3. "Limits" with anything the corpus did not establish.`;
+function surfaceFraming(surface: Surface): string {
+  if (surface === 'refugee') {
+    return 'These records sit in the refugee and asylum strategic-litigation domain, across courts and borders.';
+  }
+  if (surface === 'youth') {
+    return 'These records sit in the Australian youth-justice domain: cases, campaigns, and evidence studies.';
+  }
+  return 'These records span strategic-litigation cases, advocacy campaigns, and Australian evidence studies.';
+}
+
+function buildSystemPrompt(n: number, surface: Surface): string {
+  return SYSTEM_PROMPT_TEMPLATE.replace(/\{\{N\}\}/g, String(n)).replace(
+    '{{SURFACE_FRAMING}}',
+    surfaceFraming(surface),
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Input + provider selection
+// ---------------------------------------------------------------------------
 
 function cleanQuestion(value: unknown): string {
   if (typeof value !== 'string') return '';
@@ -132,6 +237,10 @@ function chooseProvider(): Provider | null {
   return null;
 }
 
+// ---------------------------------------------------------------------------
+// Citation construction
+// ---------------------------------------------------------------------------
+
 function hrefFor(hit: RawHit): string {
   if (hit.kind === 'case') return `/justice-matrix/cases/${hit.id}`;
   if (hit.kind === 'campaign') return `/justice-matrix/campaigns/${hit.id}`;
@@ -145,7 +254,9 @@ function metaFor(hit: RawHit): string {
   if (hit.kind === 'campaign') {
     return [hit.region, hit.start_year, hit.lead_organizations].filter(Boolean).join(' | ');
   }
-  return [hit.jurisdiction ?? 'Australia', hit.year, hit.evidence_type, hit.organization].filter(Boolean).join(' | ');
+  return [hit.jurisdiction ?? 'Australia', hit.year, hit.evidence_type, hit.organization]
+    .filter(Boolean)
+    .join(' | ');
 }
 
 function toCitation(hit: RawHit, index: number): Citation {
@@ -162,6 +273,10 @@ function toCitation(hit: RawHit, index: number): Citation {
       excerpt: hit.excerpt,
       verified: hit.verified,
       humanConfirmed: hit.human_confirmed,
+      categories: hit.categories ?? null,
+      jurisdiction: hit.jurisdiction ?? null,
+      country_code: hit.country_code ?? null,
+      _distance: hit.distance ?? null,
     };
   }
   if (hit.kind === 'campaign') {
@@ -174,6 +289,8 @@ function toCitation(hit: RawHit, index: number): Citation {
       externalUrl: hit.campaign_link,
       meta: metaFor(hit),
       excerpt: hit.excerpt,
+      categories: hit.categories ?? null,
+      _distance: hit.distance ?? null,
     };
   }
   return {
@@ -186,7 +303,16 @@ function toCitation(hit: RawHit, index: number): Citation {
     meta: metaFor(hit),
     excerpt: hit.excerpt,
     restricted: hit.restricted,
+    jurisdiction: hit.jurisdiction ?? 'Australia',
+    _distance: hit.distance ?? null,
   };
+}
+
+// Strip the internal _distance before serialising to the client.
+function publicCitation(c: Citation): Citation {
+  const { _distance, ...rest } = c;
+  void _distance;
+  return rest;
 }
 
 function orderedHits(payload: SearchPayload, surface: Surface): RawHit[] {
@@ -211,6 +337,186 @@ function orderedHits(payload: SearchPayload, surface: Surface): RawHit[] {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Multi-query retrieval + distance-min fusion
+// ---------------------------------------------------------------------------
+
+interface RetrievalResult {
+  citations: Citation[];
+  mode: 'keyword' | 'semantic';
+  total: number;
+  bestDistance: number | null;
+  fusedHits: RawHit[];
+}
+
+function maxQueriesCap(): number {
+  const raw = process.env.JM_QU_MAX_QUERIES;
+  const n = raw ? parseInt(raw, 10) : NaN;
+  return Number.isFinite(n) && n >= 1 && n <= 4 ? n : 3;
+}
+
+// Build the /search params for ONE query string + the plan filters.
+function buildSearchParams(query: string, plan: QueryPlan): URLSearchParams {
+  const f = plan.filters;
+  const params = new URLSearchParams({
+    q: query,
+    mode: 'semantic',
+    type: f.type,
+    limit: '10',
+  });
+  if (f.cat.length) params.set('cat', f.cat.join(','));
+  if (f.outcome) params.set('outcome', f.outcome);
+  if (f.strength) params.set('strength', f.strength);
+  if (f.region) params.set('region', f.region);
+  if (f.country === 'AU') params.set('country', 'AU'); // ONLY 'AU' ever passes
+  params.set('scope', f.scope);
+  return params;
+}
+
+// Effective distance for a case: verified-only boost (closer = better), floored
+// at 0. Human-confirmed boost is SKIPPED (the semantic RPC does not return it).
+function effectiveDistance(hit: RawHit): number | null {
+  if (hit.distance === null || hit.distance === undefined) return null;
+  if (hit.kind === 'case' && hit.verified === true) {
+    return Math.max(0, hit.distance - 0.03);
+  }
+  return hit.distance;
+}
+
+async function retrievePlan(request: Request, plan: QueryPlan, surface: Surface): Promise<RetrievalResult> {
+  const origin = new URL(request.url).origin;
+  const queries = plan.queries.slice(0, maxQueriesCap());
+
+  const settled = await Promise.allSettled(
+    queries.map(async (q) => {
+      const params = buildSearchParams(q, plan);
+      const res = await fetch(`${origin}/api/justice-matrix/search?${params.toString()}`, {
+        cache: 'no-store',
+      });
+      if (!res.ok) throw new Error(`Matrix search failed: ${res.status}`);
+      return (await res.json()) as SearchPayload;
+    }),
+  );
+
+  const payloads: SearchPayload[] = [];
+  for (const s of settled) {
+    if (s.status === 'fulfilled') payloads.push(s.value);
+  }
+
+  // No query succeeded -> empty result, keyword mode.
+  if (payloads.length === 0) {
+    return { citations: [], mode: 'keyword', total: 0, bestDistance: null, fusedHits: [] };
+  }
+
+  const mode: 'keyword' | 'semantic' = payloads.some((p) => p.mode === 'semantic')
+    ? 'semantic'
+    : 'keyword';
+
+  // FUSION: per-kind, keyed by id, keep the MIN effective distance across queries.
+  const fuse = <T extends RawHit>(lists: T[][]): T[] => {
+    const byId = new Map<string, T>();
+    for (const list of lists) {
+      for (const hit of list) {
+        const eff = effectiveDistance(hit);
+        const existing = byId.get(hit.id);
+        if (!existing) {
+          byId.set(hit.id, { ...hit, distance: eff });
+        } else {
+          const prev = existing.distance;
+          const next =
+            eff === null ? prev : prev === null ? eff : Math.min(prev, eff);
+          byId.set(hit.id, { ...existing, distance: next });
+        }
+      }
+    }
+    // Sort by distance ascending (nulls last — keyword mode has no distance).
+    return [...byId.values()].sort((a, b) => {
+      const da = a.distance ?? Number.POSITIVE_INFINITY;
+      const db = b.distance ?? Number.POSITIVE_INFINITY;
+      return da - db;
+    });
+  };
+
+  const fusedCases = fuse(payloads.map((p) => p.cases ?? []));
+  const fusedCampaigns = fuse(payloads.map((p) => p.campaigns ?? []));
+  const fusedEvidence = surface === 'refugee' ? [] : fuse(payloads.map((p) => p.evidence ?? []));
+
+  // RETRIEVAL_MIX quotas: lead with cases, keep campaigns + evidence visible.
+  const QUOTA = { case: 6, campaign: 3, evidence: 3 } as const;
+  const quotaPayload: SearchPayload = {
+    mode,
+    cases: fusedCases.slice(0, QUOTA.case),
+    campaigns: fusedCampaigns.slice(0, QUOTA.campaign),
+    evidence: fusedEvidence.slice(0, QUOTA.evidence),
+  };
+
+  let hits = orderedHits(quotaPayload, surface);
+
+  // SOFT year post-filter: drop out-of-range hits only when >=6 survive.
+  const yf = plan.filters.yearFrom;
+  const yt = plan.filters.yearTo;
+  if (yf !== null || yt !== null) {
+    const inRange = hits.filter((h) => {
+      const y = 'year' in h ? h.year : 'start_year' in h ? h.start_year : null;
+      if (y === null || y === undefined) return true; // keep undated rather than drop
+      if (yf !== null && y < yf) return false;
+      if (yt !== null && y > yt) return false;
+      return true;
+    });
+    if (inRange.length >= 6) hits = inRange;
+  }
+
+  hits = hits.slice(0, 10);
+
+  // bestDistance = min effective distance across the fused hits in this answer.
+  let bestDistance: number | null = null;
+  for (const h of hits) {
+    if (h.distance !== null && h.distance !== undefined) {
+      bestDistance = bestDistance === null ? h.distance : Math.min(bestDistance, h.distance);
+    }
+  }
+
+  const total =
+    (fusedCases.length || 0) + (fusedCampaigns.length || 0) + (fusedEvidence.length || 0);
+
+  return {
+    citations: hits.map(toCitation),
+    mode,
+    total,
+    bestDistance,
+    fusedHits: hits,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Confidence (pure, computed AFTER retrieval, model value discarded)
+// ---------------------------------------------------------------------------
+
+function deriveConfidence(
+  citations: Citation[],
+  bestDistance: number | null,
+): 'strong' | 'partial' | 'thin' {
+  const count = citations.length;
+  const caseCites = citations.filter((c) => c.kind === 'case');
+  const verifiedCases = caseCites.filter((c) => c.verified === true).length;
+  const verifiedShare = caseCites.length > 0 ? verifiedCases / caseCites.length : 0;
+  const close = bestDistance !== null && bestDistance <= 0.32;
+  const loose = bestDistance !== null && bestDistance > 0.5;
+
+  if (count === 0) return 'thin';
+  if (count >= 4 && close && verifiedShare >= 0.25) return 'strong';
+  if (count <= 2 || loose) return 'thin';
+  return 'partial';
+}
+
+function clampToPartial(c: 'strong' | 'partial' | 'thin'): 'partial' | 'thin' {
+  return c === 'strong' ? 'partial' : c;
+}
+
+// ---------------------------------------------------------------------------
+// Provider call (route-local, preserves provider name). JSON grounding prompt.
+// ---------------------------------------------------------------------------
+
 function buildContext(citations: Citation[]): string {
   return citations
     .map((c) =>
@@ -219,7 +525,7 @@ function buildContext(citations: Citation[]): string {
         `Route: ${c.href}`,
         c.externalUrl ? `Source: ${c.externalUrl}` : null,
         c.meta ? `Meta: ${c.meta}` : null,
-        c.verified === true ? 'Trust: verified case, human confirmed when noted in metadata.' : null,
+        c.verified === true ? 'Trust: verified case.' : null,
         c.restricted ? 'Consent: restricted evidence, title and provenance only.' : null,
         c.excerpt ? `Excerpt: ${c.excerpt}` : null,
       ]
@@ -229,35 +535,14 @@ function buildContext(citations: Citation[]): string {
     .join('\n\n');
 }
 
-function fallbackAnswer(question: string, citations: Citation[], searchMode: string): string {
-  if (!citations.length) {
-    return [
-      `I could not find a strong Matrix match for "${question}".`,
-      '',
-      'Try a narrower search term, a case name, a campaign name, or one of the issue phrases such as "non-refoulement high seas", "third country transfer", "offshore detention", or "raise the age".',
-      '',
-      'This is research support, not legal advice.',
-    ].join('\n');
-  }
-
-  const useful = citations
-    .slice(0, 6)
-    .map((c) => `- [${c.label}] ${c.title}${c.meta ? ` (${c.meta})` : ''}`)
-    .join('\n');
-
-  return [
-    `I found ${citations.length} Matrix record${citations.length === 1 ? '' : 's'} for "${question}" using ${searchMode} retrieval.`,
-    '',
-    'This is a cited research packet rather than generated synthesis because no chat provider is configured in this environment. Use the records below to move from question to source.',
-    '',
-    'Useful records:',
-    useful,
-    '',
-    'Limits: the Matrix can orient strategy and source review, but it does not provide legal advice. Read the linked source before relying on a case or campaign.',
-  ].join('\n');
-}
-
-async function askProvider(provider: Provider, question: string, citations: Citation[]): Promise<string> {
+// Returns the raw provider string (parsed downstream). Sends the JSON system
+// prompt + response_format json_object so the model returns parseable JSON.
+async function askProvider(
+  provider: Provider,
+  question: string,
+  citations: Citation[],
+  surface: Surface,
+): Promise<string> {
   const res = await fetch(provider.url, {
     method: 'POST',
     headers: {
@@ -267,9 +552,15 @@ async function askProvider(provider: Provider, question: string, citations: Cita
     body: JSON.stringify({
       model: provider.model,
       temperature: 0.2,
-      max_tokens: 1100,
+      // 1100 truncated the JSON mid-object on multi-record answers (verified live
+      // 2026-06-13), which sank the parse into salvage. Sized for a full answer:
+      // directAnswer + up to 6 keyRecords + whatHeld + limits in pretty JSON.
+      // 2500 still clipped 6-record answers; 3200 covers them (salvage stays the
+      // net if a provider runs even longer).
+      max_tokens: 3200,
+      response_format: { type: 'json_object' },
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: buildSystemPrompt(citations.length, surface) },
         {
           role: 'user',
           content: [
@@ -296,80 +587,358 @@ async function askProvider(provider: Provider, question: string, citations: Cita
   return content.trim();
 }
 
-async function retrieve(request: Request, question: string, surface: Surface): Promise<{
-  citations: Citation[];
-  mode: string;
-  total: number;
-}> {
-  const origin = new URL(request.url).origin;
-  const params = new URLSearchParams({
-    q: question,
-    mode: 'semantic',
-    type: 'all',
-    limit: surface === 'youth' ? '8' : '10',
-  });
+// Parse the structured answer from a raw provider string. Strip code fences,
+// slice first { .. last }, JSON.parse, Zod-validate. null on any failure.
+function parseStructured(raw: string): { directAnswer: string; keyRecords: { label: string; point: string }[]; whatHeld: string[]; limits: string } | null {
+  try {
+    let text = raw.trim();
+    // strip ``` fences
+    text = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
+    const first = text.indexOf('{');
+    const last = text.lastIndexOf('}');
+    if (first === -1 || last === -1 || last <= first) return null;
+    const sliced = text.slice(first, last + 1);
+    const parsed = JSON.parse(sliced);
+    const validated = validateLLMOutput(parsed, AskMatrixAnswerSchema);
+    if (!validated.success) return null;
+    const d = validated.data;
+    return {
+      directAnswer: d.directAnswer,
+      keyRecords: d.keyRecords,
+      whatHeld: d.whatHeld,
+      limits: d.limits,
+    };
+  } catch {
+    return null;
+  }
+}
 
-  if (surface === 'refugee' || surface === 'youth') {
-    const preset = SURFACES[surface];
-    params.set('scope', preset.defaultScope);
-    if (preset.defaultCats.length) params.set('cat', preset.defaultCats.join(','));
+// Loose salvage: when the strict parse fails (e.g. the model wrote more than the
+// schema cap, or a stray field), pull the prose out of the JSON instead of
+// leaking raw braces to the UI. Returns clean prose, or null when there is none.
+function looseProse(raw: string): { directAnswer: string; keyRecords: { label: string; point: string }[] } | null {
+  try {
+    const text = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
+    // 1. Best case: the whole JSON object parses.
+    const first = text.indexOf('{');
+    const last = text.lastIndexOf('}');
+    if (first !== -1 && last > first) {
+      try {
+        const obj = JSON.parse(text.slice(first, last + 1)) as Record<string, unknown>;
+        if (obj && typeof obj.directAnswer === 'string' && obj.directAnswer.trim()) {
+          const kr = Array.isArray(obj.keyRecords)
+            ? (obj.keyRecords as unknown[])
+                .filter(
+                  (r): r is { label: string; point: string } =>
+                    !!r &&
+                    typeof (r as { label?: unknown }).label === 'string' &&
+                    typeof (r as { point?: unknown }).point === 'string',
+                )
+                .slice(0, 6)
+                .map((r) => ({ label: r.label, point: r.point.slice(0, 500) }))
+            : [];
+          return { directAnswer: obj.directAnswer.trim().slice(0, 2600), keyRecords: kr };
+        }
+      } catch {
+        /* truncated or malformed JSON — fall through to regex recovery */
+      }
+    }
+    // 2. JSON-shaped but unparseable (e.g. truncated by max_tokens): pull the
+    //    directAnswer string value out with a regex. A complete string value
+    //    recovers as prose; a half-written one fails to match and we fall back
+    //    to the clean record-list message. We NEVER return the raw braces.
+    if (text.includes('"directAnswer"')) {
+      const m = text.match(/"directAnswer"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+      if (m && m[1].trim()) {
+        const prose = m[1].replace(/\\"/g, '"').replace(/\\n/g, ' ').replace(/\\t/g, ' ').replace(/\\\\/g, '\\').trim();
+        return prose ? { directAnswer: prose.slice(0, 2600), keyRecords: [] } : null;
+      }
+      return null;
+    }
+    // 3. Genuinely plain prose (no JSON markers at all): safe to use as-is.
+    if (!text.startsWith('{')) return text ? { directAnswer: text.slice(0, 2600), keyRecords: [] } : null;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Structured fallbacks (no-provider, provider-threw, parse-failed, salvage)
+// ---------------------------------------------------------------------------
+
+// Deterministic structured answer over the retrieved records. Used when no
+// provider is configured or a provider/parse path failed. Never fabricates: it
+// summarises counts and lists the real records, nothing more.
+function buildStructuredFallback(
+  question: string,
+  citations: Citation[],
+  confidence: 'strong' | 'partial' | 'thin',
+): StructuredAnswer {
+  if (!citations.length) {
+    return {
+      directAnswer: `The Matrix did not return a strong match for "${question}". Try a case or campaign name, or one of the issue phrases such as non-refoulement at sea, third country transfer, offshore detention, or raise the age.`,
+      keyRecords: [],
+      whatHeld: [],
+      limits:
+        'No records matched closely enough to answer. The corpus may not hold material on this question yet.',
+      confidence: 'thin',
+      boundaryNote: BOUNDARY_NOTE,
+    };
   }
 
-  const res = await fetch(`${origin}/api/justice-matrix/search?${params.toString()}`, {
-    cache: 'no-store',
-  });
+  const keyRecords = citations.slice(0, 6).map((c) => ({
+    label: c.label,
+    point: `${c.title}${c.meta ? ` (${c.meta})` : ''}`,
+  }));
 
-  if (!res.ok) throw new Error(`Matrix search failed: ${res.status}`);
-
-  const payload = (await res.json()) as SearchPayload;
-  const hits = orderedHits(payload, surface).slice(0, 10);
   return {
-    citations: hits.map(toCitation),
-    mode: payload.mode ?? 'keyword',
-    total: payload.total ?? hits.length,
+    directAnswer: `The Matrix returned ${citations.length} record${citations.length === 1 ? '' : 's'} for "${question}". This is a cited research packet of the closest matches, not generated synthesis, because no chat provider answered. Use the records below to move from question to source.`,
+    keyRecords,
+    whatHeld: [],
+    limits:
+      'These are the closest matches by retrieval, not a confirmed legal position. Read each linked source before relying on it.',
+    confidence,
+    boundaryNote: BOUNDARY_NOTE,
   };
 }
+
+// Flatten a StructuredAnswer to the back-compat `answer` prose string.
+function flattenAnswer(s: StructuredAnswer): string {
+  const parts: string[] = [s.directAnswer.trim()];
+
+  if (s.keyRecords.length) {
+    parts.push('');
+    parts.push('Key records:');
+    parts.push(...s.keyRecords.map((r) => `- [${r.label}] ${r.point}`));
+  }
+  if (s.whatHeld.length) {
+    parts.push('');
+    parts.push('What the records held:');
+    parts.push(...s.whatHeld.map((w) => `- ${w}`));
+  }
+  if (s.limits.trim()) {
+    parts.push('');
+    parts.push(`Limits: ${s.limits.trim()}`);
+  }
+  parts.push('');
+  parts.push(s.boundaryNote);
+  return parts.join('\n');
+}
+
+// ---------------------------------------------------------------------------
+// Issues read + follow-ups (the one DB read; everything else is in-memory)
+// ---------------------------------------------------------------------------
+
+async function loadPublishedIssues(): Promise<IssueRow[]> {
+  try {
+    const supabase = createServiceClient();
+    const { data } = await supabase
+      .from('justice_matrix_issues')
+      .select('slug,title,surface,category_tags,question')
+      .eq('is_published', true);
+    return ((data ?? []) as IssueRow[]).map((r) => ({
+      slug: r.slug,
+      title: r.title,
+      surface: r.surface,
+      category_tags: Array.isArray(r.category_tags) ? r.category_tags : [],
+      question: r.question ?? '',
+    }));
+  } catch {
+    return [];
+  }
+}
+
+async function buildFollowups(
+  provider: Provider | null,
+  question: string,
+  citations: Citation[],
+  related: RelatedIssue[],
+  cats: string[],
+  surface: Surface,
+): Promise<Followup[]> {
+  // Template first — always guaranteed.
+  const template = templateFollowups(question, related, cats, surface);
+  if (!provider || citations.length === 0) return template;
+
+  // One optional provider call; any failure falls back to the template.
+  try {
+    const res = await fetch(provider.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${provider.key}`,
+      },
+      body: JSON.stringify({
+        model: provider.model,
+        temperature: 0.3,
+        max_tokens: 300,
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: followupSystemPrompt() },
+          {
+            role: 'user',
+            content: followupUserPrompt(
+              question,
+              citations.map((c) => c.title),
+              related.map((r) => r.title),
+            ),
+          },
+        ],
+      }),
+    });
+    if (!res.ok) return template;
+    const json = await res.json();
+    const content = json?.choices?.[0]?.message?.content;
+    if (typeof content !== 'string') return template;
+    const parsed = parseFollowups(content, surface);
+    return parsed && parsed.length >= 1 ? parsed.slice(0, 5) : template;
+  } catch {
+    return template;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Handler
+// ---------------------------------------------------------------------------
 
 export async function POST(request: Request) {
   try {
     const body = (await request.json().catch(() => ({}))) as AskRequest;
     const question = cleanQuestion(body.question);
-    const surface = normaliseSurface(body.surface);
+    const uiSurface = normaliseSurface(body.surface);
 
     if (question.length < 3) {
       return NextResponse.json({ error: 'Question must be at least 3 characters.' }, { status: 400 });
     }
 
-    const retrieved = await retrieve(request, question, surface);
-    const provider = chooseProvider();
+    // 1. Plan the query (intent / surface / filters / expanded queries).
+    const plan = await planQuery(question, uiSurface);
+    const surface: Surface = plan.surface;
 
-    let answer: string;
+    // 2. Multi-query retrieval + distance-min fusion.
+    const retrieved = await retrievePlan(request, plan, surface);
+    const citations = retrieved.citations;
+    const cats = citationCategories(citations);
+
+    // 3. Confidence (computed in TS, overwritten in every branch below).
+    const baseConfidence = deriveConfidence(citations, retrieved.bestDistance);
+    const weak =
+      citations.length === 0 ||
+      (retrieved.bestDistance !== null && retrieved.bestDistance > WEAK_MATCH);
+
+    // 4. Structured answer through the existing provider chain.
+    const provider = chooseProvider();
     let providerName = 'retrieval-only';
-    try {
-      if (provider && retrieved.citations.length) {
-        answer = await askProvider(provider, question, retrieved.citations);
-        providerName = provider.name;
-      } else {
-        answer = fallbackAnswer(question, retrieved.citations, retrieved.mode);
+    let structured: StructuredAnswer;
+
+    if (provider && citations.length) {
+      try {
+        const raw = await askProvider(provider, question, citations, surface);
+        const parsed = parseStructured(raw);
+        if (parsed) {
+          structured = {
+            directAnswer: parsed.directAnswer,
+            // keep only keyRecords whose label maps to a real citation
+            keyRecords: parsed.keyRecords.filter((r) =>
+              citations.some((c) => c.label === r.label),
+            ),
+            whatHeld: parsed.whatHeld,
+            limits: parsed.limits,
+            confidence: baseConfidence, // overwritten below regardless
+            boundaryNote: BOUNDARY_NOTE,
+          };
+          providerName = provider.name;
+        } else {
+          // SALVAGE: JSON/Zod validation failed. Pull clean prose out of the raw
+          // (never leak the JSON braces to the UI); clamp confidence to 'partial'.
+          const loose = looseProse(raw);
+          const looseRecords = (loose?.keyRecords ?? []).filter((r) =>
+            citations.some((c) => c.label === r.label),
+          );
+          structured = {
+            directAnswer:
+              loose?.directAnswer ||
+              `The Matrix returned ${citations.length} record${citations.length === 1 ? '' : 's'} for "${question}". Use the cited records below to move from question to source.`,
+            keyRecords: looseRecords.length
+              ? looseRecords
+              : citations.slice(0, 6).map((c) => ({
+                  label: c.label,
+                  point: `${c.title}${c.meta ? ` (${c.meta})` : ''}`,
+                })),
+            whatHeld: [],
+            limits:
+              'The provider answer ran past the structured limit, so this shows the retrieved records. Read each source before relying on it.',
+            confidence: clampToPartial(baseConfidence),
+            boundaryNote: BOUNDARY_NOTE,
+          };
+          providerName = provider.name;
+        }
+      } catch (error) {
+        console.warn('[Ask the Matrix] provider failed, falling back:', error);
+        structured = buildStructuredFallback(question, citations, baseConfidence);
       }
-    } catch (error) {
-      console.warn('[Ask the Matrix] provider failed, falling back:', error);
-      answer = fallbackAnswer(question, retrieved.citations, retrieved.mode);
+    } else {
+      structured = buildStructuredFallback(question, citations, baseConfidence);
     }
+
+    // OVERWRITE the boundary note server-side in EVERY branch, no exceptions.
+    // Confidence is already the derived value (or the salvage-clamped value) set
+    // when `structured` was built; the model's own confidence is never read.
+    structured.boundaryNote = BOUNDARY_NOTE;
+
+    // 5. Amplification block.
+    const issues = await loadPublishedIssues();
+    const relatedIssues = buildRelatedIssues(issues, cats, citations, surface);
+    const gaps: Gap[] =
+      weak || citations.length < 3 ? buildGaps(citations, { weak, mode: retrieved.mode }, surface) : [];
+    const researchTrail: TrailMove[] = buildResearchTrail(question, cats, citations, surface);
+    const actions: Action[] = buildActions(cats, surface, relatedIssues, citations);
+    // export action: thread the real keyword from the question.
+    const exportAction = actions.find((a) => a.id === 'export');
+    if (exportAction && exportAction.enabled) {
+      const url = new URL(exportAction.href, 'https://x');
+      url.searchParams.set('q', question.replace(/[,()*%]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120));
+      exportAction.href = `${url.pathname}?${url.searchParams.toString()}`;
+    }
+    const followups = await buildFollowups(provider, question, citations, relatedIssues, cats, surface);
+
+    // 6. Back-compat prose + public citations.
+    const answer = flattenAnswer(structured);
+    const publicCitations = citations.map(publicCitation);
 
     return NextResponse.json({
       question,
       surface,
       answer,
-      citations: retrieved.citations,
+      answerStructured: structured,
+      citations: publicCitations,
       retrieval: {
         mode: retrieved.mode,
         total: retrieved.total,
         provider: providerName,
+        bestDistance: retrieved.bestDistance,
+        verifiedShare: verifiedShareOf(citations),
+        intent: plan.intent as QueryIntent,
+        queries: plan.queries.length,
+        planSource: plan.source,
+        weak,
       },
+      followups,
+      relatedIssues,
+      gaps,
+      researchTrail,
+      actions,
     });
   } catch (error) {
     console.error('[Ask the Matrix] failed:', error);
     return NextResponse.json({ error: 'Ask the Matrix could not answer right now.' }, { status: 500 });
   }
+}
+
+function verifiedShareOf(citations: Citation[]): number {
+  const cases = citations.filter((c) => c.kind === 'case');
+  if (cases.length === 0) return 0;
+  const verified = cases.filter((c) => c.verified === true).length;
+  return verified / cases.length;
 }

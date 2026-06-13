@@ -336,6 +336,74 @@ export const JusticeMatrixThemeMapSchema = z.object({
 export type JusticeMatrixThemeMap = z.infer<typeof JusticeMatrixThemeMapSchema>;
 
 // ---------------------------------------------------------------------------
+// Justice Matrix query understanding (/ask NL engine -> /search QueryPlan)
+// ---------------------------------------------------------------------------
+
+// snake_case mirrors the LLM JSON. Permissive .catch()/.default() discipline
+// (same as the JusticeMatrixDiscovery* schemas) so a malformed field degrades
+// to a safe default instead of throwing the whole parse. categories/country are
+// NOT enum-validated here (open vocab) — the query-understanding sanitiser
+// intersects them against CANONICAL_CATEGORIES after validation, exactly the
+// theme-mapper pattern (a hallucinated category is dropped, never used).
+export const QUERY_INTENTS = ['find-cases', 'find-campaigns', 'find-evidence', 'unknown'] as const;
+export const QUERY_SURFACES = ['all', 'refugee', 'youth'] as const;
+
+export const QueryPlanSchema = z.object({
+  intent: z.enum(QUERY_INTENTS).catch('unknown'),
+  surface: z.enum(QUERY_SURFACES).catch('all'),
+  surface_explicit: z.boolean().catch(false),
+  type: z.enum(['all', 'case', 'campaign', 'evidence']).catch('all'),
+  // Every constrained field uses .catch() so one stray model value (e.g.
+  // outcome:"" or strength:"any") coerces to a safe default instead of failing
+  // the WHOLE plan into the heuristic. Verified live 2026-06-13: Groq returned
+  // out-of-enum outcome/strength and sank otherwise-good plans.
+  categories: z.array(z.string().min(2).max(60)).max(8).catch([]),
+  outcome: z.enum(['favorable', 'adverse', 'pending']).nullable().catch(null),
+  strength: z.enum(['high', 'medium', 'low']).nullable().catch(null),
+  region: z.string().max(80).nullable().catch(null),
+  country: z.string().max(8).nullable().catch(null),
+  scope: z.enum(['all', 'au', 'global']).catch('all'),
+  year_from: z.number().int().min(1900).max(2100).nullable().catch(null),
+  year_to: z.number().int().min(1900).max(2100).nullable().catch(null),
+  // sanitisePlan backfills an empty array with the original question, so .catch([]) is safe.
+  queries: z.array(z.string().min(3).max(200)).max(4).catch([]),
+});
+export type QueryPlanLLM = z.infer<typeof QueryPlanSchema>;
+
+// ---------------------------------------------------------------------------
+// Ask the Matrix — structured answer
+// ---------------------------------------------------------------------------
+// Drives the grounded answer. The model returns these five keys; `confidence`
+// and `boundaryNote` are NOT in this schema because they are computed in TS and
+// overwritten server-side in every branch (never trusted from the model). Each
+// keyRecords label MUST match a real citation label (C1, C2, ...) — the schema
+// enforces the shape, the route enforces the join. .passthrough() ignores any
+// extra key the provider adds (Gemini returns a stray `confidence`/`sources`
+// key on some queries; verified live 2026-06-13). .strict() was rejecting those
+// whole answers into the salvage path, which leaked raw JSON into directAnswer.
+export const AskMatrixAnswerSchema = z
+  .object({
+    // Caps sized to real model output (verified live 2026-06-13: Gemini writes
+    // multi-case answers well past 1200 chars). Too tight a cap sank valid
+    // answers into the salvage path, which leaked raw JSON to the UI.
+    directAnswer: z.string().min(1).max(2600),
+    keyRecords: z
+      .array(
+        z.object({
+          label: z.string().regex(/^C\d+$/),
+          point: z.string().min(1).max(500),
+        }),
+      )
+      .max(6)
+      .catch([]),
+    whatHeld: z.array(z.string().max(500)).max(8).catch([]),
+    limits: z.string().min(1).max(1200),
+    boundaryNote: z.string().max(300).default(''),
+  })
+  .passthrough();
+export type AskMatrixAnswer = z.infer<typeof AskMatrixAnswerSchema>;
+
+// ---------------------------------------------------------------------------
 // Validated parse helper
 // ---------------------------------------------------------------------------
 
