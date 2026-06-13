@@ -17,7 +17,7 @@ import type {
   JusticeSearchContext,
 } from './types';
 import { buildSearchContext, cleanQuery } from './intent-detector';
-import { internalSearchProvider, empathyLedgerSearchProvider } from './providers';
+import { internalSearchProvider, empathyLedgerSearchProvider, jrSitesSearchProvider } from './providers';
 
 /**
  * Main entry point for unified search
@@ -55,6 +55,7 @@ export function createJusticeSearch() {
         internal: options?.sources?.internal ?? true,
         empathyLedger: options?.sources?.empathyLedger ?? true,
         external: options?.sources?.external ?? false,
+        jrSites: options?.sources?.jrSites ?? true,
       };
 
       // Collect results from all sources in parallel
@@ -83,6 +84,23 @@ export function createJusticeSearch() {
               console.warn('Empathy Ledger search failed, continuing with other sources:', error);
               sourceTiming['empathy-ledger'] = Date.now() - sourceStart;
               return { source: 'empathy-ledger', results: [] };
+            }
+          })()
+        );
+      }
+
+      if (sources.jrSites) {
+        searchPromises.push(
+          (async () => {
+            const sourceStart = Date.now();
+            try {
+              const results = await jrSitesSearchProvider.search(cleanedQuery, context);
+              sourceTiming['jr-sites'] = Date.now() - sourceStart;
+              return { source: 'jr-sites', results };
+            } catch (error) {
+              console.warn('JR sites search failed, continuing with other sources:', error);
+              sourceTiming['jr-sites'] = Date.now() - sourceStart;
+              return { source: 'jr-sites', results: [] };
             }
           })()
         );
@@ -187,14 +205,16 @@ export function createJusticeSearch() {
      * Check if all search providers are available
      */
     healthCheck: async (): Promise<Record<string, boolean>> => {
-      const [internal, empathyLedger] = await Promise.all([
+      const [internal, empathyLedger, jrSites] = await Promise.all([
         internalSearchProvider.isAvailable(),
         empathyLedgerSearchProvider.isAvailable(),
+        jrSitesSearchProvider.isAvailable(),
       ]);
 
       return {
         internal,
         empathyLedger,
+        jrSites,
       };
     },
   };
@@ -231,6 +251,7 @@ function buildFacets(results: SearchResult[]): SearchFacets {
     story: 0,
     research: 0,
     news: 0,
+    site: 0,
   };
 
   const byState: Record<string, number> = {};
