@@ -16,6 +16,7 @@ import JRNetworkExplorer, {
 } from './JRNetworkExplorer';
 
 export const revalidate = 300;
+const JR_DATA_TIMEOUT_MS = 1800;
 
 export const metadata: Metadata = {
   title: 'The justice reinvestment network | JusticeHub',
@@ -30,30 +31,107 @@ interface HistoryEntry {
   source_url: string;
 }
 
+async function withJrFallback<T>(query: Promise<T>, fallback: T): Promise<T> {
+  return Promise.race([
+    query.catch(() => fallback),
+    new Promise<T>((resolve) => {
+      setTimeout(() => resolve(fallback), JR_DATA_TIMEOUT_MS);
+    }),
+  ]);
+}
+
+function buildFallbackGroups(sites: ReturnType<typeof loadJusticeReinvestmentSites>): EnrichedGroup[] {
+  const stateLabels: Record<string, string> = {
+    NSW: 'New South Wales',
+    NT: 'Northern Territory',
+    QLD: 'Queensland',
+    SA: 'South Australia',
+    WA: 'Western Australia',
+    VIC: 'Victoria',
+    ACT: 'Australian Capital Territory',
+    TAS: 'Tasmania',
+    National: 'National',
+  };
+  const order = ['NSW', 'NT', 'QLD', 'SA', 'WA', 'VIC', 'ACT', 'TAS', 'National'];
+  const buckets = new Map<string, EnrichedGroup['initiatives']>();
+
+  sites.forEach((site) => {
+    const key = site.state || 'National';
+    const list = buckets.get(key) ?? [];
+    list.push({
+      id: site.matchName,
+      name: site.displayName,
+      verificationStatus: 'verified',
+      orgName: site.org,
+      state: site.state,
+      isIndigenousOrg: false,
+      website: site.website,
+      blurb: site.blurb,
+      siteSlug: site.siteSlug,
+    });
+    buckets.set(key, list);
+  });
+
+  return order
+    .filter((key) => buckets.has(key))
+    .map((key) => ({
+      key,
+      label: stateLabels[key] || key,
+      initiatives: buckets.get(key) || [],
+    }));
+}
+
 export default async function JusticeReinvestmentNetworkPage() {
-  const { groups, counts } = await loadJusticeReinvestmentNetwork();
   const sites = loadJusticeReinvestmentSites();
+  const fallbackGroups = buildFallbackGroups(sites);
+  const fallbackCounts = {
+    total: sites.length,
+    withLeadOrg: sites.filter((site) => site.org).length,
+    states: new Set(sites.map((site) => site.state)).size,
+    placeToConfirm: 0,
+    communityVerified: 0,
+  };
+  const [
+    { groups, counts },
+    detailIndex,
+  ] = await Promise.all([
+    withJrFallback(loadJusticeReinvestmentNetwork(), {
+      initiatives: [],
+      groups: fallbackGroups,
+      counts: fallbackCounts,
+    }),
+    withJrFallback(buildSiteOrgIndex(sites), {}),
+  ]);
   const enrichmentIndex = buildSiteEnrichmentIndex(sites);
 
   // Per-site organisation detail for the full-screen sidebar, loaded once on
   // the server. The optional curated connections layer is omitted silently when
   // its data file is absent.
-  const detailIndex = await buildSiteOrgIndex(sites);
   const connectionIndex = loadJrConnectionIndex();
 
   // Honest count for the hero: curated sites on the map (34 today).
   const placedSites = sites.filter((s) => s.lat !== null && s.lng !== null);
   const siteStates = new Set(placedSites.map((s) => s.state));
 
+  // Resolve a DB row to its per-site page slug by matching the row name against
+  // a curated site's match_name or display name.
+  const slugByName = new Map<string, string>();
+  sites.forEach((site) => {
+    slugByName.set(site.matchName.trim().toLowerCase(), site.siteSlug);
+    slugByName.set(site.displayName.trim().toLowerCase(), site.siteSlug);
+  });
+
   // Enrich each DB list row with a curated website + blurb when the name matches.
   const enrichedGroups: EnrichedGroup[] = groups.map((group) => ({
     ...group,
     initiatives: group.initiatives.map((initiative) => {
-      const enrichment = enrichmentIndex.get(initiative.name.trim().toLowerCase());
+      const key = initiative.name.trim().toLowerCase();
+      const enrichment = enrichmentIndex.get(key);
       return {
         ...initiative,
         website: enrichment?.website ?? null,
         blurb: enrichment?.blurb ?? null,
+        siteSlug: slugByName.get(key) ?? null,
       };
     }),
   }));

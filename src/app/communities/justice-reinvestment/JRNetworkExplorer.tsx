@@ -35,6 +35,8 @@ export interface EnrichedInitiative {
   isIndigenousOrg: boolean;
   website: string | null;
   blurb: string | null;
+  /** Per-site detail-page slug when this row matches a curated site. */
+  siteSlug?: string | null;
 }
 
 export interface EnrichedGroup extends Omit<JrStateGroup, 'initiatives'> {
@@ -200,16 +202,26 @@ export default function JRNetworkExplorer({
                         </p>
                       ) : null}
 
-                      {initiative.website ? (
-                        <Link
-                          href={initiative.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-4 inline-flex text-xs font-semibold text-[#4a2560]"
-                        >
-                          Visit website &rarr;
-                        </Link>
-                      ) : null}
+                      <div className="mt-4 flex flex-wrap items-center gap-4">
+                        {initiative.siteSlug ? (
+                          <Link
+                            href={`/communities/justice-reinvestment/${initiative.siteSlug}`}
+                            className="inline-flex text-xs font-semibold text-[#4a2560]"
+                          >
+                            View site profile &rarr;
+                          </Link>
+                        ) : null}
+                        {initiative.website ? (
+                          <Link
+                            href={initiative.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex text-xs font-semibold text-[#7d5f3d]"
+                          >
+                            Visit website &rarr;
+                          </Link>
+                        ) : null}
+                      </div>
                     </div>
                   ))}
                 </div>
