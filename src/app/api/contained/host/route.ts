@@ -3,6 +3,9 @@ import { createServiceClient } from '@/lib/supabase/service-lite';
 import { getGHLClient, GHL_CANONICAL, GHL_PIPELINES, STATE_TO_PLACE } from '@/lib/ghl/client';
 import { sanitizeInput, sanitizeEmail } from '@/lib/security';
 import { sendEmail } from '@/lib/email/send';
+import { writeCaptureLog, backfillCaptureSync } from '@/lib/contained/capture-log';
+
+const TEAM_EMAIL = 'benjamin@act.place';
 
 /**
  * POST /api/contained/host
@@ -56,9 +59,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
     }
 
+    // Durable-first capture: write an append-only row BEFORE any GHL call so a
+    // GHL failure can never lose the host offer. This is the fail-loud spine.
+    const supabase = createServiceClient();
+    let captureId: string | null = null;
+    try {
+      const capture = await writeCaptureLog(supabase, {
+        route: 'host',
+        email: cleanEmail,
+        name: cleanName,
+        role: 'host',
+        payload: { organization: cleanOrg, state: cleanState, venue_type: cleanVenue, message: cleanMessage },
+      });
+      captureId = capture.captureId;
+    } catch (captureErr) {
+      console.error('[contained/host] durable capture insert failed:', captureErr);
+      return NextResponse.json(
+        { error: 'We could not save your details. Please email ben@justicehub.com.au and we will reply directly.' },
+        { status: 500 }
+      );
+    }
+
     // Persist to the shared inbox (best-effort — never fail capture if absent).
     try {
-      const supabase = createServiceClient();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase as any).from('contact_submissions').insert({
         name: cleanName,
@@ -123,7 +146,29 @@ export async function POST(request: NextRequest) {
           })
           .catch((err) => console.error('[contained/host] opportunity create failed:', err));
       }
+
+      // Backfill the durable capture row with the GHL result.
+      await backfillCaptureSync(supabase, captureId, {
+        ghl_contact_id: contactId,
+        ghl_synced: !!contactId,
+      });
     }
+
+    // Notify the team so a host offer is never invisible (Defect A3). Reply-to =
+    // the submitter so the team can respond directly. No-op unless email is on.
+    sendEmail({
+      to: TEAM_EMAIL,
+      subject: `[CONTAINED] New host offer: ${cleanOrg || cleanName}${cleanState ? ` · ${cleanState}` : ''}`,
+      preheader: `${cleanName} offered to host the container.`,
+      emailFrom: `${cleanName} <${cleanEmail}>`,
+      body: `New "Host the Container" offer via CONTAINED.
+
+Name: ${cleanName}
+Email: ${cleanEmail}
+${cleanOrg ? `Organisation: ${cleanOrg}\n` : ''}${cleanState ? `State: ${cleanState}\n` : ''}${cleanVenue ? `Venue / space: ${cleanVenue}\n` : ''}Reply directly to: ${cleanEmail}
+
+${cleanMessage || '(no message)'}`,
+    }).catch((err) => console.error('[contained/host] team notification failed:', err));
 
     // Thank-you confirmation (fire-and-forget).
     sendEmail({

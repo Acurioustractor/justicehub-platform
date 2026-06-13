@@ -3,6 +3,7 @@ import { createServiceClient } from '@/lib/supabase/service-lite';
 import { getGHLClient, GHL_CANONICAL, GHL_PIPELINES } from '@/lib/ghl/client';
 import { sanitizeInput, sanitizeEmail } from '@/lib/security';
 import { sendEmail } from '@/lib/email/send';
+import { writeCaptureLog, backfillCaptureSync } from '@/lib/contained/capture-log';
 
 /**
  * POST /api/contained/connect
@@ -93,9 +94,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
     }
 
+    // Durable-first capture: write an append-only row BEFORE any GHL call so a
+    // GHL failure can never lose the lead. This is the fail-loud spine.
+    const supabase = createServiceClient();
+    let captureId: string | null = null;
+    try {
+      const capture = await writeCaptureLog(supabase, {
+        route: 'connect',
+        email: cleanEmail,
+        name: cleanName,
+        role: typedRole,
+        payload: { organization: cleanOrg, message: cleanMessage },
+      });
+      captureId = capture.captureId;
+    } catch (captureErr) {
+      console.error('[contained/connect] durable capture insert failed:', captureErr);
+      return NextResponse.json(
+        { error: 'We could not save your details. Please email ben@justicehub.com.au and we will reply directly.' },
+        { status: 500 }
+      );
+    }
+
     // Persist to the shared inbox (best-effort — never fail capture if absent).
     try {
-      const supabase = createServiceClient();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase as any).from('contact_submissions').insert({
         name: cleanName,
@@ -152,6 +173,12 @@ export async function POST(request: NextRequest) {
           })
           .catch((err) => console.error('[contained/connect] opportunity create failed:', err));
       }
+
+      // Backfill the durable capture row with the GHL result.
+      await backfillCaptureSync(supabase, captureId, {
+        ghl_contact_id: contactId,
+        ghl_synced: !!contactId,
+      });
     }
 
     // Route the enquiry to the team — reply-to = submitter so they can respond

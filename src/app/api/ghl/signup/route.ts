@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getGHLClient, GHL_CANONICAL, GHL_PIPELINES, MEMBER_TYPE_TO_ROLE, STATE_TO_PLACE, GHL_NURTURE_WORKFLOWS } from '@/lib/ghl/client';
 import { sanitizeInput } from '@/lib/security';
+import { writeCaptureLog, backfillCaptureSync } from '@/lib/contained/capture-log';
+import { sendEmail } from '@/lib/email/send';
+import { signupReceipt } from '@/content/contained-receipts';
 
 /**
  * POST /api/ghl/signup
@@ -53,6 +56,34 @@ export async function POST(request: NextRequest) {
     // workflow trigger, or in the newsletter-list upsert below. A community-lane
     // newsletter opt-in is honored only via a human-confirmed follow-up.
     const communityLane = member_type === 'lived_experience';
+
+    // Durable-first capture: write an append-only row BEFORE any GHL call, so a
+    // GHL failure (outage, 504, API error) can never lose the lead. This is the
+    // fail-loud spine — if it throws (anything but a missing table pre-migration),
+    // we 500 and the form's fail-loud fallback tells the person nothing was saved.
+    let captureId: string | null = null;
+    try {
+      const capture = await writeCaptureLog(supabase, {
+        route: 'signup',
+        email,
+        name: full_name || null,
+        role: member_type || (is_steward ? 'steward' : null),
+        payload: {
+          organization: organization || '',
+          state: state || '',
+          source: source || '',
+          newsletter: !!newsletter,
+          message: sanitizedMessage,
+        },
+      });
+      captureId = capture.captureId;
+    } catch (captureErr) {
+      console.error('[signup] durable capture insert failed:', captureErr);
+      return NextResponse.json(
+        { error: 'We could not save your details. Please email ben@justicehub.com.au and we will register you directly.' },
+        { status: 500 }
+      );
+    }
 
     if (ghl.isConfigured()) {
       // Build canonical tags. project: is always present.
@@ -122,6 +153,36 @@ export async function POST(request: NextRequest) {
           );
         }
       }
+    }
+
+    // Backfill the durable capture row with the GHL result. An un-synced row
+    // (ghl_synced=false) is replayable; the lead is never lost.
+    await backfillCaptureSync(supabase, captureId, {
+      ghl_contact_id: ghlContactId,
+      ghl_synced: !!ghlContactId,
+    });
+
+    // Receipt to the person — this is the no-reply fix (Defect B). Fire-and-forget;
+    // the kill switch in send.ts makes it a safe no-op when EMAIL_ENABLED is off.
+    // Community lane (OCAP) gets no automated email; a human follow-up acknowledges
+    // their submission. (Ben can enable a receipt for that lane if desired.)
+    if (!communityLane) {
+      const firstName = (full_name || '').split(' ')[0] || 'there';
+      const receipt = signupReceipt(firstName);
+      sendEmail({
+        to: email,
+        subject: receipt.subject,
+        body: receipt.body,
+        preheader: receipt.preheader,
+        heroImage: {
+          src: 'https://www.justicehub.com.au/images/contained/contained-brand-square.png',
+          alt: 'CONTAINED. 3 rooms. 30 minutes. The truth.',
+        },
+      })
+        .then((result) => {
+          if (result) void backfillCaptureSync(supabase, captureId, { receipt_sent: true });
+        })
+        .catch((err) => console.error('[signup] receipt email failed:', err));
     }
 
     // Update profile with GHL contact ID

@@ -36,6 +36,28 @@ The CONTAINED team at JusticeHub`,
   };
 }
 
+export function signupReceipt(firstName: string): ReceiptEmail {
+  return {
+    subject: 'Your interest in CONTAINED is in',
+    preheader: 'A real person reads these, not a filter.',
+    body: `${firstName},
+
+Your interest in CONTAINED is in. A real person reads these, not a filter.
+
+Here is what happens next. We will be in touch about the way you offered to stand with it: your city, a partnership, funding, or simply staying close to the work.
+
+While you wait, two doors you can open today:
+
+READ the brief. Three rooms, thirty minutes, and the evidence underneath it: ${SITE}/contained/brief
+
+NOMINATE the person whose decisions touch children's lives. A magistrate, an MP, a CEO. We make the personal invitation: ${SITE}/contained#nominate
+
+You can't unknow what you're about to know.
+
+The CONTAINED team at JusticeHub`,
+  };
+}
+
 export function supporterReceipt(firstName: string): ReceiptEmail {
   return {
     subject: "You're standing with it",
