@@ -189,10 +189,26 @@ function surfaceFraming(surface: Surface): string {
   return 'These records span strategic-litigation cases, advocacy campaigns, and Australian evidence studies.';
 }
 
-function buildSystemPrompt(n: number, surface: Surface): string {
-  return SYSTEM_PROMPT_TEMPLATE.replace(/\{\{N\}\}/g, String(n)).replace(
-    '{{SURFACE_FRAMING}}',
-    surfaceFraming(surface),
+// The badge stays the authoritative confidence signal; this just aligns the prose
+// with it so a tentative answer does not read as a firm one under a 'thin' badge.
+function hedgingLine(confidence: 'strong' | 'partial' | 'thin'): string {
+  if (confidence === 'thin') {
+    return 'Retrieval for this question is weak. Write tentatively: say what the few records suggest, foreground the limits, and do not state firm conclusions.';
+  }
+  if (confidence === 'partial') {
+    return 'Retrieval is moderate. State what the records support and be explicit about what they do not.';
+  }
+  return 'Retrieval is solid. You may state what the records establish plainly, every claim still cited.';
+}
+
+function buildSystemPrompt(n: number, surface: Surface, confidence: 'strong' | 'partial' | 'thin'): string {
+  return (
+    SYSTEM_PROMPT_TEMPLATE.replace(/\{\{N\}\}/g, String(n)).replace(
+      '{{SURFACE_FRAMING}}',
+      surfaceFraming(surface),
+    ) +
+    '\n\n' +
+    hedgingLine(confidence)
   );
 }
 
@@ -373,12 +389,16 @@ function buildSearchParams(query: string, plan: QueryPlan): URLSearchParams {
   return params;
 }
 
-// Effective distance for a case: verified-only boost (closer = better), floored
-// at 0. Human-confirmed boost is SKIPPED (the semantic RPC does not return it).
+// Effective distance for a case: provenance boost (closer = better), floored at
+// 0. Human-confirmed (a person checked it) beats verified beats unreviewed, so a
+// machine-extracted case sorts below a reviewed one at equal semantic distance.
+// Until the migration that adds human_confirmed to the semantic RPC lands, the
+// field is null on semantic hits and they fall through to the verified branch.
 function effectiveDistance(hit: RawHit): number | null {
   if (hit.distance === null || hit.distance === undefined) return null;
-  if (hit.kind === 'case' && hit.verified === true) {
-    return Math.max(0, hit.distance - 0.03);
+  if (hit.kind === 'case') {
+    if (hit.human_confirmed === true) return Math.max(0, hit.distance - 0.05);
+    if (hit.verified === true) return Math.max(0, hit.distance - 0.03);
   }
   return hit.distance;
 }
@@ -500,11 +520,17 @@ function deriveConfidence(
   const caseCites = citations.filter((c) => c.kind === 'case');
   const verifiedCases = caseCites.filter((c) => c.verified === true).length;
   const verifiedShare = caseCites.length > 0 ? verifiedCases / caseCites.length : 0;
+  // Human-confirmed is the stronger signal (a person checked the case, not just a
+  // pipeline flag). 'strong' now requires at least one human-confirmed case among
+  // the cited records, so an answer built entirely on unreviewed, machine-extracted
+  // cases cannot read as strong even on a close semantic match. With only 7% of the
+  // corpus human-confirmed this makes 'strong' honestly rare.
+  const humanConfirmedCases = caseCites.filter((c) => c.humanConfirmed === true).length;
   const close = bestDistance !== null && bestDistance <= 0.32;
   const loose = bestDistance !== null && bestDistance > 0.5;
 
   if (count === 0) return 'thin';
-  if (count >= 4 && close && verifiedShare >= 0.25) return 'strong';
+  if (count >= 4 && close && verifiedShare >= 0.25 && humanConfirmedCases >= 1) return 'strong';
   if (count <= 2 || loose) return 'thin';
   return 'partial';
 }
@@ -525,7 +551,13 @@ function buildContext(citations: Citation[]): string {
         `Route: ${c.href}`,
         c.externalUrl ? `Source: ${c.externalUrl}` : null,
         c.meta ? `Meta: ${c.meta}` : null,
-        c.verified === true ? 'Trust: verified case.' : null,
+        c.kind === 'case'
+          ? c.humanConfirmed === true
+            ? 'Provenance: human-confirmed case (a reviewer checked it).'
+            : c.verified === true
+              ? 'Provenance: verified, not yet human-confirmed.'
+              : 'Provenance: unreviewed, machine-extracted. Treat with extra caution and do not state its holding as settled.'
+          : null,
         c.restricted ? 'Consent: restricted evidence, title and provenance only.' : null,
         c.excerpt ? `Excerpt: ${c.excerpt}` : null,
       ]
@@ -542,6 +574,7 @@ async function askProvider(
   question: string,
   citations: Citation[],
   surface: Surface,
+  confidence: 'strong' | 'partial' | 'thin',
 ): Promise<string> {
   const res = await fetch(provider.url, {
     method: 'POST',
@@ -560,7 +593,7 @@ async function askProvider(
       max_tokens: 3200,
       response_format: { type: 'json_object' },
       messages: [
-        { role: 'system', content: buildSystemPrompt(citations.length, surface) },
+        { role: 'system', content: buildSystemPrompt(citations.length, surface, confidence) },
         {
           role: 'user',
           content: [
@@ -834,7 +867,7 @@ export async function POST(request: Request) {
 
     if (provider && citations.length) {
       try {
-        const raw = await askProvider(provider, question, citations, surface);
+        const raw = await askProvider(provider, question, citations, surface, baseConfidence);
         const parsed = parseStructured(raw);
         if (parsed) {
           structured = {

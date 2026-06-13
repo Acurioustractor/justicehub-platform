@@ -996,13 +996,32 @@ function CitationCard({ citation }: { citation: Citation }) {
         <span className="rounded px-1.5 py-0.5 text-[10px] uppercase" style={{ background: `${color}18`, fontFamily: MONO }}>
           {citation.label} {citation.kind}
         </span>
-        {citation.verified ? (
-          <span
-            className="rounded px-1.5 py-0.5 text-[10px] uppercase"
-            style={{ background: '#e7f5ed', color: '#256c42', fontFamily: MONO }}
-          >
-            verified
-          </span>
+        {citation.kind === 'case' ? (
+          citation.humanConfirmed ? (
+            <span
+              className="rounded px-1.5 py-0.5 text-[10px] uppercase"
+              style={{ background: '#e7f5ed', color: '#256c42', fontFamily: MONO }}
+              title="A reviewer has confirmed this case."
+            >
+              human verified
+            </span>
+          ) : citation.verified ? (
+            <span
+              className="rounded px-1.5 py-0.5 text-[10px] uppercase"
+              style={{ background: '#eef3f4', color: '#1f6f78', fontFamily: MONO }}
+              title="Verified, not yet human-confirmed."
+            >
+              verified
+            </span>
+          ) : (
+            <span
+              className="rounded px-1.5 py-0.5 text-[10px] uppercase"
+              style={{ background: '#fdf3e7', color: '#a96a1c', fontFamily: MONO }}
+              title="Unreviewed, machine-extracted. Read the source before relying on it."
+            >
+              needs review
+            </span>
+          )
         ) : null}
         {citation.restricted ? (
           <span
