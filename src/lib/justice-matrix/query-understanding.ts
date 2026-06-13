@@ -331,7 +331,14 @@ function sanitisePlan(llm: QueryPlanLLM, uiSurface: QuerySurface, original: stri
   // country: ONLY 'AU' ever passes; nothing else.
   const country: 'AU' | null = (llm.country ?? '').toUpperCase() === 'AU' ? 'AU' : null;
 
-  const region = (llm.region ?? '').trim() || null;
+  // region: NEVER trusted from the LLM. cases.region is 67% null, and the model
+  // routinely fills it with a court ("High Court of Australia") or country
+  // ("Australia") that the sparse sub-region column never matches, which zeros
+  // an otherwise-rich result set (verified live 2026-06-14). The heuristic
+  // already refuses to infer region; the LLM path now matches it. scope +
+  // country carry the geography; an explicit /search ?region facet still works.
+  const region = null;
+  void llm.region;
 
   // SURFACE OVERRIDE: honour the model's surface only when it explicitly named
   // the other domain; otherwise keep the UI surface.
@@ -461,4 +468,29 @@ export async function planQuery(question: string, uiSurface: QuerySurface): Prom
     console.warn('[planQuery] LLM call failed, using heuristic:', error instanceof Error ? error.message : String(error));
     return planQueryHeuristic(question, uiSurface);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Relax-and-retry support (used by the retrieval layer after a zero-result
+// first pass). Pure, exported for direct testing.
+// ---------------------------------------------------------------------------
+
+/**
+ * True when the plan carries narrowing facets that can zero a corpus that
+ * actually holds the answer. These are the planner's most over-applied filters;
+ * the geography (scope/country/type) and year window are NOT counted here
+ * because they are reliable and should survive a relax pass.
+ */
+export function hasNarrowingFilters(f: QueryPlanFilters): boolean {
+  return !!f.outcome || !!f.strength || !!f.region || f.cat.length > 0;
+}
+
+/**
+ * Drop the narrowing facets for a broad second pass: clears cat/outcome/
+ * strength/region, keeps type/scope/country and the soft year window. Used only
+ * after the first fan-out returned nothing, so precision is already lost and the
+ * goal is to surface the closest real records rather than a false "no match".
+ */
+export function relaxFilters(f: QueryPlanFilters): QueryPlanFilters {
+  return { ...f, cat: [], outcome: null, strength: null, region: null };
 }

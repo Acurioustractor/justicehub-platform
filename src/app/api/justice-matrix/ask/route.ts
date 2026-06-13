@@ -20,7 +20,13 @@
 import { NextResponse } from 'next/server';
 import { SURFACES } from '@/lib/justice-matrix/surfaces';
 import { createServiceClient } from '@/lib/supabase/service-lite';
-import { planQuery, type QueryPlan, type QueryIntent } from '@/lib/justice-matrix/query-understanding';
+import {
+  planQuery,
+  hasNarrowingFilters,
+  relaxFilters,
+  type QueryPlan,
+  type QueryIntent,
+} from '@/lib/justice-matrix/query-understanding';
 import { AskMatrixAnswerSchema, validateLLMOutput, type MatrixFaithfulness } from '@/lib/ai/llm-schemas';
 import {
   mechanicalFaithfulness,
@@ -369,6 +375,10 @@ interface RetrievalResult {
   total: number;
   bestDistance: number | null;
   fusedHits: RawHit[];
+  // True when the first fan-out returned nothing and a broadened (facet-stripped)
+  // second pass was used instead. Surfaced so the answer can be honest that it
+  // widened the search.
+  relaxed?: boolean;
 }
 
 function maxQueriesCap(): number {
@@ -409,7 +419,21 @@ function effectiveDistance(hit: RawHit): number | null {
   return hit.distance;
 }
 
+// Top-level retrieval: one fan-out, then ONE relax-and-retry if it came back
+// empty. The planner (LLM) over-applies narrow facets (region most of all, then
+// outcome/strength/cat) that can zero a question the corpus actually holds, so a
+// bare-zero first pass is retried with those facets stripped before we conclude
+// "no match". Geography (scope/country/type) + the year window survive the relax.
 async function retrievePlan(request: Request, plan: QueryPlan, surface: Surface): Promise<RetrievalResult> {
+  const first = await fanOut(request, plan, surface);
+  if (first.total > 0 || !hasNarrowingFilters(plan.filters)) return first;
+
+  const relaxedPlan: QueryPlan = { ...plan, filters: relaxFilters(plan.filters) };
+  const second = await fanOut(request, relaxedPlan, surface);
+  return second.total > 0 ? { ...second, relaxed: true } : first;
+}
+
+async function fanOut(request: Request, plan: QueryPlan, surface: Surface): Promise<RetrievalResult> {
   const origin = new URL(request.url).origin;
   const queries = plan.queries.slice(0, maxQueriesCap());
 
@@ -1065,6 +1089,10 @@ export async function POST(request: Request) {
         queries: plan.queries.length,
         planSource: plan.source,
         weak,
+        // True when the planner's narrow facets zeroed the first pass and a
+        // broadened retry was used. The records are real but less tightly
+        // scoped to the original facets.
+        relaxed: retrieved.relaxed ?? false,
       },
       // Additive + nullable. Present only when the answer cleared the >=3-citation
       // gate; null otherwise (no UI consumes it yet, surfaced for the next phase).
