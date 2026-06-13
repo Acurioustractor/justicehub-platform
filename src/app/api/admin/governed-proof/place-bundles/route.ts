@@ -3,6 +3,8 @@ import { checkAdmin } from '@/lib/supabase/admin-lite';
 import { assemblePlaceGovernedProofBundle } from '@/lib/governed-proof/place-assembler';
 import { createGovernedProofService } from '@/lib/governed-proof/service';
 
+export const dynamic = 'force-dynamic';
+
 function getPlaceKey(request: NextRequest): string | null {
   const placeKey = request.nextUrl.searchParams.get('placeKey')?.trim() ?? null;
   return placeKey && /^\d{4}$/.test(placeKey) ? placeKey : null;

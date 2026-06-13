@@ -12,9 +12,7 @@ import {
   TrendingUp,
   Search,
   ExternalLink,
-  RefreshCw,
   MapPin,
-  Award,
   FileText
 } from 'lucide-react';
 
@@ -121,11 +119,11 @@ export default async function JusticeMatrixAdminPage() {
             </div>
             <div className="flex gap-3">
               <Link
-                href="/preview/justice-matrix"
+                href="/justice-matrix"
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
               >
                 <ExternalLink className="w-4 h-4" />
-                View Preview
+                View Public Matrix
               </Link>
             </div>
           </div>
@@ -360,13 +358,13 @@ export default async function JusticeMatrixAdminPage() {
                 Review Discoveries
               </Link>
 
-              <button
+              <Link
+                href="/admin/justice-matrix/health"
                 className="flex items-center gap-3 px-4 py-3 bg-blue-50 border-2 border-blue-600 text-blue-600 font-bold hover:bg-blue-100 transition-colors"
-                title="Run /ralph-matrix-scan in Claude"
               >
-                <RefreshCw className="w-5 h-5" />
-                Run Discovery Scan
-              </button>
+                <Database className="w-5 h-5" />
+                Source Health
+              </Link>
 
               <Link
                 href="/api/justice-matrix/cases"

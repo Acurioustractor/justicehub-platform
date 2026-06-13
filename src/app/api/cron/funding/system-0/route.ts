@@ -3,6 +3,8 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { runSystem0Scheduler, type System0SchedulerOptions } from '@/lib/funding/system0-scheduler';
 import { logSystem0Event } from '@/lib/funding/system0-audit';
 
+export const dynamic = 'force-dynamic';
+
 function getCronSecret(): string | null {
   return process.env.SYSTEM0_CRON_SECRET || process.env.CRON_SECRET || null;
 }

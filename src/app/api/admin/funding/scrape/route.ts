@@ -3,6 +3,8 @@ import { requireAdminApi } from '@/lib/admin-api-auth';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { chooseScrapeStrategy } from '@/lib/scraping/strategy-engine';
 
+export const dynamic = 'force-dynamic';
+
 function getServiceClient() {
   return createServiceClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

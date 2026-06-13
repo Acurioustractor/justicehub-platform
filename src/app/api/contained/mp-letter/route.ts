@@ -4,6 +4,8 @@ import { getGHLClient, GHL_CANONICAL } from '@/lib/ghl/client';
 import { sanitizeEmail, sanitizeInput } from '@/lib/security';
 import { sendEmail } from '@/lib/email/send';
 
+export const dynamic = 'force-dynamic';
+
 const SITE = 'https://justicehub.com.au';
 
 // Pre-written letter templates for different audiences

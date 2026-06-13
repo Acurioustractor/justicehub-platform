@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { sendBatchEmail } from '@/lib/email/send';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/cron/newsletter/digest
  *

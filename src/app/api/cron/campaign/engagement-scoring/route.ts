@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Engagement tiers:
  * - Aware (1-2 points): Signed up for newsletter or visited

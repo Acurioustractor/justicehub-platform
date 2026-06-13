@@ -5,6 +5,8 @@ import { sendBatchEmail } from '@/lib/email/send';
 import { runMaturationScan } from '@/lib/cron/evidence-maturation';
 import { runGraphScoring } from '@/lib/cron/graph-score';
 
+export const dynamic = 'force-dynamic';
+
 export const maxDuration = 60;
 
 /**

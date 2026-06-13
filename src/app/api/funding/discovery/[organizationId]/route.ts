@@ -4,6 +4,8 @@ import {
   getFundingDiscoveryOrganizationDetail,
 } from '@/lib/funding/funding-operating-system';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   _request: Request,
   { params }: { params: { organizationId: string } }

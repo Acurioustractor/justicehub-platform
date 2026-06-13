@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { sendEmail } from '@/lib/email/send';
 
+export const dynamic = 'force-dynamic';
+
 const SITE = 'https://justicehub.com.au';
 
 /**

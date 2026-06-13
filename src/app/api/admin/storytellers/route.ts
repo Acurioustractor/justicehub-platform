@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { checkAdmin } from '@/lib/supabase/admin-lite';
 import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger-lite';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/admin/storytellers
  * Lists all storytellers from Empathy Ledger (source of truth).

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getYouthRemandNetworkData } from '@/lib/justice-network/youth-remand';
 
+export const dynamic = 'force-dynamic';
+
 export const revalidate = 300;
 
 export async function GET(req: Request) {

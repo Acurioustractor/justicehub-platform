@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSignalEngineClient } from '@/lib/supabase/signal-engine';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Widget API — Postcode data lookup
  * GET /api/signal-engine/widget?postcode=2200

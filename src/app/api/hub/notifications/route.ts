@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
+export const dynamic = 'force-dynamic';
+
 interface Notification {
   id: string;
   type: 'new_member' | 'org_claimed' | 'media_coverage' | 'milestone' | 'action';

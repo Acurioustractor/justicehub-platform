@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-lite';
 import { tourStops as staticTourStops } from '@/content/campaign';
 
+export const dynamic = 'force-dynamic';
+
 export const revalidate = 300;
 
 /**

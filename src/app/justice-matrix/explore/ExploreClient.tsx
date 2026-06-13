@@ -620,7 +620,12 @@ export function ExploreClient({ facetSeed, initial, initialState }: ExploreClien
           {view === 'jurisdiction' ? (
             <JurisdictionView buckets={regionBuckets} active={region} onPick={(r) => { setRegion(r); setView('list'); }} />
           ) : sorted.length === 0 ? (
-            <Empty />
+            <Empty
+              q={q}
+              mode={mode}
+              onSemantic={() => setMode('semantic')}
+              onClear={clearAll}
+            />
           ) : view === 'grouped' ? (
             <GroupedView items={sorted} counts={counts} />
           ) : view === 'cards' ? (
@@ -1106,15 +1111,98 @@ function JurisdictionView({
   );
 }
 
-function Empty() {
+function isQuestionLike(q: string): boolean {
+  const text = q.trim();
+  if (!text) return false;
   return (
-    <div className="rounded-lg border p-10 text-center" style={{ background: C.surface, borderColor: C.border }}>
-      <p className="text-base mb-1" style={{ color: C.ink }}>
-        No results.
-      </p>
-      <p className="text-sm" style={{ color: C.muted }}>
-        Try a different term, switch to semantic mode, widen the scope, or clear filters.
-      </p>
+    /\?$/.test(text) ||
+    /^(can|could|should|would|what|why|how|where|when|is|are|do|does|did|find)\b/i.test(text) ||
+    text.split(/\s+/).length >= 6
+  );
+}
+
+function isYouthDetentionQuery(q: string): boolean {
+  return /\b(youth|child|children|boy|girl|minor|teen|10|ten|detention|remand|custody|watchhouse|raise the age)\b/i.test(q);
+}
+
+function Empty({
+  q = '',
+  mode = 'keyword',
+  onSemantic,
+  onClear,
+}: {
+  q?: string;
+  mode?: Mode;
+  onSemantic?: () => void;
+  onClear?: () => void;
+}) {
+  const hasQuery = q.trim().length > 0;
+  const questionLike = isQuestionLike(q);
+  const youthDetention = isYouthDetentionQuery(q);
+  const askHref = `/justice-matrix/ask?${new URLSearchParams({
+    q,
+    ...(youthDetention ? { surface: 'youth' } : {}),
+  }).toString()}`;
+
+  return (
+    <div className="rounded-lg border p-6 md:p-8" style={{ background: C.surface, borderColor: C.border }}>
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="text-base font-semibold" style={{ color: C.ink }}>
+          No direct keyword matches.
+        </p>
+        <p className="mt-2 text-sm leading-6" style={{ color: C.muted }}>
+          {questionLike
+            ? 'That looks like a question, not a keyword search. Use Ask the Matrix for a cited answer, or broaden the search by meaning.'
+            : 'Try a broader term, search by meaning, widen the scope, or clear filters.'}
+        </p>
+
+        <div className="mt-5 flex flex-wrap justify-center gap-2">
+          {hasQuery && mode !== 'semantic' && onSemantic ? (
+            <button
+              type="button"
+              onClick={onSemantic}
+              className="inline-flex min-h-11 items-center gap-2 rounded-md px-4 text-sm font-semibold"
+              style={{ background: C.accent, color: '#fff' }}
+            >
+              <Sparkles className="h-4 w-4" />
+              Try semantic search
+            </button>
+          ) : null}
+
+          {hasQuery ? (
+            <Link
+              href={askHref}
+              className="inline-flex min-h-11 items-center gap-2 rounded-md border px-4 text-sm font-semibold"
+              style={{ borderColor: C.borderStrong, color: C.ink }}
+            >
+              <Search className="h-4 w-4" />
+              Ask this question
+            </Link>
+          ) : null}
+
+          {youthDetention ? (
+            <Link
+              href="/justice-network/youth-remand"
+              className="inline-flex min-h-11 items-center gap-2 rounded-md border px-4 text-sm font-semibold"
+              style={{ borderColor: C.borderStrong, color: C.ink }}
+            >
+              <ArrowRight className="h-4 w-4" />
+              Open Youth Remand guide
+            </Link>
+          ) : null}
+
+          {onClear ? (
+            <button
+              type="button"
+              onClick={onClear}
+              className="inline-flex min-h-11 items-center gap-2 rounded-md border px-4 text-sm font-semibold"
+              style={{ borderColor: C.borderStrong, color: C.body }}
+            >
+              Clear filters
+            </button>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }

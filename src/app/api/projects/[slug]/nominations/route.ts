@@ -13,6 +13,8 @@ const SITE = 'https://justicehub.com.au';
 // invites only ever come from a relationship owner, by hand.
 const TEAM_EMAIL = 'benjamin@act.place';
 
+export const dynamic = 'force-dynamic';
+
 const VALID_CATEGORIES = [
   'politician',
   'justice_official',

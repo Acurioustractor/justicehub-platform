@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { checkOrgAccess } from '@/lib/org-hub/auth';
 import { syncOrgToEL, getOrgELSyncStatus } from '@/lib/empathy-ledger/push-sync';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { orgId: string } }

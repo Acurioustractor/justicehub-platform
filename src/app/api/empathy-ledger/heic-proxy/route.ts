@@ -13,6 +13,8 @@ import sharp from 'sharp';
 import heicConvert from 'heic-convert';
 import { getMedia } from '@/lib/empathy-ledger/v2-client';
 
+export const dynamic = 'force-dynamic';
+
 export const runtime = 'nodejs';
 
 const CACHE_HEADERS = {

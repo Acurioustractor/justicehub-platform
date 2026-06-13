@@ -6,6 +6,8 @@ import {
 } from '@/lib/empathy-ledger/v2-client';
 import { empathyLedgerClient } from '@/lib/supabase/empathy-ledger';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/empathy-ledger/profiles/[id]
  *

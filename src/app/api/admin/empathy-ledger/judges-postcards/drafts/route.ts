@@ -11,6 +11,8 @@ import {
 } from '@/lib/supabase/empathy-ledger-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
+export const dynamic = 'force-dynamic';
+
 const DEFAULT_TENANT_ID = '8891e1a9-92ae-423f-928b-cec602660011';
 
 type StorytellerOrgLink = {

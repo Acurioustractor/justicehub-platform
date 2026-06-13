@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getThisWeekSummary } from '@/lib/bgfit/queries';
 
+export const dynamic = 'force-dynamic';
+
 const BG_FIT_ORG_ID = '11111111-1111-1111-1111-111111111004';
 
 // Temporary test endpoint — no auth, returns dashboard JSON

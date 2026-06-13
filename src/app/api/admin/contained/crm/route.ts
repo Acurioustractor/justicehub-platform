@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { requireAdminApi } from '@/lib/admin-api-auth';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/admin/contained/crm
  * Merges contacts from 6 supporter tables into a unified view.

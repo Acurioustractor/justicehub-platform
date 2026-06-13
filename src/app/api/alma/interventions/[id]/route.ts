@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { interventionService } from '@/lib/alma/intervention-service';
 import { portfolioService } from '@/lib/alma/portfolio-service';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }

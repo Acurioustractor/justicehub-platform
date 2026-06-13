@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkAdmin } from '@/lib/supabase/admin-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const admin = await checkAdmin();

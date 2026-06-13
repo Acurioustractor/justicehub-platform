@@ -9,6 +9,8 @@ import {
   type PipelineStage,
 } from '@/lib/campaign/pipeline-stages';
 
+export const dynamic = 'force-dynamic';
+
 const SITE = 'https://justicehub.com.au';
 
 // Auto follow-up templates per stage

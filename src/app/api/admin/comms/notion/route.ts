@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-lite';
 
+export const dynamic = 'force-dynamic';
+
 const NOTION_TOKEN = process.env.JUSTICEHUB_NOTION_TOKEN;
 const DB_ID = '7005d0d1-41d3-436c-9f86-526d275c2f10';
 const NOTION_API = 'https://api.notion.com/v1';

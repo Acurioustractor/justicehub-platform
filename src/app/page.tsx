@@ -61,6 +61,14 @@ const audienceRoutes = [
     color: '#4C1D95',
   },
   {
+    label: 'I am reviewing the UN pack',
+    href: '/justice-matrix/un',
+    icon: FileText,
+    body: 'Open the public NJP / OHCHR review pack with the status brief, UI plan, background paper, and source matrices.',
+    action: 'Open the pack',
+    color: '#4A2560',
+  },
+  {
     label: 'I fund or shape policy',
     href: '/follow-the-money',
     icon: DollarSign,

@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { getGHLClient } from '@/lib/ghl/client';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/admin/campaign-alignment/ghl-activity?entityId=X
  * Pull GHL conversation history for a single entity

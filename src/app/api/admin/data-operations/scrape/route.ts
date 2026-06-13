@@ -4,6 +4,8 @@ import { createClient as createServiceClient } from '@supabase/supabase-js';
 import FirecrawlApp from '@mendable/firecrawl-js';
 import { scrapeViaJina, shouldPreferFirecrawl } from '@/lib/scraping/jina-reader';
 
+export const dynamic = 'force-dynamic';
+
 // Helper to check admin status
 async function isAdmin(supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never, userId: string): Promise<boolean> {
   const { data } = await supabase

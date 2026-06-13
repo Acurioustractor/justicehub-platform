@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { sendEmail } from '@/lib/email/send';
 import { welcomeSequence } from '@/content/newsletter-sequences';
+
+export const dynamic = 'force-dynamic';
 // Only send welcome drip to subscribers who signed up AFTER this date.
 // Prevents blasting existing subscribers when EMAIL_ENABLED is first turned on.
 const WELCOME_DRIP_CUTOFF = '2026-03-23T00:00:00Z';

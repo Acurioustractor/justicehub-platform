@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/admin/campaign-alignment/stats
  * Returns aggregate counts by category, list, outreach status, and last run info.

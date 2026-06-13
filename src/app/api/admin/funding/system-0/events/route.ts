@@ -3,6 +3,8 @@ import { requireAdminApi } from '@/lib/admin-api-auth';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { listSystem0Events, type System0AuditEvent } from '@/lib/funding/system0-audit';
 
+export const dynamic = 'force-dynamic';
+
 function getServiceClient() {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!serviceRoleKey) {

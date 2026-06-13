@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server-lite';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { queueNotionSyncTasks } from '@/lib/funding/notion-worker-queue';
 
+export const dynamic = 'force-dynamic';
+
 const DEFAULT_STAGE_FILTER = ['Matched', 'Matched - New', 'New'];
 
 function getServiceClient() {

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { createHmac, timingSafeEqual } from 'crypto';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * Verify webhook signature using HMAC-SHA256 with timing-safe comparison
  */

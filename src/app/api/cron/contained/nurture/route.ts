@@ -11,6 +11,8 @@ import {
   type EmailSequence,
 } from '@/content/newsletter-sequences';
 
+export const dynamic = 'force-dynamic';
+
 // Map role_tag → nurture sequence
 const ROLE_SEQUENCES: Record<string, EmailSequence> = {
   contained_organization: organizationNurture,

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getGHLClient } from '@/lib/ghl/client';
 import { allSequences } from '@/content/newsletter-sequences';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * POST /api/ghl/trigger-sequence
  *

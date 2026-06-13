@@ -110,7 +110,7 @@ export function ContributeForm() {
             ['campaign', 'Advocacy campaign'],
           ]}
         />
-        <Field name="title" label="Title or citation" required placeholder="e.g. Hirsi Jamaa v Italy or Lift the Ban" />
+        <Field name="title" label="Title, citation, or record being corrected" required placeholder="e.g. Hirsi Jamaa v Italy or Lift the Ban" />
         <Field
           name="jurisdiction_or_region"
           label="Jurisdiction or region"
@@ -122,12 +122,12 @@ export function ContributeForm() {
           name="summary"
           label="Summary"
           required
-          placeholder="For a case: the strategic issue, the holding, why it matters. For a campaign: the goal, lead organisations, tactics, where it stands."
+          placeholder="For a case: the strategic issue, the holding, why it matters. For a campaign: the goal, lead organisations, tactics, where it stands. For a correction: what should change and why."
         />
         <Textarea
           name="notes"
-          label="Anything else we should know (optional)"
-          placeholder="Connections to existing entries, request for confidentiality, source you can&apos;t link to publicly, etc."
+          label="Source links, corrections, confidentiality, or extra notes (optional)"
+          placeholder="Connections to existing entries, correction details, request for confidentiality, source you can&apos;t link to publicly, etc."
         />
       </FormSection>
 

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/contained/social-proof
  *

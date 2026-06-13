@@ -3,6 +3,8 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { createServerClient } from '@supabase/ssr';
 import { generateEnrollmentCode } from '@/lib/enrollment/code-generator';
 
+export const dynamic = 'force-dynamic';
+
 async function getAdminUser(request: NextRequest) {
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

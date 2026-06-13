@@ -7,6 +7,7 @@ import {
   BookOpenCheck,
   CircleHelp,
   Compass,
+  FileText,
   FilePlus2,
   Layers3,
   MapPinned,
@@ -28,7 +29,8 @@ export type MatrixFlowActive =
   | 'campaigns'
   | 'contribute'
   | 'guide'
-  | 'network';
+  | 'network'
+  | 'un';
 
 const MONO = "'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
 const C = {
@@ -73,6 +75,14 @@ const links: Array<{
     short: 'Guide',
     help: 'Map',
     icon: <BookOpenCheck className="h-4 w-4" />,
+  },
+  {
+    key: 'un',
+    href: '/justice-matrix/un',
+    label: 'UN / OHCHR Pack',
+    short: 'UN',
+    help: 'Review',
+    icon: <FileText className="h-4 w-4" />,
   },
   {
     key: 'ask',
@@ -158,7 +168,7 @@ export function MatrixFlowNav({
             FAQ <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5 xl:grid-cols-[repeat(11,minmax(0,1fr))]">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-6 xl:grid-cols-[repeat(12,minmax(0,1fr))]">
           {links.map((item) => {
             const selected = item.key === active;
             return (

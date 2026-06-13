@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { checkAdmin } from '@/lib/supabase/admin-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
+export const dynamic = 'force-dynamic';
+
 export interface UnifiedStory {
   id: string;
   title: string;

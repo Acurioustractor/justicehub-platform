@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import QRCode from 'qrcode';
 
+export const dynamic = 'force-dynamic';
+
 const DEFAULT_SIZE = 300;
 const MIN_SIZE = 64;
 const MAX_SIZE = 1024;

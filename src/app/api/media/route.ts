@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server-lite';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 function getSingleOrganization(
   value: { name: string; slug: string } | { name: string; slug: string }[] | null | undefined
 ) {

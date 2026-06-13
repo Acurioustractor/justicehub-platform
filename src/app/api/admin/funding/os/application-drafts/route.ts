@@ -7,6 +7,8 @@ import {
   type FundingApplicationDraftWorkspaceInput,
 } from '@/lib/funding/funding-operating-system';
 
+export const dynamic = 'force-dynamic';
+
 function toDraftInput(body: Record<string, unknown>): FundingApplicationDraftWorkspaceInput {
   return {
     organizationId: String(body.organizationId || ''),

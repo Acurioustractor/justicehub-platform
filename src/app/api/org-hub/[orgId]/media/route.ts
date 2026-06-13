@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { checkOrgAccess } from '@/lib/org-hub/auth';
 
+export const dynamic = 'force-dynamic';
+
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 interface UnifiedMediaItem {

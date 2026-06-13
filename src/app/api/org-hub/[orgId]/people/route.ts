@@ -4,6 +4,8 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { checkOrgAccess } from '@/lib/org-hub/auth';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
+export const dynamic = 'force-dynamic';
+
 function getEmpathyLedgerClient() {
   const url = process.env.EMPATHY_LEDGER_URL;
   const key = process.env.EMPATHY_LEDGER_API_KEY;

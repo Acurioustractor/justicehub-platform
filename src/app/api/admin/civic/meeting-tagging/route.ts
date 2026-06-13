@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkAdmin } from '@/lib/supabase/admin-lite';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 
+export const dynamic = 'force-dynamic';
+
 const VALID_SECTORS = [
   'primary_frontline', 'peak_body', 'consultancy', 'government',
   'research_academic', 'legal_service', 'advocacy', 'funder', 'media', 'other',

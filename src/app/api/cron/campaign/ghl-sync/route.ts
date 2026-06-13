@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service-lite';
 import { getGHLClient, GHL_TAGS } from '@/lib/ghl/client';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/cron/campaign/ghl-sync
  * Daily cron: syncs high-scoring campaign allies to GHL.
