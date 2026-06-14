@@ -34,6 +34,7 @@ import {
   checkFaithfulness,
   faithCacheKey,
 } from '@/lib/justice-matrix/faithfulness';
+import { recordGap, shouldRecordGap } from '@/lib/justice-matrix/gaps';
 import {
   citationCategories,
   buildRelatedIssues,
@@ -1067,6 +1068,24 @@ export async function POST(request: Request) {
       } else {
         faithfulness = { checked: false, verdict: 'unchecked', unsupportedClaims: [] };
       }
+    }
+
+    // 5c. Corpus gap sensor. A THIN answer (confidence is now final after the
+    // faithfulness clamp) means the Matrix could not confidently answer, so log
+    // the question as an acquisition demand signal. Awaited for durability but
+    // fully defensive: it never throws and no-ops before the migration lands.
+    if (shouldRecordGap(structured.confidence, citations.length)) {
+      await recordGap({
+        question,
+        surface,
+        intent: plan.intent,
+        confidence: structured.confidence,
+        citationCount: citations.length,
+        bestDistance: retrieved.bestDistance,
+        relaxed: retrieved.relaxed ?? false,
+        planSource: plan.source,
+        categories: plan.filters.cat,
+      });
     }
 
     // 6. Back-compat prose + public citations.
