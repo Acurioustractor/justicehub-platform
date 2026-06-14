@@ -232,10 +232,12 @@ describe('hasNarrowingFilters', () => {
   });
 
   it('does NOT count geography/year as narrowing (those survive a relax)', () => {
-    expect(hasNarrowingFilters(baseFilters({ scope: 'au', country: 'AU', type: 'case', yearFrom: 2015 }))).toBe(false);
+    expect(hasNarrowingFilters(baseFilters({ scope: 'au', country: 'AU', yearFrom: 2015 }))).toBe(false);
   });
 
-  it('is true when any of cat/outcome/strength/region is set', () => {
+  it('is true for a single-kind type or any of cat/outcome/strength/region', () => {
+    expect(hasNarrowingFilters(baseFilters({ type: 'evidence' }))).toBe(true);
+    expect(hasNarrowingFilters(baseFilters({ type: 'campaign' }))).toBe(true);
     expect(hasNarrowingFilters(baseFilters({ region: 'High Court of Australia' }))).toBe(true);
     expect(hasNarrowingFilters(baseFilters({ outcome: 'adverse' }))).toBe(true);
     expect(hasNarrowingFilters(baseFilters({ strength: 'high' }))).toBe(true);
@@ -244,10 +246,10 @@ describe('hasNarrowingFilters', () => {
 });
 
 describe('relaxFilters', () => {
-  it('clears cat/outcome/strength/region but keeps type/scope/country/year', () => {
+  it('broadens kind to all + clears cat/outcome/strength/region, keeps scope/country/year', () => {
     const relaxed = relaxFilters(
       baseFilters({
-        type: 'case',
+        type: 'evidence',
         cat: ['asylum', 'refugee'],
         outcome: 'adverse',
         strength: 'high',
@@ -258,12 +260,12 @@ describe('relaxFilters', () => {
         yearTo: 2004,
       }),
     );
+    expect(relaxed.type).toBe('all'); // widest net: search every kind
     expect(relaxed.cat).toEqual([]);
     expect(relaxed.outcome).toBeNull();
     expect(relaxed.strength).toBeNull();
     expect(relaxed.region).toBeNull();
     // geography + year survive so the retry stays in the right corpus slice
-    expect(relaxed.type).toBe('case');
     expect(relaxed.scope).toBe('au');
     expect(relaxed.country).toBe('AU');
     expect(relaxed.yearFrom).toBe(2004);
@@ -272,8 +274,9 @@ describe('relaxFilters', () => {
   });
 
   it('does not mutate the input', () => {
-    const input = baseFilters({ region: 'Australia', cat: ['asylum'] });
+    const input = baseFilters({ type: 'evidence', region: 'Australia', cat: ['asylum'] });
     relaxFilters(input);
+    expect(input.type).toBe('evidence');
     expect(input.region).toBe('Australia');
     expect(input.cat).toEqual(['asylum']);
   });

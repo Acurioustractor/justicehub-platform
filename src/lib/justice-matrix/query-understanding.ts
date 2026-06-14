@@ -354,12 +354,18 @@ function sanitisePlan(llm: QueryPlanLLM, uiSurface: QuerySurface, original: stri
     scope = llm.scope;
   }
 
-  // intent -> type coupling.
-  const intent: QueryIntent = llm.intent;
-  let type: 'all' | 'case' | 'campaign' | 'evidence';
-  if (intent === 'find-campaigns') type = 'campaign';
-  else if (intent === 'find-evidence') type = 'evidence';
-  else type = llm.type === 'campaign' || llm.type === 'evidence' || llm.type === 'case' ? llm.type : 'all';
+  // intent + type: derive BOTH deterministically from the question text, NOT
+  // from the LLM. The model over-commits to find-evidence/find-campaigns on
+  // questions that never named a kind (e.g. "raise the age" -> find-evidence ->
+  // the evidence-lane gate then collapses it to evidence-only, dropping every
+  // relevant case), verified live 2026-06-14. detectIntent narrows ONLY on an
+  // explicit kind word ("campaign", "evidence/research/study") and otherwise
+  // yields 'all' (cases lead, campaigns + evidence stay visible — the corpus is
+  // small and cross-kind answers are the point). The LLM still drives cat /
+  // scope / country / surface / queries below, where it adds value without the
+  // sharp over-narrowing failure mode.
+  const intent: QueryIntent = detectIntent(normaliseQuestion(original));
+  const type = intentToType(intent);
 
   let finalCat = cat;
   // Seed refugee cats from the preset when the resolved surface is refugee and
@@ -476,21 +482,23 @@ export async function planQuery(question: string, uiSurface: QuerySurface): Prom
 // ---------------------------------------------------------------------------
 
 /**
- * True when the plan carries narrowing facets that can zero a corpus that
- * actually holds the answer. These are the planner's most over-applied filters;
- * the geography (scope/country/type) and year window are NOT counted here
- * because they are reliable and should survive a relax pass.
+ * True when the plan carries a narrowing that can zero a corpus that actually
+ * holds the answer: a single-kind type (a campaign/evidence request returning 0
+ * should retry across all kinds) OR any of cat/outcome/strength/region. The
+ * geography (scope/country) and year window are NOT counted; they are reliable
+ * and survive a relax pass.
  */
 export function hasNarrowingFilters(f: QueryPlanFilters): boolean {
-  return !!f.outcome || !!f.strength || !!f.region || f.cat.length > 0;
+  return f.type !== 'all' || !!f.outcome || !!f.strength || !!f.region || f.cat.length > 0;
 }
 
 /**
- * Drop the narrowing facets for a broad second pass: clears cat/outcome/
- * strength/region, keeps type/scope/country and the soft year window. Used only
- * after the first fan-out returned nothing, so precision is already lost and the
- * goal is to surface the closest real records rather than a false "no match".
+ * Cast the widest sensible net for a broad second pass: kind back to 'all' and
+ * cat/outcome/strength/region cleared, keeping scope/country and the soft year
+ * window. Used only after the first fan-out returned nothing, so precision is
+ * already lost and the goal is to surface the closest real records rather than a
+ * false "no match".
  */
 export function relaxFilters(f: QueryPlanFilters): QueryPlanFilters {
-  return { ...f, cat: [], outcome: null, strength: null, region: null };
+  return { ...f, type: 'all', cat: [], outcome: null, strength: null, region: null };
 }
