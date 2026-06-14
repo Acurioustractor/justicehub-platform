@@ -19,7 +19,10 @@
 import {
   planQueryHeuristic,
   CANONICAL_CATEGORIES,
+  hasNarrowingFilters,
+  relaxFilters,
   type QueryPlan,
+  type QueryPlanFilters,
 } from '@/lib/justice-matrix/query-understanding';
 
 describe('CANONICAL_CATEGORIES', () => {
@@ -203,5 +206,78 @@ describe('planQueryHeuristic — query expansion', () => {
     for (const query of plan.queries) {
       expect(query.trim().length).toBeGreaterThan(0);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Relax-and-retry helpers (the fix for planner over-narrowing zeroing /ask).
+// ---------------------------------------------------------------------------
+
+const baseFilters = (over: Partial<QueryPlanFilters> = {}): QueryPlanFilters => ({
+  type: 'all',
+  cat: [],
+  outcome: null,
+  strength: null,
+  region: null,
+  country: null,
+  scope: 'all',
+  yearFrom: null,
+  yearTo: null,
+  ...over,
+});
+
+describe('hasNarrowingFilters', () => {
+  it('is false for a clean filter set (nothing to relax)', () => {
+    expect(hasNarrowingFilters(baseFilters())).toBe(false);
+  });
+
+  it('does NOT count geography/year as narrowing (those survive a relax)', () => {
+    expect(hasNarrowingFilters(baseFilters({ scope: 'au', country: 'AU', yearFrom: 2015 }))).toBe(false);
+  });
+
+  it('is true for a single-kind type or any of cat/outcome/strength/region', () => {
+    expect(hasNarrowingFilters(baseFilters({ type: 'evidence' }))).toBe(true);
+    expect(hasNarrowingFilters(baseFilters({ type: 'campaign' }))).toBe(true);
+    expect(hasNarrowingFilters(baseFilters({ region: 'High Court of Australia' }))).toBe(true);
+    expect(hasNarrowingFilters(baseFilters({ outcome: 'adverse' }))).toBe(true);
+    expect(hasNarrowingFilters(baseFilters({ strength: 'high' }))).toBe(true);
+    expect(hasNarrowingFilters(baseFilters({ cat: ['immigration-detention'] }))).toBe(true);
+  });
+});
+
+describe('relaxFilters', () => {
+  it('broadens kind to all + clears cat/outcome/strength/region, keeps scope/country/year', () => {
+    const relaxed = relaxFilters(
+      baseFilters({
+        type: 'evidence',
+        cat: ['asylum', 'refugee'],
+        outcome: 'adverse',
+        strength: 'high',
+        region: 'High Court of Australia',
+        country: 'AU',
+        scope: 'au',
+        yearFrom: 2004,
+        yearTo: 2004,
+      }),
+    );
+    expect(relaxed.type).toBe('all'); // widest net: search every kind
+    expect(relaxed.cat).toEqual([]);
+    expect(relaxed.outcome).toBeNull();
+    expect(relaxed.strength).toBeNull();
+    expect(relaxed.region).toBeNull();
+    // geography + year survive so the retry stays in the right corpus slice
+    expect(relaxed.scope).toBe('au');
+    expect(relaxed.country).toBe('AU');
+    expect(relaxed.yearFrom).toBe(2004);
+    // a relaxed set has nothing left to relax
+    expect(hasNarrowingFilters(relaxed)).toBe(false);
+  });
+
+  it('does not mutate the input', () => {
+    const input = baseFilters({ type: 'evidence', region: 'Australia', cat: ['asylum'] });
+    relaxFilters(input);
+    expect(input.type).toBe('evidence');
+    expect(input.region).toBe('Australia');
+    expect(input.cat).toEqual(['asylum']);
   });
 });

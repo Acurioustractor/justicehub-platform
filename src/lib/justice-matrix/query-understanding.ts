@@ -331,7 +331,14 @@ function sanitisePlan(llm: QueryPlanLLM, uiSurface: QuerySurface, original: stri
   // country: ONLY 'AU' ever passes; nothing else.
   const country: 'AU' | null = (llm.country ?? '').toUpperCase() === 'AU' ? 'AU' : null;
 
-  const region = (llm.region ?? '').trim() || null;
+  // region: NEVER trusted from the LLM. cases.region is 67% null, and the model
+  // routinely fills it with a court ("High Court of Australia") or country
+  // ("Australia") that the sparse sub-region column never matches, which zeros
+  // an otherwise-rich result set (verified live 2026-06-14). The heuristic
+  // already refuses to infer region; the LLM path now matches it. scope +
+  // country carry the geography; an explicit /search ?region facet still works.
+  const region = null;
+  void llm.region;
 
   // SURFACE OVERRIDE: honour the model's surface only when it explicitly named
   // the other domain; otherwise keep the UI surface.
@@ -347,12 +354,18 @@ function sanitisePlan(llm: QueryPlanLLM, uiSurface: QuerySurface, original: stri
     scope = llm.scope;
   }
 
-  // intent -> type coupling.
-  const intent: QueryIntent = llm.intent;
-  let type: 'all' | 'case' | 'campaign' | 'evidence';
-  if (intent === 'find-campaigns') type = 'campaign';
-  else if (intent === 'find-evidence') type = 'evidence';
-  else type = llm.type === 'campaign' || llm.type === 'evidence' || llm.type === 'case' ? llm.type : 'all';
+  // intent + type: derive BOTH deterministically from the question text, NOT
+  // from the LLM. The model over-commits to find-evidence/find-campaigns on
+  // questions that never named a kind (e.g. "raise the age" -> find-evidence ->
+  // the evidence-lane gate then collapses it to evidence-only, dropping every
+  // relevant case), verified live 2026-06-14. detectIntent narrows ONLY on an
+  // explicit kind word ("campaign", "evidence/research/study") and otherwise
+  // yields 'all' (cases lead, campaigns + evidence stay visible — the corpus is
+  // small and cross-kind answers are the point). The LLM still drives cat /
+  // scope / country / surface / queries below, where it adds value without the
+  // sharp over-narrowing failure mode.
+  const intent: QueryIntent = detectIntent(normaliseQuestion(original));
+  const type = intentToType(intent);
 
   let finalCat = cat;
   // Seed refugee cats from the preset when the resolved surface is refugee and
@@ -461,4 +474,31 @@ export async function planQuery(question: string, uiSurface: QuerySurface): Prom
     console.warn('[planQuery] LLM call failed, using heuristic:', error instanceof Error ? error.message : String(error));
     return planQueryHeuristic(question, uiSurface);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Relax-and-retry support (used by the retrieval layer after a zero-result
+// first pass). Pure, exported for direct testing.
+// ---------------------------------------------------------------------------
+
+/**
+ * True when the plan carries a narrowing that can zero a corpus that actually
+ * holds the answer: a single-kind type (a campaign/evidence request returning 0
+ * should retry across all kinds) OR any of cat/outcome/strength/region. The
+ * geography (scope/country) and year window are NOT counted; they are reliable
+ * and survive a relax pass.
+ */
+export function hasNarrowingFilters(f: QueryPlanFilters): boolean {
+  return f.type !== 'all' || !!f.outcome || !!f.strength || !!f.region || f.cat.length > 0;
+}
+
+/**
+ * Cast the widest sensible net for a broad second pass: kind back to 'all' and
+ * cat/outcome/strength/region cleared, keeping scope/country and the soft year
+ * window. Used only after the first fan-out returned nothing, so precision is
+ * already lost and the goal is to surface the closest real records rather than a
+ * false "no match".
+ */
+export function relaxFilters(f: QueryPlanFilters): QueryPlanFilters {
+  return { ...f, type: 'all', cat: [], outcome: null, strength: null, region: null };
 }

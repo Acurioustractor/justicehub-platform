@@ -21,6 +21,7 @@ import {
   Newspaper,
   Briefcase,
   Sparkles,
+  MapPin,
 } from 'lucide-react';
 import Link from 'next/link';
 import type { SearchResult as UnifiedSearchResult, SearchResultType, SearchIntent } from '@/lib/search/types';
@@ -41,6 +42,7 @@ const TYPE_ICONS: Record<SearchResultType, React.ReactNode> = {
   story: <BookOpen className="h-4 w-4 text-orange-500" />,
   research: <BarChart3 className="h-4 w-4 text-cyan-500" />,
   news: <Newspaper className="h-4 w-4 text-gray-500" />,
+  site: <MapPin className="h-4 w-4 text-rose-500" />,
 };
 
 // Map result types to labels
@@ -53,6 +55,7 @@ const TYPE_LABELS: Record<SearchResultType, string> = {
   story: 'Story',
   research: 'Research',
   news: 'News',
+  site: 'Site',
 };
 
 // Map intents to display labels

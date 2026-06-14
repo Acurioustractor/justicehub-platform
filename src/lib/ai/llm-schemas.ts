@@ -403,6 +403,20 @@ export const AskMatrixAnswerSchema = z
   .passthrough();
 export type AskMatrixAnswer = z.infer<typeof AskMatrixAnswerSchema>;
 
+// Post-hoc faithfulness (NLI) check output. A background model judges whether the
+// draft answer's claims are supported by the cited record excerpts. The verdict
+// is STRICT (no .catch): a malformed verdict fails validation -> the caller gets
+// null -> it skips the clamp. The check only ever DOWN-ranks confidence, so a
+// skip never inflates trust. unsupportedClaims is informational and degrades to
+// [] rather than sinking the whole verdict.
+export const MatrixFaithfulnessSchema = z
+  .object({
+    verdict: z.enum(['entailed', 'partial', 'contradicted']),
+    unsupportedClaims: z.array(z.string().max(400)).max(6).catch([]),
+  })
+  .passthrough();
+export type MatrixFaithfulness = z.infer<typeof MatrixFaithfulnessSchema>;
+
 // ---------------------------------------------------------------------------
 // Validated parse helper
 // ---------------------------------------------------------------------------

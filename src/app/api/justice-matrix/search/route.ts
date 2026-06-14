@@ -51,6 +51,10 @@ interface CaseResult {
   // to null there (no badge on semantic results, which is the honest fallback).
   human_confirmed: boolean | null;
   distance: number | null;
+  // Hybrid-only: the fused 1/(60+rank) score from justice_matrix_hybrid_cases.
+  // Present for BOTH legs (so a keyword-only rescue with distance NULL still
+  // carries a real relevance score); null on the keyword-list path + on evidence.
+  rrf_score: number | null;
 }
 
 interface CampaignResult {
@@ -66,6 +70,7 @@ interface CampaignResult {
   lead_organizations: string | null;
   campaign_link: string | null;
   distance: number | null;
+  rrf_score: number | null;
 }
 
 interface EvidenceResult {
@@ -328,6 +333,7 @@ function mapCaseRow(r: any): CaseResult {
     verified: typeof r.verified === 'boolean' ? r.verified : null,
     human_confirmed: typeof r.human_confirmed === 'boolean' ? r.human_confirmed : null,
     distance: typeof r.distance === 'number' ? r.distance : null,
+    rrf_score: typeof r.rrf_score === 'number' ? r.rrf_score : null,
   };
 }
 
@@ -346,6 +352,7 @@ function mapCampaignRow(r: any): CampaignResult {
     lead_organizations: r.lead_organizations ?? null,
     campaign_link: r.campaign_link ?? null,
     distance: typeof r.distance === 'number' ? r.distance : null,
+    rrf_score: typeof r.rrf_score === 'number' ? r.rrf_score : null,
   };
 }
 
